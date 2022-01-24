@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 public class MyHttpRequest extends HttpRequest {
 
     private static final BiPredicate<String, String> ALLOWED_ALL_HEADERS = (k, v) -> true;
+    private static final String END_OF_REQUEST_LINE = "";
+    private static final String REQUEST_LINE_DELIMITER = " ";
+    private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
+    private static final String HEADER_VALUE_DELIMITER = ",";
 
     private final String method;
     private final String requestURI;
@@ -21,7 +25,7 @@ public class MyHttpRequest extends HttpRequest {
     private final Map<String, List<String>> headers;
 
     private MyHttpRequest(BufferedReader in) throws IOException {
-        String[] requestHeaderParams = in.readLine().split(" ");
+        String[] requestHeaderParams = in.readLine().split(REQUEST_LINE_DELIMITER);
         this.method = requestHeaderParams[0];
         this.requestURI = requestHeaderParams[1];
         this.version = requestHeaderParams[2];
@@ -31,10 +35,10 @@ public class MyHttpRequest extends HttpRequest {
 
     private void initHeaders(BufferedReader in) throws IOException {
         String inputLine;
-        while (!(inputLine = in.readLine()).equals("")) {
-            String[] inputs = inputLine.split(": ");
+        while (!(inputLine = in.readLine()).equals(END_OF_REQUEST_LINE)) {
+            String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
 
-            List<String> values = Arrays.stream(inputs[1].split(","))
+            List<String> values = Arrays.stream(inputs[1].split(HEADER_VALUE_DELIMITER))
                     .map(String::trim)
                     .collect(Collectors.toList());
 
