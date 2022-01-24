@@ -1,6 +1,12 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -8,20 +14,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
-    /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
+
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
-     */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
     }
@@ -51,6 +48,21 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static Request parseInput(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String requestLine = br.readLine();
+        List<Pair> headers = new ArrayList<>();
+        String line;
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
+            headers.add(parseHeader(line));
+        }
+
+        return Request.builder()
+                .requestLine(requestLine)
+                .pairs(headers)
+                .build();
     }
 
     public static class Pair {
