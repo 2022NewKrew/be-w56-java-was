@@ -1,14 +1,17 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import http.Request;
+import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,33 +28,41 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             Request request = Request.parse(in);
-
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            Response response = handleRequest(request);
+            sendResponse(out, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private Response handleRequest(Request request) throws IOException {
+        if (request.getMethod().equals("GET")) {
+            return handleGetStaticRequest(request);
         }
+        return Response.notFound("Not Found");
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private Response handleGetStaticRequest(Request request) throws IOException {
+        String name = request.getPath().replaceAll("^/", "");
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream is = classLoader.getResourceAsStream(name);
+        if (is == null) {
+            return Response.notFound("Not Found");
         }
+        byte[] content = is.readAllBytes();
+        return Response.ok(new String(content));
+    }
+
+    private void sendResponse(OutputStream os, Response response) throws IOException {
+        DataOutputStream dos = new DataOutputStream(os);
+        dos.writeBytes("HTTP/1.1 " + response.getStatusCode() + " " + response.getStatusMessage() + " \r\n");
+        for (Map.Entry<String, String> header : response.getHeaders()) {
+            dos.writeBytes(header.getKey() + ": " + header.getValue() + "\r\n");
+        }
+        byte[] body = response.getBody().getBytes(StandardCharsets.UTF_8);
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+        dos.writeBytes("\r\n");
+        os.write(body, 0, body.length);
+        os.flush();
     }
 }
