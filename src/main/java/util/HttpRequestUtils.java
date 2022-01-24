@@ -1,16 +1,22 @@
 package util;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import model.Request;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-
 public class HttpRequestUtils {
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,8 +24,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param cookies 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
@@ -51,6 +56,23 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static Request createRequest(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        List<Pair> headers = new ArrayList<>();
+        String line = reader.readLine();
+        String[] tokens = line.split(" ");
+        String method = tokens[0];
+        String path = tokens[1];
+        line = reader.readLine();
+        while (!Strings.isNullOrEmpty(line)) {
+            Pair header = parseHeader(line);
+            headers.add(header);
+            line = reader.readLine();
+        }
+
+        return new Request(method, path, headers);
     }
 
     public static class Pair {
@@ -94,11 +116,8 @@ public class HttpRequestUtils {
             } else if (!key.equals(other.key))
                 return false;
             if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+                return other.value == null;
+            } else return value.equals(other.value);
         }
 
         @Override
