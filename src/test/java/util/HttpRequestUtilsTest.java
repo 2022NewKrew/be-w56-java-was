@@ -2,9 +2,11 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
 import java.util.Map;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
@@ -68,5 +70,38 @@ public class HttpRequestUtilsTest {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+    }
+
+    @DisplayName("getPathFromRequestLine 테스트 - Request Line이 주어졌을때 Path를 반환")
+    @Test
+    public void getPathFromRequestLine_RequestLine_Path() {
+        // given
+        String requestLine = "GET /index.html HTTP/1.1";
+
+        // when
+        String path = HttpRequestUtils.getPathFromRequestLine(requestLine);
+
+        // then
+        assertThat(path).isEqualTo("/index.html");
+    }
+
+    @DisplayName("readHeader 테스트 - 입력받은 Header를 Map으로 읽어온다.")
+    @Test
+    public void readHeader_BufferReaderWithHeaderString_MapOfHeader() throws IOException {
+        // given
+        String headerString = "Host: localhost:8080\n" +
+                "Connection: keep-alive\n" +
+                "Cache-Control: max-age=0\r\n";
+
+        InputStream headerInput = new ByteArrayInputStream(headerString.getBytes());
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(headerInput));
+
+        // when
+        Map<String, String> header = HttpRequestUtils.readHeader(bufferedReader);
+
+        // then
+        assertThat(header.get("Host")).isEqualTo("localhost:8080");
+        assertThat(header.get("Connection")).isEqualTo("keep-alive");
+        assertThat(header.get("Cache-Control")).isEqualTo("max-age=0");
     }
 }
