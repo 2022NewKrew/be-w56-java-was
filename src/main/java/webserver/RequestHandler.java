@@ -9,10 +9,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
+import util.Request;
+import util.Response;
 
 public class RequestHandler extends Thread {
 
@@ -34,15 +35,7 @@ public class RequestHandler extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
             DataOutputStream dos = new DataOutputStream(out);
 
-            String buffer;
-            buffer = bufferedReader.readLine();
-
-            Request request = Request.of(buffer);
-
-            while ((buffer = bufferedReader.readLine()) != null && !buffer.isBlank()) {
-                log.info(buffer);
-            }
-
+            Request request = HttpRequestUtils.parseRequest(bufferedReader);
             Response response = handleRequest(request);
 
             sendResponse(dos, response);
@@ -53,21 +46,34 @@ public class RequestHandler extends Thread {
 
     private Response handleRequest(Request request) {
         if (!request.getMethod().equals("GET")) {
-            return Response.from("405", "Method Not Allowed", new byte[0]);
+            return Response.builder()
+                .statusCode("405")
+                .statusText("Method Not Allowed")
+                .body(new byte[0])
+                .build();
         }
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + request.getTarget()).toPath());
-            return Response.from("200", "OK", body);
+            return Response.builder()
+                .statusCode("200")
+                .statusText("OK")
+                .contextType(request.getHeader("Accept").split(",")[0])
+                .body(body)
+                .build();
         } catch (IOException e) {
             log.error(e.getMessage());
-            return Response.from("404", "Not Found", new byte[0]);
+            return Response.builder()
+                .statusCode("404")
+                .statusText("Not Found")
+                .body(new byte[0])
+                .build();
         }
     }
 
     private void sendResponse(DataOutputStream dos, Response response) {
         try {
             dos.writeBytes("HTTP/1.1 " + response.getHttpStatus() + "\r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + response.getContextType() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
             dos.writeBytes("\r\n");
             dos.write(response.getBody(), 0, response.getBodyLength());
