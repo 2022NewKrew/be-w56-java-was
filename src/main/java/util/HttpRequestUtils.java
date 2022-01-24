@@ -1,13 +1,24 @@
 package util;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import webserver.HttpStartLine;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-
 public class HttpRequestUtils {
+
+    public static HttpStartLine parseStartLine(String request) {
+        final String[] tokens = request.split(" ");
+        if(tokens.length != 3) {
+            throw new RuntimeException("[ERROR] Http Request format invalid : " + request);
+        }
+
+        return new HttpStartLine(tokens[0], tokens[1], tokens[2]);
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
