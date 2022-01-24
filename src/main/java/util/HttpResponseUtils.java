@@ -2,6 +2,7 @@ package util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,9 +10,9 @@ import java.io.IOException;
 public class HttpResponseUtils {
     private static final Logger log = LoggerFactory.getLogger(HttpResponseUtils.class);
 
-    public static void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    public static void responseHeader(HttpStatus httpStatus, DataOutputStream dos, int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("HTTP/1.1 " + httpStatus.getStatus() + " \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");

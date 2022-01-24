@@ -1,5 +1,6 @@
 package webserver;
 
+import webserver.http.HttpStatus;
 import webserver.http.MyHttpRequest;
 
 import java.io.DataOutputStream;
@@ -7,8 +8,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static util.HttpResponseUtils.response200Header;
-import static util.HttpResponseUtils.responseBody;
+import static util.HttpResponseUtils.*;
 
 public class RequestMapper {
 
@@ -23,24 +23,29 @@ public class RequestMapper {
 
     public static void process(MyHttpRequest in, OutputStream out) {
         String path = in.uri().getPath();
-        if (requestMap.containsKey(path)) {
-            requestMap.get(path).handle(in, out);
+        DataOutputStream dos = new DataOutputStream(out);
+
+        if (!requestMap.containsKey(path)) {
+            byte[] body = "404 - NOT FOUND!".getBytes();
+            responseHeader(HttpStatus.NOT_FOUND, dos, body.length);
+            responseBody(dos, body);
+            return;
         }
+        requestMap.get(path).handle(in, dos);
     }
 
     public enum RequestMapping {
         ROOT("/") {
             @Override
-            public void handle(MyHttpRequest in, OutputStream out) {
-                DataOutputStream dos = new DataOutputStream(out);
+            public void handle(MyHttpRequest in, DataOutputStream dos) {
                 byte[] body = "Hello World".getBytes();
-                response200Header(dos, body.length);
+                responseHeader(HttpStatus.OK, dos, body.length);
                 responseBody(dos, body);
             }
         },
         INDEX("/index.html") {
             @Override
-            public void handle(MyHttpRequest in, OutputStream out) {
+            public void handle(MyHttpRequest in, DataOutputStream dos) {
                 // TODO - 구현 예정
             }
         };
@@ -51,6 +56,6 @@ public class RequestMapper {
             this.path = path;
         }
 
-        public abstract void handle(MyHttpRequest in, OutputStream out);
+        public abstract void handle(MyHttpRequest in, DataOutputStream dos);
     }
 }
