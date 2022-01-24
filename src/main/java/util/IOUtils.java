@@ -2,8 +2,37 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IOUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(IOUtils.class);
+
+    private IOUtils() {
+    }
+
+    public static List<String> getRequestLines(InputStream in) throws IOException {
+        List<String> header = new ArrayList<>();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        String line = br.readLine();
+        log.debug("request line: {}", line);
+
+        while (line != null && !line.equals("")) {
+            header.add(line);
+            line = br.readLine();
+            log.debug("header: {}", line);
+        }
+
+        return header;
+    }
+
     /**
      * @param BufferedReader는
      *            Request Body를 시작하는 시점이어야
