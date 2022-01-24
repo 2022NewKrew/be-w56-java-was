@@ -1,16 +1,16 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
+import http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    public static final String DOCUMENT_ROOT = "./webapp";
 
     private Socket connection;
 
@@ -24,8 +24,14 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            HttpRequest httpRequest = new HttpRequest(in);
+            httpRequest.loggingRequestHeader();
+            String requestUri = httpRequest.getUri();
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            File file = new File(DOCUMENT_ROOT + requestUri);
+            log.info("file absolute path:{}", file.getAbsolutePath());
+            byte[] body = Files.readAllBytes(file.toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -36,7 +42,7 @@ public class RequestHandler extends Thread {
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            //dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
