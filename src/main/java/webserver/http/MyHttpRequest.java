@@ -2,6 +2,7 @@ package webserver.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public class MyHttpRequest{
                 '}';
     }
 
-    public String getRequestURI() {
-        return requestURI;
+    public URI uri() {
+        return URI.create(requestURI);
     }
 }
