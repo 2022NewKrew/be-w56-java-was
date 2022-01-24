@@ -1,5 +1,6 @@
 package webserver.controller;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestFile;
@@ -7,6 +8,7 @@ import webserver.RequestHandler;
 import webserver.RequestParser;
 
 import java.io.*;
+import java.util.Map;
 
 public class GetController implements MethodController {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -34,6 +36,16 @@ public class GetController implements MethodController {
 
     private void methodSignUp () throws IOException {
         log.info("--Sign-up method 실행--");
+
+        Map<String,String> queryMap = rp.parseRequestQuery();
+        String userId = queryMap.get("userId");
+        String password = queryMap.get("password");
+        String name = queryMap.get("name");
+        String email = queryMap.get("email");
+        User user = new User(userId,password,name,email);
+
+        log.info(user.toString());
+
         DataOutputStream dos = new DataOutputStream(os);
 
         RequestFile requestFile = new RequestFile(RequestFile.ERROR_FILE);
