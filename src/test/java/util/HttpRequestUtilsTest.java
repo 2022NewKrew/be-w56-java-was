@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Map;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
@@ -68,5 +69,19 @@ public class HttpRequestUtilsTest {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+    }
+
+    @Test
+    @DisplayName("[성공] requestHeader 분리")
+    public void processRequestLine() {
+        // Given
+        String requestLine = "GET /index.html HTTP/1.1";
+        String[] tokens = requestLine.split(" ");
+        // HTTP Method
+        String method = tokens[0];
+
+        // when & then
+        assertThat(method).isEqualTo("GET");
+        assertThat(tokens[1]).isEqualTo("/index.html");
     }
 }
