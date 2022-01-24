@@ -1,53 +1,29 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.utils.Request;
 
-public class RequestHandler extends Thread {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class ConnectionHandler extends Thread {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionHandler.class);
 
     private final Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public ConnectionHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
     public void run() {
-        LOGGER.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+//        LOGGER.debug("Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            DataOutputStream dos = new DataOutputStream(out);
-            Request request = new Request(in);
-
-
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
+            RequestHandler requestHandler = new RequestHandler(in);
+            ResponseHandler responseHandler = new ResponseHandler(requestHandler);
+            responseHandler.makeHeaderAndFlush(out);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
