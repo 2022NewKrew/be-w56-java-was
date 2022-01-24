@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,23 +23,10 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
-
-            if (line == null) {
-                return;
-            }
-            String[] tokens = line.split(" ");
-            String url = tokens[1];
-            log.debug("url : {}", url);
-            log.debug("request line : {}", line);
-            while (!line.equals(BLANK)) {
-                log.debug("header : {}", line);
-                line = br.readLine();
-            }
+            HttpRequest request = new HttpRequest(in);
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + request.getRequestLine().getUrl()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
