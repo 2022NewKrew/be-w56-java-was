@@ -1,13 +1,31 @@
 package util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import model.RequestHeader;
 
 public class HttpRequestUtils {
+
+    public static void setRequest(RequestHeader requestHeader, String request){
+        String[] tokens = request.split(" ");
+        requestHeader.putHeader("method", tokens[0]);
+        if(!tokens[1].contains(".")) {
+            tokens[1] = tokens[1] + ".html";
+        }
+        requestHeader.putHeader("uri", tokens[1]);
+        requestHeader.putHeader("protocol", tokens[2]);
+    }
+
+    public static void setHeader(RequestHeader requestHeader, String header){
+        String[] tokens = header.split(": ");
+        requestHeader.putHeader(tokens[0], tokens[1]);
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
