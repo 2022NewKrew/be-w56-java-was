@@ -1,37 +1,33 @@
 package http;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class Response {
 
     private final int status;
-    private final Map<String, String> headers;
+    private final Headers headers;
     private final String body;
 
-    private Response(int status, Map<String, String> headers, String body) {
+    private Response(int status, Headers headers, String body) {
         this.status = status;
         this.headers = headers;
         this.body = body;
     }
 
-    public static Response of(int status, String body) {
-        Map<String, String> headers = Collections.singletonMap(
-                "Content-Type", "text/html;charset=utf-8"
-        );
+    public static Response of(int status, Headers headers, String body) {
         return new Response(status, headers, body);
     }
 
-    public static Response ok(String body) {
-        return of(200, body);
+    public static Response ok(Headers headers, String body) {
+        return of(200, headers, body);
     }
 
-    public static Response notFound(String body) {
-        return of(404, body);
+    public static Response notFound(Headers headers, String body) {
+        return of(404, headers, body);
     }
 
-    public static Response error(String message) {
-        return of(500, message);
+    public static Response error(Headers headers, String message) {
+        return of(500, headers, message);
     }
 
     public int getStatusCode() {

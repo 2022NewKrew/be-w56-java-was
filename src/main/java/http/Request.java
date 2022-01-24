@@ -13,10 +13,10 @@ public class Request {
     private final String method;
     private final String path;
     private final String version;
-    private final Map<String, String> headers;
+    private final Headers headers;
     private final String body;
 
-    public Request(String method, String path, String version, Map<String, String> headers, String body) {
+    public Request(String method, String path, String version, Headers headers, String body) {
         this.method = method;
         this.path = path;
         this.version = version;
@@ -51,12 +51,12 @@ public class Request {
         String method = split[0];
         String path = split[1];
         String version = split[2];
-        Map<String, String> headers = parseHeaders(br);
+        Headers headers = parseHeaders(br);
         String body = parseBody(headers, br);
         return new Request(method, path, version, headers, body);
     }
 
-    private static Map<String, String> parseHeaders(BufferedReader br) throws IOException {
+    private static Headers parseHeaders(BufferedReader br) throws IOException {
         Map<String, String> out = new HashMap<>();
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
@@ -67,10 +67,10 @@ public class Request {
                     .replaceFirst("^\\s+", "");
             out.put(key, value);
         }
-        return out;
+        return new Headers(out);
     }
 
-    private static String parseBody(Map<String, String> headers, BufferedReader br) throws IOException {
+    private static String parseBody(Headers headers, BufferedReader br) throws IOException {
         String contentLength = headers.get("Content-Length");
         if (contentLength == null) {
             return "";

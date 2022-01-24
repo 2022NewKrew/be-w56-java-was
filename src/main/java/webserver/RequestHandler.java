@@ -1,5 +1,6 @@
 package webserver;
 
+import http.Headers;
 import http.Request;
 import http.Response;
 import http.Route;
@@ -45,7 +46,7 @@ public class RequestHandler extends Thread {
                 return route.getValue().apply(request);
             }
         }
-        return Response.notFound("Not Found");
+        return Response.notFound(Headers.contentType("text/plain"), "Not Found");
     }
 
     private void sendResponse(OutputStream os, Response response) throws IOException {
