@@ -46,4 +46,8 @@ public class MyHttpRequest{
                 ", headers=" + headers +
                 '}';
     }
+
+    public String getRequestURI() {
+        return requestURI;
+    }
 }
