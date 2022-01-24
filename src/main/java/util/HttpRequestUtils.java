@@ -1,16 +1,16 @@
 package util;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class HttpRequestUtils {
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,8 +18,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
@@ -53,18 +52,34 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static String parseUrl(String query) {
-        String url = query.split(" ")[1];
+    public static Map<String, String> parseRequest(String request) {
+        String[] requestLst = request.split(" ");
 
-        if (url.contains("\\?")) {
-            url = url.split("\\?")[0];
-        }
+        Map<String, String> requestMap = new HashMap<>();
+        requestMap.put("type", requestLst[0]);
+        requestMap.put("uri", parseUri(requestLst[1]));
+        requestMap.put("query", parseQuery(requestLst[1]));
+        requestMap.put("version", requestLst[2]);
 
-        return url;
+        return requestMap;
     }
 
-    public static String parseRequest(String request) {
-        return request.split(" ")[0];
+    private static String parseUri(String sourceUri) {
+        String uri = sourceUri;
+
+        if (uri.contains("\\?")) {
+            uri = uri.split("\\?")[0];
+        }
+
+        return uri;
+    }
+
+    private static String parseQuery(String sourceUri) {
+        if (!sourceUri.contains("\\?")) {
+            return "";
+        }
+
+        return sourceUri.split("\\?")[1];
     }
 
     public static class Pair {
