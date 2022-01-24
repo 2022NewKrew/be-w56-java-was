@@ -11,10 +11,12 @@ public class RequestHeader {
     public static String DEFAULT_RESOURCE = "/index.html";
     private List<String> requestHeader;
     private String path;
+    private HttpMethod method;
 
     public RequestHeader(String requestHeader){
         this.requestHeader = Arrays.asList(requestHeader.split("\n"));
         parsePath(this.requestHeader.get(0));
+        parseMethod(this.requestHeader.get(0));
     }
 
 
@@ -39,12 +41,39 @@ public class RequestHeader {
         }
     }
 
+    private void parseMethod(String lineStr){
+        String[] strArray = lineStr.split(" ");
+        String methodStr = strArray[0];
+
+        switch (methodStr){
+            case "GET":
+                method = HttpMethod.GET;
+                break;
+            case "POST":
+                method = HttpMethod.POST;
+                break;
+            case "PUT":
+                method = HttpMethod.PUT;
+                break;
+            case "DELETE":
+                method = HttpMethod.DELETE;
+                break;
+            default:
+                method = HttpMethod.NONE;
+                break;
+        }
+    }
+
     public List<String> getRequestHeader() {
         return requestHeader;
     }
 
     public String getPath() {
         return path;
+    }
+
+    public HttpMethod getMethod() {
+        return method;
     }
 
     @Override
