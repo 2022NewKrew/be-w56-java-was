@@ -14,7 +14,7 @@ public class HttpRequestUtils {
         String url = requestLineTokens[1];
 
         if(url.equals("/")){
-            return "index.html";
+            return "/index.html";
         }
 
         return url;
