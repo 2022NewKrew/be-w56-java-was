@@ -2,6 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.MyRequest;
 
 import java.io.*;
 import java.net.Socket;
