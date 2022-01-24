@@ -1,5 +1,7 @@
 package util;
 
+import exception.UnsupportedMethodException;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,9 +18,12 @@ public enum RequestMethod {
         Arrays.stream(RequestMethod.values()).forEach(value -> stringToRequestMethod.put(value.name().toUpperCase(), value));
     }
 
-    public static RequestMethod getRequestMethod(String requestMethod) {
-        // TODO Define NoSuchMethod Exception
-        return stringToRequestMethod.get(requestMethod.toUpperCase());
+    public static RequestMethod getRequestMethod(String requestMethodAsString) {
+        RequestMethod requestMethod = stringToRequestMethod.get(requestMethodAsString.toUpperCase());
+        if (requestMethod == null) {
+            throw new UnsupportedMethodException();
+        }
+        return requestMethod;
     }
 
     @Override
