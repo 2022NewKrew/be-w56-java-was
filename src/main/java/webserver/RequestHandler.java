@@ -1,10 +1,9 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +23,29 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            BufferedReader br = new BufferedReader( new InputStreamReader(in));
+            String requestLine = br.readLine();
+            log.debug("REQ: {}", requestLine);
+
+            // Request Header 첫 번째 요소 추출
+            List<String> requestElement = List.of(requestLine.split(" "));
+            String requestMethod = requestElement.get(0);
+            String requestUrl = requestElement.get(1);
+            String clientHttpVersion = requestElement.get(2);
+            log.debug("requestMethod : {}", requestMethod);
+            log.debug("requestUrl : {}", requestUrl);
+            log.debug("clientHttpVersion : {}", clientHttpVersion);
+
+            // 모든 Request Header 출력
+            String line;
+            while (!(line = br.readLine()).equals("")) {
+                log.debug("other: {}", line);
+            }
+
+            // Response 메시지 구성
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            // 요구한 URL의 html파일로 응답
+            byte[] body = Files.readAllBytes(new File("./webapp" + requestUrl).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
