@@ -2,6 +2,7 @@ package webserver;
 
 import http.Request;
 import http.Response;
+import http.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +13,17 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.Function;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
+    private final Map<Route, Function<Request, Response>> routes;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, Map<Route, Function<Request, Response>> routes) {
         this.connection = connectionSocket;
+        this.routes = routes;
     }
 
     public void run() {
@@ -36,21 +40,12 @@ public class RequestHandler extends Thread {
     }
 
     private Response handleRequest(Request request) throws IOException {
-        if (request.getMethod().equals("GET")) {
-            return handleGetStaticRequest(request);
+        for (Map.Entry<Route, Function<Request, Response>> route : routes.entrySet()) {
+            if (route.getKey().matches(request)) {
+                return route.getValue().apply(request);
+            }
         }
         return Response.notFound("Not Found");
-    }
-
-    private Response handleGetStaticRequest(Request request) throws IOException {
-        String name = request.getPath().replaceAll("^/", "");
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream is = classLoader.getResourceAsStream(name);
-        if (is == null) {
-            return Response.notFound("Not Found");
-        }
-        byte[] content = is.readAllBytes();
-        return Response.ok(new String(content));
     }
 
     private void sendResponse(OutputStream os, Response response) throws IOException {

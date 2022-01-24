@@ -30,6 +30,10 @@ public class Response {
         return of(404, body);
     }
 
+    public static Response error(String message) {
+        return of(500, message);
+    }
+
     public int getStatusCode() {
         return status;
     }
