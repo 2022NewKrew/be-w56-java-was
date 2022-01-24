@@ -6,6 +6,8 @@ import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.controller.GetController;
+import webserver.controller.MethodController;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,35 +25,27 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             RequestParser rp = new RequestParser(in);
-            DataOutputStream dos = new DataOutputStream(out);
 
-            RequestFile requestFile = new RequestFile(rp.getPath());
-            byte[] body = requestFile.getFileBytes();
-
-            response200Header(rp, dos, body.length);
-            responseBody(dos, body);
+            requestMethodMapping(rp, out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(RequestParser rp, DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: "+rp.getContentType()+";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
+    private void requestMethodMapping (RequestParser rp, OutputStream os) throws IOException {
+        MethodController methodController = null;
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        switch (rp.getMethod()) {
+            case "GET" :
+                methodController = new GetController(rp, os);
+                break;
+            case "POST":
+                break;
+            case "PUT":
+                break;
+            case "DELETE":
+                break;
         }
+        methodController.service();
     }
 }

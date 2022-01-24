@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RequestParser {
-    public static final String METHOD = "Method";
-    public static final String URL_PATH = "Url-Path";
-    public static final String ACCEPT = "Accept";
+    private static final String METHOD = "Method";
+    private static final String PATH = "Url-Path";
+    private static final String QUERIES = "Queries";
+    private static final String ACCEPT = "Accept";
 
     private static final String ROOT_URL_PATH = "/";
     private static final String DEFAULT_URL_PATH = "/index.html";
@@ -31,10 +32,7 @@ public class RequestParser {
                 return;
             }
             writeBw(bw, requestMethod);
-
-            String[] methodAndPath = requestMethod.split(" ");
-            map.put(METHOD, methodAndPath[0]);
-            map.put(URL_PATH, methodAndPath[1]);
+            parseRequestMethod(requestMethod);
 
             String requestLine = null;
             while(!checkStringIsEmpty(requestLine=br.readLine())) {
@@ -51,27 +49,50 @@ public class RequestParser {
         }
     }
 
+    private void parseRequestMethod (String requestMethod) {
+        String[] methodAndURL = requestMethod.split(" ");
+        map.put(METHOD, methodAndURL[0]);
+        parseRequestURL(methodAndURL[1]);
+    }
+
+    private void parseRequestURL (String methodAndURL) {
+        String[] pathAndQuery = methodAndURL.split("\\?");
+        map.put(PATH, pathAndQuery[0]);
+        if(pathAndQuery.length == 2) {
+            map.put(QUERIES, pathAndQuery[1]);
+        }
+    }
+
+    private void parseRequestQuery (String queries) {
+        String[] queryList = queries.split("&");
+        for(String query : queryList) {
+            String[] keyAndValue = query.split("=");
+
+        }
+    }
+
     private void writeBw (BufferedWriter bw, String str) throws IOException {
         bw.write("=== REQ :: ");
         bw.write(str);
         bw.write("\n");
     }
+
     private void flushBw (BufferedWriter bw) throws IOException {
         bw.write("==========================================\n");
         bw.flush();
     }
 
-    String getMethod () throws IOException {
+    public String getMethod () {
         return map.get(METHOD);
     }
 
-    String getPath() throws IOException {
-        String path = map.get(URL_PATH);
+    public String getPath() {
+        String path = map.get(PATH);
         return ROOT_URL_PATH.equals(path) ? DEFAULT_URL_PATH : path;
 
     }
 
-    String getContentType () throws IOException {
+    public String getContentType () throws IOException {
         return map.get(ACCEPT).split(",")[0];
     }
 }
