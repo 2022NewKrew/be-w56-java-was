@@ -5,21 +5,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestHandler extends Thread {
+public class RequestHandler implements Callable<Void> {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
-    public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
+    @Override
+    public Void call() {
+        log.debug("New Client Connect! Connected IP : {}, Port : {}",
+                connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -31,6 +34,9 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+
+        // signal that thread is gracefully ended
+        return null;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
