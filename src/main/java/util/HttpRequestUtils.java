@@ -1,26 +1,32 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
 
 public class HttpRequestUtils {
+    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
+     * @param queryString 은 URL 에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     *
      */
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
+     * @param cookies 값은 name1=value1; name2=value2 형식임
+     *
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
@@ -32,8 +38,8 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
@@ -49,8 +55,40 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static Pair parseHeader(String header) {
+    private static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
+        Map<String, String> header = new HashMap<>();
+//        br.lines().filter(line -> !line.equals("")).forEach(line -> {
+//            Pair keyValue = parseHeader(line);
+//            header.put(keyValue.getKey(),keyValue.getValue());
+//        });
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (line.equals("")) {
+                break;
+            }
+            log.debug("header : {}",line);
+            Pair keyValue = parseHeader(line);
+            header.put(keyValue.getKey(),keyValue.getValue());
+        }
+        return header;
+    }
+
+    public static Map<String, String> parseRequestLine(BufferedReader br) throws IOException {
+        Map<String, String> parameters = new HashMap<>();
+        String requestLine = br.readLine();
+        String[] tokens = requestLine.split(" ");
+        if (tokens.length != 3) {
+            throw new IOException("request line error : " + requestLine);
+        }
+        log.debug("request line : {}",requestLine);
+        parameters.put("method", tokens[0]);
+        parameters.put("url", tokens[1]);
+        parameters.put("version", tokens[2]);
+        return parameters;
     }
 
     public static class Pair {
@@ -94,11 +132,8 @@ public class HttpRequestUtils {
             } else if (!key.equals(other.key))
                 return false;
             if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+                return other.value == null;
+            } else return value.equals(other.value);
         }
 
         @Override
