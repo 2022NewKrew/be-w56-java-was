@@ -46,7 +46,7 @@
 - 깃허브 토근 만료 문제
   - 해당 토큰의 regenerate 를 통해서 해결
   - 비밀번호 대신, PAT 의 문자열을 입력
-    
+
 # 참고 사이트
 - HTTP Header
   - https://dev-ezic.tistory.com/8?category=773711
