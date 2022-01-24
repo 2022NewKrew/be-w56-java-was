@@ -1,13 +1,12 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.config.WebConst;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -19,17 +18,33 @@ public class RequestHandler extends Thread {
     }
 
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            HttpRequest httpRequest = HttpRequest.from(in);
+            createResponse(httpRequest, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    private void createResponse(HttpRequest request, DataOutputStream dos) throws IOException {
+        log.info("[REQUEST URI] - " + request.getRequestUri());
+        if(request.getMethod().equals("GET")){
+            byte[] body = Files.readAllBytes(new File(WebConst.URL_PREFIX + request.getRequestUri()).toPath());
+            response200Header(dos, body.length);
+            responseBody(dos, body);
+        }
+    }
+
+    public void printReq(InputStream in) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+        String line = bufferedReader.readLine();
+        while(!"".equals(line)) {
+            System.out.println(line);
+            line = bufferedReader.readLine();
         }
     }
 
