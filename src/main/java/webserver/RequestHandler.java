@@ -30,9 +30,9 @@ public class RequestHandler extends Thread {
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + requestURI).toPath());
-//              byte[] body = Files.readAllBytes(new File("./src/main/webapp" + requestURI).toPath());
-//            byte[] body = Files.readAllBytes(new File("./webapp" + requestURI).toPath());
+//            byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + requestURI).toPath());
+            byte[] body = (!requestURI.endsWith("html")) ? "helloWorld".getBytes() : Files.readAllBytes(new File("./webapp" + requestURI).toPath());
+
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
