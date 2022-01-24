@@ -1,13 +1,16 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.request.HttpRequest;
+import webserver.request.RequestContext;
+import webserver.response.HttpResponse;
+import webserver.response.HttpResponseHeader;
+import webserver.response.HttpResponseLine;
+
+import java.io.*;
+import java.net.Socket;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,14 +26,39 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            HttpRequest httpRequest = createRequest(in);
+            HttpResponse response = getResponse(httpRequest);
+            response(response, out);
         } catch (IOException e) {
             log.error(e.getMessage());
+        } finally {
+            RequestContext.getInstance().endRequest();
         }
+    }
+
+    private HttpRequest createRequest(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        return RequestContext.getInstance().startRequest(br);
+    }
+
+    private HttpResponse getResponse(HttpRequest httpRequest) {
+        return ResponseProcessor.getInstance().response(httpRequest);
+    }
+
+    private void response(HttpResponse response, OutputStream out) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        writeResponseLine(dos, response.getResponseLine());
+        writeResponseHeader(dos, response.getResponseHeader());
+        byte[] body = response.getBytesForBodyContent();
+        responseBody(dos, body);
+    }
+
+    private void writeResponseLine(DataOutputStream dos, HttpResponseLine responseLine) throws IOException {
+        dos.writeBytes(responseLine.getHttpVersion() + StringUtils.SPACE + responseLine.getStatusCode() + StringUtils.CR + StringUtils.LF);
+    }
+
+    private void writeResponseHeader(DataOutputStream dos, HttpResponseHeader responseHeader) throws IOException {
+        dos.writeBytes(responseHeader.getHeaders() + StringUtils.CR + StringUtils.LF);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
