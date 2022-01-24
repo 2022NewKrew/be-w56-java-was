@@ -1,14 +1,17 @@
 package util;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Map;
-
-
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
+
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
@@ -68,5 +71,34 @@ public class HttpRequestUtilsTest {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+    }
+
+    @Test
+    void parseRequest() throws IOException {
+        // Given
+        BufferedReader bufferedReader = Mockito.mock(BufferedReader.class);
+        given(bufferedReader.readLine())
+            .willReturn("GET /index.html HTTP/1.1")
+            .willReturn("Host: localhost:8080")
+            .willReturn("Connection: keep-alive")
+            .willReturn("Accept: */*")
+            .willReturn("");
+
+        // When
+        Request request = HttpRequestUtils.parseRequest(bufferedReader);
+
+        // Then
+        assertThat(request.getMethod())
+            .isEqualTo("GET");
+        assertThat(request.getTarget())
+            .isEqualTo("/index.html");
+        assertThat(request.getHeaderSize())
+            .isEqualTo(3);
+        assertThat(request.getHeader("Host"))
+            .isEqualTo("localhost:8080");
+        assertThat(request.getHeader("Connection"))
+            .isEqualTo("keep-alive");
+        assertThat(request.getHeader("Accept"))
+            .isEqualTo("*/*");
     }
 }

@@ -32,6 +32,10 @@ public class Request {
         return target;
     }
 
+    public int getHeaderSize() {
+        return headers.size();
+    }
+
     public String getHeader(String key) {
         if (!headers.containsKey(key)) {
             return "";
