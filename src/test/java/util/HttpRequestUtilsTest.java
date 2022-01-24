@@ -2,6 +2,9 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Map;
 
 
@@ -64,9 +67,12 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseHeader() throws Exception {
-        String header = "Content-Length: 59";
-        Pair pair = HttpRequestUtils.parseHeader(header);
-        assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+    public void readHeader() throws IOException {
+        String data = "Host: localhost:8080\r\nConnection: keep-alive\r\n\r\n";
+        StringReader sr = new StringReader(data);
+        BufferedReader br = new BufferedReader(sr);
+        Map<String,String> header = HttpRequestUtils.readHeader(br);
+        assertThat(header.get("Host")).isEqualTo("localhost:8080");
+        assertThat(header.get("Connection")).isEqualTo("keep-alive");
     }
 }
