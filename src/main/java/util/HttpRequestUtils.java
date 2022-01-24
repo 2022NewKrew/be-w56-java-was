@@ -1,16 +1,24 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
 
 public class HttpRequestUtils {
+    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,12 +26,27 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
+    }
+
+    public static String parseUrl(String url) {
+        log.debug("request line : {}", url);
+        return url.split(" ")[1];
+    }
+
+    public static String readHeaderAccept(BufferedReader br) throws IOException {
+        String line;
+        Map<String, String> header = new HashMap<>();
+        while (!(line = br.readLine()).equals("")) {
+            log.debug("header : {}", line);
+            String[] split = line.split(":", 2);
+            header.put(split[0].trim(), split[1].trim());
+        }
+        return Optional.ofNullable(header.get("Accept")).orElse("").split(",")[0];
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
