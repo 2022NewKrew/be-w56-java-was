@@ -13,10 +13,13 @@ public class HttpRequest {
 
     private RequestLine requestLine;
 
+    private final RequestParams requestParams = new RequestParams();
+
     public HttpRequest(InputStream in) {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             requestLine = createRequestLine(br);
+            requestParams.addRequestParams(requestLine.getQueryString());
         } catch (IOException e) {
             log.error(e.getMessage());
         }
