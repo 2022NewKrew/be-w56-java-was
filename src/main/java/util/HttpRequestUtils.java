@@ -6,8 +6,35 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import webserver.request.HttpMethod;
+import exception.InvalidRequestException;
 
 public class HttpRequestUtils {
+
+    public static HttpMethod parseHttpMethod(String requestLine) throws Exception{
+        try {
+            return HttpMethod.valueOf(requestLine.split(" ")[0]);
+        } catch (Exception e) {
+            throw new InvalidRequestException("request method를 찾을 수 없음");
+        }
+    }
+
+    public static String parseUri(String requestLine) {
+        try {
+            return requestLine.split(" ")[1];
+        } catch (Exception e) {
+            throw new InvalidRequestException("request uri를 찾을 수 없음");
+        }
+    }
+
+    public static String parseHttpVersion(String requestLine) {
+        try {
+            return requestLine.split(" ")[2];
+        } catch (Exception e) {
+            throw new InvalidRequestException("http version을 찾을 수 없음");
+        }
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
