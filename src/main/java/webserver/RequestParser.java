@@ -63,11 +63,23 @@ public class RequestParser {
         }
     }
 
-    private void parseRequestQuery (String queries) {
-        String[] queryList = queries.split("&");
-        for(String query : queryList) {
-            String[] keyAndValue = query.split("=");
+    public Map<String,String> parseRequestQuery () {
+        Map<String,String> queryMap = new HashMap<>();
 
+        String queries = map.get(QUERIES);
+        if(queries != null) {
+            String[] queryList = queries.split("&");
+            for(String query : queryList) {
+                parseRequestKeyValue(queryMap, query);
+            }
+        }
+        return queryMap;
+    }
+
+    private void parseRequestKeyValue (Map<String,String> queryMap, String query) {
+        String[] keyAndValue = query.split("=");
+        if(keyAndValue.length == 2) {
+            queryMap.put(keyAndValue[0], keyAndValue[1]);
         }
     }
 
