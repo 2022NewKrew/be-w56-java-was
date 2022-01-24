@@ -55,6 +55,9 @@ public class RequestHandler implements Callable<Void> {
             if (method == HttpMethod.GET) {
                 writeFileResponse(out, location);
             }
+            else {
+                writeErrorResponse(out);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
