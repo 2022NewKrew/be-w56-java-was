@@ -1,16 +1,17 @@
 package util;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import model.HttpRequestStartLine;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,12 +19,18 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param cookies 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
+    }
+
+    public static HttpRequestStartLine parseStartLine(String line) {
+        if (Strings.isNullOrEmpty(line)) {
+            return null;
+        }
+        return HttpRequestStartLine.valueOf(List.of(line.split(" ")));
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
