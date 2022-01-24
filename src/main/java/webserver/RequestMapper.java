@@ -2,13 +2,12 @@ package webserver;
 
 import webserver.http.HttpStatus;
 import webserver.http.MyHttpRequest;
+import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static util.HttpResponseUtils.*;
 
 public class RequestMapper {
 
@@ -26,26 +25,42 @@ public class RequestMapper {
         DataOutputStream dos = new DataOutputStream(out);
 
         if (!requestMap.containsKey(path)) {
-            byte[] body = "404 - NOT FOUND!".getBytes();
-            responseHeader(HttpStatus.NOT_FOUND, dos, body.length);
-            responseBody(dos, body);
+            response404NotFound(dos);
             return;
         }
         requestMap.get(path).handle(in, dos);
     }
 
+    private static void response404NotFound(DataOutputStream dos) {
+        byte[] body = "404 - NOT FOUND!".getBytes();
+
+        MyHttpResponse response = MyHttpResponse.builder(dos)
+                .status(HttpStatus.NOT_FOUND)
+                .body(body)
+                .build();
+
+        response.writeBytes();
+        response.flush();
+    }
+
     public enum RequestMapping {
         ROOT("/") {
             @Override
-            public void handle(MyHttpRequest in, DataOutputStream dos) {
+            public void handle(MyHttpRequest request, DataOutputStream dos) {
                 byte[] body = "Hello World".getBytes();
-                responseHeader(HttpStatus.OK, dos, body.length);
-                responseBody(dos, body);
+
+                MyHttpResponse response = MyHttpResponse.builder(dos)
+                        .status(HttpStatus.OK)
+                        .body(body)
+                        .build();
+
+                response.writeBytes();
+                response.flush();
             }
         },
         INDEX("/index.html") {
             @Override
-            public void handle(MyHttpRequest in, DataOutputStream dos) {
+            public void handle(MyHttpRequest request, DataOutputStream dos) {
                 // TODO - 구현 예정
             }
         };
@@ -56,6 +71,6 @@ public class RequestMapper {
             this.path = path;
         }
 
-        public abstract void handle(MyHttpRequest in, DataOutputStream dos);
+        public abstract void handle(MyHttpRequest request, DataOutputStream dos);
     }
 }
