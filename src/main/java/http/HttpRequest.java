@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 @Getter
 public class HttpRequest {
@@ -17,7 +18,7 @@ public class HttpRequest {
 
     public HttpRequest(InputStream in) {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             requestLine = createRequestLine(br);
             requestParams.addRequestParams(requestLine.getQueryString());
         } catch (IOException e) {
