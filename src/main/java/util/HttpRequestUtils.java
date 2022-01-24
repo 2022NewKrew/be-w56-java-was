@@ -1,6 +1,7 @@
 package util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,16 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
+
+    public static Map<String, String> parseRequestLine(String requestLine) {
+        Map<String, String> tokenMap = new HashMap<>();
+        String[] tokens = requestLine.split(" ");
+        tokenMap.put("method", tokens[0]);
+        tokenMap.put("path", tokens[1]);
+        tokenMap.put("version", tokens[2]);
+        return tokenMap;
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임

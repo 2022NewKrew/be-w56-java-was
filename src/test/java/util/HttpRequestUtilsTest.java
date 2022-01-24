@@ -9,6 +9,14 @@ import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
+
+    @Test
+    public void parseRequestLine() {
+        String request = "GET /index.html HTTP/1.1";
+        Map<String, String> tokenMap = HttpRequestUtils.parseRequestLine(request);
+        assertThat(tokenMap.get("path")).isEqualTo("/index.html");
+    }
+
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
