@@ -5,16 +5,18 @@ import java.io.IOException;
 
 public class IOUtils {
     /**
-     * @param BufferedReader는
-     *            Request Body를 시작하는 시점이어야
-     * @param contentLength는
-     *            Request Header의 Content-Length 값이다.
-     * @return
-     * @throws IOException
+     * @param br
+     *            Request Body 를 시작하는 시점이어야
+     * @param contentLength
+     *            Request Header 의 Content-Length 값이다.
+     * @throws IOException : IOException
      */
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
-        br.read(body, 0, contentLength);
+        int result = br.read(body, 0, contentLength);
+        if (result == -1) {
+            return null;
+        }
         return String.copyValueOf(body);
     }
 }
