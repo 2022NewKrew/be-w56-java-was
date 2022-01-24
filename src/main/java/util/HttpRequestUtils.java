@@ -33,11 +33,11 @@ public class HttpRequestUtils {
     }
 
     String[] tokens = values.split(separator);
-    return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
-        .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
   }
 
-  static Pair<String, String> getKeyValue(String keyValue, String regex) {
+  static Pair getKeyValue(String keyValue, String regex) {
     if (Strings.isNullOrEmpty(keyValue)) {
       return null;
     }
@@ -47,27 +47,27 @@ public class HttpRequestUtils {
       return null;
     }
 
-    return new Pair<>(tokens[0], tokens[1]);
+    return new Pair(tokens[0], tokens[1]);
   }
 
-  public static Pair<String, String> parseHeader(String header) {
+  public static Pair parseHeader(String header) {
     return getKeyValue(header, ": ");
   }
 
-  public static class Pair<T, A> {
-    T key;
-    A value;
+  public static class Pair {
+    String key;
+    String value;
 
-    public Pair(T key, A value) {
-      this.key = key;
-      this.value = value;
+    Pair(String key, String value) {
+      this.key = key.trim();
+      this.value = value.trim();
     }
 
-    public T getKey() {
+    public String getKey() {
       return key;
     }
 
-    public A getValue() {
+    public String getValue() {
       return value;
     }
 
