@@ -11,6 +11,7 @@ public class HttpRequest {
 
     public HttpRequest(String requestLine, List<String> requestHeader, List<String> requestBody) {
         this.requestLine = new HttpRequestLine(requestLine);
+        this.headers = new HttpHeaders(requestHeader);
     }
 
     public String getMethod() {
@@ -19,5 +20,13 @@ public class HttpRequest {
 
     public String getUrl() {
         return requestLine.getUrl();
+    }
+
+    public String getHeader(String header) {
+        return headers.getFirst(header);
+    }
+
+    public void setHeader(String header, String value) {
+        headers.add(header, value);
     }
 }

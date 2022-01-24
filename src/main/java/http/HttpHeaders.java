@@ -3,7 +3,6 @@ package http;
 import http.map.MultiValueMap;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HttpHeaders implements MultiValueMap<String, String> {
 
@@ -11,11 +10,19 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     private final Map<String, List<String>> headers;
 
     public HttpHeaders() {
-        this(new HashMap<>());
+        this.headers = new HashMap<>();
     }
 
-    public HttpHeaders(Map<String, List<String>> headers) {
-        this.headers = headers;
+    public HttpHeaders(List<String> headerString) {
+        this();
+        initHeader(headerString);
+    }
+
+    private void initHeader(List<String> headerString) {
+        headerString.forEach(header -> {
+            String[] split = header.split(": ");
+            add(split[0], split[1]);
+        });
     }
 
     @Override
@@ -28,17 +35,6 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     public void add(String key, String value) {
         List<String> values = headers.computeIfAbsent(key, k -> new ArrayList<>(1));
         values.add(value);
-    }
-
-    public HttpHeaders addAll(HttpHeaders headers) {
-        for (Entry<String, List<String>> entry : headers.entrySet()) {
-            String key = entry.getKey();
-            List<String> values = entry.getValue();
-            for (String value : values) {
-                this.add(key, value);
-            }
-        }
-        return this;
     }
 
     @Override
