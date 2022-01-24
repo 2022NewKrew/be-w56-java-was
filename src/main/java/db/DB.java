@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 
 import model.User;
 
-public class DataBase {
+public class DB {
 
     private static final Map<String, User> users = Maps.newHashMap();
 

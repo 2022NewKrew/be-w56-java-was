@@ -2,10 +2,13 @@ package webserver;
 
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
+import webserver.request.HttpRequest;
+import webserver.request.HttpRequestMethod;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 @Slf4j
 public class RequestHandler extends Thread {
@@ -26,18 +29,11 @@ public class RequestHandler extends Thread {
              OutputStream out = connection.getOutputStream();
              BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
-            System.out.println();
-            while (true) {
-                String line = br.readLine();
-                if (Strings.isNullOrEmpty(line)) {
-                    break;
-                }
-
-                System.out.printf("> %s%n", line);
-            }
+            HttpRequest request = readHttpRequest(br);
+            log.debug(request.toString());
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            byte[] body = Files.readAllBytes(new File("./webapp" + request.getTarget()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -46,8 +42,38 @@ public class RequestHandler extends Thread {
     }
 
     /* ---------------------------------------------------------------------- */
-    private void readHttpRequest(BufferedReader br) {
+    private HttpRequest readHttpRequest(BufferedReader br) throws IOException {
+        String line;
+        String[] tokens;
 
+        line = br.readLine();
+        tokens = line.split(" ");
+        if (tokens.length != 3) {
+            throw new IOException();
+        }
+
+        HttpRequest request = HttpRequest.builder()
+                .method(HttpRequestMethod.valueOf(tokens[0]))
+                .target(tokens[1])
+                .version(tokens[2])
+                .build();
+
+        // TODO: body 있는 경우 처리 추가
+        while (true) {
+            line = br.readLine();
+            if (Strings.isNullOrEmpty(line)) {
+                break;
+            }
+
+            tokens = line.split(": ");
+            if (tokens.length != 2) {
+                throw new IOException();
+            }
+
+            request.addHeader(tokens[0], tokens[1]);
+        }
+
+        return request;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
