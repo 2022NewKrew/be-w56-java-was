@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString은
+     * @param queryString
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
@@ -18,7 +18,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
+     * @param cookies
      *            값은 name1=value1; name2=value2 형식임
      * @return
      */
@@ -51,6 +51,16 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static String parseLocation(String firstLine) {
+        String location = firstLine.split(" ")[1];
+        return location;
+    }
+
+    public static String parseMethodType(String firstLine) {
+        String methodType = firstLine.split(" ")[0];
+        return methodType;
     }
 
     public static class Pair {
