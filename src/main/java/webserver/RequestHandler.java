@@ -1,16 +1,19 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
+import http.HttpRequest;
+import http.HttpResponse;
+import http.Resource;
+import http.StaticFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    public static final String DOCUMENT_ROOT = "./webapp";
 
     private Socket connection;
 
@@ -24,32 +27,30 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            HttpRequest httpRequest = new HttpRequest(in);
+            httpRequest.loggingRequestHeader();
+            String requestUri = httpRequest.getUri();
+
+            HttpResponse httpResponse = new HttpResponse(new DataOutputStream(out));
+            String contentType = getContentType(httpRequest);
+            Resource file = getStaticFile(contentType, requestUri);
+            httpResponse.send(file);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private String getContentType(HttpRequest httpRequest) {
+        String acceptHeader = httpRequest.getHeader("Accept").orElse("text/html");
+        String contentType = acceptHeader.split(",")[0].trim();
+        return contentType;
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private Resource getStaticFile(String contentType, String requestUri) {
+        if ("/".equals(requestUri)) {
+            return new StaticFile(contentType, new File(DOCUMENT_ROOT + "/index.html"));
         }
+
+        return new StaticFile(contentType, new File(DOCUMENT_ROOT + requestUri));
     }
 }
