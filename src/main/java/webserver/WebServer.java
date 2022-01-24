@@ -23,6 +23,7 @@ public class WebServer {
             log.info("Web Application Server started {} port.", port);
 
             Socket connection;
+
             while ((connection = listenSocket.accept()) != null) {
                 ConnectionHandler requestHandler = new ConnectionHandler(connection);
                 requestHandler.start();

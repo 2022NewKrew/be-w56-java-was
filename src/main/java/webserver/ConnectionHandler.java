@@ -18,7 +18,7 @@ public class ConnectionHandler extends Thread {
     }
 
     public void run() {
-//        LOGGER.debug("Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        LOGGER.debug("Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             RequestHandler requestHandler = new RequestHandler(in);

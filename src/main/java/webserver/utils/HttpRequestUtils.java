@@ -1,4 +1,4 @@
-package util;
+package webserver.utils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;

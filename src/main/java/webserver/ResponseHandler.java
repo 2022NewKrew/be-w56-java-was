@@ -1,22 +1,23 @@
 package webserver;
 
 import lombok.Getter;
+import org.apache.http.HttpStatus;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.utils.ContentType;
-import webserver.utils.StatusCode;
+
 
 import java.io.*;
 
-import static util.Constants.CONTEXT_PATH;
+import static webserver.utils.Constants.CONTEXT_PATH;
 
 @Getter
 public class ResponseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResponseHandler.class);
 
     private String httpVersion;
-    private StatusCode statusCode = StatusCode.NOT_FOUND;
+    private int statusCode = HttpStatus.SC_NOT_FOUND;
     private long contentLength;
     private String connection = "close";
     private ContentType contentType;
@@ -27,7 +28,7 @@ public class ResponseHandler {
         File file = new File(CONTEXT_PATH + requestHandler.getUrl());
 
         if (file.exists()) {
-            statusCode = StatusCode.OK;
+            statusCode = HttpStatus.SC_OK;
         }
 
         FileInputStream fis = new FileInputStream(file);
