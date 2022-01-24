@@ -5,14 +5,16 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import http.header.HttpHeaders;
 import http.request.HttpRequest;
+import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    public static final String WEB_ROOT = "./webapp";
 
     private Socket connection;
 
@@ -27,12 +29,28 @@ public class RequestHandler extends Thread {
              BufferedReader br = new BufferedReader(new InputStreamReader(in)); DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = getHttpRequest(br);
-            byte[] body = Files.readAllBytes(new File(WEB_ROOT + httpRequest.getUrl()).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            handleResponse(httpRequest, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private void handleResponse(HttpRequest request, DataOutputStream dos) throws IOException {
+        HttpResponse response;
+        switch (request.getUrl()) {
+            default:
+                response = Router.statics(request);
+                break;
+        }
+
+        writeResponse(response, dos);
+    }
+
+    private void writeResponse(HttpResponse response, DataOutputStream dos) throws IOException {
+        dos.write(response.getStatus());
+        dos.write(response.getHeaders());
+        dos.write(response.getBody());
+        dos.flush();
     }
 
     private HttpRequest getHttpRequest(BufferedReader br) throws IOException {

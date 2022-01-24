@@ -24,10 +24,14 @@ public class HttpRequestLine {
     }
 
     private String extractUrl(String url) {
-        return url.substring(0, url.indexOf("?"));
+        return url.contains("?") ? url.substring(0, url.indexOf("?")) : url;
     }
 
     private Map<String, String> extractParams(String url) {
+        if (!url.contains("?")) {
+            return new HashMap<>();
+        }
+
         Map<String, String> paramMap = new HashMap<>();
         String queryString = url.substring(url.indexOf("?") + 1);
         String[] params = queryString.split("&");

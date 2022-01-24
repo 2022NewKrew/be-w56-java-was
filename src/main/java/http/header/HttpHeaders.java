@@ -5,6 +5,9 @@ import java.util.*;
 public class HttpHeaders implements MultiValueMap<String, String> {
 
     public static final String ACCEPT = "Accept";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_LENGTH = "Content-Length";
+
     private final Map<String, List<String>> headers;
 
     public HttpHeaders() {
