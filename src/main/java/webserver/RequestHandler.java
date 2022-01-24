@@ -2,6 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.time.Duration;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +30,9 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String requestLine = br.readLine();
-            String requestUrl = requestLine.split(" ")[1];
+            HttpRequest request = new HttpRequest(in);
 
-            viewResolver.render(out, requestUrl);
+            viewResolver.render(out, request.getUrl());
         } catch (IOException e) {
             log.error(e.getMessage());
         }
