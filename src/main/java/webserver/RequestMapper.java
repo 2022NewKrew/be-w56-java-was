@@ -19,13 +19,13 @@ import java.util.Map;
 public class RequestMapper {
 
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
-    private static final Map<String, RequestMapping> requestMap;
+    private static final Map<String, RequestMappingInfo> requestMap;
     private static final List<String> STATIC_RESOURCE_DIR = List.of("/js", "/css", "/fonts", "images", "/favicon.ico");
 
     static {
         requestMap = new HashMap<>();
-        for (RequestMapping value : RequestMapping.values()) {
-            requestMap.put(value.path, value);
+        for (RequestMappingInfo value : RequestMappingInfo.values()) {
+            requestMap.put(value.getPath(), value);
         }
     }
 
@@ -45,7 +45,11 @@ public class RequestMapper {
             response404NotFound(dos);
             return;
         }
-        requestMap.get(path).handle(in, dos);
+        try {
+            requestMap.get(path).handle(in, dos);
+        } catch (Exception e) {
+            response500InternalServerError(dos);
+        }
     }
 
     private static void responseStaticResource(DataOutputStream dos, String path) {
@@ -77,46 +81,15 @@ public class RequestMapper {
         response.flush();
     }
 
-    public enum RequestMapping {
-        ROOT("/") {
-            @Override
-            public void handle(MyHttpRequest request, DataOutputStream dos) {
-                byte[] body = "Hello World".getBytes();
+    private static void response500InternalServerError(DataOutputStream dos) {
+        byte[] body = "500 - INTERNAL SERVER ERROR!".getBytes();
 
-                MyHttpResponse response = MyHttpResponse.builder(dos)
-                        .status(HttpStatus.OK)
-                        .body(body)
-                        .build();
+        MyHttpResponse response = MyHttpResponse.builder(dos)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body)
+                .build();
 
-                response.writeBytes();
-                response.flush();
-            }
-        },
-        INDEX("/index.html") {
-            @Override
-            public void handle(MyHttpRequest request, DataOutputStream dos) {
-                try {
-                    byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
-
-                    MyHttpResponse response = MyHttpResponse.builder(dos)
-                            .status(HttpStatus.OK)
-                            .body(body)
-                            .build();
-
-                    response.writeBytes();
-                    response.flush();
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
-        };
-
-        private final String path;
-
-        RequestMapping(String path) {
-            this.path = path;
-        }
-
-        public abstract void handle(MyHttpRequest request, DataOutputStream dos);
+        response.writeBytes();
+        response.flush();
     }
 }
