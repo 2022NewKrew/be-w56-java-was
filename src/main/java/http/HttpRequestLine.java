@@ -15,7 +15,7 @@ public class HttpRequestLine {
         return method;
     }
 
-    public String getUri() {
+    public String getUrl() {
         return url;
     }
 
