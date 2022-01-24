@@ -1,6 +1,8 @@
 package util;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,7 @@ public class HttpRequestUtils {
 
         String[] tokens = keyValue.split(regex);
         if (tokens.length != 2) {
-            return null;
+            return new Pair(tokens[0], tokens[1]+tokens[2]);
         }
 
         return new Pair(tokens[0], tokens[1]);
@@ -105,5 +107,19 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
+    }
+
+
+    private static Map<String, String> mimeMappings = new HashMap<>() {{
+        put("html", "text/html");
+        put("css", "text/css");
+        put("woff2", "application/font-woff2");
+        put("js", "application/javascript");
+        put("ico", "image/x-icon");
+
+    }};
+
+    public static String findMimeMapping(String extension) {
+        return mimeMappings.get(extension.toLowerCase(Locale.ENGLISH));
     }
 }
