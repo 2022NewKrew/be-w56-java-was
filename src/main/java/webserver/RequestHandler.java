@@ -26,12 +26,11 @@ public class RequestHandler extends Thread {
             String contextType = "";
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            HttpServletRequestUtils httpServletRequestUtils = new HttpServletRequestUtils();
             String line = br.readLine();
-            HttpServletRequestUtils.RequestInfo requestInfo = httpServletRequestUtils.parseRequestLine(line);
+            HttpServletRequestUtils.RequestInfo requestInfo = HttpServletRequestUtils.parseRequestLine(line);
             log.debug("Request line = {}", line);
 
-            Map<String, String> headerMap = httpServletRequestUtils.readHeader(br);
+            Map<String, String> headerMap = HttpServletRequestUtils.readHeader(br);
             if(headerMap.containsKey("Accept")){
                 contextType = headerMap.get("Accept").split(",")[0];
             }

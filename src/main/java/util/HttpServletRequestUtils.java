@@ -13,12 +13,13 @@ public class HttpServletRequestUtils {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    public RequestInfo parseRequestLine(String requestLine) {
+    public static RequestInfo parseRequestLine(String requestLine) {
         String[] tokens = requestLine.split(" ");
         RequestInfo requestInfo = new RequestInfo(tokens[0],tokens[1],tokens[2]);
+        System.out.println("requestInfo = " + requestInfo);
         return requestInfo;
     }
-    public Map<String,String> readHeader(BufferedReader br) throws IOException {
+    public static Map<String,String> readHeader(BufferedReader br) throws IOException {
         Map<String,String> headerMap = new HashMap<>();
         String line;
         while (!(line = br.readLine()).equals("")) {
@@ -28,7 +29,7 @@ public class HttpServletRequestUtils {
         }
         return headerMap;
     }
-    public class RequestInfo{
+    public static class RequestInfo{
         private String method;
         private String url;
         private String protocol;
