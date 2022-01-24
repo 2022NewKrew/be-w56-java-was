@@ -16,7 +16,13 @@ public class Request {
     private final Headers headers;
     private final String body;
 
-    public Request(String method, String path, String version, Headers headers, String body) {
+    private Request(
+            String method,
+            String path,
+            String version,
+            Headers headers,
+            String body
+    ) {
         this.method = method;
         this.path = path;
         this.version = version;
@@ -53,7 +59,13 @@ public class Request {
         String version = split[2];
         Headers headers = parseHeaders(br);
         String body = parseBody(headers, br);
-        return new Request(method, path, version, headers, body);
+        return Request.newBuilder()
+                .method(method)
+                .path(path)
+                .version(version)
+                .headers(headers)
+                .body(body)
+                .build();
     }
 
     private static Headers parseHeaders(BufferedReader br) throws IOException {
@@ -79,5 +91,47 @@ public class Request {
         char[] chars = new char[length];
         br.read(chars);
         return String.valueOf(chars);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    private static class Builder {
+
+        private String method;
+        private String path;
+        private String version;
+        private Headers headers;
+        private String body;
+
+        public Builder method(String method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder path(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder headers(Headers headers) {
+            this.headers = headers;
+            return this;
+        }
+
+        public Builder body(String body) {
+            this.body = body;
+            return this;
+        }
+
+        public Request build() {
+            return new Request(method, path, version, headers, body);
+        }
     }
 }
