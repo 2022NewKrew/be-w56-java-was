@@ -29,21 +29,25 @@ public class RequestHandler extends Thread {
             String path = HttpRequestUtils.getPathFromRequestLine(line);
 
             Map<String, String> header = HttpRequestUtils.readHeader(bufferedReader);
+            String contentType = "";
+            if (header.containsKey("Accept")) {
+                contentType = header.get("Accept").split(",")[0];
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
             File file = new File("./webapp" + path);
             byte[] body = Files.readAllBytes(file.toPath());
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + "\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
