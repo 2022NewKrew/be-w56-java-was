@@ -2,6 +2,7 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class IOUtils {
     /**
@@ -16,5 +17,9 @@ public class IOUtils {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
+    }
+
+    public static String readAll(BufferedReader br) {
+        return br.lines().collect(Collectors.joining());
     }
 }
