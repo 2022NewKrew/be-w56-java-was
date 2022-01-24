@@ -1,4 +1,6 @@
-package com.kakao.webserver;
+package com.kakao.http.response;
+
+import com.kakao.http.header.HttpHeader;
 
 import java.util.List;
 

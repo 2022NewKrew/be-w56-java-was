@@ -1,4 +1,4 @@
-package com.kakao.webserver;
+package com.kakao.http.header;
 
 public abstract class AbstractHttpHeader implements HttpHeader {
     @Override

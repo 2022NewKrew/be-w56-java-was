@@ -1,4 +1,4 @@
-package com.kakao.webserver;
+package com.kakao.http.request;
 
 public enum HttpMethod {
     GET,

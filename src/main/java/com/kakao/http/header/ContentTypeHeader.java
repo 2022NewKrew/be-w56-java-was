@@ -1,4 +1,4 @@
-package com.kakao.webserver;
+package com.kakao.http.header;
 
 public class ContentTypeHeader extends AbstractHttpHeader {
     private static final String KEY = "Content-Type";

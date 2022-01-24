@@ -1,4 +1,4 @@
-package com.kakao.webserver;
+package com.kakao.http.response;
 
 public class HttpStatusLine {
     private final String version;

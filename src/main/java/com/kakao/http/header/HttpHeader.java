@@ -1,4 +1,4 @@
-package com.kakao.webserver;
+package com.kakao.http.header;
 
 public interface HttpHeader {
     String key();
