@@ -1,17 +1,23 @@
 plugins {
     id 'java'
+    id 'application'
+    id "io.freefair.lombok" version "6.3.0"
 }
 
-group 'org.example'
+group 'com.kakao'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
 
+application {
+    mainClassName = "com.kakao.webserver.WebServer"
+}
+
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
