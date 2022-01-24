@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final ControllerMapping controllerMapping = new ControllerMapping();
+    private static final RequestParser requestParser = new RequestParser();
 
     private final Socket connection;
 
@@ -33,19 +34,7 @@ public class RequestHandler extends Thread {
 
     private RequestMap readRequestHeader(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        RequestMap requestMap = new RequestMap();
-
-        String line = br.readLine();
-        log.info("request line {}: ", line);
-        String[] requestLine = line.split(" ");
-        requestMap.addHeader("url", requestLine[1]);
-
-        while(!line.equals("")){
-            line = br.readLine();
-            log.debug("request header {}: ", line);
-        }
-
-        return requestMap;
+        return requestParser.parse(br);
     }
 
     private void createResponse(RequestMap requestMap, OutputStream out) throws IOException {
