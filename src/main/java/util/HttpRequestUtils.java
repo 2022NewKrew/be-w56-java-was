@@ -1,7 +1,5 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,7 +9,7 @@ import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -30,6 +28,7 @@ public class HttpRequestUtils {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
+
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
                      .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
@@ -111,24 +110,5 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
-    }
-
-    public static Map<String, String> parseBody(BufferedReader br) throws IOException {
-        Map<String, String> body = Maps.newHashMap();
-        String line;
-        while (!"".equals(line = br.readLine()) && line != null) {
-            HttpRequestUtils.parseBodyLine(body, line);
-        }
-        return body;
-    }
-
-    private static void parseBodyLine(Map<String, String> map, String line) {
-        if (Strings.isNullOrEmpty(line)) {
-            return;
-        }
-        System.out.println("line = " + line);
-        String[] tokens = line.split(": ");
-        Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-              .forEach(p -> map.put(p.getKey(), p.getValue()));
     }
 }
