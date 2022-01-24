@@ -1,5 +1,6 @@
 package util;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,6 +52,11 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static String parseRequestUrl(String requestLine) throws IOException {
+        String[] tokens = requestLine.split(" ");
+        return tokens[1];
     }
 
     public static class Pair {
