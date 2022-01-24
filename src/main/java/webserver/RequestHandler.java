@@ -1,10 +1,10 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,20 +23,32 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+            String reqLine = bufferedReader.readLine();
+            log.debug(reqLine);
+            String[] result = reqLine.split(" ");
+            String uri = result[1];
+
+            // Implicit GET
+            String[] filePath = result[1].split("\\.");
+            // Extract extension
+            String text_type = filePath[filePath.length - 1];
+            log.debug(text_type);
+            Path path = Paths.get("./webapp" + uri);
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
+            byte[] body = Files.readAllBytes(path);
+            response200Header(dos, body.length, text_type);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String text_type) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: text/" + text_type + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
