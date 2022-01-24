@@ -29,14 +29,22 @@ public class RequestHandler extends Thread {
             String requestUri = httpRequest.getUri();
 
             DataOutputStream dos = new DataOutputStream(out);
-            File file = new File(DOCUMENT_ROOT + requestUri);
-            log.info("file absolute path:{}", file.getAbsolutePath());
+            File file = getStaticFile(requestUri);
+
             byte[] body = Files.readAllBytes(file.toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private File getStaticFile(String requestUri) {
+        if ("/".equals(requestUri)) {
+            return new File(DOCUMENT_ROOT + "/index.html");
+        }
+
+        return new File(DOCUMENT_ROOT + requestUri);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
