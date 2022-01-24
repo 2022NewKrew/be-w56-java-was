@@ -3,6 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,26 +23,36 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            readRequestHeader(in);
-            createResponse(out);
+            RequestMap requestMap = readRequestHeader(in);
+            createResponse(requestMap, out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void readRequestHeader(InputStream in) throws IOException {
+    private RequestMap readRequestHeader(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        RequestMap requestMap = new RequestMap();
+
         String line = br.readLine();
         log.debug("request line {}: ", line);
+        String[] requestLine = line.split(" ");
+        requestMap.addHeader("url", requestLine[1]);
+
         while(!line.equals("")){
             line = br.readLine();
             log.debug("request header {}: ", line);
         }
+
+        return requestMap;
     }
 
-    private void createResponse(OutputStream out){
+    private void createResponse(RequestMap requestMap, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = "Hello World".getBytes();
+        String filePath = String.format("./webapp%s", requestMap.getHeader("url").orElseThrow());
+        log.info("return file {}", filePath);
+
+        byte[] body = Files.readAllBytes(new File(filePath).toPath());
         response200Header(dos, body.length);
         responseBody(dos, body);
     }
