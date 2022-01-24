@@ -69,4 +69,12 @@ public class HttpRequestUtilsTest {
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
     }
+
+    @Test
+    public void parseLocationTest() throws Exception {
+        String firstLine = "GET /user/form.html HTTP/1.1";
+        String location = HttpRequestUtils.parseLocation(firstLine);
+        String answer = "/user/form.html";
+        assertThat(location).isEqualTo(answer);
+    }
 }
