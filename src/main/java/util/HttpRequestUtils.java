@@ -30,15 +30,12 @@ public class HttpRequestUtils {
     /**
      * @param 요청 (GET /index.html HTTP/1.1)
      */
-    public static Map<String, String> parseRequest(String request) {
+    public static Map<String, String> parseRequestLine(String request) {
         String[] tokens = request.split(" ");
         Map<String, String> map = new HashMap<>();
         map.put("method", tokens[0]);
         map.put("url", tokens[1]);
         map.put("httpVersion", tokens[2]);
-
-        String[] urlTokens = tokens[1].split("\\."); // url 확장자 parsing 후 저장
-        map.put("urlExtension", urlTokens[urlTokens.length - 1]);
 
         return map;
     }

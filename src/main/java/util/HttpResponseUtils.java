@@ -7,10 +7,13 @@ public class HttpResponseUtils {
      *
      * @return content-type
      */
-    public static String contentTypeOf(String extension) {
-        if ("css".equals(extension))
+    public static String contentTypeOf(String url) {
+        if (url == null)
+            return "text/plain";
+
+        if (url.endsWith(".css"))
             return "text/css";
-        else if ("javascript".equals(extension))
+        else if (url.endsWith(".js"))
             return "text/javascript";
 
         return "text/html";

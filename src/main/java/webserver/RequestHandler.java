@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpResponseUtils;
 
-import static util.HttpRequestUtils.parseRequest;
-
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -32,17 +30,17 @@ public class RequestHandler extends Thread {
             BufferedReader br = new BufferedReader(isr);
 
             String line = br.readLine();
-            Map<String, String> request = HttpRequestUtils.parseRequest(line);
+            Map<String, String> request = HttpRequestUtils.parseRequestLine(line);
 
             while (!"".equals(line)) {
-                log.debug(line);
+                //log.debug(line);
 
                 line = br.readLine();
             }
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File("./webapp" + request.get("url")).toPath());
-            response200Header(dos, HttpResponseUtils.contentTypeOf(request.get("urlExtension")), body.length);
+            response200Header(dos, HttpResponseUtils.contentTypeOf(request.get("url")), body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
