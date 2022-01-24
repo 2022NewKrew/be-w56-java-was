@@ -9,7 +9,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
-    private static final String HEADER_SEPARATOR = ":";
+    private static final String HEADER_SEPARATOR = ": ";
     private static final String PARAMETER_SEPARATOR = "&";
     private static final String COOKIE_SEPARATOR = ";";
     private static final String VALUE_SEPARATOR = "=";
