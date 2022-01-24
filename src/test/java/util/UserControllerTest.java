@@ -19,8 +19,7 @@ public class UserControllerTest {
 
     @Test
     void signInByGetTest(){
-        HttpRequest httpRequest = new HttpRequest(
-                "GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1\n" +
+        HttpRequest httpRequest = new HttpRequest("GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
                 "Connection: keep-alive\n" +
                 "Accept: */*\n");
@@ -31,6 +30,6 @@ public class UserControllerTest {
                         (user.getPassword().equals("password")) &&
                         (user.getName().equals("박재성"))
         ).isTrue();
-    }
 
+    }
 }
