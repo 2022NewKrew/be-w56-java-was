@@ -1,42 +1,32 @@
 package webserver.http.request;
 
+import java.net.URI;
+
 public class HttpRequestLine {
 
-    private final String HttpVersion;
-    private final String method;
-    private final String uri;
+    private final Method method;
+    private final URI uri;
+    private final String httpVersion;
 
-    public HttpRequestLine(String method, String uri, String httpVersion) {
+    public HttpRequestLine(Method method, URI uri, String httpVersion) {
         this.method = method;
         this.uri = uri;
-        HttpVersion = httpVersion;
+        this.httpVersion = httpVersion;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
     }
 
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 
     public String getHttpVersion() {
-        return HttpVersion;
+        return httpVersion;
     }
 
-    enum Method {
-        GET("GET"),
-        POST("POST");
-
-        private final String method;
-
-        Method(String method) {
-            this.method = method;
-        }
-
-        @Override
-        public String toString() {
-            return method;
-        }
+    public String getRequestPath() {
+        return uri.getPath();
     }
 }
