@@ -6,7 +6,9 @@ import java.nio.file.Files;
 
 public class ViewMapper {
 
+    private static final String PREFIX = "./webapp";
+
     public static byte[] getBytes(String url) throws IOException {
-        return Files.readAllBytes(new File("./webapp" + url).toPath());
+        return Files.readAllBytes(new File(PREFIX + url).toPath());
     }
 }

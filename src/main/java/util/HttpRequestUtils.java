@@ -10,16 +10,6 @@ import com.google.common.collect.Maps;
 public class HttpRequestUtils {
 
     /**
-     *
-     * @param line
-     *          request 첫 줄에 위치한 httpMethod url httpVersion 형식임
-     * @return
-     */
-    public static String parseUrl(String line) {
-        return line.split(" ")[1];
-    }
-
-    /**
      * @param queryString
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
