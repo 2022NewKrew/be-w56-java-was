@@ -53,6 +53,20 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
+    public static String parseUrl(String query) {
+        String url = query.split(" ")[1];
+
+        if (url.contains("\\?")) {
+            url = url.split("\\?")[0];
+        }
+
+        return url;
+    }
+
+    public static String parseRequest(String request) {
+        return request.split(" ")[0];
+    }
+
     public static class Pair {
         String key;
         String value;
