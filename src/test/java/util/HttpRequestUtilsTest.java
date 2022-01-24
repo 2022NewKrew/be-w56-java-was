@@ -9,6 +9,31 @@ import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
+
+    @Test
+    public void parseUrl() throws Exception {
+        // given
+        String request = "GET /index.html HTTP/1.1";
+
+        // when
+        String parsedUrl = HttpRequestUtils.parseUrl(request);
+
+        // then
+        assertThat(parsedUrl).isEqualTo("/index.html");
+    }
+
+    @Test
+    public void parseUrlNull() throws Exception {
+        // given
+        String request = "GET /index.html";
+
+        // when
+        String parsedUrl = HttpRequestUtils.parseUrl(request);
+
+        // then
+        assertThat(parsedUrl).isNull();
+    }
+
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
