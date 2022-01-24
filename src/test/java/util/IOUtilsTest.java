@@ -30,9 +30,11 @@ public class IOUtilsTest {
         String icoUrl = "./webapp/favicon.ico";
         String jsUrl = "./webapp/js/scripts.js";
         String cssUrl = "./webapp/css/styles.css";
+        String htmlUrl = "./webapp/index.html";
 
         assertThat(IOUtils.readMimeType(icoUrl)).isEqualTo("image/vnd.microsoft.icon");
         assertThat(IOUtils.readMimeType(jsUrl)).isEqualTo("application/javascript");
         assertThat(IOUtils.readMimeType(cssUrl)).isEqualTo("text/css");
+        assertThat(IOUtils.readMimeType(htmlUrl)).isEqualTo("text/html");
     }
 }
