@@ -53,6 +53,25 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
+    public static Pair parseRequestLine(String requestLine) {
+        String[] tokens = requestLine.split(" ");
+        if (tokens.length != 3) {
+            return null;
+        }
+        if (!tokens[2].equals("HTTP/1.1")) {
+            return null;
+        }
+        return new Pair(tokens[0], tokens[1]);
+    }
+
+    public static String getUrlExtension(String url) {
+        String[] tokens = url.split("\\.");
+        if (tokens.length != 2) {
+            return null;
+        }
+        return tokens[1];
+    }
+
     public static class Pair {
         String key;
         String value;
