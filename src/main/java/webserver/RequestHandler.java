@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
-import domain.RequestHeader;
+import http.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +25,10 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
             //requestHeader객체 생성
-            RequestHeader requestHeader = new RequestHeader(RequestHeader.inputStreamToString(in));
+            Request request = new Request(Request.inputStreamToString(in));
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + requestHeader.getPath()).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + request.getPath()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {

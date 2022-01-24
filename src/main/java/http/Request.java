@@ -1,4 +1,4 @@
-package domain;
+package http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,13 +7,13 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
-public class RequestHeader {
+public class Request {
     public static String DEFAULT_RESOURCE = "/index.html";
     private List<String> requestHeader;
     private String path;
     private HttpMethod method;
 
-    public RequestHeader(String requestHeader){
+    public Request(String requestHeader){
         this.requestHeader = Arrays.asList(requestHeader.split("\n"));
         parsePath(this.requestHeader.get(0));
         parseMethod(this.requestHeader.get(0));
