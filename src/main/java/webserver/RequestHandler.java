@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,18 +28,39 @@ public class RequestHandler extends Thread {
             log.debug("Request : {}", request);
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
+            byte[] body = setBody(request);
+
+            response200Header(dos, getContentType(request.getUri()), body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private String getContentType(String uri) {
+        if (uri.endsWith(".js")) {
+            return "text/javascript";
+        }
+
+        if (uri.endsWith(".css")) {
+            return "text/css";
+        }
+
+        return "text/html";
+    }
+
+    private byte[] setBody(Request request) throws IOException {
+        if (request.getType().equals("GET")) {
+            return Files.readAllBytes(new File("./webapp" + request.getUri()).toPath());
+        }
+
+        return "Hello World".getBytes();
+    }
+
+    private void response200Header(DataOutputStream dos, String contentType, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

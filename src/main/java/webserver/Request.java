@@ -1,13 +1,11 @@
 package webserver;
 
-import lombok.Getter;
 import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
-@Getter
 public class Request {
     private final String type;
     private final String uri;
@@ -32,6 +30,14 @@ public class Request {
         }
 
         //TODO : body가 있는경우 추가하는 로직 + body가 없는 경우에도 돌아갈 수 있게 로직 세팅
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     @Override
