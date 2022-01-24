@@ -3,11 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
-import http.HttpRequest;
-import http.HttpRequestParser;
-import http.HttpResponse;
-import http.HttpResponseRenderer;
-import http.impl.HttpFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.SocketErrorException;
