@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Map;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
@@ -68,5 +69,12 @@ public class HttpRequestUtilsTest {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+    }
+
+    @DisplayName("Request 요청에서 URL parsing")
+    @Test
+    public void parseRequestUrl() throws Exception {
+        String requestMsg = "GET /index.html HTTP/1.1";
+        assertThat(HttpRequestUtils.parseRequestUrl(requestMsg)).isEqualTo("/index.html");
     }
 }
