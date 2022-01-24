@@ -1,13 +1,12 @@
-package util;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+package webserver.common.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import model.HttpRequestStartLine;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
     /**
@@ -30,7 +29,15 @@ public class HttpRequestUtils {
         if (Strings.isNullOrEmpty(line)) {
             return null;
         }
-        return HttpRequestStartLine.valueOf(List.of(line.split(" ")));
+
+        boolean hasQueryString = false;
+        if (line.contains("?")) {
+            line = line.replace("?", " ");
+            hasQueryString = true;
+        }
+        String[] parsed = line.split(" ");
+        Map<String, String> queryParameters = hasQueryString ? parseQueryString(parsed[2]) : Collections.emptyMap();
+        return HttpRequestStartLine.valueOf(parsed[0], parsed[1], parsed[parsed.length - 1], queryParameters);
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
@@ -43,7 +50,7 @@ public class HttpRequestUtils {
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
-    static Pair getKeyValue(String keyValue, String regex) {
+    public static Pair getKeyValue(String keyValue, String regex) {
         if (Strings.isNullOrEmpty(keyValue)) {
             return null;
         }
@@ -64,7 +71,7 @@ public class HttpRequestUtils {
         String key;
         String value;
 
-        Pair(String key, String value) {
+        public Pair(String key, String value) {
             this.key = key.trim();
             this.value = value.trim();
         }
