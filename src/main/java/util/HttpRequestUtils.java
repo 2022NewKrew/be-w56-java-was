@@ -1,11 +1,15 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
 
 public class HttpRequestUtils {
     /**
@@ -24,6 +28,31 @@ public class HttpRequestUtils {
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
+    }
+
+    public static Map<String, String> readRequest(BufferedReader br) throws IOException {
+        String request = br.readLine();
+        Map<String, String> requestMap = new HashMap<>();
+        String[] tokens = request.split(" ");
+        if(tokens.length != 3)
+            return null;
+        requestMap.put("httpMethod", tokens[0]);
+        requestMap.put("httpUrl", tokens[1]);
+        requestMap.put("httpProtocol", tokens[2]);
+        return requestMap;
+    }
+
+    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
+        String line;
+        Map<String, String> headerMap = new HashMap<>();
+        Pair pair;
+        while(true) {
+            line = br.readLine();
+            if(line == null || line.equals(""))
+                return headerMap;
+            pair = parseHeader(line);
+            headerMap.put(pair.getKey(), pair.getValue());
+        }
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
