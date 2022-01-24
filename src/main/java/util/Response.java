@@ -1,18 +1,19 @@
-package webserver;
+package util;
+
+import lombok.Builder;
 
 public class Response {
 
     private final String statusCode;
     private final String statusText;
+    private final String contextType;
     private final byte[] body;
 
-    public static Response from(String statusCode, String statusText, byte[] body) {
-        return new Response(statusCode, statusText, body);
-    }
-
-    private Response(String statusCode, String statusText, byte[] body) {
+    @Builder
+    public Response(String statusCode, String statusText, String contextType, byte[] body) {
         this.statusCode = statusCode;
         this.statusText = statusText;
+        this.contextType = contextType;
         this.body = body;
     }
 
@@ -26,5 +27,9 @@ public class Response {
 
     public int getBodyLength() {
         return body.length;
+    }
+
+    public String getContextType() {
+        return contextType;
     }
 }
