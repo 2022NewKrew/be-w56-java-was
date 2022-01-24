@@ -3,9 +3,13 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.security.NoSuchProviderException;
 
+import controller.Controller;
+import controller.ControllerCommander;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.ViewResolver;
 import webserver.config.WebConst;
 
 public class RequestHandler extends Thread {
@@ -32,10 +36,17 @@ public class RequestHandler extends Thread {
 
     private void createResponse(HttpRequest request, DataOutputStream dos) throws IOException {
         log.info("[REQUEST URI] - " + request.getRequestUri());
-        if(request.getMethod().equals("GET")){
-            byte[] body = Files.readAllBytes(new File(WebConst.URL_PREFIX + request.getRequestUri()).toPath());
+        String requestUri = request.getRequestUri();
+        try {
+            Controller controller = ControllerCommander.findController(requestUri);
+            String viewName = controller.execute(request, dos);
+
+            byte[] body = ViewResolver.render(viewName);
+
             response200Header(dos, body.length);
             responseBody(dos, body);
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
         }
     }
 

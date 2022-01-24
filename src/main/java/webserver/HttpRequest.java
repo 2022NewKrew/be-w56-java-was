@@ -21,11 +21,10 @@ public class HttpRequest {
         String startLine = bufferedReader.readLine();
         httpRequest.setStartLine(startLine);
 
-        String line = bufferedReader.readLine();
-        while(!"".equals(line) && line != null) {
-//            System.out.println(line);
-            line = bufferedReader.readLine();
-        }
+//        String line = bufferedReader.readLine();
+//        while(!"".equals(line) && line != null) {
+//            line = bufferedReader.readLine();
+//        }
 
         return httpRequest;
     }
@@ -33,9 +32,8 @@ public class HttpRequest {
     private void setStartLine(String startLine) {
         String[] parsedLine = HttpRequestUtils.parseBySpace(startLine);
         this.method = parsedLine[0];
-        this.httpVersion = parsedLine[2];
-
         setUrlInfo(parsedLine[1]);
+        this.httpVersion = parsedLine[2];
     }
 
     private void setUrlInfo(String url) {
@@ -57,5 +55,9 @@ public class HttpRequest {
 
     public String getHttpVersion() {
         return httpVersion;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
     }
 }
