@@ -79,4 +79,3 @@
   - https://allg.tistory.com/20
   - https://www.tutorialspoint.com/h2_database/h2_database_jdbc_connection.htm
   - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
-

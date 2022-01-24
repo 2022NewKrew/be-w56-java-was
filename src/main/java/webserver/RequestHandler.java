@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,6 @@ public class RequestHandler extends Thread {
 
     private void requestMethodMapping (RequestParser rp, OutputStream os) throws IOException {
         MethodController methodController = null;
-
         switch (rp.getMethod()) {
             case "GET" :
                 methodController = new GetController(rp, os);
