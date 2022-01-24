@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 public class HttpRequestUtils {
     public static String parseUrl(String requestLine){
         String[] requestLineTokens = requestLine.split(" ");
-
         String url = requestLineTokens[1];
 
         if(url.equals("/")){
