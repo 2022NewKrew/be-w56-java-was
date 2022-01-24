@@ -3,9 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Objects;
 
+import model.HttpRequestStartLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -27,12 +26,10 @@ public class RequestHandler extends Thread {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             String line = br.readLine();
-            List<String> parsed = HttpRequestUtils.parsePath(line);
-            if (parsed == null) {
-                return;
-            }
-            String path = Objects.equals(parsed.get(1), "/") ? "/index.html" : parsed.get(1);
-            byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
+            HttpRequestStartLine startLine = HttpRequestUtils.parseStartLine(line);
+
+            assert startLine != null;
+            byte[] body = Files.readAllBytes(new File("./webapp" + startLine.getUrl()).toPath());
             while (!line.equals("")) {
                 line = br.readLine();
                 log.debug(line);
@@ -44,7 +41,7 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             response200Header(dos, body.length);
             responseBody(dos, body);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             log.error(e.getMessage());
         }
     }

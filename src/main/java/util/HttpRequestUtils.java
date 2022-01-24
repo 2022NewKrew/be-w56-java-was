@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import model.HttpRequestStartLine;
 
 public class HttpRequestUtils {
     /**
@@ -25,12 +26,11 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
-    public static List<String> parsePath(String line) {
+    public static HttpRequestStartLine parseStartLine(String line) {
         if (Strings.isNullOrEmpty(line)) {
             return null;
         }
-
-        return List.of(line.split(" "));
+        return HttpRequestStartLine.valueOf(List.of(line.split(" ")));
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
