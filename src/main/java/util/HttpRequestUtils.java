@@ -1,11 +1,14 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import webserver.ContentType;
 
 public class HttpRequestUtils {
     /**
@@ -42,11 +45,31 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = keyValue.split(regex);
+        if (tokens.length == 1) {
+
+        }
         if (tokens.length != 2) {
             return null;
         }
 
         return new Pair(tokens[0], tokens[1]);
+    }
+
+    public static ContentType parseExtension(String path) {
+        String[] pathParsed = path.split("\\.");
+        String extension = pathParsed[pathParsed.length - 1];
+        return ContentType.matching(extension);
+    }
+
+    public static List<Pair> parseRequestLine(String header) {
+        String[] parsed = header.split(" ");
+        List<Pair> pairs = new ArrayList<>();
+        if (parsed.length == 3) {
+            pairs.add(new Pair("METHOD", parsed[0]));
+            pairs.add(new Pair("PATH", parsed[1]));
+            pairs.add(new Pair("VERSION", parsed[2]));
+        }
+        return pairs;
     }
 
     public static Pair parseHeader(String header) {
