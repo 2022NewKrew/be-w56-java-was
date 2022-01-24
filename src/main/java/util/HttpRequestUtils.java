@@ -42,11 +42,12 @@ public class HttpRequestUtils {
      * @return
      */
     public static Map<String, String> parseQueries(String targetToken) {
-        if (!targetToken.contains(PATH_QUERY_STRING_DELIMITER)) {
+        String[] tokens = targetToken.split(PATH_QUERY_STRING_DELIMITER);
+        if (tokens.length < 2) {
             return new HashMap<>();
         }
-        String queryString = targetToken.split(PATH_QUERY_STRING_DELIMITER)[1];
-        return parseValues(queryString, QUERY_DELIMITER);
+
+        return parseValues(tokens[1], QUERY_DELIMITER);
     }
 
     public static String parseAccepts(String accepts) {
