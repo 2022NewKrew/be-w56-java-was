@@ -1,18 +1,19 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.controller.Controller;
+import webserver.controller.StaticController;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final ControllerMapping controllerMapping = new ControllerMapping();
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -35,7 +36,7 @@ public class RequestHandler extends Thread {
         RequestMap requestMap = new RequestMap();
 
         String line = br.readLine();
-        log.debug("request line {}: ", line);
+        log.info("request line {}: ", line);
         String[] requestLine = line.split(" ");
         requestMap.addHeader("url", requestLine[1]);
 
@@ -49,31 +50,8 @@ public class RequestHandler extends Thread {
 
     private void createResponse(RequestMap requestMap, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        String filePath = String.format("./webapp%s", requestMap.getHeader("url").orElseThrow());
-        log.info("return file {}", filePath);
-
-        byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        response200Header(dos, body.length);
-        responseBody(dos, body);
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        String url = (String) requestMap.getHeader("url").orElseThrow();
+        Controller controller = controllerMapping.getController(url).orElseThrow();
+        controller.handle(requestMap, dos);
     }
 }
