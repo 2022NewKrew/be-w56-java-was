@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.nio.file.Files;
 
 import http.HttpRequest;
+import http.HttpResponse;
+import http.Resource;
+import http.StaticFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,42 +31,26 @@ public class RequestHandler extends Thread {
             httpRequest.loggingRequestHeader();
             String requestUri = httpRequest.getUri();
 
-            DataOutputStream dos = new DataOutputStream(out);
-            File file = getStaticFile(requestUri);
-
-            byte[] body = Files.readAllBytes(file.toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            HttpResponse httpResponse = new HttpResponse(new DataOutputStream(out));
+            String contentType = getContentType(httpRequest);
+            Resource file = getStaticFile(contentType, requestUri);
+            httpResponse.send(file);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private File getStaticFile(String requestUri) {
+    private String getContentType(HttpRequest httpRequest) {
+        String acceptHeader = httpRequest.getHeader("Accept").orElse("text/html");
+        String contentType = acceptHeader.split(",")[0].trim();
+        return contentType;
+    }
+
+    private Resource getStaticFile(String contentType, String requestUri) {
         if ("/".equals(requestUri)) {
-            return new File(DOCUMENT_ROOT + "/index.html");
+            return new StaticFile(contentType, new File(DOCUMENT_ROOT + "/index.html"));
         }
 
-        return new File(DOCUMENT_ROOT + requestUri);
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            //dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        return new StaticFile(contentType, new File(DOCUMENT_ROOT + requestUri));
     }
 }
