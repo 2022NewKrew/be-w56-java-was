@@ -8,8 +8,19 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
+
     /**
-     * @param queryString은
+     *
+     * @param line
+     *          request 첫 줄에 위치한 httpMethod url httpVersion 형식임
+     * @return
+     */
+    public static String parseUrl(String line) {
+        return line.split(" ")[1];
+    }
+
+    /**
+     * @param queryString
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
@@ -18,7 +29,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
+     * @param cookies
      *            값은 name1=value1; name2=value2 형식임
      * @return
      */
