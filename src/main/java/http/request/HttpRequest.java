@@ -1,6 +1,6 @@
 package http.request;
 
-import http.HttpHeaders;
+import http.header.HttpHeaders;
 
 import java.util.List;
 

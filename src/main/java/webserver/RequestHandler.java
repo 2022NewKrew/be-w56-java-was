@@ -5,16 +5,14 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import http.HttpHeaders;
 import http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    public static final String WEB_ROOT = "./webapp";
 
     private Socket connection;
 
@@ -27,9 +25,9 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
              BufferedReader br = new BufferedReader(new InputStreamReader(in)); DataOutputStream dos = new DataOutputStream(out)) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+
             HttpRequest httpRequest = getHttpRequest(br);
-            byte[] body = Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
+            byte[] body = Files.readAllBytes(new File(WEB_ROOT + httpRequest.getUrl()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -38,26 +36,35 @@ public class RequestHandler extends Thread {
     }
 
     private HttpRequest getHttpRequest(BufferedReader br) throws IOException {
+        String requestLine = getRequestLine(br);
+        List<String> requestHeader = getRequestStrings(br);
+        List<String> requestBody = getRequestStrings(br);
+
+        return new HttpRequest(requestLine, requestHeader, requestBody);
+    }
+
+    private String getRequestLine(BufferedReader br) throws IOException {
         String line = "";
         if ((line = br.readLine()) == null) {
             throw new IllegalArgumentException("invalid http request");
         }
-        String requestLine = line;
+        log.info("request line = {}", line);
+        return line;
+    }
 
+    private List<String> getRequestStrings(BufferedReader br) throws IOException {
+        if (!br.ready()) {
+            return null;
+        }
         List<String> requestHeader = new ArrayList<>();
+        String line = br.readLine();
         while (line != null && !line.equals("")) {
-            log.info("header = {}", line);
-            line = br.readLine();
+            log.info("request = {}", line);
             requestHeader.add(line);
+            line = br.readLine();
         }
 
-        List<String> requestBody = new ArrayList<>();
-        while (line != null && !line.equals("")) {
-            log.info("body = {}", line);
-            line = br.readLine();
-            requestBody.add(line);
-        }
-        return new HttpRequest(requestLine, requestHeader, requestBody);
+        return requestHeader;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
