@@ -2,6 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.MimeParser;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -23,7 +24,7 @@ public class ViewResolver {
         DataOutputStream dos = new DataOutputStream(out);
         try {
             byte[] body = getBytesOfFile(viewPath);
-            writeResponseHeader(dos, httpStatus);
+            writeResponseHeader(dos, viewPath, httpStatus);
             writeResponseBody(dos, body);
             dos.flush();
         } catch (IOException e) {
@@ -36,9 +37,14 @@ public class ViewResolver {
         return Files.readAllBytes(new File(DEFAULT_PREFIX + viewPath).toPath());
     }
 
-    private void writeResponseHeader(DataOutputStream dos, HttpStatus httpStatus) throws IOException {
+    private void writeResponseHeader(DataOutputStream dos, String viewPath, HttpStatus httpStatus) throws IOException {
         dos.writeBytes(httpStatus.getHttpResponseHeader());
+        dos.writeBytes(getContentType(viewPath));
         dos.writeBytes(newLine);
+    }
+
+    private String getContentType(String viewPath) {
+        return String.format("Content-Type: %s;charset=utf-8" + newLine, MimeParser.parseMimeType(DEFAULT_PREFIX + viewPath));
     }
 
     private void writeResponseBody(DataOutputStream dos, byte[] body) throws IOException {
