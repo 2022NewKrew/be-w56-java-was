@@ -1,6 +1,7 @@
 package util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,22 @@ public class HttpRequestUtils {
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
+    }
+
+    /**
+     * @param 요청 (GET /index.html HTTP/1.1)
+     */
+    public static Map<String, String> parseRequest(String request) {
+        String[] tokens = request.split(" ");
+        Map<String, String> map = new HashMap<>();
+        map.put("method", tokens[0]);
+        map.put("url", tokens[1]);
+        map.put("httpVersion", tokens[2]);
+
+        String[] urlTokens = tokens[1].split("\\."); // url 확장자 parsing 후 저장
+        map.put("urlExtension", urlTokens[urlTokens.length - 1]);
+
+        return map;
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
