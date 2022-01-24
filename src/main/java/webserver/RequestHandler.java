@@ -35,6 +35,7 @@ public class RequestHandler extends Thread {
 
     private void requestMethodMapping (RequestParser rp, OutputStream os) throws IOException {
         MethodController methodController = null;
+
         switch (rp.getMethod()) {
             case "GET" :
                 methodController = new GetController(rp, os);
