@@ -1,12 +1,13 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;
+
+import java.io.*;
+import java.net.Socket;
+import java.nio.file.Files;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,14 +28,26 @@ public class RequestHandler extends Thread {
             MyHttpRequest myHttpRequest = new MyHttpRequest(br);
             log.info(myHttpRequest.toString());
 
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            MyHttpResponse myHttpResponse = MyHttpResponse.builder(dos)
-                    .body(body)
-                    .build();
-            myHttpResponse.writeBytes();
+            byte[] body;
 
+            switch (myHttpRequest.uri().getPath()) {
+                case "/":
+                    body = "Hello World".getBytes();
+                    MyHttpResponse myHttpResponse = MyHttpResponse.builder(dos)
+                            .body(body)
+                            .build();
+                    myHttpResponse.writeBytes();
+                    break;
+                case "/favicon.ico":
+                    body = Files.readAllBytes(new File("./webapp/favicon.ico").toPath());
+                    MyHttpResponse myHttpResponse1 = MyHttpResponse.builder(dos)
+                            .contentType("image/x-icon")
+                            .body(body)
+                            .build();
+                    myHttpResponse1.writeBytes();
+                    break;
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
