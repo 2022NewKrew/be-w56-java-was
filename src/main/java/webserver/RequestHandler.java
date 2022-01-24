@@ -67,22 +67,22 @@ public class RequestHandler implements Callable<Void> {
     }
 
     private HttpRequest readRequest(final InputStream in) throws IOException {
-        final String[] topHeaders = Separator.splitString(readOneLine(in), " ");
-        final HttpMethod method = HttpMethod.valueOf(topHeaders[0]);
-        final HttpLocation location = new HttpLocation(topHeaders[1]);
+        final String[] topHeaderValues = Separator.splitString(readOneHeader(in), " ");
+        final HttpMethod method = HttpMethod.valueOf(topHeaderValues[0]);
+        final HttpLocation location = new HttpLocation(topHeaderValues[1]);
 
         final List<HttpRequestUtils.Pair> list = new ArrayList<>();
-        String header = readOneLine(in);
+        String header = readOneHeader(in);
         while (!header.isEmpty()) {
             list.add(HttpRequestUtils.parseHeader(header));
-            header = readOneLine(in);
+            header = readOneHeader(in);
         }
         final Headers headers = new Headers(list);
 
         return new HttpRequest(method, location, headers);
     }
 
-    private String readOneLine(final InputStream in) throws IOException {
+    private String readOneHeader(final InputStream in) throws IOException {
         final StringBuilder sb = new StringBuilder();
         int data;
         while (true) {
