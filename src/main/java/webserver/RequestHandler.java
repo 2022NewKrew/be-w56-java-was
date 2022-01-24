@@ -1,13 +1,14 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
+import util.ResponseStatus;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,20 +24,36 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String line = br.readLine();
+            if (line == null) {
+                return;
+            }
+            String url = HttpRequestUtils.parseUrl(line);
+            String contentType = HttpRequestUtils.readHeaderAccept(br);
+
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
+            File file = new File("./webapp" + url);
+            byte[] body;
+
+            if (file.exists()) {
+                body = Files.readAllBytes(file.toPath());
+                responseHeader(ResponseStatus.OK, contentType, dos, body.length);
+            } else {
+                body = ResponseStatus.NOT_FOUND.name().getBytes(StandardCharsets.UTF_8);
+                responseHeader(ResponseStatus.NOT_FOUND, contentType, dos, body.length);
+            }
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void responseHeader(ResponseStatus status, String contentType, DataOutputStream dos, int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("HTTP/1.1 " + status.getValue() + " " + status.name() + " \r\n");
+            dos.writeBytes("Content-Type: " + contentType + "; charset = utf - 8\r\n ");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
