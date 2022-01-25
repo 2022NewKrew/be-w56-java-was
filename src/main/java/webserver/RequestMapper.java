@@ -77,7 +77,7 @@ public class RequestMapper {
     }
 
     private static MyHttpResponse response400BadRequest(DataOutputStream dos, Exception e) {
-        byte[] body = (HttpStatus.NOT_FOUND + ":" + e.getMessage()).getBytes();
+        byte[] body = (HttpStatus.BAD_REQUEST + ":" + e.getMessage()).getBytes();
 
         return MyHttpResponse.builder(dos)
                 .status(HttpStatus.BAD_REQUEST)
