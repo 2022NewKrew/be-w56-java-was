@@ -6,6 +6,7 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.MyHttpRequest;
+import webserver.http.MyHttpResponse;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,8 +24,9 @@ public class RequestHandler extends Thread {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream())); OutputStream out = connection.getOutputStream()) {
             MyHttpRequest request = MyHttpRequest.of(in);
 
-            RequestMapper.process(request, out);
-
+            MyHttpResponse response = RequestMapper.process(request, out);
+            response.writeBytes();
+            response.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -28,7 +28,7 @@ public class RequestMapper {
         }
     }
 
-    public static void process(MyHttpRequest in, OutputStream out) {
+    public static MyHttpResponse process(MyHttpRequest in, OutputStream out) {
         String path = in.uri().getPath();
         DataOutputStream dos = new DataOutputStream(out);
 
@@ -36,73 +36,61 @@ public class RequestMapper {
                 .anyMatch(m -> m.isExtensionMatch(path));
 
         if (isRequestStaticResource) {
-            responseStaticResource(dos, path);
-            return;
+            return responseStaticResource(dos, path);
         }
 
         if (!requestMap.containsKey(path)) {
-            response404NotFound(dos);
-            return;
+            return response404NotFound(dos);
         }
         try {
-            requestMap.get(path).handle(in, dos);
+            return requestMap.get(path).handle(in, dos);
         } catch (IllegalArgumentException e) {
-            response400BadRequest(dos, e);
+            return response400BadRequest(dos, e);
         } catch (Exception e) {
-            response500InternalServerError(dos);
+            log.error(e.getMessage());
+            return response500InternalServerError(dos);
         }
     }
 
-    private static void responseStaticResource(DataOutputStream dos, String path) {
+    private static MyHttpResponse responseStaticResource(DataOutputStream dos, String path) {
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
 
-            MyHttpResponse response = MyHttpResponse.builder(dos)
+            return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)
                     .contentType(MIME.parse(path))
                     .body(body)
                     .build();
-
-            response.writeBytes();
-            response.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
+            return response500InternalServerError(dos);
         }
     }
 
-    private static void response404NotFound(DataOutputStream dos) {
+    private static MyHttpResponse response404NotFound(DataOutputStream dos) {
         byte[] body = "404 - NOT FOUND!".getBytes();
 
-        MyHttpResponse response = MyHttpResponse.builder(dos)
+        return MyHttpResponse.builder(dos)
                 .status(HttpStatus.NOT_FOUND)
                 .body(body)
                 .build();
-
-        response.writeBytes();
-        response.flush();
     }
 
-    private static void response400BadRequest(DataOutputStream dos, Exception e) {
+    private static MyHttpResponse response400BadRequest(DataOutputStream dos, Exception e) {
         byte[] body = ("400 - BAD REQUEST! - " + e.getMessage()).getBytes();
 
-        MyHttpResponse response = MyHttpResponse.builder(dos)
+        return MyHttpResponse.builder(dos)
                 .status(HttpStatus.BAD_REQUEST)
                 .body(body)
                 .build();
-
-        response.writeBytes();
-        response.flush();
     }
 
-    private static void response500InternalServerError(DataOutputStream dos) {
+    private static MyHttpResponse response500InternalServerError(DataOutputStream dos) {
         byte[] body = "500 - INTERNAL SERVER ERROR!".getBytes();
 
-        MyHttpResponse response = MyHttpResponse.builder(dos)
+        return MyHttpResponse.builder(dos)
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(body)
                 .build();
-
-        response.writeBytes();
-        response.flush();
     }
 }

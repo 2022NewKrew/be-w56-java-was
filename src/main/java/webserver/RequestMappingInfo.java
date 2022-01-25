@@ -18,21 +18,18 @@ public enum RequestMappingInfo {
 
     ROOT("/") {
         @Override
-        public void handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
 
-            MyHttpResponse response = MyHttpResponse.builder(dos)
+            return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)
                     .body(body)
                     .build();
-
-            response.writeBytes();
-            response.flush();
         }
     },
     SIGN_UP("/create") {
         @Override
-        public void handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             URI uri = request.uri();
             Map<String, String> parameterMap = HttpRequestUtils.parseQueryString(uri.getQuery());
 
@@ -40,13 +37,10 @@ public enum RequestMappingInfo {
             User user = userCreateRequest.toEntity();
             DataBase.addUser(user);
 
-            MyHttpResponse response = MyHttpResponse.builder(dos)
+            return MyHttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
                     .build();
-
-            response.writeBytes();
-            response.flush();
         }
     };
 
@@ -60,5 +54,5 @@ public enum RequestMappingInfo {
         return path;
     }
 
-    public abstract void handle(MyHttpRequest request, DataOutputStream dos) throws Exception;
+    public abstract MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception;
 }
