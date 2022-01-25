@@ -47,24 +47,18 @@ public class WebServer {
         
         // 서버 스레드 풀을 생성한다.
         ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        Socket conn = null;
         do {
+            Socket conn;
             try {
                 conn = serverSocket.accept();
             } catch (IOException e) {
                 continue;
             }
+            if (conn == null) {
+                break;
+            }
             
             threadPool.submit(new RequestHandler(conn));
-        } while (conn != null);
-
-        threadPool.shutdown();
-        try {
-            if (!threadPool.awaitTermination(SOCKET_TIMEOUT, TimeUnit.MILLISECONDS)) {
-                threadPool.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            threadPool.shutdownNow();
-        }
+        } while (true);
     }
 }
