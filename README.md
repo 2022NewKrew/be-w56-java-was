@@ -22,3 +22,8 @@
     - 독립 스트림 -> 향상된 Multiplexing 가능 (TCP Head Of Line Blocking 문제 해결)
       - 로딩 시간 평균 3% 개선 , 유튜브 개선
     - HTTP 3.0이 QUIC 이다. 구글은 이미 HTTP3.0 사용중입니다.
+
+## Thread Pool
+- https://limkydev.tistory.com/55
+- https://postitforhooney.tistory.com/entry/JavaThread-Java-Thread-Pool%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-Thread%EB%A5%BC-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0Thread-Runnable
+- 

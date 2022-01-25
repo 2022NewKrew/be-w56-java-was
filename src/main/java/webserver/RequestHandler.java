@@ -7,8 +7,9 @@ import util.MyRequest;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.concurrent.Callable;
 
-public class RequestHandler extends Thread {
+public class RequestHandler implements Callable<Void> {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
@@ -17,7 +18,9 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
-    public void run() {
+    @Override
+    public Void call() throws Exception {
+
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
@@ -34,6 +37,8 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+
+        return null;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
@@ -55,4 +60,6 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
+
+
 }
