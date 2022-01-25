@@ -1,11 +1,11 @@
-package db;
+package application.db;
 
 import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import model.User;
+import application.model.User;
 
 public class DataBase {
     private static Map<String, User> users = Maps.newHashMap();
@@ -20,5 +20,9 @@ public class DataBase {
 
     public static Collection<User> findAll() {
         return users.values();
+    }
+
+    public static boolean existsUserById(String userId) {
+        return users.containsKey(userId);
     }
 }
