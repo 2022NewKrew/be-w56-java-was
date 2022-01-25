@@ -1,12 +1,12 @@
 package util;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import request.HttpRequestLine;
 
 public class HttpRequestUtils {
     /**
@@ -30,14 +30,10 @@ public class HttpRequestUtils {
     /**
      * @param 요청 (GET /index.html HTTP/1.1)
      */
-    public static Map<String, String> parseRequestLine(String request) {
+    public static HttpRequestLine parseRequestLine(String request) {
         String[] tokens = request.split(" ");
-        Map<String, String> map = new HashMap<>();
-        map.put("method", tokens[0]);
-        map.put("url", tokens[1]);
-        map.put("httpVersion", tokens[2]);
 
-        return map;
+        return new HttpRequestLine(tokens[0], tokens[1], tokens[2]);
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
