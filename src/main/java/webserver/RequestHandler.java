@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import controller.RequestController;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import org.slf4j.Logger;
@@ -31,7 +32,8 @@ public class RequestHandler extends Thread {
                     .forEach(header -> HttpRequestUtils.setHeader(requestHeader, header));
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + requestHeader.getHeader("uri")).toPath());
+            String returnUri = RequestController.controlRequest(requestHeader);
+            byte[] body = Files.readAllBytes(new File(returnUri).toPath());
             response200Header(dos, body.length, requestHeader);
             responseBody(dos, body);
         } catch (IOException e) {
