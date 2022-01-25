@@ -1,8 +1,8 @@
-package webserver.request;
+package webserver.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.web.WebService;
+import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.response.HttpResponseHeader;
 import webserver.response.HttpResponseStatusLine;
