@@ -1,4 +1,4 @@
-package webserver;
+package webserver.manage;
 
 import webserver.io.RequestIO;
 import webserver.io.RequestInput;

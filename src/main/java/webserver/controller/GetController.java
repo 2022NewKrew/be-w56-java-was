@@ -3,12 +3,11 @@ package webserver.controller;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestFile;
+import webserver.manage.RequestFile;
 import webserver.RequestHandler;
-import webserver.RequestParser;
+import webserver.manage.RequestParser;
 
 import java.io.*;
-import java.util.Map;
 
 public class GetController implements MethodController {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
