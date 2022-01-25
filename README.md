@@ -1,6 +1,34 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
+# 2022.01.25 TIL
+### Socket.InputStream을 close하면, Socket도 close된다.
+따라서 다음과 같이 작성할 수 없다
+```java
+try (in = socket.getIn()) {
+    ...
+} catch ...
+
+try (out = socket.getOut()) {
+   ...
+} catch ...
+```
+
+### Lambda에서는 Exception처리가 안 된다.
+따라서 다음과 같은 Wrapper function을 만들어야 한다
+```java
+void methodInQuestion() throw SomeException {
+    ...
+}
+
+void wrappedMethodInQuestion(){
+     try {
+        methodInQuestion();
+     } catch(SomeException e)...
+}
+```
+   
+
 
 # 2022.01.24 TIL
 ## 잡다한 거
