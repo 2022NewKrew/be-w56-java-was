@@ -72,16 +72,15 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    @DisplayName("[성공] requestHeader 분리")
-    public void processRequestLine() {
+    @DisplayName("[성공] HTTP Request parsing")
+    public void parseRequest() {
         // Given
         String requestLine = "GET /index.html HTTP/1.1";
         String[] tokens = requestLine.split(" ");
-        // HTTP Method
-        String method = tokens[0];
 
         // when & then
-        assertThat(method).isEqualTo("GET");
-        assertThat(tokens[1]).isEqualTo("/index.html");
+        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("method"));
+        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("uri"));
+        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("httpVersion"));
     }
 }

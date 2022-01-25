@@ -1,6 +1,7 @@
 package util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -49,11 +50,16 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static String processRequestLine(String requestLine) {
+    public static Map<String, String> parseRequest(String requestLine) {
         String[] tokens = requestLine.split(" ");
-        // HTTP Method
-        String method = tokens[0];
-        return tokens[1];
+
+        Map<String, String> requestMap = new HashMap<>();
+
+        requestMap.put("method", tokens[0]);
+        requestMap.put("url", tokens[1]);
+        requestMap.put("httpVersion", tokens[2]);
+
+        return requestMap;
     }
 
     public static Pair parseHeader(String header) {
