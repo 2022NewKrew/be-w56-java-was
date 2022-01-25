@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 public class MyRequest {
@@ -24,7 +22,7 @@ public class MyRequest {
     private static final int KEY = 0;
     private static final int VALUE = 1;
 
-    private final Map<String, String> params = new HashMap<>();
+    private final RequestParams params = new RequestParams();
     private String method;
     private String requestUrl;
     private String httpVersion;
