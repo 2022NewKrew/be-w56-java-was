@@ -2,6 +2,8 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.Map;
 
 import model.Request;
 import model.Response;
@@ -29,8 +31,6 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
-
-
 
 
 }
