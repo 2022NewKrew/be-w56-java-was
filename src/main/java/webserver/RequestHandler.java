@@ -1,11 +1,15 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.Map;
+import java.util.Objects;
 
+import http.request.HttpRequest;
+import http.request.HttpRequestHeader;
+import http.request.HttpRequestStartLine;
+import http.util.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +28,34 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+            HttpRequest httpRequest = HttpRequestUtils.parseHttpRequest(bufferedReader);
+            printRequest(httpRequest);
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            byte[] body = Files.readAllBytes(new File("./webapp" + httpRequest.getHttpRequestStartLine().getTargetUri()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    private void printRequest(HttpRequest httpRequest){
+        printHttpRequestStartLine(httpRequest.getHttpRequestStartLine());
+        printHttpRequestHeader(httpRequest.getHttpRequestHeader());
+    }
+
+    private void printHttpRequestStartLine(HttpRequestStartLine startLine){
+        log.debug("(STARTLINE)method : {}", startLine.getMethod());
+        log.debug("(STARTLINE)targetUri : {}", startLine.getTargetUri());
+        log.debug("(STARTLINE)http version : {}", startLine.getHttpVersion());
+    }
+
+    private void printHttpRequestHeader(HttpRequestHeader header){
+        Map<String, String> headers = header.getHeaders();
+        for (Map.Entry<String, String> entrySet : headers.entrySet()) {
+            log.debug("(HEADER) {} : {}", entrySet.getKey(), entrySet.getValue());
         }
     }
 
