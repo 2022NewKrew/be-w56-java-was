@@ -1,12 +1,15 @@
 package webserver;
 
+import controller.ControllerHandler;
+import http.HttpHeader;
+import http.HttpRequest;
+import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.Map;
 
 public class RequestHandler extends Thread {
@@ -24,31 +27,27 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = bufferedReader.readLine();
-            log.debug("request line : {}", line);
-            String path = HttpRequestUtils.getPathFromRequestLine(line);
+            HttpRequest httpRequest = new HttpRequest(bufferedReader);
 
-            Map<String, String> header = HttpRequestUtils.readHeader(bufferedReader);
-            String contentType = "";
-            if (header.containsKey("Accept")) {
-                contentType = header.get("Accept").split(",")[0];
-            }
+            HttpResponse response = ControllerHandler.run(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
-            File file = new File("./webapp" + path);
-            byte[] body = Files.readAllBytes(file.toPath());
-            response200Header(dos, body.length, contentType);
-            responseBody(dos, body);
-        } catch (IOException e) {
+            responseHeader(dos, response);
+            responseBody(dos, response.getBody());
+        } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
+    private void responseHeader(DataOutputStream dos, HttpResponse response) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + "\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes(response.getStatusLineText() + "\r\n");
+            dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
+
+            HttpHeader header = response.getHeader();
+            for (Map.Entry<String, String> headerLine : header.getHeaders().entrySet()) {
+                dos.writeBytes(headerLine.getKey() + ": " + headerLine.getValue() + "\r\n");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
