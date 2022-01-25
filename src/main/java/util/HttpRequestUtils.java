@@ -1,5 +1,7 @@
 package util;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,7 +48,7 @@ public class HttpRequestUtils {
             return null;
         }
 
-        return new Pair(tokens[0], tokens[1]);
+        return new Pair(tokens[0], URLDecoder.decode(tokens[1], StandardCharsets.UTF_8));
     }
 
     public static Pair parseHeader(String header) {

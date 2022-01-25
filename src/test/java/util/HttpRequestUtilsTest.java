@@ -15,7 +15,6 @@ public class HttpRequestUtilsTest {
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
         assertThat(parameters.get("password")).isNull();
-
         queryString = "userId=javajigi&password=password2";
         parameters = HttpRequestUtils.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
@@ -69,4 +68,7 @@ public class HttpRequestUtilsTest {
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
     }
+
+
+
 }
