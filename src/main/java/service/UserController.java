@@ -42,11 +42,10 @@ public class UserController {
     }
 
     private HttpResponse readStaticFile(String url) throws IOException {
-        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(HttpStatus.OK);
         HttpResponseBody responseBody = HttpResponseBody.createFromUrl(url);
-        HttpResponseHeader responseHeader = new HttpResponseHeader(url, responseBody.length());
+        HttpResponseHeader responseHeader = new HttpResponseHeader(url, HttpStatus.OK, responseBody.length());
 
-        return new HttpResponse(statusLine, responseHeader, responseBody);
+        return new HttpResponse(responseHeader, responseBody);
     }
 
     private HttpResponse createUser(HttpRequestLine requestLine) {
@@ -63,12 +62,11 @@ public class UserController {
     }
 
     private HttpResponse redirect(String redirectUrl) {
-        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(HttpStatus.FOUND);
-        HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, 0);
+        HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
         responseHeader.addKeyValue("Location", redirectUrl);
         byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
         HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
 
-        return new HttpResponse(statusLine, responseHeader, responseBody);
+        return new HttpResponse(responseHeader, responseBody);
     }
 }
