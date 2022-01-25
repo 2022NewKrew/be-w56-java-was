@@ -21,7 +21,7 @@ public class MyHttpRequest {
 
     private final RequestParams params = new RequestParams();
     private final MyHeaders headers = new MyHeaders();
-    private HttpStatus method;
+    private MyHttpStatus method;
     private String requestURI;
     private String httpVersion;
 
@@ -33,7 +33,7 @@ public class MyHttpRequest {
         log.debug("Line : {}", request);
         String[] requestInfo = request.split(" ");
 
-        this.method = HttpStatus.valueOf(requestInfo[METHOD]);
+        this.method = MyHttpStatus.valueOf(requestInfo[METHOD]);
         this.httpVersion = requestInfo[HTTP_VERSION];
 
         updateRequestUri(requestInfo[REQUEST_URI]);
@@ -97,7 +97,7 @@ public class MyHttpRequest {
         return params.get(key);
     }
 
-    public HttpStatus getMethod() {
+    public MyHttpStatus getMethod() {
         return method;
     }
 
@@ -110,6 +110,7 @@ public class MyHttpRequest {
     }
 
     public MyRequestDispatcher getRequestDispatcher(String viewPath) {
+        //TODO redirectURI 만들기
         return new MyRequestDispatcher(viewPath);
     }
 }

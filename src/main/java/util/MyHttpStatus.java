@@ -1,5 +1,5 @@
 package util;
 
-public enum HttpStatus {
+public enum MyHttpStatus {
     GET, POST
 }
