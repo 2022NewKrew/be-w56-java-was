@@ -15,6 +15,15 @@ public class UserService {
     public String join(UserAccountDTO userAccountDTO){
         userRepository.save(userAccountDTO);
 
+        validateDuplicateUserId(userAccountDTO);
+
         return userAccountDTO.getUserId();
+    }
+
+    private void validateDuplicateUserId(UserAccountDTO userAccountDTO) throws IllegalStateException{
+        userRepository.findById(userAccountDTO.getUserId())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("중복된 userId로 가입 요청을 하였습니다.");
+                });
     }
 }

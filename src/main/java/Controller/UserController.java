@@ -2,6 +2,8 @@ package Controller;
 
 import model.UserAccount;
 import model.UserAccountDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.UserService;
 
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import java.util.function.Function;
 public class UserController implements Controller{
     private final Map<String, Function<Map<String, String>, Map<String, Object>>> methodMapper;
     private final UserService userService;
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController(){
         methodMapper = new HashMap<>();
@@ -41,7 +44,11 @@ public class UserController implements Controller{
                                             .setName(name)
                                             .setEmail(email).build();
 
-        userService.join(userAccountDTO);
+        try {
+            userService.join(userAccountDTO);
+        } catch (IllegalStateException e) {
+            log.info("아이디 {}로 중복으로 회원 가입을 신청했습니다", userId);
+        }
 
         result.put("name", "redirect:/");
 
