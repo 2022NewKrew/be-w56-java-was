@@ -2,7 +2,7 @@ package controller;
 
 import webserver.model.HttpRequest;
 
-public class StaticController implements BaseController {
+public class StaticResourceController implements BaseController {
 
     @Override
     public String process(HttpRequest request) {

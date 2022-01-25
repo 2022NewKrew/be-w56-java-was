@@ -3,13 +3,13 @@ package webserver.model;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import controller.BaseController;
-import controller.StaticController;
+import controller.StaticResourceController;
 import controller.user.SignupController;
 
 public class Routes {
 
     private final Table<HttpMethod, String, BaseController> routes;
-    private final StaticController staticController = new StaticController();
+    private final StaticResourceController staticResourceController = new StaticResourceController();
 
     public Routes() {
         routes = HashBasedTable.create();
@@ -26,7 +26,7 @@ public class Routes {
             return routes.get(httpMethod, url);
         }
         if (httpMethod.equals(HttpMethod.GET)) {
-            return staticController;
+            return staticResourceController;
         }
         throw new IllegalArgumentException(String.format("지원하지 않는 요청입니다. %s %s", httpMethod.name(), url));
     }
