@@ -13,12 +13,11 @@ public class HttpResponseHeader {
                 "\r\n";
     }
 
-    public void writeToDataOutputStream(DataOutputStream dos) {
+    public void writeToDataOutputStream(DataOutputStream dos) throws IOException {
         try {
             dos.writeBytes(header);
         } catch (IOException e) {
-
+            throw new IOException("Failed to write response header to dos");
         }
-
     }
 }
