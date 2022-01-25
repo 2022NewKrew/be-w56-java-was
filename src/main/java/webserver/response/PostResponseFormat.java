@@ -31,6 +31,7 @@ public class PostResponseFormat implements ResponseFormat {
             case STATUS_404:
             case STATUS_405:
                 responseError();
+                break;
         }
         responseBody();
     }
