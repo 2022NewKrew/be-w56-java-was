@@ -1,16 +1,8 @@
 package response;
 
-public enum ContentType {
-    CSS("text/css"),
-    JS("text/javascript"),
-    HTML("text/html"),
-    DEFAULT("application/octet-stream");
-
-    private final String contentType;
-
-    ContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String value() { return contentType; }
+public class ContentType {
+    public static final String CSS = "text/css";
+    public static final String JS = "text/javascript";
+    public static final String HTML = "text/html";
+    public static final String DEFAULT = "application/octet-stream";
 }
