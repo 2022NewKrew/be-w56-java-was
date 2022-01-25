@@ -1,5 +1,7 @@
 package webserver;
 
+import db.DataBase;
+import model.User;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,17 +13,22 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class ResponseWriter {
     private static final Logger log = LoggerFactory.getLogger(ResponseWriter.class);
 
     private static final String FILE_PREFIX = "./webapp";
 
+    private static final String MIME_PLAIN_TEXT = "text/plain";
+
     private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK \r\n";
     private static final String RESPONSE_BODY_SEPARATOR = "\r\n";
 
     private static final String HEADER_VALUE_SEPARATOR = ": ";
     private static final String HEADER_NEWLINE = "\r\n";
+
+    private final DataBase dataBase = new DataBase();
 
     public void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
         final File file = new File(FILE_PREFIX + filePath);
@@ -37,9 +44,26 @@ public class ResponseWriter {
         writeErrorResponse(out);
     }
 
+    public void writeUserCreateResponse(
+            final OutputStream out,
+            final Map<String, String> parameterMap
+    )
+    {
+        final User user = new User(
+                parameterMap.get("id"),
+                parameterMap.get("password"),
+                parameterMap.get("name"),
+                parameterMap.get("email"));
+
+        dataBase.addUser(user);
+
+        final byte[] body = "OK".getBytes(StandardCharsets.UTF_8);
+        writeResponse(out, body, MIME_PLAIN_TEXT);
+    }
+
     public void writeErrorResponse(final OutputStream out) {
         byte[] body = "Error".getBytes(StandardCharsets.UTF_8);
-        writeResponse(out, body, "text/plain");
+        writeResponse(out, body, MIME_PLAIN_TEXT);
     }
 
     private void writeResponse(final OutputStream out, final byte[] body, final String mime) {
