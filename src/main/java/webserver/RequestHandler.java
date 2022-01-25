@@ -3,12 +3,15 @@ package webserver;
 import controller.Controller;
 import http.HttpRequest;
 import http.HttpResponse;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +32,12 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            List<String> requestLines = IOUtils.getRequestLines(in);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+
+            List<String> requestLines = IOUtils.getRequestLines(br);
             HttpRequest httpRequest = HttpRequest.from(requestLines);
+            String body = IOUtils.readData(br, httpRequest.getContentLength());
+            httpRequest.setParams(body);
 
             HandlerMapping handlerMapping = HandlerMapping.getInstance();
             Controller controller = handlerMapping.getController(httpRequest.getPath());

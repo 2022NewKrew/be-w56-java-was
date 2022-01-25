@@ -15,7 +15,7 @@ public class HttpRequestUtils {
 
     private static final String REQUEST_LINE_DELIMITER = " ";
     private static final String PATH_QUERY_STRING_DELIMITER = "\\?";
-    private static final String QUERY_DELIMITER = "&";
+    private static final String PARAMETER_DELIMITER = "&";
     private static final String COOKIE_DELIMITER = ";";
     private static final String ACCEPT_DELIMITER = ",";
     private static final String PARAMETER_KEY_VALUE_DELIMITER = "=";
@@ -47,7 +47,15 @@ public class HttpRequestUtils {
             return new HashMap<>();
         }
 
-        return parseValues(tokens[1], QUERY_DELIMITER);
+        return parseValues(tokens[1], PARAMETER_DELIMITER);
+    }
+
+    public static Map<String, String> parseRequestBody(String body) {
+        if (Strings.isNullOrEmpty(body)) {
+            return new HashMap<>();
+        }
+
+        return parseValues(body, PARAMETER_DELIMITER);
     }
 
     public static String parseAccepts(String accepts) {
