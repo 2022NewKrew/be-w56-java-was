@@ -1,16 +1,45 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 
+import static util.HttpMethod.getHttpMethod;
+
+@Slf4j
 public class HttpRequestUtils {
+
+    public static HttpRequest parseRequest(BufferedReader br) throws IOException {
+        HttpRequest.HttpRequestBuilder httpRequestBuilder = HttpRequest.builder();
+        parseRequestLine(br, httpRequestBuilder);
+        parseRequestHeaders(br, httpRequestBuilder);
+        return httpRequestBuilder.build();
+    }
+
+    private static void parseRequestLine(BufferedReader br,
+                                  HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
+        String requestLine = br.readLine();
+        log.info(requestLine);
+
+        String[] splitRequestLine = requestLine.split(" ");
+        httpRequestBuilder.httpMethod(getHttpMethod(splitRequestLine[0]));
+        httpRequestBuilder.uri(splitRequestLine[1]);
+        httpRequestBuilder.httpVersion(splitRequestLine[2]);
+    }
+
+    private static void parseRequestHeaders(BufferedReader br,
+                                     HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
+        // No support for any headers yet
+    }
+
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,8 +47,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param cookies 쿠키값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {

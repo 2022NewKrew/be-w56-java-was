@@ -1,7 +1,6 @@
 package webserver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import util.HttpRequest;
 import util.HttpResponse;
 import util.HttpStatus;
@@ -15,10 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static util.HttpMethod.getHttpMethod;
+import static util.HttpRequestUtils.parseRequest;
 
+@Slf4j
 public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
 
@@ -56,28 +55,5 @@ public class RequestHandler extends Thread {
         httpResponse.setHttpStatus(HttpStatus.OK);
         httpResponse.setContentType("text/" + textType + ";charset=utf-8");
         httpResponse.setBody(Files.readAllBytes(path));
-    }
-
-    private HttpRequest parseRequest(BufferedReader br) throws IOException {
-        HttpRequest.HttpRequestBuilder httpRequestBuilder = HttpRequest.builder();
-        parseRequestLine(br, httpRequestBuilder);
-        parseRequestHeaders(br, httpRequestBuilder);
-        return httpRequestBuilder.build();
-    }
-
-    private void parseRequestLine(BufferedReader br,
-                                  HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
-        String requestLine = br.readLine();
-        log.info(requestLine);
-
-        String[] splitRequestLine = requestLine.split(" ");
-        httpRequestBuilder.httpMethod(getHttpMethod(splitRequestLine[0]));
-        httpRequestBuilder.uri(splitRequestLine[1]);
-        httpRequestBuilder.httpVersion(splitRequestLine[2]);
-    }
-
-    private void parseRequestHeaders(BufferedReader br,
-                                     HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
-        // No support for any headers yet
     }
 }
