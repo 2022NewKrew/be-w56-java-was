@@ -46,6 +46,7 @@ public class RequestHandler extends Thread {
                 path = "/index.html";
             }
 
+
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File("./webapp"+path).toPath());
             response200Header(dos, body.length);
