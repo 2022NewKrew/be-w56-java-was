@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
+group 'com.kakao'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -10,18 +10,16 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'ch.qos.logback:logback-classic:1.2.10'
+    implementation 'org.apache.commons:commons-dbcp2:2.9.0'
+    implementation 'com.h2database:h2:2.1.210'
 
-    // https://mvnrepository.com/artifact/com.google.guava/guava
-    implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
-    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2
-    implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.9.0'
-    // https://mvnrepository.com/artifact/com.h2database/h2
-    implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.assertj:assertj-core:3.22.0'
 }
 
 test {
