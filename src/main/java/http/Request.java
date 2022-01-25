@@ -41,6 +41,10 @@ public class Request {
         return locator.getPath();
     }
 
+    public Map<String, String> getQueryParams() {
+        return locator.getQuery();
+    }
+
     public Version getVersion() {
         return version;
     }
