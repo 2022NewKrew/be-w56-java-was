@@ -3,13 +3,13 @@ package webserver;
 import http.HttpRequest;
 import http.HttpRequestParser;
 import http.HttpResponse;
-import http.HttpResponseRenderer;
-import http.impl.HttpFactory;
+import http.render.HttpResponseRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.BadRequestException;
 import webserver.exception.InternalServerErrorException;
 import webserver.exception.ResourceNotFoundException;
+import webserver.processor.HttpProcessor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,12 +20,13 @@ public class RequestHandlerInternal {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandlerInternal.class);
 
-    public void run(InputStream in, OutputStream out, HttpProcessor httpProcessor) throws IOException {
+    public void run(InputStream in, OutputStream out) throws IOException {
+        HttpProcessor processor = HttpFactory.httpProcessor();
         try {
             HttpRequest httpRequest = parseHttpRequest(in);
-            HttpResponse response = httpProcessor.process(httpRequest);
+            HttpResponse response = processor.process(httpRequest);
             ByteArrayOutputStream bos = renderOutputStream(response);
-            printByteArrayOutputStreamToOutputStream(bos, out);
+            bos.writeTo(out);
         }  catch (InternalServerErrorException e) {
             log.error("서버 예외 : {} ", e.getMessage());
         } catch (ResourceNotFoundException e) {
@@ -38,17 +39,12 @@ public class RequestHandlerInternal {
     }
 
     private HttpRequest parseHttpRequest(InputStream in) {
-        HttpRequestParser parser = HttpFactory.getHttpRequestParser();
+        HttpRequestParser parser = HttpFactory.httpRequestParser();
         return parser.parse(in);
     }
 
     private ByteArrayOutputStream renderOutputStream(HttpResponse httpResponse) {
-        HttpResponseRenderer httpResponseRenderer = HttpFactory.getHttpResponseRenderer();
+        HttpResponseRenderer httpResponseRenderer = HttpFactory.httpResponseRenderer();
         return httpResponseRenderer.render(httpResponse);
-    }
-
-    private void printByteArrayOutputStreamToOutputStream(ByteArrayOutputStream bos, OutputStream os) throws IOException {
-        byte[] response = bos.toByteArray();
-        os.write(response, 0, response.length);
     }
 }
