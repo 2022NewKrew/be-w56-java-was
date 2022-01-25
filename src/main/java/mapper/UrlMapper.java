@@ -6,6 +6,7 @@ import Controller.StaticController;
 import Controller.ErrorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.HttpRequest;
 
 import java.net.Socket;
 import java.util.HashMap;
@@ -30,15 +31,21 @@ public class UrlMapper {
         controllerMap.put("/fonts", staticController);
         controllerMap.put("/images", staticController);
         controllerMap.put("/favicon.ico", staticController);
-        controllerMap.put("/index.html", rootController);
+        controllerMap.put("/", rootController);
         controllerMap.put("/error", errorController);
     }
 
-    public Map<String, Object> mappingResult(String method, String url, Map<String, String> message){;
+    public Map<String, Object> mappingResult(HttpRequest httpRequest){
+        String method = httpRequest.getMethod();
+        String url = httpRequest.getUrl();
+        Map<String, String> message = httpRequest.getData();
+
         return controllerMap.get(createMappingUrl(url)).run(method, url, message);
     }
 
     private String createMappingUrl(String url){
+        url = url.split("\\?")[0];
+
         for (Map.Entry<String, Controller> map: controllerMap.entrySet()){
             String regUrl = map.getKey();
 

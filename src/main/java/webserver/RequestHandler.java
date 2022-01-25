@@ -36,38 +36,19 @@ public class RequestHandler {
                 return;
 
             String[] firstLineSplit = firstLine.split(" ");
-            String method = firstLineSplit[0];
-            String url = firstLineSplit[1];
-            String protocol = firstLineSplit[2];
-            String respondType = "";
 
-            Map<String, String> headerMap = getHeader(br);
+            HttpRequest httpRequest = new HttpRequest(firstLineSplit);
 
-            if(headerMap.containsKey("Accept"))
-                respondType = headerMap.get("Accept").split(",")[0];
+            httpRequest.reBuildHttpRequest(br);
 
-            if("/".equals(url))
-                url = "/index.html";
-
-            log.info("{} {} {}", method, url, protocol);
-            log.info("{}", headerMap);
-
-            Map<String, String> message = new HashMap<>();
-
-            if(!"GET".equals(method)){
-                int len = Integer.parseInt(headerMap.get("Content-Length"));
-                message = getRequestData(br, len);
-            }
-
-            message.put("request_url", url);
-            Map<String, Object> result = urlMapper.mappingResult(method, url, message);
+            Map<String, Object> result = urlMapper.mappingResult(httpRequest);
             String filename = (String)result.get("name");
 
             DataOutputStream dos = new DataOutputStream(out);
 
             byte[] body = Files.readAllBytes(new File("./webapp" + filename).toPath());
 
-            response200Header(dos, body.length, respondType);
+            response200Header(dos, body.length);
             responseBody(dos, body);
 
         } catch (IOException e) {
@@ -75,34 +56,9 @@ public class RequestHandler {
         }
     }
 
-    private Map<String, String> getHeader(BufferedReader br) throws IOException{
-        Map<String, String> headerMap = new HashMap<>();
-
-        String line = br.readLine();
-        while(line != null && !"".equals(line)){
-            headerMap.put(line.split(":")[0].trim(), line.split(":")[1].trim());
-            line = br.readLine();
-        }
-
-        return headerMap;
-    }
-
-    private Map<String, String> getRequestData(BufferedReader br, int len) throws IOException{
-        Map<String, String> message = new HashMap<>();
-        char[] a = new char[len];
-
-        br.read(a, 0, a.length);
-        for(String data: new String(a).split("&")){
-            message.put(data.split("=")[0], data.split("=")[1]);
-        }
-
-        return message;
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String type) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            //dos.writeBytes("Content-Type: " + type + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
