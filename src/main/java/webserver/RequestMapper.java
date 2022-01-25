@@ -46,6 +46,8 @@ public class RequestMapper {
         }
         try {
             requestMap.get(path).handle(in, dos);
+        } catch (IllegalArgumentException e) {
+            response400BadRequest(dos, e);
         } catch (Exception e) {
             response500InternalServerError(dos);
         }
@@ -73,6 +75,18 @@ public class RequestMapper {
 
         MyHttpResponse response = MyHttpResponse.builder(dos)
                 .status(HttpStatus.NOT_FOUND)
+                .body(body)
+                .build();
+
+        response.writeBytes();
+        response.flush();
+    }
+
+    private static void response400BadRequest(DataOutputStream dos, Exception e) {
+        byte[] body = ("400 - BAD REQUEST! - " + e.getMessage()).getBytes();
+
+        MyHttpResponse response = MyHttpResponse.builder(dos)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(body)
                 .build();
 
