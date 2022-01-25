@@ -13,8 +13,19 @@
    - `MyHttpResponse` 의 경우 빌더 패턴을 적용해보았습니다. (각각의 응답을 간단히 처리하기 위함)
    - `RequestMappingInfo` 의 경우 스프링 `@RequestMapping` 을 흉내내보았습니다. (추가적인 url 매핑 정보를 간단하게 설정하기 위함)
 
-# 새롭게 알게 된 내용 & 구현 중 학습하게 된 내용
-- MIME
-- java.net 패키지
-- ServerSocket 클래스
-- InputStream, OutputStream 클래스들
+- __새롭게 알게 된 내용 & 구현 중 학습하게 된 내용__
+   - MIME
+   - java.net 패키지
+   - ServerSocket 클래스
+   - InputStream, OutputStream 클래스들
+
+# 구현 2단계
+- [x] 요구사항 2: GET 으로 회원가입 기능 구현
+   - 유저 회원가입 요청을 처리하기 위한 `UserCreateRequest` 클래스 추가
+   - `MyHttpResponse` 에서 response header 값도 추가할 수 있도록 구현
+   - 모든 정적 `.html` 파일 또한 추가적인 매핑이 없어도 요청에 응답하도록 변경
+   - 400, 500 예외 처리 추가
+   - response writeBytes() & flush() 메서드를 `RequeestHandler` 에서 처리하도록 변경
+
+- __새롭게 알게 된 내용 & 구현 중 학습하게 된 내용__
+   - redirect response
