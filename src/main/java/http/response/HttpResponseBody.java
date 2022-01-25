@@ -13,7 +13,7 @@ public class HttpResponseBody {
         this.body = body;
     }
 
-    public static HttpResponseBody createFromUrl(String url) throws IOException {
+    public static HttpResponseBody createFromUrl(final String url) throws IOException {
         File file = new File(STATIC_ROOT + url);
         return new HttpResponseBody(Files.readAllBytes(file.toPath()));
     }

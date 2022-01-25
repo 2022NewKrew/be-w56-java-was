@@ -1,7 +1,6 @@
 package http.response;
 
 import http.ContentType;
-import http.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,4 +35,6 @@ public class HttpResponseHeader {
             default: return ContentType.DEFAULT;
         }
     }
+
+    public String getHeader() { return header; }
 }

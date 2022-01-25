@@ -1,7 +1,7 @@
 package webserver;
 
 import http.HttpStatus;
-import http.request.HttpRequestLine;
+import http.request.HttpRequest;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
 import org.slf4j.Logger;
@@ -28,18 +28,11 @@ public class RequestHandler extends Thread {
              InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
              BufferedReader br = new BufferedReader(isr);
              DataOutputStream dos = new DataOutputStream(out);) {
+            
+            HttpRequest request = HttpRequest.readWithBufferedReader(br);
 
-            String line = br.readLine();
-            HttpRequestLine requestLine = HttpRequestLine.parseRequestLine(line);
-
-            while (!"".equals(line)) {
-                log.debug(line);
-
-                line = br.readLine();
-            }
-
-            HttpResponseBody responseBody = HttpResponseBody.createFromUrl(requestLine.url());
-            HttpResponseHeader responseHeader = new HttpResponseHeader(requestLine.url(), HttpStatus.OK, responseBody.length());
+            HttpResponseBody responseBody = HttpResponseBody.createFromUrl(request.line().url());
+            HttpResponseHeader responseHeader = new HttpResponseHeader(request.line().url(), HttpStatus.OK, responseBody.length());
 
             responseHeader.writeToDataOutputStream(dos);
             responseBody.writeToDataOutputStream(dos);

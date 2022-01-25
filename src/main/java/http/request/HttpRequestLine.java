@@ -20,7 +20,7 @@ public class HttpRequestLine {
     /**
      * @param 요청 (GET /index.html HTTP/1.1)
      */
-    public static HttpRequestLine parseRequestLine(String request) {
+    public static HttpRequestLine parseRequestLine(final String request) {
         String[] tokens = request.split(" ");
         Map<String, String> queryString = null;
 
