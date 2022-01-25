@@ -14,12 +14,14 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.Map;
 
+import static webserver.WebServer.DEFAULT_RESOURCES_DIR;
+
 public enum RequestMappingInfo {
 
     ROOT("/") {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
-            byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
+            byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + "/index.html").toPath());
 
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)

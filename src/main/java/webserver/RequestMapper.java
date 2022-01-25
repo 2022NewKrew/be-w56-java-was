@@ -16,8 +16,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static webserver.WebServer.DEFAULT_RESOURCES_DIR;
+
 public class RequestMapper {
-    private static final String DEFAULT_RESOURCES_DIR = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
     private static final Map<String, RequestMappingInfo> requestMap;
 
