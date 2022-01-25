@@ -37,5 +37,7 @@ public class User {
         email = builder.email;
     }
 
-
+    public String getUserId() {
+        return userId;
+    }
 }

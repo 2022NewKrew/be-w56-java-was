@@ -1,13 +1,13 @@
 package dto;
 
-public class UserSignUp {
+public class UserSignUpDto {
 
     private final String userId;
     private final String password;
     private final String name;
     private final String email;
 
-    public UserSignUp(String userId, String password, String name, String email) {
+    public UserSignUpDto(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
