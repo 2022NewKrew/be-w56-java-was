@@ -27,11 +27,11 @@ public class HeadersTest {
 
     @Test
     void notEqualsHeaders_WhenKeySetDifferent() {
-        Map<FieldName, FieldValue> compare = new HashMap<>();
-        compare.put(new FieldName("Host"), new FieldValue("localhost:8080"));
-        compare.put(new FieldName("Connection"), new FieldValue("keep-alive"));
+        Map<String, String> compare = new HashMap<>();
+        compare.put("Host", "localhost:8080");
+        compare.put("Connection", "keep-alive");
 
-        assertThat(new Headers(map)).isNotEqualTo(new Headers(compare));
+        assertThat(new Headers(map)).isNotEqualTo(Headers.create(compare));
     }
 
     @Test

@@ -24,4 +24,8 @@ public enum HttpVersion {
         }
         return findMethod.get();
     }
+
+    public String getValue() {
+        return value;
+    }
 }

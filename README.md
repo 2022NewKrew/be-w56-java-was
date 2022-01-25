@@ -46,13 +46,13 @@ CRLF
   - [x] 2째줄 ~ CRLF 전까지는 header-field 이다.
   - [x] 일반적으로 body는 없다.
 - [ ] response 메시지를 만들어 보낸다.
-  - [ ] request-line의 path에 맞는 html 파일을 찾는다.
-  - [ ] 파일이 있다면 response-line의 status-code를 200으로 reason-phase를 OK로 설정한다.
-    - [ ] html 파일을 byte로 변환해서 body에 담는다.
+  - [x] request-line의 path에 맞는 파일을 찾는다.
+  - [x] 파일이 있다면 response-line의 status-code를 200으로 reason-phase를 OK로 설정한다.
+    - [x] html 파일을 byte로 변환해서 body에 담는다.
   - [ ] 파일이 없다면 response-line의 status-code를 404로 reason-phase를 NotFound로 설정한다.
     - [ ] error page를 던진다...?
   - [ ] response header의 accept를 참고해서 header의 content-type을 세팅한다.
-  - [ ] header에 content-length를 추가한다.
+  - [x] header에 content-length를 추가한다.
 
 ## 도메인 요구사항
 ### message
@@ -66,8 +66,8 @@ CRLF
   - [x] method, request-target, http-version으로 이루어져 있다.
   - [x] 모두 null일 수 없다.
 - [ ] response인 경우 status-line
-  - [ ] http-version, status-code, reason-phase로 이루어져있다.
-  - [ ] 모두 null일 수 없다.
+  - [x] http-version, status-code, reason-phase로 이루어져있다.
+  - [x] 모두 null일 수 없다.
 
 ### request-target
 

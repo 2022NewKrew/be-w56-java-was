@@ -12,6 +12,10 @@ public class Header {
         this.fieldValue = fieldValue;
     }
 
+    public static Header create(String fieldName, String fieldValue) {
+        return new Header(new FieldName(fieldName), new FieldValue(fieldValue));
+    }
+
     public static Header create(String[] tokens) {
         return new Header(new FieldName(tokens[0]), new FieldValue(tokens[1]));
     }

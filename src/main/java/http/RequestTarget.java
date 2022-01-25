@@ -13,17 +13,17 @@ public class RequestTarget {
     }
 
     private void validateNull(String path) {
-        if(Strings.isNullOrEmpty(path)) {
+        if (Strings.isNullOrEmpty(path)) {
             throw new IllegalArgumentException();
         }
     }
 
     @Override
     public boolean equals(Object object) {
-        if (this == object){
+        if (this == object) {
             return true;
         }
-        if (object == null || getClass() != object.getClass()){
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
         RequestTarget requestTarget = (RequestTarget) object;
@@ -35,8 +35,11 @@ public class RequestTarget {
         return Objects.hash(path);
     }
 
-    @Override
-    public String toString() {
-        return path;
+    public String findPath() {
+        String path = this.path;
+        if (this.path.equals("/")) {
+            path += "index.html";
+        }
+        return "./webapp" + path;
     }
 }

@@ -1,5 +1,8 @@
 package http;
 
+import java.io.File;
+import java.io.IOException;
+
 public class RequestMessage {
     private final RequestLine requestLine;
     private final Headers headers;
@@ -14,5 +17,9 @@ public class RequestMessage {
         if(requestLine == null || headers == null) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public File findStaticFile() {
+        return requestLine.findStaticFile();
     }
 }

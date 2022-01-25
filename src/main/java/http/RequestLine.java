@@ -1,5 +1,6 @@
 package http;
 
+import java.io.File;
 import java.util.Objects;
 
 public class RequestLine {
@@ -47,11 +48,7 @@ public class RequestLine {
         return Objects.hash(method, requestTarget, version);
     }
 
-    public boolean equalMethod(HttpMethod method) {
-        return this.method.equals(method);
-    }
-
-    public RequestTarget getPath() {
-        return requestTarget;
+    public File findStaticFile() {
+        return new File(requestTarget.findPath());
     }
 }

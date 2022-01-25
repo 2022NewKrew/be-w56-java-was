@@ -1,10 +1,12 @@
 package util;
 
+import http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,5 +42,41 @@ public class IOUtils {
             log.debug("request : {}", line);
         }
         return header;
+    }
+
+    public static void writeResponse(DataOutputStream dos, ResponseMessage response) {
+        writeStatusLine(dos, response.getStatusLine());
+        writeHeaders(dos, response.getHeaders());
+        write(dos, "\r\n");
+        writeBody(dos, response.getBody());
+    }
+
+    private static void writeStatusLine(DataOutputStream dos, StatusLine statusLine) {
+        HttpStatus status = statusLine.getStatus();
+        IOUtils.write(dos, String.format("%s %s %s\r\n", statusLine.getVersion().getValue(), status.getStatusCode(), status.getReasonPhase()));
+    }
+
+    private static void writeHeaders(DataOutputStream dos, Headers headers) {
+        headers.getHeaders()
+                .forEach((key, value) -> IOUtils.write(dos, String.format("%s: %s\r\n", key, value)));
+
+    }
+
+    private static void write(DataOutputStream dos, String message) {
+        try {
+            dos.writeBytes(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writeBody(DataOutputStream dos, Body body) {
+        try {
+            byte[] bytes = body.getBytes();
+            dos.write(bytes, 0, bytes.length);
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
