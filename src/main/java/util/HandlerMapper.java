@@ -3,6 +3,7 @@ package util;
 import model.User;
 import network.HttpMethod;
 import network.HttpRequest;
+import network.HttpStatus;
 import network.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +37,12 @@ public class HandlerMapper {
 
     private static ResponseBody indexView() throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
-        return new ResponseBody("200", body);
+        return new ResponseBody(HttpStatus.OK, body);
     }
 
     private static ResponseBody signupView() throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp/user/form.html").toPath());
-        return new ResponseBody("200", body);
+        return new ResponseBody(HttpStatus.OK, body);
     }
 
     private static ResponseBody signup(Map<String, String> queryString) throws IOException {
@@ -54,11 +55,11 @@ public class HandlerMapper {
         log.debug(user.toString());
 
         byte[] body = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
-        return new ResponseBody("200", body);
+        return new ResponseBody(HttpStatus.OK, body);
     }
 
     private static ResponseBody defaultPath(String path) throws IOException{
         byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
-        return new ResponseBody("200", body);
+        return new ResponseBody(HttpStatus.OK, body);
     }
 }

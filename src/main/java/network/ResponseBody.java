@@ -2,17 +2,17 @@ package network;
 
 public class ResponseBody {
 
-    private final String status;
+    private final HttpStatus httpStatus;
     private final byte[] body;
     private String location;
 
-    public ResponseBody(String status, byte[] body) {
-        this.status = status;
+    public ResponseBody(HttpStatus httpStatus, byte[] body) {
+        this.httpStatus = httpStatus;
         this.body = body;
     }
 
-    public String getStatus() {
-        return status;
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
     public byte[] getBody() {
