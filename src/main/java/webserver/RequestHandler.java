@@ -32,7 +32,7 @@ public class RequestHandler extends Thread {
                 line = bufferedReader.readLine();
                 HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
                 if (pair.getKey().equals("Accept")) {
-                    contentType = pair.getValue().split(",")[0];
+                    contentType = HttpRequestUtils.contentNegotation(pair.getValue());
                     break;
                 }
             }

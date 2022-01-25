@@ -10,6 +10,37 @@ import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
 
+    public static String contentNegotation (String accept) {
+        String mime = accept.split(",")[0];
+        if (mime.contains(";")) {
+            mime = mime.split(";")[0];
+        }
+
+        String[] mimeType = mime.split("/");
+        String type = mimeType[0];
+        String subType = mimeType[1];
+        if (type.equals("*")) {
+            return "text/plain";
+        }
+
+        if (subType.equals("*")) {
+            switch (type) {
+                case "text" : subType = "plain";
+                break;
+                case "image" : subType = "png";
+                break;
+                case "audio" : subType = "midi";
+                break;
+                case "video" : subType = "webm";
+                break;
+                case "application" : subType = "json";
+                break;
+            }
+        }
+
+        return type + "/" + subType;
+    }
+
     public static Map<String, String> parseRequestLine(String requestLine) {
         Map<String, String> tokenMap = new HashMap<>();
         String[] tokens = requestLine.split(" ");
