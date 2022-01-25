@@ -84,8 +84,8 @@ public class PostController implements MethodController {
             User user = new User(userId, password, name, email);
             log.info(user.toString());
             DataBase.addUser(user);
-
             rf.sendResponse(ResponseCode.STATUS_303);
+
             return;
         } catch (Exception e) {
             log.error(e.getMessage());
