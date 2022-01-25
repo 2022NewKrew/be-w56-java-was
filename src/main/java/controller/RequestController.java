@@ -37,6 +37,21 @@ public class RequestController {
             return responseHeader;
         }
 
+        if(uri.equals("/user/login")
+                && method.equals("POST")){
+            String id = requestHeader.getParameter("userId");
+            String password = requestHeader.getParameter("password");
+            responseHeader.setStatusCode(302);
+            if(DataBase.isExistUserId(id) &&
+                    DataBase.findUserById(id).getPassword().equals(password)){
+                responseHeader.setStatusCode(310);
+                responseHeader.setUri("/index.html");
+                return responseHeader;
+            }
+            responseHeader.setUri("/user/login_failed.html");
+            return responseHeader;
+        }
+
         if(!uri.contains(".")){
             uri = uri + ".html";
         }

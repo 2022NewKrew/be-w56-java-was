@@ -14,6 +14,10 @@ public class DataBase {
         users.put(user.getUserId(), user);
     }
 
+    public static boolean isExistUserId(String userId){
+        return users.containsKey(userId);
+    }
+
     public static User findUserById(String userId) {
         return users.get(userId);
     }

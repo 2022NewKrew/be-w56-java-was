@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 import controller.RequestController;
+import db.DataBase;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.ResponseHeader;
@@ -59,7 +60,10 @@ public class RequestHandler extends Thread {
             response200Header(dos, lengthOfBodyContnet, responseHeader);
         }
         if(responseHeader.getStatusCode() == 302){
-            response302Header(dos, lengthOfBodyContnet, responseHeader);
+            response302Header(dos, responseHeader);
+        }
+        if(responseHeader.getStatusCode() == 310){
+            response302LoginSuccess(dos,responseHeader);
         }
     }
 
@@ -74,13 +78,25 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void response302Header(DataOutputStream dos, int lengthOfBodyContent, ResponseHeader responseHeader){
+    private void response302Header(DataOutputStream dos, ResponseHeader responseHeader){
         try{
             log.info("302: " + responseHeader.getUri());
             dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
             dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302LoginSuccess(DataOutputStream dos, ResponseHeader responseHeader){
+        try{
+            log.info("Login 302: " + responseHeader.getUri());
+            dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
+            dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+            dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
+            dos.writeBytes("\r\n");
+        }catch(IOException e){
             log.error(e.getMessage());
         }
     }
