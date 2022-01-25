@@ -23,7 +23,10 @@ public class Routes {
         if (routes.contains(httpMethod, url)) {
             return routes.get(httpMethod, url);
         }
-        return staticController;
+        if (httpMethod.equals(HttpMethod.GET)) {
+            return staticController;
+        }
+        throw new IllegalArgumentException(String.format("지원하지 않는 요청입니다. %s %s", httpMethod.name(), url));
     }
 
 }
