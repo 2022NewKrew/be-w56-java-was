@@ -33,6 +33,7 @@
     - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
   - Header 에 Location 정보를 입력하면, 클라이언트는 해당 Location 을 GET 으로 요청 ( redirect )
   - 클라이언트의 URL 도 함께 바뀌게되고, 해당 페이지가 허용하는 경로 내에선 Path 정보만으로 자유롭게 이동도 가능
+- interface 의 default Method 는 별도의 접근 지정자 선언이 불가능
 
 # 참고 사이트
 - HTTP Header

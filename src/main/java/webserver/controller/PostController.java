@@ -1,5 +1,6 @@
 package webserver.controller;
 
+import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +43,20 @@ public class PostController implements MethodController {
         String password = rp.getBody("password");
         String name = rp.getBody("name");
         String email = rp.getBody("email");
-        User user = new User(userId,password,name,email);
-
-        log.info(user.toString());
 
         ResponseFormat rf = new PostResponseFormat(os, "/");
-        rf.sendResponse(ResponseCode.STATUS_302);
+
+        try {
+            User user = new User(userId, password, name, email);
+            log.info(user.toString());
+            DataBase.addUser(user);
+
+            rf.sendResponse(ResponseCode.STATUS_302);
+            return;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
+        rf.sendResponse(ResponseCode.STATUS_405);
     }
 }

@@ -10,12 +10,12 @@ public class ResponseFile {
     File file;
 
     private static final String ROOT_DIRECTORY = "./webapp";
-    public static final String ERROR_FILE = "/index.html";
+    public static final String ERROR_FILE = "/error/error.html";
 
-    public ResponseFile(String filePath) throws RuntimeException {
-        File newFile = new File(ROOT_DIRECTORY + filePath);
+    public ResponseFile(String filePath) {
+        File newFile = new File(ROOT_DIRECTORY+filePath);
         if(!checkFileIsExist(newFile)) {
-            throw new RuntimeException();
+            newFile = new File(ROOT_DIRECTORY+ERROR_FILE);
         }
         this.file = newFile;
     }
