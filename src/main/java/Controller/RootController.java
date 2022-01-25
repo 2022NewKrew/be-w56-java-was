@@ -23,21 +23,6 @@ public class RootController implements Controller{
     }
 
     @Override
-    public Map<String, String> parseUrlInfo(String url, Map<String, String> message) {
-        String[] split = url.split("\\?");
-        if(split.length == 1)
-            return message;
-
-        url = split[1];
-
-        for(String data: url.split("&")){
-            message.put(data.split("=")[0], data.split("=")[1]);
-        }
-
-        return message;
-    }
-
-    @Override
     public Function<Map<String, String>, Map<String, Object>> decideMethod(String method, String url) {
         url = method + " " + url;
 

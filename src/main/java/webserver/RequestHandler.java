@@ -46,6 +46,11 @@ public class RequestHandler {
 
             DataOutputStream dos = new DataOutputStream(out);
 
+            if(filename.matches("redirect:.*")){
+                response302Header(dos, filename.substring(9));
+                return;
+            }
+
             byte[] body = Files.readAllBytes(new File("./webapp" + filename).toPath());
 
             response200Header(dos, body.length);
@@ -60,6 +65,17 @@ public class RequestHandler {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+            dos.flush();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos, String url) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 \r\n");
+            dos.writeBytes("Location: " + url + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

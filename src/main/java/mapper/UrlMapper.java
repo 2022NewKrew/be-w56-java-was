@@ -4,6 +4,7 @@ import Controller.Controller;
 import Controller.RootController;
 import Controller.StaticController;
 import Controller.ErrorController;
+import Controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.HttpRequest;
@@ -19,20 +20,24 @@ public class UrlMapper {
     private final Controller rootController;
     private final Controller staticController;
     private final Controller errorController;
+    private final Controller userController;
 
     public UrlMapper(){
         controllerMap = new LinkedHashMap<String, Controller>();
         rootController = new RootController();
         staticController = new StaticController();
         errorController = new ErrorController();
+        userController = new UserController();
 
         controllerMap.put("/js", staticController);
         controllerMap.put("/css", staticController);
         controllerMap.put("/fonts", staticController);
         controllerMap.put("/images", staticController);
         controllerMap.put("/favicon.ico", staticController);
-        controllerMap.put("/", rootController);
         controllerMap.put("/error", errorController);
+        controllerMap.put("/users", userController);
+
+        controllerMap.put("/", rootController);
     }
 
     public Map<String, Object> mappingResult(HttpRequest httpRequest){

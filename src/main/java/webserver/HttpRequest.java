@@ -26,7 +26,7 @@ public class HttpRequest {
         bringHeader(br);
 
         if(!"GET".equals(method)){
-            int len = Integer.parseInt(data.get("Content-Length"));
+            int len = Integer.parseInt(header.get("Content-Length"));
             data.putAll(getRequestData(br, len));
         }
     }

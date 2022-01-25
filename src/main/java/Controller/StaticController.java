@@ -25,11 +25,6 @@ public class StaticController implements Controller{
     }
 
     @Override
-    public Map<String, String> parseUrlInfo(String url, Map<String, String> message) {
-        return message;
-    }
-
-    @Override
     public Function<Map<String, String>, Map<String, Object>> decideMethod(String method, String url) {
         url = method + " /";
 
