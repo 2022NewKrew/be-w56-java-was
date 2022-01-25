@@ -33,7 +33,9 @@ public class Uri {
     public boolean isUriFile() {
         return resourceUri.endsWith(".html")
             || resourceUri.endsWith(".css")
-            || resourceUri.endsWith(".js");
+            || resourceUri.endsWith(".js")
+            || resourceUri.endsWith(".ttf")
+            || resourceUri.endsWith(".ico");
     }
 
     public String getResourceUri() {

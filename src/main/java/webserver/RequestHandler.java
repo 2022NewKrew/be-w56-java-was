@@ -29,14 +29,17 @@ public class RequestHandler implements Runnable {
 
     @Override
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}",
+            connection.getInetAddress(),
+            connection.getPort());
         logger.debug("쓰레드 이름 : {}", Thread.currentThread().getName());
 
         try (final InputStream inputStream = connection.getInputStream();
             final OutputStream outputStream = connection.getOutputStream();
-            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            final BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            final BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(inputStream));
+            final BufferedWriter bufferedWriter = new BufferedWriter(
+                new OutputStreamWriter(outputStream))) {
 
             HttpResponse response = messageConvert(bufferedReader);
 
@@ -54,11 +57,12 @@ public class RequestHandler implements Runnable {
         HttpResponse response = new HttpResponse();
         try {
             final HttpRequest httpRequest = HttpRequestConverter.createdRequest(bufferedReader);
+            logger.info("요청한 url : {}", httpRequest.getUri());
             Controller controller = REQUEST_MAPPING.getController();
             controller.service(httpRequest, response);
             return response;
         } catch (Exception exception) {
-            logger.error("알수없는 에러가 발생 : {}", exception.getMessage());
+            logger.error("알수없는 에러가 발생", exception);
             response.setErrorResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             return response;
         }
