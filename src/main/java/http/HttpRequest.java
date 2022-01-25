@@ -41,4 +41,8 @@ public class HttpRequest {
         String accepts = headers.getOrDefault("Accept", "");
         return HttpRequestUtils.parseAccepts(accepts);
     }
+
+    public Map<String, String> getQueries() {
+        return queries;
+    }
 }
