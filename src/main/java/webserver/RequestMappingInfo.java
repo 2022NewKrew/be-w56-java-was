@@ -29,7 +29,7 @@ public enum RequestMappingInfo {
                     .build();
         }
     },
-    SIGN_UP("/create") {
+    SIGN_UP("/user/create") {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             URI uri = request.uri();
