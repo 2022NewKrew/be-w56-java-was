@@ -1,14 +1,21 @@
 package webserver;
 
-import com.google.common.base.Strings;
+import db.DB;
+import http.HttpHeaders;
+import http.request.HttpRequest;
+import http.request.HttpRequestMethod;
+import http.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
-import webserver.request.HttpRequest;
-import webserver.request.HttpRequestMethod;
+import model.User;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class RequestHandler extends Thread {
@@ -30,10 +37,23 @@ public class RequestHandler extends Thread {
              BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
             HttpRequest request = readHttpRequest(br);
-            log.debug(request.toString());
+            String queryStr = request.getUri().split("\\?", 2)[1];
+            Map<String, String> queryParams = HttpRequestUtils.parseQueryString(queryStr);
+            List<String> userProperties = List.of("userId", "password", "name", "email");
+
+            if (request.getUri().startsWith("/user/create") && userProperties.stream().allMatch(queryParams::containsKey)) {
+                User user = User.builder()
+                        .userId(queryParams.get("userId"))
+                        .password(queryParams.get("password"))
+                        .name(queryParams.get("name"))
+                        .email(queryParams.get("email"))
+                        .build();
+
+                DB.addUser(user);
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + request.getTarget()).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + request.getUri()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -48,35 +68,23 @@ public class RequestHandler extends Thread {
 
         line = br.readLine();
         tokens = line.split(" ");
+
         if (tokens.length != 3) {
             throw new IOException();
         }
 
-        HttpRequest request = HttpRequest.builder()
+        HttpHeaders headers = HttpRequestUtils.parseHttpHeaders(br);
+
+        return HttpRequest.builder()
                 .method(HttpRequestMethod.valueOf(tokens[0]))
-                .target(tokens[1])
-                .version(tokens[2])
+                .uri(tokens[1])
+                .protocolVersion(tokens[2])
+                .headers(headers)
                 .build();
-
-        // TODO: body 있는 경우 처리 추가
-        while (true) {
-            line = br.readLine();
-            if (Strings.isNullOrEmpty(line)) {
-                break;
-            }
-
-            tokens = line.split(": ");
-            if (tokens.length != 2) {
-                throw new IOException();
-            }
-
-            request.addHeader(tokens[0], tokens[1]);
-        }
-
-        return request;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+        // TODO: content-type
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
