@@ -10,9 +10,9 @@ import webserver.model.HttpRequest;
 
 public class SignupController implements BaseController {
 
-    private static Logger log = LoggerFactory.getLogger(SignupController.class);
+    private static final Logger log = LoggerFactory.getLogger(SignupController.class);
 
-    private SignupService signupService = new SignupService();
+    private final SignupService signupService = new SignupService();
 
     @Override
     public String process(HttpRequest request) {
