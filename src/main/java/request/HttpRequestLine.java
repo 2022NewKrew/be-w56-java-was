@@ -11,5 +11,5 @@ public class HttpRequestLine {
         this.httpVersion = httpVersion;
     }
 
-    public String getUrl() { return url; }
+    public String url() { return url; }
 }

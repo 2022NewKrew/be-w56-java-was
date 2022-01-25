@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import response.HttpResponseBody;
 import response.HttpResponseHeader;
 import util.HttpRequestUtils;
-import util.HttpResponseUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -39,8 +38,8 @@ public class RequestHandler extends Thread {
                 line = br.readLine();
             }
 
-            HttpResponseBody responseBody = HttpResponseBody.createFromUrl(requestLine.getUrl());
-            HttpResponseHeader responseHeader = new HttpResponseHeader(HttpResponseUtils.contentTypeOf(requestLine.getUrl()), responseBody.length());
+            HttpResponseBody responseBody = HttpResponseBody.createFromUrl(requestLine.url());
+            HttpResponseHeader responseHeader = new HttpResponseHeader(requestLine.url(), responseBody.length());
 
             responseHeader.writeToDataOutputStream(dos);
             responseBody.writeToDataOutputStream(dos);
