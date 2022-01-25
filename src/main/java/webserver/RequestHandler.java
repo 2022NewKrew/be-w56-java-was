@@ -37,8 +37,8 @@ public class RequestHandler extends Thread {
     }
 
     private void sendResponse(DataOutputStream dos, HttpResponse httpResponse){
-        switch (httpResponse.getStatusLine().getStatusCode()){
-            case "200":{
+        switch (httpResponse.getStatusLine().getStatus()){
+            case OK :{
                 HttpResponseMapper.response200Header(dos, httpResponse);
                 HttpResponseMapper.responseBody(dos, httpResponse.getBody());
             }

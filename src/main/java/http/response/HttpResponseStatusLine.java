@@ -1,30 +1,22 @@
 package http.response;
 
+import http.HttpStatus;
+
 public class HttpResponseStatusLine {
     private final String version;
-    private final String statusCode;
-    private final String statusText;
+    private final HttpStatus status;
 
-    public HttpResponseStatusLine(String version, String statusCode, String statusText) {
+    public HttpResponseStatusLine(String version, HttpStatus status) {
         this.version = version;
-        this.statusCode = statusCode;
-        this.statusText = statusText;
+        this.status = status;
     }
 
-    public String getProtocol() {
-        return version;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public String getStatusText() {
-        return statusText;
+    public HttpStatus getStatus() {
+        return status;
     }
 
     @Override
     public String toString() {
-        return version + " " + statusCode + " " + statusText;
+        return version + " " + status.getCode() + " " + status.getText();
     }
 }

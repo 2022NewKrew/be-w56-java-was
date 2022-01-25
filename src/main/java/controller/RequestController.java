@@ -1,5 +1,6 @@
 package controller;
 
+import http.HttpStatus;
 import http.request.HttpRequest;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
@@ -35,7 +36,7 @@ public class RequestController {
     public static HttpResponse signUp(HttpRequestLine httpRequestLine) throws IOException {
         UserService.addUser(httpRequestLine.getUrl());
 
-        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), "200", "OK");
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), HttpStatus.OK);
         HttpResponseHeaders headers = new HttpResponseHeaders();
         HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp/index.html").toPath()));
 
@@ -43,7 +44,7 @@ public class RequestController {
     }
 
     public static HttpResponse others(HttpRequestLine httpRequestLine) throws IOException {
-        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), "200", "OK");
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), HttpStatus.OK);
         HttpResponseHeaders headers = new HttpResponseHeaders();
         HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp" + httpRequestLine.getUrl()).toPath()));
 
