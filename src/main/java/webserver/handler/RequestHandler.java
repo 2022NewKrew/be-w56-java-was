@@ -31,6 +31,7 @@ public class RequestHandler extends Thread {
             Map<String, String> headerMap = HttpServletRequestUtils.readHeader(br);
             DataOutputStream dos = new DataOutputStream(out);
 
+            //TODO : /user/create 같은 URI 정보들 따로 enum 같은 것으로 만들 것.
             if (requestInfo.getUrl().contains("/user/create")) {
                 UserController.mapping(requestInfo, headerMap, dos);
             } else {

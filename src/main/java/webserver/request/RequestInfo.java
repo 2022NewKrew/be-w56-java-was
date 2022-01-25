@@ -6,12 +6,13 @@ import lombok.*;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @AllArgsConstructor
+@ToString
 public class RequestInfo{
     @NonNull
     private String method;
     @NonNull
-    private String url;
-    @NonNull
     private String protocol;
+    @NonNull
+    private String url;
     private String queryString;
 }

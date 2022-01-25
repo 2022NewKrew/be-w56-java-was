@@ -17,11 +17,11 @@ public class HttpServletRequestUtils {
     public static RequestInfo parseRequestLine(String requestLine) {
         RequestInfo requestInfo;
         String[] tokens = requestLine.split(" ");
-        String[] split = tokens[2].split("\\?", 2);
-        if(split.length > 2)
-            requestInfo = new RequestInfo(tokens[0],tokens[1],split[0],split[1]);
+        String[] split = tokens[1].split("\\?", 2);
+        if(split.length == 2)
+            requestInfo = new RequestInfo(tokens[0],tokens[2],split[0],split[1]);
         else
-            requestInfo = new RequestInfo(tokens[0],tokens[1],split[0]);
+            requestInfo = new RequestInfo(tokens[0],tokens[2],split[0]);
         return requestInfo;
     }
     public static Map<String,String> readHeader(BufferedReader br) throws IOException {
