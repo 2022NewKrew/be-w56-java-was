@@ -9,8 +9,12 @@ import controller.Controller;
 import controller.ControllerCommander;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ModelAndView;
 import view.ViewResolver;
 import webserver.config.WebConst;
+
+import static util.HttpResponseUtils.response200Header;
+import static util.HttpResponseUtils.responseBody;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,10 +29,9 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
+            DataOutputStream res = new DataOutputStream(out);
             HttpRequest httpRequest = HttpRequest.from(in);
-            createResponse(httpRequest, dos);
+            createResponse(httpRequest, res);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -36,12 +39,12 @@ public class RequestHandler extends Thread {
 
     private void createResponse(HttpRequest request, DataOutputStream dos) throws IOException {
         log.info("[REQUEST URI] - " + request.getRequestUri());
-        String requestUri = request.getRequestUri();
         try {
-            Controller controller = ControllerCommander.findController(requestUri);
-            String viewName = controller.execute(request, dos);
+            Controller controller = ControllerCommander.findController(request);
+            ModelAndView modelAndView = controller.execute(request, dos);
 
-            byte[] body = ViewResolver.render(viewName);
+            //redirect 에 따라서 조절 해야함. 다 옮기기
+            byte[] body = ViewResolver.render(modelAndView.getViewName());
 
             response200Header(dos, body.length);
             responseBody(dos, body);
@@ -56,26 +59,6 @@ public class RequestHandler extends Thread {
         while(!"".equals(line)) {
             System.out.println(line);
             line = bufferedReader.readLine();
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
         }
     }
 }

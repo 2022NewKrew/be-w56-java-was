@@ -1,23 +1,30 @@
 package controller;
 
+import util.ModelAndView;
 import webserver.HttpRequest;
 import webserver.config.WebConst;
 
 import java.io.DataOutputStream;
 
-public class MainController implements Controller{
-    @Override
-    public boolean isSupport(String url) {
-        //다 처리해주는 컨트롤러 여기서 없으면 IOException;
-        return true;
-    }
+public class MainController extends Controller{
 
+    public MainController() {
+        baseUrl = "";
+
+        //모든 GET 처리
+        runner.put("GET", (req, res) -> {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName(WebConst.URL_PREFIX + req.getRequestUri());
+            return modelAndView;
+        });
+    }
     @Override
-    public String execute(HttpRequest httpRequest, DataOutputStream dos) {
-        // method 와 url 을 가져와서 적절한 메소드 호출
-        if(httpRequest.getMethod().equals("GET")) {
-            return WebConst.URL_PREFIX + httpRequest.getRequestUri();
+    public ModelAndView execute(HttpRequest httpRequest, DataOutputStream dos) {
+        ControllerMethod controllerMethod = runner.get(httpRequest.getMethod() + httpRequest.getRequestUri());
+        if(controllerMethod == null) {
+            controllerMethod = runner.get("GET");
         }
-        return "";
+
+        return controllerMethod.run(httpRequest, dos);
     }
 }
