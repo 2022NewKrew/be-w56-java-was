@@ -2,7 +2,7 @@ package webserver.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestMap;
+import webserver.request.HttpRequest;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class StaticController implements Controller{
     private static final Logger log = LoggerFactory.getLogger(StaticController.class);
-    private static final Set<String> supportExtensions = Set.of("html", "css", "js");
+    private static final Set<String> supportExtensions = Set.of("html", "css", "js", "ico", "eot", "svg", "ttf", "woff", "woff2", "png");
     private static final String BASE_DIRECTORY = "./webapp";
 
     @Override
@@ -27,8 +27,8 @@ public class StaticController implements Controller{
     }
 
     @Override
-    public void handle(RequestMap requestMap, DataOutputStream dos) throws IOException {
-        String filePath = getFilePath((String) requestMap.getHeader("url").orElseThrow());
+    public void handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
+        String filePath = getFilePath(httpRequest.getUrl());
         log.info("return file {}", filePath);
 
         byte[] body = Files.readAllBytes(new File(filePath).toPath());

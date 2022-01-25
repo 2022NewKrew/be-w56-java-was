@@ -3,16 +3,16 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.controller.Controller;
-import webserver.controller.StaticController;
+import webserver.request.HttpRequest;
+import webserver.request.RequestReader;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final ControllerMapping controllerMapping = new ControllerMapping();
-    private static final RequestParser requestParser = new RequestParser();
+    private static final RequestReader REQUEST_READER = new RequestReader();
 
     private final Socket connection;
 
@@ -21,26 +21,22 @@ public class RequestHandler extends Thread {
     }
 
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        log.debug("New Client Connect! Connected IP : {}, Port : {}"
+                , connection.getInetAddress(), connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            RequestMap requestMap = readRequestHeader(in);
-            createResponse(requestMap, out);
-        } catch (IOException e) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+             DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
+
+            HttpRequest httpRequestMap = REQUEST_READER.read(br);
+            getController(httpRequestMap).handle(httpRequestMap, dos);
+        } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private RequestMap readRequestHeader(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        return requestParser.parse(br);
-    }
-
-    private void createResponse(RequestMap requestMap, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-        String url = (String) requestMap.getHeader("url").orElseThrow();
-        Controller controller = controllerMapping.getController(url).orElseThrow();
-        controller.handle(requestMap, dos);
+    private Controller getController(HttpRequest httpRequest){
+        String url = httpRequest.getUrl();
+        return controllerMapping.getController(url).orElseThrow();
     }
 }
