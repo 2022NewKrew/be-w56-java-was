@@ -17,7 +17,9 @@ public class RequestController {
     public static HttpResponse controlRequest(HttpRequest httpRequest) {
         HttpResponse httpResponse = new HttpResponse();
         String uri = httpRequest.getPath();
+        String version = httpRequest.getVersion();
 
+        httpResponse.setVersion(version);
         httpResponse.setUri(uri);
         httpResponse.setStatusCode(HttpStatus.OK);
         httpResponse.setContentType(MIME.parse(uri));

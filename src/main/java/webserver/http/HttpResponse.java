@@ -13,9 +13,14 @@ public class HttpResponse {
     private static final String CRLF = "\r\n";
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
+    private String version;
     private String uri;
     private HttpStatus statusCode;
     private String contentType;
+
+    public String getVersion() {
+        return version;
+    }
 
     public String getUri() {
         return uri;
@@ -27,6 +32,10 @@ public class HttpResponse {
 
     public String getContentType() {
         return contentType;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public void setUri(String uri) {
@@ -53,7 +62,7 @@ public class HttpResponse {
 
     private void responseHeader(DataOutputStream dos, int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 " + statusCode + CRLF);
+            dos.writeBytes(version + " " + statusCode + CRLF);
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8" + CRLF);
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + CRLF);
             dos.writeBytes(CRLF);
