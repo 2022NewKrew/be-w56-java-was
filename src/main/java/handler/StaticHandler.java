@@ -1,4 +1,4 @@
-package router;
+package handler;
 
 import http.Headers;
 import http.Request;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class StaticRouter {
+public class StaticHandler {
 
     public Response get(Request request) {
         File file = new File("./webapp/" + request.getPath());
