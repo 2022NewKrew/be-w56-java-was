@@ -5,3 +5,7 @@
 - JAVA 입력함수 InputStream, InputReader, BufferedReader, Scanner 비교
 - HttpServletRequest 객체 공부
 - ViewResolver 공부
+
+### 0125 (화)
+- DispatcherServlet
+- Front Controller 패턴

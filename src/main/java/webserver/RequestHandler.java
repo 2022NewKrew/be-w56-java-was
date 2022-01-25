@@ -2,10 +2,12 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
+import controller.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -24,37 +26,47 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            HttpRequest httpRequest = HttpRequest.create(br);
-            log.debug(httpRequest.toString());
-
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = ViewMapper.getBytes(httpRequest.getUrl());
-//            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+
+            HttpRequest httpRequest = createHttpRequest(br);
+            log.debug(httpRequest.toMessage());
+
+            HttpResponse httpResponse = createHttpResponse();
+
+            FrontController.getResponse(httpRequest, httpResponse);
+            response(dos, httpResponse);
+
+            br.close();
+            dos.close();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    public static HttpRequest createHttpRequest(BufferedReader br) throws IOException {
+
+        String[] tokens = br.readLine().split(" ");
+        Map<String, String> headers = new HashMap<>();
+        String line = br.readLine();
+        while (line != null && !line.equals("")) {
+            headers.put(line.split(":")[0].trim(), line.split(":")[1].trim());
+            line = br.readLine();
         }
+        return new HttpRequest(tokens[0], tokens[1], tokens[2], headers, "");
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
+    public static HttpResponse createHttpResponse(){
+        return new HttpResponse();
+    }
+
+    private void response(DataOutputStream dos, HttpResponse httpResponse) {
         try {
-            dos.write(body, 0, body.length);
+            dos.writeBytes(httpResponse.toHeader());
+            dos.write(httpResponse.getBody(), 0, httpResponse.getBody().length);
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
+
 }
