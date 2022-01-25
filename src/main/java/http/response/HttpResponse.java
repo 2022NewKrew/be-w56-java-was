@@ -1,0 +1,25 @@
+package http.response;
+
+public class HttpResponse {
+    private final HttpResponseStatusLine statusLine;
+    private final HttpResponseHeaders headers;
+    private final HttpResponseBody body;
+
+    public HttpResponse(HttpResponseStatusLine statusLine, HttpResponseHeaders headers, HttpResponseBody body) {
+        this.statusLine = statusLine;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    public HttpResponseStatusLine getStatusLine() {
+        return statusLine;
+    }
+
+    public HttpResponseHeaders getHeaders() {
+        return headers;
+    }
+
+    public HttpResponseBody getBody() {
+        return body;
+    }
+}
