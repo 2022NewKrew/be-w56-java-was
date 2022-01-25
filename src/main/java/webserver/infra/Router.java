@@ -1,4 +1,7 @@
-package webserver;
+package webserver.infra;
+
+import webserver.model.HttpRequest;
+import webserver.model.Routes;
 
 public class Router {
 

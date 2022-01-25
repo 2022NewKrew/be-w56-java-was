@@ -1,8 +1,9 @@
-package webserver;
+package webserver.infra;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.MimeParser;
+import webserver.model.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.File;

@@ -1,4 +1,4 @@
-package webserver;
+package webserver.model;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;

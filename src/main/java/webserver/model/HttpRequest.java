@@ -1,4 +1,4 @@
-package webserver;
+package webserver.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;

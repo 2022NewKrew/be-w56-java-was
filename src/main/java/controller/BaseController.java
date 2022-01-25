@@ -1,6 +1,6 @@
 package controller;
 
-import webserver.HttpRequest;
+import webserver.model.HttpRequest;
 
 public interface BaseController {
     String process(HttpRequest request);
