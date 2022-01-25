@@ -17,13 +17,21 @@ public class MyHttpRequest {
 
     private final String method;
     private final String requestURI;
+    private final String getParam;
     private final String version;
     private final Map<String, List<String>> headers;
 
     public MyHttpRequest(BufferedReader br) throws IOException {
         String[] requestLine = br.readLine().split(REQUEST_LINE_DELIMITER);
         this.method = requestLine[0];
-        this.requestURI = requestLine[1];
+
+        if (requestLine[1].contains("?")) {
+            requestURI = requestLine[1].split("\\?")[0];
+            getParam = requestLine[1].split("\\?")[1];
+        } else {
+            this.requestURI = requestLine[1];
+            this.getParam = null;
+        }
         this.version = requestLine[2];
         this.headers = initHeaders(br);
     }
@@ -45,9 +53,14 @@ public class MyHttpRequest {
     public String toString() {
         return "method='" + method + '\'' +
                 ", requestURI='" + requestURI + '\'' +
+                ", getParam='" + getParam + '\'' +
                 ", version='" + version + '\'' +
                 ", headers=" + headers +
                 '}';
+    }
+
+    public String getGetParam() {
+        return getParam;
     }
 
     public URI uri() {

@@ -1,5 +1,8 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 import webserver.http.HttpStatus;
 import webserver.http.MIME;
 import webserver.http.MyHttpRequest;
@@ -10,8 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 public class Controller {
+    private static final Logger log = LoggerFactory.getLogger(Controller.class);
+
     public static void mapping(MyHttpRequest myHttpRequest, DataOutputStream dos) throws IOException {
 
         String path = myHttpRequest.uri().getPath();
@@ -30,7 +36,17 @@ public class Controller {
                 myHttpResponse.writeBytes();
                 break;
             case "/index.html":
+            case "/user/form.html":
                 body = Files.readAllBytes(new File("./webapp" + path).toPath());
+                myHttpResponse = MyHttpResponse.builder(dos)
+                        .body(body)
+                        .build();
+                myHttpResponse.writeBytes();
+                break;
+            case "/user/create":
+                Map<String, String> getParam = HttpRequestUtils.parseQueryString(myHttpRequest.getGetParam());
+
+                body = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
                 myHttpResponse = MyHttpResponse.builder(dos)
                         .body(body)
                         .build();
