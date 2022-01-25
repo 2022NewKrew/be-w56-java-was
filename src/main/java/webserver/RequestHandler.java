@@ -6,12 +6,15 @@ import httpmodel.HttpResponse;
 import httpmodel.HttpStatus;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestConverter;
@@ -36,16 +39,11 @@ public class RequestHandler implements Runnable {
 
         try (final InputStream inputStream = connection.getInputStream();
             final OutputStream outputStream = connection.getOutputStream();
-            final BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(inputStream));
-            final BufferedWriter bufferedWriter = new BufferedWriter(
-                new OutputStreamWriter(outputStream))) {
-
+            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        ) {
             HttpResponse response = messageConvert(bufferedReader);
-
-            bufferedWriter.write(response.message());
-            bufferedWriter.flush();
-
+            outputStream.write(response.message().getBytes());
+            outputStream.flush();
         } catch (IOException exception) {
             logger.error("Exception stream", exception);
         } finally {

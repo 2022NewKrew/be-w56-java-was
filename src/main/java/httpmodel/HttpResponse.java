@@ -1,5 +1,6 @@
 package httpmodel;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class HttpResponse {
 
     public void set200OK(HttpRequest httpRequest, String responseBody) {
         header.add("Content-Type: " + httpRequest.acceptType() + ";charset=utf-8");
-        header.add(CONTENT_LENGTH + responseBody.getBytes().length);
+        header.add(CONTENT_LENGTH + responseBody.getBytes(StandardCharsets.UTF_8).length);
         httpStatus = HttpStatus.OK;
         body = responseBody;
     }

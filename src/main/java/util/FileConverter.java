@@ -11,8 +11,7 @@ public class FileConverter {
 
     public static String fileToString(String uri) throws IOException {
         byte[] bytes = Files.readAllBytes(
-            new File("./webapp" + uri).toPath());
-
+            new File("webapp" + uri).toPath());
         return new String(bytes);
     }
 }
