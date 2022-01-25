@@ -3,13 +3,16 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
+import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
+import util.LoginUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -44,14 +47,26 @@ public class RequestHandler extends Thread {
                 log.debug("{} : {}", header.getKey(), header.getValue());
 
             String url = requestMap.get("httpUrl");
+            String cookie = null;
             int httpStatus = 200;
+            int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
+            Map<String, String> params = new HashMap<>();
+            if(requestMap.get("httpMethod").equals("POST"))
+                params = HttpRequestUtils.parseRequestBody(br, contentLength);
 
-            if(url.startsWith("/user/create")) {
-                int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
-                String requestBody = IOUtils.readData(br, contentLength);
-                Map<String, String> params = HttpRequestUtils.parseQueryString(requestBody);
+            if(url.equals("/user/create")) {
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
                 log.debug("User : {}", user);
+                DataBase.addUser(user);
+                httpStatus = 302;
+            }
+
+            if(url.equals("/user/login")) {
+                String userId = params.get("userId");
+                String password = params.get("password");
+                log.debug("userId : {}, password : {}", userId, password);
+                User user = DataBase.findUserById(userId);
+                cookie = LoginUtils.checkLogin(log, user, password);
                 httpStatus = 302;
             }
 
@@ -59,13 +74,14 @@ public class RequestHandler extends Thread {
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            response(dos, url, httpStatus);
+            response(dos, url, httpStatus, cookie);
+
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response(DataOutputStream dos, String url, int httpStatus) throws IOException {
+    private void response(DataOutputStream dos, String url, int httpStatus, String cookie) throws IOException {
         switch(httpStatus) {
             case 200:
                 byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
@@ -73,8 +89,27 @@ public class RequestHandler extends Thread {
                 responseBody(dos, body);
                 break;
             case 302:
-                response302Header(dos);
+                response302(dos, cookie);
                 break;
+        }
+    }
+
+    private void response302(DataOutputStream dos, String cookie) {
+        if(cookie == null) {
+            response302Header(dos);
+            return;
+        }
+        response302HeaderWithCookie(dos, cookie);
+    }
+
+    private void response302HeaderWithCookie(DataOutputStream dos, String cookie) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: /index.html\r\n");
+            dos.writeBytes("Set-Cookie: " + cookie + "; Path=/");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
     }
 
