@@ -5,8 +5,9 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Map;
 
 
+import http.util.HttpRequestUtils;
 import org.junit.jupiter.api.Test;
-import util.HttpRequestUtils.Pair;
+import http.util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
     @Test
