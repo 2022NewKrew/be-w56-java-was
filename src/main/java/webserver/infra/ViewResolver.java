@@ -12,7 +12,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class ViewResolver {
-    private static final String newLine = "\r\n";
+    private static final String PREFIX_OF_REDIRECTION = "redirect:";
+    private static final String NEW_LINE = "\r\n";
     private static final String DEFAULT_PREFIX = "./webapp";
 
     private static final ViewResolver instance = new ViewResolver();
@@ -28,7 +29,26 @@ public class ViewResolver {
     }
 
     public void render(OutputStream out, String viewPath) {
+        if (viewPath.startsWith(PREFIX_OF_REDIRECTION)) {
+            redirect(out, viewPath.substring(PREFIX_OF_REDIRECTION.length()));
+            return;
+        }
         render(out, viewPath, HttpStatus.OK);
+    }
+
+    private void redirect(OutputStream out, String urlPath) {
+        DataOutputStream dos = new DataOutputStream(out);
+        try {
+            dos.writeBytes(HttpStatus.FOUND.getHttpResponseHeader());
+            dos.writeBytes(getLocation(urlPath));
+            dos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getLocation(String urlPath) {
+        return String.format("Location: %s" + NEW_LINE, urlPath);
     }
 
     public void render(OutputStream out, String viewPath, HttpStatus httpStatus) {
@@ -51,11 +71,11 @@ public class ViewResolver {
     private void writeResponseHeader(DataOutputStream dos, String viewPath, HttpStatus httpStatus) throws IOException {
         dos.writeBytes(httpStatus.getHttpResponseHeader());
         dos.writeBytes(getContentType(viewPath));
-        dos.writeBytes(newLine);
+        dos.writeBytes(NEW_LINE);
     }
 
     private String getContentType(String viewPath) {
-        return String.format("Content-Type: %s;charset=utf-8" + newLine, MimeParser.parseMimeType(DEFAULT_PREFIX + viewPath));
+        return String.format("Content-Type: %s;charset=utf-8" + NEW_LINE, MimeParser.parseMimeType(DEFAULT_PREFIX + viewPath));
     }
 
     private void writeResponseBody(DataOutputStream dos, byte[] body) throws IOException {
