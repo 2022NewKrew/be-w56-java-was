@@ -22,7 +22,7 @@ public class HttpResponse {
         dos = new DataOutputStream(out);
     }
 
-    public void getResponse(String url) throws IOException {
+    public void getResponse(String url) {
         byte[] body;
         try {
             body = Files.readAllBytes(new File("./webapp" + url).toPath());
@@ -33,6 +33,18 @@ public class HttpResponse {
         }
         responseBody(dos, body);
     }
+
+    public void sendRedirect302Header(String redirectUrl) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 FOUND \r\n");
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Location: " + redirectUrl + " \r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
