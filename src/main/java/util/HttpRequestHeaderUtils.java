@@ -2,8 +2,6 @@ package util;
 
 import webserver.model.HttpRequestHeader;
 
-import java.util.Arrays;
-
 public class HttpRequestHeaderUtils {
     public static HttpRequestHeader parseRequestHeader(String request) {
         String[] tokens = request.split(" ");

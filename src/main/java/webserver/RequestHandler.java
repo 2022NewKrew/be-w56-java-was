@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +14,7 @@ import util.HttpRequestHeaderUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final StringBuffer sb = new StringBuffer();
 
     private Socket connection;
 
@@ -30,9 +32,18 @@ public class RequestHandler extends Thread {
             HttpRequestHeader httpRequestHeader = HttpRequestHeaderUtils.parseRequestHeader(request);
             DataOutputStream dos = new DataOutputStream(out);
             Path path = new File("./webapp" + httpRequestHeader.getRequestURI()).toPath();
+            sb.append("[" + httpRequestHeader.getMethod() + "] " + httpRequestHeader.getRequestURI());
+            sb.append(System.getProperty("line.separator"));
+            sb.append("path: ");
+            sb.append(path);
+            sb.append(System.getProperty("line.separator"));
+            sb.append("Mime Type: " + httpRequestHeader.getMimeType());
+            log.info(sb.toString());
+            sb.setLength(0);
             byte[] body = Files.readAllBytes(path);
-            String mimeType = Files.probeContentType(path);
-            response200Header(dos, body.length, mimeType);
+
+            log.info("path: " + path);
+            response200Header(dos, body.length, httpRequestHeader.getMimeType());
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
