@@ -25,11 +25,11 @@ class HttpRequestReaderTest {
         final BufferedReader br = createMockBufferedReader(requestStrings);
 
         //when
-        final HttpRequest httpRequestMap = requestReader.read(br);
+        final HttpRequest httpRequest = requestReader.read(br);
 
         //then
         final String requestLine = getRequestLine(requestStrings);
-        assertThat(requestLine).contains(httpRequestMap.getUrl());
+        assertThat(requestLine).contains(httpRequest.getUrl());
     }
 
     @ParameterizedTest
@@ -41,10 +41,14 @@ class HttpRequestReaderTest {
         final BufferedReader br = createMockBufferedReader(requestStrings);
 
         //when
-        final HttpRequest httpRequestMap = requestReader.read(br);
+        final HttpRequest httpRequest = requestReader.read(br);
 
         //then
-//         Request.getQueryParams();
+        final String queryString = requestStrings.get(0);
+        httpRequest.getQueryParams().forEach((k, v) -> {
+            assertThat(queryString).contains(k);
+            assertThat(queryString).contains(v);
+        });
     }
 
     private static BufferedReader createMockBufferedReader(List<String> requestStrings) throws IOException {
