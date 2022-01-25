@@ -22,6 +22,7 @@ public class RequestParser {
     private static final String KEY_CONTENT_LENGTH = "Content-Length";
     private static final String KEY_COOKIE = "Cookie";
 
+
     private static final String ROOT_URL_PATH = "/";
     private static final String DEFAULT_URL_PATH = "/index.html";
 

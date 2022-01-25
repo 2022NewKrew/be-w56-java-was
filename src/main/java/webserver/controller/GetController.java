@@ -12,7 +12,6 @@ import webserver.response.format.ResponseFormat;
 import webserver.response.ResponseCode;
 
 import java.io.*;
-import java.util.Map;
 
 public class GetController implements MethodController {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
