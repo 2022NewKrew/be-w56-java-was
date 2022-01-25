@@ -4,11 +4,14 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Objects;
 
+import dto.UserSignUpDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import request.HttpRequestFactory;
+import service.UserService;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -32,6 +35,14 @@ public class RequestHandler extends Thread {
 
             log.debug("request line : {}", httpRequest.getHttpRequestLine());
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+
+            if (httpRequest.getUrl().contains("/user/create") && Objects.equals(httpRequest.getMethod(), "GET")) {
+                UserService userService = new UserService();
+                String queries = httpRequest.getUrl().split("\\?")[1];
+                Map<String, String> queriesMap = HttpRequestUtils.parseQueryString(queries);
+                userService.join(new UserSignUpDto(queriesMap.get("userId"), queriesMap.get("password"), queriesMap.get("name"), queriesMap.get("email")));
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = (!httpRequest.getUrl().endsWith("html")) ? "helloWorld".getBytes() : Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
 

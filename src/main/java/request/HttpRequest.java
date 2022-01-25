@@ -16,4 +16,8 @@ public class HttpRequest {
     public String getUrl() {
         return httpRequestLine.getUrl();
     }
+
+    public String getMethod() {
+        return httpRequestLine.getMethod();
+    }
 }
