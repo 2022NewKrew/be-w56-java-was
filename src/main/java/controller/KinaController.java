@@ -18,10 +18,10 @@ public class KinaController {
         return INSTANCE;
     }
 
-    @RequestMapping(value = "/index.html", method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/index", "/index.html"}, method = RequestMethod.GET)
     public String index() {
         log.info("KinaController - index()");
-        return "index.html";
+        return "/index.html";
     }
 
     @RequestMapping(value = "/user/create", method = RequestMethod.GET)

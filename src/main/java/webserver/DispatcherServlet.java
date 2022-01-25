@@ -8,12 +8,14 @@ import webserver.model.KinaHttpRequest;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 public class DispatcherServlet extends Thread {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final KinaController controller = KinaController.getInstance();
+    private static final KinaController CONTROLLER = KinaController.getInstance();
+    private static final ViewRenderer RENDERER = ViewRenderer.getInstance();
     private Socket connection;
 
     public DispatcherServlet(Socket connectionSocket) {
@@ -27,10 +29,16 @@ public class DispatcherServlet extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             KinaHttpRequest httpRequest = KinaHttpRequest.of(buffer);
+            DataOutputStream dos = new DataOutputStream(out);
             log.info(httpRequest.toString());
             String uriString = httpRequest.uri().getPath();
-
-            HandlerMapping.getMethod(RequestMethod.valueOf(httpRequest.method()), uriString).invoke(controller);
+            Method method = HandlerMapping.getMethod(RequestMethod.valueOf(httpRequest.method()), uriString);
+            if (method == null) { // 정적 파일 요청
+                RENDERER.render(dos, httpRequest.uri().getPath());
+            } else { // controller 호출
+                Object result = method.invoke(CONTROLLER);
+                RENDERER.render(dos, (String) result);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         } catch (InvocationTargetException e) {
