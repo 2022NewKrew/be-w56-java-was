@@ -1,5 +1,7 @@
 package http.response;
 
+import http.HttpStatus;
+
 public class HttpResponse {
     private final HttpResponseStatusLine statusLine;
     private final HttpResponseHeaders headers;
@@ -21,5 +23,17 @@ public class HttpResponse {
 
     public HttpResponseBody getBody() {
         return body;
+    }
+
+    public HttpStatus getStatus(){
+        return getStatusLine().getStatus();
+    }
+
+    public String getStatusString(){
+        return statusLine.toString();
+    }
+
+    public int getBodyLength(){
+        return body.getBodyLength();
     }
 }

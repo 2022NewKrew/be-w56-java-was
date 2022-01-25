@@ -13,8 +13,8 @@ public class HttpResponseMapper {
 
     public static void response200Header(DataOutputStream dos, HttpResponse httpResponse) {
         try {
-            dos.writeBytes(httpResponse.getStatusLine().toString() +"\r\n");
-            dos.writeBytes("Content-Length: " + httpResponse.getBody().getBodyLength() + "\r\n");
+            dos.writeBytes(httpResponse.getStatusString() +"\r\n");
+            dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

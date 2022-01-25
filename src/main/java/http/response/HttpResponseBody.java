@@ -10,7 +10,6 @@ public class HttpResponseBody {
     public byte[] getBody() {
         return body;
     }
-
     public int getBodyLength(){
         return body.length;
     }
