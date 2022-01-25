@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class StaticController implements Controller{
     private static final Logger log = LoggerFactory.getLogger(StaticController.class);
-    private static final Set<String> supportExtensions = Set.of("html", "css", "js");
+    private static final Set<String> supportExtensions = Set.of("html", "css", "js", "ico", "eot", "svg", "ttf", "woff", "woff2", "png");
     private static final String BASE_DIRECTORY = "./webapp";
 
     @Override
@@ -35,6 +35,11 @@ public class StaticController implements Controller{
         response200Header(dos, body.length);
         responseBody(dos, body);
     }
+
+    public final String finalmethod(){
+        return "hello";
+    }
+
 
     private String getFilePath(String url){
         if(isIndexUrl(url)){
