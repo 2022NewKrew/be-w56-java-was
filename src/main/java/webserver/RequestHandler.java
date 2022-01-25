@@ -1,12 +1,14 @@
 package webserver;
 
 import Controller.StaticController;
+import Controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 
 import static util.HttpRequestUtils.parseRequestLine;
@@ -32,10 +34,16 @@ public class RequestHandler extends Thread {
             Map<String, String> requestHeader = readHeader(br);
             DataOutputStream dos = new DataOutputStream(out);
             String url = requestLine.get("url");
-            String[] path = url.split("/");
-            // 정적 파일 확인
-            if (path[path.length - 1].matches(".+\\.(html|css|js|woff|ttf|ico)$")) {
+            // Static File
+            if (url.matches(".+\\.(html|css|js|woff|ttf|ico)$")) {
                 StaticController.view(url, dos, requestHeader);
+                return;
+            }
+            String[] path = url.split("/");
+            // User
+            if (path[1].equals("user")) {
+                String userUrl = url.split("/user")[1];
+                UserController.view(dos, requestLine, requestHeader, userUrl);
             }
         } catch (IOException e) {
             log.error(e.getMessage());
