@@ -1,55 +1,76 @@
 package webserver;
 
+import controller.Controller;
+import httpmodel.HttpRequest;
+import httpmodel.HttpResponse;
+import httpmodel.HttpStatus;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
-
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestConverter;
 
-public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class RequestHandler implements Runnable {
 
-    private Socket connection;
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final RequestMapping REQUEST_MAPPING = new RequestMapping();
+
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
+    @Override
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}",
+            connection.getInetAddress(),
+            connection.getPort());
+        logger.debug("쓰레드 이름 : {}", Thread.currentThread().getName());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        try (final InputStream inputStream = connection.getInputStream();
+            final OutputStream outputStream = connection.getOutputStream();
+            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        ) {
+            HttpResponse response = messageConvert(bufferedReader);
+            outputStream.write(response.message().getBytes());
+            outputStream.flush();
+        } catch (IOException exception) {
+            logger.error("Exception stream", exception);
+        } finally {
+            close();
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private HttpResponse messageConvert(BufferedReader bufferedReader) throws IOException {
+        HttpResponse response = new HttpResponse();
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            final HttpRequest httpRequest = HttpRequestConverter.createdRequest(bufferedReader);
+            logger.info("요청한 url : {}", httpRequest.getUri());
+            Controller controller = REQUEST_MAPPING.getController();
+            controller.service(httpRequest, response);
+            return response;
+        } catch (Exception exception) {
+            logger.error("알수없는 에러가 발생", exception);
+            response.setErrorResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
+    private void close() {
         try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            connection.close();
+        } catch (IOException exception) {
+            logger.error("Exception closing socket", exception);
         }
     }
 }
