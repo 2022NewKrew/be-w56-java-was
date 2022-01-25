@@ -9,7 +9,7 @@
 
 - `index.html` 요청 시 `webapp/index.html` 반환
 
-#### 알게 된 내용
+#### 구현 관련 고찰
 
 - favicon.ico: favorite + icon 의 합성어로 웹 브라우저 주소창에 표시되는 아이콘
 - 웹 서버 코드 분석
@@ -27,3 +27,64 @@
     5. `DataOutputStream dos = new DataOutputStream(out);`: `DataOutputStream` 생성
     6. `dos.writeBytes()` 등으로 OutputStream 처리
     7. `dos.flush()`: 버퍼에 저장된 내용을 강재로 내보낸다.
+    
+### 2022-01-25 (화)
+
+#### 구현 내용
+
+- `Request`, `Response` 객체 분리
+- GET 으로 회원가입 기능 구현
+- css, js 적용
+
+#### 구현 관련 고찰
+
+- `RequestHandler::run`에 많은 기능이 집중되어 있음
+  1. 요청 Parsing
+  2. 응답 쓰기
+- 다음과 같이 코드 작성 시 `NoClassDefFoundError` 발생
+```java
+public enum ContentType {    
+    private String contentType;
+    private static Map<String, ContentType> contentType;
+    
+    ContentType(String contentType) {
+        this.contentType = contentType;
+        initializeContentTypeMap();
+    }
+    
+    private static void initializeContentTypeMap() {
+        // ...   
+    }
+
+  public static ContentType of(String requestType) {
+    return contentTypeMap.getOrDefault(requestType, ContentType.HTML);
+  }
+}
+```
+- 아래와 같이 수정하여 에러 해결
+```java
+public enum ContentType {
+  private String contentType;
+  private static Map<String, ContentType> contentTypeMap;
+
+  ContentType(String contentType) {
+    this.contentType = contentType;
+  }
+
+  private static Map<String, ContentType> initializeContentTypeMap() {
+    Map<String, ContentType> contentTypeMap = new HashMap<>();
+    ContentType[] contentTypes = values();
+    for (ContentType contentType : contentTypes) {
+      contentTypeMap.put(contentType.contentType, contentType);
+    }
+    return contentTypeMap;
+  }
+
+  public static ContentType of(String requestType) {
+    if (contentTypeMap == null) {
+      contentTypeMap = initializeContentTypeMap();
+    }
+    return contentTypeMap.getOrDefault(requestType, ContentType.HTML);
+  }
+}
+```
