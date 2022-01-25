@@ -56,7 +56,7 @@ public class HttpRequestUtils {
         Map<String, String> requestMap = new HashMap<>();
 
         requestMap.put("method", tokens[0]);
-        requestMap.put("uri", tokens[1]);
+        requestMap.put("url", tokens[1]);
         requestMap.put("httpVersion", tokens[2]);
 
         return requestMap;

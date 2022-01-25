@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import request.HttpRequest;
+import request.HttpRequestFactory;
 import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
@@ -25,15 +27,12 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
-            String line = br.readLine();
-            log.debug("request line : {}", line);
+            HttpRequest httpRequest = HttpRequestFactory.getInstance().createHttpRequest(br);
 
-            Map<String, String> requestMap = HttpRequestUtils.parseRequest(line);
-            String requestURI = requestMap.get("uri");
-
+            log.debug("request line : {}", httpRequest.getHttpRequestLine());
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = (!requestURI.endsWith("html")) ? "helloWorld".getBytes() : Files.readAllBytes(new File("./webapp" + requestURI).toPath());
+            byte[] body = (!httpRequest.getUrl().endsWith("html")) ? "helloWorld".getBytes() : Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
 
             response200Header(dos, body.length);
             responseBody(dos, body);

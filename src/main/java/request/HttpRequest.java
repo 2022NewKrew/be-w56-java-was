@@ -8,4 +8,12 @@ public class HttpRequest {
         this.httpRequestLine = httpRequestLine;
         this.httpRequestHeader = httpRequestHeader;
     }
+
+    public HttpRequestLine getHttpRequestLine() {
+        return httpRequestLine;
+    }
+
+    public String getUrl() {
+        return httpRequestLine.getUrl();
+    }
 }
