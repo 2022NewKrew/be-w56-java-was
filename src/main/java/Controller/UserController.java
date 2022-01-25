@@ -21,6 +21,9 @@ public class UserController implements Controller{
 
         methodMapper.put("GET /form", this::getForm);
         methodMapper.put("POST /form", this::postForm);
+        methodMapper.put("GET /login", this::getLogin);
+        methodMapper.put("POST /login", this::postLogin);
+        methodMapper.put("GET /login_failed", this::getLoginFailed);
     }
 
     private Map<String, Object> getForm(Map<String, String> model){
@@ -51,6 +54,31 @@ public class UserController implements Controller{
         }
 
         result.put("name", "redirect:/");
+
+        return result;
+    }
+
+    private Map<String, Object> getLogin(Map<String, String> model){
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("name", "/user/login.html");
+
+        return result;
+    }
+
+    private Map<String, Object> postLogin(Map<String, String> model){
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("name", "redirect:/");
+
+        return result;
+    }
+
+    private Map<String, Object> getLoginFailed(Map<String, String> model){
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("name", "/user/login_failed" +
+                ".html");
 
         return result;
     }
