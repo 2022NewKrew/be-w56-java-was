@@ -115,7 +115,7 @@ public class RequestHandler implements Callable<Void> {
 
     private void writeErrorResponse(final OutputStream out) {
         byte[] body = "Error".getBytes(StandardCharsets.UTF_8);
-        writeResponse(out, body, "text/html");
+        writeResponse(out, body, "text/plain");
     }
 
     private void writeResponse(final OutputStream out, final byte[] body, final String mime) {
