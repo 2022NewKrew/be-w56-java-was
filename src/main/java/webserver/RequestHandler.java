@@ -1,33 +1,56 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-
+import Controller.Controller;
+import mapper.UrlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestHandler extends Thread {
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class RequestHandler {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private final UrlMapper urlMapper = new UrlMapper();
 
-    private Socket connection;
+    public void sendResponseMessage(Socket socket){
+        log.debug("New Client Connect! Connected IP : {}, Port : {}", socket.getInetAddress(),
+                socket.getPort());
 
-    public RequestHandler(Socket connectionSocket) {
-        this.connection = connectionSocket;
-    }
+        try (InputStream in = socket.getInputStream(); OutputStream out = socket.getOutputStream()) {
+            BufferedReader br = new BufferedReader( new InputStreamReader(in,"UTF-8") );
 
-    public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+            String firstLine = br.readLine();
+            if(firstLine == null)
+                return;
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            String[] firstLineSplit = firstLine.split(" ");
+
+            HttpRequest httpRequest = new HttpRequest(firstLineSplit);
+
+            httpRequest.reBuildHttpRequest(br);
+
+            Map<String, Object> result = urlMapper.mappingResult(httpRequest);
+            String filename = (String)result.get("name");
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+
+            byte[] body = Files.readAllBytes(new File("./webapp" + filename).toPath());
+
             response200Header(dos, body.length);
             responseBody(dos, body);
+
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -36,7 +59,6 @@ public class RequestHandler extends Thread {
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
