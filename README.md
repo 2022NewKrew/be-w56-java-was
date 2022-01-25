@@ -58,4 +58,4 @@ userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajig
     
 GET으로 param을 받아 회원가입하는 기능 구현  
 POST로 request body의 내용을 받아 회원가입 하는 기능 구현  
-redirect 기능 구현  
+redirect 기능 구현
