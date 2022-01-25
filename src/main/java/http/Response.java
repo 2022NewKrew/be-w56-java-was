@@ -45,6 +45,10 @@ public class Response {
         return "";
     }
 
+    public String getHeader(String key) {
+        return headers.get(key);
+    }
+
     public Iterable<? extends Map.Entry<String, String>> getHeaders() {
         return headers.entrySet();
     }
