@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
-    private static final int THREAD_POOL_SIZE = 10;
+    private static final int THREAD_POOL_SIZE = 1;
     private static final int SOCKET_TIMEOUT = 3 * 60 * 1000; // 3 mins
 
     public void run(String[] args) throws Exception {
@@ -46,7 +47,6 @@ public class WebServer {
         
         // 서버 스레드 풀을 생성한다.
         ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-
         Socket conn = null;
         do {
             try {
@@ -57,5 +57,14 @@ public class WebServer {
             
             threadPool.submit(new RequestHandler(conn));
         } while (conn != null);
+
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(SOCKET_TIMEOUT, TimeUnit.MILLISECONDS)) {
+                threadPool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            threadPool.shutdownNow();
+        }
     }
 }
