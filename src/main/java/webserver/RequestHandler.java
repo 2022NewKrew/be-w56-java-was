@@ -29,6 +29,8 @@ public class RequestHandler implements Callable<Void> {
     private static final String TOP_HEADER_SEPARATOR = " ";
     private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
 
+    private static final String LOCATION_USER_CREATE = "/user/create";
+
     private final Socket connection;
     private final ResponseWriter responseWriter;
 
@@ -55,7 +57,7 @@ public class RequestHandler implements Callable<Void> {
                     location);
 
             if (method == HttpMethod.GET) {
-                responseWriter.writeFileResponse(out, location);
+                processGet(out, location, httpRequest.getParameterMap());
             }
             else {
                 responseWriter.writeErrorResponse(out);
@@ -118,5 +120,18 @@ public class RequestHandler implements Callable<Void> {
             list.add(HttpRequestUtils.parseHeader(header));
         }
         return new Headers(list);
+    }
+
+    private void processGet(
+            final OutputStream out,
+            final String location,
+            final Map<String, String> parameterMap
+    ) throws IOException
+    {
+        if (LOCATION_USER_CREATE.equals(location)) {
+            responseWriter.writeUserCreateResponse(out, parameterMap);
+        }
+
+        responseWriter.writeFileResponse(out, location);
     }
 }
