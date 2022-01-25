@@ -4,7 +4,9 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import controller.ControllerManager;
 import http.Request;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +29,11 @@ public class RequestHandler extends Thread {
             //requestHeader객체 생성
             Request request = new Request(Request.inputStreamToString(in));
 
+            ControllerManager controllerManager = new ControllerManager(request.getPath(), request.getMethod(), request.getElements());
+            String path = controllerManager.execute();
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + request.getPath()).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
