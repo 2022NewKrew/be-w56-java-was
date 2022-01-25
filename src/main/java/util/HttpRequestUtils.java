@@ -118,7 +118,6 @@ public class HttpRequestUtils {
     public static Map<String, String> readRequest(BufferedReader br) throws IOException {
         Map<String, String> map = new HashMap<>();
         String line = br.readLine();
-        log.debug(line);
         String[] splitLine = line.split(" ");
         map.put("httpMethod", splitLine[0]);
         map.put("httpUrl", splitLine[1]);
@@ -133,7 +132,6 @@ public class HttpRequestUtils {
             if (line == null || line.equals("")) {
                 return map;
             }
-            log.debug(line);
             String[] splitLine = line.split(": ");
             map.put(splitLine[0], splitLine[1]);
             line = br.readLine();
