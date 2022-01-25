@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
@@ -19,6 +21,8 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
         RequestDispatcher requestDispatcher = new RequestDispatcher();
 
 
@@ -31,8 +35,7 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 Socket finalConnection = connection;
                 Thread t = new Thread(() -> requestDispatcher.doDispatch(finalConnection));
-                t.start();
-//                requestDispatcher.doDispatch(connection);
+                executorService.execute(t);
             }
 
         } catch (IOException e) {

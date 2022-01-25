@@ -10,25 +10,18 @@ import util.HttpRequestUtils;
 import webserver.HttpRequest;
 
 public class ResourceRequestHandler extends Handler {
-    private static final Logger log = LoggerFactory.getLogger(ResourceRequestHandler.class);
 
-    private Socket connection;
-    private HttpRequest httpRequest;
+    private static final Logger log = LoggerFactory.getLogger(ResourceRequestHandler.class);
 
     private String method = "GET";
     private String path = "/index.html";
 
     public ResourceRequestHandler() {}
 
-    public ResourceRequestHandler(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-        this.connection = httpRequest.getConnection();
-    }
-
     @Override
     public void handle(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-        this.connection = httpRequest.getConnection();
+
+        Socket connection = httpRequest.getConnection();
 
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
@@ -37,14 +30,14 @@ public class ResourceRequestHandler extends Handler {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File("./webapp" + httpRequest.getPath()).toPath());
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, httpRequest);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, HttpRequest httpRequest) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + getMediaType(httpRequest.getPath()) + "\r\n");
@@ -66,8 +59,8 @@ public class ResourceRequestHandler extends Handler {
 
     @Override
     public boolean isSupport(HttpRequest httpRequest) {
-        System.out.println("method: " + this.method + ", " + httpRequest.getMethod());
-        System.out.println("path: " + this.path + ", " + httpRequest.getPath());
+//        System.out.println("method: " + this.method + ", " + httpRequest.getMethod());
+//        System.out.println("path: " + this.path + ", " + httpRequest.getPath());
 //        return this.method.equals(httpRequest.getMethod()) && this.path.equals(httpRequest.getPath());
         return true;
     }
