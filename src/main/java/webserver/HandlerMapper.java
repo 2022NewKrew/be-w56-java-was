@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class Controller {
+public class HandlerMapper {
     private Request request;
     private Response response;
 
-    public Controller(Request request, Response response){
+    public HandlerMapper(Request request, Response response){
         this.request = request;
         this.response = response;
     }

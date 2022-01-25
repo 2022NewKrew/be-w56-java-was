@@ -6,7 +6,7 @@ import java.io.*;
 
 public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
-    private DataOutputStream dos;
+    private final DataOutputStream dos;
 
     public Response(OutputStream out) throws IOException {
         this.dos = new DataOutputStream(out);
