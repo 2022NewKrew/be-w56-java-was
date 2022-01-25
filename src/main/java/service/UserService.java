@@ -5,6 +5,9 @@ import model.UserAccountDTO;
 import repository.Repository;
 import repository.user.UserAccountNoDbUseRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public class UserService {
     private final Repository<UserAccount, UserAccountDTO, String> userRepository;
 
@@ -25,5 +28,17 @@ public class UserService {
                 .ifPresent(m -> {
                     throw new IllegalStateException("중복된 userId로 가입 요청을 하였습니다.");
                 });
+    }
+
+    public List<UserAccount> findAll(){
+        return userRepository.findAll();
+    }
+
+    public Optional<UserAccount> findOne(String userId){
+        return userRepository.findById(userId);
+    }
+
+    public boolean isPasswordEqual(UserAccount userAccount, String userInputPassword){
+        return userInputPassword.equals(userAccount.getPassword());
     }
 }

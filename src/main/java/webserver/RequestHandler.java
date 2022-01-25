@@ -44,16 +44,25 @@ public class RequestHandler {
             Map<String, Object> result = urlMapper.mappingResult(httpRequest);
             String filename = (String)result.get("name");
 
+            String cookieSet = "";
+            if(result.containsKey("login")){
+                if((Boolean)result.get("login"))
+                    cookieSet = "Set-Cookie: logined=true; Path=/";
+                else
+                    cookieSet = "Set-Cookie: logined=false; Path=/";
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
 
             if(filename.matches("redirect:.*")){
-                response302Header(dos, filename.substring(9));
+                response302Header(dos, filename.substring(9), cookieSet);
                 return;
             }
 
             byte[] body = Files.readAllBytes(new File("./webapp" + filename).toPath());
 
-            response200Header(dos, body.length);
+
+            response200Header(dos, body.length, cookieSet);
             responseBody(dos, body);
 
         } catch (IOException e) {
@@ -61,10 +70,12 @@ public class RequestHandler {
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String cookie) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            if(!"".equals(cookie))
+                dos.writeBytes(cookie + "\r\n");
             dos.writeBytes("\r\n");
             dos.flush();
         } catch (IOException e) {
@@ -72,10 +83,12 @@ public class RequestHandler {
         }
     }
 
-    private void response302Header(DataOutputStream dos, String url) {
+    private void response302Header(DataOutputStream dos, String url, String cookie) {
         try {
             dos.writeBytes("HTTP/1.1 302 \r\n");
             dos.writeBytes("Location: " + url + "\r\n");
+            if(!"".equals(cookie))
+                dos.writeBytes(cookie + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

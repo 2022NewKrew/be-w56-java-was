@@ -8,6 +8,7 @@ import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class UserController implements Controller{
@@ -68,7 +69,29 @@ public class UserController implements Controller{
 
     private Map<String, Object> postLogin(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
+        String userId = model.get("userId");
+        String password = model.get("password");
 
+        Optional<UserAccount> findUserAccount = userService.findOne(userId);
+
+        if(findUserAccount.isEmpty()){
+            log.info("[UserController > login] DB 에서 유저 계정에서 {}로 검색에 실패했습니다.", userId);
+            result.put("login", false);
+            result.put("name", "redirect:/users/login_failed");
+            return result;
+        }
+
+        UserAccount userAccount = findUserAccount.get();
+
+        if(!userService.isPasswordEqual(userAccount, password)){
+            log.error("[UserController > login] {} 아이디로 로그인 시 입력한 비밀번호가 DB와 일치하지 않습니다.", userAccount.getUserId());
+            result.put("login", false);
+            result.put("name", "redirect:/users/login_failed");
+            return result;
+        }
+
+        result.put("sessionedUser", userAccount);
+        result.put("login", true);
         result.put("name", "redirect:/");
 
         return result;
@@ -77,8 +100,7 @@ public class UserController implements Controller{
     private Map<String, Object> getLoginFailed(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
 
-        result.put("name", "/user/login_failed" +
-                ".html");
+        result.put("name", "/user/login_failed.html");
 
         return result;
     }
