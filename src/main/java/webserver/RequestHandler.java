@@ -44,6 +44,7 @@ public class RequestHandler extends Thread {
                 log.debug("{} : {}", header.getKey(), header.getValue());
 
             String url = requestMap.get("httpUrl");
+            int httpStatus = 200;
 
             if(url.startsWith("/user/create")) {
                 int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
@@ -51,15 +52,37 @@ public class RequestHandler extends Thread {
                 Map<String, String> params = HttpRequestUtils.parseQueryString(requestBody);
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
                 log.debug("User : {}", user);
+                httpStatus = 302;
             }
 
             log.debug("\n");
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            response(dos, url, httpStatus);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response(DataOutputStream dos, String url, int httpStatus) throws IOException {
+        switch(httpStatus) {
+            case 200:
+                byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+                break;
+            case 302:
+                response302Header(dos);
+                break;
+        }
+    }
+
+    private void response302Header(DataOutputStream dos) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: /index.html\r\n");
+            dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
