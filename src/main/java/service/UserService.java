@@ -21,4 +21,8 @@ public class UserService {
         DataBase.addUser(user);
     }
 
+    public boolean login(String id, String password){
+        User user = DataBase.findUserById(id);
+        return user != null && password.equals(user.getPassword());
+    }
 }

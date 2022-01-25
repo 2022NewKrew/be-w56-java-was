@@ -6,8 +6,8 @@ import util.HttpRequestUtils;
 import util.IOUtils;
 import webserver.controller.WebController;
 import webserver.core.StaticResourceManager;
-import webserver.core.http.HttpClientErrorException;
 import webserver.core.http.Header;
+import webserver.core.http.HttpClientErrorException;
 import webserver.core.http.request.HttpMethod;
 import webserver.core.http.request.HttpRequest;
 import webserver.core.http.request.HttpRequestBuilder;
@@ -61,6 +61,9 @@ public class RequestHandler extends Thread {
         HttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder();
 
         String line = br.readLine();
+        if (line == null) {
+            return null;
+        }
         String[] requestLine = line.split(" ");
 
         HttpMethod method = HttpMethod.valueOf(requestLine[0]);
@@ -68,7 +71,7 @@ public class RequestHandler extends Thread {
 
         Header header = new Header();
         line = br.readLine();
-        while(!line.equals("")){
+        while (!line.equals("")) {
             HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
             header.addHeaderValue(pair.getKey(), pair.getValue());
             line = br.readLine();

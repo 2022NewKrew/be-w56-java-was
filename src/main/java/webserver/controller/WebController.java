@@ -36,8 +36,11 @@ public class WebController {
         if (request.getUrl().equals("/user/create") && (request.getMethod() == HttpMethod.POST)) {
             return join(request);
         }
+        if (request.getUrl().equals("/user/login") && (request.getMethod() == HttpMethod.POST)) {
+            return login(request);
+        }
 
-        throw new HttpClientErrorException(HttpStatus.NotFound, request.getMethod() + "," + request.getUrl() + " 페이지를 찾을 수 없습니다.");
+        throw new HttpClientErrorException(HttpStatus.NotFound, request.getMethod() + " " + request.getUrl() + " 페이지를 찾을 수 없습니다.");
     }
 
     public HttpResponse index(HttpRequest request) {
@@ -49,19 +52,38 @@ public class WebController {
     }
 
     public HttpResponse join(HttpRequest request) {
-        Map<String, String> params = request.getParams();
+        HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder();
+
+        Map<String, String> body = request.getBody();
         User user = new User(
-                params.get("userId"),
-                params.get("password"),
-                params.get("name"),
-                params.get("email")
+                body.get("userId"),
+                body.get("password"),
+                body.get("name"),
+                body.get("email")
         );
         UserService.getInstance().joinNewUser(user);
-
-        HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder();
         return httpResponseBuilder
                 .setStatus(HttpStatus.Redirect)
                 .addHeaderValue("Location", "/index.html")
+                .build();
+    }
+
+    public HttpResponse login(HttpRequest request) {
+        HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder();
+
+        Map<String, String> body = request.getBody();
+        if(UserService.getInstance().login(body.get("id"), body.get("password"))){
+            return httpResponseBuilder
+                    .setStatus(HttpStatus.Redirect)
+                    .addHeaderValue("Location", "/index.html")
+                    .addHeaderValue("Set-Cookie", "logined=true; Path=/")
+                    .build();
+        }
+
+        return httpResponseBuilder
+                .setStatus(HttpStatus.Redirect)
+                .addHeaderValue("Location", "/user/login_failed.html")
+                .addHeaderValue("Set-Cookie", "logined=false; Path=/")
                 .build();
     }
 }
