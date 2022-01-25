@@ -36,6 +36,8 @@ public class RequestHandler extends Thread {
             log.debug("request line : {}", httpRequest.getHttpRequestLine());
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
+
+            // mapper 로 각각의 상황 분리 후 controller 로 전달할 예정
             if (httpRequest.getUrl().contains("/user/create") && Objects.equals(httpRequest.getMethod(), "GET")) {
                 UserService userService = new UserService();
                 String queries = httpRequest.getUrl().split("\\?")[1];
@@ -44,7 +46,8 @@ public class RequestHandler extends Thread {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = (!httpRequest.getUrl().endsWith("html")) ? "helloWorld".getBytes() : Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
+
+            byte[] body = Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
 
             String extension = IOUtils.parseExtension(httpRequest);
             log.debug("extension : {}", extension);
