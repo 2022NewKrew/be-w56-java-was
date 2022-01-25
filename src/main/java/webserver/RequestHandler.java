@@ -1,19 +1,26 @@
 package webserver;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
+import util.HttpRequestUtils;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Map;
+
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private final UserService userService;
 
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        this.userService = UserService.INSTANCE;
     }
 
     public void run() {
@@ -33,6 +40,10 @@ public class RequestHandler extends Thread {
 
                 if (tokens[0].equals("GET")) {
                     targetResource = tokens[1];
+                    if (targetResource.startsWith("/user/create")) {
+                        signUp(targetResource.split("\\?")[1]);
+                        targetResource = targetResource.split("\\?")[0];
+                    }
                     body = getBody(targetResource);
                 }
                 if (tokens[0].equals("Accept:")) {
@@ -69,6 +80,12 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private void signUp(String signUpInfo) {
+        Map<String, String> userInfo = HttpRequestUtils.parseQueryString(signUpInfo);
+        User newUser = new User(userInfo.get("userId"), userInfo.get("password"), userInfo.get("name"), userInfo.get("email"));
+        userService.addUser(newUser);
     }
 
     private byte[] getBody(String targetResource) {
