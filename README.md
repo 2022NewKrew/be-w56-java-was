@@ -34,3 +34,20 @@ Host: localhost:8080
 Connection: keep-alive
 Accept: */*
 ```
+
+### 요구사항 3: POST로 회원 가입 구현
+
+> http://localhost:8080/user/form.html 파일의 form 태그 method를 get에서 post로 수정한 후 회원가입 기능이 정상적으로 동작하도록 구현한다. 가입 후 페이지 이동을 위해 redirection 기능을 구현한다.
+
+- HTTP Request Header 예
+
+```
+POST /user/create HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 59
+Content-Type: application/x-www-form-urlencoded
+Accept: */*
+
+userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+```
