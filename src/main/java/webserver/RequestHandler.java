@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Map;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -34,6 +35,15 @@ public class RequestHandler extends Thread {
             while(!line.equals("")){
                 line = br.readLine();
                 log.debug("request : {}", line);
+            }
+
+            if(path.startsWith("/user/create")){
+                int index = path.indexOf("?");
+                String queryString = path.substring(index+1);
+                Map<String,String> params = HttpRequestUtils.parseQueryString(queryString);
+                User user = new User(params.get("userId"),params.get("password"),params.get("name"),params.get("email"));
+                log.debug("User : {}", user);
+                path = "/index.html";
             }
 
             DataOutputStream dos = new DataOutputStream(out);
