@@ -1,11 +1,12 @@
 package webserver;
 
+import handler.StaticHandler;
+import http.Method;
 import http.Request;
 import http.Response;
 import http.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import handler.StaticHandler;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,7 +27,7 @@ public class WebServer {
 
         StaticHandler staticHandler = new StaticHandler();
         Map<Route, Function<Request, Response>> routes = Map.of(
-                new Route("GET", ".+"), staticHandler::get
+                new Route(Method.GET, ".+"), staticHandler::get
         );
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
