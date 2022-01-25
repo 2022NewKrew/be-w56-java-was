@@ -4,7 +4,7 @@ public enum HttpStatus {
     OK(200, "OK", ""),
     METHOD_NOT_ALLOWED(405, "Method Not Allowed", "This HTTP method is not supported by this URL."),
     NOT_IMPLEMENTED(501, "Not Implemented", "The server is unable to process your request."),
-    ;
+    FOUND(302, "Found", "");
 
     private final int code;
     private final String description;

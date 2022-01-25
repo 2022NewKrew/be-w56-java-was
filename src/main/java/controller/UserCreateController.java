@@ -24,13 +24,13 @@ public class UserCreateController extends AbstractController {
 
     @Override
     protected HttpResponse doGet(HttpRequest request) {
-        UserService.register(request.getQueries());
-        return null;
+        return HttpResponse.error(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Override
     protected HttpResponse doPost(HttpRequest request) {
-        return HttpResponse.error(HttpStatus.METHOD_NOT_ALLOWED);
+        UserService.register(request.getParams());
+        return HttpResponse.redirect("/index.html");
     }
 
     @Override

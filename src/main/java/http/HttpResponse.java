@@ -14,6 +14,10 @@ public class HttpResponse {
     private final Map<String, String> headers;
     private final byte[] body;
 
+    private HttpResponse(HttpStatus httpStatus, Map<String, String> header) {
+        this(httpStatus, header, new byte[0]);
+    }
+
     private HttpResponse(HttpStatus httpStatus, Map<String, String> headers, byte[] body) {
         this.httpStatus = httpStatus;
         this.headers = headers;
@@ -30,6 +34,12 @@ public class HttpResponse {
         Map<String, String> headers = new HashMap<>();
         byte[] body = httpStatus.getErrorMessage().getBytes(StandardCharsets.UTF_8);
         return new HttpResponse(httpStatus, headers, body);
+    }
+
+    public static HttpResponse redirect(String url) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Location", url);
+        return new HttpResponse(HttpStatus.FOUND, headers);
     }
 
     public String getHeader() {
