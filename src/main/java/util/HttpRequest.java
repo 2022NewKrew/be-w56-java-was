@@ -78,4 +78,8 @@ public class HttpRequest {
     public Map<String, String> body(){
         return this.body;
     }
+
+    public String getHeader(String key){
+        return headers.get(key);
+    }
 }
