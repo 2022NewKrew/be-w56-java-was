@@ -20,7 +20,7 @@ public class RequestMapper {
 
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
     private static final Map<String, RequestMappingInfo> requestMap;
-    private static final List<String> STATIC_RESOURCE_DIR = List.of("/js", "/css", "/fonts", "images", "/favicon.ico");
+    private static final List<String> STATIC_RESOURCE_DIR = List.of("/js", "/css", "/fonts", "/images", "/favicon.ico");
 
     static {
         requestMap = new HashMap<>();
