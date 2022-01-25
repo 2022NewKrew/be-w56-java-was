@@ -30,6 +30,7 @@ public class HttpRequestUtils {
         String[] splitRequestLine = requestLine.split(" ");
         httpRequestBuilder.httpMethod(getHttpMethod(splitRequestLine[0]));
         httpRequestBuilder.uri(splitRequestLine[1]);
+        httpRequestBuilder.queryStrings(parseQueryString(splitRequestLine[1].substring(splitRequestLine[1].lastIndexOf("?") + 1)));
         httpRequestBuilder.httpVersion(splitRequestLine[2]);
     }
 
