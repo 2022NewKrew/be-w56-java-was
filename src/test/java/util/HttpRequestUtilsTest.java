@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
-import webserver.HttpMethod;
+import http.HttpMethod;
 
 public class HttpRequestUtilsTest {
 

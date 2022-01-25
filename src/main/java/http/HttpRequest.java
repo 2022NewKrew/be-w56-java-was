@@ -1,9 +1,8 @@
-package domain;
+package http;
 
 import java.util.List;
 import java.util.Map;
 import util.HttpRequestUtils;
-import webserver.HttpMethod;
 
 public class HttpRequest {
 

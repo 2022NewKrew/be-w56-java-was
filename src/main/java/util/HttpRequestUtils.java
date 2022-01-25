@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.HttpMethod;
+import http.HttpMethod;
 
 public class HttpRequestUtils {
 
