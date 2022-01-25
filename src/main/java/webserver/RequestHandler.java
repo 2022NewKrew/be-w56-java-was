@@ -2,14 +2,22 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
+import controller.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
-    private final static Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final static String STATIC_FILE_DIRECTORY = "./webapp";
+    private static final Logger log;
+    private static final FrontController frontController;
+
+    static {
+        log = LoggerFactory.getLogger(RequestHandler.class);
+        frontController = FrontController.getInstance();
+    }
 
     private Socket connection;
 
@@ -24,43 +32,34 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader httpRequestHeaderReader = new BufferedReader(new InputStreamReader(in));
 
-            String requestUrl = this.getRequestUrl(httpRequestHeaderReader);
-            log.info("request url : {}", requestUrl);
+            String[] requestInfo = this.parseRequestInfo(httpRequestHeaderReader);
 
-            byte[] body = Files.readAllBytes(new File(STATIC_FILE_DIRECTORY + requestUrl).toPath());
+            String requestMethod = requestInfo[0];
+            String requestPath = requestInfo[1];
+            Map<String, String> queryParams = Maps.newHashMap();
+            if(requestInfo.length == 3) {
+                queryParams = HttpRequestUtils.parseQueryString(requestInfo[2]);
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
-            this.response200Header(dos, body.length);
-            this.responseBody(dos, body);
+            frontController.dispatch(requestMethod, requestPath, queryParams, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private String getRequestUrl(BufferedReader httpRequestHeaderReader) throws IOException {
-        String firstLine = httpRequestHeaderReader.readLine();
-        String[] tokens = firstLine.split(" ");
+    private String[] parseRequestInfo(BufferedReader httpRequestHeaderReader) throws IOException {
+        String requestInfo = httpRequestHeaderReader.readLine();
 
-        return tokens[1];
-    }
+        String[] requestInfoTokens = requestInfo.split(" ");
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        String requestMethod = requestInfoTokens[0];
+        String[] requestUrl = requestInfoTokens[1].split("\\?");
+
+        if(requestUrl.length == 1) {
+            return new String[] { requestMethod, requestUrl[0] };
         }
-    }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        return new String[] { requestMethod, requestUrl[0], requestUrl[1] };
     }
 }
