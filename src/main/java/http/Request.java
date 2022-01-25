@@ -15,7 +15,7 @@ public class Request {
     private List<String> requestHeader;
     private String path;
     private HttpMethod method;
-    private Map<String, String> inputElements;
+    private Map<String, String> elements;
 
     public Request(String requestHeader){
         this.requestHeader = Arrays.asList(requestHeader.split("\n"));
@@ -41,9 +41,20 @@ public class Request {
         String[] strArray = lineStr.split(" ");
         path = strArray[1];
 
+        for(int i = 0 ; i < path.length() ; i++){
+            if(path.charAt(i) == '?'){
+                path = path.substring(0, i);
+                break;
+            }
+        }
+
         if(path.equals("/")){
             path = DEFAULT_RESOURCE;
         }
+    }
+
+    public Map<String, String> getElements() {
+        return elements;
     }
 
     private void parseMethod(String lineStr){
@@ -75,7 +86,7 @@ public class Request {
         }
 
         String elementSubString = divideElementSubString(lineStr);
-        this.inputElements = HttpRequestUtils.parseQueryString(elementSubString);
+        this.elements = HttpRequestUtils.parseQueryString(elementSubString);
     }
 
     public List<String> getRequestHeader() {
