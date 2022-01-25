@@ -1,19 +1,24 @@
 package webserver;
 
-import model.Request;
+import http.HttpStatusCode;
+import http.MyHttpRequest;
+import http.MyHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
+import util.Router;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.List;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
+
+    private static final byte[] SERVER_ERROR_MESSAGE = "서버에서 에러가 발생했습니다.".getBytes();
 
     private final Socket connection;
 
@@ -26,53 +31,29 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request request = HttpRequestUtils.createRequest(in);
-            printHeaders(request.getHeader());
-            DataOutputStream dos = new DataOutputStream(out);
-            File file = new File("./webapp" + request.getPath());
-            byte[] body;
-            if (file.exists()) {
-                body = Files.readAllBytes(file.toPath());
-                response200Header(dos, body.length);
-            } else {
-                body = NOT_FOUNT_MESSAGE;
-                response404Header(dos);
+            MyHttpResponse response;
+            try {
+                MyHttpRequest request = new MyHttpRequest.Builder().build(in);
+                printHeaders(request.getHeader());
+                response = Router.routing(request);
+            } catch (Exception exception) {
+                log.error(exception.getMessage());
+                response = new MyHttpResponse.Builder()
+                        .setBody(SERVER_ERROR_MESSAGE)
+                        .setStatusCode(HttpStatusCode.STATUS_CODE_500)
+                        .build();
             }
-            responseBody(dos, body);
+            sendResponse(out, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + NOT_FOUNT_MESSAGE.length + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private void sendResponse(OutputStream out, MyHttpResponse response) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        byte[] responseBytes = response.toBytes();
+        dos.write(responseBytes, 0, responseBytes.length);
+        dos.flush();
     }
 
     private void printHeaders(List<Pair> header) {
