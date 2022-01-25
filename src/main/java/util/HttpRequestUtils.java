@@ -10,15 +10,29 @@ import com.google.common.collect.Maps;
 import model.RequestHeader;
 
 public class HttpRequestUtils {
-
     public static void setRequest(RequestHeader requestHeader, String request){
         String[] tokens = request.split(" ");
         requestHeader.putHeader("method", tokens[0]);
-        if(!tokens[1].contains(".")) {
-            tokens[1] = tokens[1] + ".html";
-        }
-        requestHeader.putHeader("uri", tokens[1]);
+        setUri(requestHeader, tokens[1]);
         requestHeader.putHeader("protocol", tokens[2]);
+    }
+
+    private static void setUri(RequestHeader requestHeader, String uri){
+        if(uri.contains("?")){
+            String[] tokens = uri.split("\\?");
+            uri = tokens[0];
+            setRequestParameter(requestHeader, tokens[1]);
+        }
+
+        requestHeader.putHeader("uri", uri);
+    }
+
+    public static void setRequestParameter(RequestHeader requestHeader, String token){
+        String[] parameters = token.split("&");
+        for(String parameter : parameters){
+            String[] tokens = parameter.split("=");
+            requestHeader.putParameter(tokens[0], tokens[1]);
+        }
     }
 
     public static void setHeader(RequestHeader requestHeader, String header){
