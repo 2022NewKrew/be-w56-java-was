@@ -6,7 +6,11 @@
 - [x] 스레드 풀 적용
 - [x] main 분리
 - [x] port 범위 검사
-- [ ] Controller 기능 추가하기
+- [x] 상속을 인터페이스 구현으로 변경
+- [x] RequestMaper 추가하기
+- [x] Controller 기능 추가하기
+- [x] favicon 응답 추가하기
+- [x] image 응답 추가하기
 
 # 2단계
 - [ ] 회원가입 기능 Get으로 구현하기
