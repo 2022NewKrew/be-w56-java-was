@@ -1,6 +1,6 @@
 package webserver.response;
 
-import webserver.exception.ContentTypeNotFoundedException;
+import webserver.exception.ContentTypeNotFoundException;
 
 public enum ContentType {
 
@@ -29,6 +29,6 @@ public enum ContentType {
                 return contentType;
             }
         }
-        throw new ContentTypeNotFoundedException();
+        throw new ContentTypeNotFoundException();
     }
 }
