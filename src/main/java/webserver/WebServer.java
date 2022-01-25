@@ -10,8 +10,9 @@ public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String args[]) throws Exception {
-        int port = 0;
+    public static void main(String[] args) throws Exception {
+        SingletonRegistry.registerClassesInPackage("controller");
+        int port;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
         } else {
