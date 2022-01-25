@@ -4,42 +4,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class RootController implements Controller{
+public class ErrorController implements Controller{
     private final Map<String, Function<Map<String, String>, Map<String, Object>>> methodMapper;
 
-    public RootController(){
+    public ErrorController(){
         methodMapper = new HashMap<>();
 
-        methodMapper.put("GET /", this::index);
-        methodMapper.put("GET /index.html", this::index);
+        methodMapper.put("GET /error", this::notFoundError);
+        methodMapper.put("POST /error", this::notFoundError);
     }
 
-    private Map<String, Object> index(Map<String, String> model){
+    private Map<String, Object> notFoundError(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
 
-        result.put("name", "/index.html");
+        result.put("name", "/404_error.html");
 
         return result;
     }
 
     @Override
     public Map<String, String> parseUrlInfo(String url, Map<String, String> message) {
-        String[] split = url.split("\\?");
-        if(split.length == 1)
-            return message;
-
-        url = split[1];
-
-        for(String data: url.split("&")){
-            message.put(data.split("=")[0], data.split("=")[1]);
-        }
-
         return message;
     }
 
     @Override
     public Function<Map<String, String>, Map<String, Object>> decideMethod(String method, String url) {
-        url = method + " " + url;
+        url = method + " /error";
 
         return methodMapper.get(url);
     }

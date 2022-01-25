@@ -3,6 +3,7 @@ package mapper;
 import Controller.Controller;
 import Controller.RootController;
 import Controller.StaticController;
+import Controller.ErrorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +17,13 @@ public class UrlMapper {
     private static final Logger log = LoggerFactory.getLogger(UrlMapper.class);
     private final Controller rootController;
     private final Controller staticController;
+    private final Controller errorController;
 
     public UrlMapper(){
         controllerMap = new LinkedHashMap<String, Controller>();
         rootController = new RootController();
         staticController = new StaticController();
+        errorController = new ErrorController();
 
         controllerMap.put("/js", staticController);
         controllerMap.put("/css", staticController);
@@ -28,9 +31,10 @@ public class UrlMapper {
         controllerMap.put("/images", staticController);
         controllerMap.put("/favicon.ico", staticController);
         controllerMap.put("/index.html", rootController);
+        controllerMap.put("/error", errorController);
     }
 
-    public Map<String, Object> mappingResult(String method, String url, Map<String, String> message){
+    public Map<String, Object> mappingResult(String method, String url, Map<String, String> message){;
         return controllerMap.get(createMappingUrl(url)).run(method, url, message);
     }
 
@@ -42,6 +46,6 @@ public class UrlMapper {
                 return regUrl;
         }
 
-        return "/index.html";
+        return "/error";
     }
 }
