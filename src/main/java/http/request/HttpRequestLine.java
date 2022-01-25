@@ -1,8 +1,8 @@
 package http.request;
 
 import lombok.Getter;
+import util.HttpRequestUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -28,18 +28,8 @@ public class HttpRequestLine {
     }
 
     private Map<String, String> extractParams(String url) {
-        if (!url.contains("?")) {
-            return new HashMap<>();
-        }
-
-        Map<String, String> paramMap = new HashMap<>();
-        String queryString = url.substring(url.indexOf("?") + 1);
-        String[] params = queryString.split("&");
-        for (String param : params) {
-            String[] splits = param.split("=");
-            paramMap.put(splits[0], splits[1]);
-        }
-        return paramMap;
+        String queryString = url.contains("?") ? url.substring(url.indexOf("?") + 1) : "";
+        return HttpRequestUtils.parseQueryString(queryString);
     }
 
     public String getParam(String name) {

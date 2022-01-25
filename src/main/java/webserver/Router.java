@@ -1,6 +1,6 @@
 package webserver;
 
-import controller.UserController;
+import controller.Controller;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
@@ -16,8 +16,11 @@ public class Router {
     public static HttpResponse route(HttpRequest request) throws IOException {
         String url;
         switch (request.getUrl()) {
+            case "/":
+                url = Controller.index(request);
+                break;
             case "/create":
-                url = UserController.createUser(request);
+                url = Controller.createUser(request);
                 break;
             default:
                 url = request.getUrl();

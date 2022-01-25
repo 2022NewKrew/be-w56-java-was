@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 
 @Slf4j
-public class UserController {
+public class Controller {
+
+    public static String index(HttpRequest request) {
+        return "/index.html";
+    }
 
     public static String createUser(HttpRequest request) {
         String userId = request.getParam("userId");
