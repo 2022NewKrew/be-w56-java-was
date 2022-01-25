@@ -2,8 +2,6 @@ package webserver;
 
 import db.DataBase;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import webserver.http.HttpStatus;
 import webserver.http.MIME;
@@ -18,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Controller {
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
-
     public static void mapping(MyHttpRequest myHttpRequest, DataOutputStream dos) throws IOException {
 
         String path = myHttpRequest.uri().getPath();
@@ -46,7 +42,7 @@ public class Controller {
                 myHttpResponse.writeBytes();
                 break;
             case "/user/create":
-                Map<String, String> getParam = HttpRequestUtils.parseQueryString(myHttpRequest.getGetParam());
+                Map<String, String> getParam = HttpRequestUtils.parseQueryString(myHttpRequest.uri().getQuery());
                 User joinedUser = new User(getParam.get("userId"), getParam.get("password"), getParam.get("name"), getParam.get("email"));
                 DataBase.addUser(joinedUser);
                 body = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
