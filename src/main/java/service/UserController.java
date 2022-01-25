@@ -8,6 +8,7 @@ import http.request.HttpRequestLine;
 import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
+import http.response.HttpResponseStatusLine;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +42,14 @@ public class UserController {
     }
 
     private HttpResponse readStaticFile(String url) throws IOException {
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(HttpStatus.OK);
         HttpResponseBody responseBody = HttpResponseBody.createFromUrl(url);
-        HttpResponseHeader responseHeader = new HttpResponseHeader(url, HttpStatus.OK, responseBody.length());
+        HttpResponseHeader responseHeader = new HttpResponseHeader(url, responseBody.length());
 
-        return new HttpResponse(responseHeader, responseBody);
+        return new HttpResponse(statusLine, responseHeader, responseBody);
     }
 
-    private HttpResponse createUser(HttpRequestLine requestLine) throws IOException {
+    private HttpResponse createUser(HttpRequestLine requestLine) {
         Map<String, String> queryString = requestLine.queryString();
         System.out.println(queryString);
         User newUser = new User(
@@ -57,15 +59,16 @@ public class UserController {
                 queryString.get("email"));
 
         DataBase.addUser(newUser);
-        return redirect("/index.html"); // TODO : redirection 구현?
+        return redirect("/index.html");
     }
 
     private HttpResponse redirect(String redirectUrl) {
-        HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(HttpStatus.FOUND);
+        HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, 0);
         responseHeader.addKeyValue("Location", redirectUrl);
         byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
         HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
 
-        return new HttpResponse(responseHeader, responseBody);
+        return new HttpResponse(statusLine, responseHeader, responseBody);
     }
 }

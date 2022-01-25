@@ -6,12 +6,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class HttpResponseHeader {
-    private static final String HTTP_VERSION = "HTTP/1.1";
     private String header;
 
-    public HttpResponseHeader(String url, String status, int bodyLength) {
-        header = HTTP_VERSION + " " + status + " \r\n" +
-                "Content-Type: " + contentTypeOf(url) + ";charset=utf-8\r\n" +
+    public HttpResponseHeader(String url, int bodyLength) {
+        header = "Content-Type: " + contentTypeOf(url) + ";charset=utf-8\r\n" +
                 "Content-Length: " + bodyLength + "\r\n";
     }
 
