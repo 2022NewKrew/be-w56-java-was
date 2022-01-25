@@ -1,14 +1,22 @@
 package util;
 
+import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 public class ResponseUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseUtils.class);
+
+    private ResponseUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static void response200Header(String respContextType, DataOutputStream dos, int lengthOfBodyContent) {
         try {
@@ -28,5 +36,12 @@ public class ResponseUtils {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    public static void response(OutputStream out, Response response) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        byte[] body = Files.readAllBytes(new File("./webapp" + response.getFilePath()).toPath());
+        response200Header(response.getRespContextType(), dos, body.length);
+        responseBody(dos, body);
     }
 }

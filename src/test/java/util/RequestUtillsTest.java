@@ -12,15 +12,6 @@ import static org.mockito.Mockito.when;
 
 class RequestUtillsTest {
 
-    @Test
-    void readUrlPath() throws IOException {
-        BufferedReader bufferedReader = mock(BufferedReader.class);
-        when(bufferedReader.readLine()).
-                thenReturn("GET /index.html HTTP/1.1");
-
-        String url = RequestUtills.readUrlPath(bufferedReader);
-        assertEquals("/index.html", url);
-    }
 
     @Test
     void readHeader() throws IOException {
