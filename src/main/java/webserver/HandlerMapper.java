@@ -1,21 +1,22 @@
 package webserver;
 
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.controller.Controller;
+import webserver.controller.StaticFileController;
+import webserver.controller.UserCreateController;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandlerMapper {
-    private Request request;
-    private Response response;
+    private static final Logger log = LoggerFactory.getLogger(HandlerMapper.class);
+    private static final Map<String, Controller> controllers = new HashMap<>(){{
+        put("GET/users/create", new UserCreateController());
+    }};
+    private static final Controller staticFileController = new StaticFileController();
 
-    public HandlerMapper(Request request, Response response){
-        this.request = request;
-        this.response = response;
-    }
-
-    public void start() throws IOException {
-        byte[] body = Files.readAllBytes(new File("./webapp" + request.getUri()).toPath());
-        response.writeHeader(body.length, 200);
-        response.writeBody(body);
+    public static void map(Request request, Response response) throws IOException {
+        controllers.getOrDefault(request.getMethod()+request.getUri(), staticFileController).start(request, response);
     }
 }

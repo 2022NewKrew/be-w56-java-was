@@ -20,8 +20,7 @@ public class FrontController extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             Request request = new Request(in);
             Response response = new Response(out);
-            HandlerMapper handlerMapper = new HandlerMapper(request, response);
-            handlerMapper.start();
+            HandlerMapper.map(request, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

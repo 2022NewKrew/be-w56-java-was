@@ -19,10 +19,9 @@ public class Request {
     public Request(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String requestLine = br.readLine();
-        String[] tokens = requestLine.split(" ");
-        this.method = tokens[0];
-        this.uri = tokens[1];
-        this.parameters = findParameters(uri);
+        this.method = requestLine.split(" ")[0];
+        this.uri = findUri(requestLine);
+        this.parameters = findParameters(requestLine);
         this.HeaderAttributes = findHeaderAttributes(br);
     }
 
@@ -35,12 +34,22 @@ public class Request {
         return HeaderAttributes;
     }
 
-    private Map<String,String> findParameters(String uri){
-        if(uri.contains("?")){
-            return HttpRequestUtils.parseQueryString(uri.split("\\?")[1]);
+    private Map<String,String> findParameters(String requestLine){
+        if(requestLine.contains("?")){
+            return HttpRequestUtils.parseQueryString(requestLine.split(" ")[1].split("\\?")[1]);
         }
         return Maps.newHashMap();
     }
+
+    private String findUri(String requestLine){
+        log.info(requestLine);
+        if (requestLine.contains("?")){
+            return requestLine.split(" ")[1].split("\\?")[0];
+        }
+        return requestLine.split(" ")[1];
+    }
+
+
 
     public String getMethod() {
         return method;
