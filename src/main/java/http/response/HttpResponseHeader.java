@@ -1,4 +1,7 @@
-package response;
+package http.response;
+
+import http.ContentType;
+import http.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,7 +11,7 @@ public class HttpResponseHeader {
     private static final String HTTP_VERSION = "HTTP/1.1";
 
     public HttpResponseHeader(String url, int bodyLength) {
-        header = HTTP_VERSION + " 200 OK \r\n" +
+        header = HTTP_VERSION + " " + HttpStatus.OK + " \r\n" +
                 "Content-Type: " + contentTypeOf(url) + ";charset=utf-8\r\n" +
                 "Content-Length: " + bodyLength + "\r\n" +
                 "\r\n";

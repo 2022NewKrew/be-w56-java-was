@@ -4,11 +4,11 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import request.HttpRequestLine;
+import http.request.HttpRequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponseBody;
-import response.HttpResponseHeader;
+import http.response.HttpResponseBody;
+import http.response.HttpResponseHeader;
 import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {

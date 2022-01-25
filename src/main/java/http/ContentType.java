@@ -1,4 +1,4 @@
-package response;
+package http;
 
 public class ContentType {
     public static final String CSS = "text/css";
