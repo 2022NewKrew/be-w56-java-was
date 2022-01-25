@@ -30,7 +30,6 @@ public class HttpRequestUtils {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
-
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
                      .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
@@ -117,13 +116,9 @@ public class HttpRequestUtils {
     public static Map<String, String> parseBody(BufferedReader br) throws IOException {
         Map<String, String> body = Maps.newHashMap();
         String line;
-        System.out.println("here?");
-        System.out.println("br.readLine() = " + br.readLine());
         while (!"".equals(line = br.readLine()) && line != null) {
-            System.out.println("line = " + line);
             HttpRequestUtils.parseBodyLine(body, line);
         }
-        System.out.println("here3 ");
         return body;
     }
 
@@ -131,6 +126,7 @@ public class HttpRequestUtils {
         if (Strings.isNullOrEmpty(line)) {
             return;
         }
+        System.out.println("line = " + line);
         String[] tokens = line.split(": ");
         Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
               .forEach(p -> map.put(p.getKey(), p.getValue()));
