@@ -19,6 +19,10 @@ public class HttpRequest {
         this.url = requestLine[INDEX_OF_URL];
     }
 
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
+    }
+
     public String getUrl() {
         return url;
     }
