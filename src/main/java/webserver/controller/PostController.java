@@ -73,7 +73,6 @@ public class PostController implements MethodController {
 
     private void methodSignUp() {
         log.info("[run] methodSignUp");
-
         String userId = rp.getBody("userId");
         String password = rp.getBody("password");
         String name = rp.getBody("name");
