@@ -1,0 +1,48 @@
+package controller;
+
+import http.request.HttpRequest;
+import http.request.HttpRequestLine;
+import http.response.HttpResponse;
+import http.response.HttpResponseBody;
+import http.response.HttpResponseHeaders;
+import http.response.HttpResponseStatusLine;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+public class RequestController {
+    public static HttpResponse getResponse(HttpRequest httpRequest) throws IOException {
+        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+        String url = requestLine.getUrl();
+        String method = requestLine.getMethod();
+
+        HttpRequestLineInfo requestLineInfo = HttpRequestLineInfo.lookup(url, method);
+        return handleRequest(requestLineInfo, requestLine);
+    }
+
+    public static HttpResponse handleRequest(HttpRequestLineInfo requestLineInfo, HttpRequestLine requestLine) throws IOException {
+        switch (requestLineInfo){
+            case SIGN_UP:
+                return signUp(requestLine);
+            default:
+                return others(requestLine);
+        }
+    }
+
+    public static HttpResponse signUp(HttpRequestLine httpRequestLine) throws IOException {
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), "200", "OK");
+        HttpResponseHeaders headers = new HttpResponseHeaders();
+        HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp/index.html").toPath()));
+
+        return new HttpResponse(statusLine, headers, body);
+    }
+
+    public static HttpResponse others(HttpRequestLine httpRequestLine) throws IOException {
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), "200", "OK");
+        HttpResponseHeaders headers = new HttpResponseHeaders();
+        HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp" + httpRequestLine.getUrl()).toPath()));
+
+        return new HttpResponse(statusLine, headers, body);
+    }
+}
