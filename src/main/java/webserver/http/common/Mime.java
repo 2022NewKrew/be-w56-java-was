@@ -1,4 +1,4 @@
-package webserver.http.message.common;
+package webserver.http.common;
 
 import java.util.Arrays;
 
@@ -23,11 +23,14 @@ public enum Mime {
         this.contentType = contentType;
     }
 
-    public static String contentTypeOf(String target) {
+    public static Mime of(String target) {
         return Arrays.stream(Mime.values())
                 .filter((mime -> target.endsWith(mime.extension)))
                 .findAny()
-                .orElse(Mime.PLAIN_TEXT)
-                .contentType;
+                .orElse(Mime.PLAIN_TEXT);
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }
