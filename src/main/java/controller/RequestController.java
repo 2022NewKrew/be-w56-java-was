@@ -23,6 +23,13 @@ public class RequestController {
         httpResponse.setContentType(MIME.parse(uri));
         if (uri.startsWith("/user/create")) {
             Map<String, String> params = httpRequest.getParameters();
+            if (!params.containsKey("userId") ||
+                    !params.containsKey("password") ||
+                    !params.containsKey("name") ||
+                    !params.containsKey("email")) {
+                httpResponse.setStatusCode(HttpStatus.BAD_REQUEST);
+                return httpResponse;
+            }
             User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
             log.debug("User: {}", user);
             DataBase.addUser(user);
