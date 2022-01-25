@@ -6,17 +6,17 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import webserver.http.HttpMethod;
 
 public class HttpRequestUtils {
     public static String parseUrl(String requestLine){
         String[] requestLineTokens = requestLine.split(" ");
-        String url = requestLineTokens[1];
+        return requestLineTokens[1];
+    }
 
-        if(url.equals("/")){
-            return "/index.html";
-        }
-
-        return url;
+    public static HttpMethod parseMethod(String requestLine){
+        String[] requestLineTokens = requestLine.split(" ");
+        return HttpMethod.valueOf(requestLineTokens[0]);
     }
 
     /**
