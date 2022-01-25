@@ -11,7 +11,6 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import util.IOUtils;
 import util.LoginUtils;
 
 public class RequestHandler extends Thread {
@@ -59,6 +58,7 @@ public class RequestHandler extends Thread {
                 log.debug("User : {}", user);
                 DataBase.addUser(user);
                 httpStatus = 302;
+                url = "/index.html";
             }
 
             if(url.equals("/user/login")) {
@@ -68,6 +68,7 @@ public class RequestHandler extends Thread {
                 User user = DataBase.findUserById(userId);
                 cookie = LoginUtils.checkLogin(log, user, password);
                 httpStatus = 302;
+                url = "/index.html";
             }
 
             log.debug("\n");
@@ -89,23 +90,23 @@ public class RequestHandler extends Thread {
                 responseBody(dos, body);
                 break;
             case 302:
-                response302(dos, cookie);
+                response302(dos, cookie, url);
                 break;
         }
     }
 
-    private void response302(DataOutputStream dos, String cookie) {
+    private void response302(DataOutputStream dos, String cookie, String url) {
         if(cookie == null) {
-            response302Header(dos);
+            response302Header(dos, url);
             return;
         }
-        response302HeaderWithCookie(dos, cookie);
+        response302HeaderWithCookie(dos, cookie, url);
     }
 
-    private void response302HeaderWithCookie(DataOutputStream dos, String cookie) {
+    private void response302HeaderWithCookie(DataOutputStream dos, String cookie, String url) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: /index.html\r\n");
+            dos.writeBytes("Location: " + url + "\r\n");
             dos.writeBytes("Set-Cookie: " + cookie + "; Path=/");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -113,10 +114,10 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void response302Header(DataOutputStream dos) {
+    private void response302Header(DataOutputStream dos, String url) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: /index.html\r\n");
+            dos.writeBytes("Location: " + url + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
