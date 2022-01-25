@@ -4,9 +4,14 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
+
+import static util.HttpRequestUtils.parseQueryString;
+import static webserver.RequestMapper.requestMapping;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -36,6 +41,9 @@ public class RequestHandler extends Thread {
             log.debug("requestUrl : {}", requestUrl);
             log.debug("clientHttpVersion : {}", clientHttpVersion);
 
+            // Request Method에 맞는 동작 & template 반환
+            String templatePath = requestMapping(requestMethod, requestUrl);
+
             // 모든 Request Header 출력
             String line;
             while (!(line = br.readLine()).equals("")) {
@@ -45,7 +53,7 @@ public class RequestHandler extends Thread {
             // Response 메시지 구성
             DataOutputStream dos = new DataOutputStream(out);
             // 요구한 URL의 html파일로 응답
-            byte[] body = Files.readAllBytes(new File("./webapp" + requestUrl).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + templatePath).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
