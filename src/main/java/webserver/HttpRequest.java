@@ -2,7 +2,7 @@ package webserver;
 
 import util.HttpRequestUtils;
 
-import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,7 @@ public class HttpRequest {
         }
     }
 
+
     public String getMethod() {
         return method;
     }
@@ -68,12 +69,12 @@ public class HttpRequest {
         return cookies;
     }
 
-    @Override
-    public String toString() {
-        String responseMessage = String.format("%s %s %s \n", method, uri, version);
+    public String toMessage() {
+        String reqeustMessage = String.format("%s %s %s\r\n", method, uri, version);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            responseMessage += String.format("%s: %s\n", entry.getKey(), entry.getValue());
+            reqeustMessage += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
         }
-        return responseMessage;
+        reqeustMessage += "\r\n";
+        return reqeustMessage;
     }
 }

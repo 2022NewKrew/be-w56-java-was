@@ -1,19 +1,25 @@
 package controller;
 
 import webserver.HttpRequest;
-import webserver.ViewMapper;
+import webserver.HttpResponse;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class FrontController {
 
-    public static byte[] getView(HttpRequest httpRequest) throws IOException {
+    public static void getResponse(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+        String view;
+
         if (httpRequest.getPath().equals("/user/create")) {
             Map<String, String> query = httpRequest.getQueryString();
-            String view = AuthController.signUp(query.get("userId"), query.get("password"), query.get("name"), query.get("email"));
-            return ViewMapper.getBytes(view);
+            view = AuthController.signUp(query.get("userId"), query.get("password"), query.get("name"), query.get("email"));
+
+        } else {
+            view = httpRequest.getPath();
         }
-        return ViewMapper.getBytes(httpRequest.getPath());
+
+        httpResponse.set200Header();
+        httpResponse.setBody(ViewMapper.getBytes(view));
     }
 }

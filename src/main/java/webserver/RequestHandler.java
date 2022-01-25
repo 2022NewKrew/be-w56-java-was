@@ -26,18 +26,15 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            HttpRequest httpRequest = create(br);
-            if (httpRequest.getUri().equals("/favicon.ico")) {
-                return;
-            }
-            log.debug(httpRequest.toString());
-
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = FrontController.getView(httpRequest);
-//            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+
+            HttpRequest httpRequest = createHttpRequest(br);
+            log.debug(httpRequest.toMessage());
+
+            HttpResponse httpResponse = createHttpResponse();
+
+            FrontController.getResponse(httpRequest, httpResponse);
+            response(dos, httpResponse);
 
             br.close();
             dos.close();
@@ -46,7 +43,7 @@ public class RequestHandler extends Thread {
         }
     }
 
-    public static HttpRequest create(BufferedReader br) throws IOException {
+    public static HttpRequest createHttpRequest(BufferedReader br) throws IOException {
 
         String[] tokens = br.readLine().split(" ");
         Map<String, String> headers = new HashMap<>();
@@ -55,33 +52,21 @@ public class RequestHandler extends Thread {
             headers.put(line.split(":")[0].trim(), line.split(":")[1].trim());
             line = br.readLine();
         }
-
-//        String body = "";
-//        line = br.readLine();
-//        while (line != null && !line.equals("")) {
-//            body += line + "\n";
-//            line = br.readLine();
-//        }
-
         return new HttpRequest(tokens[0], tokens[1], tokens[2], headers, "");
     }
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+
+    public static HttpResponse createHttpResponse(){
+        return new HttpResponse();
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
+    private void response(DataOutputStream dos, HttpResponse httpResponse) {
         try {
-            dos.write(body, 0, body.length);
+            dos.writeBytes(httpResponse.toHeader());
+            dos.write(httpResponse.getBody(), 0, httpResponse.getBody().length);
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
+
 }
