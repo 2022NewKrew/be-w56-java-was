@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Map;
 
 
+import model.Request;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
@@ -73,6 +74,18 @@ public class HttpRequestUtilsTest {
     @Test
     public void parseUrl() {
         String url = "GET /index.html HTTP/1.1";
-        assertThat(HttpRequestUtils.parseRequestHeader(url)).isEqualTo("/index.html");
+        Request request = HttpRequestUtils.parseRequestHeader(url);
+
+        assertThat(request.getUrl()).isEqualTo("/index.html");
+        assertThat(request.getQuery()).isNull();
+    }
+
+    @Test
+    public void parseUrlWithQuery() {
+        String url = "GET /index.html?name=test HTTP/1.1";
+        Request request = HttpRequestUtils.parseRequestHeader(url);
+
+        assertThat(request.getUrl()).isEqualTo("/index.html");
+        assertThat(request.getQuery()).isEqualTo("name=test");
     }
 }
