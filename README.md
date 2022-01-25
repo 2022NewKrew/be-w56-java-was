@@ -1,6 +1,22 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
+# 2022.01.25 TIL
+### Socket.InputStream을 close하면, Socket도 close된다.
+따라서 다음과 같이 작성할 수 없다
+```
+try (in = socket.getIn()) {
+   ...
+} catch ...
+
+try (out = socket.getOut()) {
+   ...
+} catch ...
+```
+
+### 
+   
+
 
 # 2022.01.24 TIL
 ## 잡다한 거
