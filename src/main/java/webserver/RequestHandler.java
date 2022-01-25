@@ -3,11 +3,10 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.Arrays;
 
+import network.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -24,18 +23,10 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = bufferedReader.readLine();
-            String url = HttpRequestUtils.parseRequestLine(line).get("path");
 
-            String contentType = "";
-            while (!"".equals(line)) {
-                line = bufferedReader.readLine();
-                HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
-                if (pair.getKey().equals("Accept")) {
-                    contentType = HttpRequestUtils.contentNegotation(pair.getValue());
-                    break;
-                }
-            }
+            HttpRequest httpRequest = new HttpRequest(bufferedReader);
+            String url = httpRequest.getPath();
+            String contentType = httpRequest.getContentType();
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
