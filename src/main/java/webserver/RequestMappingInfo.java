@@ -13,20 +13,6 @@ public enum RequestMappingInfo {
     ROOT("/") {
         @Override
         public void handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
-            byte[] body = "Hello World".getBytes();
-
-            MyHttpResponse response = MyHttpResponse.builder(dos)
-                    .status(HttpStatus.OK)
-                    .body(body)
-                    .build();
-
-            response.writeBytes();
-            response.flush();
-        }
-    },
-    INDEX("/index.html") {
-        @Override
-        public void handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
 
             MyHttpResponse response = MyHttpResponse.builder(dos)

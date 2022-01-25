@@ -12,15 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RequestMapper {
 
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
     private static final Map<String, RequestMappingInfo> requestMap;
-    private static final List<String> STATIC_RESOURCE_DIR = List.of("/js", "/css", "/fonts", "/images", "/favicon.ico");
 
     static {
         requestMap = new HashMap<>();
@@ -33,8 +32,8 @@ public class RequestMapper {
         String path = in.uri().getPath();
         DataOutputStream dos = new DataOutputStream(out);
 
-        boolean isRequestStaticResource = STATIC_RESOURCE_DIR.stream()
-                .anyMatch(path::startsWith);
+        boolean isRequestStaticResource = Arrays.stream(MIME.values())
+                .anyMatch(m -> m.isExtensionMatch(path));
 
         if (isRequestStaticResource) {
             responseStaticResource(dos, path);

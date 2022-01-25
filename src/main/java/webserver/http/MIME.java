@@ -28,4 +28,12 @@ public enum MIME {
 
         return mime.contentType;
     }
+
+    public boolean isExtensionMatch(String path) {
+        return path.endsWith(extension);
+    }
+
+    public String getExtension() {
+        return extension;
+    }
 }
