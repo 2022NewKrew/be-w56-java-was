@@ -4,8 +4,11 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
+import util.MyUtill;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,19 +26,33 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String headerLine = bufferedReader.readLine();
+            String query = headerLine.split(" ")[1];
 
-            byte[] body = getHtmlBytes(bufferedReader);
-
-            DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            if(MyUtill.isGetQuery(query)){
+                handleQueryRequest(query);
+                return;
+            }
+            handleHtmlRequest(headerLine, out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private byte[] getHtmlBytes(BufferedReader bufferedReader) throws IOException {
-        String headerLine = bufferedReader.readLine();
+    private void handleQueryRequest(String headerLine){
+        String query = headerLine.split("\\?")[1];
+        User user = new User(HttpRequestUtils.parseQueryString(query));
+    }
+
+    private void handleHtmlRequest(String headerLine, OutputStream out) throws IOException {
+        byte[] body = getHtmlBytes(headerLine);
+
+        DataOutputStream dos = new DataOutputStream(out);
+        response200Header(dos, body.length);
+        responseBody(dos, body);
+    }
+
+    private byte[] getHtmlBytes(String headerLine) throws IOException {
 
         String url = extractPath(headerLine);
         return Files.readAllBytes(new File("./webapp" + url).toPath());
