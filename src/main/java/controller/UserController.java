@@ -19,18 +19,20 @@ public class UserController extends Controller{
         baseUrl = "/user";
 
         runner.put("GET/user/form", (req, res) -> {
-            ModelAndView modelAndView = new ModelAndView();
             String viewName = UrlFormatter.format(req.getRequestUri());
-            modelAndView.setViewName(viewName);
-            return modelAndView;
+            return new ModelAndView(viewName, 200);
         });
 
         runner.put("GET/user/create", (req, res) -> {
-            ModelAndView modelAndView = new ModelAndView();
             loginService.join(req.getParams());
             String viewName = UrlFormatter.format(WebConst.HOME);
-            modelAndView.setViewName(viewName);
-            return modelAndView;
+            return new ModelAndView(viewName, 200);
+        });
+
+        runner.put("POST/user/create", (req, res) -> {
+            loginService.join(req.getParams());
+            String viewName = UrlFormatter.format(WebConst.HOME);
+            return new ModelAndView(viewName, 302);
         });
     }
 

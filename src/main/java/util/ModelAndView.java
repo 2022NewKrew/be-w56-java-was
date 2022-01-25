@@ -4,7 +4,18 @@ package util;
 public class ModelAndView {
     private String viewName;
     private int responseCode;
-    private String redirectURL;
+
+    public ModelAndView() {
+    }
+
+    public ModelAndView(String viewName) {
+        this.viewName = viewName;
+    }
+
+    public ModelAndView(String viewName, int responseCode) {
+        this.viewName = viewName;
+        this.responseCode = responseCode;
+    }
 
     public String getViewName() {
         return viewName;
@@ -20,13 +31,5 @@ public class ModelAndView {
 
     public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
-    }
-
-    public String getRedirectURL() {
-        return redirectURL;
-    }
-
-    public void setRedirectURL(String redirectURL) {
-        this.redirectURL = redirectURL;
     }
 }

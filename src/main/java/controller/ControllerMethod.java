@@ -7,5 +7,5 @@ import java.io.DataOutputStream;
 
 @FunctionalInterface
 public interface ControllerMethod {
-    ModelAndView run(HttpRequest httpRequest, DataOutputStream res);
+    ModelAndView run(HttpRequest req, DataOutputStream res);
 }
