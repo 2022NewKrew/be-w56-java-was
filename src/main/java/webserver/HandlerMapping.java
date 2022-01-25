@@ -3,6 +3,7 @@ package webserver;
 import controller.AbstractController;
 import controller.Controller;
 import controller.StaticController;
+import controller.UserCreateController;
 import java.util.List;
 
 public class HandlerMapping {
@@ -19,7 +20,7 @@ public class HandlerMapping {
 
     public static HandlerMapping getInstance() {
         if (instance == null) {
-            instance = new HandlerMapping(List.of(StaticController.getInstance()));
+            instance = new HandlerMapping(List.of(UserCreateController.getInstance()));
         }
         return instance;
     }
