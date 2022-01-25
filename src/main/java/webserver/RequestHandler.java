@@ -9,7 +9,6 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpHeaderUtils;
-import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -30,6 +29,7 @@ public class RequestHandler extends Thread {
             String request = br.readLine();
             String urlWithQuery = HttpHeaderUtils.getHttpRequestUrl(request);
             log.info("url = {}", urlWithQuery);
+            String url = HttpHeaderUtils.getUrl(urlWithQuery);
             Optional<String> query = HttpHeaderUtils.getQuery(urlWithQuery);
             if(query.isPresent()) {
                 User user = HttpHeaderUtils.getUserInfoFromUrl(query.get());
@@ -42,18 +42,18 @@ public class RequestHandler extends Thread {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + urlWithQuery).toPath());
-            response200Header(dos, body.length);
+            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+            response200Header(dos, body.length, HttpHeaderUtils.getContentTypeFromUrl(url));
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
