@@ -1,5 +1,7 @@
 package webserver.model;
 
+import webserver.annotation.RequestMethod;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
@@ -11,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class KinaHttpRequest extends HttpRequest {
-    private final String method;
+    private final RequestMethod method;
     private final String requestURI;
     private final String version;
     private final Map<String, List<String>> headers;
@@ -19,7 +21,7 @@ public class KinaHttpRequest extends HttpRequest {
 
     private KinaHttpRequest(BufferedReader in) throws IOException {
         String[] request = in.readLine().split(" ");
-        this.method = request[0];
+        this.method = RequestMethod.valueOf(request[0]);
         this.requestURI = request[1];
         this.version = request[2];
         headers = new HashMap<>();
@@ -48,7 +50,7 @@ public class KinaHttpRequest extends HttpRequest {
 
     @Override
     public String method() {
-        return method;
+        return method.toString();
     }
 
     @Override
