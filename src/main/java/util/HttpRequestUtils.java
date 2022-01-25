@@ -2,22 +2,16 @@ package util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import model.Request;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
     /**
      * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
+     * @return parameter Map
      */
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
@@ -25,7 +19,7 @@ public class HttpRequestUtils {
 
     /**
      * @param cookies 값은 name1=value1; name2=value2 형식임
-     * @return
+     * @return cookie Map
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
@@ -37,8 +31,8 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
@@ -56,23 +50,6 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
-    }
-
-    public static Request createRequest(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        List<Pair> headers = new ArrayList<>();
-        String line = reader.readLine();
-        String[] tokens = line.split(" ");
-        String method = tokens[0];
-        String path = tokens[1];
-        line = reader.readLine();
-        while (!Strings.isNullOrEmpty(line)) {
-            Pair header = parseHeader(line);
-            headers.add(header);
-            line = reader.readLine();
-        }
-
-        return new Request(method, path, headers);
     }
 
     public static class Pair {
