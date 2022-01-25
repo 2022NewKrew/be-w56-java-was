@@ -10,7 +10,7 @@ public @interface RequestMapping {
 
     String[] value() default {};
 
-    RequestMethod[] method() default {};
+    RequestMethod method() default RequestMethod.GET;
 
     String[] params() default {};
 
