@@ -3,11 +3,13 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import db.DataBase;
 import model.User;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -48,10 +50,12 @@ public class RequestHandler extends Thread {
             String url = requestMap.get("httpUrl");
             String cookie = null;
             int httpStatus = 200;
-            int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
             Map<String, String> params = new HashMap<>();
-            if(requestMap.get("httpMethod").equals("POST"))
+            if(requestMap.get("httpMethod").equals("POST")) {
+                int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
                 params = HttpRequestUtils.parseRequestBody(br, contentLength);
+
+            }
 
             if(url.equals("/user/create")) {
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
@@ -85,8 +89,10 @@ public class RequestHandler extends Thread {
     private void response(DataOutputStream dos, String url, int httpStatus, String cookie) throws IOException {
         switch(httpStatus) {
             case 200:
-                byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-                response200Header(dos, body.length);
+                File file = new File("./webapp" + url);
+                String contentType = new Tika().detect(file);
+                byte[] body = Files.readAllBytes(file.toPath());
+                response200Header(dos, body.length, contentType);
                 responseBody(dos, body);
                 break;
             case 302:
@@ -124,10 +130,10 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: ;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
