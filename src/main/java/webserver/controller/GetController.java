@@ -37,11 +37,10 @@ public class GetController implements MethodController {
     private void methodSignUp () throws IOException {
         log.info("--Sign-up method 실행--");
 
-        Map<String,String> queryMap = rp.parseRequestQuery();
-        String userId = queryMap.get("userId");
-        String password = queryMap.get("password");
-        String name = queryMap.get("name");
-        String email = queryMap.get("email");
+        String userId = rp.getQuery("userId");
+        String password = rp.getQuery("password");
+        String name = rp.getQuery("name");
+        String email = rp.getQuery("email");
         User user = new User(userId,password,name,email);
 
         log.info(user.toString());

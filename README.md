@@ -21,6 +21,7 @@
   0. Request 헤더 파싱 
   1. Get/Post 에 따라 수행할 요청을 구분 ( interface )
   2. 경로에 따라 세부적인 작업을 수행 ( service 함수에서 작업을 선택 )
+- 쿼리문을 저장하는 Map 을 추가로 구현
 
 # 참고 사이트
 - HTTP Header
