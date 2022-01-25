@@ -11,6 +11,7 @@ import webserver.response.HttpResponseLine;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,10 +26,14 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            createRequest(in);
+        try (
+                InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                DataOutputStream dos = new DataOutputStream(out)
+        ) {
+            createRequest(br);
             HttpResponse response = getResponse();
-            response(response, out);
+            response(response, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         } finally {
@@ -36,8 +41,7 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private HttpRequest createRequest(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+    private HttpRequest createRequest(BufferedReader br) throws IOException {
         return RequestContext.getInstance().startRequest(br);
     }
 
@@ -45,8 +49,7 @@ public class RequestHandler extends Thread {
         return ResponseProcessor.getInstance().response();
     }
 
-    private void response(HttpResponse response, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
+    private void response(HttpResponse response, DataOutputStream dos) throws IOException {
         writeResponseLine(dos, response.getResponseLine());
         writeResponseHeader(dos, response.getResponseHeader());
         byte[] body = response.getBytesForBodyContent();
