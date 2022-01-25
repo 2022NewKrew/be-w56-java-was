@@ -7,7 +7,7 @@ import util.IOUtils;
 import webserver.controller.WebController;
 import webserver.core.StaticResourceManager;
 import webserver.core.http.HttpClientErrorException;
-import webserver.core.http.request.Header;
+import webserver.core.http.Header;
 import webserver.core.http.request.HttpMethod;
 import webserver.core.http.request.HttpRequest;
 import webserver.core.http.request.HttpRequestBuilder;

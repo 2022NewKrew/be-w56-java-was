@@ -2,7 +2,6 @@ package webserver.core;
 
 import org.apache.tika.Tika;
 import webserver.core.http.HttpClientErrorException;
-import webserver.core.http.request.Header;
 import webserver.core.http.request.HttpRequest;
 import webserver.core.http.response.HttpResponse;
 import webserver.core.http.response.HttpResponseBuilder;

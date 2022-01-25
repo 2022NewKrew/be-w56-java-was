@@ -1,6 +1,6 @@
 package webserver.core.http.response;
 
-import webserver.core.http.request.Header;
+import webserver.core.http.Header;
 
 public class HttpResponseBuilder {
     private HttpStatus status;

@@ -1,5 +1,7 @@
 package webserver.core.http.request;
 
+import webserver.core.http.Header;
+
 import java.util.Map;
 
 public class HttpRequest {

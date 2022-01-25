@@ -1,6 +1,6 @@
 package webserver.core.http.response;
 
-import webserver.core.http.request.Header;
+import webserver.core.http.Header;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
