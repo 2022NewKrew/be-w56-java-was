@@ -1,8 +1,10 @@
 package webserver;
 
 import model.Request;
+import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import router.Router;
 import util.RequestUtills;
 import util.ResponseUtils;
 
@@ -22,15 +24,17 @@ public class RequestHandler extends Thread {
 
     @Override
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
             Request request = RequestUtills.generateRequest(in);
-            ResponseUtils.response(out, request);
+            Response response = Router.routing(request);
+            ResponseUtils.response(out, response);
 
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+
     }
 }

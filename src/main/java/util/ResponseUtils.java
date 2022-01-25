@@ -1,6 +1,6 @@
 package util;
 
-import model.Request;
+import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +38,10 @@ public class ResponseUtils {
         }
     }
 
-    public static void response(OutputStream out, Request request) throws IOException {
+    public static void response(OutputStream out, Response response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File("./webapp" + request.getUrlPath()).toPath());
-        response200Header(request.getRespContextType(), dos, body.length);
+        byte[] body = Files.readAllBytes(new File("./webapp" + response.getFilePath()).toPath());
+        response200Header(response.getRespContextType(), dos, body.length);
         responseBody(dos, body);
     }
 }

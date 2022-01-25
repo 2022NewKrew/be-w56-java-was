@@ -3,7 +3,6 @@ package model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static util.punctuationMarksUtils.QUESTION_MARK;
@@ -29,5 +28,9 @@ public class Request {
 
     public String getRespContextType() {
         return header.get("Accept").split(",")[0];
+    }
+
+    public String getHttpMethod() {
+        return requestLine[0];
     }
 }
