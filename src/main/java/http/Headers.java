@@ -2,6 +2,7 @@ package http;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class Headers {
@@ -20,7 +21,20 @@ public class Headers {
         return map.entrySet();
     }
 
-    public static Headers contentType(String contentType) {
-        return new Headers(Collections.singletonMap("Content-Type", contentType));
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Headers headers = (Headers) o;
+        return Objects.equals(map, headers.map);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(map);
+    }
+
+    public static Headers contentType(ContentType contentType) {
+        return new Headers(Collections.singletonMap("Content-Type", contentType.getContentType()));
     }
 }

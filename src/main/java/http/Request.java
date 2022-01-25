@@ -4,41 +4,48 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Request {
 
-    private final String method;
-    private final String path;
-    private final String version;
+    private final Method method;
+    private final Locator locator;
+    private final Version version;
     private final Headers headers;
     private final String body;
 
     private Request(
-            String method,
-            String path,
-            String version,
+            Method method,
+            Locator locator,
+            Version version,
             Headers headers,
             String body
     ) {
         this.method = method;
-        this.path = path;
+        this.locator = locator;
         this.version = version;
         this.headers = headers;
         this.body = body;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
     }
 
     public String getPath() {
-        return path;
+        return locator.getPath();
     }
 
-    public String getVersion() {
+    public Map<String, String> getQueryParams() {
+        return locator.getQuery();
+    }
+
+    public Version getVersion() {
         return version;
     }
 
@@ -55,14 +62,14 @@ public class Request {
         String line = br.readLine();
         String[] split = line.split(" ");
         String method = split[0];
-        String path = split[1];
+        String locator = split[1];
         String version = split[2];
         Headers headers = parseHeaders(br);
         String body = parseBody(headers, br);
         return Request.newBuilder()
-                .method(method)
-                .path(path)
-                .version(version)
+                .method(Method.fromString(method).orElseThrow(() -> new IllegalArgumentException("Invalid method")))
+                .locator(Locator.parse(locator))
+                .version(Version.fromString(version).orElseThrow(() -> new IllegalArgumentException("Invalid version")))
                 .headers(headers)
                 .body(body)
                 .build();
@@ -85,37 +92,56 @@ public class Request {
     private static String parseBody(Headers headers, BufferedReader br) throws IOException {
         String contentLength = headers.get("Content-Length");
         if (contentLength == null) {
-            return "";
+            return null;
         }
         int length = Integer.parseInt(contentLength);
         char[] chars = new char[length];
         br.read(chars);
-        return String.valueOf(chars);
+        return URLDecoder.decode(new String(chars), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Request request = (Request) o;
+        return method == request.method &&
+                Objects.equals(locator, request.locator) &&
+                version == request.version &&
+                Objects.equals(headers, request.headers) &&
+                Objects.equals(body, request.body);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(method, locator, version, headers, body);
     }
 
     public static Builder newBuilder() {
         return new Builder();
     }
 
-    private static class Builder {
+    public static class Builder {
 
-        private String method;
-        private String path;
-        private String version;
+        private Method method;
+        private Locator locator;
+        private Version version;
         private Headers headers;
         private String body;
 
-        public Builder method(String method) {
+        private Builder() {}
+
+        public Builder method(Method method) {
             this.method = method;
             return this;
         }
 
-        public Builder path(String path) {
-            this.path = path;
+        public Builder locator(Locator locator) {
+            this.locator = locator;
             return this;
         }
 
-        public Builder version(String version) {
+        public Builder version(Version version) {
             this.version = version;
             return this;
         }
@@ -131,7 +157,7 @@ public class Request {
         }
 
         public Request build() {
-            return new Request(method, path, version, headers, body);
+            return new Request(method, locator, version, headers, body);
         }
     }
 }

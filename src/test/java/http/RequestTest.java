@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,13 +23,21 @@ class RequestTest {
 
         Request result = Request.parse(is);
 
-        assertEquals("GET", result.getMethod());
-        assertEquals("/index.html", result.getPath());
-        assertEquals("HTTP/1.1", result.getVersion());
-        assertEquals("localhost:8080", result.getHeader("Host"));
-        assertEquals("keep-alive", result.getHeader("Connection"));
-        assertEquals("*/*", result.getHeader("Accept"));
-        assertEquals("", result.getBody());
+        Map<String, String> headers = Map.of(
+                "Host", "localhost:8080",
+                "Connection", "keep-alive",
+                "Accept", "*/*"
+        );
+        assertEquals(
+                Request.newBuilder()
+                        .method(Method.GET)
+                        .locator(Locator.parse("/index.html"))
+                        .version(Version.HTTP_1_1)
+                        .headers(new Headers(headers))
+                        .body(null)
+                        .build(),
+                result
+        );
     }
 
     @Test
@@ -45,11 +54,20 @@ class RequestTest {
 
         Request result = Request.parse(is);
 
-        assertEquals("POST", result.getMethod());
-        assertEquals("/tasks", result.getPath());
-        assertEquals("HTTP/1.1", result.getVersion());
-        assertEquals("example.org", result.getHeader("Host"));
-        assertEquals("application/x-www-form-urlencoded", result.getHeader("Content-Type"));
-        assertEquals("title=Send%20report%20to%20manager&completed=false", result.getBody());
+        Map<String, String> headers = Map.of(
+                "Host", "example.org",
+                "Content-Type", "application/x-www-form-urlencoded",
+                "Content-Length", "50"
+        );
+        assertEquals(
+                Request.newBuilder()
+                        .method(Method.POST)
+                        .locator(Locator.parse("/tasks"))
+                        .version(Version.HTTP_1_1)
+                        .headers(new Headers(headers))
+                        .body("title=Send report to manager&completed=false")
+                        .build(),
+                result
+        );
     }
 }

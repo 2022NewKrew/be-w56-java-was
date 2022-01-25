@@ -1,9 +1,6 @@
 package webserver;
 
-import http.Headers;
-import http.Request;
-import http.Response;
-import http.Route;
+import http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -46,7 +42,7 @@ public class RequestHandler extends Thread {
                 return route.getValue().apply(request);
             }
         }
-        return Response.notFound(Headers.contentType("text/plain"), "Not Found");
+        return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
     }
 
     private void sendResponse(OutputStream os, Response response) throws IOException {
@@ -55,10 +51,9 @@ public class RequestHandler extends Thread {
         for (Map.Entry<String, String> header : response.getHeaders()) {
             dos.writeBytes(header.getKey() + ": " + header.getValue() + "\r\n");
         }
-        byte[] body = response.getBody().getBytes(StandardCharsets.UTF_8);
-        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+        byte[] body = response.getBody();
         dos.writeBytes("\r\n");
-        os.write(body, 0, body.length);
-        os.flush();
+        dos.write(body, 0, body.length);
+        dos.flush();
     }
 }

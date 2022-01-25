@@ -4,10 +4,10 @@ import java.util.Objects;
 
 public class Route {
 
-    private final String method;
+    private final Method method;
     private final String pattern;
 
-    public Route(String method, String pattern) {
+    public Route(Method method, String pattern) {
         this.method = method;
         this.pattern = pattern;
     }
