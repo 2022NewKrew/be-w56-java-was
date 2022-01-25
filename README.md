@@ -3,8 +3,6 @@
 
 ## 1일차
 ### TODO-From Review
-* HttpRequestUtils에서 parseRequest의 로직을 Request의 생성자로 이동
-* Request에 Lombok 다시 사용
 * RequestHandler내의 try-catch문을 재구성
     * try 내의 로직을 메소드로 추출
     * catch 시에 적절한 Response를 날려보자
@@ -15,6 +13,8 @@
     * path에 해당하는 파일 읽어 응답하기
 * Review 반영
   * HttpRequestUtils에서 parseRequest의 로직을 Request의 생성자로 이동
+  * Request에 Lombok 다시 사용
 ### LEARNED
 * GET Request format
 * Response content type
+* Lombok을 쓸때에는 annotationProcessor에 Lombok을 추가해주어야 한다
