@@ -4,9 +4,11 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpHeaderUtils;
+import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,8 +27,10 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String request = br.readLine();
-            String url = HttpHeaderUtils.getHttpRequestUrl(request);
-            log.info("url = {}", url);
+            String urlWithQuery = HttpHeaderUtils.getHttpRequestUrl(request);
+            log.info("url = {}", urlWithQuery);
+            String query = HttpHeaderUtils.getQuery(urlWithQuery);
+            User user = HttpHeaderUtils.getUserInfoFromUrl(query);
 
             String line = br.readLine();
             while(line != null && !"".equals(line)) {
@@ -35,7 +39,7 @@ public class RequestHandler extends Thread {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + urlWithQuery).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
