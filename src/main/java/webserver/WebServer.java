@@ -61,5 +61,15 @@ public class WebServer {
             
             threadPool.submit(new RequestHandler(conn, responseWriter));
         } while (true);
+
+        // 종료 시 스레드 풀 처리
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(SOCKET_TIMEOUT, TimeUnit.MILLISECONDS)) {
+                threadPool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            threadPool.shutdownNow();
+        }
     }
 }
