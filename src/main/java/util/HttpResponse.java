@@ -1,7 +1,5 @@
 package util;
 
-import lombok.Builder;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +12,6 @@ public class HttpResponse {
     private HttpStatus httpStatus;
     private byte[] body;
 
-    @Builder
     public HttpResponse(HttpRequest httpRequest, String httpVersion) {
         this.httpRequest = httpRequest;
         this.httpVersion = httpVersion;
