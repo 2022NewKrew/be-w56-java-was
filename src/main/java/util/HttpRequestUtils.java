@@ -27,6 +27,10 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
+    public static Pair parseHeader(String header) {
+        return getKeyValue(header, ": ");
+    }
+    
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
@@ -48,10 +52,6 @@ public class HttpRequestUtils {
         }
 
         return new Pair(tokens[0], tokens[1]);
-    }
-
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
     }
 
     public static class Pair {
