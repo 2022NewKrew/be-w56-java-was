@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Map;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -41,9 +42,19 @@ public class RequestHandler extends Thread {
             for(Map.Entry<String, String> header : headerMap.entrySet())
                 log.debug("{} : {}", header.getKey(), header.getValue());
 
+            String url = requestMap.get("httpUrl");
+
+            if(url.startsWith("/user/create")) {
+                Map<String, String> params = HttpRequestUtils.parseQueryUrl(url);
+                User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
+                log.debug("User : {}", user);
+            }
+
+            log.debug("\n");
+
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + requestMap.get("httpUrl")).toPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
