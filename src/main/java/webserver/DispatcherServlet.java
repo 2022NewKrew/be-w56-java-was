@@ -3,6 +3,7 @@ package webserver;
 import controller.KinaController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 import webserver.annotation.RequestMethod;
 import webserver.model.KinaHttpRequest;
 
@@ -11,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class DispatcherServlet extends Thread {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
@@ -31,13 +33,18 @@ public class DispatcherServlet extends Thread {
             KinaHttpRequest httpRequest = KinaHttpRequest.of(buffer);
             DataOutputStream dos = new DataOutputStream(out);
             log.info(httpRequest.toString());
+            Map<String, String> queryMap = HttpRequestUtils.parseQueryString(httpRequest.uri().getQuery());
             String uriString = httpRequest.uri().getPath();
             Method method = HandlerMapping.getMethod(RequestMethod.valueOf(httpRequest.method()), uriString);
             if (method == null) { // 정적 파일 요청
                 RENDERER.render(dos, httpRequest.uri().getPath());
             } else { // controller 호출
-                Object result = method.invoke(CONTROLLER);
-                RENDERER.render(dos, (String) result);
+                String result = (String) method.invoke(CONTROLLER, queryMap);
+                if (result.startsWith("redirect:")) {
+                    RENDERER.redirect(dos, httpRequest.headers().map().get("Host").get(0) + result.split(":")[1]);
+                } else {
+                    RENDERER.render(dos, result);
+                }
             }
         } catch (IOException e) {
             log.error(e.getMessage());

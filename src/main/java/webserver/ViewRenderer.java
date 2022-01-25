@@ -21,6 +21,11 @@ public class ViewRenderer {
         return INSTANCE;
     }
 
+    public void redirect(DataOutputStream dos, String urlString) throws IOException {
+
+        response302Header(dos, urlString);
+    }
+
     public void render(DataOutputStream dos, String pathString) throws IOException {
         Path path = new File("./webapp" + pathString).toPath();
 
@@ -49,6 +54,15 @@ public class ViewRenderer {
             dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos, String urlString) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
+            dos.writeBytes("Location: http://" + urlString + "\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }

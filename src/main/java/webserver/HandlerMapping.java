@@ -6,8 +6,6 @@ import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
 
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.Map;
 
