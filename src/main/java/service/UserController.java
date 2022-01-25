@@ -62,6 +62,7 @@ public class UserController {
 
     private HttpResponse redirect(String redirectUrl) {
         HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
+        responseHeader.addKeyValue("Location", redirectUrl);
         byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
         HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
 

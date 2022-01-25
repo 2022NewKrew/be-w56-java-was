@@ -6,19 +6,22 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class HttpResponseHeader {
-    private final String header;
     private static final String HTTP_VERSION = "HTTP/1.1";
+    private String header;
 
     public HttpResponseHeader(String url, String status, int bodyLength) {
         header = HTTP_VERSION + " " + status + " \r\n" +
                 "Content-Type: " + contentTypeOf(url) + ";charset=utf-8\r\n" +
-                "Content-Length: " + bodyLength + "\r\n" +
-                "\r\n";
+                "Content-Length: " + bodyLength + "\r\n";
+    }
+
+    public void addKeyValue(String key, String value) {
+        header += key + ": " + value + "\r\n";
     }
 
     public void writeToDataOutputStream(DataOutputStream dos) throws IOException {
         try {
-            dos.writeBytes(header);
+            dos.writeBytes(header + "\r\n");
         } catch (IOException e) {
             throw new IOException("Failed to write response header to dos");
         }
@@ -36,5 +39,5 @@ public class HttpResponseHeader {
         }
     }
 
-    public String getHeader() { return header; }
+    public String getHeader() { return header + "\r\n"; }
 }
