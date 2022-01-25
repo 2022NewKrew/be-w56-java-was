@@ -1,5 +1,6 @@
-package http;
+package http.response;
 
+import http.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

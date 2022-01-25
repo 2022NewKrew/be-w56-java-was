@@ -1,4 +1,4 @@
-package http;
+package http.resource;
 
 public interface Resource {
     String getType();

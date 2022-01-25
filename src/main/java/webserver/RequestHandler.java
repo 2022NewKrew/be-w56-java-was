@@ -2,23 +2,28 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
-import http.HttpRequest;
-import http.HttpResponse;
-import http.Resource;
-import http.StaticFile;
+import controller.Controller;
+import controller.ResoureController;
+import controller.SignUpController;
+import http.request.HttpRequest;
+import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler extends Thread {
+
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    public static final String DOCUMENT_ROOT = "./webapp";
+    public List<Controller> controllers = new ArrayList<>();
 
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        controllers.add(new SignUpController());
+        controllers.add(new ResoureController());
     }
 
     public void run() {
@@ -29,28 +34,20 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest httpRequest = new HttpRequest(in);
             httpRequest.loggingRequestHeader();
-            String requestUri = httpRequest.getUri();
-
             HttpResponse httpResponse = new HttpResponse(new DataOutputStream(out));
-            String contentType = getContentType(httpRequest);
-            Resource file = getStaticFile(contentType, requestUri);
-            httpResponse.send(file);
+
+            Controller controller = findController(httpRequest);
+            controller.handle(httpRequest, httpResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private String getContentType(HttpRequest httpRequest) {
-        String acceptHeader = httpRequest.getHeader("Accept").orElse("text/html");
-        String contentType = acceptHeader.split(",")[0].trim();
-        return contentType;
+    private Controller findController(HttpRequest httpRequest) {
+        return controllers.stream()
+                .filter(controller -> controller.isSupported(httpRequest))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할수 없습니다."));
     }
 
-    private Resource getStaticFile(String contentType, String requestUri) {
-        if ("/".equals(requestUri)) {
-            return new StaticFile(contentType, new File(DOCUMENT_ROOT + "/index.html"));
-        }
-
-        return new StaticFile(contentType, new File(DOCUMENT_ROOT + requestUri));
-    }
 }
