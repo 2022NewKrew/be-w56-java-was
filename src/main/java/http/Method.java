@@ -1,6 +1,6 @@
 package http;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public enum Method {
     GET,
@@ -13,16 +13,15 @@ public enum Method {
     TRACE,
     CONNECT;
 
-    @Nullable
-    public static Method fromString(String method) {
+    public static Optional<Method> fromString(String method) {
         if (method == null) {
-            return null;
+            return Optional.empty();
         }
         for (Method m : Method.values()) {
             if (m.name().equalsIgnoreCase(method)) {
-                return m;
+                return Optional.of(m);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

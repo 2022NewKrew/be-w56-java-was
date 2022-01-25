@@ -1,6 +1,6 @@
 package http;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public enum Version {
     HTTP_1_0("HTTP/1.0"),
@@ -12,13 +12,12 @@ public enum Version {
         this.version = version;
     }
 
-    @Nullable
-    public static Version fromString(String version) {
+    public static Optional<Version> fromString(String version) {
         for (Version v : values()) {
             if (v.version.equals(version)) {
-                return v;
+                return Optional.of(v);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

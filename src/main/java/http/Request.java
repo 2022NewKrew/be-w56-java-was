@@ -67,9 +67,9 @@ public class Request {
         Headers headers = parseHeaders(br);
         String body = parseBody(headers, br);
         return Request.newBuilder()
-                .method(Method.fromString(method))
+                .method(Method.fromString(method).orElseThrow(() -> new IllegalArgumentException("Invalid method")))
                 .locator(Locator.parse(locator))
-                .version(Version.fromString(version))
+                .version(Version.fromString(version).orElseThrow(() -> new IllegalArgumentException("Invalid version")))
                 .headers(headers)
                 .body(body)
                 .build();

@@ -1,6 +1,6 @@
 package http;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public enum ContentType {
     HTML(".html", "text/html"),
@@ -31,13 +31,12 @@ public enum ContentType {
         return contentType;
     }
 
-    @Nullable
-    public static ContentType fromExtension(String extension) {
+    public static Optional<ContentType> fromExtension(String extension) {
         for (ContentType contentType : values()) {
             if (contentType.getExtension().equals(extension)) {
-                return contentType;
+                return Optional.of(contentType);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
