@@ -3,6 +3,7 @@ package service;
 import db.DataBase;
 import http.HttpStatus;
 import http.request.HttpRequest;
+import http.request.HttpRequestHeader;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
 import http.response.HttpResponseBody;
@@ -12,16 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
- *  싱글톤 클래스
- *
  *  process 메소드를 통해 HttpRequest 를 넘겨주면
  *  필요한 작업 후 HttpResponse 를 반환
  */
 public class UserController {
-    private static UserController INSTANCE;
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController() {
@@ -58,6 +57,14 @@ public class UserController {
                 queryString.get("email"));
 
         DataBase.addUser(newUser);
-        return readStaticFile("/index.html"); // TODO : redirection 구현?
+        return redirect("/index.html"); // TODO : redirection 구현?
+    }
+
+    private HttpResponse redirect(String redirectUrl) {
+        HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
+        byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
+        HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
+
+        return new HttpResponse(responseHeader, responseBody);
     }
 }

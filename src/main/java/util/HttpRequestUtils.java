@@ -30,7 +30,7 @@ public class HttpRequestUtils {
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
     }
-    
+
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();

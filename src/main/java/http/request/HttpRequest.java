@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpRequest {
-    private final HttpRequestHeader header;
     private final HttpRequestLine line;
+    private final HttpRequestHeader header;
     // HttpRequestBody body;
 
-    public HttpRequest(HttpRequestHeader header, HttpRequestLine line) {
-        this.header = header;
+    public HttpRequest(HttpRequestLine line, HttpRequestHeader header) {
         this.line = line;
+        this.header = header;
     }
 
     public static HttpRequest readWithBufferedReader(BufferedReader br) throws IOException{
@@ -35,7 +35,7 @@ public class HttpRequest {
             throw new IOException("tmp msg"); // TODO
         }
 
-        return new HttpRequest(requestHeader, requestLine);
+        return new HttpRequest(requestLine, requestHeader);
     }
 
     public HttpRequestHeader header() { return header; }
