@@ -1,5 +1,7 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,7 +11,7 @@ import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -110,5 +112,27 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
+    }
+
+    public static Map<String, String> parseBody(BufferedReader br) throws IOException {
+        Map<String, String> body = Maps.newHashMap();
+        String line;
+        System.out.println("here?");
+        System.out.println("br.readLine() = " + br.readLine());
+        while (!"".equals(line = br.readLine()) && line != null) {
+            System.out.println("line = " + line);
+            HttpRequestUtils.parseBodyLine(body, line);
+        }
+        System.out.println("here3 ");
+        return body;
+    }
+
+    private static void parseBodyLine(Map<String, String> map, String line) {
+        if (Strings.isNullOrEmpty(line)) {
+            return;
+        }
+        String[] tokens = line.split(": ");
+        Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
+              .forEach(p -> map.put(p.getKey(), p.getValue()));
     }
 }
