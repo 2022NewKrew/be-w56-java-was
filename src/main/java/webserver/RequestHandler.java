@@ -3,8 +3,10 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.Objects;
 
+import model.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +27,13 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String path = br.readLine().split(" ")[1];
-            if (Objects.equals(path, "/")) {
-                path += "index.html";
+            RequestHeader header = new RequestHeader(br);
+            String url = header.getUri();
+            if (Objects.equals(url, "/")) {
+                url += "index.html";
             }
-            path = "./webapp" + path;
-            File file = new File(path);
+            url = "./webapp" + url;
+            File file = new File(url);
             byte[] body = Files.readAllBytes(file.toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
