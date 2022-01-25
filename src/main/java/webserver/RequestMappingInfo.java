@@ -2,6 +2,8 @@ package webserver;
 
 import db.DataBase;
 import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import webserver.dto.UserCreateRequest;
 import webserver.http.HttpStatus;
@@ -38,6 +40,7 @@ public enum RequestMappingInfo {
             UserCreateRequest userCreateRequest = UserCreateRequest.of(parameterMap);
             User user = userCreateRequest.toEntity();
             DataBase.addUser(user);
+            log.info("New user created : {}", user);
 
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
@@ -45,6 +48,8 @@ public enum RequestMappingInfo {
                     .build();
         }
     };
+
+    private static final Logger log = LoggerFactory.getLogger(RequestMappingInfo.class);
 
     private final String path;
 
