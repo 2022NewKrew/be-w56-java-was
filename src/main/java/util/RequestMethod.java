@@ -1,11 +1,13 @@
 package util;
 
 import exception.UnsupportedMethodException;
+import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public enum RequestMethod {
     GET,
     POST,
@@ -24,10 +26,5 @@ public enum RequestMethod {
             throw new UnsupportedMethodException();
         }
         return requestMethod;
-    }
-
-    @Override
-    public String toString() {
-        return "RequestMethod=" + this.name();
     }
 }
