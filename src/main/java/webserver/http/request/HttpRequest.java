@@ -1,5 +1,7 @@
 package webserver.http.request;
 
+import java.net.URI;
+
 public class HttpRequest {
 
     private final HttpRequestLine requestLine;
@@ -26,5 +28,13 @@ public class HttpRequest {
 
     public String getRequestPath() {
         return requestLine.getRequestPath();
+    }
+
+    public String getHttpVersion() {
+        return requestLine.getHttpVersion();
+    }
+
+    public URI getUri() {
+        return requestLine.getUri();
     }
 }

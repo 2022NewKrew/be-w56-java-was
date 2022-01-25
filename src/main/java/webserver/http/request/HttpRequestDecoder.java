@@ -1,5 +1,10 @@
 package webserver.http.request;
 
+import static webserver.http.HttpMeta.INDEX_OF_HTTP_VERSION_IN_REQUEST_LINE;
+import static webserver.http.HttpMeta.INDEX_OF_METHOD_IN_REQUEST_LINE;
+import static webserver.http.HttpMeta.INDEX_OF_URI_IN_REQUEST_LINE;
+import static webserver.http.HttpMeta.SEPARATOR_OF_REQUEST_LINE;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,11 +44,11 @@ public class HttpRequestDecoder {
 
         log.debug("Request Line : {}", httpRequestLine);
 
-        String[] httpRequestLineSplitArray = httpRequestLine.split(" ");
+        String[] httpRequestLineSplitArray = httpRequestLine.split(SEPARATOR_OF_REQUEST_LINE);
         return new HttpRequestLine(
-            Method.getMethodFromString(httpRequestLineSplitArray[0]),
-            new URI(httpRequestLineSplitArray[1]),
-            httpRequestLineSplitArray[2]
+            Method.getMethodFromString(httpRequestLineSplitArray[INDEX_OF_METHOD_IN_REQUEST_LINE]),
+            new URI(httpRequestLineSplitArray[INDEX_OF_URI_IN_REQUEST_LINE]),
+            httpRequestLineSplitArray[INDEX_OF_HTTP_VERSION_IN_REQUEST_LINE]
         );
     }
 
