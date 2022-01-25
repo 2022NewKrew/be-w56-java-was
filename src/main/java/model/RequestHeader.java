@@ -9,12 +9,24 @@ public class RequestHeader {
     private String protocol = "";
     private final Map<String, String> headers = new HashMap<>();
 
+    public String getMethod() {
+        return method;
+    }
+
     public String getUri() {
         return uri;
     }
 
+    public String getProtocol() {
+        return protocol;
+    }
+
     public String getAccept() {
         return headers.get("Accept").split(",")[0];
+    }
+
+    public String getHeader(String key) {
+        return headers.get(key);
     }
 
     public void setMethod(String method) {
