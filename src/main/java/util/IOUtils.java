@@ -3,6 +3,9 @@ package util;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+/**
+ * @deprecated
+ */
 public class IOUtils {
     /**
      * @param BufferedReader는

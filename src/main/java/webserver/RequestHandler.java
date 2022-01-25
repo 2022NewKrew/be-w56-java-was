@@ -1,14 +1,18 @@
 package webserver;
 
+import frontcontroller.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.MyRequest;
+import util.MyHttpRequest;
+import util.MyHttpResponse;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.concurrent.Callable;
 
-public class RequestHandler extends Thread {
+public class RequestHandler implements Callable<Void> {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
@@ -17,40 +21,25 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
-    public void run() {
+    @Override
+    public Void call() throws Exception {
+
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            MyRequest myRequest = new MyRequest(in);
 
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + myRequest.getRequestUrl()).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            MyHttpRequest request = new MyHttpRequest(in);
+            MyHttpResponse response = new MyHttpResponse(out);
+
+            new FrontController().service(request, response);
+            
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+
+        return null;
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
 }
