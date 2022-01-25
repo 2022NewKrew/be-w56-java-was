@@ -3,10 +3,13 @@ package webserver.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MyHttpRequest{
+public class MyHttpRequest {
     private static final String END_OF_REQUEST_LINE = "";
     private static final String REQUEST_LINE_DELIMITER = " ";
     private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
@@ -40,8 +43,7 @@ public class MyHttpRequest{
 
     @Override
     public String toString() {
-        return "MyHttpRequest{" +
-                "method='" + method + '\'' +
+        return "method='" + method + '\'' +
                 ", requestURI='" + requestURI + '\'' +
                 ", version='" + version + '\'' +
                 ", headers=" + headers +
