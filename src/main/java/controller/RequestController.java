@@ -6,12 +6,14 @@ import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeaders;
 import http.response.HttpResponseStatusLine;
+import service.UserService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 public class RequestController {
+
     public static HttpResponse getResponse(HttpRequest httpRequest) throws IOException {
         HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
         String url = requestLine.getUrl();
@@ -31,6 +33,8 @@ public class RequestController {
     }
 
     public static HttpResponse signUp(HttpRequestLine httpRequestLine) throws IOException {
+        UserService.addUser(httpRequestLine.getUrl());
+
         HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), "200", "OK");
         HttpResponseHeaders headers = new HttpResponseHeaders();
         HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp/index.html").toPath()));
