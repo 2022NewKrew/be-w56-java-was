@@ -51,5 +51,9 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
+    public static Map<String, String> getQueries(String url){
+        String[] urls = url.split("\\?");
+        return parseQueryString(urls[1]);
+    }
 
 }
