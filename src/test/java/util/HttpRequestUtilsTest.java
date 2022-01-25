@@ -1,16 +1,15 @@
 package util;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
-
-
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
-public class HttpRequestUtilsTest {
+class HttpRequestUtilsTest {
+
     @Test
-    public void parseQueryString() {
+    void parseQueryString() {
         String queryString = "userId=javajigi";
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
@@ -23,7 +22,7 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseQueryString_null() {
+    void parseQueryString_null() {
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(null);
         assertThat(parameters.isEmpty()).isTrue();
 
@@ -35,7 +34,7 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseQueryString_invalid() {
+    void parseQueryString_invalid() {
         String queryString = "userId=javajigi&password";
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
@@ -43,7 +42,7 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseCookies() {
+    void parseCookies() {
         String cookies = "logined=true; JSessionId=1234";
         Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
         assertThat(parameters.get("logined")).isEqualTo("true");
@@ -52,19 +51,19 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void getKeyValue() throws Exception {
+    void getKeyValue() throws Exception {
         Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
         assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
     }
 
     @Test
-    public void getKeyValue_invalid() throws Exception {
+    void getKeyValue_invalid() throws Exception {
         Pair pair = HttpRequestUtils.getKeyValue("userId", "=");
         assertThat(pair).isNull();
     }
 
     @Test
-    public void parseHeader() throws Exception {
+    void parseHeader() throws Exception {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
