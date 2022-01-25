@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import java.util.Map;
 
 public class UserController {
-    //private construct
     private UserController() {}
 
     private static class InnerInstanceClazz {
