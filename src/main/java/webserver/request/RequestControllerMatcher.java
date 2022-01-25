@@ -1,0 +1,29 @@
+package webserver.request;
+
+import controller.Controller;
+import webserver.header.HttpMethod;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+
+public class RequestControllerMatcher {
+
+    private final HttpMethod httpMethod;
+    private final String url;
+
+    public RequestControllerMatcher(HttpMethod httpMethod, String url) {
+        this.httpMethod = httpMethod;
+        this.url = url;
+    }
+
+    public String match(Map<String, String> queryMap)
+            throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+        String result = RequestProcessor.process(Controller.class, url, httpMethod, queryMap);
+        if(result.equals("")) {
+            return url;
+        }
+        return result;
+    }
+
+
+}
