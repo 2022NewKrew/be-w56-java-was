@@ -6,8 +6,9 @@ import webserver.infra.Router;
 import webserver.infra.ViewResolver;
 import webserver.model.HttpRequest;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -25,8 +26,11 @@ public class RequestHandler extends Thread {
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest request = new HttpRequest(in);
+        try (
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                OutputStream out = connection.getOutputStream();
+        ) {
+            HttpRequest request = new HttpRequest(br);
 
             // Mapping to Controller by HttpRequest (HttpMethod & URL)
             String viewPath = router.route(request);
