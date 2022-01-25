@@ -12,19 +12,16 @@ import webserver.response.HttpResponse;
  */
 public class ResponseProcessor {
 
-    private static ResponseProcessor INSTANCE;
+    private static ResponseProcessor INSTANCE = new ResponseProcessor();
 
     private ResponseProcessor() {
     }
 
     public static ResponseProcessor getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ResponseProcessor();
-        }
         return INSTANCE;
     }
 
-    public HttpResponse response(HttpRequest request) {
+    public HttpResponse response() {
         HttpRequestUri uri = RequestContext.getInstance().getHttpRequest().getUri();
         if (uri.isForStaticContent()) {
             return getResponseForStaticContent();

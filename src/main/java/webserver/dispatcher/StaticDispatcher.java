@@ -17,15 +17,12 @@ public class StaticDispatcher extends Dispatcher {
 
     private static final String DEFAULT_LOCATION_OF_RESOURCES = "./webapp";
 
-    private static StaticDispatcher INSTANCE;
+    private static final StaticDispatcher INSTANCE = new StaticDispatcher();
 
     private StaticDispatcher() {
     }
 
     public static StaticDispatcher getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new StaticDispatcher();
-        }
         return INSTANCE;
     }
 

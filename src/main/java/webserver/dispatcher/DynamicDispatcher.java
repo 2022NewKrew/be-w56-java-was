@@ -8,15 +8,12 @@ import webserver.response.HttpResponse;
  */
 public class DynamicDispatcher extends Dispatcher {
 
-    private static DynamicDispatcher INSTANCE;
+    private static final DynamicDispatcher INSTANCE = new DynamicDispatcher();
 
     private DynamicDispatcher() {
     }
 
     public static DynamicDispatcher getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new DynamicDispatcher();
-        }
         return INSTANCE;
     }
 

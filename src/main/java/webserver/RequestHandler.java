@@ -26,8 +26,8 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = createRequest(in);
-            HttpResponse response = getResponse(httpRequest);
+            createRequest(in);
+            HttpResponse response = getResponse();
             response(response, out);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -41,8 +41,8 @@ public class RequestHandler extends Thread {
         return RequestContext.getInstance().startRequest(br);
     }
 
-    private HttpResponse getResponse(HttpRequest httpRequest) {
-        return ResponseProcessor.getInstance().response(httpRequest);
+    private HttpResponse getResponse() {
+        return ResponseProcessor.getInstance().response();
     }
 
     private void response(HttpResponse response, OutputStream out) throws IOException {

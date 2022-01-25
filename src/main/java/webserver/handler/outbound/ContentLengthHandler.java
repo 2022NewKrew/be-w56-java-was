@@ -9,15 +9,12 @@ public class ContentLengthHandler extends OutboundHandler {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 
-    private static ContentLengthHandler INSTANCE;
+    private static final ContentLengthHandler INSTANCE = new ContentLengthHandler();
 
     private ContentLengthHandler() {
     }
 
     public static ContentLengthHandler getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ContentLengthHandler();
-        }
         return INSTANCE;
     }
 

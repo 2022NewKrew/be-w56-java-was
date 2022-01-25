@@ -12,15 +12,12 @@ import webserver.response.HttpResponseHeader;
  */
 public class ContentTypeHandler extends OutboundHandler {
 
-    private static ContentTypeHandler INSTANCE;
+    private static final ContentTypeHandler INSTANCE = new ContentTypeHandler();
 
     private ContentTypeHandler() {
     }
 
     public static ContentTypeHandler getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ContentTypeHandler();
-        }
         return INSTANCE;
     }
 
