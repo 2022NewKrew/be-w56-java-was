@@ -29,6 +29,10 @@ public class HttpRequest {
         return new HttpRequest(method, path, queries, headers);
     }
 
+    public HttpMethod getMethod() {
+        return method;
+    }
+
     public String getPath() {
         return path;
     }
