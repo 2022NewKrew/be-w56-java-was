@@ -13,3 +13,14 @@
 - request header를 파싱하여 RequestInfo 클래스에 필요한 정보 저장
 - requestInfo 를 바탕으로 response header 작성
 - requestInfo 를 바탕으로 static file을 바이트 코드로 변환하여 response body에 담아 전달
+
+## 웹 서버 구현 2단계
+### 요구사항
+- “회원가입” 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동하면서 회원가입 폼을 표시한다.
+- 이 폼을 통해서 회원가입을 할 수 있다.
+- 회원가입을 하면 다음과 같은 형태로 사용자가 입력한 값이 서버에 전달된다.
+
+### 구현 내용
+프로젝트 구조 변경
+  - 스프링과 유사한 구조로 변경
+  - ![img.png](img.png)

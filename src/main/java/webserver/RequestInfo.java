@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class RequestInfo {
-    private String method;
     private String url;
-    private String mimeType;
+    private String method;
+    private boolean isStaticResource = false;
 }

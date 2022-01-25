@@ -1,7 +1,7 @@
 package util;
 
 public enum PathVariable {
-    BASEURL("./webapp");
+    BASEURL("./webapp/");
 
     private final String path;
 
