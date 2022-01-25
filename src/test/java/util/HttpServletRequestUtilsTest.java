@@ -1,13 +1,13 @@
 package util;
 
 import org.junit.jupiter.api.Test;
+import webserver.request.RequestInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,8 +16,8 @@ class HttpServletRequestUtilsTest {
     @Test
     void parseRequestLine() {
         String requestLine = "GET /index.html HTTP/1.1";
-        HttpServletRequestUtils.RequestInfo requestInfo = HttpServletRequestUtils.parseRequestLine(requestLine);
-        assertThat(requestInfo).isEqualTo(new HttpServletRequestUtils.RequestInfo("GET","/index.html","HTTP/1.1"));
+        RequestInfo requestInfo = HttpServletRequestUtils.parseRequestLine(requestLine);
+        assertThat(requestInfo).isEqualTo(new RequestInfo("GET","/index.html","HTTP/1.1"));
 
     }
 
