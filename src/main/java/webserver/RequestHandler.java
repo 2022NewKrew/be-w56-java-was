@@ -7,9 +7,9 @@ import webserver.infra.ViewResolver;
 import webserver.model.HttpRequest;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
 
 public class RequestHandler extends Thread {
@@ -28,14 +28,13 @@ public class RequestHandler extends Thread {
 
         try (
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                OutputStream out = connection.getOutputStream();
+                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
         ) {
             HttpRequest request = new HttpRequest(br);
 
-            // Mapping to Controller by HttpRequest (HttpMethod & URL)
             String viewPath = router.route(request);
 
-            viewResolver.render(out, viewPath);
+            viewResolver.render(dos, viewPath);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -8,7 +8,6 @@ import webserver.model.HttpStatus;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class ViewResolver {
@@ -28,16 +27,15 @@ public class ViewResolver {
         return instance;
     }
 
-    public void render(OutputStream out, String viewPath) {
+    public void render(DataOutputStream dos, String viewPath) {
         if (viewPath.startsWith(PREFIX_OF_REDIRECTION)) {
-            redirect(out, viewPath.substring(PREFIX_OF_REDIRECTION.length()));
+            redirect(dos, viewPath.substring(PREFIX_OF_REDIRECTION.length()));
             return;
         }
-        render(out, viewPath, HttpStatus.OK);
+        render(dos, viewPath, HttpStatus.OK);
     }
 
-    private void redirect(OutputStream out, String urlPath) {
-        DataOutputStream dos = new DataOutputStream(out);
+    private void redirect(DataOutputStream dos, String urlPath) {
         try {
             dos.writeBytes(HttpStatus.FOUND.getHttpResponseHeader());
             dos.writeBytes(getLocation(urlPath));
@@ -51,8 +49,7 @@ public class ViewResolver {
         return String.format("Location: %s" + NEW_LINE, urlPath);
     }
 
-    public void render(OutputStream out, String viewPath, HttpStatus httpStatus) {
-        DataOutputStream dos = new DataOutputStream(out);
+    public void render(DataOutputStream dos, String viewPath, HttpStatus httpStatus) {
         try {
             byte[] body = getBytesOfFile(viewPath);
             writeResponseHeader(dos, viewPath, httpStatus);
@@ -60,7 +57,7 @@ public class ViewResolver {
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
-            renderNotFound(out);
+            renderNotFound(dos);
         }
     }
 
@@ -82,8 +79,8 @@ public class ViewResolver {
         dos.write(body, 0, body.length);
     }
 
-    private void renderNotFound(OutputStream out) {
-        render(out, "/error/404.html", HttpStatus.NOT_FOUND);
+    private void renderNotFound(DataOutputStream dos) {
+        render(dos, "/error/404.html", HttpStatus.NOT_FOUND);
     }
 
 }
