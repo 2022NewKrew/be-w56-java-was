@@ -31,11 +31,13 @@ public class RequestHandler extends Thread {
             if(requestMap == null)
                 throw new IOException("Incorrect Request Header");
 
+            log.debug("request");
             for(Map.Entry<String, String> request : requestMap.entrySet())
                 log.debug("{} : {}", request.getKey(), request.getValue());
 
             Map<String,String> headerMap = HttpRequestUtils.readHeader(br);
 
+            log.debug("header");
             for(Map.Entry<String, String> header : headerMap.entrySet())
                 log.debug("{} : {}", header.getKey(), header.getValue());
 
