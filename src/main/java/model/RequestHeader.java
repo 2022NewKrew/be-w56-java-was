@@ -31,4 +31,10 @@ public class RequestHeader {
     public void putParameter(String key, String value) {
         parameter.put(key, value);
     }
+
+    @Override
+    public String toString(){
+        return "method: " + header.get("method") +
+                " uri: " + header.get("uri");
+    }
 }

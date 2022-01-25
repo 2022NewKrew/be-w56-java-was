@@ -21,18 +21,18 @@ public class HttpRequestUtils {
         if(uri.contains("?")){
             String[] tokens = uri.split("\\?");
             uri = tokens[0];
-            String[] parameters = tokens[1].split("&");
-            for(String parameter : parameters){
-                setRequestParameter(requestHeader, parameter);
-            }
+            setRequestParameter(requestHeader, tokens[1]);
         }
 
         requestHeader.putHeader("uri", uri);
     }
 
-    private static void setRequestParameter(RequestHeader requestHeader, String parameter){
-        String[] tokens = parameter.split("=");
-        requestHeader.putParameter(tokens[0], tokens[1]);
+    public static void setRequestParameter(RequestHeader requestHeader, String token){
+        String[] parameters = token.split("&");
+        for(String parameter : parameters){
+            String[] tokens = parameter.split("=");
+            requestHeader.putParameter(tokens[0], tokens[1]);
+        }
     }
 
     public static void setHeader(RequestHeader requestHeader, String header){

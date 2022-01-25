@@ -2,6 +2,7 @@ package controller;
 
 import db.DataBase;
 import model.RequestHeader;
+import model.ResponseHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,27 +13,30 @@ public class RequestController {
     private static final String RETURN_BASE = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(RequestController.class);
 
-    public static String controlRequest(RequestHeader requestHeader){
+    public static ResponseHeader controlRequest(RequestHeader requestHeader){
+        ResponseHeader responseHeader = new ResponseHeader();
         String uri = requestHeader.getHeader("uri");
         String method = requestHeader.getHeader("method");
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 
+        responseHeader.setStatusCode(200);
+        responseHeader.setAccept(requestHeader.getAccept());
+        responseHeader.setHost(requestHeader.getHeader("Host"));
+
         if(uri.equals("/user/create")
-                && method.equals("GET")){
+                && method.equals("POST")){
             signup(requestHeader);
-            return RETURN_BASE + "/user/form.html";
+            responseHeader.setUri("/index.html");
+            responseHeader.setStatusCode(302);
+            return responseHeader;
         }
 
-
-
-        if(!method.equals("GET")){
-            return RETURN_BASE + "/index.html";
-        }
         if(!uri.contains(".")){
             uri = uri + ".html";
         }
-        return RETURN_BASE + uri;
+        responseHeader.setUri(uri);
+        return responseHeader;
     }
 
     private static void signup(RequestHeader requestHeader){
