@@ -20,7 +20,7 @@ public class WebServer {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
 
-            // 클라이언트가 연결될 때까지 대기
+            // TODO: thread -> event loop 로 변경
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 RequestHandler requestHandler = new RequestHandler(connection);
