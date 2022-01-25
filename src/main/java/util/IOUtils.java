@@ -25,13 +25,6 @@ public class IOUtils {
     public static String parseExtension(HttpRequest httpRequest) {
         Map<String, String> extensionMap = new HashMap<>();
 
-//        extensionMap.put("text/html", "html");
-//        extensionMap.put("text/css", "css");
-//        extensionMap.put("text/javascript", "js");
-//        extensionMap.put("image/x-icon", "ico");
-//        extensionMap.put("png", "image/png");
-
-
         extensionMap.put("html", "text/html");
         extensionMap.put("css", "text/css");
         extensionMap.put("js", "text/javascript");
