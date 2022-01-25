@@ -58,7 +58,7 @@ public class RequestHandler extends Thread {
         byte[] body = response.getBody().getBytes(StandardCharsets.UTF_8);
         dos.writeBytes("Content-Length: " + body.length + "\r\n");
         dos.writeBytes("\r\n");
-        os.write(body, 0, body.length);
-        os.flush();
+        dos.write(body, 0, body.length);
+        dos.flush();
     }
 }
