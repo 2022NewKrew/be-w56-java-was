@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import http.HttpStatus;
 import http.request.HttpRequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(out);) {
 
             String line = br.readLine();
-            HttpRequestLine requestLine = HttpRequestUtils.parseRequestLine(line);
+            HttpRequestLine requestLine = HttpRequestLine.parseRequestLine(line);
 
             while (!"".equals(line)) {
                 log.debug(line);
@@ -39,7 +40,7 @@ public class RequestHandler extends Thread {
             }
 
             HttpResponseBody responseBody = HttpResponseBody.createFromUrl(requestLine.url());
-            HttpResponseHeader responseHeader = new HttpResponseHeader(requestLine.url(), responseBody.length());
+            HttpResponseHeader responseHeader = new HttpResponseHeader(requestLine.url(), HttpStatus.OK, responseBody.length());
 
             responseHeader.writeToDataOutputStream(dos);
             responseBody.writeToDataOutputStream(dos);

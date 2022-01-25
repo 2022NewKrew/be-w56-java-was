@@ -1,5 +1,9 @@
 package http.request;
 
-public class HttpRequestHeader {
+import java.util.Map;
 
+public class HttpRequestHeader {
+    private final Map<String, String> header;
+
+    public HttpRequestHeader()
 }

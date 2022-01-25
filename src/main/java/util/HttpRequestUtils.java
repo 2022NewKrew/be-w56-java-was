@@ -27,15 +27,6 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
-    /**
-     * @param 요청 (GET /index.html HTTP/1.1)
-     */
-    public static HttpRequestLine parseRequestLine(String request) {
-        String[] tokens = request.split(" ");
-
-        return new HttpRequestLine(tokens[0], tokens[1], tokens[2]);
-    }
-
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
