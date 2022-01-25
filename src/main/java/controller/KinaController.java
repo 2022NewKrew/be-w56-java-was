@@ -9,6 +9,14 @@ import webserver.annotation.RequestMethod;
 public class KinaController {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private static final KinaController INSTANCE = new KinaController();
+
+    private KinaController() {
+    }
+
+    public static KinaController getInstance() {
+        return INSTANCE;
+    }
 
     @RequestMapping(value = "/index.html", method = RequestMethod.GET)
     public String index() {
