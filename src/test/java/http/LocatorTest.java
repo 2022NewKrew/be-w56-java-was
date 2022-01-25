@@ -23,9 +23,9 @@ class LocatorTest {
     private static Stream<Arguments> provideParseParameters() {
         return Stream.of(
                 Arguments.of(
-                        "/index.html?foo=bar&baz=qux#hash",
+                        "/index.html?foo=b%20a%20r&baz=qux#hash",
                         "/index.html",
-                        Map.of("foo", "bar", "baz", "qux"),
+                        Map.of("foo", "b a r", "baz", "qux"),
                         "hash"
                 ),
                 Arguments.of(

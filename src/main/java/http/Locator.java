@@ -2,6 +2,8 @@ package http;
 
 import util.HttpRequestUtils;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -35,7 +37,7 @@ public class Locator {
 
     public static Locator parse(String locator) {
         Pattern pattern = Pattern.compile("([^?#]+)(\\?[^#]*)?(#.*)?");
-        Matcher matcher = pattern.matcher(locator);
+        Matcher matcher = pattern.matcher(URLDecoder.decode(locator, StandardCharsets.UTF_8));
         matcher.find();
         String path = matcher.group(1);
         String queryString = Optional.ofNullable(matcher.group(2))
