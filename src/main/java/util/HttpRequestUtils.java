@@ -1,12 +1,12 @@
 package util;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import http.request.HttpRequestLine;
 
 public class HttpRequestUtils {
     /**
@@ -27,20 +27,8 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
-    /**
-     * @param 요청 (GET /index.html HTTP/1.1)
-     */
-    public static Map<String, String> parseRequest(String request) {
-        String[] tokens = request.split(" ");
-        Map<String, String> map = new HashMap<>();
-        map.put("method", tokens[0]);
-        map.put("url", tokens[1]);
-        map.put("httpVersion", tokens[2]);
-
-        String[] urlTokens = tokens[1].split("\\."); // url 확장자 parsing 후 저장
-        map.put("urlExtension", urlTokens[urlTokens.length - 1]);
-
-        return map;
+    public static Pair parseHeader(String header) {
+        return getKeyValue(header, ": ");
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
@@ -64,10 +52,6 @@ public class HttpRequestUtils {
         }
 
         return new Pair(tokens[0], tokens[1]);
-    }
-
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
     }
 
     public static class Pair {
