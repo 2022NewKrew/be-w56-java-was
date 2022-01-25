@@ -42,10 +42,12 @@ public class Router {
                 return "text/html;charset=utf-8";
             case "css":
                 return "text/css";
+            case "js":
+                return "application/javascript";
             case "ico":
                 return "image/avif";
             default:
-                return "";
+                return "text/plain";
         }
     }
 }
