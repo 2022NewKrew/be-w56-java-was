@@ -35,21 +35,8 @@ public class RequestHandler extends Thread {
             HandlerMapping handlerMapping = HandlerMapping.getInstance();
             Controller controller = handlerMapping.getController(httpRequest.getPath());
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String accept) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + accept + "\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
+            HttpResponse httpResponse = controller.service(httpRequest);
+            IOUtils.write(new DataOutputStream(out), httpResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
