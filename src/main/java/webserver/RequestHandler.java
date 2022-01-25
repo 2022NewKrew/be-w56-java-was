@@ -1,23 +1,47 @@
 package webserver;
 
+import exception.ServerErrorException;
 import lombok.extern.slf4j.Slf4j;
+import util.HttpMethod;
 import util.HttpRequest;
 import util.HttpResponse;
 import util.HttpStatus;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static util.HttpRequestUtils.parseRequest;
 
 @Slf4j
 public class RequestHandler extends Thread {
+    private static final Map<Predicate<HttpRequest>, BiConsumer<HttpRequest, HttpResponse>> handlers;
+    static {
+        // TODO: Handlers probably deserve an dedicated object
+        // TODO: Need a better way to register handlers. It seems possible to implement spring's annotation style mapping with Reflection library.
+        handlers = new LinkedHashMap<>();
+
+        handlers.put(
+                httpRequest -> {
+                    // TODO: Pattern is compiling every time
+                    String urlRegex = "/user/create.*";
+                    return httpRequest.getHttpMethod() == HttpMethod.GET && Pattern.matches(urlRegex, httpRequest.getUri());
+                }, RequestHandler::getUserCreateHandler);
+        handlers.put(
+                httpRequest -> {
+                    // TODO: Pattern is compiling every time
+                    // TODO: Pattern for static server is probably too broad
+                    String urlRegex = ".*";
+                    return httpRequest.getHttpMethod() == HttpMethod.GET && Pattern.matches(urlRegex, httpRequest.getUri());
+                }, RequestHandler::safeGetStaticHandler);
+    }
 
     private final Socket connection;
 
@@ -38,22 +62,53 @@ public class RequestHandler extends Thread {
             HttpRequest httpRequest = parseRequest(br);
             // TODO: Http version should be provided by the handler. Copying from request is wrong.
             HttpResponse httpResponse = new HttpResponse(httpRequest, httpRequest.getHttpVersion());
-            hardcodedHandle(httpRequest, httpResponse);
+            handlers.entrySet().stream()
+                    .filter(entry -> entry.getKey().test(httpRequest))
+                    .findFirst()
+                    // TODO: This exception is caught nowhere. We need a global error handler.
+                    .orElseThrow(ServerErrorException::new).getValue().accept(httpRequest, httpResponse);
             dos.write(httpResponse.toByte());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    private void hardcodedHandle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        // Implicit GET
-        String[] filePath = httpRequest.getUri().split("\\.");
-        // Extract extension
-        String textType = filePath[filePath.length - 1];
-        Path path = Paths.get("./webapp" + httpRequest.getUri());
-
+    private static void getUserCreateHandler(HttpRequest httpRequest, HttpResponse httpResponse) {
+        log.info("In getUserCreateHandler - {}", httpRequest.getUri());
+        Map<String, String> queryStrings = httpRequest.getQueryStrings();
+        httpResponse.setContentType("text/plain;charset=utf-8");
+        httpResponse.setBody(queryStrings.entrySet().toString().getBytes());
         httpResponse.setHttpStatus(HttpStatus.OK);
-        httpResponse.setContentType("text/" + textType + ";charset=utf-8");
+    }
+
+    private static void safeGetStaticHandler(HttpRequest httpRequest, HttpResponse httpResponse) {
+        try {
+            getStaticHandler(httpRequest, httpResponse);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            // TODO: This is not right
+            httpResponse.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private static void getStaticHandler(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+        log.info("In getStaticHandler - {}", httpRequest.getUri());
+        String filePath = httpRequest.getUri();
+        if (filePath.equals("/")) {
+            filePath = "/index.html";
+        }
+        Path path = Paths.get("./webapp" + filePath);
+
+        String fileType = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+        // TODO: Need better content-type support.
+        if (fileType.equals("js")) {
+            httpResponse.setContentType("Application/javascript;charset=utf-8");
+        }
+        if (fileType.equals("html") || fileType.equals("css")) {
+            httpResponse.setContentType("text/" + fileType + ";charset=utf-8");
+        }
         httpResponse.setBody(Files.readAllBytes(path));
+        httpResponse.setHttpStatus(HttpStatus.OK);
     }
 }
