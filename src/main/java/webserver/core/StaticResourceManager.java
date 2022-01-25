@@ -1,7 +1,12 @@
-package webserver;
+package webserver.core;
 
-import webserver.http.HttpClientErrorException;
-import webserver.http.HttpStatus;
+import org.apache.tika.Tika;
+import webserver.core.http.HttpClientErrorException;
+import webserver.core.http.request.Header;
+import webserver.core.http.request.HttpRequest;
+import webserver.core.http.response.HttpResponse;
+import webserver.core.http.response.HttpResponseBuilder;
+import webserver.core.http.response.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +37,17 @@ public class StaticResourceManager {
         return staticResource.contains(url);
     }
 
-    public static byte[] getResource(String url){
+    public static HttpResponse getResource(HttpRequest request){
+        File file = new File("./webapp" + request.getUrl());
+        HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder();
+        Tika tika = new Tika();
         try{
-            return Files.readAllBytes(new File("./webapp" + url).toPath());
+            return httpResponseBuilder
+                    .setStatus(HttpStatus.Ok)
+                    .addHeaderValue("Content-Type", tika.detect(file))
+                    .setBody(Files.readAllBytes(file.toPath()))
+                    .build();
+
         }catch(IOException e){
             e.printStackTrace();
             throw new HttpClientErrorException(HttpStatus.NotFound, "해당 리소스를 찾을 수 없습니다.");

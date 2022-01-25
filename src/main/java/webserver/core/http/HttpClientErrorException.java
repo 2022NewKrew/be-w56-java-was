@@ -1,4 +1,6 @@
-package webserver.http;
+package webserver.core.http;
+
+import webserver.core.http.response.HttpStatus;
 
 public class HttpClientErrorException extends RuntimeException{
     private final HttpStatus status;

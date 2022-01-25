@@ -4,10 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
-import webserver.http.HttpClientErrorException;
-import webserver.http.HttpMethod;
-import webserver.http.HttpRequest;
-import webserver.http.HttpStatus;
+import webserver.controller.WebController;
+import webserver.core.StaticResourceManager;
+import webserver.core.http.HttpClientErrorException;
+import webserver.core.http.request.Header;
+import webserver.core.http.request.HttpMethod;
+import webserver.core.http.request.HttpRequest;
+import webserver.core.http.request.HttpRequestBuilder;
+import webserver.core.http.response.HttpResponse;
+import webserver.core.http.response.HttpStatus;
 
 import java.io.*;
 import java.net.Socket;
@@ -38,21 +43,14 @@ public class RequestHandler extends Thread {
                 throw new HttpClientErrorException(HttpStatus.BadRequest, "잘못된 요청입니다. 요청 형식을 확인하세요");
             }
 
+            DataOutputStream dos = new DataOutputStream(out);
             if (request.getMethod() == HttpMethod.GET && StaticResourceManager.has(request.getUrl())) {
-
-                byte[] body = StaticResourceManager.getResource(request.getUrl());
-
-                DataOutputStream dos = new DataOutputStream(out);
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+                StaticResourceManager.getResource(request).response(dos);
                 return;
             }
+            HttpResponse res = WebController.getInstance().route(request);
+            res.response(dos);
 
-            byte[] body = WebController.getInstance().route(request);
-
-            DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length);
-            responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -67,19 +65,25 @@ public class RequestHandler extends Thread {
 
         HttpMethod method = HttpMethod.valueOf(requestLine[0]);
         String url = requestLine[1];
+
         Header header = new Header();
-        header.save(br);
+        line = br.readLine();
+        while(!line.equals("")){
+            HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
+            header.addHeaderValue(pair.getKey(), pair.getValue());
+            line = br.readLine();
+        }
 
         int queryStringStartIdx = url.indexOf("\\?");
         Map<String, String> params = new HashMap<>();
-        if(queryStringStartIdx != -1){
+        if (queryStringStartIdx != -1) {
             params = HttpRequestUtils.parseQueryString(url.substring(queryStringStartIdx));
             url = url.substring(0, queryStringStartIdx);
         }
 
         Map<String, String> body = new HashMap<>();
-        if(!method.equals(HttpMethod.GET)){
-            body = HttpRequestUtils.parseQueryString(IOUtils.readData(br, Integer.parseInt(header.getAttribute("Content-Length"))));
+        if (!method.equals(HttpMethod.GET)) {
+            body = HttpRequestUtils.parseQueryString(IOUtils.readData(br, Integer.parseInt(header.getHeaderValue("Content-Length"))));
         }
 
         return httpRequestBuilder
@@ -91,23 +95,4 @@ public class RequestHandler extends Thread {
                 .build();
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
 }

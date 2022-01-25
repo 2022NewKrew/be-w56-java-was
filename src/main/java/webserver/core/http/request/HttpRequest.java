@@ -1,6 +1,4 @@
-package webserver.http;
-
-import webserver.Header;
+package webserver.core.http.request;
 
 import java.util.Map;
 

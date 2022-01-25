@@ -2,7 +2,6 @@ package service;
 
 import db.DataBase;
 import model.User;
-import webserver.TemplateEngine;
 
 public class UserService {
 
