@@ -1,20 +1,8 @@
 package util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static util.HttpRequestUtils.parseHeader;
-import static util.HttpRequestUtils.parseQueryString;
 
 public class HttpRequest {
-    private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
     private final HttpMethod method;
     private final URL url;
@@ -31,30 +19,21 @@ public class HttpRequest {
         this.body = null;
     }
 
-    public HttpRequest(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        String[] words = line.split(" ");
-        this.method = HttpMethod.valueOf(words[0]);
-        this.url = new URL(words[1]);
-        this.httpVersion = words[2];
 
-        //header parsing
-        List<HttpRequestUtils.Pair> pairs = new ArrayList<>();
-        while (!line.equals("")) {
-            line = br.readLine();
-            pairs.add(parseHeader(line));
-            log.debug("header : {}", line);
-        }
+    public HttpRequest(HttpMethod method, URL url, String httpVersion, Map<String, String> headers) {
+        this.method = method;
+        this.url = url;
+        this.httpVersion = httpVersion;
+        this.headers = headers;
+        this.body = null;
+    }
 
-        this.headers = pairs.stream().filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-        Map<String, String> body = null;
-
-        if(this.method == HttpMethod.POST) {
-            int contentLength = Integer.parseInt(headers.get("Content-Length"));
-            String queryString = IOUtils.readData(br, contentLength);
-            body = parseQueryString(queryString);
-        }
+    public HttpRequest(HttpMethod method, URL url, String httpVersion, Map<String, String> headers,
+                       Map<String, String> body) {
+        this.method = method;
+        this.url = url;
+        this.httpVersion = httpVersion;
+        this.headers = headers;
         this.body = body;
     }
 
@@ -77,5 +56,9 @@ public class HttpRequest {
 
     public Map<String, String> body(){
         return this.body;
+    }
+
+    public String getHeader(String key){
+        return headers.get(key);
     }
 }

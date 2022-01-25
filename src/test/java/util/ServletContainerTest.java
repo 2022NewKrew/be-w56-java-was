@@ -48,7 +48,7 @@ public class ServletContainerTest {
 
         InputStream is = new ByteArrayInputStream(request.getBytes(StandardCharsets.UTF_8));
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        HttpRequest httpRequest = new HttpRequest(br);
+        HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
         HttpResponse httpResponse = new HttpResponse();
         servletContainer.service(httpRequest, httpResponse);
         assertThat(httpResponse.headerText()).isEqualTo(result);

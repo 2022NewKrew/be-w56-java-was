@@ -6,11 +6,13 @@ import util.annotation.Controller;
 import util.annotation.GetMapping;
 import util.annotation.PostMapping;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,6 @@ public class ServletContainer {
     private final Map<Method, Object> methodClassMap;
 
     public ServletContainer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
         getUrlMethodMap = new HashMap<>();
         postUrlMethodMap = new HashMap<>();
         methodClassMap = new HashMap<>();
@@ -55,69 +56,82 @@ public class ServletContainer {
             getUrlMethodMap.put(getMapping.url(), method);
             return;
         }
-        if((postMapping = method.getAnnotation(PostMapping.class)) != null){
+        if ((postMapping = method.getAnnotation(PostMapping.class)) != null) {
             postUrlMethodMap.put(postMapping.url(), method);
             return;
         }
     }
+
+    private Method methodFromUrl(HttpRequest httpRequest) {
+        if (httpRequest.method() == HttpMethod.GET)
+            return this.getUrlMethodMap.get(httpRequest.url());
+        if (httpRequest.method() == HttpMethod.POST)
+            return this.postUrlMethodMap.get(httpRequest.url());
+        return null;
+
+    }
+
+    private Map<String, String> dataFromRequest(HttpRequest httpRequest) {
+        if (httpRequest.method() == HttpMethod.GET)
+            return httpRequest.params();
+        if (httpRequest.method() == HttpMethod.POST)
+            return httpRequest.body();
+        return null;
+    }
+
+    private List<Object> methodArguments(Method method, Map data, HttpRequest httpRequest, HttpResponse httpResponse) {
+        List<Object> arguments = new ArrayList<>();
+        Parameter[] parameters = method.getParameters();
+        for (Parameter parameter : parameters) {
+            arguments.add(methodArgument(parameter, data, httpRequest, httpResponse));
+        }
+        return arguments;
+    }
+
+    private Object methodArgument(Parameter parameter, Map data, HttpRequest httpRequest, HttpResponse httpResponse) {
+        if (parameter.getType() == Map.class)
+            return data;
+        if (parameter.getType() == HttpRequest.class)
+            return httpRequest;
+        if (parameter.getType() == HttpResponse.class)
+            return httpResponse;
+        return null;
+    }
+
+    private void controllerResponse(String controllerResult, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+        String[] controllerResults = controllerResult.split(":");
+        if (controllerResults[0].equals("redirect")) {
+            HttpResponseUtils.redirectResponse(httpResponse, controllerResults[1].trim(), httpRequest.getHeader("Host"));
+            return;
+        }
+        HttpResponseUtils.staticResponse(httpResponse, controllerResults[0]);
+    }
+
 
     public void service(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
         Method method = null;
         Object controller = null;
         Map data = null;
 
-        if(request.method() == HttpMethod.GET) {
-            method = this.getUrlMethodMap.get(request.url());
-            data = request.params();
-        }
-        if(request.method() == HttpMethod.POST){
-            method = this.postUrlMethodMap.get(request.url());
-            data = request.body();
+        method = methodFromUrl(request);
+        log.debug("url : {}, method : {}", request.url(), method);
+
+        if (method == null) {
+            HttpResponseUtils.staticResponse(response, request.url());
+            return;
         }
 
+        data = dataFromRequest(request);
         controller = this.methodClassMap.get(method);
-
-        if(method == null) {
-            // 일단 static file은 그냥 서빙하도록 한다.
-            String location = request.url();
-            response.setStatus(HttpStatus.OK);
-            byte[] body = Files.readAllBytes(new File("./webapp" + location).toPath());
-            response.setHeader("Content-Type", "text/html;charset=utf-8");
-            response.setHeader("Content-Length", String.valueOf(body.length));
-            response.setBody(body);
-        }
-
-        List<Object> arguments = new ArrayList<>();
-        Parameter[] parameters = method.getParameters();
-        for(Parameter parameter : parameters){
-            if(parameter.getType() == Map.class)
-                arguments.add(data);
-            if(parameter.getType() == HttpRequest.class)
-                arguments.add(request);
-            if(parameter.getType() == HttpResponse.class)
-                arguments.add(response);
-        }
+        List<Object> arguments = methodArguments(method, data, request, response);
 
         String controllerResult = (String) method.invoke(controller, arguments.toArray());
+        controllerResponse(controllerResult, request, response);
 
-        String[] controllerResults = controllerResult.split(":");
-        if(controllerResults[0].equals("redirect")){
-            response.setStatus(HttpStatus.FOUND);
-            String location = controllerResults[1].trim();
-            response.setHeader("Location", String.format("http://%s%s", request.getHeader("Host"), location));
-        }else{
-            String location = controllerResults[0];
-            response.setStatus(HttpStatus.OK);
-            byte[] body = Files.readAllBytes(new File("./webapp" + location).toPath());
-            if(controller.getClass().getAnnotation(Controller.class) != null)
-                response.setHeader("Content-Type", "text/html;charset=utf-8");
-            response.setHeader("Content-Length", String.valueOf(body.length));
-            response.setBody(body);
-        }
     }
 
 
-    public static class AccessingAllClassesInPackage {
+    private static class AccessingAllClassesInPackage {
 
         public Set<Class> findAllClassesUsingClassLoader(String packageName) {
             InputStream stream = ClassLoader.getSystemClassLoader()
