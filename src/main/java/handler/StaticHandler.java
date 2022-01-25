@@ -16,7 +16,7 @@ public class StaticHandler {
         if (!file.exists()) {
             return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
         }
-        String extension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+        String extension = file.getName().substring(file.getName().lastIndexOf("."));
         ContentType contentType = ContentType.fromExtension(extension).orElse(ContentType.TEXT);
         try {
             byte[] content = Files.readAllBytes(file.toPath());
