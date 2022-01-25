@@ -21,7 +21,7 @@ public class HttpResponse {
 
     private void setResponse() {
         try {
-            ResponseBody responseBody = HandlerMapper.requestMapping(httpRequest.getMethod(), httpRequest.getPath());
+            ResponseBody responseBody = HandlerMapper.requestMapping(httpRequest);
             byte[] body = responseBody.getBody();
             response200Header(body.length, httpRequest.getContentType());
             responseBody(body);
