@@ -53,7 +53,6 @@ public class RequestHandler extends Thread {
             if(requestMap.get("httpMethod").equals("POST")) {
                 int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
                 params = HttpRequestUtils.parseRequestBody(br, contentLength);
-
             }
 
             if(url.equals("/user/create")) {
