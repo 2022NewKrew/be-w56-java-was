@@ -52,34 +52,22 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static Map<String, String> parseRequest(String request) {
-        String[] requestLst = request.split(" ");
-
-        Map<String, String> requestMap = new HashMap<>();
-        requestMap.put("type", requestLst[0]);
-        requestMap.put("uri", parseUri(requestLst[1]));
-        requestMap.put("query", parseQuery(requestLst[1]));
-        requestMap.put("version", requestLst[2]);
-
-        return requestMap;
-    }
-
-    private static String parseUri(String sourceUri) {
+    public static String parseUri(String sourceUri) {
         String uri = sourceUri;
 
-        if (uri.contains("\\?")) {
+        if (uri.contains("?")) {
             uri = uri.split("\\?")[0];
         }
 
         return uri;
     }
 
-    private static String parseQuery(String sourceUri) {
-        if (!sourceUri.contains("\\?")) {
-            return "";
+    public static Map<String, String> parseQuery(String sourceUri) {
+        if (!sourceUri.contains("?")) {
+            return new HashMap<>();
         }
 
-        return sourceUri.split("\\?")[1];
+        return parseQueryString(sourceUri.split("\\?")[1]);
     }
 
     public static class Pair {

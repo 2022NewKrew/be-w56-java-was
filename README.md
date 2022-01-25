@@ -13,6 +13,8 @@
     * 모든 Request Header 출력하기
     * Request Line에서 path 분리하기
     * path에 해당하는 파일 읽어 응답하기
+* Review 반영
+  * HttpRequestUtils에서 parseRequest의 로직을 Request의 생성자로 이동
 ### LEARNED
 * GET Request format
 * Response content type

@@ -15,13 +15,12 @@ public class Request {
     private final List<String> body = new ArrayList<>();
 
     public Request(BufferedReader a) throws IOException {
-        String requestLine = a.readLine();
-        Map<String, String> requestLineMap = HttpRequestUtils.parseRequest(requestLine);
-        type = requestLineMap.get("type");
-        uri = requestLineMap.get("uri");
-        query = HttpRequestUtils.parseQueryString(
-                requestLineMap.get("query"));
-        httpVer = requestLineMap.get("version");
+        String[] requestLine = a.readLine().split(" ");
+
+        type = requestLine[0];
+        uri = HttpRequestUtils.parseUri(requestLine[1]);
+        query = HttpRequestUtils.parseQuery(requestLine[1]);
+        httpVer = requestLine[2];
 
         String line;
         while (!(line = a.readLine()).equals("")) {
