@@ -8,6 +8,8 @@
     * catch 시에 적절한 Response를 날려보자
 ### TODO
 * GET으로 회원가입 기능 구현
-    * service, DTO, controller 구현
-    * controller에 전달할수 있도록 RequestHandler에 회원가입을 요청하는 경우를 다룰 수 있는 로직 추가 
+    * controller에 전달할수 있도록 RequestHandler에 회원가입을 요청하는 경우를 다룰 수 있는 로직 추가
+### DONE
+* GET으로 회원가입 기능 구현
+  * service, DTO, controller 구현
 ### LEARNED
