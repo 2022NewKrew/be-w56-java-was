@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 public class RequestParser {
+    static final String BLANK_LINE = "";
     private static final Logger log = LoggerFactory.getLogger(RequestParser.class);
 
     public RequestMap parse(BufferedReader br) throws IOException {
@@ -21,7 +22,7 @@ public class RequestParser {
         String[] requestLine = line.split(" ");
         requestMap.addHeader("url", requestLine[1]);
 
-        while (!line.equals("")) {
+        while (!line.equals(BLANK_LINE)) {
             line = br.readLine();
             log.debug("request header {}: ", line);
         }
