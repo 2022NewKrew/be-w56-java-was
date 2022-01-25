@@ -49,7 +49,7 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static String processRequestLine(String requestLine) {
+    public static String parseRequest(String requestLine) {
         String[] tokens = requestLine.split(" ");
         // HTTP Method
         String method = tokens[0];

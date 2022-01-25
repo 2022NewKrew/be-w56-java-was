@@ -26,7 +26,7 @@ public class RequestHandler extends Thread {
             String line = br.readLine();
             log.debug("request line : {}", line);
 
-            String requestURI = HttpRequestUtils.processRequestLine(line);
+            String requestURI = HttpRequestUtils.parseRequest(line);
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
