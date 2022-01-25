@@ -1,16 +1,21 @@
 package http.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import http.request.HttpRequest;
+import http.request.HttpRequestBody;
+import http.request.HttpRequestHeader;
+import http.request.HttpRequestStartLine;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,13 +23,15 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
     }
+
+
+
 
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
@@ -34,6 +41,46 @@ public class HttpRequestUtils {
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
+    public static HttpRequest parseHttpRequest(BufferedReader bufferedReader) throws IOException {
+        HttpRequestStartLine httpRequestStartLine = parseHttpRequestStartLine(bufferedReader);
+        HttpRequestHeader httpRequestHeader = parseHttpRequestHeader(bufferedReader);
+
+        return new HttpRequest(httpRequestStartLine, httpRequestHeader, null);
+    }
+
+    private static HttpRequestStartLine parseHttpRequestStartLine(BufferedReader bufferedReader) throws IOException {
+        String line = bufferedReader.readLine();
+        if (Strings.isNullOrEmpty(line)) {
+            throw new IOException("startline empty");
+        }
+
+        String[] tokens = line.split(" ");
+
+        if (tokens.length != 3) {
+            throw new IOException("startline length is not 3");
+        }
+
+        String method = tokens[0];
+        String targetUri = tokens[1];
+        String httpVersion = tokens[2];
+
+        return new HttpRequestStartLine(method, targetUri, httpVersion);
+    }
+
+    private static HttpRequestHeader parseHttpRequestHeader(BufferedReader bufferedReader) throws IOException {
+        String line;
+        String[] tokens;
+
+        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
+        while(!(line  = bufferedReader.readLine()).equals("")){
+            tokens = line.split(": ");
+            if(tokens.length!=2) throw new IOException("header type mismatch");
+            httpRequestHeader.addHeaderLine(tokens[0], tokens[1]);
+        }
+
+        return httpRequestHeader;
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

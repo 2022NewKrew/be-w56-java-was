@@ -2,9 +2,13 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.http.HttpRequest;
+import java.util.Map;
 import java.util.Objects;
 
+import http.request.HttpRequest;
+import http.request.HttpRequestHeader;
+import http.request.HttpRequestStartLine;
+import http.util.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +28,8 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            String line = bufferedReader.readLine();
-            if(Objects.isNull(line)) return;
-            log.debug("REQ : {}", line);
-            while (!(line = bufferedReader.readLine()).equals("")){
-                log.debug("other : {}", line);
-            }
+            HttpRequest httpRequest = HttpRequestUtils.parseHttpRequest(bufferedReader);
+            printRequest(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "Hello World".getBytes();
@@ -37,6 +37,24 @@ public class RequestHandler extends Thread {
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    private void printRequest(HttpRequest httpRequest){
+        printHttpRequestStartLine(httpRequest.getHttpRequestStartLine());
+        printHttpRequestHeader(httpRequest.getHttpRequestHeader());
+    }
+
+    private void printHttpRequestStartLine(HttpRequestStartLine startLine){
+        log.debug("(STARTLINE)method : {}", startLine.getMethod());
+        log.debug("(STARTLINE)targetUri : {}", startLine.getTargetUri());
+        log.debug("(STARTLINE)http version : {}", startLine.getHttpVersion());
+    }
+
+    private void printHttpRequestHeader(HttpRequestHeader header){
+        Map<String, String> headers = header.getHeaders();
+        for (Map.Entry<String, String> entrySet : headers.entrySet()) {
+            log.debug("(HEADER) {} : {}", entrySet.getKey(), entrySet.getValue());
         }
     }
 
