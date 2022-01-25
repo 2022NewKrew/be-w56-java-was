@@ -22,7 +22,7 @@ public class MyHttpRequest {
     private final RequestParams params = new RequestParams();
     private final MyHeaders headers = new MyHeaders();
     private HttpStatus method;
-    private String requestUrl;
+    private String requestURI;
     private String httpVersion;
 
     private MyHttpRequest() {
@@ -70,7 +70,7 @@ public class MyHttpRequest {
 
     private void updateRequestUri(String uri) {
         String[] uriInfo = uri.split("\\?");
-        this.requestUrl = uriInfo[REQUEST_URL];
+        this.requestURI = uriInfo[REQUEST_URL];
 
         if (uriInfo.length > 1) {
             updateRequestParams(uriInfo[REQUEST_PARAMS]);
@@ -101,11 +101,15 @@ public class MyHttpRequest {
         return method;
     }
 
-    public String getRequestUrl() {
-        return requestUrl;
+    public String getRequestURI() {
+        return requestURI;
     }
 
     public String getHttpVersion() {
         return httpVersion;
+    }
+
+    public MyRequestDispatcher getRequestDispatcher(String viewPath) {
+        return new MyRequestDispatcher(viewPath);
     }
 }
