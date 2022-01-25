@@ -6,9 +6,7 @@ import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HttpRequest {
@@ -17,7 +15,7 @@ public class HttpRequest {
     private final BufferedReader bufferedReader;
     private HttpMethod method;
     private String path;
-    private String queryString;
+    private Map<String, String> queryString;
     private String version;
     private final Map<String, String> headers = new HashMap<>();
     private String body;
@@ -48,7 +46,7 @@ public class HttpRequest {
         Map<String, String> tokens = HttpRequestUtils.parseRequestLine(line);
         this.method = HttpMethod.valueOf(tokens.get("method"));
         this.path = tokens.get("path");
-        this.queryString = tokens.get("queryString");
+        this.queryString = HttpRequestUtils.parseQueryString(tokens.get("queryString"));
         this.version = tokens.get("version");
     }
 
@@ -63,6 +61,10 @@ public class HttpRequest {
 
     public String getPath() {
         return path;
+    }
+
+    public Map<String, String> getQueryString() {
+        return queryString;
     }
 
     public String getContentType() {

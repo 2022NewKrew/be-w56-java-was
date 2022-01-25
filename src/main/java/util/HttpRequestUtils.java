@@ -44,9 +44,17 @@ public class HttpRequestUtils {
     public static Map<String, String> parseRequestLine(String requestLine) {
         Map<String, String> tokenMap = new HashMap<>();
         String[] tokens = requestLine.split(" ");
+        String[] requestURI = tokens[1].split("\\?");
+
         tokenMap.put("method", tokens[0]);
-        tokenMap.put("path", tokens[1]);
         tokenMap.put("version", tokens[2]);
+        tokenMap.put("path", requestURI[0]);
+        tokenMap.put("queryString", "");
+
+        if (tokens[1].contains("?")) {
+            tokenMap.put("queryString", requestURI[1]);
+        }
+
         return tokenMap;
     }
 
