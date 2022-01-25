@@ -2,7 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.MyRequest;
+import util.MyHttpRequest;
 
 import java.io.*;
 import java.net.Socket;
@@ -26,13 +26,13 @@ public class RequestHandler implements Callable<Void> {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
-            MyRequest myRequest = new MyRequest(in);
+            MyHttpRequest myRequest = new MyHttpRequest(in);
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File("./webapp" + myRequest.getRequestUrl()).toPath());
 
-            response200Header(dos, body.length);
+            response200Header(dos, myRequest.getAccept(), body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -41,10 +41,10 @@ public class RequestHandler implements Callable<Void> {
         return null;
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, String accept, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + accept + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
