@@ -24,6 +24,11 @@ public class RequestController {
         responseHeader.setAccept(requestHeader.getAccept());
         responseHeader.setHost(requestHeader.getHeader("Host"));
 
+        if(uri.equals("/")){
+            responseHeader.setUri("/index.html");
+            return responseHeader;
+        }
+
         if(uri.equals("/user/create")
                 && method.equals("POST")){
             signup(requestHeader);

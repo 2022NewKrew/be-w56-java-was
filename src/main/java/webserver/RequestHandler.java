@@ -31,12 +31,12 @@ public class RequestHandler extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             RequestHeader requestHeader = new RequestHeader();
             HttpRequestUtils.setRequest(requestHeader, bufferedReader.readLine());
-            System.out.println("-----------" + requestHeader.getHeader("uri"));
-            System.out.println(requestHeader);
+            System.out.println("---------------" + requestHeader.getHeader("uri"));
+
             bufferedReader.lines()
                     .takeWhile(header -> header.contains(": "))
                     .peek(System.out::println)
-                    .forEach(hedaer -> HttpRequestUtils.setHeader(requestHeader, hedaer));
+                    .forEach(header -> HttpRequestUtils.setHeader(requestHeader, header));
             if(requestHeader.getHeader("method").equals("POST")){
                 String parameters = IOUtils.readData(bufferedReader,
                         Integer.parseInt(requestHeader.getHeader("Content-Length")));
@@ -77,10 +77,8 @@ public class RequestHandler extends Thread {
     private void response302Header(DataOutputStream dos, int lengthOfBodyContent, ResponseHeader responseHeader){
         try{
             log.info("302: " + responseHeader.getUri());
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Content-Type: "+ responseHeader.getAccept() + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("Location: " + responseHeader.getHost() + responseHeader.getUri() + "\r\n");
+            dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
+            dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
