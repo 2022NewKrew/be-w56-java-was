@@ -41,6 +41,10 @@ public class UserSignupRequest {
         return new User(userId, password, name, email);
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     @Override
     public String toString() {
         return "UserSignupRequest{" +

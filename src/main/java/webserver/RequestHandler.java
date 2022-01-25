@@ -43,7 +43,7 @@ public class RequestHandler extends Thread {
         try {
             String viewPath = router.route(request);
             viewResolver.render(dos, viewPath);
-        } catch (InvalidInputException e) {
+        } catch (InvalidInputException | IllegalArgumentException e) {
             e.printStackTrace();
             viewResolver.renderBadRequest(dos);
         }
