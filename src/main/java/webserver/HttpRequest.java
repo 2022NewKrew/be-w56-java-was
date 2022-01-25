@@ -39,7 +39,7 @@ public class HttpRequest {
             headerMap.put(line.split(":")[0].trim(), line.split(":")[1].trim());
             line = br.readLine();
         }
-        System.out.println(headerMap);
+
         header = headerMap;
     }
 
