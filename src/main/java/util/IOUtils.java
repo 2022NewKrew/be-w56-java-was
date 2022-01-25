@@ -1,6 +1,6 @@
 package util;
 
-import dto.RequestLine;
+import webserver.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,16 +25,16 @@ public class IOUtils {
         return String.copyValueOf(body);
     }
 
-    public static RequestLine printAllRequestHeadersAndReturnRequestLine(BufferedReader br) throws IOException {
-        RequestLine requestLine = printAndReturnRequestLine(br);
+    public static HttpRequest printAllRequestHeadersAndReturnRequestLine(BufferedReader br) throws IOException {
+        HttpRequest httpRequest = printAndReturnRequestLine(br);
         printRequestHeaders(br);
-        return requestLine;
+        return httpRequest;
     }
 
-    private static RequestLine printAndReturnRequestLine(BufferedReader br) throws IOException {
+    private static HttpRequest printAndReturnRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
         log.debug("request line: {}", line);
-        return new RequestLine(line.split(" "));
+        return new HttpRequest(line);
     }
 
     private static void printRequestHeaders(BufferedReader br) throws IOException {
