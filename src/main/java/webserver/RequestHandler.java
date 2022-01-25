@@ -1,6 +1,8 @@
 package webserver;
 
 import model.HttpRequest;
+import model.Pair;
+import model.ValueMap;
 import model.request.Headers;
 import model.request.HttpLocation;
 import model.request.HttpMethod;
@@ -12,17 +14,23 @@ import util.Separator;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class RequestHandler implements Callable<Void> {
     private static final String FILE_PREFIX = "./webapp";
 
+    private static final String TOP_HEADER_SEPARATOR = " ";
+    private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
     private static final String HEADER_SEPARATOR = ": ";
+
     private static final String HEADER_NEWLINE = "\r\n";
 
     private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK \r\n";
@@ -67,19 +75,16 @@ public class RequestHandler implements Callable<Void> {
     }
 
     private HttpRequest readRequest(final InputStream in) throws IOException {
-        final String[] topHeaderValues = Separator.splitString(readOneHeader(in), " ");
+        final String[] topHeaderValues = Separator.splitString(readOneHeader(in), TOP_HEADER_SEPARATOR);
         final HttpMethod method = HttpMethod.valueOf(topHeaderValues[0]);
-        final HttpLocation location = new HttpLocation(topHeaderValues[1]);
 
-        final List<HttpRequestUtils.Pair> list = new ArrayList<>();
-        String header = readOneHeader(in);
-        while (!header.isEmpty()) {
-            list.add(HttpRequestUtils.parseHeader(header));
-            header = readOneHeader(in);
-        }
-        final Headers headers = new Headers(list);
+        final String[] locAndParams = Separator.splitString(topHeaderValues[1], LOCATION_AND_PARAMETER_SEPARATOR);
+        final HttpLocation location = new HttpLocation(locAndParams[0]);
+        final ValueMap params = getParams(locAndParams);
 
-        return new HttpRequest(method, location, headers);
+        final Headers headers = getHeaders(in);
+
+        return new HttpRequest(method, location, params, headers);
     }
 
     private String readOneHeader(final InputStream in) throws IOException {
@@ -97,6 +102,28 @@ public class RequestHandler implements Callable<Void> {
         }
 
         return sb.toString();
+    }
+
+    private ValueMap getParams(final String[] locAndParams) {
+        if (locAndParams.length != 2) {
+            return new ValueMap(Collections.emptyMap());
+        }
+
+        final String decodedParams = URLDecoder.decode(locAndParams[1], StandardCharsets.UTF_8);
+        final Map<String, String> map = HttpRequestUtils.parseQueryString(decodedParams);
+        return new ValueMap(map);
+    }
+
+    private Headers getHeaders(final InputStream in) throws IOException {
+        final List<Pair> list = new ArrayList<>();
+        while (true) {
+            final String header = readOneHeader(in);
+            if (header.isEmpty()) {
+                break;
+            }
+            list.add(HttpRequestUtils.parseHeader(header));
+        }
+        return new Headers(list);
     }
 
     private void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
