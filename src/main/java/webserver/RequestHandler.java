@@ -3,8 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.Map;
-import java.util.Objects;
 
 import model.RequestHeader;
 import org.slf4j.Logger;
@@ -28,12 +26,8 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             RequestHeader header = new RequestHeader(br);
-            String url = header.getUri();
-            if (Objects.equals(url, "/")) {
-                url += "index.html";
-            }
-            url = "./webapp" + url;
-            File file = new File(url);
+            String path = Controller.controller(header);
+            File file = new File(path);
             byte[] body = Files.readAllBytes(file.toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
