@@ -61,4 +61,8 @@ public class HttpRequest {
     public String getUrl() {
         return url;
     }
+
+    public Map<String, String> getQueryStrings() {
+        return queryStrings;
+    }
 }

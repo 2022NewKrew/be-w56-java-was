@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import controller.BaseController;
 import controller.StaticController;
+import controller.user.SignupController;
 
 public class Routes {
 
@@ -17,6 +18,7 @@ public class Routes {
 
     private void setRoutes() {
         // Request Mapping to Controller
+        routes.put(HttpMethod.GET, "/user/create", new SignupController());
     }
 
     public BaseController getController(HttpMethod httpMethod, String url) {
