@@ -3,6 +3,8 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.controller.Controller;
+import webserver.request.Request;
+import webserver.request.RequestParser;
 
 import java.io.*;
 import java.net.Socket;
@@ -25,7 +27,7 @@ public class RequestHandler extends Thread {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
-            RequestMap requestMap = requestParser.parse(br);
+            Request requestMap = requestParser.parse(br);
             getController(requestMap).handle(requestMap, dos);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -33,8 +35,8 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private Controller getController(RequestMap requestMap){
-        String url = (String) requestMap.getHeader("url").orElseThrow();
+    private Controller getController(Request request){
+        String url = request.getUrl();
         return controllerMapping.getController(url).orElseThrow();
     }
 }

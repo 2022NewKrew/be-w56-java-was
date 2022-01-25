@@ -1,9 +1,11 @@
-package webserver;
+package webserver.request;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import webserver.request.Request;
+import webserver.request.RequestParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,14 +27,27 @@ class RequestParserTest {
         final BufferedReader br = createMockBufferedReader(requestStrings);
 
         //when
-        final RequestMap requestMap = requestParser.parse(br);
+        final Request requestMap = requestParser.parse(br);
 
         //then
         final String requestLine = getRequestLine(requestStrings);
-        assertThat(requestLine).contains((CharSequence) requestMap.getHeader("url").orElseThrow());
+        assertThat(requestLine).contains(requestMap.getUrl());
     }
 
+    @ParameterizedTest
+    @DisplayName("http request queryString 파싱 테스트")
+    @MethodSource("getHttpRequestStringStream")
+    void parseQueryString(List<String> requestStrings) throws IOException{
+        //gvien
+        final RequestParser requestParser = new RequestParser();
+        final BufferedReader br = createMockBufferedReader(requestStrings);
 
+        //when
+        final Request requestMap = requestParser.parse(br);
+
+        //then
+//         Request.getQueryParams();
+    }
 
     private static BufferedReader createMockBufferedReader(List<String> requestStrings) throws IOException {
         final BufferedReader br = mock(BufferedReader.class);

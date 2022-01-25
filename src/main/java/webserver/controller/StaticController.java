@@ -2,7 +2,7 @@ package webserver.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestMap;
+import webserver.request.Request;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -27,8 +27,8 @@ public class StaticController implements Controller{
     }
 
     @Override
-    public void handle(RequestMap requestMap, DataOutputStream dos) throws IOException {
-        String filePath = getFilePath((String) requestMap.getHeader("url").orElseThrow());
+    public void handle(Request request, DataOutputStream dos) throws IOException {
+        String filePath = getFilePath(request.getUrl());
         log.info("return file {}", filePath);
 
         byte[] body = Files.readAllBytes(new File(filePath).toPath());
