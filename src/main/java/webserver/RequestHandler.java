@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import request.HttpRequestFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -34,17 +35,19 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = (!httpRequest.getUrl().endsWith("html")) ? "helloWorld".getBytes() : Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
 
-            response200Header(dos, body.length);
+            String extension = IOUtils.parseExtension(httpRequest);
+            log.debug("extension : {}", extension);
+            response200Header(dos, body.length, extension);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String extension) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + extension + "; charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
