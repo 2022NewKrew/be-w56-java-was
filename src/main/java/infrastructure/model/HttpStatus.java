@@ -1,6 +1,7 @@
 package infrastructure.model;
 
 public enum HttpStatus {
+
     BAD_REQUEST(400);
 
     private final int code;

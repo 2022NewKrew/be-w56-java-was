@@ -1,6 +1,7 @@
 package adaptor.in.web;
 
 import adaptor.in.web.exception.UriNotFoundException;
+import adaptor.in.web.user.UserController;
 import infrastructure.model.HttpRequest;
 import infrastructure.model.Path;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ public class FrontController {
     private static final Logger log = LoggerFactory.getLogger(FrontController.class);
     private final StaticResourceController staticResourceController = StaticResourceController.getInstance();
     private final HomeController homeController = HomeController.getInstance();
+    private final UserController userController = UserController.getInstance();
 
     private FrontController() {
     }
@@ -34,6 +36,9 @@ public class FrontController {
             if (path.getContentType().isDiscrete()) {
                 staticResourceController.handleFileRequest(dos, httpRequest);
                 return;
+            }
+            if (path.matchHandler("/user")) {
+                userController.handle(dos, httpRequest);
             }
         } catch (UriNotFoundException e) {
             response400(dos);

@@ -3,11 +3,12 @@ package infrastructure.model;
 import java.util.Arrays;
 
 public enum ContentType {
+
     HTML(".html", "text/html", true),
     ICO(".ico", "text/plain", true),
     CSS(".css", "text/css", true),
     JS(".js", "application/js", true),
-    UNKNOWN("text/html", true);
+    UNKNOWN("text/html", false);
 
     private final String extension;
     private final String mimeType;

@@ -41,11 +41,10 @@ public class RequestHandler extends Thread {
 
     private void handle(DataOutputStream dos, BufferedReader bufferedReader) throws IOException {
         HttpRequest httpRequest = getRequest(bufferedReader);
-        log.debug("{}", httpRequest);
         frontController.handle(dos, httpRequest);
     }
 
-    private HttpRequest getRequest(BufferedReader bufferedReader) throws IOException {
+    private HttpRequest getRequest(BufferedReader bufferedReader) throws IOException, IllegalArgumentException {
         String line = bufferedReader.readLine();
         RequestLine requestLine = HttpRequestUtils.parseRequestLine(line);
 

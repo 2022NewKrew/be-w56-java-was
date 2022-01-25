@@ -2,8 +2,7 @@ package infrastructure.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import infrastructure.model.Pair;
-import infrastructure.model.RequestLine;
+import infrastructure.model.*;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -52,14 +51,34 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static RequestLine parseRequestLine(String line) {
-        String[] split = line.split(REQUEST_SEPARATE_TOKEN);
-        return RequestLine.create(split[0], split[1]);
+    public static RequestLine parseRequestLine(String requestLine) throws IllegalArgumentException {
+        String[] line = requestLine.split(REQUEST_SEPARATE_TOKEN);
+        RequestMethod requestMethod = RequestMethod.getMethod(line[0])
+                .orElseThrow(IllegalArgumentException::new);
+        Path path = parsePath(line[1]);
+
+        return new RequestLine(requestMethod, path);
+    }
+
+    private static Path parsePath(String path) {
+        if (!path.contains("?")) {
+            return Path.builder()
+                    .value(path)
+                    .contentType(ContentType.valueOfPath(path))
+                    .build();
+        }
+
+        String[] split = path.split("\\?");
+        path = split[0];
+        String queryString = split[1];
+        return Path.builder()
+                .value(path)
+                .contentType(ContentType.valueOfPath(path))
+                .variables(parseQueryString(queryString))
+                .build();
     }
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
     }
-
-
 }

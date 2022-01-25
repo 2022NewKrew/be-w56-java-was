@@ -12,12 +12,6 @@ public class RequestLine {
         this.path = path;
     }
 
-    public static RequestLine create(String method, String path) {
-        RequestMethod requestMethod = RequestMethod.getMethod(method).orElseThrow(IllegalArgumentException::new);
-        Path requestPath = Path.create(path);
-        return new RequestLine(requestMethod, requestPath);
-    }
-
     public Path getPath() {
         return path;
     }

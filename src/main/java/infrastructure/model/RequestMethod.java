@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum RequestMethod {
+
     GET("GET");
 
     private final String value;

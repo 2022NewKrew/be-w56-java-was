@@ -1,6 +1,7 @@
 package infrastructure.model;
 
 public class Pair {
+
     String key;
     String value;
 
