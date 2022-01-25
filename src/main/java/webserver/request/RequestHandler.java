@@ -1,16 +1,18 @@
-package webserver;
+package webserver.request;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import webserver.response.ResponseHandler;
+import webserver.header.ContentType;
+import webserver.header.HttpMethod;
+import webserver.header.RequestLine;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -26,25 +28,38 @@ public class RequestHandler extends Thread {
                 connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        try ( BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
             Map<String, String> headerMap = new HashMap<>();
 
             addRequestLine(br, headerMap);
             addRequestHeader(br, headerMap);
+            Map<String, String> queryMap = getQueryStringMap(headerMap);
 
-            RequestMapper requestMapper = new RequestMapper(HttpMethod.match(headerMap.get("METHOD")), headerMap.get("PATH"));
-            String result = requestMapper.match();
+            RequestControllerMatcher requestControllerMatcher = new RequestControllerMatcher(
+                    HttpMethod.match(headerMap.get(RequestLine.METHOD.name())),
+                    headerMap.get(RequestLine.PATH.name()));
+            String result = requestControllerMatcher.match(queryMap);
+
             ContentType contentType = HttpRequestUtils.parseExtension(result);
             byte[] body = Files.readAllBytes(new File("./webapp" + result).toPath());
 
-            DataOutputStream dos = new DataOutputStream(out);
             ResponseHandler responseHandler = new ResponseHandler(dos);
             responseHandler.response(body, contentType);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
         }
+    }
+
+    private Map<String, String> getQueryStringMap(Map<String, String> headerMap) {
+        Map<String, String> queryMap = new HashMap<>();
+        String[] parsedPath = HttpRequestUtils.parseGetRequest(headerMap.get("PATH"));
+        if(parsedPath.length == 2) {
+            queryMap = HttpRequestUtils.parseQueryString(parsedPath[1]);
+            headerMap.put("PATH", parsedPath[0]);
+        }
+        return queryMap;
     }
 
     private void addRequestHeader(BufferedReader br, Map<String, String> headerMap) throws IOException {
