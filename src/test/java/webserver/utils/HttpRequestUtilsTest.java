@@ -1,12 +1,10 @@
-package util;
-
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.Map;
-
+package webserver.utils;
 
 import org.junit.jupiter.api.Test;
-import util.HttpRequestUtils.Pair;
+import webserver.utils.HttpRequestUtils.Pair;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpRequestUtilsTest {
     @Test
