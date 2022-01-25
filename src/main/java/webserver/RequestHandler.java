@@ -8,12 +8,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.http.HttpRequest;
 import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import util.Request;
-import util.Response;
+import http.Request;
+import http.Response;
 
 public class RequestHandler extends Thread {
 

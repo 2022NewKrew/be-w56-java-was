@@ -2,6 +2,7 @@ package util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import http.Request;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
