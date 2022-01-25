@@ -15,7 +15,7 @@ import webserver.RequestHandler;
 
 public class HttpRequestUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
     public static String getPathFromRequestLine(String requestLine) {
         String[] token = requestLine.split(" ");
