@@ -9,24 +9,17 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import domain.Constants;
+import domain.ContentType;
 
 public class HttpRequestUtils {
-    private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
-    /**
-     * @param queryString - URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     */
     public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, "&");
+        return parseValues(queryString, Constants.QUERY_STRING_DELIMITER);
     }
 
-    /**
-     * @param cookies - 값은 name1=value1; name2=value2 형식임
-     */
     public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, ";");
+        return parseValues(cookies, Constants.COOKIE_DELIMITER);
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
@@ -36,26 +29,9 @@ public class HttpRequestUtils {
 
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens)
-                .map(t -> getKeyValue(t, "="))
+                .map(t -> getKeyValue(t, Constants.PARAMETER_DELIMITER))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-    }
-
-    public static String parseRequestPath(String requestLine) {
-        String[] tokens = requestLine.split(" ");
-        String path = tokens[1];
-        log.info("HTTP Request Path : {}", path);
-        return path;
-    }
-
-    public static StringBuffer readHeaders(BufferedReader bufferedReader) throws IOException {
-        StringBuffer stringBuffer = new StringBuffer();
-        String readLine;
-        while (!(readLine = bufferedReader.readLine()).equals("")) {
-            stringBuffer.append(readLine).append("\n");
-            log.info("HTTP Request Header : {}", readLine);
-        }
-        return stringBuffer;
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
@@ -71,20 +47,37 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static Map<String, String> parseHeaders(String headers) {
+    public static Map<String, String> parseHeaders(BufferedReader bufferedReader) throws IOException {
+        String headers = readHeaders(bufferedReader).toString();
+
         if (Strings.isNullOrEmpty(headers)) {
             return Maps.newHashMap();
         }
 
-        String[] tokens = headers.split("\n");
+        String[] tokens = headers.split(Constants.LINE_DELIMITER);
         return Arrays.stream(tokens)
                 .map(HttpRequestUtils::parseHeader)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
+    private static StringBuffer readHeaders(BufferedReader bufferedReader) throws IOException {
+        StringBuffer stringBuffer = new StringBuffer();
+        String readLine;
+        while (!(readLine = bufferedReader.readLine()).equals(Constants.EMPTY_STRING)) {
+            stringBuffer.append(readLine).append(Constants.LINE_DELIMITER);
+        }
+        return stringBuffer;
+    }
+
     public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
+        return getKeyValue(header, Constants.HEADER_DELIMITER);
+    }
+
+    public static ContentType parseContentType(String path) {
+        String[] strings = path.split(Constants.FILE_EXTENSION_DELIMITER);
+        String fileExtension = strings[strings.length-1];
+        return ContentType.getIfPresent(fileExtension.toUpperCase());
     }
 
     public static class Pair {
