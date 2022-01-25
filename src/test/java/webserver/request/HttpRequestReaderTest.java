@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import webserver.request.Request;
-import webserver.request.RequestParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,22 +14,22 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-class RequestParserTest {
+class HttpRequestReaderTest {
 
     @ParameterizedTest
     @DisplayName("http request url 파싱 테스트")
     @MethodSource("getHttpRequestStringStream")
     void parseUrl(List<String> requestStrings) throws IOException {
         //given
-        final RequestParser requestParser = new RequestParser();
+        final RequestReader requestReader = new RequestReader();
         final BufferedReader br = createMockBufferedReader(requestStrings);
 
         //when
-        final Request requestMap = requestParser.parse(br);
+        final HttpRequest httpRequestMap = requestReader.read(br);
 
         //then
         final String requestLine = getRequestLine(requestStrings);
-        assertThat(requestLine).contains(requestMap.getUrl());
+        assertThat(requestLine).contains(httpRequestMap.getUrl());
     }
 
     @ParameterizedTest
@@ -39,11 +37,11 @@ class RequestParserTest {
     @MethodSource("getHttpRequestStringStream")
     void parseQueryString(List<String> requestStrings) throws IOException{
         //gvien
-        final RequestParser requestParser = new RequestParser();
+        final RequestReader requestReader = new RequestReader();
         final BufferedReader br = createMockBufferedReader(requestStrings);
 
         //when
-        final Request requestMap = requestParser.parse(br);
+        final HttpRequest httpRequestMap = requestReader.read(br);
 
         //then
 //         Request.getQueryParams();
@@ -81,14 +79,14 @@ class RequestParserTest {
                         "Host: localhost:8080",
                         "Connection: keep-alive",
                         "Accept: */*",
-                        RequestParser.BLANK_LINE
+                        RequestReader.BLANK_LINE
                 ),
                 List.of(
                         "GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1",
                         "Host: localhost:8080",
                         "Connection: keep-alive",
                         "Accept: */*",
-                        RequestParser.BLANK_LINE
+                        RequestReader.BLANK_LINE
                 )
         );
     }

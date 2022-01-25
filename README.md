@@ -6,8 +6,8 @@
 ### 요구사항
 
 - [X]  정적인 html 파일 응답
-    - [X]  request header 출력
-    - [X]  request line에서 path 분리
+    - [X]  httpRequest header 출력
+    - [X]  httpRequest line에서 path 분리
     - [X]  path에 해당하는 파일 읽어 응답
 
 ### 구현 내용

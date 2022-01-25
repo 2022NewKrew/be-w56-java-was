@@ -4,7 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import webserver.request.Request;
+import webserver.request.HttpRequest;
+import webserver.request.HttpVersion;
+import webserver.request.MethodType;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -63,13 +65,17 @@ class StaticControllerTest {
         final Controller controller = new StaticController();
         final DataOutputStream dos = mock(DataOutputStream.class);
 
-        final Request requestMap = new Request(url);
+        final HttpRequest httpRequest = HttpRequest.builder()
+                .method(MethodType.GET)
+                .url(url)
+                .httpVersion(HttpVersion.VERSION_1_1)
+                .build();
 
         final File file = new File(String.format("./webapp%s", url));
         final byte[] expectedBody = Files.readAllBytes(file.toPath());
 
         //when
-        controller.handle(requestMap, dos);
+        controller.handle(httpRequest, dos);
 
         //then
         then(dos).should().write(
