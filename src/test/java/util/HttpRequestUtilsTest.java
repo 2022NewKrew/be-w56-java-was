@@ -73,6 +73,6 @@ public class HttpRequestUtilsTest {
     @Test
     public void parseUrl() {
         String url = "GET /index.html HTTP/1.1";
-        assertThat(HttpRequestUtils.parseUrl(url)).isEqualTo("/index.html");
+        assertThat(HttpRequestUtils.parseRequestHeader(url)).isEqualTo("/index.html");
     }
 }

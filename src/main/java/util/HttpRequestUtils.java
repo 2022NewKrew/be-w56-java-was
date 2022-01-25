@@ -10,12 +10,13 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import model.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
 public class HttpRequestUtils {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
     /**
      * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -33,9 +34,14 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
-    public static String parseUrl(String url) {
+    public static Request parseRequestHeader(String url) {
         log.debug("request line : {}", url);
-        return url.split(" ")[1];
+        String[] split = url.split(" ");
+        String[] pathSplit = split[1].split("\\?");
+        if (pathSplit.length == 1) {
+            return new Request(split[0], split[1], split[2]);
+        }
+        return new Request(split[0], pathSplit[0], pathSplit[1], split[2]);
     }
 
     public static String readHeaderAccept(BufferedReader br) throws IOException {
