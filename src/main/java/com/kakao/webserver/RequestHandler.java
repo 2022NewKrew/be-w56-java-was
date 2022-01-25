@@ -6,7 +6,6 @@ import com.kakao.webserver.controller.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -31,12 +30,12 @@ public class RequestHandler extends Thread {
              OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = new HttpRequest(in);
             handleRequest(httpRequest, out);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-    private void handleRequest(HttpRequest httpRequest, OutputStream out) {
+    private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
         for (Controller controller : controllerList) {
             if (controller.isValidPath(httpRequest.getUrl().getPath())) {
                 controller.handleRequest(httpRequest, out);

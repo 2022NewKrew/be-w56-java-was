@@ -7,5 +7,6 @@ import java.io.OutputStream;
 public interface Controller {
     boolean isValidPath(String path);
 
-    void handleRequest(HttpRequest request, OutputStream os);
+    void handleRequest(HttpRequest request, OutputStream os)
+            throws Exception;
 }
