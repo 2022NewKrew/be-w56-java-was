@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class TemplateEngine {
+
     private static TemplateEngine templateEngine;
+
     private TemplateEngine(){}
 
     public static TemplateEngine getInstance(){
