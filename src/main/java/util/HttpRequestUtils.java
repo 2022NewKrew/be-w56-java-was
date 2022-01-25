@@ -30,6 +30,16 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
+    public static Map<String, String> parseQueryUrl(String queryUrl) {
+        String queryString = queryUrl.split("\\?")[1];
+        return parseQueryString(queryString);
+    }
+
+    public static Map<String, String> parseRequestBody(BufferedReader br, int contentLength) throws IOException {
+        String requestBody = IOUtils.readData(br, contentLength);
+        return parseQueryString(requestBody);
+    }
+
     public static Map<String, String> readRequest(BufferedReader br) throws IOException {
         String request = br.readLine();
         Map<String, String> requestMap = new HashMap<>();
