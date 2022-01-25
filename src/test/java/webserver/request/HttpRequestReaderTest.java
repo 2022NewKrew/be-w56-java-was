@@ -44,7 +44,7 @@ class HttpRequestReaderTest {
         final HttpRequest httpRequest = requestReader.read(br);
 
         //then
-        final String queryString = requestStrings.get(0);
+        final String queryString = getRequestLine(requestStrings);
         httpRequest.getQueryParams().forEach((k, v) -> {
             assertThat(queryString).contains(k);
             assertThat(queryString).contains(v);

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface Controller {
     boolean supports(String url);
-    void handle(HttpRequest httpRequestMap, DataOutputStream dos) throws IOException;
+    void handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException;
 
     default void response200Header(DataOutputStream dos, int lengthOfBodyContent) throws IOException {
         dos.writeBytes("HTTP/1.1 200 OK \r\n");
