@@ -5,9 +5,10 @@ import java.io.IOException;
 
 public class HttpResponseHeader {
     private final String header;
+    private static final String HTTP_VERSION = "HTTP/1.1";
 
     public HttpResponseHeader(String url, int bodyLength) {
-        header = "HTTP/1.1 200 OK \r\n" +
+        header = HTTP_VERSION + " 200 OK \r\n" +
                 "Content-Type: " + contentTypeOf(url) + ";charset=utf-8\r\n" +
                 "Content-Length: " + bodyLength + "\r\n" +
                 "\r\n";
@@ -26,10 +27,10 @@ public class HttpResponseHeader {
         String extension = tokens[tokens.length - 1];
 
         switch (extension) {
-            case "css": return ContentType.CSS.value();
-            case "js": return ContentType.JS.value();
-            case "html": return ContentType.HTML.value();
-            default: return ContentType.DEFAULT.value();
+            case "css": return ContentType.CSS;
+            case "js": return ContentType.JS;
+            case "html": return ContentType.HTML;
+            default: return ContentType.DEFAULT;
         }
     }
 }
