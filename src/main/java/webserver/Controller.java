@@ -1,5 +1,7 @@
 package webserver;
 
+import db.DataBase;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -45,7 +47,8 @@ public class Controller {
                 break;
             case "/user/create":
                 Map<String, String> getParam = HttpRequestUtils.parseQueryString(myHttpRequest.getGetParam());
-
+                User joinedUser = new User(getParam.get("userId"), getParam.get("password"), getParam.get("name"), getParam.get("email"));
+                DataBase.addUser(joinedUser);
                 body = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
                 myHttpResponse = MyHttpResponse.builder(dos)
                         .body(body)
