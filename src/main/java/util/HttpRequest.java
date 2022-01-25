@@ -7,13 +7,13 @@ import lombok.ToString;
 @Getter
 @ToString
 public class HttpRequest {
-    private final RequestMethod requestMethod;
+    private final HttpMethod httpMethod;
     private final String uri;
     private final String httpVersion;
 
     @Builder
-    public HttpRequest(RequestMethod requestMethod, String uri, String httpVersion) {
-        this.requestMethod = requestMethod;
+    public HttpRequest(HttpMethod httpMethod, String uri, String httpVersion) {
+        this.httpMethod = httpMethod;
         this.uri = uri;
         this.httpVersion = httpVersion;
     }

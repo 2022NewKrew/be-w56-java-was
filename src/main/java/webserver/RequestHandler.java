@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static util.RequestMethod.getRequestMethod;
+import static util.HttpMethod.getHttpMethod;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -71,7 +71,7 @@ public class RequestHandler extends Thread {
         log.info(requestLine);
 
         String[] splitRequestLine = requestLine.split(" ");
-        httpRequestBuilder.requestMethod(getRequestMethod(splitRequestLine[0]));
+        httpRequestBuilder.httpMethod(getHttpMethod(splitRequestLine[0]));
         httpRequestBuilder.uri(splitRequestLine[1]);
         httpRequestBuilder.httpVersion(splitRequestLine[2]);
     }
