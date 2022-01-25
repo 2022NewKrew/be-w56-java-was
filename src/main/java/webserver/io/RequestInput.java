@@ -21,4 +21,14 @@ public class RequestInput {
         }
         return result;
     }
+
+    public String read(int contentLength) {
+        char[] result = new char[contentLength];
+        try {
+            br.read(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return String.valueOf(result);
+    }
 }

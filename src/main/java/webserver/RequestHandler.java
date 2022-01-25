@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.controller.GetController;
 import webserver.controller.MethodController;
+import webserver.controller.PostController;
 import webserver.manage.RequestParser;
 
 public class RequestHandler extends Thread {
@@ -40,6 +41,7 @@ public class RequestHandler extends Thread {
                 methodController = new GetController(rp, os);
                 break;
             case "POST":
+                methodController = new PostController(rp, os);
                 break;
             case "PUT":
                 break;

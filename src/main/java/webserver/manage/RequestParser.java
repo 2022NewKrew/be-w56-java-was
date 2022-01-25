@@ -20,89 +20,117 @@ public class RequestParser {
     private static final String KEY_PATH = "Url-Path";
     private static final String KEY_QUERIES = "Queries";
     private static final String KEY_ACCEPT = "Accept";
+    private static final String KEY_CONTENT_LENGTH = "Content-Length";
 
     private static final String ROOT_URL_PATH = "/";
     private static final String DEFAULT_URL_PATH = "/index.html";
 
-    Map<String, String> map;
-    Map<String, String> queryMap;
+    private static final int MIN_CONTENT_LENGTH = 1;
+
+    private Map<String, String> optionMap;
+    private Map<String, String> queryMap;
+    private Map<String, String> bodyMap;
 
     public RequestParser(InputStream is) {
-        this.map = new HashMap<>();
+        this.optionMap = new HashMap<>();
         generateRequestMap(is);
         parseRequestQuery();
     }
 
-    void generateRequestMap (InputStream is) {
+    private void generateRequestMap (InputStream is) {
         RequestOutput ro = new RequestOutput();
         RequestInput ri = new RequestInput(is);
 
-        String requestMethod = ri.readLine(); // 첫 줄
+        // 요청 데이터
+        String requestMethod = ri.readLine();
         if(RequestIO.checkStringIsEmpty(requestMethod)) {
             return;
         }
         ro.write(requestMethod);
         parseRequestMethod(requestMethod);
 
-        String requestLine = null;
-        while(!RequestIO.checkStringIsEmpty(requestLine=ri.readLine())) {
-            ro.write(requestLine);
+        // Header
+        String headerLine = null;
+        while(!RequestIO.checkStringIsEmpty(headerLine=ri.readLine())) {
+            ro.write(headerLine);
 
-            String[] input = requestLine.split(REQUEST_TOKEN);
+            String[] input = headerLine.split(REQUEST_TOKEN);
             if(input.length == 2) {
-                map.put(input[0].trim(), input[1].trim());
+                optionMap.put(input[0].trim(), input[1].trim());
             }
+        }
+
+        // Body
+        int contentLength = Integer.parseInt(optionMap.getOrDefault(KEY_CONTENT_LENGTH, "0"));
+        if( contentLength >= MIN_CONTENT_LENGTH ) {
+            String bodyLine = ri.read(contentLength);
+            parseRequestBody(bodyLine);
+            ro.write(bodyLine);
         }
         ro.flush();
     }
 
     private void parseRequestMethod (String requestMethod) {
         String[] methodAndURL = requestMethod.split(METHOD_TOKEN);
-        map.put(KEY_METHOD, methodAndURL[0]);
+        optionMap.put(KEY_METHOD, methodAndURL[0]);
         parseRequestURL(methodAndURL[1]);
     }
 
     private void parseRequestURL (String methodAndURL) {
         String[] pathAndQuery = methodAndURL.split(PATH_TOKEN);
-        map.put(KEY_PATH, pathAndQuery[0]);
+        optionMap.put(KEY_PATH, pathAndQuery[0]);
         if(pathAndQuery.length == 2) {
-            map.put(KEY_QUERIES, pathAndQuery[1]);
+            optionMap.put(KEY_QUERIES, pathAndQuery[1]);
         }
-    }
-
-    public String getQuery(String key) {
-        return queryMap.get(key);
     }
 
     private void parseRequestQuery () {
         this.queryMap = new HashMap<>();
 
-        String queries = map.get(KEY_QUERIES);
+        String queries = optionMap.get(KEY_QUERIES);
         if(queries != null) {
             String[] queryList = queries.split(QUERY_TOKEN);
             for(String query : queryList) {
-                parseRequestKeyValue(queryMap, query);
+                parseRequestKeyValue(this.queryMap, query);
             }
         }
     }
 
-    private void parseRequestKeyValue (Map<String,String> queryMap, String query) {
+    private void parseRequestKeyValue (Map<String,String> map, String query) {
         String[] keyAndValue = query.split(KEY_VALUE_TOKEN);
         if(keyAndValue.length == 2) {
-            queryMap.put(keyAndValue[0], keyAndValue[1]);
+            map.put(keyAndValue[0], keyAndValue[1]);
         }
     }
 
+    private void parseRequestBody (String requestBody) {
+        this.bodyMap = new HashMap<>();
+        if(requestBody != null) {
+            String[] bodyList = requestBody.split(QUERY_TOKEN);
+            for(String query : bodyList) {
+                parseRequestKeyValue(this.bodyMap, query);
+            }
+        }
+    }
+
+    public String getQuery(String key) {
+        return queryMap.getOrDefault(key, null);
+    }
+
+    public String getBody(String key) {
+        return bodyMap.getOrDefault(key, null);
+    }
+
     public String getMethod () {
-        return map.get(KEY_METHOD);
+        return optionMap.getOrDefault(KEY_METHOD, null);
     }
 
     public String getPath() {
-        String path = map.get(KEY_PATH);
+        String path = optionMap.get(KEY_PATH);
         return ROOT_URL_PATH.equals(path) ? DEFAULT_URL_PATH : path;
     }
 
     public String getContentType () {
-        return map.get(KEY_ACCEPT).split(ACCEPT_TOKEN)[0];
+        return optionMap.get(KEY_ACCEPT).split(ACCEPT_TOKEN)[0];
     }
 }

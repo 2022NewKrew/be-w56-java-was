@@ -22,6 +22,10 @@
   2. Get/Post 에 따라 수행할 요청을 구분 ( interface )
   3. 경로에 따라 세부적인 작업을 수행 ( service 함수에서 작업을 선택 )
 - 쿼리문을 저장하는 Map 을 추가로 구현
+- RequestBody 는 Header + 한 줄 공백 뒤에 등장
+  - body 데이터는 문자열 뒤에 \n 또는 EOF 가 존재하지 않음
+  - 기존 BufferedReader 의 ReadLine 에서 IO-Blocking 이 발생하는 원인
+  - read(char[]) 함수를 사용하도록 구조를 변경 ( content-type 크기만큼만 읽도록 수정 )
 
 # 참고 사이트
 - HTTP Header

@@ -23,6 +23,8 @@ public class GetController implements MethodController {
     }
 
     public void service() throws IOException {
+        log.info(":: GET Service");
+
         switch (rp.getPath()) {
             case SIGN_UP:
                 methodSignUp();
@@ -34,8 +36,6 @@ public class GetController implements MethodController {
     }
 
     private void methodSignUp () throws IOException {
-        log.info("--Sign-up method 실행--");
-
         String userId = rp.getQuery("userId");
         String password = rp.getQuery("password");
         String name = rp.getQuery("name");
