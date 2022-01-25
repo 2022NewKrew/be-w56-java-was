@@ -17,6 +17,8 @@
     - Accept 내용이 너무 과도하게 긴 점이 의심스러워, "," 를 기준으로 잘라내어 첫 문자열만을 사용하도록 변경하니 문제가 해결됨
       - Accept 의 경우, 클라이언트가 서버에서 전송을 요청하는 여러 데이터 타입 목록을 나열한 것
       - Content-type 의 경우, 서버가 클라이언트로 전송하는 데이터의 타입 (해석 방법)
+    - 해당 방식은, 실제 파일의 데이터 타입과 정보불일치가 발생할 수 있어서 MIME 타입을 얻어 반환하는 형태로 수정
+      - https://offbyone.tistory.com/330
 - 데이터를 받는 절차를 구성
   1. Request 헤더 파싱 
   2. Get/Post 에 따라 수행할 요청을 구분 ( interface )
@@ -26,6 +28,11 @@
   - body 데이터는 문자열 뒤에 \n 또는 EOF 가 존재하지 않음
   - 기존 BufferedReader 의 ReadLine 에서 IO-Blocking 이 발생하는 원인
   - read(char[]) 함수를 사용하도록 구조를 변경 ( content-type 크기만큼만 읽도록 수정 )
+- Redirect 의 경우, 상태값을 302 를 사용한다고 함
+  - 하지만 302는 기존 메소드를 그대로 사용하고, POST/PUT 을 GET 으로 바꾸는 용도로 303을 사용
+    - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
+  - Header 에 Location 정보를 입력하면, 클라이언트는 해당 Location 을 GET 으로 요청 ( redirect )
+  - 클라이언트의 URL 도 함께 바뀌게되고, 해당 페이지가 허용하는 경로 내에선 Path 정보만으로 자유롭게 이동도 가능
 
 # 참고 사이트
 - HTTP Header
@@ -33,3 +40,12 @@
 - ACCEPT 와 CONTENT-TYPE
   - https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Accept
   - https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Content-Type
+- MIME TYPE
+  - https://offbyone.tistory.com/330
+  - https://stackoverflow.com/questions/51438/how-to-get-a-files-media-type-mime-type
+- 302 Status ( redirect )
+  - https://developer.mozilla.org/ko/docs/Web/HTTP/Status/302
+  - https://nsinc.tistory.com/168
+  - https://cherrypick.co.kr/avoid-location-header-cache-in-brower-using-303-http-code/
+
+

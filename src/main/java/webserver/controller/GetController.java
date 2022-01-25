@@ -3,9 +3,11 @@ package webserver.controller;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.manage.RequestFile;
+import webserver.manage.ResponseCode;
+import webserver.manage.ResponseFile;
 import webserver.RequestHandler;
 import webserver.manage.RequestParser;
+import webserver.manage.ResponseFormat;
 
 import java.io.*;
 
@@ -22,7 +24,7 @@ public class GetController implements MethodController {
         this.os = os;
     }
 
-    public void service() throws IOException {
+    public void service() {
         log.info(":: GET Service");
 
         switch (rp.getPath()) {
@@ -35,7 +37,7 @@ public class GetController implements MethodController {
         }
     }
 
-    private void methodSignUp () throws IOException {
+    private void methodSignUp () {
         String userId = rp.getQuery("userId");
         String password = rp.getQuery("password");
         String name = rp.getQuery("name");
@@ -43,41 +45,18 @@ public class GetController implements MethodController {
         User user = new User(userId,password,name,email);
 
         log.info(user.toString());
-
-        DataOutputStream dos = new DataOutputStream(os);
-
-        RequestFile requestFile = new RequestFile(RequestFile.ERROR_FILE);
-        byte[] body = requestFile.getFileBytes();
-
-        response200Header(rp, dos, body.length);
-        responseBody(dos, body);
-    }
-
-    private void methodDefault () throws IOException {
-        DataOutputStream dos = new DataOutputStream(os);
-
-        RequestFile requestFile = new RequestFile(rp.getPath());
-        byte[] body = requestFile.getFileBytes();
-
-        response200Header(rp, dos, body.length);
-        responseBody(dos, body);
-    }
-
-    private void response200Header(RequestParser rp, DataOutputStream dos, int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: "+rp.getContentType()+";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
+            ResponseFormat rf = new ResponseFormat(os, ResponseFile.ERROR_FILE);
+            rf.sendResponse(ResponseCode.STATUS_200);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
+    private void methodDefault () {
         try {
-            dos.write(body, 0, body.length);
-            dos.flush();
+            ResponseFormat rf = new ResponseFormat(os, rp.getPath());
+            rf.sendResponse(ResponseCode.STATUS_200);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

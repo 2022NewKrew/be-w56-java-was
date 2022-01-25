@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 import webserver.manage.RequestParser;
+import webserver.manage.ResponseCode;
+import webserver.manage.ResponseFormat;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,5 +45,11 @@ public class PostController implements MethodController {
 
         log.info(user.toString());
 
+        try {
+            ResponseFormat rf = new ResponseFormat(os, "/index.html");
+            rf.sendResponse(ResponseCode.STATUS_302);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 }
