@@ -49,10 +49,10 @@ public class HttpRequest {
             HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
             headers.put(pair.getKey(), pair.getValue());
         }
+        if (headers.containsKey("Content-Length")) { this.contentLength = Integer.parseInt(headers.get("Content-Length")); }
     }
 
     private void parseBody(BufferedReader br) throws IOException {
-        if (headers.containsKey("Content-Lengt")) { this.contentLength = Integer.parseInt(headers.get("Content-Lengt")); }
         this.body = IOUtils.readData(br, contentLength);
     }
 

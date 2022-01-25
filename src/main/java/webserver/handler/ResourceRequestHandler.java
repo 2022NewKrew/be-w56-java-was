@@ -26,17 +26,6 @@ public class ResourceRequestHandler extends Handler {
     }
 
     @Override
-    public ResourceRequestHandler getHandlerWithRequest(HttpRequest httpRequest) {
-        return new ResourceRequestHandler(httpRequest);
-    }
-
-//    @Override
-//    public String handle(HttpRequest httpRequest) {
-//        String viewName;
-//        this.start();
-//    }
-
-    @Override
     public void handle(HttpRequest httpRequest) {
         this.httpRequest = httpRequest;
         this.connection = httpRequest.getConnection();

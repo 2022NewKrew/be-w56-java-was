@@ -14,7 +14,7 @@ public class RequestDispatcher {
 
     public void doDispatch(Socket connection) {
         HttpRequest httpRequest = new HttpRequest(connection);
-        Handler requestHandler = handlerMapping.getHandler(httpRequest);
-        requestHandler.handle(httpRequest);
+        Handler mappedHandler = handlerMapping.getHandler(httpRequest);
+        mappedHandler.handle(httpRequest);
     }
 }

@@ -6,6 +6,5 @@ public abstract class Handler extends Thread{
 
 //    abstract public String handle(HttpRequest httpRequest);
     abstract public void handle(HttpRequest httpRequest);
-    abstract public Handler getHandlerWithRequest(HttpRequest httpRequest);
-    abstract public boolean isSupport(HttpRequest httpReques);
+    abstract public boolean isSupport(HttpRequest httpRequest);
 }

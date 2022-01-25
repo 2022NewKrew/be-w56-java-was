@@ -30,12 +30,7 @@ public class WebServer {
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 Socket finalConnection = connection;
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        requestDispatcher.doDispatch(finalConnection);
-                    }
-                });
+                Thread t = new Thread(() -> requestDispatcher.doDispatch(finalConnection));
                 t.start();
 //                requestDispatcher.doDispatch(connection);
             }
