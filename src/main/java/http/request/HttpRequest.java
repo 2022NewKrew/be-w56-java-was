@@ -26,6 +26,10 @@ public class HttpRequest {
         return headers.getFirst(header);
     }
 
+    public String getParam(String param) {
+        return requestLine.getParam(param);
+    }
+
     public void setHeader(String header, String value) {
         headers.add(header, value);
     }

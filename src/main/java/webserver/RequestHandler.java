@@ -35,24 +35,6 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void handleResponse(HttpRequest request, DataOutputStream dos) throws IOException {
-        HttpResponse response;
-        switch (request.getUrl()) {
-            default:
-                response = Router.statics(request);
-                break;
-        }
-
-        writeResponse(response, dos);
-    }
-
-    private void writeResponse(HttpResponse response, DataOutputStream dos) throws IOException {
-        dos.write(response.getStatus());
-        dos.write(response.getHeaders());
-        dos.write(response.getBody());
-        dos.flush();
-    }
-
     private HttpRequest getHttpRequest(BufferedReader br) throws IOException {
         String requestLine = getRequestLine(br);
         List<String> requestHeader = getRequestStrings(br);
@@ -85,23 +67,15 @@ public class RequestHandler extends Thread {
         return requestHeader;
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private void handleResponse(HttpRequest request, DataOutputStream dos) throws IOException {
+        HttpResponse response = Router.route(request);
+        writeResponse(response, dos);
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private void writeResponse(HttpResponse response, DataOutputStream dos) throws IOException {
+        dos.write(response.getStatus());
+        dos.write(response.getHeaders());
+        dos.write(response.getBody());
+        dos.flush();
     }
 }
