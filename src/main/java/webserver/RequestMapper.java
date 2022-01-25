@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RequestMapper {
-
+    private static final String DEFAULT_RESOURCES_DIR = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
     private static final Map<String, RequestMappingInfo> requestMap;
 
@@ -54,7 +54,7 @@ public class RequestMapper {
 
     private static MyHttpResponse responseStaticResource(DataOutputStream dos, String path) {
         try {
-            byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
+            byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + path).toPath());
 
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)
@@ -68,7 +68,7 @@ public class RequestMapper {
     }
 
     private static MyHttpResponse response404NotFound(DataOutputStream dos) {
-        byte[] body = "404 - NOT FOUND!".getBytes();
+        byte[] body = HttpStatus.NOT_FOUND.toString().getBytes();
 
         return MyHttpResponse.builder(dos)
                 .status(HttpStatus.NOT_FOUND)
@@ -77,7 +77,7 @@ public class RequestMapper {
     }
 
     private static MyHttpResponse response400BadRequest(DataOutputStream dos, Exception e) {
-        byte[] body = ("400 - BAD REQUEST! - " + e.getMessage()).getBytes();
+        byte[] body = (HttpStatus.NOT_FOUND + ":" + e.getMessage()).getBytes();
 
         return MyHttpResponse.builder(dos)
                 .status(HttpStatus.BAD_REQUEST)
@@ -86,7 +86,7 @@ public class RequestMapper {
     }
 
     private static MyHttpResponse response500InternalServerError(DataOutputStream dos) {
-        byte[] body = "500 - INTERNAL SERVER ERROR!".getBytes();
+        byte[] body = HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes();
 
         return MyHttpResponse.builder(dos)
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
