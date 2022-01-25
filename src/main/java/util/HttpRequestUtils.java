@@ -1,14 +1,14 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.ContentType;
+import webserver.header.ContentType;
+import webserver.header.RequestLine;
 
 public class HttpRequestUtils {
     /**
@@ -29,14 +29,19 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
+    public static String[] parseGetRequest(String request) {
+        return request.split("\\?");
+    }
+
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
+        values = URLDecoder.decode(values, StandardCharsets.UTF_8);
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
@@ -45,9 +50,6 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = keyValue.split(regex);
-        if (tokens.length == 1) {
-
-        }
         if (tokens.length != 2) {
             return null;
         }
@@ -65,9 +67,9 @@ public class HttpRequestUtils {
         String[] parsed = header.split(" ");
         List<Pair> pairs = new ArrayList<>();
         if (parsed.length == 3) {
-            pairs.add(new Pair("METHOD", parsed[0]));
-            pairs.add(new Pair("PATH", parsed[1]));
-            pairs.add(new Pair("VERSION", parsed[2]));
+            pairs.add(new Pair(RequestLine.METHOD.name(), parsed[0]));
+            pairs.add(new Pair(RequestLine.PATH.name(), parsed[1]));
+            pairs.add(new Pair(RequestLine.VERSION.name(), parsed[2]));
         }
         return pairs;
     }
@@ -117,11 +119,10 @@ public class HttpRequestUtils {
             } else if (!key.equals(other.key))
                 return false;
             if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+                return other.value == null;
+            } else {
+                return value.equals(other.value);
+            }
         }
 
         @Override
