@@ -3,7 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Optional;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpHeaderUtils;
@@ -25,8 +27,14 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String request = br.readLine();
-            String url = HttpHeaderUtils.getHttpRequestUrl(request);
-            log.info("url = {}", url);
+            String urlWithQuery = HttpHeaderUtils.getHttpRequestUrl(request);
+            log.info("url = {}", urlWithQuery);
+            String url = HttpHeaderUtils.getUrl(urlWithQuery);
+            Optional<String> query = HttpHeaderUtils.getQuery(urlWithQuery);
+            if(query.isPresent()) {
+                User user = HttpHeaderUtils.getUserInfoFromUrl(query.get());
+                log.info("user = {}", user);
+            }
 
             String line = br.readLine();
             while(line != null && !"".equals(line)) {
@@ -35,19 +43,36 @@ public class RequestHandler extends Thread {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            if(new File("./webapp" + url).exists()) {
+                byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+                response200Header(dos, body.length, HttpHeaderUtils.getContentTypeFromUrl(url));
+                responseBody(dos, body);
+                return;
+            }
+            final String redirectUrl = "/index.html";
+            response301Header(dos, redirectUrl, HttpHeaderUtils.getContentTypeFromUrl(redirectUrl));
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response301Header(DataOutputStream dos, String redirectUrl, String contentType) {
+        try {
+            dos.writeBytes("HTTP/1.1 301 Moved Permanently \r\n");
+            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: 0\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
