@@ -27,7 +27,10 @@ public class HttpResponseHeadersEncoder {
         }
         responseHeaders.add(SEPARATOR_OF_BETWEEN_HEADERS);
 
-        byte[] body = Files.readAllBytes(filePath);
+        byte[] body = null;
+        if(filePath != null) {
+            body = Files.readAllBytes(filePath);
+        }
 
         return new EncodedHttpResponse(responseStatusLine, responseHeaders, body);
     }

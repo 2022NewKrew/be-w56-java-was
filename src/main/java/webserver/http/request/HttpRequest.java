@@ -26,15 +26,15 @@ public class HttpRequest {
         return requestBody;
     }
 
-    public String getRequestPath() {
-        return requestLine.getRequestPath();
-    }
-
     public String getHttpVersion() {
         return requestLine.getHttpVersion();
     }
 
-    public URI getUri() {
+    public String getUri() {
         return requestLine.getUri();
+    }
+
+    public Method getMethod() {
+        return requestLine.getMethod();
     }
 }

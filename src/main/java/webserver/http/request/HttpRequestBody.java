@@ -11,4 +11,8 @@ public class HttpRequestBody {
     public String getBody() {
         return body;
     }
+
+    public long getBodySize() {
+        return body.length();
+    }
 }

@@ -38,19 +38,19 @@ public class HttpResponse {
         return statusCode;
     }
 
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+        if (statusCode != HttpURLConnection.HTTP_OK) {
+            this.status = HTTP_STATUS_NOT_OK;
+        }
+    }
+
     public String getStatus() {
         return status;
     }
 
     public HttpResponseHeaders getHeaders() {
         return headers;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-        if (statusCode != HttpURLConnection.HTTP_OK) {
-            this.status = HTTP_STATUS_NOT_OK;
-        }
     }
 
     public void setHeader(Header header, String value) {
@@ -66,13 +66,25 @@ public class HttpResponse {
         setHeader(Header.Content_Length, Long.toString(contentLength));
     }
 
-    public void sendResponse(EncodedHttpResponse encodedResponse) throws IOException {
+    public void setLocation(String redirectPath) {
+        setHeader(Header.Location, redirectPath);
+    }
+
+    public void sendNormalResponse(EncodedHttpResponse encodedResponse) throws IOException {
         dos.writeBytes(encodedResponse.getStatusLine());
         List<String> responseHeader = encodedResponse.getResponseHeaders();
-        for(String header:responseHeader) {
+        for (String header : responseHeader) {
             dos.writeBytes(header);
         }
         dos.write(encodedResponse.getBody(), 0, encodedResponse.getBodyLength());
+    }
+
+    public void sendRedirectResponse(EncodedHttpResponse encodedResponse) throws IOException {
+        dos.writeBytes(encodedResponse.getStatusLine());
+        List<String> responseHeader = encodedResponse.getResponseHeaders();
+        for (String header : responseHeader) {
+            dos.writeBytes(header);
+        }
     }
 
     private String getContentTypeFromFilePath(Path filePath) throws IOException {
@@ -88,7 +100,8 @@ public class HttpResponse {
 
     enum Header {
         Content_Type("Content-Type"),
-        Content_Length("Content-Length");
+        Content_Length("Content-Length"),
+        Location("Location");
 
         private final String header;
 

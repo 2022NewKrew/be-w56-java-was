@@ -14,4 +14,8 @@ public class HttpRequestHeaders {
     void addHeader(String httpRequestHeaderKey, String httpRequestHeaderValue) {
         headers.put(httpRequestHeaderKey, httpRequestHeaderValue);
     }
+
+    public int getSize() {
+        return headers.size();
+    }
 }

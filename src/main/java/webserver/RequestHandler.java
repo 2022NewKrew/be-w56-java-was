@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.SignUpService;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestDecoder;
 import webserver.http.request.exceptions.NullRequestException;
@@ -57,7 +58,20 @@ public class RequestHandler extends Thread {
     }
 
     private void handle(HttpRequest request, HttpResponse response) throws IOException {
-        URI uri = request.getUri();
+        String requestPath = request.getUri();
+        URI uri;
+        try {
+            uri = new URI(requestPath);
+        } catch (URISyntaxException e) {
+            response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+            // TODO : Exception Handler required
+            return;
+        }
+
+        if (requestPath.startsWith("/user/create")) {
+            handleQuery(response, uri);
+            return;
+        }
 
         File file = new File(ROOT_PATH_OF_WEB_RESOURCE_FILES + uri.getPath());
 
@@ -65,13 +79,21 @@ public class RequestHandler extends Thread {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
             // TODO : Exception Handler required
         }
-
         if (!file.canRead()) {
             response.setStatusCode(HttpURLConnection.HTTP_FORBIDDEN);
             // TODO : Exception Handler required
         }
 
         handleFile(response, file);
+    }
+
+    private void handleQuery(HttpResponse response, URI uri) throws IOException {
+        SignUpService.signUp(uri.getQuery());
+        response.setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
+        response.setLocation("/index.html");
+
+        EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, null);
+        response.sendRedirectResponse(encodedHttpResponse);
     }
 
     private void handleFile(HttpResponse response, File file) throws IOException {
@@ -82,6 +104,6 @@ public class RequestHandler extends Thread {
         response.setContentLength(contentLength);
 
         EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, filePath);
-        response.sendResponse(encodedHttpResponse);
+        response.sendNormalResponse(encodedHttpResponse);
     }
 }

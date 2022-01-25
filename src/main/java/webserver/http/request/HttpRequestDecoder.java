@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
@@ -35,21 +34,29 @@ public class HttpRequestDecoder {
     }
 
     private static HttpRequestLine createRequestLine(BufferedReader br)
-        throws IOException, NullRequestException, URISyntaxException {
-        String httpRequestLine = br.readLine();
+        throws IOException, NullRequestException {
+        String httpRequestLineString = br.readLine();
 
-        if (httpRequestLine == null) {
+        if (httpRequestLineString == null) {
             throw new NullRequestException();
         }
 
-        log.debug("Request Line : {}", httpRequestLine);
+        log.debug("Request Line : {}", httpRequestLineString);
 
-        String[] httpRequestLineSplitArray = httpRequestLine.split(SEPARATOR_OF_REQUEST_LINE);
-        return new HttpRequestLine(
+        String[] httpRequestLineSplitArray = httpRequestLineString.split(SEPARATOR_OF_REQUEST_LINE);
+        HttpRequestLine httpRequestLine = new HttpRequestLine(
             Method.getMethodFromString(httpRequestLineSplitArray[INDEX_OF_METHOD_IN_REQUEST_LINE]),
-            new URI(httpRequestLineSplitArray[INDEX_OF_URI_IN_REQUEST_LINE]),
+            httpRequestLineSplitArray[INDEX_OF_URI_IN_REQUEST_LINE],
             httpRequestLineSplitArray[INDEX_OF_HTTP_VERSION_IN_REQUEST_LINE]
         );
+
+        log.debug(
+            "Method: {} URI: {} Version: {} decoded",
+            httpRequestLine.getMethod(),
+            httpRequestLine.getUri(),
+            httpRequestLine.getHttpVersion()
+        );
+        return httpRequestLine;
     }
 
     private static HttpRequestHeaders createRequestHeaders(BufferedReader br) throws IOException {
@@ -66,11 +73,14 @@ public class HttpRequestDecoder {
             Pair header = HttpRequestUtils.parseHeader(line);
             requestHeaders.addHeader(header.getKey(), header.getValue());
         }
+        log.debug("Request Headers(size:{}}) decoded", requestHeaders.getSize());
         return requestHeaders;
     }
 
     private static HttpRequestBody createRequestBody(BufferedReader br) {
         // TODO : 3단계 요구사항
-        return new HttpRequestBody("");
+        HttpRequestBody httpRequestBody = new HttpRequestBody("");
+        log.debug("Request Body(size:{}) decoded", httpRequestBody.getBodySize());
+        return httpRequestBody;
     }
 }
