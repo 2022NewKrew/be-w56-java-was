@@ -65,8 +65,6 @@ public class HttpRequestUtilsTest {
 
     @Test
     public void parseHeader() throws Exception {
-        String header = "Content-Length: 59";
-        Pair pair = HttpRequestUtils.parseHeader(header);
-        assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+
     }
 }
