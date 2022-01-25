@@ -21,10 +21,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            InputStreamReader inReader = new InputStreamReader(in);
-            BufferedReader reader = new BufferedReader(inReader);
-
-            Request request = new Request(reader);
+            Request request = new Request(in);
             log.debug("Request : {}", request);
 
             DataOutputStream dos = new DataOutputStream(out);
