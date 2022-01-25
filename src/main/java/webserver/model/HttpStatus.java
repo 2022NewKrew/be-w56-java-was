@@ -3,6 +3,7 @@ package webserver.model;
 public enum HttpStatus {
     OK(200, "OK"),
     FOUND(302, "Found"),
+    BAD_REQUEST(400, "Bad Request"),
     NOT_FOUND(404, "Not Found");
 
     private final int statusCode;

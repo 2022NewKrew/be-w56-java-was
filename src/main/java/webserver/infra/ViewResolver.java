@@ -83,4 +83,8 @@ public class ViewResolver {
         render(dos, "/error/404.html", HttpStatus.NOT_FOUND);
     }
 
+    public void renderBadRequest(DataOutputStream dos) {
+        render(dos, "/error/400.html", HttpStatus.BAD_REQUEST);
+    }
+
 }

@@ -2,6 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.exception.InvalidInputException;
 import webserver.infra.Router;
 import webserver.infra.ViewResolver;
 import webserver.model.HttpRequest;
@@ -30,14 +31,21 @@ public class RequestHandler extends Thread {
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
         ) {
-            HttpRequest request = new HttpRequest(br);
-
-            String viewPath = router.route(request);
-
-            viewResolver.render(dos, viewPath);
+            handleRequest(br, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
+    private void handleRequest(BufferedReader br, DataOutputStream dos) throws IOException {
+        HttpRequest request = new HttpRequest(br);
+
+        try {
+            String viewPath = router.route(request);
+            viewResolver.render(dos, viewPath);
+        } catch (InvalidInputException e) {
+            e.printStackTrace();
+            viewResolver.renderBadRequest(dos);
+        }
+    }
 }
