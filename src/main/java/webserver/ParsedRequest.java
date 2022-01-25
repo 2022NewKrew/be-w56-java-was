@@ -1,5 +1,6 @@
 package webserver;
 
+import lombok.Getter;
 import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+@Getter
 public class ParsedRequest {
 
     private String httpMethod;
@@ -45,25 +47,5 @@ public class ParsedRequest {
             String queryString = url.split("\\?")[1];
             parsedQueryString = HttpRequestUtils.parseQueryString(queryString);
         }
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public Map<String, String> getParsedQueryString() {
-        return parsedQueryString;
-    }
-
-    public Map<String, String> getParsedCookies() {
-        return parsedCookies;
     }
 }
