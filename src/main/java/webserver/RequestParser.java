@@ -1,6 +1,10 @@
 package webserver;
 
-import java.io.*;
+import webserver.io.RequestIO;
+import webserver.io.RequestInput;
+import webserver.io.RequestOutput;
+
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,34 +33,27 @@ public class RequestParser {
         parseRequestQuery();
     }
 
-    private boolean checkStringIsEmpty(String str) {
-        return str == null || "".equals(str.trim());
-    }
-
     void generateRequestMap (InputStream is) {
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        try {
-            String requestMethod = br.readLine(); // 첫 줄
-            if(checkStringIsEmpty(requestMethod)) {
-                return;
-            }
-            writeBw(bw, requestMethod);
-            parseRequestMethod(requestMethod);
+        RequestOutput ro = new RequestOutput();
+        RequestInput ri = new RequestInput(is);
 
-            String requestLine = null;
-            while(!checkStringIsEmpty(requestLine=br.readLine())) {
-                writeBw(bw, requestLine);
-
-                String[] input = requestLine.split(REQUEST_TOKEN);
-                if(input.length == 2) {
-                    map.put(input[0].trim(), input[1].trim());
-                }
-            }
-            flushBw(bw);
-        } catch (IOException e) {
-            e.printStackTrace();
+        String requestMethod = ri.readLine(); // 첫 줄
+        if(RequestIO.checkStringIsEmpty(requestMethod)) {
+            return;
         }
+        ro.write(requestMethod);
+        parseRequestMethod(requestMethod);
+
+        String requestLine = null;
+        while(!RequestIO.checkStringIsEmpty(requestLine=ri.readLine())) {
+            ro.write(requestLine);
+
+            String[] input = requestLine.split(REQUEST_TOKEN);
+            if(input.length == 2) {
+                map.put(input[0].trim(), input[1].trim());
+            }
+        }
+        ro.flush();
     }
 
     private void parseRequestMethod (String requestMethod) {
@@ -96,17 +93,6 @@ public class RequestParser {
         }
     }
 
-    private void writeBw (BufferedWriter bw, String str) throws IOException {
-        bw.write("=== REQ :: ");
-        bw.write(str);
-        bw.write("\n");
-    }
-
-    private void flushBw (BufferedWriter bw) throws IOException {
-        bw.write("==========================================\n");
-        bw.flush();
-    }
-
     public String getMethod () {
         return map.get(KEY_METHOD);
     }
@@ -116,7 +102,7 @@ public class RequestParser {
         return ROOT_URL_PATH.equals(path) ? DEFAULT_URL_PATH : path;
     }
 
-    public String getContentType () throws IOException {
+    public String getContentType () {
         return map.get(KEY_ACCEPT).split(ACCEPT_TOKEN)[0];
     }
 }
