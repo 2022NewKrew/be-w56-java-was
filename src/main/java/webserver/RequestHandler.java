@@ -38,9 +38,11 @@ public class RequestHandler implements Callable<Void> {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
+    private final ResponseWriter responseWriter;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(final Socket connectionSocket, final ResponseWriter responseWriter) {
         this.connection = connectionSocket;
+        this.responseWriter = responseWriter;
     }
 
     @Override

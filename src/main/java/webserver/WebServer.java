@@ -46,7 +46,8 @@ public class WebServer {
         serverSocket.setSoTimeout(SOCKET_TIMEOUT);
         
         // 서버 스레드 풀을 생성한다.
-        ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        final ResponseWriter responseWriter = new ResponseWriter();
         do {
             Socket conn;
             try {
@@ -58,7 +59,7 @@ public class WebServer {
                 break;
             }
             
-            threadPool.submit(new RequestHandler(conn));
+            threadPool.submit(new RequestHandler(conn, responseWriter));
         } while (true);
     }
 }
