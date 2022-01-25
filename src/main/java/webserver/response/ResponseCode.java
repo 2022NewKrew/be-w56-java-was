@@ -1,4 +1,4 @@
-package webserver.manage;
+package webserver.response;
 
 public enum ResponseCode {
     STATUS_200,

@@ -1,4 +1,4 @@
-package webserver.manage;
+package webserver.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,18 +8,19 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class ResponseFormat {
+public class GetResponseFormat implements ResponseFormat {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private DataOutputStream dos;
     private ResponseFile responseFile;
 
-    public ResponseFormat(OutputStream os, String filePath) {
+    public GetResponseFormat(OutputStream os, String filePath) {
         this.dos = new DataOutputStream(os);
         this.responseFile = new ResponseFile(filePath);
     }
 
-    public void sendResponse (ResponseCode status) throws IOException {
+    @Override
+    public void sendResponse (ResponseCode status) {
         byte[] body = responseFile.getFileBytes();
         switch (status) {
             case STATUS_200:
@@ -55,7 +56,7 @@ public class ResponseFormat {
         }
     }
 
-    private void responseBody(byte[] body) {
+    protected void responseBody(byte[] body) {
         try {
             dos.write(body, 0, body.length);
             dos.flush();

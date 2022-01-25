@@ -1,4 +1,4 @@
-package webserver.manage;
+package webserver.response;
 
 import org.apache.tika.Tika;
 
