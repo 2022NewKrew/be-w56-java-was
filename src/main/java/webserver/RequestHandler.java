@@ -1,11 +1,10 @@
 package webserver;
 
-import http.HttpStatus;
 import http.request.HttpRequest;
-import http.response.HttpResponseBody;
-import http.response.HttpResponseHeader;
+import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserController;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,6 +14,7 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+    private UserController userController = new UserController();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -28,14 +28,11 @@ public class RequestHandler extends Thread {
              InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
              BufferedReader br = new BufferedReader(isr);
              DataOutputStream dos = new DataOutputStream(out);) {
-            
+
             HttpRequest request = HttpRequest.readWithBufferedReader(br);
 
-            HttpResponseBody responseBody = HttpResponseBody.createFromUrl(request.line().url());
-            HttpResponseHeader responseHeader = new HttpResponseHeader(request.line().url(), HttpStatus.OK, responseBody.length());
-
-            responseHeader.writeToDataOutputStream(dos);
-            responseBody.writeToDataOutputStream(dos);
+            HttpResponse response = userController.process(request);
+            response.writeToDataOutputStream(dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

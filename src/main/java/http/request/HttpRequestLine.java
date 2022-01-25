@@ -17,9 +17,6 @@ public class HttpRequestLine {
         this.httpVersion = httpVersion;
     }
 
-    /**
-     * @param 요청 (GET /index.html HTTP/1.1)
-     */
     public static HttpRequestLine parseRequestLine(final String request) {
         String[] tokens = request.split(" ");
         Map<String, String> queryString = null;
@@ -31,5 +28,9 @@ public class HttpRequestLine {
         return new HttpRequestLine(tokens[0], tokens[1], queryString, tokens[2]);
     }
 
+    public String method() { return method; }
+
     public String url() { return url; }
+
+    public Map<String, String> queryString() { return queryString; }
 }
