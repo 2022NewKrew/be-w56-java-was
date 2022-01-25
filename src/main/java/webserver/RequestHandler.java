@@ -33,6 +33,7 @@ public class RequestHandler extends Thread {
             Optional<String> query = HttpHeaderUtils.getQuery(urlWithQuery);
             if(query.isPresent()) {
                 User user = HttpHeaderUtils.getUserInfoFromUrl(query.get());
+                log.info("user = {}", user);
             }
 
             String line = br.readLine();
@@ -42,9 +43,14 @@ public class RequestHandler extends Thread {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-            response200Header(dos, body.length, HttpHeaderUtils.getContentTypeFromUrl(url));
-            responseBody(dos, body);
+            if(new File("./webapp" + url).exists()) {
+                byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+                response200Header(dos, body.length, HttpHeaderUtils.getContentTypeFromUrl(url));
+                responseBody(dos, body);
+                return;
+            }
+            final String redirectUrl = "/index.html";
+            response301Header(dos, redirectUrl, HttpHeaderUtils.getContentTypeFromUrl(redirectUrl));
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -55,6 +61,18 @@ public class RequestHandler extends Thread {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response301Header(DataOutputStream dos, String redirectUrl, String contentType) {
+        try {
+            dos.writeBytes("HTTP/1.1 301 Moved Permanently \r\n");
+            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: 0\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
