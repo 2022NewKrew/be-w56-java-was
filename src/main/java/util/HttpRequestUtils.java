@@ -1,11 +1,18 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
 
 public class HttpRequestUtils {
     /**
@@ -105,5 +112,36 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+
+    @Getter
+    public static class RequestInfo{
+        private String method;
+        private String url;
+        private String protocol;
+
+        RequestInfo(String[] tokens){
+            method = tokens[0];
+            url = tokens[1];
+            protocol = tokens[2];
+        }
+    }
+
+    public static RequestInfo parseRequestLine(String requestLine) {;
+        RequestInfo requestInfo = new RequestInfo(requestLine.split(" "));
+        return requestInfo;
+    }
+
+    public static Map<String,String> readHeader(BufferedReader br) throws IOException {
+        Map<String, String> headerMap = new HashMap<>();
+        String line;
+        while (!(line = br.readLine()).equals("")) {
+            String[] split = line.split(":", 2);
+            headerMap.put(split[0].trim(), split[1].trim());
+            log.debug("{} : {}", split[0], split[1]);
+        }
+        return headerMap;
     }
 }
