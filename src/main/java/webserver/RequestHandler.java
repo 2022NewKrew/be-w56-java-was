@@ -1,6 +1,8 @@
 package webserver;
 
+import controller.Controller;
 import http.HttpRequest;
+import http.HttpResponse;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +12,6 @@ import java.net.Socket;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.FileIOUtils;
 import util.IOUtils;
 
 public class RequestHandler extends Thread {
@@ -31,15 +32,8 @@ public class RequestHandler extends Thread {
             List<String> requestLines = IOUtils.getRequestLines(in);
             HttpRequest httpRequest = HttpRequest.from(requestLines);
 
-            byte[] body = FileIOUtils.loadStaticFile(httpRequest.getPath());
-
-            DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length, httpRequest.getAccept());
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
+            HandlerMapping handlerMapping = HandlerMapping.getInstance();
+            Controller controller = handlerMapping.getController(httpRequest.getPath());
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String accept) {
         try {
