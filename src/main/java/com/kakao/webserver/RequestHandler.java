@@ -1,28 +1,26 @@
 package com.kakao.webserver;
 
-import com.kakao.http.header.ContentLengthHeader;
-import com.kakao.http.header.ContentTypeHeader;
-import com.kakao.http.header.HttpHeader;
 import com.kakao.http.request.HttpRequest;
-import com.kakao.http.response.HttpResponse;
-import com.kakao.http.response.HttpStatus;
+import com.kakao.util.ReflectionUtils;
+import com.kakao.webserver.controller.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String DEFAULT_HTTP_VERSION = "HTTP/1.1";
 
     private final Socket connection;
+    private final List<Controller> controllerList;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        controllerList = ReflectionUtils.getInstancesImplementedInterface(Controller.class);
     }
 
     public void run() {
@@ -32,39 +30,18 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = new HttpRequest(in);
-            Path targetPath = buildProperPath(httpRequest.getUrl().getPath());
-            responseFile(out, targetPath.toFile());
+            handleRequest(httpRequest, out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private Path buildProperPath(String path) {
-        if (path.equals("/")) {
-            return Path.of("./webapp/index.html");
-        }
-        return Path.of("./webapp", path);
-    }
-
-    private void responseFile(OutputStream out, File file) {
-        try {
-            DataOutputStream dos = new DataOutputStream(out);
-            List<HttpHeader> headers = List.of(new ContentTypeHeader(file.getName()),
-                    new ContentLengthHeader(file.length()));
-            HttpResponse httpResponse = new HttpResponse(DEFAULT_HTTP_VERSION, HttpStatus.OK, headers);
-            dos.writeBytes(httpResponse.toString());
-            responseBody(dos, Files.readAllBytes(file.toPath()));
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private void handleRequest(HttpRequest httpRequest, OutputStream out) {
+        for (Controller controller : controllerList) {
+            if (controller.isValidPath(httpRequest.getUrl().getPath())) {
+                controller.handleRequest(httpRequest, out);
+                return;
+            }
         }
     }
 }
