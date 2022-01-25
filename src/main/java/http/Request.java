@@ -41,6 +41,7 @@ public class Request {
         String[] strArray = lineStr.split(" ");
         path = strArray[1];
 
+        //path에서 get방식의 elements들이 전달되는경우 '?' 까지 substring으로 만든다.
         for(int i = 0 ; i < path.length() ; i++){
             if(path.charAt(i) == '?'){
                 path = path.substring(0, i);
@@ -85,6 +86,7 @@ public class Request {
             return;
         }
 
+        //'?' 이후 파싱.
         String elementSubString = divideElementSubString(lineStr);
         this.elements = HttpRequestUtils.parseQueryString(elementSubString);
     }

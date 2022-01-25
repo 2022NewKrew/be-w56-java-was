@@ -7,6 +7,8 @@ import model.User;
 import java.util.Map;
 
 public class UserController {
+
+    //회원가입
     public String createUser(ControllerDTO controllerDTO) {
         Map<String, String> elements = controllerDTO.getElement();
 

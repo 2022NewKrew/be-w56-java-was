@@ -19,12 +19,15 @@ public class ControllerManager {
         controllerDTO = new ControllerDTO(path, elements);
 
         //mapping to method
-        if(path.equals("/user/create")) {
+
+        //@GetMapping(value = "/user/create") 과 동일
+        if(path.equals("/user/create") && method.equals(HttpMethod.GET)) {
             function = new UserController()::createUser; //createUser만 메모리에 올릴 수 있는 방법이 없을까...
         }
     }
 
     public String execute(){
+        //메소드와 매핑이 되어있지 않은 메소드인경우 요청한 path그대로 정적페이지를 요청한다.
         if(function == null) {
             return controllerDTO.getPath();
         }
