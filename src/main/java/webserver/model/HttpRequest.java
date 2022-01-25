@@ -5,6 +5,7 @@ import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class HttpRequest {
 
         String[] requestUrl = splitRequestUrl(requestLine[INDEX_OF_URL]);
         this.url = requestUrl[INDEX_OF_URL_PATH];
-        this.queryStrings = requestUrl.length > 1 ? parseQueryStrings(requestUrl[INDEX_OF_URL_QUERY_STRING]) : new HashMap<>();
+        this.queryStrings = requestUrl.length > 1 ? parseQueryStrings(URLDecoder.decode(requestUrl[INDEX_OF_URL_QUERY_STRING], "UTF-8")) : new HashMap<>();
 
         this.headers = parseHttpHeader(br);
     }
