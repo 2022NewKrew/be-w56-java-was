@@ -8,9 +8,6 @@ public class HttpResponseUtils {
      * @return content-type
      */
     public static String contentTypeOf(String url) {
-        if (url == null)
-            return "text/plain";
-
         if (url.endsWith(".css"))
             return "text/css";
         else if (url.endsWith(".js"))

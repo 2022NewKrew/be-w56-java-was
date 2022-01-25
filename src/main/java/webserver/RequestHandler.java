@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import request.HttpRequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import response.HttpResponseHeader;
 import util.HttpRequestUtils;
 import util.HttpResponseUtils;
 
@@ -40,7 +41,9 @@ public class RequestHandler extends Thread {
 
             byte[] body = Files.readAllBytes(new File("./webapp" + requestLine.getUrl()).toPath());
 
-            response200Header(dos, HttpResponseUtils.contentTypeOf(requestLine.getUrl()), body.length);
+            HttpResponseHeader responseHeader = new HttpResponseHeader(HttpResponseUtils.contentTypeOf(requestLine.getUrl()), body.length);
+            responseHeader.writeToDataOutputStream(dos);
+            //response200Header(dos, HttpResponseUtils.contentTypeOf(requestLine.getUrl()), body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
