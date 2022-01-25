@@ -2,15 +2,19 @@ package webserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
+import controller.KinaController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.annotation.RequestMapping;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
+        HandlerMapping.initRequestMapping(KinaController.class);
         int port = 0;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
@@ -26,8 +30,8 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection);
-                requestHandler.start();
+                DispatcherServlet dispatcherServlet = new DispatcherServlet(connection);
+                dispatcherServlet.start();
             }
         }
     }
