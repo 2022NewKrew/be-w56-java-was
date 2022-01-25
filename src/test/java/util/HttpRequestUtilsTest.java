@@ -1,72 +1,90 @@
 package util;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.Map;
-
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import util.HttpRequestUtils.Pair;
 
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class HttpRequestUtilsTest {
-    @Test
-    public void parseQueryString() {
-        String queryString = "userId=javajigi";
+    @ParameterizedTest
+    @MethodSource("parseQueryStringParams")
+    public void parseQueryString(String queryString, String userIdExpected, String passwordExpected) {
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isNull();
 
-        queryString = "userId=javajigi&password=password2";
-        parameters = HttpRequestUtils.parseQueryString(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isEqualTo("password2");
+        assertAll(
+                () -> assertEquals(userIdExpected, parameters.get("userId")),
+                () -> assertEquals(passwordExpected, parameters.get("password"))
+        );
     }
 
-    @Test
-    public void parseQueryString_null() {
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(null);
-        assertThat(parameters.isEmpty()).isTrue();
-
-        parameters = HttpRequestUtils.parseQueryString("");
-        assertThat(parameters.isEmpty()).isTrue();
-
-        parameters = HttpRequestUtils.parseQueryString(" ");
-        assertThat(parameters.isEmpty()).isTrue();
+    static Stream<Arguments> parseQueryStringParams() {
+        return Stream.of(
+                Arguments.arguments("userId=javajigi", "javajigi", null),
+                Arguments.arguments("userId=javajigi&password=password2", "javajigi", "password2"),
+                Arguments.arguments("userId=javajigi&password", "javajigi", null)
+        );
     }
 
-    @Test
-    public void parseQueryString_invalid() {
-        String queryString = "userId=javajigi&password";
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isNull();
+    @ParameterizedTest
+    @MethodSource("parseQueryStringNullParams")
+    public void parseQueryString_null(String null_) {
+        Map<String, String> parameters = HttpRequestUtils.parseQueryString(null_);
+        assertTrue(parameters.isEmpty());
+    }
+
+    static Stream<Arguments> parseQueryStringNullParams() {
+        return Stream.of(
+                Arguments.arguments((String) null),
+                Arguments.arguments(""),
+                Arguments.arguments(" ")
+        );
     }
 
     @Test
     public void parseCookies() {
         String cookies = "logined=true; JSessionId=1234";
         Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
-        assertThat(parameters.get("logined")).isEqualTo("true");
-        assertThat(parameters.get("JSessionId")).isEqualTo("1234");
-        assertThat(parameters.get("session")).isNull();
+
+        assertEquals(parameters.get("logined"), "true");
+        assertEquals(parameters.get("JSessionId"), "1234");
+        assertNull(parameters.get("session"));
     }
 
-    @Test
-    public void getKeyValue() throws Exception {
-        Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
-        assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
+    @ParameterizedTest
+    @MethodSource("getKeyValueParams")
+    public void getKeyValue(String keyValue, Pair expected) throws Exception {
+        Pair pair = HttpRequestUtils.getKeyValue(keyValue, "=");
+        assertEquals(expected, pair);
     }
 
-    @Test
-    public void getKeyValue_invalid() throws Exception {
-        Pair pair = HttpRequestUtils.getKeyValue("userId", "=");
-        assertThat(pair).isNull();
+    static Stream<Arguments> getKeyValueParams() {
+        return Stream.of(
+                Arguments.arguments("userId=javajigi", new Pair("userId", "javajigi")),
+                Arguments.arguments("userId", null)
+        );
     }
 
     @Test
     public void parseHeader() throws Exception {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
-        assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+        assertEquals(new Pair("Content-Length", "59"), pair);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "GET /index.html HTTP/1.1,/index.html",
+            "POST /member/memberForm.html HTTP/1.1,/member/memberForm.html"
+    })
+    public void parseRequestLine(String requestLine, String expected) {
+        String[] token = HttpRequestUtils.parseRequestLine(requestLine);
+        assertEquals(expected, token[1]);
     }
 }
