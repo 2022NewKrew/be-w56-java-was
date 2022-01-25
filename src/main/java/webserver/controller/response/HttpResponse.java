@@ -1,8 +1,10 @@
-package webserver.response;
+package webserver.controller.response;
 
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+
+import webserver.common.Status;
 
 public class HttpResponse {
     private String path;

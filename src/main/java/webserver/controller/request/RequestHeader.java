@@ -1,4 +1,4 @@
-package webserver.request;
+package webserver.controller.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,6 @@ public class RequestHeader {
             String[] token = line.split(": ");
             requestHeader.put(token[0], token[1]);
         }
-
         return requestHeader;
     }
 
