@@ -1,22 +1,28 @@
 package webserver;
 
+import http.Method;
+import http.Request;
+import http.Response;
+import http.Status;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
-import java.net.http.HttpRequest;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import http.Request;
-import http.Response;
+import util.HttpRequestUtils.Pair;
 
 public class RequestHandler extends Thread {
+
+    private static final int REQUEST_METHOD_INDEX = 0;
+    private static final int REQUEST_TARGET_INDEX = 1;
+    private static final int REQUEST_VERSION_INDEX = 2;
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -31,52 +37,98 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
             connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            DataOutputStream dos = new DataOutputStream(out);
+        try (BufferedReader br =
+            new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
-            Request request = HttpRequestUtils.parseRequest(bufferedReader);
+            Request request = parseRequest(br);
             Response response = handleRequest(request);
 
-            sendResponse(dos, response);
+            sendResponse(dos, request, response);
         } catch (IOException e) {
             log.error(e.getMessage());
+            log.error("{}", e);
         }
     }
 
-    private Response handleRequest(Request request) {
-        if (!request.getMethod().equals("GET")) {
-            return Response.builder()
-                .statusCode("405")
-                .statusText("Method Not Allowed")
-                .body(new byte[0])
-                .build();
+    private Request parseRequest(BufferedReader br) throws IOException {
+        String buffer = br.readLine();
+        String[] requestTokens = HttpRequestUtils.parseRequestLine(buffer);
+
+        Map<String, String> headers = new HashMap<>();
+        while ((buffer = br.readLine()) != null && !buffer.isBlank()) {
+            Pair header = HttpRequestUtils.parseHeader(buffer);
+            headers.put(header.getKey(), header.getValue());
         }
+
+        return Request.builder()
+            .method(Method.valueOf(requestTokens[REQUEST_METHOD_INDEX]))
+            .target(requestTokens[REQUEST_TARGET_INDEX])
+            .version(requestTokens[REQUEST_VERSION_INDEX])
+            .headers(headers)
+            .build();
+    }
+
+    private Response handleRequest(Request request) {
+        if (request.isGet()) {
+            return doGet(request);
+        }
+        if (request.isPost()) {
+            return doPost(request);
+        }
+        if (request.isPut()) {
+            return doPut(request);
+        }
+        if (request.isDelete()) {
+            return doDelete(request);
+        }
+        return Response.builder()
+            .status(Status.BAD_REQUEST)
+            .build();
+    }
+
+    private Response doGet(Request request) {
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + request.getTarget()).toPath());
             return Response.builder()
-                .statusCode("200")
-                .statusText("OK")
-                .contextType(request.getHeader("Accept").split(",")[0])
+                .status(Status.OK)
                 .body(body)
                 .build();
         } catch (IOException e) {
             log.error(e.getMessage());
+            log.error("{}", e);
             return Response.builder()
-                .statusCode("404")
-                .statusText("Not Found")
-                .body(new byte[0])
+                .status(Status.NOT_FOUND)
                 .build();
         }
     }
 
-    private void sendResponse(DataOutputStream dos, Response response) {
+    private Response doPost(Request request) {
+        return notAllowedMethod();
+    }
+
+    private Response doPut(Request request) {
+        return notAllowedMethod();
+    }
+
+    private Response doDelete(Request request) {
+        return notAllowedMethod();
+    }
+
+    private Response notAllowedMethod() {
+        return Response.builder()
+            .status(Status.METHOD_NOT_ALLOWED)
+            .build();
+    }
+
+    private void sendResponse(DataOutputStream dos, Request request, Response response) {
         try {
-            dos.writeBytes("HTTP/1.1 " + response.getHttpStatus() + "\r\n");
-            dos.writeBytes("Content-Type: " + response.getContextType() + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
-            dos.writeBytes("\r\n");
+            dos.writeBytes("HTTP/1.1 " + response.getHttpStatus() + System.lineSeparator());
+            dos.writeBytes("Content-Type: " +
+                HttpRequestUtils.parseAcceptContextType(request.getHeader("Accept"))
+                + ";charset=utf-8" + System.lineSeparator());
+            dos.writeBytes("Content-Length: " + response.getBodyLength() + System.lineSeparator());
+            dos.writeBytes(System.lineSeparator());
             dos.write(response.getBody(), 0, response.getBodyLength());
             dos.flush();
         } catch (IOException e) {

@@ -1,24 +1,21 @@
 package http;
 
+import javax.annotation.Nullable;
 import lombok.Builder;
 
 public class Response {
 
-    private final String statusCode;
-    private final String statusText;
-    private final String contextType;
+    private final Status status;
     private final byte[] body;
 
     @Builder
-    public Response(String statusCode, String statusText, String contextType, byte[] body) {
-        this.statusCode = statusCode;
-        this.statusText = statusText;
-        this.contextType = contextType;
-        this.body = body;
+    public Response(Status status, @Nullable byte[] body) {
+        this.status = status;
+        this.body = body == null ? new byte[0] : body;
     }
 
     public String getHttpStatus() {
-        return statusCode + " " + statusText;
+        return status.name() + " " + status.getCode();
     }
 
     public byte[] getBody() {
@@ -27,9 +24,5 @@ public class Response {
 
     public int getBodyLength() {
         return body.length;
-    }
-
-    public String getContextType() {
-        return contextType;
     }
 }

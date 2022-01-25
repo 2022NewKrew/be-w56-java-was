@@ -2,16 +2,14 @@ package util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import http.Request;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
+
+    private static final String REQUEST_DELIMITER = " ";
+    private static final String ACCEPT_TYPE_DELIMITER = ",";
 
     /**
      * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -56,19 +54,12 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static Request parseRequest(BufferedReader bufferedReader) throws IOException {
-        String requestLine = bufferedReader.readLine();
-        List<Pair> headers = new ArrayList<>();
+    public static String[] parseRequestLine(String requestLine) {
+        return requestLine.split(REQUEST_DELIMITER);
+    }
 
-        String line;
-        while ((line = bufferedReader.readLine()) != null && !line.isBlank()) {
-            headers.add(HttpRequestUtils.parseHeader(line));
-        }
-
-        return Request.builder()
-            .requestLine(requestLine)
-            .pairs(headers)
-            .build();
+    public static String parseAcceptContextType(String header) {
+        return header.split(ACCEPT_TYPE_DELIMITER)[0];
     }
 
     public static class Pair {
