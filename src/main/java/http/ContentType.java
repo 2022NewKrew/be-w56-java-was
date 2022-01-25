@@ -13,6 +13,8 @@ public enum ContentType {
     TEXT(".txt", "text/plain"),
     XML(".xml", "application/xml"),
     PDF(".pdf", "application/pdf"),
+    TTF(".ttf", "font/ttf"),
+    WOFF(".woff", "font/woff"),
     OCTET_STREAM(".bin", "application/octet-stream");
 
     private final String extension;

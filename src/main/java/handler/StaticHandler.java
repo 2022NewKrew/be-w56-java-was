@@ -16,11 +16,12 @@ public class StaticHandler {
         if (!file.exists()) {
             return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
         }
-        String extension = file.getName().substring(file.getName().lastIndexOf("."));
+        String filename = file.getName();
+        String extension = filename.substring(filename.lastIndexOf("."));
         ContentType contentType = ContentType.fromExtension(extension).orElse(ContentType.TEXT);
         try {
             byte[] content = Files.readAllBytes(file.toPath());
-            return Response.ok(Headers.contentType(contentType), new String(content));
+            return new Response(200, Headers.contentType(contentType), content);
         } catch (IOException e) {
             return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
         }

@@ -1,21 +1,22 @@
 package http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class Response {
 
     private final int status;
     private final Headers headers;
-    private final String body;
+    private final byte[] body;
 
-    private Response(int status, Headers headers, String body) {
+    public Response(int status, Headers headers, byte[] body) {
         this.status = status;
         this.headers = headers;
         this.body = body;
     }
 
     public static Response of(int status, Headers headers, String body) {
-        return new Response(status, headers, body);
+        return new Response(status, headers, body.getBytes(StandardCharsets.UTF_8));
     }
 
     public static Response ok(Headers headers, String body) {
@@ -48,7 +49,7 @@ public class Response {
         return headers.entrySet();
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 }
