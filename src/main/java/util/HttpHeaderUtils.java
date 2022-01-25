@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HttpHeaderUtils {
@@ -22,8 +23,12 @@ public class HttpHeaderUtils {
         return token[1];
     }
 
-    public static String getQuery(String urlWithQuery) {
-        return urlWithQuery.split("\\?")[1];
+    public static Optional<String> getQuery(String urlWithQuery) {
+        String[] token = urlWithQuery.split("\\?");
+        if(token.length < 2) {
+            return Optional.empty();
+        }
+        return Optional.of(urlWithQuery.split("\\?")[1]);
     }
 
     public static String getUrl(String urlWithQuery) {

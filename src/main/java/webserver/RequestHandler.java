@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Optional;
 
 import model.User;
 import org.slf4j.Logger;
@@ -29,8 +30,10 @@ public class RequestHandler extends Thread {
             String request = br.readLine();
             String urlWithQuery = HttpHeaderUtils.getHttpRequestUrl(request);
             log.info("url = {}", urlWithQuery);
-            String query = HttpHeaderUtils.getQuery(urlWithQuery);
-            User user = HttpHeaderUtils.getUserInfoFromUrl(query);
+            Optional<String> query = HttpHeaderUtils.getQuery(urlWithQuery);
+            if(query.isPresent()) {
+                User user = HttpHeaderUtils.getUserInfoFromUrl(query.get());
+            }
 
             String line = br.readLine();
             while(line != null && !"".equals(line)) {
