@@ -2,12 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
-import util.IOUtils;
+import webserver.request.Request;
+import webserver.response.Response;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,41 +22,11 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
-            String url = HttpRequestUtils.parseRequestUrl(line);
-            log.debug("request line : {}", line);
-            log.debug("request URL : {}", url);
-            while(!line.equals("")){
-                line = br.readLine();
-                log.debug("header : {}", line);
-            }
+            Request request = new Request(in);
+            request.read();
 
-            DataOutputStream dos = new DataOutputStream(out);
-            String mimeType = IOUtils.readMimeType("./webapp"+url);
-            byte[] body = Files.readAllBytes(new File("./webapp"+url).toPath());
-            response200Header(dos, body.length, mimeType);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + mimeType +";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
+            Response response = new Response(out, "./webapp" + request.getUrl());
+            response.write();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
