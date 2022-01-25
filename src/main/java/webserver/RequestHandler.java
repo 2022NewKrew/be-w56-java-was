@@ -11,11 +11,13 @@ import java.net.Socket;
 import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileUtils;
 import util.HttpResponseUtil;
-import webserver.http.HttpMethod;
+import webserver.http.HttpHeader;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
+import webserver.http.MimeType;
 
 public class RequestHandler extends Thread {
 
@@ -31,18 +33,21 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
             connection.getPort());
 
-        try {
-            InputStream in = connection.getInputStream();
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String[] tokens = reader.readLine().split(" ");
-            HttpRequest request = new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1]);
-            log.info("request {} {}", tokens[0], tokens[1]);
+            HttpRequest request = HttpRequest.create(reader.readLine());
+            log.info("[request]: {} {}", request.getMethod(), request.getUri());
 
-            HttpResponse response = new HttpResponse(
-                HttpResponseStatus.OK,
-                Files.readAllBytes(new File(WebServerConfig.BASE_PATH + request.getUri()).toPath())
-            );
-            respond(connection.getOutputStream(), response);
+            File contentFile = new File(WebServerConfig.BASE_PATH + request.getUri());
+            String fileExtension = FileUtils.parseExtension(contentFile);
+
+            byte[] contents = Files.readAllBytes(contentFile.toPath());
+            HttpResponse response = new HttpResponse(HttpResponseStatus.OK, contents);
+            response.headers()
+                .set(HttpHeader.CONTENT_TYPE, MimeType.getExtensionHeaderValue(fileExtension))
+                .set(HttpHeader.CONTENT_LENGTH, String.valueOf(contents.length));
+            
+            respond(out, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

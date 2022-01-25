@@ -18,12 +18,12 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        try (ServerSocket listenSocket = new ServerSocket(port)) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
 
-            Socket connection;
-            while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection);
+            Socket clientSocket;
+            while ((clientSocket = serverSocket.accept()) != null) {
+                RequestHandler requestHandler = new RequestHandler(clientSocket);
                 requestHandler.start();
             }
         }
