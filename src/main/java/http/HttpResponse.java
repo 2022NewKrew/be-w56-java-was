@@ -10,6 +10,7 @@ public class HttpResponse {
     public HttpResponse(String protocol, HttpStatus httpStatus, HttpHeader header) {
         this.statusLine = new StatusLine(protocol, httpStatus);
         this.header = header;
+        this.body = new byte[1];
     }
 
     public HttpResponse(String protocol, HttpStatus httpStatus, HttpHeader header, byte[] body) {
