@@ -36,11 +36,6 @@ public class StaticController implements Controller{
         responseBody(dos, body);
     }
 
-    public final String finalmethod(){
-        return "hello";
-    }
-
-
     private String getFilePath(String url){
         if(isIndexUrl(url)){
             return String.format("%s/index.html", BASE_DIRECTORY);
