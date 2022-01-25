@@ -1,6 +1,6 @@
 package webserver;
 
-import http.HttpRequest;
+import http.request.HttpRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ class HttpRequestTest {
                 "Accept: */*";
         InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes(StandardCharsets.UTF_8));
         HttpRequest httpRequest = new HttpRequest(inputStream);
-        assertThat(httpRequest.getUri()).isEqualTo("/index.html");
+        assertThat(httpRequest.getPath()).isEqualTo("/index.html");
         assertThat(httpRequest.getHeader("Host").get()).isEqualTo("localhost:8080");
         assertThat(httpRequest.getHeader("Connection").get()).isEqualTo("keep-alive");
         assertThat(httpRequest.getHeader("Accept").get()).isEqualTo("*/*");
