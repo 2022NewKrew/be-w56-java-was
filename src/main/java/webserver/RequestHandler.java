@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.stream.Collectors;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,23 +27,22 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String request = buffer.readLine();
-            String lines = buffer.lines()
-                    .takeWhile(line -> !line.equals(""))
-                    .collect(Collectors.joining(System.lineSeparator()));
-            HttpRequestHeader httpRequestHeader = HttpRequestHeaderUtils.parseRequestHeader(request, lines);
+            HttpRequestHeader httpRequestHeader = HttpRequestHeaderUtils.parseRequestHeader(request);
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + httpRequestHeader.getRequestURI()).toPath());
-            response200Header(dos, body.length, httpRequestHeader);
+            Path path = new File("./webapp" + httpRequestHeader.getRequestURI()).toPath();
+            byte[] body = Files.readAllBytes(path);
+            String mimeType = Files.probeContentType(path);
+            response200Header(dos, body.length, mimeType);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, HttpRequestHeader httpRequestHeader) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + httpRequestHeader.getContentType() + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
