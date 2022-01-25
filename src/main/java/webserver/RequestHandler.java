@@ -1,29 +1,22 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.time.Duration;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final ViewResolver viewResolver;
+    private final Router router = Router.getInstance();
+    private final ViewResolver viewResolver = ViewResolver.getInstance();
 
     public RequestHandler(Socket connectionSocket) {
-        this(connectionSocket, new ViewResolver());
-    }
-
-    public RequestHandler(Socket connection, ViewResolver viewResolver) {
-        this.connection = connection;
-        this.viewResolver = viewResolver;
+        this.connection = connectionSocket;
     }
 
     public void run() {
@@ -32,7 +25,10 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest request = new HttpRequest(in);
 
-            viewResolver.render(out, request.getUrl());
+            // Mapping to Controller by HttpRequest (HttpMethod & URL)
+            String viewPath = router.route(request);
+
+            viewResolver.render(out, viewPath);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

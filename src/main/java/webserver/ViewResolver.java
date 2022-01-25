@@ -14,7 +14,17 @@ public class ViewResolver {
     private static final String newLine = "\r\n";
     private static final String DEFAULT_PREFIX = "./webapp";
 
+    private static final ViewResolver instance = new ViewResolver();
     private static final Logger log = LoggerFactory.getLogger(ViewResolver.class);
+
+    private ViewResolver() {}
+
+    public static ViewResolver getInstance() {
+        if (instance == null) {
+            return new ViewResolver();
+        }
+        return instance;
+    }
 
     public void render(OutputStream out, String viewPath) {
         render(out, viewPath, HttpStatus.OK);
