@@ -34,7 +34,7 @@ public class Headers {
         return Objects.hash(map);
     }
 
-    public static Headers contentType(String contentType) {
-        return new Headers(Collections.singletonMap("Content-Type", contentType));
+    public static Headers contentType(ContentType contentType) {
+        return new Headers(Collections.singletonMap("Content-Type", contentType.getContentType()));
     }
 }
