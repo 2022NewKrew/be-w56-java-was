@@ -12,6 +12,7 @@ public class HttpResponse404 implements HttpResponse {
 
     private final DataOutputStream dos;
     private final byte[] body;
+
     public HttpResponse404(DataOutputStream dos, byte[] body) {
         this.dos = dos;
         this.body = body;
@@ -32,7 +33,6 @@ public class HttpResponse404 implements HttpResponse {
             log.info(exception.getMessage());
         }
     }
-
 
     private void responseBody() {
         try {

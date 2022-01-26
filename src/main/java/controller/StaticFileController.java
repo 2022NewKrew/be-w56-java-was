@@ -1,6 +1,10 @@
 package controller;
 
 import http.request.HttpRequest;
+import http.response.HttpResponse;
+import http.response.HttpResponseFactory;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,10 +20,11 @@ public class StaticFileController implements Controller {
     }
 
     @Override
-    public Map<String, String> run(HttpRequest request, Map<String, String> model) {
+    public HttpResponse run(HttpRequest request, DataOutputStream dos) throws IOException {
         Map<String, String> result = new HashMap<>();
         result.put("url", request.getUrl());
         result.put("status", "200");
-        return result;
+
+        return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
     }
 }

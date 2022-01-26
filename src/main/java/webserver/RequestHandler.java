@@ -3,7 +3,6 @@ package webserver;
 import controller.Controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
-import http.response.HttpResponseFactory;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,8 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constant;
@@ -35,13 +32,10 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest request = new HttpRequest(inputStreamToStrings(in));
-            Map<String, String> model = new HashMap<>();
             Controller controller = ControllerType.getControllerType(request.getUrl());
-            Map<String, String> result = controller.run(request, model);
-
             DataOutputStream dos = new DataOutputStream(out);
-            HttpResponse response = HttpResponseFactory.getHttpResponse(result, model, dos);
-            response.sendResponse();
+            HttpResponse httpResponse = controller.run(request, dos);
+            httpResponse.sendResponse();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

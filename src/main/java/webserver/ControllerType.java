@@ -3,7 +3,6 @@ package webserver;
 import controller.Controller;
 import controller.StaticFileController;
 import controller.UserCreateController;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
