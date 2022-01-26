@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -17,11 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
+import webserver.domain.HttpStatus;
+import webserver.domain.Request;
+import webserver.domain.Response;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String FILE_ROOT_PATH = "./webapp";
 
     private final Socket connection;
 
@@ -35,67 +36,36 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String line = readLine(br);
-            if (line == null) {
-                return;
-            }
-            String url = HttpRequestUtils.getUrl(line);
-            List<Pair> headers = readHeader(br);
-            byte[] body = Files.readAllBytes(new File(FILE_ROOT_PATH + url).toPath());
             DataOutputStream dos = new DataOutputStream(out);
-            responseHeader(dos, headers, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private String readLine(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        log.debug("request: {}", line);
-        return line;
-    }
-
-    private List<Pair> readHeader(BufferedReader br) throws IOException {
-        List<Pair> headers = new ArrayList<>();
-        String header;
-        while(!"".equals(header=br.readLine())){
-            log.debug("header: {}", header);
-            headers.add(HttpRequestUtils.parseHeader(header));
-        }
-        return headers;
-    }
-
-    private void responseHeader(DataOutputStream dos, List<Pair> headers, int bodyLength) {
-        String contentType = getHeaderValue(headers,"Accept").split(",")[0];
-        response200Header(dos, bodyLength, contentType);
-    }
-
-    private String getHeaderValue(List<Pair> headers, String key) {
-        return headers.stream()
-            .filter(h->h.getKey().equals(key))
-            .findFirst()
-            .get()
-            .getValue();
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + "; charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
+            Response response = readRequestToResponse(br);
+            dos.write(response.getBytes());
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private Response readRequestToResponse(BufferedReader br) throws IOException {
+        Request request = createRequest(br);
+        byte[] body = Files.readAllBytes(new File(request.getRequestUrl()).toPath());
+        return Response.createResponse(HttpStatus.OK, body, request.getHeaderAttribute("Accept"));
+    }
+
+    public Request createRequest(BufferedReader br) throws IOException {
+        String line = br.readLine();
+        log.debug("request: {}", line);
+        List<Pair> headerPairs = readHeader(br);
+        return Request.createRequest(line, headerPairs);
+    }
+
+    private List<Pair> readHeader(BufferedReader br) throws IOException {
+        List<Pair> headerPairs = new ArrayList<>();
+        String header;
+        while (!"".equals(header = br.readLine())) {
+            log.debug("header: {}", header);
+            Pair headerPair = HttpRequestUtils.parseHeader(header);
+            headerPairs.add(headerPair);
+        }
+        return headerPairs;
     }
 }
