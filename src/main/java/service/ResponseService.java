@@ -1,8 +1,7 @@
-package webserver;
+package service;
 
 import enums.HttpStatus;
 import org.apache.tika.Tika;
-import org.slf4j.Logger;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -10,24 +9,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-public class ResponseHandler {
+public class ResponseService {
 
     private DataOutputStream dos;
-    private Logger log;
 
-    public ResponseHandler(OutputStream out, Logger log) {
+    public ResponseService(OutputStream out) {
         dos = new DataOutputStream(out);
-        this.log = log;
     }
 
-    public void response(String url, HttpStatus httpStatus, String cookie) {
-        try {
-            String status = httpStatus.getStatus();
-            dos.writeBytes("HTTP/1.1 " + status + " \r\n");
-            responseEachStatus(url, httpStatus, cookie);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    public void response(String url, HttpStatus httpStatus, String cookie) throws IOException {
+        String status = httpStatus.getStatus();
+        dos.writeBytes("HTTP/1.1 " + status + " \r\n");
+        responseEachStatus(url, httpStatus, cookie);
     }
 
     private void responseEachStatus(String url, HttpStatus httpStatus, String cookie) throws IOException {

@@ -30,7 +30,10 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseQueryUrl(String queryUrl) {
-        String queryString = queryUrl.split("\\?")[1];
+        String[] tokens = queryUrl.split("\\?");
+        if(tokens.length == 1)
+            return new HashMap<>();
+        String queryString = tokens[1];
         return parseQueryString(queryString);
     }
 
