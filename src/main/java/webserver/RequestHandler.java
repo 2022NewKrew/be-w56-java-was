@@ -34,9 +34,6 @@ public class RequestHandler extends Thread {
 
             Map<String, String> requestMap = HttpRequestUtils.readRequest(br);
 
-            if(requestMap == null)
-                throw new IOException("Incorrect Request Header");
-
             log.debug("request");
             for(Map.Entry<String, String> request : requestMap.entrySet())
                 log.debug("{} : {}", request.getKey(), request.getValue());

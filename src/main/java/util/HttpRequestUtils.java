@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
 
 public class HttpRequestUtils {
     /**
@@ -45,7 +44,7 @@ public class HttpRequestUtils {
         Map<String, String> requestMap = new HashMap<>();
         String[] tokens = request.split(" ");
         if(tokens.length != 3)
-            return null;
+            throw new IOException("Incorrect Request Header");
         requestMap.put("httpMethod", tokens[0]);
         requestMap.put("httpUrl", tokens[1]);
         requestMap.put("httpProtocol", tokens[2]);
