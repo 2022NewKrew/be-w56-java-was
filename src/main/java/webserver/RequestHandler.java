@@ -1,17 +1,19 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.domain.Request;
+import webserver.domain.Response;
+import webserver.resolver.ControllerResolver;
+import webserver.resolver.ViewResolver;
+
 import java.io.*;
 import java.net.Socket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import request.GetRequestProcess;
-import request.PostRequestProcess;
-import request.RequestProcess;
-import util.ResponseData;
-
 public class RequestHandler extends Thread {
     public static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    public static final ControllerResolver controllerResolver = ControllerResolver.getInstance();
+    public static final ViewResolver viewResolver = ViewResolver.getInstance();
 
     private Socket connection;
 
@@ -27,29 +29,16 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            Request request = new Request(br);
 
-            RequestProcess requestProcess = getRequestProcessByMethod(br);
-            requestProcess.process();
-            ResponseData result = requestProcess.getResponseData();
+            String resultFromController = controllerResolver.resolveRequest(request);
+            Response response = viewResolver.resolveResponse(resultFromController);
 
-            responseHeader(dos, result.getHeader());
-            responseBody(dos, result.getBody());
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        } catch (NoSuchMethodException e) {
+            responseHeader(dos, response.getHeader());
+            responseBody(dos, response.getBody());
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
-    }
-
-    private RequestProcess getRequestProcessByMethod(BufferedReader br) throws NoSuchMethodException, IOException {
-        String[] tokens = br.readLine().split(" ");
-        String method = tokens[0];
-        String url = tokens[1];
-        log.debug(method + " " + url);
-        if ("GET".equals(method)) return new GetRequestProcess(url);
-        if ("POST".equals(method)) return new PostRequestProcess(url, br);
-
-        throw new NoSuchMethodException();
     }
 
     private void responseHeader(DataOutputStream dos, String header) throws IOException {
