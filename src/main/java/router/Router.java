@@ -15,8 +15,10 @@ public class Router {
             return UserController.routing(request);
         }
 
-        return Response.of(request.getHttpMethod(),
-                request.getRespContextType(),
-                request.getUrlPath());
+        return defaultRouting(request);
+    }
+
+    private static Response defaultRouting(Request request) {
+        return Response.of(request, request.getUrlPath());
     }
 }

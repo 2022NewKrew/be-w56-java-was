@@ -11,4 +11,8 @@ public class UserService {
     public static void save(Request request) {
         RepositoryImpl.save(request);
     }
+
+    public static boolean isRightLogin(Request request) {
+        return RepositoryImpl.isRightLogin(request);
+    }
 }
