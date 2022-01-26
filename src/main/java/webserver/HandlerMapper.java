@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.controller.Controller;
 import webserver.controller.StaticFileController;
-import webserver.controller.UserCreateController;
+import webserver.controller.user.UserCreateController;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
