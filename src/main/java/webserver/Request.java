@@ -36,7 +36,5 @@ public class Request {
             HttpRequestUtils.Pair headerPair = HttpRequestUtils.parseHeader(line);
             header.put(headerPair.getKey(), Arrays.asList(headerPair.getValue().split(", ")));
         }
-
-        //TODO : body가 있는경우 추가하는 로직 + body가 없는 경우에도 돌아갈 수 있게 로직 세팅
     }
 }

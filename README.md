@@ -2,14 +2,18 @@
 56주차 간단 웹 서버 구현
 
 ## 2일차
-### TODO-From Reviewer
-* RequestHandler내의 try-catch문을 재구성
-    * try 내의 로직을 메소드로 추출
-    * catch 시에 적절한 Response를 날려보자
 ### TODO
-* GET으로 회원가입 기능 구현
-    * controller에 전달할수 있도록 RequestHandler에 회원가입을 요청하는 경우를 다룰 수 있는 로직 추가
+* Content Type을 enum 객체로 구현
+* Request의 body를 추출 할 수 있는 기능 (In next step)
+* custom exception 구현(In next step)
 ### DONE
 * GET으로 회원가입 기능 구현
   * service, DTO, controller 구현
+  * controller에 전달할수 있도록 RequestHandler에 회원가입을 요청하는 경우를 다룰 수 있는 로직 추가
+    * 각 메소드와 uri값에 대한 method mapping을 할 수 있도록 ControlMappingTable 객체 생성
+    * uri 값에 대한 control 메소드가 존재하지 않을 경우에 사용되는 DefaultRequestHandler class 구현
+    * 각각의 Response 값에 따른 Response를 작성해줄 수 있는 HttpResponseUtils 작성
+      * 아직은 200, 404만 구현
 ### LEARNED
+* 403, 404 reponse의 구조
+* 메소드를 저장할 수 있게 하는 java.util.function.Function에 대한 공부
