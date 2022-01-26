@@ -33,6 +33,7 @@ public class RequestHandler extends Thread {
             handleRequest(in, out);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
 
     }
@@ -46,9 +47,11 @@ public class RequestHandler extends Thread {
             handler.handle(request, response);
         } catch (CustomException e) {
             log.error("CustomException occurred: {}", e.getMessage());
+            e.printStackTrace();
             response = Response.createErrorResponse(out, e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage());
+            e.printStackTrace();
             response = Response.createErrorResponse(out, StatusCode.INTERNAL_SERVER_ERROR,
                 e.getMessage());
         } finally {

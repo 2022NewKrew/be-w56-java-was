@@ -25,6 +25,8 @@ dependencies {
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
     // https://mvnrepository.com/artifact/org.apache.tika/tika-parsers
     implementation group: 'org.apache.tika', name: 'tika-parsers', version: '1.18'
+// https://mvnrepository.com/artifact/org.reflections/reflections
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
 
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'

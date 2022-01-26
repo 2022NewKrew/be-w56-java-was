@@ -1,5 +1,6 @@
 package webserver;
 
+import context.Context;
 import java.net.ServerSocket;
 import java.net.Socket;
 import org.slf4j.Logger;
@@ -11,6 +12,9 @@ public class WebServer {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
+        // init contexts
+        Context.init();
+
         int port = 0;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
