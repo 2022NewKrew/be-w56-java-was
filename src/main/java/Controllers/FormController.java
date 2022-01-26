@@ -10,7 +10,7 @@ public class FormController extends Controller {
     @Override
     public void getMethod(Request request, Response response) throws IOException {
         response.buildBody(request);
-        response.buildResponse();
+        response.build200Response();
     }
 
     @Override

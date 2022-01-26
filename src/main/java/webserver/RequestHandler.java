@@ -32,6 +32,7 @@ public class RequestHandler extends Thread {
 
             Request request = new Request(br);
             Response response = new Response(dos);
+
             Controller controller = requestMapper.getController(request);
             controller.service(request, response);
         } catch (IOException e) {
