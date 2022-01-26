@@ -2,15 +2,17 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import com.google.common.base.Charsets;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
+import http.request.HttpRequestBody;
+import http.request.HttpRequestLine;
 import http.response.HttpResponse;
-import http.status.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +29,7 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort()); //
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
-             BufferedReader br = new BufferedReader(new InputStreamReader(in)); DataOutputStream dos = new DataOutputStream(out)) {
+             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)); DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = getHttpRequest(br);
             handleResponse(httpRequest, dos);
@@ -37,23 +39,23 @@ public class RequestHandler extends Thread {
     }
 
     private HttpRequest getHttpRequest(BufferedReader br) throws IOException {
-        String requestLine = getRequestLine(br);
-        List<String> requestHeader = getRequestStrings(br);
-        List<String> requestBody = getRequestStrings(br);
+        HttpRequestLine requestLine = getRequestLine(br);
+        HttpHeaders requestHeader = getReqeustHeader(br);
+        HttpRequestBody requestBody = getRequestBody(br, requestHeader);
 
         return new HttpRequest(requestLine, requestHeader, requestBody);
     }
 
-    private String getRequestLine(BufferedReader br) throws IOException {
+    private HttpRequestLine getRequestLine(BufferedReader br) throws IOException {
         String line = "";
         if ((line = br.readLine()) == null) {
             throw new IllegalArgumentException("invalid http request");
         }
         log.info("request line = {}", line);
-        return line;
+        return new HttpRequestLine(line);
     }
 
-    private List<String> getRequestStrings(BufferedReader br) throws IOException {
+    private HttpHeaders getReqeustHeader(BufferedReader br) throws IOException {
         if (!br.ready()) {
             return null;
         }
@@ -65,7 +67,19 @@ public class RequestHandler extends Thread {
             line = br.readLine();
         }
 
-        return requestHeader;
+        return new HttpHeaders(requestHeader);
+    }
+
+    private HttpRequestBody getRequestBody(BufferedReader br, HttpHeaders headers) throws IOException {
+        if (!br.ready() && !headers.containsKey(HttpHeaders.CONTENT_LENGTH)) {
+            return null;
+        }
+
+        String len = headers.getFirst(HttpHeaders.CONTENT_LENGTH);
+        char[] chars = new char[Integer.parseInt(len)];
+        br.read(chars);
+
+        return new HttpRequestBody(new String(chars));
     }
 
     private void handleResponse(HttpRequest request, DataOutputStream dos) throws IOException {

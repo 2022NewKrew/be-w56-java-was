@@ -15,7 +15,7 @@ public class RequestUrlController {
         return "/index";
     }
 
-    @RequestMapping("/create")
+    @RequestMapping(value = "/create", method = "POST")
     public String createUser(HttpRequest request, HttpResponse response) {
         String userId = request.getParam("userId");
         String password = request.getParam("password");
@@ -24,7 +24,7 @@ public class RequestUrlController {
         User user = new User(userId, password, name, email);
         DataBase.addUser(user);
 
-        log.info("user created");
+        log.info("user created = {}", user);
         return "/index";
     }
 }
