@@ -12,7 +12,7 @@ import webserver.http.MyHttpResponse;
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -22,18 +22,24 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
+        MyHttpResponse response = null;
+
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream())); OutputStream out = connection.getOutputStream()) {
             MyHttpRequest request = MyHttpRequest.of(in);
+            response = RequestMapper.process(request, out);
+        } catch (WebServerException e) {
+            response = RequestExceptionHandler.handle(e);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        } finally {
+            sendResponse(response);
+        }
+    }
 
-            MyHttpResponse response = RequestMapper.process(request, out);
+    private void sendResponse(MyHttpResponse response) {
+        if (response != null) {
             response.writeBytes();
             response.flush();
-        } catch (WebServerException e) {
-            // TODO - 웹서버 예외 처리
-            log.error(e.getMessage());
-        } catch (Exception e) {
-            // TODO - 비정상 예외 처리
-            log.error(e.getMessage());
         }
     }
 }
