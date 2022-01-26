@@ -12,7 +12,7 @@ public class HttpResponseUtils {
     public static void make200Response(DataOutputStream dos, String ret) {
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + ret).toPath());
-            response200Header(dos, getContentType(ret), body.length);
+            response200Header(dos, ContentTypeClassifier.getContentType(ret), body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error("Cannot Found Resource : {}", e.getMessage());
@@ -47,18 +47,5 @@ public class HttpResponseUtils {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-    }
-
-    //TODO enum 객체로 치환
-    private static String getContentType(String uri) {
-        if (uri.endsWith(".js")) {
-            return "text/javascript";
-        }
-
-        if (uri.endsWith(".css")) {
-            return "text/css";
-        }
-
-        return "text/html";
     }
 }
