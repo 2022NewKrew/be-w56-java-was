@@ -12,7 +12,7 @@ public class ControllerMapper {
     private final Map<String, Controller> controllerMap;
 
     public static ControllerMapper create() {
-        return new ControllerMapper(Map.of(DEFAULT_REQUEST_PATH, StaticResourceController.create(),
+        return new ControllerMapper(Map.of(DEFAULT_REQUEST_PATH, StaticFileReader.create(),
             USER_REQUEST_PATH, UserController.create()));
     }
 

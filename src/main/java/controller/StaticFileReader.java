@@ -15,15 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class StaticResourceController implements Controller {
+public class StaticFileReader implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(StaticResourceController.class);
+    private static final Logger log = LoggerFactory.getLogger(StaticFileReader.class);
     private static final Tika tika = new Tika();
 
     private static final String WEB_APP_PATH = "./webapp";
 
-    public static StaticResourceController create() {
-        return new StaticResourceController();
+    public static StaticFileReader create() {
+        return new StaticFileReader();
     }
 
     @Override
