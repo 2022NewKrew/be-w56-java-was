@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import db.DataBase;
+import enums.HttpStatus;
 import model.User;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class RequestHandler extends Thread {
 
             String url = requestMap.get("httpUrl");
             String cookie = null;
-            int httpStatus = 200;
+            HttpStatus httpStatus = HttpStatus.OK;
             Map<String, String> params = new HashMap<>();
             if(requestMap.get("httpMethod").equals("POST")) {
                 int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
@@ -59,7 +60,7 @@ public class RequestHandler extends Thread {
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
                 log.debug("User : {}", user);
                 DataBase.addUser(user);
-                httpStatus = 302;
+                httpStatus = HttpStatus.FOUND;
                 url = "/index.html";
             }
 
@@ -69,82 +70,18 @@ public class RequestHandler extends Thread {
                 log.debug("userId : {}, password : {}", userId, password);
                 User user = DataBase.findUserById(userId);
                 cookie = LoginUtils.checkLogin(log, user, password);
-                httpStatus = 302;
+                httpStatus = HttpStatus.FOUND;
                 url = "/index.html";
             }
 
             log.debug("\n");
-
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            response(dos, url, httpStatus, cookie);
+            
+            ResponseHandler responseHandler = new ResponseHandler(out, log);
+            responseHandler.response(url, httpStatus, cookie);
 
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response(DataOutputStream dos, String url, int httpStatus, String cookie) throws IOException {
-        switch(httpStatus) {
-            case 200:
-                File file = new File("./webapp" + url);
-                String contentType = new Tika().detect(file);
-                byte[] body = Files.readAllBytes(file.toPath());
-                response200Header(dos, body.length, contentType);
-                responseBody(dos, body);
-                break;
-            case 302:
-                response302(dos, cookie, url);
-                break;
-        }
-    }
-
-    private void response302(DataOutputStream dos, String cookie, String url) {
-        if(cookie == null) {
-            response302Header(dos, url);
-            return;
-        }
-        response302HeaderWithCookie(dos, cookie, url);
-    }
-
-    private void response302HeaderWithCookie(DataOutputStream dos, String cookie, String url) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + url + "\r\n");
-            dos.writeBytes("Set-Cookie: " + cookie + "; Path=/");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String url) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + url + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
 }
