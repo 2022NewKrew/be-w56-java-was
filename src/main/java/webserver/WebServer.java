@@ -30,7 +30,8 @@ public class WebServer {
         UserHandler userHandler = new UserHandler();
         Map<Route, Function<Request, Response>> routes = Map.of(
                 new Route(Method.GET, ".+"), staticHandler::get,
-                new Route(Method.POST, "/user/create"), userHandler::create
+                new Route(Method.POST, "/user/create"), userHandler::create,
+                new Route(Method.POST, "/user/login"), userHandler::login
         );
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
