@@ -8,6 +8,7 @@ import util.HttpRequestUtils;
 import util.IOUtils;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class Request {
 
     public Request(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        String requestLine = br.readLine();
+        String requestLine = URLDecoder.decode(br.readLine(), "UTF-8");
         this.method = requestLine.split(" ")[0];
         this.uri = findUri(requestLine);
         this.parameters = findParameters(requestLine);
@@ -35,7 +36,7 @@ public class Request {
     private Map<String,String> findHeaderAttributes(BufferedReader br) throws IOException {
         List<HttpRequestUtils.Pair> HeaderAttributes = new ArrayList<>();
         String line;
-        while(!(line=br.readLine()).equals("")){
+        while(!(line=URLDecoder.decode(br.readLine(), "UTF-8")).equals("")){
             HeaderAttributes.add(HttpRequestUtils.parseHeader(line));
         }
         return HeaderAttributes.stream().filter(p -> p != null)
@@ -61,6 +62,6 @@ public class Request {
         if(method.equals("GET") || contentLength == -1){
             return Maps.newHashMap();
         }
-        return HttpRequestUtils.parseQueryString(IOUtils.readData(br, contentLength));
+        return HttpRequestUtils.parseQueryString(URLDecoder.decode(IOUtils.readData(br, contentLength), "UTF-8"));
     }
 }
