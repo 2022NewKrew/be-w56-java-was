@@ -3,6 +3,7 @@ package webserver;
 import lombok.Getter;
 import lombok.ToString;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class Request {
     private final Map<String, String> query;
     private final String httpVer;
     private final Map<String, List<String>> header = new HashMap<>();
-    private final List<String> body = new ArrayList<>();
+    private final String body;
 
     public Request(InputStream in) throws IOException {
         InputStreamReader inReader = new InputStreamReader(in);
@@ -36,5 +37,18 @@ public class Request {
             HttpRequestUtils.Pair headerPair = HttpRequestUtils.parseHeader(line);
             header.put(headerPair.getKey(), Arrays.asList(headerPair.getValue().split(", ")));
         }
+
+        if (!header.containsKey("Content-Length")) {
+            body = null;
+            return;
+        }
+        int contentLen = Integer.parseInt(header.get("Content-Length").get(0));
+        if (contentLen == 0) {
+            body = null;
+            return;
+        }
+
+        //TODO : parsing body
+        body = IOUtils.readData(reader, contentLen);
     }
 }

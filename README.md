@@ -3,7 +3,7 @@
 
 ## 2일차
 ### TODO
-* Request의 body를 추출 할 수 있는 기능 (In next step)
+* Request의 body를 parsing
 * custom exception 구현(In next step)
 ### DONE
 * GET으로 회원가입 기능 구현
@@ -14,6 +14,7 @@
     * 각각의 Response 값에 따른 Response를 작성해줄 수 있는 HttpResponseUtils 작성
       * 아직은 200, 404만 구현
   * Content Type을 enum 객체로 구현
+  * Request의 body를 contentLength를 기반으로 입력받을 수 있는 기능
 ### LEARNED
 * 403, 404 reponse의 구조
 * 메소드를 저장할 수 있게 하는 java.util.function.Function에 대한 공부
