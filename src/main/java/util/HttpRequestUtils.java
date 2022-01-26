@@ -1,16 +1,21 @@
 package util;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class HttpRequestUtils {
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -18,8 +23,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param cookies 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
@@ -32,8 +36,8 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
@@ -51,6 +55,41 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static Map<String, String> parseReponseLine(String requestLine) {
+        Map<String, String> ret = new HashMap<>();
+        String[] parsed = requestLine.split(" ");
+        String[] urlParsed = parsed[1].split("\\?");
+        if (urlParsed.length == 2) {
+            ret.put("query", urlParsed[1]);
+        }
+        ret.put("method", parsed[0]);
+        ret.put("url", urlParsed[0]);
+        ret.put("protocol", parsed[2]);
+
+        return ret;
+    }
+
+    public static Map<String, String> parseResponseHeader(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String line;
+        do {
+            line = br.readLine();
+            Pair header = parseHeader(line);
+            if (header != null)
+                headers.put(header.getKey(), header.getValue());
+        } while (!line.equals(""));
+
+        return headers;
+    }
+
+    public static byte[] matchURL(String requestURL) throws IOException {
+        File file = new File("./webapp" + requestURL);
+        if (file.exists()) {
+            return Files.readAllBytes(file.toPath());
+        }
+        return Files.readAllBytes(new File("./webapp/404.html").toPath());
     }
 
     public static class Pair {
@@ -94,11 +133,8 @@ public class HttpRequestUtils {
             } else if (!key.equals(other.key))
                 return false;
             if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+                return other.value == null;
+            } else return value.equals(other.value);
         }
 
         @Override
