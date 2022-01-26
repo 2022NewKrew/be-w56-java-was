@@ -1,14 +1,13 @@
 package util;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
-
-
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
+
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
