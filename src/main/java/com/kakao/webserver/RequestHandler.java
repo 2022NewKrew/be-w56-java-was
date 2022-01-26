@@ -2,7 +2,7 @@ package com.kakao.webserver;
 
 import com.kakao.http.request.HttpRequest;
 import com.kakao.util.ReflectionUtils;
-import com.kakao.webserver.controller.Controller;
+import com.kakao.webserver.controller.HttpController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,17 +11,18 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
-public class RequestHandler extends Thread {
+public class RequestHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final List<Controller> controllerList;
+    private final List<HttpController> controllerList;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerList = ReflectionUtils.getInstancesImplementedInterface(Controller.class);
+        controllerList = ReflectionUtils.getInstancesImplementedInterface(HttpController.class);
     }
 
+    @Override
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
@@ -36,8 +37,8 @@ public class RequestHandler extends Thread {
     }
 
     private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
-        for (Controller controller : controllerList) {
-            if (controller.isValidPath(httpRequest.getUrl().getPath())) {
+        for (HttpController controller : controllerList) {
+            if (controller.isValidRequest(httpRequest.getMethod(), httpRequest.getUrl().getPath())) {
                 controller.handleRequest(httpRequest, out);
                 return;
             }

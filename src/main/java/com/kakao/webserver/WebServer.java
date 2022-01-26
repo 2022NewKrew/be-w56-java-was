@@ -5,10 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
+    private static final ThreadPoolExecutor THREAD_POOL =
+            (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
 
     public static void main(String[] args) throws Exception {
         int port;
@@ -27,7 +31,7 @@ public class WebServer {
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 RequestHandler requestHandler = new RequestHandler(connection);
-                requestHandler.start();
+                THREAD_POOL.execute(requestHandler);
             }
         }
     }

@@ -3,6 +3,8 @@ package com.kakao.util;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -11,10 +13,12 @@ import java.util.stream.Collectors;
 public class HttpRequestUtils {
     /**
      * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return field와 value를 매칭시킨 Map
+     * @return field와 URL decode된 value를 매칭시킨 Map
      */
     public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, "&");
+        Map<String, String> queryMap = parseValues(queryString, "&");
+        queryMap.replaceAll((k, v) -> URLDecoder.decode(v, StandardCharsets.UTF_8));
+        return queryMap;
     }
 
     /**
