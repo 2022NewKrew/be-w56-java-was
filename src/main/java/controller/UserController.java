@@ -64,6 +64,7 @@ public class UserController implements Controller {
                 queryString.get("email"));
 
         DataBase.addUser(newUser);
+        System.out.println(DataBase.findAll());
         return redirect("/index.html");
     }
 }
