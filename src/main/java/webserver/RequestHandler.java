@@ -31,6 +31,7 @@ public class RequestHandler extends Thread {
             // RequestLine 처리
             String requestLine = br.readLine();
             httpRequest.setRequestLine(requestLine);
+            log.debug(httpRequest.getRequestLine().getUrl());
 
             // Header 처리
             String headerSingleline = " ";
@@ -46,7 +47,7 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse = new HttpResponse();
             httpResponse.setBody(httpRequest.getRequestLine().getUrl());
-            httpResponse.response200Header(dos, httpResponse.getBody().length, "");
+            httpResponse.response200Header(dos, httpRequest.getRequestLine().getUrl(), httpResponse.getBody().length);
             httpResponse.responseBody(dos, httpResponse.getBody());
         } catch (IOException e) {
             log.error(e.getMessage());
