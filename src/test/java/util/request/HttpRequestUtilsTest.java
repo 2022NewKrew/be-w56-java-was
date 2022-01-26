@@ -1,15 +1,14 @@
-package util;
+package util.request;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import util.request.HttpRequestUtils.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
 
-
-import org.junit.jupiter.api.Test;
-import util.HttpRequestUtils.Pair;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpRequestUtilsTest {
     @Test
@@ -55,13 +54,13 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void getKeyValue() throws Exception {
+    public void getKeyValue() {
         Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
         assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
     }
 
     @Test
-    public void getKeyValue_invalid() throws Exception {
+    public void getKeyValue_invalid() {
         Pair pair = HttpRequestUtils.getKeyValue("userId", "=");
         assertThat(pair).isNull();
     }
