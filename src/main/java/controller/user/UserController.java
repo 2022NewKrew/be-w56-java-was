@@ -36,12 +36,12 @@ public class UserController {
             File file = new File("./webapp/index.html");
             byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader header = new HttpHeader();
-            header.addHeader("Content-Type", "text/html");
-            header.addHeader("Content-Length", String.valueOf(body.length));
-            header.addHeader("Location", "/index.html");
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.addHeader("Content-Type", "text/html");
+            responseHeader.addHeader("Content-Length", String.valueOf(body.length));
+            responseHeader.addHeader("Location", "/index.html");
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, header, body);
+            return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
         } catch (IOException e) {
             log.error(e.getMessage());
             return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
