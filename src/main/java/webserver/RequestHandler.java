@@ -62,6 +62,7 @@ public class RequestHandler extends Thread {
                 responseBody(dos, body);
             }
 
+
         } catch (IOException e) {
             log.error(e.getMessage());
         }
