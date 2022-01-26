@@ -17,32 +17,9 @@ public class IOUtils {
      * @throws IOException
      */
 
-    private static final Logger log = LoggerFactory.getLogger(IOUtils.class);
-
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
-    }
-
-    public static HttpRequest printAllRequestHeadersAndReturnRequestLine(BufferedReader br) throws IOException {
-        HttpRequest httpRequest = printAndReturnRequestLine(br);
-        printRequestHeaders(br);
-        return httpRequest;
-    }
-
-    private static HttpRequest printAndReturnRequestLine(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        log.debug("request line: {}", line);
-        return new HttpRequest(line);
-    }
-
-    private static void printRequestHeaders(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        while (!line.equals("")) {
-            line = br.readLine();
-            if (line == null) { return; }
-            log.debug("header: {}", line);
-        }
     }
 }

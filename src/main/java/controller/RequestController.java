@@ -9,34 +9,75 @@ import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
 import webserver.http.MIME;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Map;
 
 public class RequestController {
+    private static final String URI_BASE = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(RequestController.class);
 
     public static HttpResponse controlRequest(HttpRequest httpRequest) {
-        HttpResponse httpResponse = new HttpResponse();
-        String uri = httpRequest.getPath();
-        String version = httpRequest.getVersion();
+        String path = httpRequest.getPath();
 
-        httpResponse.setVersion(version);
-        httpResponse.setUri(uri);
-        httpResponse.setStatusCode(HttpStatus.OK);
-        httpResponse.setContentType(MIME.parse(uri));
-        if (uri.startsWith("/user/create")) {
+        if (path.startsWith("/user/create")) {
             Map<String, String> params = httpRequest.getParameters();
-            if (!params.containsKey("userId") ||
-                    !params.containsKey("password") ||
-                    !params.containsKey("name") ||
-                    !params.containsKey("email")) {
-                httpResponse.setStatusCode(HttpStatus.BAD_REQUEST);
-                return httpResponse;
+            try {
+                User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
+                log.debug("User: {}", user);
+                DataBase.addUser(user);
+                return generateStaticResponse("/user/list.html");
+            } catch (Exception e) {
+                return generateResponse400(e);
             }
-            User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
-            log.debug("User: {}", user);
-            DataBase.addUser(user);
-            httpResponse.setUri("/user/list.html");
+        } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+            return generateStaticResponse(path);
+        } else {
+            return generateResponse404();
         }
-        return httpResponse;
+    }
+
+    private static HttpResponse generateStaticResponse(String path) {
+        try {
+            byte[] body = Files.readAllBytes(new File(URI_BASE + path).toPath());
+
+            return HttpResponse.builder()
+                    .status(HttpStatus.OK)
+                    .contentType(MIME.parse(path))
+                    .body(body)
+                    .build();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return generateResponse500();
+        }
+    }
+
+    private static HttpResponse generateResponse400(Exception e) {
+        byte[] body = (HttpStatus.BAD_REQUEST + ": " + e.getMessage()).getBytes();
+
+        return HttpResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body)
+                .build();
+    }
+
+    private static HttpResponse generateResponse404() {
+        byte[] body = HttpStatus.NOT_FOUND.toString().getBytes();
+
+        return HttpResponse.builder()
+                .status(HttpStatus.NOT_FOUND)
+                .body(body)
+                .build();
+    }
+
+    private static HttpResponse generateResponse500() {
+        byte[] body = HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes();
+
+        return HttpResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body)
+                .build();
     }
 }
