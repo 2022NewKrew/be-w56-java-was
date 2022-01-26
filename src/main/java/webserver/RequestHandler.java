@@ -29,8 +29,7 @@ public class RequestHandler extends Thread {
             //requestHeader객체 생성
             Request request = new Request(Request.inputStreamToString(in));
 
-            ControllerManager controllerManager = new ControllerManager(request.getPath(), request.getMethod(), request.getElements());
-            String path = controllerManager.execute();
+            String path = ControllerManager.matchController(request.getPath(), request.getMethod(), request.getElements());
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());

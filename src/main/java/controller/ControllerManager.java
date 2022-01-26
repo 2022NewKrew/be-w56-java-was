@@ -12,31 +12,20 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ControllerManager {
-    private Function<ControllerDTO, String> function;
-    private ControllerDTO controllerDTO;
+    private static Map<String, Function<ControllerDTO, String>> map = new HashMap<>();
 
-    public ControllerManager(String path, HttpMethod method, Map<String, String> elements){
-        controllerDTO = new ControllerDTO(path, elements);
-
-        //mapping to method
-
-        //@GetMapping(value = "/user/create") 과 동일
-        if(path.equals("/user/create") && method.equals(HttpMethod.GET)) {
-            function = new UserController()::createUser; //createUser만 메모리에 올릴 수 있는 방법이 없을까...
-        }
-        else if(path.equals("/user/create") && method.equals(HttpMethod.POST)) {
-            function = new UserController()::createUser;
-        }
-
+    //mapping path to method.
+    static{
+        map.put("/user/create", UserController::execute);
     }
 
-    public String execute(){
-        //메소드와 매핑이 되어있지 않은 메소드인경우 요청한 path그대로 정적페이지를 요청한다.
-        if(function == null) {
-            return controllerDTO.getPath();
+
+    public static String matchController(String path, HttpMethod method, Map<String, String> elements){
+        if(map.get(path) != null){
+            ControllerDTO controllerDTO = new ControllerDTO(path, elements);
+            return map.get(path).apply(controllerDTO);
         }
 
-        return function.apply(controllerDTO);
+        return path;
     }
-
 }
