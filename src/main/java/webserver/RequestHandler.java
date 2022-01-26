@@ -2,17 +2,16 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 import db.DataBase;
 import enums.HttpStatus;
 import model.User;
-import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.LogUtils;
 import util.LoginUtils;
 
 public class RequestHandler extends Thread {
@@ -33,16 +32,10 @@ public class RequestHandler extends Thread {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             Map<String, String> requestMap = HttpRequestUtils.readRequest(br);
-
-            log.debug("request");
-            for(Map.Entry<String, String> request : requestMap.entrySet())
-                log.debug("{} : {}", request.getKey(), request.getValue());
+            LogUtils.requestLog(requestMap, log);
 
             Map<String,String> headerMap = HttpRequestUtils.readHeader(br);
-
-            log.debug("header");
-            for(Map.Entry<String, String> header : headerMap.entrySet())
-                log.debug("{} : {}", header.getKey(), header.getValue());
+            LogUtils.headerLog(headerMap, log);
 
             String url = requestMap.get("httpUrl");
             String cookie = null;
