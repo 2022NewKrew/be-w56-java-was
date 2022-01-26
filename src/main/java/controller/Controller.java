@@ -26,6 +26,12 @@ public interface Controller {
         return path.toFile().isFile();
     }
 
+    default boolean isStaticFileSRequest(HttpRequest request) {
+        String url = request.line().url();
+        Path path = Path.of("./webapp", url);
+        return path.toFile().isFile();
+    }
+
     default HttpResponse readStaticFile(String url) throws IOException {
         HttpResponseBody responseBody = HttpResponseBody.createFromUrl(url);
         HttpResponseHeader responseHeader = new HttpResponseHeader(url, HttpStatus.OK, responseBody.length());
