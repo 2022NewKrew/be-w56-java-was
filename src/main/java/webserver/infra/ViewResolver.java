@@ -39,7 +39,6 @@ public class ViewResolver {
         try {
             dos.writeBytes(HttpStatus.FOUND.getHttpResponseHeader());
             dos.writeBytes(getLocation(urlPath));
-            dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,7 +53,6 @@ public class ViewResolver {
             byte[] body = getBytesOfFile(viewPath);
             writeResponseHeader(dos, viewPath, httpStatus);
             writeResponseBody(dos, body);
-            dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
             renderNotFound(dos);

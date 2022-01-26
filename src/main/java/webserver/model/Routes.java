@@ -18,7 +18,7 @@ public class Routes {
 
     private void setRoutes() {
         // Request Mapping to Controller
-        routes.put(HttpMethod.GET, "/user/create", new SignupController());
+        routes.put(HttpMethod.POST, "/users", new SignupController());
     }
 
     public BaseController getController(HttpMethod httpMethod, String url) {
