@@ -71,9 +71,22 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseUrl() {
+    public void parseReqFirstLine() {
         String header = "GET /index.html HTTP/1.1";
-        String url = HttpRequestUtils.parseUrl(header);
+        Map<String, String> firstLine = HttpRequestUtils.parseReqFirstLine(header);
+        String method = firstLine.get("method");
+        String url = firstLine.get("url");
+
+        assertThat(method).isEqualTo("GET");
         assertThat(url).isEqualTo("/index.html");
+    }
+
+    @Test
+    public void parseUrlRootPath() {
+        String url = "/user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
+
+        String root = HttpRequestUtils.parseUrlRootPath(url);
+
+        assertThat(root).isEqualTo("/user");
     }
 }
