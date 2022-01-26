@@ -9,24 +9,41 @@ public class User {
 
     public static class Builder {
         // 필수 매개변수
-        private final String userId;
-        private final String password;
-        private final String name;
-        private final String email;
+        private String userId;
+        private String password;
+        private String name;
+        private String email;
 
         // 선택 매개변수
         private final Long id = 0L;
 
-        public Builder(String userId, String password, String name, String email) {
+        public Builder userId(String userId) {
             this.userId = userId;
+            return this;
+        }
+
+        public Builder password(String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder email(String email) {
             this.email = email;
+            return this;
         }
 
         public User build() {
             return new User(this);
         }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     private User(Builder builder) {

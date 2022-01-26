@@ -7,11 +7,12 @@ import entity.User;
 public class UserService {
 
     public void join(UserSignUpDto userSignUpDto) {
-        User user = new User.Builder(
-                userSignUpDto.getUserId(),
-                userSignUpDto.getPassword(),
-                userSignUpDto.getName(),
-                userSignUpDto.getEmail()).build();
+        User user = User.builder()
+                .userId(userSignUpDto.getUserId())
+                .password(userSignUpDto.getPassword())
+                .name(userSignUpDto.getName())
+                .email(userSignUpDto.getEmail())
+                .build();
 
         DataBase.addUser(user);
     }
