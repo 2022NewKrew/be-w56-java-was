@@ -44,4 +44,89 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/user/login.html", method = "GET")
+    public HttpResponse userLoginHtml() {
+        try {
+            File file = new File("./webapp" + httpRequest.getPath());
+            byte[] body = Files.readAllBytes(file.toPath());
+
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.setContentType(MediaType.TEXT_HTML);
+            responseHeader.setContentLength(body.length);
+
+            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        }
+    }
+
+    @RequestMapping(value = "/user/login_failed.html", method = "GET")
+    public HttpResponse userLoginFailedHtml() {
+        try {
+            File file = new File("./webapp" + httpRequest.getPath());
+            byte[] body = Files.readAllBytes(file.toPath());
+
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.setContentType(MediaType.TEXT_HTML);
+            responseHeader.setContentLength(body.length);
+
+            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        }
+    }
+
+
+    @RequestMapping(value = "/user/form.html", method = "GET")
+    public HttpResponse userSignupHtml() {
+        try {
+            File file = new File("./webapp" + httpRequest.getPath());
+            byte[] body = Files.readAllBytes(file.toPath());
+
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.setContentType(MediaType.TEXT_HTML);
+            responseHeader.setContentLength(body.length);
+
+            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        }
+    }
+
+    @RequestMapping(value = "/user/profile.html", method = "GET")
+    public HttpResponse userProfileHtml() {
+        try {
+            File file = new File("./webapp" + httpRequest.getPath());
+            byte[] body = Files.readAllBytes(file.toPath());
+
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.setContentType(MediaType.TEXT_HTML);
+            responseHeader.setContentLength(body.length);
+
+            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        }
+    }
+
+    @RequestMapping(value = "/user/list.html", method = "GET")
+    public HttpResponse userProfileListHtml() {
+        try {
+            File file = new File("./webapp" + httpRequest.getPath());
+            byte[] body = Files.readAllBytes(file.toPath());
+
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.setContentType(MediaType.TEXT_HTML);
+            responseHeader.setContentLength(body.length);
+
+            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        }
+    }
 }
