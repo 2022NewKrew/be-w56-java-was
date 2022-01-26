@@ -1,10 +1,9 @@
 package util;
 
+import http.HttpResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -17,10 +16,8 @@ public class IOUtils {
     private IOUtils() {
     }
 
-    public static List<String> getRequestLines(InputStream in) throws IOException {
+    public static List<String> getRequestLines(BufferedReader br) throws IOException {
         List<String> header = new ArrayList<>();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String line = br.readLine();
         log.debug("request line: {}", line);
 
@@ -45,5 +42,15 @@ public class IOUtils {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
+    }
+
+    public static void write(OutputStream dataOutputStream, HttpResponse httpResponse) throws IOException {
+        String headerString = httpResponse.getHeader();
+        log.debug("response header: {}", headerString);
+        byte[] body = httpResponse.getBody();
+
+        dataOutputStream.write(headerString.getBytes());
+        dataOutputStream.write(body, 0, body.length);
+        dataOutputStream.flush();
     }
 }

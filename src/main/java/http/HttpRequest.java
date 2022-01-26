@@ -1,9 +1,9 @@
-package domain;
+package http;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import util.HttpRequestUtils;
-import webserver.HttpMethod;
 
 public class HttpRequest {
 
@@ -11,6 +11,7 @@ public class HttpRequest {
     private final String path;
     private final Map<String, String> queries;
     private final Map<String, String> headers;
+    private Map<String, String> params;
 
     private HttpRequest(HttpMethod method, String path, Map<String, String> queries, Map<String, String> headers) {
         this.method = method;
@@ -30,6 +31,10 @@ public class HttpRequest {
         return new HttpRequest(method, path, queries, headers);
     }
 
+    public HttpMethod getMethod() {
+        return method;
+    }
+
     public String getPath() {
         return path;
     }
@@ -37,5 +42,18 @@ public class HttpRequest {
     public String getAccept() {
         String accepts = headers.getOrDefault("Accept", "");
         return HttpRequestUtils.parseAccepts(accepts);
+    }
+
+    public int getContentLength() {
+        String contentLength = headers.getOrDefault("Content-Length", "0");
+        return Integer.parseInt(contentLength);
+    }
+
+    public Map<String, String> getParams() {
+        return Collections.unmodifiableMap(params);
+    }
+
+    public void setParams(String body) {
+        this.params = HttpRequestUtils.parseRequestBody(body);
     }
 }
