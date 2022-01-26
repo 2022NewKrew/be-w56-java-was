@@ -2,11 +2,13 @@ package controller;
 
 import db.DataBase;
 import http.request.HttpRequest;
+import http.request.HttpRequestBody;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class UserController implements Controller {
     private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
 
     {
-        methodMap.put("GET /create", this::createUser);
+        methodMap.put("POST /create", this::createUser);
     }
 
     private UserController() {
@@ -53,9 +55,8 @@ public class UserController implements Controller {
     }
 
     private HttpResponse createUser(HttpRequest request) {
-        HttpRequestLine requestLine = request.line();
-        Map<String, String> queryString = requestLine.queryString();
-        System.out.println(queryString);
+        HttpRequestBody requestBody = request.body();
+        Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
         User newUser = new User(
                 queryString.get("userId"),
                 queryString.get("password"),
