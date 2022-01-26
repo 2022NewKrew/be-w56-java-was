@@ -7,7 +7,6 @@ public class UserController {
 
     @GetMapping("/join")
     public String join() {
-        System.out.println("afsas");
         return "join";
     }
 

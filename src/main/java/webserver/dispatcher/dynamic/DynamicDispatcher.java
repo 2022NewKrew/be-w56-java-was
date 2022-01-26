@@ -29,7 +29,7 @@ public class DynamicDispatcher extends Dispatcher {
     protected HttpResponse createResponse() {
         HttpRequest request = RequestContext.getInstance().getHttpRequest();
         // todo RequestMethodNotFoundException 처리 로직
-        ClassAndMethod classAndMethod = HandlerMapping.getInstance().getControllerMethodForRequest();
+        ClassAndMethod classAndMethod = HandlerMapping.getInstance().getControllerClassAndMethodForRequest();
 
         // todo 해당하는 Controller 없을 때 예외 처리 로직
         Object controller = ControllerContainer.getInstance().getControllerInstance(classAndMethod.getClazz());
@@ -44,6 +44,7 @@ public class DynamicDispatcher extends Dispatcher {
             e.printStackTrace();
         }
 
+        // todo Response Factory 이용
         return new HttpResponse(new HttpResponseLine(HttpStatus.OK), new HttpResponseHeader(new HashMap<>()), new HttpResponseBody(new byte[]{}));
     }
 

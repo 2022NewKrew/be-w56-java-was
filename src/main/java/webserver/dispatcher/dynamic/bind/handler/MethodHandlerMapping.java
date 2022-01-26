@@ -4,7 +4,6 @@ import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import webserver.exception.RequestMethodNotFoundException;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +23,7 @@ public abstract class MethodHandlerMapping {
     protected abstract void setMappingTableWithReflections(Reflections reflections, Class<?> clazz);
 
     public ClassAndMethod getMethod(String url) {
-        Optional<ClassAndMethod> method = Optional.of(mappingTable.get(url));
-        return method.orElseThrow(() -> new RequestMethodNotFoundException());
+        Optional<ClassAndMethod> classAndMethod = Optional.of(mappingTable.get(url));
+        return classAndMethod.orElseThrow(() -> new RequestMethodNotFoundException());
     }
 }

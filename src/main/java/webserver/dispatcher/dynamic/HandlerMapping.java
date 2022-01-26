@@ -43,9 +43,10 @@ public class HandlerMapping {
                 .forEach( entry -> entry.getValue().initMappingTable(restControllerTypes));
     }
 
-    public ClassAndMethod getControllerMethodForRequest() {
+    public ClassAndMethod getControllerClassAndMethodForRequest() {
         HttpRequest request = RequestContext.getInstance().getHttpRequest();
         HttpRequestMethod requestMethod = request.getHttpRequestMethod();
-        return methodHandlerMappings.get(requestMethod).getMethod(request.getUri().getUrl());
+        return methodHandlerMappings.get(requestMethod)
+                .getMethod(request.getUri().getUrl());
     }
 }

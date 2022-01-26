@@ -6,6 +6,7 @@ import webserver.dispatcher.dynamic.bind.annotation.RestController;
 import webserver.exception.ContainerInitializationException;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ public class ControllerContainer {
     private Map<Class<?>, Object> restControllers;
 
     private void scanAndCreateRestControllers() {
+        restControllers = new HashMap<>();
         Reflections reflections = new Reflections(DEFAULT_COMPONENT_SCAN_DIR, Scanners.TypesAnnotated);
         Set<Class<?>> types =  reflections.getTypesAnnotatedWith(RestController.class);
         for(Class<?> type : types) {

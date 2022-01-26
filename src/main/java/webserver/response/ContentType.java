@@ -1,7 +1,5 @@
 package webserver.response;
 
-import webserver.exception.ContentTypeNotFoundException;
-
 public enum ContentType {
 
     TEXT_HTML("text/html", "html"),
@@ -9,7 +7,8 @@ public enum ContentType {
     TEXT_JS("text/javascript", "js"),
     IMAGE_PNG("image/png", "png"),
     IMAGE_JPEG("image/jpeg", "jpeg"),
-    IMAGE_X_ICON("image/x-icon", "ico");
+    IMAGE_X_ICON("image/x-icon", "ico"),
+    APPLICATION_OCTET_STREAM("application/octet-stream", "default");
 
     private String value;
     private String extension;
@@ -29,6 +28,6 @@ public enum ContentType {
                 return contentType;
             }
         }
-        throw new ContentTypeNotFoundException();
+        return APPLICATION_OCTET_STREAM;
     }
 }
