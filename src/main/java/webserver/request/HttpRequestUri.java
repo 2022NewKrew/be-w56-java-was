@@ -23,6 +23,10 @@ public class HttpRequestUri {
         return url;
     }
 
+    public Map<String, String> getQueries() {
+        return queries;
+    }
+
     public boolean isForStaticContent() {
         return url.contains(".");
     }
