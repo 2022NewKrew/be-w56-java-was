@@ -41,7 +41,7 @@ public class HttpRequest {
         HttpHeaders httpHeaders = new HttpHeaders();
 
         String headerLine = br.readLine();
-        while(headerLine != null && headerLine.isEmpty()) {
+        while(headerLine != null && !headerLine.isEmpty()) {
             httpHeaders.parseHeaderLine(headerLine);
             headerLine = br.readLine();
         }
