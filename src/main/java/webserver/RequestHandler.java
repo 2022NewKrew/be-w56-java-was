@@ -3,14 +3,16 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
-import model.Request;
+import model.RequestHeader;
+import model.RequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 import util.RequestPathController;
-import util.ResponseStatus;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -26,20 +28,23 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request requestHeader;
-            String contentType;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line = br.readLine();
                 if (line == null) {
                     return;
                 }
 
-                requestHeader = HttpRequestUtils.parseRequestHeader(line);
-                contentType = HttpRequestUtils.readHeaderAccept(br);
+                RequestLine requestLine = HttpRequestUtils.parseRequestLine(line);
+                RequestHeader requestHeader = HttpRequestUtils.parseRequestHeader(br);
+
+                Map<String, String> requestBody = new HashMap<>();
+                if (requestLine.getMethod().equals("POST")) {
+                    requestBody = HttpRequestUtils.parseQueryString(IOUtils.readData(br, requestHeader.getContentLength()));
+                }
 
                 // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
                 try (DataOutputStream dos = new DataOutputStream(out)) {
-                    RequestPathController.urlMapping(requestHeader, contentType, dos);
+                    RequestPathController.urlMapping(requestLine, requestHeader, requestBody, dos);
                 }
             }
         } catch (IOException e) {

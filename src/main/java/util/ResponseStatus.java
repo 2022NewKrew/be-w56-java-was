@@ -2,7 +2,8 @@ package util;
 
 public enum ResponseStatus {
     OK(200),
-    NOT_FOUND(404);
+    NOT_FOUND(404),
+    FOUND(302);
 
     private final int value;
 

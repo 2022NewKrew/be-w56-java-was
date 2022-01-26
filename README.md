@@ -36,12 +36,12 @@ try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCh
         }
 }
 
-requestHeader = HttpRequestUtils.parseRequestHeader(line);
+requestLineHeader = HttpRequestUtils.parseRequestHeader(line);
 contentType = HttpRequestUtils.readHeaderAccept(br);
 
 // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 try (DataOutputStream dos = new DataOutputStream(out)) {
-    RequestPathController.urlMapping(requestHeader, contentType, dos);
+    RequestPathController.urlMapping(requestLineHeader, contentType, dos);
 }
 ```
 
@@ -54,12 +54,18 @@ try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCh
             return;
         }
 
-        requestHeader = HttpRequestUtils.parseRequestHeader(line);
+        requestLineHeader = HttpRequestUtils.parseRequestHeader(line);
         contentType = HttpRequestUtils.readHeaderAccept(br);
 
         // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
         try (DataOutputStream dos = new DataOutputStream(out)) {
-            RequestPathController.urlMapping(requestHeader, contentType, dos);
+            RequestPathController.urlMapping(requestLineHeader, contentType, dos);
         }
 }
 ```
+
+## 의문점
+
+1. url이 /user/create일 땐 redirection이 제대로 작동하지 않았는데 /user로 수정하니 작동한다.
+   1. /user/create일 땐 계속 /user가 남아있어서 404오류가 발생했음 ex) /user/user/form.html, /user/index.html
+   2. /user일 땐 위와 같은 현상이 일어나지 않음. 원인은 파악 중

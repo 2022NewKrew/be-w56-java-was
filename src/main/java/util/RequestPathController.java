@@ -1,7 +1,8 @@
 package util;
 
 import db.DataBase;
-import model.Request;
+import model.RequestHeader;
+import model.RequestLine;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,47 +19,48 @@ public class RequestPathController {
     private static final String URL_PREFIX = "./webapp";
     private static final String DEFAULT_CONTENT_TYPE = "text/html";
 
-    public static void urlMapping(Request requestHeader, String contentType, DataOutputStream dos) throws IOException {
-        log.info("Request Url : {}", requestHeader.getUrl());
-        switch (requestHeader.getUrl()) {
+    public static void urlMapping(RequestLine requestLine, RequestHeader requestHeader,
+                                  Map<String, String> requestBody, DataOutputStream dos) throws IOException {
+        log.info("Request Url : {}", requestLine.getUrl());
+        switch (requestLine.getUrl()) {
             case "/":
                 rootPath(dos);
                 break;
-            case "/user/create":
-                userCreatePath(requestHeader, contentType, dos);
+            case "/user":
+                userCreatePath(requestHeader, requestBody, dos);
                 break;
             default:
-                defaultPath(requestHeader, contentType, dos);
+                defaultPath(requestLine, requestHeader, dos);
                 break;
         }
     }
 
-    private static void rootPath(DataOutputStream dos) {
-        byte[] body = "Hello World".getBytes(StandardCharsets.UTF_8);
+    private static void rootPath(DataOutputStream dos) throws IOException {
+        byte[] body = Files.readAllBytes(new File(URL_PREFIX + "/index.html").toPath());
         responseHeader(ResponseStatus.OK, DEFAULT_CONTENT_TYPE, dos, body.length);
         responseBody(dos, body);
     }
 
-    private static void userCreatePath(Request requestHeader, String contentType, DataOutputStream dos) {
-        Map<String, String> userInput = HttpRequestUtils.parseQueryString(requestHeader.getQuery());
-        User user = new User(userInput.get("userId"), userInput.get("password"), userInput.get("name"), userInput.get("email"));
+    private static void userCreatePath(RequestHeader requestHeader, Map<String, String> requestBody, DataOutputStream dos) throws IOException {
+        User user = new User(requestBody.get("userId"), requestBody.get("password"), requestBody.get("name"), requestBody.get("email"));
         DataBase.addUser(user);
 
-        byte[] body = DataBase.findUserById(userInput.get("userId")).toString().getBytes(StandardCharsets.UTF_8);
-        responseHeader(ResponseStatus.OK, contentType, dos, body.length);
+        log.info("Added User : {}", DataBase.findUserById(requestBody.get("userId")).toString());
+        byte[] body = Files.readAllBytes(new File(URL_PREFIX + "/index.html").toPath());
+        responseHeader(ResponseStatus.FOUND, requestHeader.getContentType(), dos, body.length);
         responseBody(dos, body);
     }
 
-    private static void defaultPath(Request requestHeader, String contentType, DataOutputStream dos) throws IOException {
-        File file = new File(URL_PREFIX + requestHeader.getUrl());
+    private static void defaultPath(RequestLine requestLine, RequestHeader requestHeader, DataOutputStream dos) throws IOException {
+        File file = new File(URL_PREFIX + requestLine.getUrl());
         byte[] body;
 
         if (file.exists()) {
             body = Files.readAllBytes(file.toPath());
-            responseHeader(ResponseStatus.OK, contentType, dos, body.length);
+            responseHeader(ResponseStatus.OK, requestHeader.getContentType(), dos, body.length);
         } else {
             body = ResponseStatus.NOT_FOUND.name().getBytes(StandardCharsets.UTF_8);
-            responseHeader(ResponseStatus.NOT_FOUND, contentType, dos, body.length);
+            responseHeader(ResponseStatus.NOT_FOUND, requestHeader.getContentType(), dos, body.length);
         }
         responseBody(dos, body);
     }
