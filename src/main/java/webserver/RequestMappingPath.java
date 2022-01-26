@@ -16,7 +16,8 @@ public enum RequestMappingPath {
         @Override
         public Response handle(Request request, DataOutputStream dos) throws Exception {
             byte[] body = Files.readAllBytes(new File("./webapp" + "/index.html").toPath());
-            return new Response(dos, body, "", HttpStatus.OK, null, null);
+            Map<String, String> headers = request.getHeaders();
+            return new Response(dos, body, "", HttpStatus.OK, headers, headers.get("Accept").split(","));
         }
     },
     SIGN_UP("/user/create") {

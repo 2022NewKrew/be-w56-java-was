@@ -21,6 +21,7 @@ public class RequestMapper {
         for (RequestMappingPath value : RequestMappingPath.values()) {
             requestMap.put(value.getPath(), value);
         }
+        log.info("requestMap : "+requestMap);
     }
 
     public static Response createResponse(Request request, OutputStream out) throws IOException {
@@ -42,15 +43,18 @@ public class RequestMapper {
 
     private static Response response404NotFound(DataOutputStream dos) {
         byte[] body = HttpStatus.NOT_FOUND.toString().getBytes();
-        return new Response(dos, body, "", HttpStatus.NOT_FOUND, null, null);
+        Map<String, String> headers = new HashMap<>();
+        return new Response(dos, body, "", HttpStatus.NOT_FOUND, headers, null);
     }
     private static Response response400BadRequest(DataOutputStream dos, Exception e) {
         byte[] body = (HttpStatus.BAD_REQUEST + ":" + e.getMessage()).getBytes();
-        return new Response(dos, body, "", HttpStatus.BAD_REQUEST, null, null);
+        Map<String, String> headers = new HashMap<>();
+        return new Response(dos, body, "", HttpStatus.BAD_REQUEST, headers, null);
     }
     private static Response response500InternalServerError(DataOutputStream dos) {
         byte[] body = HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes();
-        return new Response(dos, body, "", HttpStatus.INTERNAL_SERVER_ERROR, null, null);
+        Map<String, String> headers = new HashMap<>();
+        return new Response(dos, body, "", HttpStatus.INTERNAL_SERVER_ERROR, headers, null);
     }
 
 
