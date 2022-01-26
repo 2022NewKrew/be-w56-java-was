@@ -24,6 +24,10 @@ public class ControllerManager {
         if(path.equals("/user/create") && method.equals(HttpMethod.GET)) {
             function = new UserController()::createUser; //createUser만 메모리에 올릴 수 있는 방법이 없을까...
         }
+        else if(path.equals("/user/create") && method.equals(HttpMethod.POST)) {
+            function = new UserController()::createUser;
+        }
+
     }
 
     public String execute(){

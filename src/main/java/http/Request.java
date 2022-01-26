@@ -1,6 +1,7 @@
 package http;
 
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +22,8 @@ public class Request {
         this.requestHeader = Arrays.asList(requestHeader.split("\n"));
         parsePath(this.requestHeader.get(0));
         parseMethod(this.requestHeader.get(0));
-        parseElementsFromGET(this.requestHeader.get(0));
+        parseElementsFromGet(this.requestHeader.get(0));
+        parseElementsFromPost(this.requestHeader.get(this.requestHeader.size() - 1));
     }
 
 
@@ -29,9 +31,17 @@ public class Request {
         StringBuilder sb = new StringBuilder();
         String str;
 
+        Integer contentLength = 0;
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         while( !((str = br.readLine()) == null) && !str.equals("") ){
+            if(str.startsWith("Content-Length: ")){
+                contentLength = Integer.valueOf(str.substring("Content-Length: ".length(), str.length()));
+            }
             sb.append(str + "\n");
+        }
+
+        if(contentLength > 0){
+            sb.append(IOUtils.readData(br, contentLength) + "\n");
         }
 
         return sb.toString();
@@ -81,7 +91,7 @@ public class Request {
         }
     }
 
-    private void parseElementsFromGET(String lineStr){
+    private void parseElementsFromGet(String lineStr){
         if(!method.equals(HttpMethod.GET)){
             return;
         }
@@ -89,6 +99,14 @@ public class Request {
         //'?' 이후 파싱.
         String elementSubString = divideElementSubString(lineStr);
         this.elements = HttpRequestUtils.parseQueryString(elementSubString);
+    }
+
+    private void parseElementsFromPost(String lineStr){
+        if(!method.equals(HttpMethod.POST)){
+            return;
+        }
+
+        this.elements = HttpRequestUtils.parseQueryString(lineStr);
     }
 
     public List<String> getRequestHeader() {
