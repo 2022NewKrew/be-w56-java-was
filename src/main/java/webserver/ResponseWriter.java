@@ -1,5 +1,6 @@
 package webserver;
 
+import model.request.Headers;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,6 @@ public class ResponseWriter {
 
     private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK \r\n";
     private static final String RESPONSE_BODY_SEPARATOR = "\r\n";
-
-    private static final String HEADER_VALUE_SEPARATOR = ": ";
-    private static final String HEADER_NEWLINE = "\r\n";
 
     private final Tika tika = new Tika();
 
@@ -59,7 +57,7 @@ public class ResponseWriter {
     }
 
     private String createHeaderString(final String key, final String value) {
-        return key + HEADER_VALUE_SEPARATOR + value + HEADER_NEWLINE;
+        return key + Headers.HEADER_VALUE_SEPARATOR + value + Headers.HEADER_NEWLINE;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, final String mime) {

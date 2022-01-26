@@ -4,6 +4,7 @@ import controller.UserController;
 import model.HttpRequest;
 import model.Pair;
 import model.ValueMap;
+import model.request.Body;
 import model.request.Headers;
 import model.request.HttpLocation;
 import model.request.HttpMethod;
@@ -31,6 +32,7 @@ public class RequestHandler implements Callable<Void> {
     private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
 
     private static final String LOCATION_USER_CREATE = "/user/create";
+
 
     private final Socket connection;
     private final UserController userController;
@@ -91,7 +93,15 @@ public class RequestHandler implements Callable<Void> {
 
         final Headers headers = getHeaders(in);
 
-        return new HttpRequest(method, location, params, headers);
+        final Pair contentLengthHeader = headers.getPair(Headers.HEADER_CONTENT_LENGTH);
+        if (contentLengthHeader.isNone()) {
+            return new HttpRequest(method, location, params, headers, Body.EMPTY);
+        }
+
+        final int contentLength = Integer.parseInt(contentLengthHeader.getValue(), 10);
+        final Body body = getBody(in, contentLength);
+
+        return new HttpRequest(method, location, params, headers, body);
     }
 
     private String readOneHeader(final InputStream in) throws IOException {
@@ -131,6 +141,11 @@ public class RequestHandler implements Callable<Void> {
             list.add(HttpRequestUtils.parseHeader(header));
         }
         return new Headers(list);
+    }
+
+    private Body getBody(final InputStream in, final int contentLength) throws IOException {
+        byte[] bodyBinary = in.readNBytes(contentLength);
+        return new Body(new String(bodyBinary, StandardCharsets.UTF_8));
     }
 
     private void processGet(
