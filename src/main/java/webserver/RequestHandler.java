@@ -4,10 +4,12 @@ import http.HttpRequest;
 import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestParser;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,37 +25,22 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream();
-             OutputStream out = connection.getOutputStream();
-             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
+             OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            HttpRequest httpRequest = new HttpRequest();
-
-            // RequestLine 처리
-            String requestLine = br.readLine();
-            httpRequest.setRequestLine(requestLine);
-            log.debug(httpRequest.getRequestLine().getUrl());
-
-            // Header 처리
-            String headerSingleline = " ";
-            while (true) {
-                headerSingleline = br.readLine();
-                if (headerSingleline == null || headerSingleline.equals("")) {
-                    break;
-                }
-                httpRequest.setHeaderValue(headerSingleline);
-            }
+            HttpRequestParser httpRequestParser = new HttpRequestParser();
+            httpRequestParser.parse(in);
+            HttpRequest httpRequest = httpRequestParser.getHttpRequest();
 
             // Response 처리
-            DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse = new HttpResponse();
-            httpResponse.setBody(httpRequest.getRequestLine().getUrl());
-            httpResponse.response200Header(dos, httpRequest.getRequestLine().getUrl(), httpResponse.getBody().length);
-            httpResponse.responseBody(dos, httpResponse.getBody());
+            httpResponse.setDos(out);
+            httpResponse.setBody(httpRequest.getUrl());
+            httpResponse.response200Header(httpRequest.getUrl());
+            httpResponse.responseBody(httpResponse.getBody());
+
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
-
-
 
 }

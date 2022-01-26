@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class HttpResponse {
 
     private byte[] body;
+    private DataOutputStream dos;
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
     public byte[] getBody() {
@@ -21,8 +23,13 @@ public class HttpResponse {
         body = Files.readAllBytes(new File("./webapp" + url).toPath());
     }
 
-    public void response200Header(DataOutputStream dos, String url, int lengthOfBodyContent) {
+    public void setDos(OutputStream out) {
+        dos = new DataOutputStream(out);
+    }
+
+    public void response200Header(String url) {
         String responseContentType = contentTypeFromUrl(url);
+        int lengthOfBodyContent = body.length;
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + responseContentType + ";charset=utf-8\r\n");
@@ -33,7 +40,7 @@ public class HttpResponse {
         }
     }
 
-    public void responseBody(DataOutputStream dos, byte[] body) {
+    public void responseBody(byte[] body) {
         try {
             dos.write(body, 0, body.length);
             dos.flush();
@@ -43,10 +50,10 @@ public class HttpResponse {
     }
 
     private String contentTypeFromUrl(String url) {
-        if (url.equals("/")) {
-            return "*/*";
-        }
         String[] splitUrl = url.split("\\.");
+        if (splitUrl.length == 1) {
+            return "application/octet-stream";
+        }
         String extension = splitUrl[splitUrl.length-1];
         if (extension.equals("html")) {
             return "text/html";
@@ -60,7 +67,7 @@ public class HttpResponse {
         if (extension.equals("ico")) {
             return "image/x-icon";
         }
-        return "*/*";
+        return "application/octet-stream";
     }
 
 
