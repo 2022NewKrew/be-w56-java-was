@@ -7,6 +7,7 @@ import model.User;
 public class Service {
 
     public void signUp(UserCreateRequestDto requestDto) {
-        DataBase.addUser(new User(requestDto.getUserId(), requestDto.getPassword(), requestDto.getName(), requestDto.getEmail()));
+        DataBase.addUser(new User(requestDto.getUserId(), requestDto.getPassword(), requestDto.getName(),
+                requestDto.getEmail()));
     }
 }
