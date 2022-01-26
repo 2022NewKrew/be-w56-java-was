@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import http.HttpRequest;
 
 public class HttpRequestUtils {
 
@@ -43,14 +44,14 @@ public class HttpRequestUtils {
             return null;
         }
 
-        return new Pair(tokens[0], tokens[1]);
+        return Pair.of(tokens[0], tokens[1]);
     }
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
     }
 
-    public static Request parseInput(InputStream in) throws IOException {
+    public static HttpRequest parseInput(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String requestLine = br.readLine();
         List<Pair> headers = new ArrayList<>();
@@ -59,7 +60,7 @@ public class HttpRequestUtils {
             headers.add(parseHeader(line));
         }
 
-        return Request.builder()
+        return HttpRequest.builder()
                 .requestLine(requestLine)
                 .pairs(headers)
                 .build();
@@ -69,7 +70,10 @@ public class HttpRequestUtils {
         String key;
         String value;
 
-        Pair(String key, String value) {
+        public static Pair of(String key, String value) {
+            return new Pair(key, value);
+        }
+        private Pair(String key, String value) {
             this.key = key.trim();
             this.value = value.trim();
         }
