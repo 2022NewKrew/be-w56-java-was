@@ -73,6 +73,7 @@ public class PostController implements MethodController {
 
     private void methodSignUp() {
         log.info("[run] methodSignUp");
+
         String userId = rp.getBody("userId");
         String password = rp.getBody("password");
         String name = rp.getBody("name");
@@ -85,7 +86,6 @@ public class PostController implements MethodController {
             log.info(user.toString());
             DataBase.addUser(user);
             rf.sendResponse(ResponseCode.STATUS_303);
-
             return;
         } catch (Exception e) {
             log.error(e.getMessage());
