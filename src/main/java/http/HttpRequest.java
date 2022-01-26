@@ -16,12 +16,12 @@ public class HttpRequest {
     private Url url;
     private HttpVersion version;
     private final Map<HttpHeader, String> headers;
-    private Map<String, String> values;
+    private Map<String, String> fields;
 
     public HttpRequest() {
         version = HttpVersion.HTTP_1_1;
         headers = Maps.newTreeMap();
-        values = Maps.newHashMap();
+        fields = Maps.newHashMap();
     }
 
     public void parse(InputStream in) throws IOException {
@@ -48,18 +48,34 @@ public class HttpRequest {
     }
 
     private void parseBody(String body) {
-        values = HttpRequestUtils.parseQueryString(body);
+        fields = HttpRequestUtils.parseQueryString(body);
     }
 
     public void putHeader(HttpHeader header, String value) {
         headers.put(header, value);
     }
 
+    public HttpResponse respond() {
+        return new HttpResponse(version, HttpStatus.OK, Maps.newTreeMap(), null, null);
+    }
+
+    public boolean hasAllFields(List<String> fields) {
+        if (this.fields.isEmpty()) {
+            return false;
+        }
+        for (String field : fields) {
+            if (!this.fields.containsKey(field)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Url getUrl() {
         return url;
     }
 
-    public HttpResponse respond() {
-        return new HttpResponse(version, HttpStatus.OK, Maps.newTreeMap(), null, null);
+    public Map<String, String> getFields() {
+        return fields;
     }
 }

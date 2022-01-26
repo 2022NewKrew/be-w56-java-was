@@ -1,13 +1,12 @@
 package controller;
 
 import http.GetMapping;
-import http.HttpRequest;
 
 @Controller
 public class HomeController {
 
     @GetMapping("/")
-    public String home(HttpRequest httpRequest) {
+    public String home() {
         return "/index.html";
     }
 }

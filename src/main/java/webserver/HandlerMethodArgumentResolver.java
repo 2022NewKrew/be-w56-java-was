@@ -4,7 +4,7 @@ import http.HttpRequest;
 
 public interface HandlerMethodArgumentResolver {
 
-    boolean supportsParameter(Class<?> methodParameter, HttpRequest httpRequest);
+    boolean supportsParameter(Class<?> clazz, HttpRequest httpRequest);
 
-    Object resolverArgument(Object instance, HttpRequest httpRequest);
+    Object resolveArgument(Object instance, HttpRequest httpRequest) throws Exception;
 }
