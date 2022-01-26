@@ -1,4 +1,4 @@
-package webserver.dto;
+package dto;
 
 import model.User;
 

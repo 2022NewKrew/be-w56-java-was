@@ -1,29 +1,30 @@
-package webserver;
+package webserver.mapper;
 
 import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import webserver.dto.UserCreateRequest;
+import webserver.provider.StaticResourceProvider;
+import dto.UserCreateRequest;
+import webserver.exception.BadRequestException;
+import webserver.exception.ResourceNotFoundException;
+import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.net.URI;
-import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
-
-import static webserver.WebServer.DEFAULT_RESOURCES_DIR;
 
 public enum RequestMappingInfo {
 
     ROOT("/") {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
-            byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + "/index.html").toPath());
+            byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)
@@ -51,10 +52,33 @@ public enum RequestMappingInfo {
 
     private static final Logger log = LoggerFactory.getLogger(RequestMappingInfo.class);
 
+    private static final Map<String, RequestMappingInfo> requestMap;
+
+    static {
+        requestMap = new HashMap<>();
+        for (RequestMappingInfo value : values()) {
+            requestMap.put(value.getPath(), value);
+        }
+    }
+
     private final String path;
 
     RequestMappingInfo(String path) {
         this.path = path;
+    }
+
+    public static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
+        if (!requestMap.containsKey(path)) {
+            throw new ResourceNotFoundException(dos, "에러: 존재하지 않은 리소스입니다.");
+        }
+        try {
+            RequestMappingInfo requestMappingInfo = requestMap.get(path);
+            return requestMappingInfo.handle(request, dos);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw new BadRequestException(dos, "에러: 부적절한 요청입니다.");
+        } catch (Exception e) {
+            throw new WebServerException(dos);
+        }
     }
 
     public String getPath() {

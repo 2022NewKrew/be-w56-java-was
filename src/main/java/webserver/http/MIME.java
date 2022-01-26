@@ -4,36 +4,41 @@ import java.util.Arrays;
 
 public enum MIME {
 
-    HTML("text/html", ".html"),
-    CSS("text/css", ".css"),
-    JPEG("image/jpeg", ".jpg"),
-    PNG("image/png", ".png"),
-    JS("application/javascript", ".js"),
-    ICO("image/x-icon", ".ico"),
-    TTF("application/x-font-ttf", ".ttf"),
-    WOFF("application/x-font-woff", ".woff");
+    HTML("text/html", ".html", true),
+    CSS("text/css", ".css", true),
+    JPEG("image/jpeg", ".jpg", true),
+    PNG("image/png", ".png", true),
+    JS("application/javascript", ".js", true),
+    ICO("image/x-icon", ".ico", true),
+    TTF("application/x-font-ttf", ".ttf", true),
+    WOFF("application/x-font-woff", ".woff", true),
+    NONE("*/*", "", false);
 
     private final String contentType;
     private final String extension;
+    private final boolean staticResource;
 
-    MIME(String contentType, String extension) {
+    MIME(String contentType, String extension, boolean staticResource) {
         this.contentType = contentType;
         this.extension = extension;
+        this.staticResource = staticResource;
     }
 
-    public static String parse(String path) {
-        MIME mime = Arrays.stream(values())
+    public static MIME from(String path) {
+        if (path == null) {
+            return NONE;
+        }
+        return Arrays.stream(values())
                 .filter(m -> path.endsWith(m.extension))
-                .findFirst().orElse(HTML);
-
-        return mime.contentType;
+                .findFirst()
+                .orElse(NONE);
     }
 
-    public boolean isExtensionMatch(String path) {
-        return path.endsWith(extension);
+    public boolean isStaticResource() {
+        return staticResource;
     }
 
-    public String getExtension() {
-        return extension;
+    public String getContentType() {
+        return contentType;
     }
 }
