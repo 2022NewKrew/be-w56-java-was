@@ -2,17 +2,22 @@ package http;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class HttpResponse {
 
+    private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String LINE_BREAK = "\r\n";
+
     private final HttpVersion version;
-    private final HttpStatus status;
-    private final HttpHeaders headers;
-    private final String view;
+    private HttpStatus status;
+    private final Map<HttpHeader, String> headers;
+    private String view;
     private byte[] body;
 
-    public HttpResponse(HttpVersion version, HttpStatus status, HttpHeaders headers,
-        String view, byte[] body) {
+    public HttpResponse(HttpVersion version, HttpStatus status,
+        Map<HttpHeader, String> headers, String view, byte[] body) {
         this.version = version;
         this.status = status;
         this.headers = headers;
@@ -20,17 +25,13 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public String statusLine() {
-        return version.toString() + status.toString();
-    }
-
-    public String header() {
-        return headers.toString();
+    public void putHeader(HttpHeader header, String value) {
+        headers.put(header, value);
     }
 
     public void writeBody(byte[] body) {
         this.body = body;
-        this.headers.put(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length));
+        putHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(body.length));
     }
 
     public String getView() {
@@ -40,7 +41,27 @@ public class HttpResponse {
     public void write(DataOutputStream dos) throws IOException {
         dos.writeBytes(statusLine());
         dos.writeBytes(header());
-        dos.writeBytes("\r\n");
+        dos.writeBytes(LINE_BREAK);
         dos.write(body);
+    }
+
+    public void changeView(String view) {
+        if (view.startsWith(REDIRECT_PREFIX)) {
+            view = view.substring(REDIRECT_PREFIX.length());
+            status = HttpStatus.FOUND;
+        }
+        this.view = view;
+    }
+
+    private String statusLine() {
+        return version.toString() + status.toString() + LINE_BREAK;
+    }
+
+    private String header() {
+        StringBuilder sb = new StringBuilder();
+        for (Entry<HttpHeader, String> entry : headers.entrySet()) {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append(LINE_BREAK);
+        }
+        return sb.toString();
     }
 }

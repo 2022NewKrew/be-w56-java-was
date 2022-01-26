@@ -10,6 +10,14 @@ public class Url {
         this.path = path;
     }
 
+    public HttpMethod getMethod() {
+        return method;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -3,6 +3,7 @@ package http;
 public enum HttpStatus {
 
     OK(200, "OK"),
+    FOUND(302, "FOUND"),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error");
 
     private final int value;

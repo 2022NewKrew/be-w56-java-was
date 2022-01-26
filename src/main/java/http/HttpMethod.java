@@ -16,7 +16,7 @@ public enum HttpMethod {
         Arrays.stream(values()).forEach(method -> mappings.put(method.name(), method));
     }
 
-    public static HttpMethod resolve(String method) {
+    public static HttpMethod of(String method) {
         if (Objects.isNull(method)) {
             return null;
         }

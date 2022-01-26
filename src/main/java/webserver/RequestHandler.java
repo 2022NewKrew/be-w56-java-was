@@ -1,6 +1,7 @@
 package webserver;
 
 import http.HttpRequest;
+import http.HttpResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -23,11 +24,14 @@ public class RequestHandler extends Thread {
             connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = new HttpRequest(in);
+            HttpRequest httpRequest = new HttpRequest();
+            httpRequest.parse(in);
 
-            MappingHandler.invoke(httpRequest);
+            String view = MappingHandler.invoke(httpRequest);
+            HttpResponse httpResponse = httpRequest.respond();
+            httpResponse.changeView(view);
 
-            ViewHandler.handle(out, httpRequest.respond());
+            ViewHandler.handle(out, httpResponse);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

@@ -6,13 +6,13 @@ import http.HttpMethod;
 import http.HttpRequest;
 import http.PostMapping;
 import http.Url;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
+import webserver.resolver.ArgumentResolvers;
 
 public class MappingHandler {
 
@@ -40,14 +40,13 @@ public class MappingHandler {
             });
     }
 
-    public static void invoke(HttpRequest httpRequest)
-        throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static String invoke(HttpRequest httpRequest) throws Exception {
         Method method = mappings.get(httpRequest.getUrl());
         if (method == null) {
-            return;
+            return httpRequest.getUrl().getPath();
         }
+        Object[] args = ArgumentResolvers.resolve(method, httpRequest);
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        String view = (String) method.invoke(instance, httpRequest);
-        httpRequest.postProcessing(view);
+        return (String) method.invoke(instance, args);
     }
 }
