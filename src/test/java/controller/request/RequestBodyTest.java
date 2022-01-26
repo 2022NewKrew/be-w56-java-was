@@ -16,11 +16,23 @@ class RequestBodyTest {
         String queryString = "userId=melodist&name=melodist";
 
         // when
-        RequestBody requestBody = RequestBody.of(queryString);
+        RequestBody requestBody = RequestBody.from(queryString);
 
         // then
         assertThat(requestBody.getParameter("userId")).isEqualTo("melodist");
         assertThat(requestBody.getParameter("name")).isEqualTo("melodist");
+    }
+
+    @Test
+    public void requestBodyNull(){
+        // given
+        String queryString = "userId=melodist&name=melodist";
+
+        // when
+        RequestBody requestBody = RequestBody.from(queryString);
+
+        // then
+        assertThat(requestBody.getParameter("password")).isNull();
     }
 
 }

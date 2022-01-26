@@ -17,7 +17,7 @@ public class RequestBody {
         this.paramMap = paramMap;
     }
 
-    public static RequestBody of(String queryString) {
+    public static RequestBody from(String queryString) {
         Map<String, String> paramMap = HttpRequestUtils.parseQueryString(queryString);
         return new RequestBody(paramMap);
     }
