@@ -7,7 +7,7 @@ import util.LoginUtils;
 
 import java.util.Map;
 
-public class HttpService {
+public class RequestService {
 
     public void createUser(Map<String, String> params, Logger log) {
         User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));

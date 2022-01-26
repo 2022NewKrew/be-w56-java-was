@@ -67,6 +67,15 @@ public class HttpRequestUtils {
         }
     }
 
+    public static Map<String, String> parseParams(String httpMethod, String url, Map<String, String> headerMap,
+                                                  BufferedReader br) throws IOException {
+        if(httpMethod.equals("POST")) {
+            int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
+            return parseRequestBody(br, contentLength);
+        }
+        return parseQueryUrl(url);
+    }
+
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
