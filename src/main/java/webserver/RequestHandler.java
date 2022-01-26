@@ -61,7 +61,7 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
             HttpRequest httpRequest = parseRequest(br);
             // TODO: Http version should be provided by the handler. Copying from request is wrong.
-            HttpResponse httpResponse = new HttpResponse(httpRequest, httpRequest.getHttpVersion());
+            HttpResponse httpResponse = new HttpResponse(httpRequest.getHttpVersion());
             handlers.entrySet().stream()
                     .filter(entry -> entry.getKey().test(httpRequest))
                     .findFirst()

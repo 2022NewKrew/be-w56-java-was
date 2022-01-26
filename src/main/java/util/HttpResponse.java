@@ -13,14 +13,12 @@ public class HttpResponse {
     private static final Tika tika = new Tika();
     private static final Charset ENCODING = StandardCharsets.UTF_8;
 
-    private final HttpRequest httpRequest;
     private final String httpVersion;
     private final Map<String, String> headers = new HashMap<>();
     private HttpStatus httpStatus;
     private byte[] body;
 
-    public HttpResponse(HttpRequest httpRequest, String httpVersion) {
-        this.httpRequest = httpRequest;
+    public HttpResponse(String httpVersion) {
         this.httpVersion = httpVersion;
     }
 
