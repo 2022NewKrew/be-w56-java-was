@@ -18,11 +18,32 @@ public class ResponseUtils {
         throw new IllegalStateException("Utility class");
     }
 
+    public static void response(OutputStream out, Response response) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        byte[] body = Files.readAllBytes(new File("./webapp" + response.getFilePath()).toPath());
+        if(response.getHttpMethod().equals("GET")) {
+            response200Header(response.getRespContextType(), dos, body.length);
+            responseBody(dos, body);
+        }
+        if(response.getHttpMethod().equals("POST")) {
+            response302Header(response.getRespContextType(), dos, response);
+        }
+    }
+
     public static void response200Header(String respContextType, DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + respContextType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+    private static void response302Header(String respContextType, DataOutputStream dos, Response response){
+        try{
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + response.getFilePath() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -38,10 +59,4 @@ public class ResponseUtils {
         }
     }
 
-    public static void response(OutputStream out, Response response) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File("./webapp" + response.getFilePath()).toPath());
-        response200Header(response.getRespContextType(), dos, body.length);
-        responseBody(dos, body);
-    }
 }
