@@ -65,7 +65,7 @@ public class RequestHandler implements Callable<Void> {
                     location);
 
             if (method == HttpMethod.GET) {
-                processGet(out, location, httpRequest.getParameterMap());
+                processGet(out, location);
             }
             else if (method == HttpMethod.POST) {
 //                processPost(out, location, httpRequest.getBody());
@@ -135,15 +135,9 @@ public class RequestHandler implements Callable<Void> {
 
     private void processGet(
             final OutputStream out,
-            final String location,
-            final Map<String, String> parameterMap
+            final String location
     ) throws IOException
     {
-        if (LOCATION_USER_CREATE.equals(location)) {
-            userController.add(parameterMap);
-            responseWriter.writeSuccessResponse(out);
-        }
-
         responseWriter.writeFileResponse(out, location);
     }
 
