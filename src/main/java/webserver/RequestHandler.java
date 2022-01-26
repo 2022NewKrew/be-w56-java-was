@@ -44,7 +44,6 @@ public class RequestHandler extends Thread {
     private void responseHeader(DataOutputStream dos, String header) throws IOException {
         dos.writeBytes(header);
     }
-
     private void responseBody(DataOutputStream dos, byte[] body) throws IOException {
         dos.write(body, 0, body.length);
         dos.flush();
