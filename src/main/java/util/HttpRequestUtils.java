@@ -1,5 +1,8 @@
 package util;
 
+import http.HttpHeaders;
+import http.Queries;
+import http.RequestBody;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,21 +44,21 @@ public class HttpRequestUtils {
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
-    public static Map<String, String> parseQueries(String targetToken) {
+    public static Queries parseQueries(String targetToken) {
         String[] tokens = targetToken.split(PATH_QUERY_STRING_DELIMITER);
         if (tokens.length < 2) {
-            return new HashMap<>();
+            return new Queries(new HashMap<>());
         }
 
-        return parseValues(tokens[1], PARAMETER_DELIMITER);
+        return new Queries(parseValues(tokens[1], PARAMETER_DELIMITER));
     }
 
-    public static Map<String, String> parseRequestBody(String body) {
+    public static RequestBody parseRequestBody(String body) {
         if (Strings.isNullOrEmpty(body)) {
-            return new HashMap<>();
+            return new RequestBody(new HashMap<>());
         }
 
-        return parseValues(body, PARAMETER_DELIMITER);
+        return new RequestBody(parseValues(body, PARAMETER_DELIMITER));
     }
 
     public static String parseAccepts(String accepts) {
@@ -96,10 +99,12 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static Map<String, String> parseHeaders(List<String> headers) {
-        return headers.stream()
+    public static HttpHeaders parseHeaders(List<String> headerStrings) {
+        Map<String, String> headers = headerStrings.stream()
                 .map(HttpRequestUtils::parseHeader)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        return new HttpHeaders(headers);
     }
 
     public static Pair parseHeader(String header) {

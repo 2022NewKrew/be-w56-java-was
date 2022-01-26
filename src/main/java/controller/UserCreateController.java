@@ -29,7 +29,7 @@ public class UserCreateController extends AbstractController {
 
     @Override
     protected HttpResponse doPost(HttpRequest request) {
-        UserService.register(request.getParams());
+        UserService.register(request.getBody().getParams());
         return HttpResponse.redirect("/index.html");
     }
 

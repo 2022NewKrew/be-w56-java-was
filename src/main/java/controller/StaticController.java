@@ -29,7 +29,8 @@ public class StaticController extends AbstractController {
     protected HttpResponse doGet(HttpRequest request) throws IOException {
         Path path = new File(PATHNAME + request.getPath()).toPath();
 
-        return HttpResponse.ok(request.getAccept(), Files.readAllBytes(path));
+        // TODO: 파일에 맞는 contentType 으로 변경 하기
+        return HttpResponse.ok("*/*", Files.readAllBytes(path));
     }
 
     @Override
