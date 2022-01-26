@@ -21,11 +21,12 @@ public class HttpRequestFactory {
     }
 
     public HttpRequest createHttpRequest(BufferedReader br) throws IOException {
-        HttpRequestLine httpRequestLine = createHttpRequestLine(br.readLine());
+        HttpRequestLine httpRequestLine = createHttpRequestLine(br);
         return new HttpRequest(httpRequestLine, new HttpRequestHeader(new HashMap<>()));
     }
 
-    private HttpRequestLine createHttpRequestLine(String line) throws IOException {
+    private HttpRequestLine createHttpRequestLine(BufferedReader br) throws IOException {
+        String line = br.readLine();
         Map<String, String> requestLine = HttpRequestUtils.parseRequest(line);
         return new HttpRequestLine(requestLine.get("method"), requestLine.get("url"), requestLine.get("httpVersion"));
     }
