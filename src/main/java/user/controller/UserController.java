@@ -1,7 +1,6 @@
 package user.controller;
 
 import db.DataBase;
-import dto.ControllerDTO;
 import http.Request;
 import model.User;
 

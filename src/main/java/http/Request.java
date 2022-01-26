@@ -7,106 +7,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Request {
-    public static String DEFAULT_RESOURCE = "/index.html";
     private List<String> requestHeader;
+    private List<String> requestBody;
     private String path;
     private HttpMethod method;
     private Map<String, String> elements;
 
-    public Request(String requestHeader){
-        this.requestHeader = Arrays.asList(requestHeader.split("\n"));
-        parsePath(this.requestHeader.get(0));
-        parseMethod(this.requestHeader.get(0));
-        parseElementsFromGet(this.requestHeader.get(0));
-        parseElementsFromPost(this.requestHeader.get(this.requestHeader.size() - 1));
-    }
+    public Request(InputStream in) throws IOException {
+        String[] requestString = RequestParser.inputStreamToString(in).split("START_BODY");
 
+        this.requestHeader = Arrays.asList(requestString[0].split("\n"));
+        this.requestBody = (requestString.length > 1 ? new ArrayList<>(Arrays.asList(requestString[1])) : new ArrayList<>(Arrays.asList("")));
+        this.elements = new HashMap<>();
 
-    public static String inputStreamToString(InputStream in) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String str;
-
-        Integer contentLength = 0;
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        while( !((str = br.readLine()) == null) && !str.equals("") ){
-            if(str.startsWith("Content-Length: ")){
-                contentLength = Integer.valueOf(str.substring("Content-Length: ".length(), str.length()));
-            }
-            sb.append(str + "\n");
-        }
-
-        if(contentLength > 0){
-            sb.append(IOUtils.readData(br, contentLength) + "\n");
-        }
-
-        return sb.toString();
-    }
-
-    private void parsePath(String lineStr){
-        String[] strArray = lineStr.split(" ");
-        path = strArray[1];
-
-        //path에서 get방식의 elements들이 전달되는경우 '?' 까지 substring으로 만든다.
-        for(int i = 0 ; i < path.length() ; i++){
-            if(path.charAt(i) == '?'){
-                path = path.substring(0, i);
-                break;
-            }
-        }
-
-        if(path.equals("/")){
-            path = DEFAULT_RESOURCE;
-        }
-    }
-
-    public Map<String, String> getElements() {
-        return elements;
-    }
-
-    private void parseMethod(String lineStr){
-        String[] strArray = lineStr.split(" ");
-        String methodStr = strArray[0];
-
-        switch (methodStr){
-            case "GET":
-                method = HttpMethod.GET;
-                break;
-            case "POST":
-                method = HttpMethod.POST;
-                break;
-            case "PUT":
-                method = HttpMethod.PUT;
-                break;
-            case "DELETE":
-                method = HttpMethod.DELETE;
-                break;
-            default:
-                method = HttpMethod.NONE;
-                break;
-        }
-    }
-
-    private void parseElementsFromGet(String lineStr){
-        if(!method.equals(HttpMethod.GET)){
-            return;
-        }
-
-        //'?' 이후 파싱.
-        String elementSubString = divideElementSubString(lineStr);
-        this.elements = HttpRequestUtils.parseQueryString(elementSubString);
-    }
-
-    private void parseElementsFromPost(String lineStr){
-        if(!method.equals(HttpMethod.POST)){
-            return;
-        }
-
-        this.elements = HttpRequestUtils.parseQueryString(lineStr);
+        this.path = RequestParser.parsePath(this);
+        this.method = RequestParser.parseMethod(this);
+        this.elements.putAll(RequestParser.parseElementsFromGet(this));
+        this.elements.putAll(RequestParser.parseElementsFromPost(this));
     }
 
     public List<String> getRequestHeader() {
@@ -121,16 +41,12 @@ public class Request {
         return method;
     }
 
-    private String divideElementSubString(String lineStr){
+    public Map<String, String> getElements() {
+        return elements;
+    }
 
-        //parse substring after the first question mark.
-        for(int i = 0 ; i < lineStr.length() ; i++){
-            if(lineStr.charAt(i) == '?'){
-                return lineStr.substring(i + 1, lineStr.length());
-            }
-        }
-
-        return null;
+    public List<String> getRequestBody() {
+        return requestBody;
     }
 
     @Override
