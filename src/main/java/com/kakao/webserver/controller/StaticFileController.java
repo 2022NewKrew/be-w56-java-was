@@ -25,8 +25,8 @@ public class StaticFileController implements HttpController {
 
     @Override
     public boolean isValidRequest(HttpMethod method, String path) {
-        return buildProperPath(path).toFile()
-                .exists();
+        return HttpMethod.GET.equals(method)
+                && buildProperPath(path).toFile().exists();
     }
 
     @Override

@@ -24,7 +24,8 @@ public class UserController implements HttpController {
 
     @Override
     public boolean isValidRequest(HttpMethod method, String path) {
-        return path.matches("/user/create");
+        return HttpMethod.GET.equals(method)
+                && path.matches("/user/create");
     }
 
     @Override

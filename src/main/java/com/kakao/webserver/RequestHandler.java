@@ -1,6 +1,5 @@
 package com.kakao.webserver;
 
-import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
 import com.kakao.util.ReflectionUtils;
 import com.kakao.webserver.controller.HttpController;
@@ -39,7 +38,7 @@ public class RequestHandler implements Runnable {
 
     private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
         for (HttpController controller : controllerList) {
-            if (controller.isValidRequest(HttpMethod.GET, httpRequest.getUrl().getPath())) {
+            if (controller.isValidRequest(httpRequest.getMethod(), httpRequest.getUrl().getPath())) {
                 controller.handleRequest(httpRequest, out);
                 return;
             }
