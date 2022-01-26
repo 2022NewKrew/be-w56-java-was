@@ -7,10 +7,18 @@ public class HttpResponse {
 
     private final String viewPath;
     private final Cookies cookies;
+    private final HttpStatus httpStatus;
 
     public HttpResponse(String viewPath) {
         this.viewPath = viewPath;
         this.cookies = new Cookies();
+        this.httpStatus = HttpStatus.OK;
+    }
+
+    public HttpResponse(String viewPath, HttpStatus httpStatus) {
+        this.viewPath = viewPath;
+        this.cookies = new Cookies();
+        this.httpStatus = httpStatus;
     }
 
     public void addCookie(String name, String value) {
@@ -39,6 +47,10 @@ public class HttpResponse {
 
     public boolean hasCookies() {
         return !cookies.isEmpty();
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
 }
