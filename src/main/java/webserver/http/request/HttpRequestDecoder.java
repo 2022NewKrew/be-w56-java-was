@@ -75,9 +75,18 @@ public class HttpRequestDecoder {
         return requestHeaders;
     }
 
-    private static HttpRequestBody createRequestBody(BufferedReader br) {
-        // TODO : 3단계 요구사항
-        HttpRequestBody httpRequestBody = new HttpRequestBody("");
+    private static HttpRequestBody createRequestBody(BufferedReader br) throws IOException {
+        StringBuilder body = new StringBuilder();
+
+        while (br.ready()) {
+            String line = br.readLine();
+            if (line.isEmpty()) {
+                break;
+            }
+            body.append(line);
+            body.append("\n");
+        }
+        HttpRequestBody httpRequestBody = new HttpRequestBody(body.toString());
         log.debug("Request Body(size:{}) decoded", httpRequestBody.getBodySize());
         return httpRequestBody;
     }
