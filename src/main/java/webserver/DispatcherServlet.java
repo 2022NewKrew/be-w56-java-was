@@ -6,6 +6,7 @@ import util.response.HttpResponse;
 import webserver.controller.Controller;
 import util.request.HttpRequest;
 import util.request.HttpRequestReader;
+import webserver.controller.ControllerMapping;
 import webserver.view.ViewRenderer;
 
 import java.io.*;
@@ -28,17 +29,15 @@ public class DispatcherServlet extends Thread {
         try (HttpRequestReader hr = new HttpRequestReader(connection.getInputStream());
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
-            HttpRequest httpRequestMap = hr.read();
-            HttpResponse<?> httpResponse = getController(httpRequestMap).handle(httpRequestMap, dos);
+            HttpRequest httpRequest = hr.read();
+            Controller<?> controller = controllerMapping.getController(
+                    httpRequest.getMethod(), httpRequest.getUrl()).orElseThrow();
+
+            HttpResponse<?> httpResponse = controller.handle(httpRequest, dos);
             ViewRenderer.render(httpResponse, dos);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private Controller<?> getController(HttpRequest httpRequest){
-        String url = httpRequest.getUrl();
-        return controllerMapping.getController(httpRequest.getMethod(), url).orElseThrow();
     }
 }

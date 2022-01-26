@@ -12,6 +12,8 @@ public class HttpRequest {
     private final String url;
     private final HttpVersion httpVersion;
     private final Map<String, String> queryParams;
+    private final Map<String, String> headers;
+    private final String body;
 
     public String getQueryParam(String queryParamName){
         return queryParams.get(queryParamName);

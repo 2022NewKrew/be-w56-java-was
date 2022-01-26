@@ -5,23 +5,25 @@ import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
 import util.request.MethodType;
 import util.response.HttpResponse;
-import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
 import webserver.domain.User;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 public class UserController implements Controller<String>{
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private static final String BASE_URL = "/user";
-    private static final String JOIN_URL = "/user/create";
+    private static final String JOIN_URL = BASE_URL.concat("/create");
 
     @Override
     public boolean supports(MethodType methodType, String url) {
-        return url.startsWith(JOIN_URL) && methodType == MethodType.GET;
+        return url.startsWith(JOIN_URL) && methodType == MethodType.POST;
     }
 
     @Override
@@ -46,9 +48,16 @@ public class UserController implements Controller<String>{
     }
 
     private User createUser(HttpRequest httpRequest){
-        return new User(httpRequest.getQueryParam("userId")
-                , httpRequest.getQueryParam("password")
-                , httpRequest.getQueryParam("name")
-                , httpRequest.getQueryParam("email"));
+        Map<String, String > bodyParams
+                = Arrays.stream(httpRequest.getBody().split("&"))
+                .map(parameter -> {
+                    String[] split = parameter.split("=");
+                    return Map.entry(split[0], split[1]);})
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        return new User(bodyParams.get("userId")
+                , bodyParams.get("password")
+                , bodyParams.get("name")
+                , bodyParams.get("email"));
     }
 }
