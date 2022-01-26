@@ -18,3 +18,4 @@
 ### LEARNED
 * 403, 404 reponse의 구조
 * 메소드를 저장할 수 있게 하는 java.util.function.Function에 대한 공부
+* Optional을 Handling 할 수 있는 방법.(orElse)
