@@ -5,8 +5,10 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import lombok.extern.slf4j.Slf4j;
 import model.User;
 
+@Slf4j
 public class DataBase {
     private static Map<String, User> users = Maps.newHashMap();
 

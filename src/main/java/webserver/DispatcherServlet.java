@@ -1,8 +1,7 @@
 package webserver;
 
 import controller.KinaController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import util.HttpRequestUtils;
 import webserver.annotation.RequestMethod;
 import webserver.model.KinaHttpRequest;
@@ -14,8 +13,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+@Slf4j
 public class DispatcherServlet extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final KinaController CONTROLLER = KinaController.getInstance();
     private static final ViewRenderer RENDERER = ViewRenderer.getInstance();
     private Socket connection;

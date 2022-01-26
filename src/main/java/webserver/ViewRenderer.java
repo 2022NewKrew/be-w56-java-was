@@ -1,7 +1,6 @@
 package webserver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -9,8 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 public class ViewRenderer {
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private static final ViewRenderer INSTANCE = new ViewRenderer();
 

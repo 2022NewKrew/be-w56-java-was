@@ -1,17 +1,15 @@
 package controller;
 
 import db.DataBase;
+import lombok.extern.slf4j.Slf4j;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.DispatcherServlet;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
 
 import java.util.Map;
 
+@Slf4j
 public class KinaController {
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private static final KinaController INSTANCE = new KinaController();
 
@@ -31,12 +29,12 @@ public class KinaController {
     @RequestMapping(value = "/user/create", method = RequestMethod.GET)
     public String createUser(Map<String, String> queryMap) {
         log.info("KinaController - createUser() " + queryMap.entrySet().toString());
-        User user = new User(
-                queryMap.get("userId"),
-                queryMap.get("password"),
-                queryMap.get("name"),
-                queryMap.get("email")
-        );
+        User user = User.builder()
+                .userId(queryMap.get("userId"))
+                .password(queryMap.get("password"))
+                .name(queryMap.get("name"))
+                .email(queryMap.get("email"))
+                .build();
         DataBase.addUser(user);
         log.info("DataBase.findAll(): " + DataBase.findAll().toString());
         return "redirect:/index.html";

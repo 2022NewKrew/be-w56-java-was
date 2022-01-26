@@ -1,7 +1,6 @@
 package webserver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
 
@@ -9,8 +8,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class HandlerMapping {
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static Map<String, Method> getRequestMap;
     private static Map<String, Method> postRequestMap;
     private static Map<String, Method> putRequestMap;

@@ -4,11 +4,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import controller.KinaController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class WebServer {
-    private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
