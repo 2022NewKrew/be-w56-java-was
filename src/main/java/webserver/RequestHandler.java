@@ -1,20 +1,35 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.HandleRequestHeader;
-import response.HandleResponseBody;
+import springmvc.frontcontroller.FrontController;
+import webserver.http.request.CustomHttpRequest;
+import webserver.http.request.HttpRequestHandler;
+import webserver.http.response.CustomHttpResponse;
+import webserver.http.response.HttpResponseHandler;
+
+import javax.management.ServiceNotFoundException;
+import java.io.*;
+import java.net.Socket;
+import java.nio.file.Files;
+
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-
     private Socket connection;
+
+    //front controller
+    private final FrontController frontController;
+
+    //http
+    private HttpRequestHandler httpRequestHandler;
+    private HttpResponseHandler httpResponseHandler;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        httpRequestHandler = new HttpRequestHandler();
+        httpResponseHandler = new HttpResponseHandler();
+        frontController = new FrontController();
     }
 
     public void run() {
@@ -23,20 +38,35 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            HandleRequestHeader handleRequestHeader = new HandleRequestHeader();
+            httpRequestHandler.parseRequest(br);
 
-            handleRequestHeader.parseRequestHeader(br);
+            CustomHttpRequest httpRequest = httpRequestHandler.getHttpRequest();
+            CustomHttpResponse httpResponse = httpResponseHandler.getHttpResponse();
+            String viewPath = null;
 
-            HandleResponseBody handleResponseBody = new HandleResponseBody();
-            handleResponseBody.setBodyResource(handleRequestHeader.getUrl());
+            if(httpRequestHandler.isStaticResourceRequest()) {
+                viewPath = "./webapp" + httpRequest.getRequestURI();
+            } else {
+                viewPath = frontController.service(httpRequest, httpResponse);
+            }
 
-            DataOutputStream dos = new DataOutputStream(out);
-            handleResponseBody.response200Header(dos, handleRequestHeader.getFirstAccept());
-            handleResponseBody.responseBody(dos);
+            log.debug("view path : {}", viewPath);
+            httpResponse.setBody(Files.readAllBytes(new File(viewPath).toPath()));
+            httpResponseHandler.writeResponseHeader(httpRequest);
+            writeWithOutPutStream(new DataOutputStream(out), httpResponse);
         } catch (IOException e) {
+            log.error(e.getMessage());
+        } catch (ServiceNotFoundException e) {
             log.error(e.getMessage());
         }
     }
 
+    private void writeWithOutPutStream(DataOutputStream dos, CustomHttpResponse response) throws IOException {
+        log.debug("header content : {}", response.getResponseHeaderContent());
+        dos.writeBytes(response.getResponseHeaderContent());
+        dos.write(response.getBody().getBodyContent());
 
+        dos.flush();
+        dos.close();
+    }
 }
