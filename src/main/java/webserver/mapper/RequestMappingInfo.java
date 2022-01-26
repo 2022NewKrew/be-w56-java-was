@@ -1,11 +1,12 @@
-package webserver;
+package webserver.mapper;
 
 import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import webserver.dto.UserCreateRequest;
+import webserver.provider.StaticResourceProvider;
+import dto.UserCreateRequest;
 import webserver.exception.BadRequestException;
 import webserver.exception.ResourceNotFoundException;
 import webserver.exception.WebServerException;
@@ -23,7 +24,7 @@ public enum RequestMappingInfo {
     ROOT("/") {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
-            byte[] body = StaticResourceManager.getBytesFromPath("/index.html");
+            byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)

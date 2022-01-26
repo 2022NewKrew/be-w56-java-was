@@ -1,5 +1,6 @@
-package webserver;
+package webserver.handler;
 
+import webserver.provider.ResponseProvider;
 import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.MyHttpResponse;

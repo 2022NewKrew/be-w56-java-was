@@ -1,5 +1,6 @@
-package webserver;
+package webserver.mapper;
 
+import webserver.provider.ResponseProvider;
 import webserver.http.MIME;
 import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;

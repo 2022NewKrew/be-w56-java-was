@@ -1,4 +1,4 @@
-package webserver;
+package webserver.provider;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static webserver.WebServer.DEFAULT_RESOURCES_DIR;
 
-public class StaticResourceManager {
+public class StaticResourceProvider {
 
     private static final Map<String, ByteArray> resourceCacheMap = new HashMap<>();
 

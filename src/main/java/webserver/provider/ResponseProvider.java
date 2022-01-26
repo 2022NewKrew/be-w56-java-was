@@ -1,4 +1,4 @@
-package webserver;
+package webserver.provider;
 
 import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
@@ -12,7 +12,7 @@ public class ResponseProvider {
 
     public static MyHttpResponse responseStaticResource(DataOutputStream dos, String path) {
         try {
-            byte[] body = StaticResourceManager.getBytesFromPath(path);
+            byte[] body = StaticResourceProvider.getBytesFromPath(path);
             MIME mime = MIME.from(path);
 
             return MyHttpResponse.builder(dos)
