@@ -2,6 +2,7 @@ package http.response;
 
 import http.HttpStatusCode;
 import http.ResponseData;
+import model.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
@@ -11,6 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static util.ConstantValues.REDIRECT_COMMAND;
+import static util.ConstantValues.REDIRECT_IDX;
 
 public class Response {
     private static final String ROOT_URL = "http://localhost:8080";
@@ -18,42 +23,29 @@ public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
 
     private final DataOutputStream dos;
-    private final HttpStatusCode statusCode;
-    private final String url;
+    private final ModelAndView mv;
+    private HttpStatusCode statusCode = HttpStatusCode.NOT_FOUND;
+    private String urlWithDirectory;
 
-    public Response(OutputStream out, ResponseData responseData){
-        this.dos = new DataOutputStream(out);
-        this.statusCode = responseData.getStatusCode();
-        this.url = responseData.getUrl();
+
+    public Response(DataOutputStream dos, ModelAndView mv){
+        this.dos = dos;
+        this.mv = mv;
     }
+
+    private void generateHttpStatus(){
+        if(mv.getViewName().indexOf(REDIRECT_COMMAND) == REDIRECT_IDX){
+            statusCode = HttpStatusCode.REDIRECT;
+        }
+        if(Files.isRegularFile(Path.of(ROOT_DIRECTORY + mv.getViewName()))){
+            statusCode = HttpStatusCode.SUCCESS;
+        }
+    }
+
 
     public void write() throws IOException {
-        if(statusCode.getStatusCode() == 302){
-            responseRedirect();
-        }
-        else{
-            String mimeType = IOUtils.readMimeType(ROOT_DIRECTORY + url);
-            byte[] body = Files.readAllBytes(new File(ROOT_DIRECTORY + url).toPath());
-            responseHeader(body.length, mimeType);
-            responseBody(body);
-        }
-    }
-
-    private void responseHeader(int lengthOfBodyContent, String mimeType) throws IOException{
-        dos.writeBytes("HTTP/1.1 "+ statusCode.getStatusCode() +" "+ statusCode.getMessage() +"\r\n");
-        dos.writeBytes("Content-Type: " + mimeType +";charset=utf-8\r\n");
-        dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-        dos.writeBytes("\r\n");
-    }
-
-    private void responseRedirect() throws IOException{
-        log.info("REDIRECT");
-        dos.writeBytes("HTTP/1.1 "+ statusCode.getStatusCode() + " " + statusCode.getMessage() + "\r\n");
-        dos.writeBytes("Location: "+ ROOT_URL + url + "\r\n");
-    }
-
-    private void responseBody(byte[] body) throws IOException{
-        dos.write(body, 0, body.length);
-        dos.flush();
+        generateHttpStatus();
+        log.info("HTTP STATUS : " + statusCode.getStatusCode() + ", " + statusCode.getMessage());
+        statusCode.response(dos, mv);
     }
 }

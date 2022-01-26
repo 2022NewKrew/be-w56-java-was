@@ -5,7 +5,6 @@ import model.ModelAndView;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static util.ConstantValues.*;
 
 public class ViewResolver {
     private final Map<String, String> viewMap = new ConcurrentHashMap<>();
@@ -20,8 +19,10 @@ public class ViewResolver {
         return viewResolver;
     }
 
-    public String getView(ModelAndView mv){
-        return viewMap.get(mv.getViewName()) != null ?
-                viewMap.get(mv.getViewName()) : mv.getViewName();
+    public ModelAndView getView(ModelAndView mv){
+        if(viewMap.get(mv.getViewName()) != null){
+            mv.setViewName(viewMap.get(mv.getViewName()));
+        }
+        return mv;
     }
 }

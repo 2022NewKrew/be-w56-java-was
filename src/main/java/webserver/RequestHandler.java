@@ -2,19 +2,14 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import controller.Controller;
-import controller.ControllerDeprecated;
 import model.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.ViewResolver;
 import http.HandlerAdapter;
 import http.HandlerMapper;
-import http.HttpStatusCode;
-import http.ResponseData;
 import http.request.Request;
 import http.response.Response;
 
@@ -40,15 +35,14 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                OutputStream out = connection.getOutputStream()) {
+             DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
             Request request = new Request(br);
             request.read();
 
             Controller controller = handlerMapper.get(request.getMethod(), request.getUrl());
-            ModelAndView mv = checkController(controller, request);
-            String view = viewResolver.getView(mv);
+            ModelAndView mv = viewResolver.getView(checkController(controller, request));
 
-            Response response = new Response(out, checkDirectory(request));
+            Response response = new Response(dos, mv);
             response.write();
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -60,14 +54,5 @@ public class RequestHandler extends Thread {
             return new ModelAndView(request.getUrl());
         }
         return handlerAdapter.handleController(controller, request);
-    }
-
-    private ResponseData checkDirectory(Request request){
-        if(Files.isRegularFile(Path.of(ROOT_DIRECTORY+ request.getUrl()))){
-            log.info("File exist");
-            return new ResponseData(HttpStatusCode.SUCCESS, request.getUrl());
-        }
-        log.info("URL mapping");
-        return ControllerDeprecated.proceed(request);
     }
 }
