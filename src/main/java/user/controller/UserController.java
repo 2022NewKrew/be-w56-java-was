@@ -10,13 +10,13 @@ import java.util.Map;
 public class UserController {
 
     //회원가입
-    public static String execute(ControllerDTO controllerDTO) {
-        Map<String, String> elements = controllerDTO.getElement();
+    public static String execute(Request request) {
+        Map<String, String> elements = request.getElements();
 
         User user = new User(elements.get("userId"),
-                elements.get("password"),
-                elements.get("name"),
-                elements.get("email"));
+                            elements.get("password"),
+                            elements.get("name"),
+                            elements.get("email"));
 
         DataBase.addUser(user);
 
