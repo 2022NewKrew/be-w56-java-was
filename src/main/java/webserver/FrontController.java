@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 public class FrontController extends Thread {
     private static final Logger log = LoggerFactory.getLogger(FrontController.class);
+    private static final HandlerMapper handlerMapper = new HandlerMapper();
+    private static final ViewResolver viewResolver = new ViewResolver();
     private Socket connection;
 
     public FrontController(Socket connectionSocket) {
@@ -20,7 +22,7 @@ public class FrontController extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             Request request = new Request(in);
             Response response = new Response(out);
-            HandlerMapper.map(request, response);
+            viewResolver.resolve(response, handlerMapper.map(request));
         } catch (IOException e) {
             log.error(e.getMessage());
         }

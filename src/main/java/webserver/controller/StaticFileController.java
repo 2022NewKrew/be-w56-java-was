@@ -9,9 +9,7 @@ import java.nio.file.Files;
 
 public class StaticFileController implements Controller{
     @Override
-    public void start(Request request, Response response) throws IOException {
-        byte[] body = Files.readAllBytes(new File("./webapp" + request.getUri()).toPath());
-        response.writeHeader(body.length, 200);
-        response.writeBody(body);
+    public String control(Request request) throws IOException {
+        return request.getUri();
     }
 }

@@ -1,7 +1,7 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
-### 습득 지식 정리(21.01.24)
+### 습득 지식 정리(22.01.24)
 - #### URL과 URI의 차이
   - /index(URI O, URL X) -> /index.html(URI O, URL O)
 - #### InputStream vs InputStreamReader vs BufferedReader

@@ -19,6 +19,12 @@ public class Response {
         dos.writeBytes("\r\n");
     }
 
+    public void writeRedirectHeader(String redirectUri) throws IOException {
+        dos.writeBytes("HTTP/1.1 302 OK \r\n");
+        dos.writeBytes("Location: " + redirectUri + "\r\n");
+        dos.writeBytes("\r\n");
+    }
+
     public void writeBody(byte[] body) throws IOException {
         dos.write(body, 0, body.length);
         dos.flush();

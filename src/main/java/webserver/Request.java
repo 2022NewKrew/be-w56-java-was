@@ -6,14 +6,16 @@ import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Request {
     private static final Logger log = LoggerFactory.getLogger(Request.class);
     private final String method;
     private final String uri;
-    private final List<HttpRequestUtils.Pair> HeaderAttributes;
+    private final Map<String,String> HeaderAttributes;
     private final Map<String,String> parameters;
 
     public Request(InputStream in) throws IOException {
@@ -25,13 +27,14 @@ public class Request {
         this.HeaderAttributes = findHeaderAttributes(br);
     }
 
-    private List<HttpRequestUtils.Pair> findHeaderAttributes(BufferedReader br) throws IOException {
+    private Map<String,String> findHeaderAttributes(BufferedReader br) throws IOException {
         List<HttpRequestUtils.Pair> HeaderAttributes = new ArrayList<>();
         String line;
         while(!(line=br.readLine()).equals("")){
             HeaderAttributes.add(HttpRequestUtils.parseHeader(line));
         }
-        return HeaderAttributes;
+        return HeaderAttributes.stream().filter(p -> p != null)
+                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
     private Map<String,String> findParameters(String requestLine){
@@ -59,7 +62,7 @@ public class Request {
         return uri;
     }
 
-    public List<HttpRequestUtils.Pair> getHeaderAttributes() {
+    public Map<String,String> getHeaderAttributes() {
         return HeaderAttributes;
     }
 
