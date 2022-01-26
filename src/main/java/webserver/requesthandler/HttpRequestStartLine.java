@@ -1,4 +1,4 @@
-package webserver.common.util;
+package webserver.requesthandler;
 
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
