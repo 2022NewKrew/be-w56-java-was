@@ -6,17 +6,26 @@ public class HttpRequest {
 
     private final RequestLine requestLine;
     private final HttpHeaders headers;
+    private HttpBody body;
 
-    public HttpRequest(String requestLine, Map<String, String> headers) {
-        this.requestLine = new RequestLine(requestLine);
+    public HttpRequest(RequestLine requestLine, Map<String, String> headers) {
+        this.requestLine = requestLine;
         this.headers = new HttpHeaders(headers);
+    }
+
+    public void addHttpBody(Map<String, String> body) {
+        this.body = new HttpBody(body);
     }
 
     public String getRequestPath() {
         return requestLine.getPath();
     }
 
-    public String getValueByHeader(String header) {
-        return headers.getValueByHeader(header);
+    public HttpBody getHttpBody() {
+        return body;
+    }
+
+    public int getContentLength() {
+        return Integer.parseInt(headers.getValueByHeader("Content-Length"));
     }
 }

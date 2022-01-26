@@ -18,11 +18,21 @@ public class ResponseHandler {
         this.dos = dos;
     }
 
-    public void responseHeader(HttpStatus status, int lengthOfBodyContent, String contentType) {
+    public void response200Header(int lengthOfBodyContent, String contentType) {
         try {
-            dos.writeBytes("HTTP/1.1 " + status + Constants.LINE_DELIMITER);
+            dos.writeBytes("HTTP/1.1 " + HttpStatus.OK + Constants.LINE_DELIMITER);
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8" + Constants.LINE_DELIMITER);
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + Constants.LINE_DELIMITER);
+            dos.writeBytes(Constants.LINE_DELIMITER);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    public void response302Header(String location) {
+        try {
+            dos.writeBytes("HTTP/1.1 " + HttpStatus.FOUND + Constants.LINE_DELIMITER);
+            dos.writeBytes("Location: " + location + Constants.LINE_DELIMITER);
             dos.writeBytes(Constants.LINE_DELIMITER);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
