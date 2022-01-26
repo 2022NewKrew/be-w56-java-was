@@ -16,9 +16,9 @@ public class RequestControllerMatcher {
         this.url = url;
     }
 
-    public String match(Map<String, String> queryMap)
+    public String match(Map<String, String> queryMap, Map<String, String> bodyMap)
             throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
-        String result = RequestProcessor.process(Controller.class, url, httpMethod, queryMap);
+        String result = RequestProcessor.process(Controller.class, url, httpMethod, queryMap, bodyMap);
         if(result.equals("")) {
             return url;
         }
