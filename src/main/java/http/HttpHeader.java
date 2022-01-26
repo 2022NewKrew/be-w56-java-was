@@ -50,8 +50,8 @@ public class HttpHeader {
         headers.put(key, value);
     }
 
-    public void setContentType(String contentType) {
-        headers.put(CONTENT_TYPE, contentType);
+    public void setContentType(MediaType contentType) {
+        headers.put(CONTENT_TYPE, contentType.getText());
     }
 
     public void setContentLength(int contentLength) {

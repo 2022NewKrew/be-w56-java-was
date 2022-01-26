@@ -3,10 +3,7 @@ package controller.user;
 import annotation.Controller;
 import annotation.RequestMapping;
 import db.DataBase;
-import http.HttpHeader;
-import http.HttpRequest;
-import http.HttpResponse;
-import http.HttpStatus;
+import http.*;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +33,7 @@ public class UserController {
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType("text/html");
+            responseHeader.setContentType(MediaType.TEXT_HTML);
             responseHeader.setContentLength(body.length);
             responseHeader.setLocation("/index.html");
 

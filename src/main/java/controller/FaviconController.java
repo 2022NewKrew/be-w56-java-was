@@ -2,10 +2,7 @@ package controller;
 
 import annotation.Controller;
 import annotation.RequestMapping;
-import http.HttpHeader;
-import http.HttpRequest;
-import http.HttpResponse;
-import http.HttpStatus;
+import http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +27,7 @@ public class FaviconController {
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType("image/avif");
+            responseHeader.setContentType(MediaType.IMAGE_AVIF);
             responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
