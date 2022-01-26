@@ -50,6 +50,7 @@ public class HttpHeaderUtils {
             case "html": return "text/html";
             case "css": return "text/css";
             case "js": return "text/javascript";
+            case "ico": return "image/x-icon";
             default: return "text/html";
         }
     }
