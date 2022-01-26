@@ -1,4 +1,4 @@
-package webserver.request;
+package util.request;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,25 +1,32 @@
-package webserver.request;
+package util.request;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
 
-public class RequestReader {
-    static final String BLANK_LINE = "";
-    private static final Logger log = LoggerFactory.getLogger(RequestReader.class);
+public class HttpRequestReader implements AutoCloseable{
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestReader.class);
 
-    public HttpRequest read(BufferedReader br) throws IOException {
-        HttpRequest httpRequest = parsingLine(br);
-        parsingHeader(br, httpRequest);
+    private BufferedReader br;
+
+    public HttpRequestReader(InputStream in) {
+        this.br = new BufferedReader(new InputStreamReader(in));
+    }
+
+    public HttpRequest read() throws IOException {
+        HttpRequest httpRequest = parsingLine();
+        parsingHeader(httpRequest);
         return httpRequest;
     }
 
-    private HttpRequest parsingLine(BufferedReader br) throws IOException {
+    private HttpRequest parsingLine() throws IOException {
         String line = br.readLine();
         log.info("request line {}: ", line);
 
@@ -41,11 +48,16 @@ public class RequestReader {
         return HttpRequestUtils.parseQueryString(urlSplit[1]);
     }
 
-    private void parsingHeader(BufferedReader br, HttpRequest httpRequest) throws IOException {
+    private void parsingHeader(HttpRequest httpRequest) throws IOException {
         String line = br.readLine();
-        while (!line.equals(BLANK_LINE)) {
+        while (!Strings.isNullOrEmpty(line)) {
             line = br.readLine();
             log.debug("request header {}: ", line);
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        br.close();
     }
 }

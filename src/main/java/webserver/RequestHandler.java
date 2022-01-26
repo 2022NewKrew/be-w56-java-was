@@ -3,8 +3,8 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.controller.Controller;
-import webserver.request.HttpRequest;
-import webserver.request.RequestReader;
+import util.request.HttpRequest;
+import util.request.HttpRequestReader;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,7 +12,6 @@ import java.net.Socket;
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final ControllerMapping controllerMapping = new ControllerMapping();
-    private static final RequestReader REQUEST_READER = new RequestReader();
 
     private final Socket connection;
 
@@ -24,10 +23,10 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}"
                 , connection.getInetAddress(), connection.getPort());
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        try (HttpRequestReader hr = new HttpRequestReader(connection.getInputStream());
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
-            HttpRequest httpRequestMap = REQUEST_READER.read(br);
+            HttpRequest httpRequestMap = hr.read();
             getController(httpRequestMap).handle(httpRequestMap, dos);
         } catch (Exception e) {
             log.error(e.getMessage());

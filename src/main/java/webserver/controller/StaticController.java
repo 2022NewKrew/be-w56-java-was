@@ -2,7 +2,7 @@ package webserver.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.request.HttpRequest;
+import util.request.HttpRequest;
 
 import java.io.DataOutputStream;
 import java.io.File;
