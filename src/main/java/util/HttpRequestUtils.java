@@ -10,10 +10,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import model.Request;
+import model.RequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 public class HttpRequestUtils {
     private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
@@ -34,14 +33,14 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
-    public static Request parseRequestHeader(String url) {
+    public static RequestLine parseRequestLine(String url) {
         log.debug("request line : {}", url);
         String[] split = url.split(" ");
         String[] pathSplit = split[1].split("\\?");
         if (pathSplit.length == 1) {
-            return new Request(split[0], split[1], split[2]);
+            return new RequestLine(split[0], split[1], split[2]);
         }
-        return new Request(split[0], pathSplit[0], pathSplit[1], split[2]);
+        return new RequestLine(split[0], pathSplit[0], pathSplit[1], split[2]);
     }
 
     public static String readHeaderAccept(BufferedReader br) throws IOException {

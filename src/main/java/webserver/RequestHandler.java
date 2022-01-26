@@ -3,14 +3,12 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
-import model.Request;
+import model.RequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.RequestPathController;
-import util.ResponseStatus;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -26,7 +24,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request requestHeader;
+            RequestLine requestLine;
             String contentType;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line = br.readLine();
@@ -34,12 +32,12 @@ public class RequestHandler extends Thread {
                     return;
                 }
 
-                requestHeader = HttpRequestUtils.parseRequestHeader(line);
+                requestLine = HttpRequestUtils.parseRequestLine(line);
                 contentType = HttpRequestUtils.readHeaderAccept(br);
 
                 // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
                 try (DataOutputStream dos = new DataOutputStream(out)) {
-                    RequestPathController.urlMapping(requestHeader, contentType, dos);
+                    RequestPathController.urlMapping(requestLine, contentType, dos);
                 }
             }
         } catch (IOException e) {

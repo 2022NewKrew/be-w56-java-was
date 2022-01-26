@@ -36,12 +36,12 @@ try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCh
         }
 }
 
-requestHeader = HttpRequestUtils.parseRequestHeader(line);
+requestLineHeader = HttpRequestUtils.parseRequestHeader(line);
 contentType = HttpRequestUtils.readHeaderAccept(br);
 
 // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 try (DataOutputStream dos = new DataOutputStream(out)) {
-    RequestPathController.urlMapping(requestHeader, contentType, dos);
+    RequestPathController.urlMapping(requestLineHeader, contentType, dos);
 }
 ```
 
@@ -54,12 +54,12 @@ try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCh
             return;
         }
 
-        requestHeader = HttpRequestUtils.parseRequestHeader(line);
+        requestLineHeader = HttpRequestUtils.parseRequestHeader(line);
         contentType = HttpRequestUtils.readHeaderAccept(br);
 
         // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
         try (DataOutputStream dos = new DataOutputStream(out)) {
-            RequestPathController.urlMapping(requestHeader, contentType, dos);
+            RequestPathController.urlMapping(requestLineHeader, contentType, dos);
         }
 }
 ```

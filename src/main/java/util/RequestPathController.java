@@ -1,7 +1,7 @@
 package util;
 
 import db.DataBase;
-import model.Request;
+import model.RequestLine;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +18,17 @@ public class RequestPathController {
     private static final String URL_PREFIX = "./webapp";
     private static final String DEFAULT_CONTENT_TYPE = "text/html";
 
-    public static void urlMapping(Request requestHeader, String contentType, DataOutputStream dos) throws IOException {
-        log.info("Request Url : {}", requestHeader.getUrl());
-        switch (requestHeader.getUrl()) {
+    public static void urlMapping(RequestLine requestLine, String contentType, DataOutputStream dos) throws IOException {
+        log.info("Request Url : {}", requestLine.getUrl());
+        switch (requestLine.getUrl()) {
             case "/":
                 rootPath(dos);
                 break;
             case "/user/create":
-                userCreatePath(requestHeader, contentType, dos);
+                userCreatePath(requestLine, contentType, dos);
                 break;
             default:
-                defaultPath(requestHeader, contentType, dos);
+                defaultPath(requestLine, contentType, dos);
                 break;
         }
     }
@@ -39,8 +39,8 @@ public class RequestPathController {
         responseBody(dos, body);
     }
 
-    private static void userCreatePath(Request requestHeader, String contentType, DataOutputStream dos) {
-        Map<String, String> userInput = HttpRequestUtils.parseQueryString(requestHeader.getQuery());
+    private static void userCreatePath(RequestLine requestLine, String contentType, DataOutputStream dos) {
+        Map<String, String> userInput = HttpRequestUtils.parseQueryString(requestLine.getQuery());
         User user = new User(userInput.get("userId"), userInput.get("password"), userInput.get("name"), userInput.get("email"));
         DataBase.addUser(user);
 
@@ -49,8 +49,8 @@ public class RequestPathController {
         responseBody(dos, body);
     }
 
-    private static void defaultPath(Request requestHeader, String contentType, DataOutputStream dos) throws IOException {
-        File file = new File(URL_PREFIX + requestHeader.getUrl());
+    private static void defaultPath(RequestLine requestLine, String contentType, DataOutputStream dos) throws IOException {
+        File file = new File(URL_PREFIX + requestLine.getUrl());
         byte[] body;
 
         if (file.exists()) {
