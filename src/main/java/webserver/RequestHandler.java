@@ -1,23 +1,39 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import collections.RequestHeaders;
 import collections.RequestStartLine;
-import collections.ResponseHeaders;
-import model.User;
+import controller.Controller;
+import controller.GetController;
+import controller.PostController;
+import db.DataBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import static util.HttpRequestUtils.*;
 
 public class RequestHandler extends Thread {
+
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final DataBase DATA_BASE = new DataBase();
+    private static final UserService USER_SERVICE = new UserService(DATA_BASE);
+
+    private static final GetController GET_CONTROLLER = new GetController(USER_SERVICE);
+    private static final PostController POST_CONTROLLER = new PostController(USER_SERVICE);
+
+    private static final Map<String, Controller> CONTROLLER_MAP = new HashMap<>(){{
+        put("GET", GET_CONTROLLER);
+        put("POST", POST_CONTROLLER);
+    }};
+    private static final Map<String, String> PATH_METHOD_MAP = new HashMap<>() {{
+        put("/user/create", "userCreate");
+    }};
 
     private Socket connection;
 
@@ -59,72 +75,30 @@ public class RequestHandler extends Thread {
             }
             RequestHeaders requestHeaders = new RequestHeaders(tempRequestHeaders);
 
+            // 적합한 핸들러, 컨트롤러 메소드 찾기 -> 둘 중 하나라도 실패하면 처리 가능한 요청 아님
+            String controllerMethodName = searchControllerMethod(requestStartLine);
+            Controller controller = (controllerMethodName.equals("staticResource")) ? CONTROLLER_MAP.get("GET") : searchController(requestStartLine);
+
             // 응답 준비
             DataOutputStream dos = new DataOutputStream(out);
 
-            // 메서드 별 응답 처리
-            switch (requestStartLine.getMethod()) {
-                case "GET":
-                    responseGet(dos, requestStartLine, requestHeaders);
-                    return;
-                case "POST":
-                    resposePost(dos, requestStartLine, requestHeaders);
-            }
+            // 응답 처리
+            controller.doResponse(controllerMethodName, dos, requestStartLine, requestHeaders);
 
         } catch (IOException e) {
             log.error(e.getMessage());
+            log.error("존재하지 않는 페이지입니다.");
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 
-    private void resposePost(DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        // body 만들기
-
-
-        // header 만들기
-
-
-        // 전송
-
+    private String searchControllerMethod(RequestStartLine requestStartLine) {
+        return PATH_METHOD_MAP.getOrDefault(requestStartLine.getPath(), "staticResource");
     }
 
-    private void responseGet(DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        // body 만들기
-        byte[] body = Files.readAllBytes(new File("./webapp" + requestStartLine.getPath()).toPath());
-
-        // header 만들기
-        var temp = new HashMap<String, String>();
-        temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", requestHeaders.getHeader("Accept"));
-        ResponseHeaders responseHeaders = new ResponseHeaders(temp);
-
-        Map<String, String> parameters = requestStartLine.getParameters();
-        if (parameters != null) {
-            User user = new User(parameters.get("userId"), parameters.get("password"), parameters.get("name"), parameters.get("email"));
-            log.debug(user.toString());
-        }
-
-        // 전송
-        response200Header(dos, responseHeaders);
-        responseBody(dos, body);
+    private Controller searchController(RequestStartLine requestStartLine) {
+        return CONTROLLER_MAP.get(requestStartLine.getMethod());
     }
 
-    private void response200Header(DataOutputStream dos, ResponseHeaders responseHeaders) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-//            dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", responseHeaders.getHeader("Content-Type")));
-            dos.writeBytes(String.format("Content-Length: %s\r\n", responseHeaders.getHeader("Content-Length")));
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
 }
