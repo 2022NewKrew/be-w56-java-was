@@ -88,3 +88,17 @@ public enum ContentType {
   }
 }
 ```
+
+### 2022-01-26 (수)
+
+#### 구현 내용
+
+- 회원 가입 POST 방식으로 변경, 리다이렉트 적용
+- `HttpStatus` 추가
+- `Response` 추가
+- `Request` 구조 변경
+
+#### 구현 관련 고찰
+
+- `BufferedReader::readLine` 사용 시 `\r` 또는 `\n`이 없을 경우 메소드가 종료되지 않음.  
+따라서 POST body를 가져올 경우 `BufferedReader::read` 사용
