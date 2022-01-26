@@ -1,7 +1,6 @@
 package http.response;
 
 import http.ContentType;
-import http.ContentTypeMap;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,7 +11,7 @@ public class HttpResponseHeader {
 
     public HttpResponseHeader(String url, String status, int bodyLength) {
         statusLine = new HttpResponseStatusLine(status);
-        headers = "Content-Type: " + contentTypeOf(url).str() + ";charset=utf-8\r\n" +
+        headers = "Content-Type: " + contentTypeOf(url).value() + ";charset=utf-8\r\n" +
                 "Content-Length: " + bodyLength + "\r\n";
     }
 
@@ -33,7 +32,7 @@ public class HttpResponseHeader {
         String[] tokens = url.split("\\.");
         String extension = tokens[tokens.length - 1];
 
-        return ContentTypeMap.get(extension);
+        return ContentType.get(extension);
     }
 
     public String getHeaders() { return headers + "\r\n"; }

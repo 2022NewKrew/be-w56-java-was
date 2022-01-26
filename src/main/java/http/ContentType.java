@@ -1,16 +1,36 @@
 package http;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum ContentType {
     CSS("text/css"),
     JS("text/javascript"),
     HTML("text/html"),
     DEFAULT("application/octet-stream");
 
-    private String str;
+    private static final Map<String, ContentType> reverseMap;
 
-    ContentType(String str) {
-        this.str = str;
+    static {
+        reverseMap = new HashMap<>();
+        reverseMap.put("css", ContentType.CSS);
+        reverseMap.put("javascript", ContentType.JS);
+        reverseMap.put("html", ContentType.HTML);
     }
 
-    public String str() { return str; }
+    private final String value;
+
+    ContentType(String value) {
+        this.value = value;
+    }
+
+    public String value() { return value; }
+
+    public static ContentType get(String key) {
+        if (!reverseMap.containsKey(key)) {
+            return ContentType.DEFAULT;
+        }
+
+        return reverseMap.get(key);
+    }
 }
