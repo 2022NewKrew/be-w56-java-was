@@ -1,8 +1,11 @@
-package http;
+package web.http.response;
 
 public enum HttpStatus {
 
     OK(200, "OK"),
+
+    REDIRECT(302, "FOUND"),
+
     NOT_FOUND(404, "NOT FOUND");
 
     private final int code;

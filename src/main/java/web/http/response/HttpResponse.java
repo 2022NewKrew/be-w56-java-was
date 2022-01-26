@@ -1,6 +1,4 @@
-package http.response;
-
-import http.HttpStatus;
+package web.http.response;
 
 public class HttpResponse {
     private final HttpResponseStatusLine statusLine;
@@ -35,5 +33,9 @@ public class HttpResponse {
 
     public int getBodyLength(){
         return body.getBodyLength();
+    }
+
+    public String getRedirectHeader(){
+        return headers.getHeaderByKey("Location");
     }
 }

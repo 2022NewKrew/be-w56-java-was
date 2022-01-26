@@ -1,18 +1,16 @@
-package controller;
+package web.controller;
 
 public enum HttpRequestLineInfo {
 
-    SIGN_UP("/user/create", "GET", true),
-    OTHERS(null, "GET", false);
+    SIGN_UP("/user/create", "POST"),
+    OTHERS(null, "GET");
 
     private final String url;
     private final String method;
-    private final boolean hasQueries;
 
-    HttpRequestLineInfo(String url, String method, boolean hasQueries) {
+    HttpRequestLineInfo(String url, String method) {
         this.url = url;
         this.method = method;
-        this.hasQueries = hasQueries;
     }
 
     public static HttpRequestLineInfo lookup(String url, String method){

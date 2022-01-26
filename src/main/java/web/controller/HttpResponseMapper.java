@@ -1,7 +1,7 @@
-package controller;
+package web.controller;
 
-import http.response.HttpResponse;
-import http.response.HttpResponseBody;
+import web.http.response.HttpResponse;
+import web.http.response.HttpResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +14,17 @@ public class HttpResponseMapper {
     public static void response200Header(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusString() +"\r\n");
+            dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    public static void response302Header(DataOutputStream dos, HttpResponse httpResponse) {
+        try {
+            dos.writeBytes(httpResponse.getStatusString() +"\r\n");
+            dos.writeBytes(httpResponse.getRedirectHeader() + "\r\n");
             dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

@@ -12,8 +12,8 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public static void addUser(String url){
-        Map<String, String> queries = HttpRequestUtils.getQueries(url);
+    public static void addUser(String body){
+        Map<String, String> queries = HttpRequestUtils.parseBody(body);
         String userId = queries.get("userId");
         String name = queries.get("name");
         String password = queries.get("password");
