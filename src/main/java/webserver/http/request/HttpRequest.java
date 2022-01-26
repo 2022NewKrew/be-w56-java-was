@@ -1,7 +1,5 @@
 package webserver.http.request;
 
-import java.net.URI;
-
 public class HttpRequest {
 
     private final HttpRequestLine requestLine;

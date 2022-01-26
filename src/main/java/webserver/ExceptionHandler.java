@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.response.EncodedHttpResponse;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpResponseHeadersEncoder;
+import webserver.http.response.HttpResponseEncoder;
 
 public class ExceptionHandler {
 
@@ -25,7 +25,7 @@ public class ExceptionHandler {
 
         response.setContentType(MIME_TYPE_OF_HTML);
 
-        EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, null);
+        EncodedHttpResponse encodedHttpResponse = HttpResponseEncoder.encode(response, null);
 
         String message = "<html>" + "<head>" + "<title>" + "Server Error" + "</title>" + "</head>" +
                          "<body>" + "<h1>" + e.getMessage() + "</h1 >" +

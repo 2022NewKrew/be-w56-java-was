@@ -3,7 +3,6 @@ package webserver.http.response;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import webserver.http.response.HttpResponseHeader;
 
 public class HttpResponseHeaders {
 

@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HttpResponseHeadersEncoder {
+public class HttpResponseEncoder {
 
     public static EncodedHttpResponse encode(HttpResponse response, Path filePath) throws IOException {
         String responseStatusLine = getResponseStatusLine(
@@ -27,7 +27,7 @@ public class HttpResponseHeadersEncoder {
         responseHeaders.add(SEPARATOR_OF_BETWEEN_HEADERS);
 
         byte[] body = null;
-        if(filePath != null) {
+        if (filePath != null) {
             body = Files.readAllBytes(filePath);
         }
 

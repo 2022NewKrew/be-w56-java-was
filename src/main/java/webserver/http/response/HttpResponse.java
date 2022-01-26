@@ -6,6 +6,7 @@ import static webserver.http.HttpMeta.MIME_TYPE_OF_CSS;
 import static webserver.http.HttpMeta.MIME_TYPE_OF_JAVASCRIPT;
 import static webserver.http.HttpMeta.SUFFIX_OF_CSS_FILE;
 import static webserver.http.HttpMeta.SUFFIX_OF_JS_FILE;
+import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -28,10 +29,6 @@ public class HttpResponse {
         this.dos = dos;
         this.statusCode = HttpURLConnection.HTTP_OK;
         this.status = HTTP_STATUS_OK;
-    }
-
-    public DataOutputStream getDos() {
-        return dos;
     }
 
     public String getHttpVersion() {
@@ -109,5 +106,10 @@ public class HttpResponse {
     public void sendErrorResponse(EncodedHttpResponse encodedResponse, String message) throws IOException {
         buildOutputStreamOfHeaders(encodedResponse);
         dos.writeBytes(message);
+    }
+
+    public void redirect() {
+        setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
+        setLocation(VIEW_BASIC_PAGE);
     }
 }

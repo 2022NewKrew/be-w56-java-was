@@ -1,7 +1,6 @@
 package webserver;
 
 import static webserver.http.HttpMeta.ROOT_PATH_OF_WEB_RESOURCE_FILES;
-import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -22,8 +21,8 @@ import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestDecoder;
 import webserver.http.response.EncodedHttpResponse;
 import webserver.http.response.HttpResponse;
+import webserver.http.response.HttpResponseEncoder;
 import webserver.http.response.HttpResponseHeaders;
-import webserver.http.response.HttpResponseHeadersEncoder;
 
 public class RequestHandler extends Thread {
 
@@ -58,12 +57,8 @@ public class RequestHandler extends Thread {
 
     private void handle(HttpRequest request, HttpResponse response) throws IOException {
         String requestPath = request.getUri();
-        URI uri;
-        try {
-            uri = new URI(requestPath);
-        } catch (URISyntaxException e) {
-            response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-            handleError(response, e);
+        URI uri = getUri(response, requestPath);
+        if (uri == null) {
             return;
         }
 
@@ -74,38 +69,59 @@ public class RequestHandler extends Thread {
 
         File file = new File(ROOT_PATH_OF_WEB_RESOURCE_FILES + uri.getPath());
 
-        if (!file.exists() || !file.isFile()) {
-            response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-            handleError(response, new FileNotFoundException("File Not Found for requested URI '" + uri + "'"));
-            return;
-        }
-        if (!file.canRead()) {
-            response.setStatusCode(HttpURLConnection.HTTP_FORBIDDEN);
-            handleError(response, new AccessDeniedException(file.getPath()));
-            return;
-        }
-
         handleFile(response, file);
+    }
+
+    private URI getUri(HttpResponse response, String requestPath) throws IOException {
+        URI uri;
+        try {
+            uri = new URI(requestPath);
+        } catch (URISyntaxException e) {
+            response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+            handleError(response, e);
+            return null;
+        }
+        return uri;
     }
 
     private void handleQuery(HttpResponse response, URI uri) throws IOException {
         SignUpService.signUp(uri.getQuery());
-        response.setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
-        response.setLocation(VIEW_BASIC_PAGE);
+        response.redirect();
 
-        EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, null);
+        EncodedHttpResponse encodedHttpResponse = HttpResponseEncoder.encode(response, null);
         response.sendRedirectResponse(encodedHttpResponse);
     }
 
     private void handleFile(HttpResponse response, File file) throws IOException {
+        if (!isValidFile(response, file)) {
+            return;
+        }
+
         Path filePath = file.toPath();
         response.setContentTypeWithFilePath(filePath);
 
         long contentLength = file.length();
         response.setContentLength(contentLength);
 
-        EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, filePath);
+        EncodedHttpResponse encodedHttpResponse = HttpResponseEncoder.encode(response, filePath);
         response.sendNormalResponse(encodedHttpResponse);
+    }
+
+    private boolean isValidFile(HttpResponse response, File file) throws IOException {
+        if (!file.exists()) {
+            response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+            handleError(
+                response,
+                new FileNotFoundException("File Not Found for requested URL '" + file.getPath() + "'")
+            );
+            return false;
+        }
+        if (!file.canRead() || !file.isFile()) {
+            response.setStatusCode(HttpURLConnection.HTTP_FORBIDDEN);
+            handleError(response, new AccessDeniedException(file.getPath()));
+            return false;
+        }
+        return true;
     }
 
     private void handleError(HttpResponse response, Exception e) throws IOException {
