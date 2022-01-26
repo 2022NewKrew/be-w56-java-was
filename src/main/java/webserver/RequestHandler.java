@@ -45,7 +45,7 @@ public class RequestHandler extends Thread {
             viewResolver.render(dos, viewPath);
         } catch (InvalidInputException | IllegalArgumentException e) {
             e.printStackTrace();
-            viewResolver.renderBadRequest(dos);
+            viewResolver.renderBadRequest(dos, e);
         }
     }
 }

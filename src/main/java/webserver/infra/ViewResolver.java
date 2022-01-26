@@ -81,8 +81,29 @@ public class ViewResolver {
         render(dos, "/error/404.html", HttpStatus.NOT_FOUND);
     }
 
-    public void renderBadRequest(DataOutputStream dos) {
-        render(dos, "/error/400.html", HttpStatus.BAD_REQUEST);
+    public void renderBadRequest(DataOutputStream dos, Exception e) {
+        render(dos, e, HttpStatus.BAD_REQUEST);
+    }
+
+    public void render(DataOutputStream dos, Exception exception, HttpStatus httpStatus) {
+        try {
+            byte[] body = exception.getMessage().getBytes();
+            writeResponseHeader(dos, httpStatus);
+            writeResponseBody(dos, body);
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirect(dos, "/index.html");
+        }
+    }
+
+    private void writeResponseHeader(DataOutputStream dos, HttpStatus httpStatus) throws IOException {
+        dos.writeBytes(httpStatus.getHttpResponseHeader());
+        dos.writeBytes(getTextContentType());
+        dos.writeBytes(NEW_LINE);
+    }
+
+    private String getTextContentType() {
+        return "Content-Type: text/html;charset=utf-8" + NEW_LINE;
     }
 
 }
