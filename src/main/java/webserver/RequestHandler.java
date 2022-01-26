@@ -3,6 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import model.User;
@@ -33,24 +35,12 @@ public class RequestHandler extends Thread {
             log.info("url = {}", urlWithQuery);
             String url = HttpHeaderUtils.getUrl(urlWithQuery);
 
-            String line = br.readLine();
-            int contentLength = 0;
-            while(line != null && !"".equals(line)) {
-                log.info("Http header = {}", line);
-                String[] token = line.split(": ");
-                if(token[0].equals("Content-Length")) {
-                    contentLength = Integer.parseInt(token[1]);
-                }
-                line = br.readLine();
-            }
-
             if(url.equals("/user/create")) {
+                Map<String, String> headers = getHeaders(br);
+                int contentLength = Integer.parseInt(headers.get("Content-Length"));
                 String requestBody = IOUtils.readData(br, contentLength);
-                log.info("requestBody = {}", requestBody);
-                if (requestBody.length() > 0) {
-                    User user = HttpHeaderUtils.getUserInfoFromUrl(requestBody);
-                    log.info("user = {}", user);
-                }
+                Optional<User> user = HttpHeaderUtils.parseUserInfo(requestBody);
+                log.info("user = {}", user);
             }
 
             DataOutputStream dos = new DataOutputStream(out);
@@ -65,6 +55,18 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private Map<String, String> getHeaders(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String line = br.readLine();
+        while(line != null && !"".equals(line)) {
+            log.info("Http header = {}", line);
+            String[] token = line.split(": ");
+            headers.put(token[0], token[1]);
+            line = br.readLine();
+        }
+        return headers;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {

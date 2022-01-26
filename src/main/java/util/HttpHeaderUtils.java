@@ -34,7 +34,7 @@ public class HttpHeaderUtils {
         return urlWithQuery.split("\\?")[0];
     }
 
-    public static User getUserInfoFromUrl(String query) throws UnsupportedEncodingException {
+    public static User getUserInfoFromUrl(String query) {
         Map<String, String> userInfo = HttpRequestUtils.parseQueryString(query);
         String userId = URLDecoder.decode(userInfo.get("userId"), StandardCharsets.UTF_8);
         String password = URLDecoder.decode(userInfo.get("password"), StandardCharsets.UTF_8);
@@ -53,5 +53,15 @@ public class HttpHeaderUtils {
             case "ico": return "image/x-icon";
             default: return "text/html";
         }
+    }
+
+    public static Optional<User> parseUserInfo(String requestBody) throws UnsupportedEncodingException {
+        log.info("requestBody = {}", requestBody);
+        if (requestBody.length() > 0) {
+            User user = HttpHeaderUtils.getUserInfoFromUrl(requestBody);
+            log.info("user = {}", user);
+            return Optional.of(user);
+        }
+        return Optional.empty();
     }
 }
