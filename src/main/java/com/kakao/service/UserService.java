@@ -14,7 +14,7 @@ public class UserService {
         return InstanceHolder.instance;
     }
 
-    public synchronized void addUser(User user) {
+    public void addUser(User user) {
         DataBase.addUser(user);
     }
 
