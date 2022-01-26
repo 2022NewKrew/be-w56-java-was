@@ -2,6 +2,8 @@ package controller;
 
 import controller.WebController;
 import controller.request.Request;
+import controller.response.Response;
+import util.HttpStatus;
 
 /**
  * Created by melodist
@@ -10,7 +12,7 @@ import controller.request.Request;
  */
 public class ViewController implements WebController {
     @Override
-    public String process(Request request) {
-        return request.getPath();
+    public Response process(Request request) {
+        return new Response(HttpStatus.OK, request.getPath());
     }
 }
