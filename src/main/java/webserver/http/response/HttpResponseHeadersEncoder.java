@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import webserver.http.response.HttpResponse.Header;
 
 public class HttpResponseHeadersEncoder {
 
@@ -22,7 +21,7 @@ public class HttpResponseHeadersEncoder {
 
         HttpResponseHeaders httpResponseHeaders = response.getHeaders();
         List<String> responseHeaders = new ArrayList<>();
-        for (Header header : httpResponseHeaders.keySet()) {
+        for (HttpResponseHeader header : httpResponseHeaders.keySet()) {
             responseHeaders.add(getResponseHeaderLine(header, httpResponseHeaders.getValue(header)));
         }
         responseHeaders.add(SEPARATOR_OF_BETWEEN_HEADERS);
@@ -40,7 +39,7 @@ public class HttpResponseHeadersEncoder {
                SEPARATOR_OF_BETWEEN_HEADERS;
     }
 
-    private static String getResponseHeaderLine(Header header, String value) {
+    private static String getResponseHeaderLine(HttpResponseHeader header, String value) {
         return header + SEPARATOR_OF_HEADER_LINE + value + SEPARATOR_OF_BETWEEN_HEADERS;
     }
 }

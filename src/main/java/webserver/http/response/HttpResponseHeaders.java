@@ -3,25 +3,25 @@ package webserver.http.response;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import webserver.http.response.HttpResponse.Header;
+import webserver.http.response.HttpResponseHeader;
 
 public class HttpResponseHeaders {
 
-    private final Map<Header, String> headers = new HashMap<>();
+    private final Map<HttpResponseHeader, String> headers = new HashMap<>();
 
-    public Map<Header, String> getHeaders() {
+    public Map<HttpResponseHeader, String> getHeaders() {
         return headers;
     }
 
-    void addHeader(Header httpResponseHeaderKey, String httpResponseHeaderValue) {
+    void addHeader(HttpResponseHeader httpResponseHeaderKey, String httpResponseHeaderValue) {
         headers.put(httpResponseHeaderKey, httpResponseHeaderValue);
     }
 
-    public Set<Header> keySet() {
+    public Set<HttpResponseHeader> keySet() {
         return headers.keySet();
     }
 
-    public String getValue(Header header) {
+    public String getValue(HttpResponseHeader header) {
         return headers.get(header);
     }
 }

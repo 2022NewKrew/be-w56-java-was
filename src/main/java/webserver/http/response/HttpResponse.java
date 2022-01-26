@@ -53,21 +53,21 @@ public class HttpResponse {
         return headers;
     }
 
-    public void setHeader(Header header, String value) {
-        headers.addHeader(header, value);
+    public void setHeader(HttpResponseHeader httpResponseHeader, String value) {
+        headers.addHeader(httpResponseHeader, value);
     }
 
     public void setContentType(Path filePath) throws IOException {
         String contentType = getContentTypeFromFilePath(filePath);
-        setHeader(Header.Content_Type, contentType);
+        setHeader(HttpResponseHeader.Content_Type, contentType);
     }
 
     public void setContentLength(long contentLength) {
-        setHeader(Header.Content_Length, Long.toString(contentLength));
+        setHeader(HttpResponseHeader.Content_Length, Long.toString(contentLength));
     }
 
     public void setLocation(String redirectPath) {
-        setHeader(Header.Location, redirectPath);
+        setHeader(HttpResponseHeader.Location, redirectPath);
     }
 
     public void sendNormalResponse(EncodedHttpResponse encodedResponse) throws IOException {
@@ -96,22 +96,5 @@ public class HttpResponse {
             return MIME_TYPE_OF_CSS;
         }
         return Files.probeContentType(filePath);
-    }
-
-    enum Header {
-        Content_Type("Content-Type"),
-        Content_Length("Content-Length"),
-        Location("Location");
-
-        private final String header;
-
-        Header(String header) {
-            this.header = header;
-        }
-
-        @Override
-        public String toString() {
-            return header;
-        }
     }
 }
