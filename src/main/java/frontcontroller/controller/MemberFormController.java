@@ -23,7 +23,12 @@ public class MemberFormController implements MyController {
     }
 
     private void get(MyHttpRequest request, MyHttpResponse response) throws IOException {
+        MyRequestDispatcher dispatcher = request.getRequestDispatcher("/user/form.html");
+        dispatcher.forward(request, response);
+    }
 
+
+    private void post(MyHttpRequest request, MyHttpResponse response) throws IOException {
         String userId = request.getPathVariable("userId");
         String password = request.getPathVariable("password");
         String name = request.getPathVariable("name");
@@ -32,13 +37,7 @@ public class MemberFormController implements MyController {
         User user = new User(userId, password, name, email);
         DataBase.addUser(user);
 
-        MyRequestDispatcher dispatcher = request.getRequestDispatcher("/user/form.html");
-        dispatcher.forward(request, response);
-    }
-
-
-    private void post(MyHttpRequest request, MyHttpResponse response) throws IOException {
-
+        System.out.println(user);
 
         MyRequestDispatcher dispatcher = request.getRequestDispatcher("/index.html");
         dispatcher.forward(request, response);

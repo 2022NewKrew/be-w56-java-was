@@ -42,13 +42,25 @@ public class MyHttpRequest {
             log.debug("Header : {}", request);
             headers.set(request);
         }
+
+        String contentLength = headers.get("Content-Length");
+        if (contentLength != null) {
+            log.debug("Content-Length : {}", contentLength);
+            String entity = (read(httpRequestInputStream, Integer.parseInt(contentLength)));
+            log.debug("Entity : {}", entity);
+            // entity 값을 읽어 Params로 읽을 수 있도록 반영한다.
+            // TODO: 객체바인딩, @RequestBody
+            updateRequestParams(entity);
+        }
+
     }
 
     private String read(final InputStream inputStream) throws IOException {
         StringBuilder sb = new StringBuilder();
 
         while (true) {
-            char data = (char) inputStream.read();
+            int data = inputStream.read();
+
             if (data == '\n') {
                 break;
             }
@@ -57,7 +69,17 @@ public class MyHttpRequest {
                 continue;
             }
 
-            sb.append(data);
+            sb.append((char) data);
+        }
+
+        return sb.toString();
+    }
+
+    private String read(final InputStream inputStream, int contentLength) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < contentLength; i++) {
+            sb.append((char) inputStream.read());
         }
 
         return sb.toString();
