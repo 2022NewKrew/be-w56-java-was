@@ -3,17 +3,17 @@ package webserver.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
+import util.response.HttpResponse;
+import util.response.HttpResponseDataType;
+import util.response.HttpResponseStatus;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Set;
 
-public class StaticController implements Controller{
+public class StaticController implements Controller<String>{
     private static final Logger log = LoggerFactory.getLogger(StaticController.class);
     private static final Set<String> supportExtensions = Set.of("html", "css", "js", "ico", "eot", "svg", "ttf", "woff", "woff2", "png");
-    private static final String BASE_DIRECTORY = "./webapp";
 
     @Override
     public boolean supports(String url) {
@@ -27,21 +27,18 @@ public class StaticController implements Controller{
     }
 
     @Override
-    public void handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
-        String filePath = getFilePath(httpRequest.getUrl());
-        log.info("return file {}", filePath);
+    public HttpResponse<String> handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
+        String fileName = isIndexUrl(httpRequest.getUrl())
+                ? "/index.html"
+                : httpRequest.getUrl();
 
-        byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        response200Header(dos, body.length);
-        responseBody(dos, body);
-    }
+        log.info("return file {}", fileName);
 
-    private String getFilePath(String url){
-        if(isIndexUrl(url)){
-            return String.format("%s/index.html", BASE_DIRECTORY);
-        }
-
-        return String.format("%s%s", BASE_DIRECTORY, url);
+        return HttpResponse.<String>builder()
+                .status(HttpResponseStatus.SUCCESS)
+                .data(fileName)
+                .dataType(HttpResponseDataType.FILE_NAME)
+                .build();
     }
 
     private boolean isIndexUrl(String url){

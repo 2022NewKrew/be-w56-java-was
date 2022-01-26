@@ -7,6 +7,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import util.request.HttpRequest;
 import util.request.HttpVersion;
 import util.request.MethodType;
+import util.response.HttpResponse;
+import util.response.HttpResponseDataType;
+import util.response.HttpResponseStatus;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -28,7 +31,7 @@ class StaticControllerTest {
     @MethodSource("getUrlSupportStream")
     void supports(String url, boolean expected) {
         //given
-        final Controller controller = new StaticController();
+        final Controller<String> controller = new StaticController();
 
         //when
         final boolean actual = controller.supports(url);
@@ -62,7 +65,7 @@ class StaticControllerTest {
     @MethodSource("getExistFileStream")
     void handle(String url) throws IOException {
         //given
-        final Controller controller = new StaticController();
+        final Controller<?> controller = new StaticController();
         final DataOutputStream dos = mock(DataOutputStream.class);
 
         final HttpRequest httpRequest = HttpRequest.builder()
@@ -71,15 +74,13 @@ class StaticControllerTest {
                 .httpVersion(HttpVersion.VERSION_1_1)
                 .build();
 
-        final File file = new File(String.format("./webapp%s", url));
-        final byte[] expectedBody = Files.readAllBytes(file.toPath());
-
         //when
-        controller.handle(httpRequest, dos);
+        HttpResponse<String> httpResponse = (HttpResponse<String>) controller.handle(httpRequest, dos);
 
         //then
-        then(dos).should().write(
-                argThat(body -> Arrays.equals(body, expectedBody)), eq(0), eq(expectedBody.length));
+        assertThat(httpResponse.getStatus()).isEqualTo(HttpResponseStatus.SUCCESS);
+        assertThat(httpResponse.getDataType()).isEqualTo(HttpResponseDataType.FILE_NAME);
+        assertThat(httpResponse.getData()).isEqualTo(url);
     }
 
     private static Stream<Arguments> getExistFileStream(){

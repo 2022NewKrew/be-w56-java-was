@@ -2,20 +2,22 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.response.HttpResponse;
 import webserver.controller.Controller;
 import util.request.HttpRequest;
 import util.request.HttpRequestReader;
+import webserver.view.ViewRenderer;
 
 import java.io.*;
 import java.net.Socket;
 
-public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class DispatcherServlet extends Thread {
+    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final ControllerMapping controllerMapping = new ControllerMapping();
 
     private final Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public DispatcherServlet(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
@@ -27,14 +29,15 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
             HttpRequest httpRequestMap = hr.read();
-            getController(httpRequestMap).handle(httpRequestMap, dos);
+            HttpResponse<?> httpResponse = getController(httpRequestMap).handle(httpRequestMap, dos);
+            ViewRenderer.render(httpResponse, dos);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private Controller getController(HttpRequest httpRequest){
+    private Controller<?> getController(HttpRequest httpRequest){
         String url = httpRequest.getUrl();
         return controllerMapping.getController(url).orElseThrow();
     }

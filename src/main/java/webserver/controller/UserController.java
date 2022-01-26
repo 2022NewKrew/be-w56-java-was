@@ -1,12 +1,15 @@
 package webserver.controller;
 
-import webserver.domain.User;
 import util.request.HttpRequest;
+import util.response.HttpResponse;
+import util.response.HttpResponseDataType;
+import util.response.HttpResponseStatus;
+import webserver.domain.User;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class UserController implements Controller{
+public class UserController implements Controller<String>{
     private static final String BASE_URL = "/user";
     private static final String JOIN_URL = "/user/create";
 
@@ -16,18 +19,24 @@ public class UserController implements Controller{
     }
 
     @Override
-    public void handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
+    public HttpResponse<String> handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
         if(httpRequest.getUrl().startsWith(JOIN_URL)){
-            handleJoin(httpRequest, dos);
+            return handleJoin(httpRequest, dos);
         }
+
+        return HttpResponse.<String>builder()
+                .status(HttpResponseStatus.NOT_FOUND)
+                .build();
     }
 
-    private void handleJoin(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
+    private HttpResponse<String> handleJoin(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
         User user = createUser(httpRequest);
 
-        byte[] body = "가입이 완료되었습니다.".getBytes();
-        response200Header(dos, body.length);
-        responseBody(dos, body);
+        return HttpResponse.<String>builder()
+                .status(HttpResponseStatus.SUCCESS)
+                .data("가입이 완료되었습니다.")
+                .dataType(HttpResponseDataType.STRING)
+                .build();
     }
 
     private User createUser(HttpRequest httpRequest){
