@@ -2,6 +2,7 @@ package util;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -32,11 +33,11 @@ public class HttpRequestUtils {
     }
 
     String[] tokens = values.split(separator);
-    return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+        .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
   }
 
-  static Pair getKeyValue(String keyValue, String regex) {
+  static Pair<String, String> getKeyValue(String keyValue, String regex) {
     if (Strings.isNullOrEmpty(keyValue)) {
       return null;
     }
@@ -46,27 +47,27 @@ public class HttpRequestUtils {
       return null;
     }
 
-    return new Pair(tokens[0], tokens[1]);
+    return new Pair<>(tokens[0], tokens[1]);
   }
 
-  public static Pair parseHeader(String header) {
+  public static Pair<String, String> parseHeader(String header) {
     return getKeyValue(header, ": ");
   }
 
-  public static class Pair {
-    String key;
-    String value;
+  public static class Pair<T, A> {
+    T key;
+    A value;
 
-    Pair(String key, String value) {
-      this.key = key.trim();
-      this.value = value.trim();
+    public Pair(T key, A value) {
+      this.key = key;
+      this.value = value;
     }
 
-    public String getKey() {
+    public T getKey() {
       return key;
     }
 
-    public String getValue() {
+    public A getValue() {
       return value;
     }
 

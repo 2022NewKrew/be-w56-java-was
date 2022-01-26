@@ -1,4 +1,4 @@
-package model;
+package com.leoserver.model;
 
 public class User {
   private String userId;
