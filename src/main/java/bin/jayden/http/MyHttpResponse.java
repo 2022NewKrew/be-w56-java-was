@@ -1,4 +1,4 @@
-package http;
+package bin.jayden.http;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -8,11 +8,13 @@ public class MyHttpResponse {
     private final byte[] body;
     private final HttpStatusCode statusCode;
     private final Mime mime;
+    private final String location;
 
-    private MyHttpResponse(byte[] body, HttpStatusCode statusCode, Mime mime) {
+    private MyHttpResponse(byte[] body, HttpStatusCode statusCode, Mime mime, String location) {
         this.body = body;
         this.statusCode = statusCode;
         this.mime = mime;
+        this.location = location;
     }
 
     public byte[] getBody() {
@@ -25,25 +27,33 @@ public class MyHttpResponse {
 
     public byte[] toBytes() {
         String header = getHeader(body.length + CLRF.length);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(header.length() + body.length + CLRF.length * 2);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(header.length() + body.length + CLRF.length);
         byteBuffer.put(header.getBytes());
-        byteBuffer.put(CLRF);
         byteBuffer.put(body);
         byteBuffer.put(CLRF);
         return byteBuffer.array();
     }
 
+
     private String getHeader(int lengthOfBodyContent) {
-        return "HTTP/1.1 " + statusCode + " \r\n" +
-                "Content-Type: " + mime.getContentType() + ";charset=utf-8\r\n" +
-                "Content-Length: " + lengthOfBodyContent + "\r\n" +
-                "\r\n";
+        String header = "HTTP/1.1 " + statusCode + " \r\n";
+
+        if (statusCode == HttpStatusCode.STATUS_CODE_302) {
+            header += "Location: " + location + "\r\n" +
+                    "\r\n";
+        } else {
+            header += "Content-Type: " + mime.getContentType() + ";charset=utf-8\r\n" +
+                    "Content-Length: " + lengthOfBodyContent + "\r\n" +
+                    "\r\n";
+        }
+        return header;
     }
 
     public static class Builder {
-        private byte[] body = null;
+        private byte[] body = new byte[0];
         private HttpStatusCode statusCode = HttpStatusCode.STATUS_CODE_200;
         private Mime mime = Mime.HTML;
+        private String location = null;
 
         public Builder setBody(byte[] body) {
             this.body = body;
@@ -52,6 +62,11 @@ public class MyHttpResponse {
 
         public Builder setBody(String body) {
             return setBody(body.getBytes(StandardCharsets.UTF_8));
+        }
+
+        public Builder setLocation(String location) {
+            this.location = location;
+            return this;
         }
 
         public Builder setStatusCode(HttpStatusCode statusCode) {
@@ -65,7 +80,7 @@ public class MyHttpResponse {
         }
 
         public MyHttpResponse build() {
-            return new MyHttpResponse(body, statusCode, mime);
+            return new MyHttpResponse(body, statusCode, mime, location);
         }
     }
 }

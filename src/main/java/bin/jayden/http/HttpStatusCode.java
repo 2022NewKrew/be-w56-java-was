@@ -1,7 +1,8 @@
-package http;
+package bin.jayden.http;
 
 public enum HttpStatusCode {
     STATUS_CODE_200(200, "OK"),
+    STATUS_CODE_302(302, "Found"),
     STATUS_CODE_404(404, "Not Found"),
     STATUS_CODE_500(500, "Internal Server Error");
 
