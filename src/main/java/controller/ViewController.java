@@ -21,6 +21,8 @@ public class ViewController {
         STATIC_FILE_BASE_DIRECTORY = "./webapp";
     }
 
+    private ViewController() {}
+
     public static ViewController getInstance() {
         return INSTANCE;
     }

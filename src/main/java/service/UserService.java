@@ -13,6 +13,8 @@ public class UserService {
         INSTANCE = new UserService();
     }
 
+    private UserService() {}
+
     public static UserService getInstance() {
         return INSTANCE;
     }

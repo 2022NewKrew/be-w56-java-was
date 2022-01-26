@@ -19,6 +19,8 @@ public class UserController implements Controller {
         USER_SERVICE = UserService.getInstance();
     }
 
+    private UserController() {}
+
     public static UserController getInstance() {
         return INSTANCE;
     }

@@ -23,6 +23,8 @@ public class FrontController {
         init();
     }
 
+    private FrontController() {}
+
     private static void init() {
         REQUEST_MAPPINGS.put("/user/create", UserController.getInstance());
     }
