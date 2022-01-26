@@ -23,7 +23,7 @@ public class UserController implements HttpController {
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public boolean isValidRequest(String path, HttpMethod method) {
+    public boolean isValidRequest(HttpMethod method, String path) {
         return path.matches("/user/create");
     }
 

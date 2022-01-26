@@ -6,7 +6,7 @@ import com.kakao.http.request.HttpRequest;
 import java.io.OutputStream;
 
 public interface HttpController {
-    boolean isValidRequest(String path, HttpMethod method);
+    boolean isValidRequest(HttpMethod method, String path);
 
     void handleRequest(HttpRequest request, OutputStream os)
             throws Exception;

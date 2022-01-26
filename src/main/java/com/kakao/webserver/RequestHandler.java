@@ -39,7 +39,7 @@ public class RequestHandler implements Runnable {
 
     private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
         for (HttpController controller : controllerList) {
-            if (controller.isValidRequest(httpRequest.getUrl().getPath(), HttpMethod.GET)) {
+            if (controller.isValidRequest(HttpMethod.GET, httpRequest.getUrl().getPath())) {
                 controller.handleRequest(httpRequest, out);
                 return;
             }

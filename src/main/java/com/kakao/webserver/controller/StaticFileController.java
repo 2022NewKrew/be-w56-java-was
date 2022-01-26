@@ -24,7 +24,7 @@ public class StaticFileController implements HttpController {
     private static final Logger logger = LoggerFactory.getLogger(StaticFileController.class);
 
     @Override
-    public boolean isValidRequest(String path, HttpMethod method) {
+    public boolean isValidRequest(HttpMethod method, String path) {
         return buildProperPath(path).toFile()
                 .exists();
     }
