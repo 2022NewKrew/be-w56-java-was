@@ -43,6 +43,9 @@
       - cookie!=null && [ ! ] "".equals(cookie.trim())
       - 항상 조건식이 false 로 나와서 적용이 안되었던 것
       - 또한 각 Header 는 \r\n 을 반드시 필요로 한다는 점에 유의
+- 깃허브 토근 만료 문제
+  - 해당 토큰의 regenerate 를 통해서 해결
+  - 비밀번호 대신, PAT 의 문자열을 입력
     
 # 참고 사이트
 - HTTP Header
@@ -60,4 +63,7 @@
 - 303 with set-cookie
   - https://stackoverflow.com/questions/63049618/browser-does-not-send-cookies-when-cookie-is-set-on-a-303-redirect
   - https://bugs.chromium.org/p/chromium/issues/detail?id=696204
+- github > personal access token
+  - https://github.com/settings/tokens
+  - https://miracleground.tistory.com/entry/GitHub-%ED%86%A0%ED%81%B0-%EC%9D%B8%EC%A6%9D-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%ED%95%98%EA%B8%B0-%EC%98%A4%EB%A5%98-%ED%95%B4%EA%B2%B0-remote-Support-for-password-authentication-was-removed-on-August-13-2021-Please-use-a-personal-access-token-instead
 
