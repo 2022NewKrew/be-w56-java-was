@@ -36,7 +36,8 @@ public class RequestController {
     public static HttpResponse signUp(HttpRequestLine httpRequestLine) throws IOException {
         UserService.addUser(httpRequestLine.getUrl());
 
-        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), HttpStatus.OK);
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), HttpStatus.REDIRECT);
+
         HttpResponseHeaders headers = new HttpResponseHeaders();
         HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp/index.html").toPath()));
 

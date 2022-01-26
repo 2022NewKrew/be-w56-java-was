@@ -38,10 +38,13 @@ public class RequestHandler extends Thread {
 
     private void sendResponse(DataOutputStream dos, HttpResponse httpResponse){
         switch (httpResponse.getStatus()){
-            case OK :{
+            case OK :
                 HttpResponseMapper.response200Header(dos, httpResponse);
                 HttpResponseMapper.responseBody(dos, httpResponse.getBody());
-            }
+                break;
+            case REDIRECT:
+                HttpResponseMapper.response302Header(dos, httpResponse);
+                break;
         }
     }
 }

@@ -21,6 +21,17 @@ public class HttpResponseMapper {
         }
     }
 
+    public static void response302Header(DataOutputStream dos, HttpResponse httpResponse) {
+        try {
+            dos.writeBytes(httpResponse.getStatusString() +"\r\n");
+            dos.writeBytes("Location: http://localhost:8080/index.html" + "\r\n");
+            dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     public static void responseBody(DataOutputStream dos, HttpResponseBody body) {
         try {
             dos.write(body.getBody(), 0, body.getBodyLength());
