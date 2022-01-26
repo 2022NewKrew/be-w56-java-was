@@ -36,4 +36,8 @@ public class HttpResponse {
     public int getBodyLength(){
         return body.getBodyLength();
     }
+
+    public String getRedirectHeader(){
+        return headers.getHeaderByKey("Location");
+    }
 }

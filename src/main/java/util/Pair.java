@@ -4,7 +4,7 @@ public class Pair {
     String key;
     String value;
 
-    Pair(String key, String value) {
+    public Pair(String key, String value) {
         this.key = key.trim();
         this.value = value.trim();
     }
@@ -50,6 +50,6 @@ public class Pair {
 
     @Override
     public String toString() {
-        return "Pair [key=" + key + ", value=" + value + "]";
+        return key + ": " + value;
     }
 }

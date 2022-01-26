@@ -8,6 +8,7 @@ import http.response.HttpResponseBody;
 import http.response.HttpResponseHeaders;
 import http.response.HttpResponseStatusLine;
 import service.UserService;
+import util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,13 +34,14 @@ public class RequestController {
         }
     }
 
-    public static HttpResponse signUp(HttpRequestLine httpRequestLine) throws IOException {
+    public static HttpResponse signUp(HttpRequestLine httpRequestLine) {
         UserService.addUser(httpRequestLine.getUrl());
 
         HttpResponseStatusLine statusLine = new HttpResponseStatusLine(httpRequestLine.getVersion(), HttpStatus.REDIRECT);
-
         HttpResponseHeaders headers = new HttpResponseHeaders();
-        HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp/index.html").toPath()));
+        headers.addHeader(new Pair("Location", "http://localhost:8080/index.html"));
+
+        HttpResponseBody body = new HttpResponseBody();
 
         return new HttpResponse(statusLine, headers, body);
     }

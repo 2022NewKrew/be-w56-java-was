@@ -1,10 +1,15 @@
 package http.response;
 
+
 public class HttpResponseBody {
     private final byte[] body;
 
     public HttpResponseBody(byte[] body) {
         this.body = body;
+    }
+
+    public HttpResponseBody()    {
+        this.body = new byte[]{};
     }
 
     public byte[] getBody() {
