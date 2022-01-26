@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.*;
 
+import controller.Controller;
+import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -16,10 +18,12 @@ public class RequestHandler extends Thread {
 
     private Map<String, String> requestMap;
     private Socket connection;
+    private Controller controller;
 
     public RequestHandler(Socket connectionSocket) {
-        requestMap = new HashMap<>();
+        this.requestMap = new HashMap<>();
         this.connection = connectionSocket;
+        this.controller = new Controller();
     }
 
     public void run() {
@@ -45,31 +49,21 @@ public class RequestHandler extends Thread {
             }
             log.debug(requestMap.toString());
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + requestMap.get("Url")).toPath());
             log.debug("Response!");
-            response200Header(dos, body.length, requestMap);
-            responseBody(dos, body);
+            DataOutputStream dos = new DataOutputStream(out);
+            Response response = controller.route(requestMap);
+            dos.writeBytes(response.getHeader());
+            dos.write(response.getBody(), 0, response.getBody().length);
+            dos.flush();
+//            response200Header(dos, body.length, requestMap);
+//            responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, Map<String, String> requestMap) {
-        try {
-            String contentType = "";
-            List<String> textTypeList = new ArrayList<>(Arrays.asList("css", "html", "js"));
-            List<String> imageTypeList = new ArrayList<>(Arrays.asList("ico", "png", "jpeg", "webp"));
-            String extension = getUrlExtension(requestMap.get("Url"));
-            contentType = textTypeList.stream().anyMatch(s -> s.equals(extension)) ? "text/" + extension : contentType;
-            contentType = imageTypeList.stream().anyMatch(s -> s.equals(extension)) ? "image/" + extension : contentType;
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private void response200Header(Map<String, String> requestMap) {
+
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {

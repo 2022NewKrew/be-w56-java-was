@@ -5,6 +5,8 @@
   * 경로에 맞는 파일 응답하기
   * content type 설정
 * 2일차
+  * request header 파싱 후 requestMap에 저장
+  * request header 파싱 -> controller route -> response header -> response body
 * 3일차
 * 4일차
 * 5일차
