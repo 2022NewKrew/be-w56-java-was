@@ -24,6 +24,14 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
+    /**
+     * @param body URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @return
+     */
+    public static Map<String, String> parseBody(String body) {
+        return parseValues(body, "&");
+    }
+
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();

@@ -1,5 +1,6 @@
 package util;
 
+import http.request.HttpRequestBody;
 import http.request.HttpRequestHeaders;
 import http.request.HttpRequestLine;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +21,10 @@ public class IOUtils {
      * @return
      * @throws IOException
      */
-    public static String readData(BufferedReader br, int contentLength) throws IOException {
+    public static HttpRequestBody readRequestBody(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
-        return String.copyValueOf(body);
+        return new HttpRequestBody(String.copyValueOf(body));
     }
 
     /**
@@ -45,7 +47,7 @@ public class IOUtils {
      */
     public static HttpRequestHeaders readRequestHeaders(BufferedReader br) throws IOException {
         List<Pair> headers = new ArrayList<>();
-        String line = "";
+        String line;
         log.info("========== Request Header ==========");
         while (!(line = br.readLine()).equals("")) {
             log.info(" {}", line);
