@@ -24,8 +24,8 @@ public class HttpRequestUtils {
     private HttpRequestUtils() {
     }
 
-    public static String[] parseRequestLine(List<String> requestLines) {
-        return requestLines.get(0).split(REQUEST_LINE_DELIMITER);
+    public static String[] parseRequestLine(String requestLine) {
+        return requestLine.split(REQUEST_LINE_DELIMITER);
     }
 
     public static HttpMethod parseHttpMethod(String methodToken) {

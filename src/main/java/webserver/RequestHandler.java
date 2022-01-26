@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
@@ -34,10 +33,7 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-            List<String> requestLines = IOUtils.getRequestLines(br);
-            HttpRequest httpRequest = HttpRequest.from(requestLines);
-            String body = IOUtils.readData(br, httpRequest.getContentLength());
-            httpRequest.setParams(body);
+            HttpRequest httpRequest = HttpRequest.from(br);
 
             HandlerMapping handlerMapping = HandlerMapping.getInstance();
             Controller controller = handlerMapping.getController(httpRequest.getPath());

@@ -16,18 +16,24 @@ public class IOUtils {
     private IOUtils() {
     }
 
-    public static List<String> getRequestLines(BufferedReader br) throws IOException {
-        List<String> header = new ArrayList<>();
+    public static String readRequestLine(BufferedReader br) throws IOException {
+        String requestLine = br.readLine();
+        log.debug("request line: {}", requestLine);
+
+        return requestLine;
+    }
+
+    public static List<String> readHttpHeaders(BufferedReader br) throws IOException {
+        List<String> httpHeaders = new ArrayList<>();
         String line = br.readLine();
-        log.debug("request line: {}", line);
 
         while (line != null && !line.equals("")) {
-            header.add(line);
+            httpHeaders.add(line);
             line = br.readLine();
             log.debug("header: {}", line);
         }
 
-        return header;
+        return httpHeaders;
     }
 
     /**
