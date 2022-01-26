@@ -16,4 +16,10 @@ public class RequestLineTest {
     void createRequestStartLineSuccess() {
         new RequestLine(HttpMethod.GET, new RequestTarget("/index.html"), HttpVersion.V_1_0);
     }
+
+    @Test
+    void findStaticFileSuccess() {
+        RequestLine requestLine = new RequestLine(HttpMethod.GET, new RequestTarget("/index.html"), HttpVersion.V_1_0);
+        requestLine.findStaticFile();
+    }
 }

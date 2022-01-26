@@ -2,6 +2,7 @@ package http;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class RequestMessage {
     private final RequestLine requestLine;
@@ -19,7 +20,8 @@ public class RequestMessage {
         }
     }
 
-    public File findStaticFile() {
-        return requestLine.findStaticFile();
+    public byte[] readStaticFile() throws IOException {
+        File file =  requestLine.findStaticFile();
+        return Files.readAllBytes(file.toPath());
     }
 }

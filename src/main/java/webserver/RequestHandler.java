@@ -22,6 +22,7 @@ public class RequestHandler extends Thread {
 
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
             RequestMessage request = receiveRequestMessage(in);
@@ -33,17 +34,26 @@ public class RequestHandler extends Thread {
     }
 
     private ResponseMessage createResponseMessage(RequestMessage request) {
+        Body body = createResponseBody(request);
+        StatusLine statusLine = createStatusLine(body);
+        Headers responseHeaders = body.createResponseHeader();
+        return new ResponseMessage(statusLine, responseHeaders, body);
+    }
+
+    private StatusLine createStatusLine(Body body) {
+        if (body.isEmpty()) {
+            return new StatusLine(HttpVersion.V_1_1, HttpStatus.NOT_FOUND);
+        }
+        return new StatusLine(HttpVersion.V_1_1, HttpStatus.OK);
+    }
+
+    private Body createResponseBody(RequestMessage request) {
         try {
-            File file = request.findStaticFile();
-            Body body = Body.create(file);
-            StatusLine statusLine = new StatusLine(HttpVersion.V_1_1, HttpStatus.OK);
-            Headers responseHeaders = body.createResponseHeader();
-            return new ResponseMessage(statusLine, responseHeaders, body);
-        } catch (IOException exception) {
-            StatusLine statusLine = new StatusLine(HttpVersion.V_1_1, HttpStatus.NOT_FOUND);
-            Body body = new Body(new byte[]{});
-            Headers responseHeaders = body.createResponseHeader();
-            return new ResponseMessage(statusLine, responseHeaders, null);
+            byte[] file = request.readStaticFile();
+            return new Body(file);
+        } catch (IOException e) {
+            // TODO 서블릿 컨트롤러 호출
+            return new Body();
         }
     }
 
