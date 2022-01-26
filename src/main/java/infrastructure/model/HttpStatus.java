@@ -2,15 +2,20 @@ package infrastructure.model;
 
 public enum HttpStatus {
 
-    BAD_REQUEST(400);
+    OK(200, "Ok"),
+    BAD_REQUEST(400, "Bad Request"),
+    FORBIDDEN(403, "Forbidden"),
+    NOT_FOUND(404, "Not Found");
 
     private final int code;
+    private final String name;
 
-    HttpStatus(int code) {
+    HttpStatus(int code, String name) {
         this.code = code;
+        this.name = name;
     }
 
-    public int getCode() {
-        return code;
+    public String getStartLineMessage() {
+        return code + " " + name;
     }
 }

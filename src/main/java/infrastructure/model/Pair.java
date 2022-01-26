@@ -10,6 +10,10 @@ public class Pair {
         this.value = value.trim();
     }
 
+    public static Pair of(String key, String value) {
+        return new Pair(key, value);
+    }
+
     public String getKey() {
         return key;
     }

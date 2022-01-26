@@ -1,15 +1,15 @@
 package adaptor.in.web;
 
-import adaptor.in.web.exception.UriNotFoundException;
+import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.user.UserController;
 import infrastructure.model.HttpRequest;
+import infrastructure.model.HttpResponse;
 import infrastructure.model.Path;
+import infrastructure.util.HttpResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-
-import static infrastructure.util.ResponseHandler.response400;
+import java.io.IOException;
 
 public class FrontController {
 
@@ -26,23 +26,23 @@ public class FrontController {
         return INSTANCE;
     }
 
-    public void handle(DataOutputStream dos, HttpRequest httpRequest) {
+    public HttpResponse handle(HttpRequest httpRequest) throws IOException {
         Path path = httpRequest.getRequestPath();
         log.debug("Request Path: {}", path.getValue());
+
         try {
             if (path.getValue().equals("/")) {
-                homeController.handle(dos, httpRequest);
+                return homeController.handle(httpRequest);
             }
             if (path.getContentType().isDiscrete()) {
-                staticResourceController.handleFileRequest(dos, httpRequest);
-                return;
+                return staticResourceController.handleFileRequest(httpRequest);
             }
             if (path.matchHandler("/user")) {
-                userController.handle(dos, httpRequest);
+                return userController.handleWithResponse(httpRequest);
             }
-        } catch (UriNotFoundException e) {
-            response400(dos);
+        } catch (FileNotFoundException e) {
+            return HttpResponseUtils.notFound();
         }
+        return HttpResponseUtils.badRequest();
     }
-
 }

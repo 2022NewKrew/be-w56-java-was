@@ -5,13 +5,13 @@ import java.util.Objects;
 public class HttpRequest {
 
     private final RequestLine requestLine;
-    private final RequestHeader requestHeader;
-    private final RequestBody requestBody;
+    private final HttpHeader httpHeader;
+    private final HttpBody httpBody;
 
-    public HttpRequest(RequestLine requestLine, RequestHeader requestHeader, RequestBody requestBody) {
+    public HttpRequest(RequestLine requestLine, HttpHeader httpHeader, HttpBody httpBody) {
         this.requestLine = requestLine;
-        this.requestHeader = requestHeader;
-        this.requestBody = requestBody;
+        this.httpHeader = httpHeader;
+        this.httpBody = httpBody;
     }
 
     public Path getRequestPath() {
@@ -23,20 +23,20 @@ public class HttpRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HttpRequest that = (HttpRequest) o;
-        return Objects.equals(requestLine, that.requestLine) && Objects.equals(requestHeader, that.requestHeader) && Objects.equals(requestBody, that.requestBody);
+        return Objects.equals(requestLine, that.requestLine) && Objects.equals(httpHeader, that.httpHeader) && Objects.equals(httpBody, that.httpBody);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestLine, requestHeader, requestBody);
+        return Objects.hash(requestLine, httpHeader, httpBody);
     }
 
     @Override
     public String toString() {
         return "HttpRequest{" +
                 "requestLine=" + requestLine +
-                ", requestHeader=" + requestHeader +
-                ", requestBody=" + requestBody +
+                ", requestHeader=" + httpHeader +
+                ", requestBody=" + httpBody +
                 '}';
     }
 }

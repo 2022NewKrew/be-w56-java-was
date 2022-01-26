@@ -1,10 +1,7 @@
 package infrastructure.util;
 
 import adaptor.in.web.FrontController;
-import infrastructure.model.HttpRequest;
-import infrastructure.model.Pair;
-import infrastructure.model.RequestHeader;
-import infrastructure.model.RequestLine;
+import infrastructure.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +9,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
+
+import static infrastructure.util.ResponseHandler.response;
 
 public class RequestHandler extends Thread {
 
@@ -33,15 +32,16 @@ public class RequestHandler extends Thread {
             InputStreamReader inputStreamReader = new InputStreamReader(in);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            handle(dos, bufferedReader);
+            response(dos, handle(bufferedReader));
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void handle(DataOutputStream dos, BufferedReader bufferedReader) throws IOException {
+    private HttpResponse handle(BufferedReader bufferedReader) throws IOException {
         HttpRequest httpRequest = getRequest(bufferedReader);
-        frontController.handle(dos, httpRequest);
+
+        return frontController.handle(httpRequest);
     }
 
     private HttpRequest getRequest(BufferedReader bufferedReader) throws IOException, IllegalArgumentException {
@@ -53,7 +53,7 @@ public class RequestHandler extends Thread {
             headers.add(HttpRequestUtils.parseHeader(line));
         }
 
-        RequestHeader requestHeader = new RequestHeader(headers);
-        return new HttpRequest(requestLine, requestHeader, null);
+        HttpHeader httpHeader = new HttpHeader(headers);
+        return new HttpRequest(requestLine, httpHeader, null);
     }
 }

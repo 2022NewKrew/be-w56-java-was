@@ -1,22 +1,15 @@
 package adaptor.in.web.user;
 
+import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
 import application.SignUpUserService;
 import domain.user.User;
-import infrastructure.model.ContentType;
-import infrastructure.model.HttpRequest;
-import infrastructure.model.Path;
+import infrastructure.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
-
-import static infrastructure.util.ResponseHandler.response200Body;
-import static infrastructure.util.ResponseHandler.response200Header;
 
 public class UserController {
 
@@ -32,18 +25,25 @@ public class UserController {
         return INSTANCE;
     }
 
-    public void handle(DataOutputStream dos, HttpRequest httpRequest) {
+    public HttpResponse handleWithResponse(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {
         Path path = httpRequest.getRequestPath();
         log.debug("User Controller: {}", path);
-        if (path.matchHandler(REQUEST_MAPPING + "/create")) {
-            signUp(dos, httpRequest);
+
+        try {
+            if (path.matchHandler(REQUEST_MAPPING + "/create")) {
+                return signUpWithResponse(httpRequest);
+            }
+        } catch (IOException e) {
+            throw new FileNotFoundException();
         }
+        throw new UriNotFoundException();
     }
 
-    private void signUp(DataOutputStream dos, HttpRequest httpRequest) {
-        log.debug("User SignUp Page Request!");
+    private HttpResponse signUpWithResponse(HttpRequest request) throws IOException {
+        log.debug("User SignUp Method Called!!");
 
-        Map<String, String> pathVariables = httpRequest.getRequestPath().getVariables();
+
+        Map<String, String> pathVariables = request.getRequestPath().getVariables();
         User user = User.builder()
                 .userId(pathVariables.get("userId"))
                 .password(pathVariables.get("password"))
@@ -53,12 +53,10 @@ public class UserController {
 
         signUpUserService.signUp(user);
 
-        try {
-            byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
-            response200Header(dos, ContentType.HTML.getMimeType(), body.length);
-            response200Body(dos, body);
-        } catch (IOException e) {
-            throw new UriNotFoundException();
-        }
+        return new HttpResponse(
+                ResponseLine.valueOf(HttpStatus.OK),
+                HttpHeader.of(Pair.of("Content-Type", "text/html; charset=utf-8")),
+                HttpBody.valueOfFile("/index.html")
+        );
     }
 }
