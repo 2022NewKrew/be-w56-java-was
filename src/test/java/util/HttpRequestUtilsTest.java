@@ -76,7 +76,7 @@ public class HttpRequestUtilsTest {
     public void parseRequest() {
         // Given
         String requestLine = "GET /index.html HTTP/1.1";
-        String[] tokens = requestLine.split(" ");
+        String[] tokens = requestLine.split(Constants.SPACE);
 
         // when & then
         assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_METHOD));
