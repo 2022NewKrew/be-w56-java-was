@@ -3,12 +3,10 @@ package service;
 import db.DataBase;
 import http.HttpStatus;
 import http.request.HttpRequest;
-import http.request.HttpRequestHeader;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
-import http.response.HttpResponseStatusLine;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +61,7 @@ public class UserController {
 
     private HttpResponse redirect(String redirectUrl) {
         HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
-        responseHeader.addKeyValue("Location", redirectUrl);
+        responseHeader.putToHeaders("Location", redirectUrl);
         byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
         HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
 
