@@ -16,7 +16,6 @@ public class WebServer {
 
     public static void main(String args[]) throws Exception {
         ArgsUtil argsUtil = ArgsUtil.from(args);
-
         try (ServerSocket listenSocket = new ServerSocket(DEFAULT_PORT)) {
             log.info("Web Application Server started {} port.", DEFAULT_PORT);
             Socket connection;

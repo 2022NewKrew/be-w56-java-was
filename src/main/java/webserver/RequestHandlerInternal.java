@@ -1,7 +1,7 @@
 package webserver;
 
 import http.HttpRequest;
-import http.HttpRequestParser;
+import http.parser.HttpRequestParser;
 import http.HttpResponse;
 import http.render.HttpResponseRenderer;
 import org.slf4j.Logger;
@@ -34,11 +34,11 @@ public class RequestHandlerInternal {
         } catch (BadRequestException e) {
             log.error("잘못된 요청 예외 : {} ", e.getMessage());
         } catch (IOException e) {
-            throw e;
+            log.error("I/O Exception : {} ", e.getMessage());
         }
     }
 
-    private HttpRequest parseHttpRequest(InputStream in) {
+    private HttpRequest parseHttpRequest(InputStream in) throws IOException {
         HttpRequestParser parser = HttpFactory.httpRequestParser();
         return parser.parse(in);
     }
