@@ -27,4 +27,10 @@ public class HttpRequestHeader {
 
         return new HttpRequestHeader(header);
     }
+
+    public String getIfPresent(String key) {
+        if (header.containsKey(key))
+            return header.get(key);
+        return "";
+    }
 }

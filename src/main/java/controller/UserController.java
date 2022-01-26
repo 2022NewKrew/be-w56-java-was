@@ -1,19 +1,17 @@
 package controller;
 
 import db.DataBase;
-import http.HttpStatus;
 import http.request.HttpRequest;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
-import http.response.HttpResponseBody;
-import http.response.HttpResponseHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  *  싱글톤
@@ -24,6 +22,11 @@ import java.util.Map;
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private static UserController INSTANCE;
+    private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
+
+    {
+        methodMap.put("GET /create", this::createUser);
+    }
 
     private UserController() {
     }
@@ -37,18 +40,20 @@ public class UserController implements Controller {
     public HttpResponse process(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
         String[] urlTokens = requestLine.url().split("/");
-        String url = urlTokens[urlTokens.length - 1].split("\\?")[0];
+        String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];
+        String methodAndUrl = requestLine.method() + " /" + urlWithoutQueryString;
 
-        if (requestLine.method().equals("GET") && url.equals("create")) {
-            log.debug("GET /create called");
-            return createUser(requestLine);
+        if (methodMap.containsKey(methodAndUrl)) {
+            log.debug("{} called", methodAndUrl);
+            return methodMap.get(methodAndUrl).apply(request);
         } else { // TODO : 임시 구현
             log.debug("{} {}", requestLine.method(), requestLine.url());
             return readStaticFile(requestLine.url());
         }
     }
 
-    private HttpResponse createUser(HttpRequestLine requestLine) {
+    private HttpResponse createUser(HttpRequest request) {
+        HttpRequestLine requestLine = request.line();
         Map<String, String> queryString = requestLine.queryString();
         System.out.println(queryString);
         User newUser = new User(
