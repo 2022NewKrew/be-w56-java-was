@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class HttpHeader {
     private static final Logger log = LoggerFactory.getLogger(HttpHeader.class);
-    public static final String HEADER_KEY_VALUE_SPLIT_DELIMITER = ": ";
+    private static final String HEADER_KEY_VALUE_SPLIT_DELIMITER = ": ";
+
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String LOCATION = "Location";
@@ -25,7 +26,7 @@ public class HttpHeader {
         makeHeaders(bufferedReader);
     }
 
-    public void makeHeaders(BufferedReader bufferedReader) throws IOException {
+    private void makeHeaders(BufferedReader bufferedReader) throws IOException {
         headers = new HashMap<>();
 
         String line;

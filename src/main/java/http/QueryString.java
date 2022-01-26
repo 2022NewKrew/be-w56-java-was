@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QueryString {
-    public static final String QUERY_STRING_KEY_VALUE_SPLIT_DELIMITER = "=";
-    public static final String QUERY_STRING_PAIR_SPLIT_DELIMITER = "&";
+    private static final String QUERY_STRING_KEY_VALUE_SPLIT_DELIMITER = "=";
+    private static final String QUERY_STRING_PAIR_SPLIT_DELIMITER = "&";
 
     private Map<String, String> queryStringMap;
 

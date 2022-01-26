@@ -1,7 +1,7 @@
 package http;
 
 public class StatusLine {
-    public static final String EMPTY_SPACE = " ";
+    private static final String EMPTY_SPACE = " ";
 
     private String protocol;
     private HttpStatus httpStatus;

@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RequestBody {
-    public static final String REQUEST_BODY_KEY_VALUE_SPLIT_DELIMITER = "=";
-    public static final String REQUEST_BODY_PAIR_SPLIT_DELIMITER = "&";
+    private static final String REQUEST_BODY_KEY_VALUE_SPLIT_DELIMITER = "=";
+    private static final String REQUEST_BODY_PAIR_SPLIT_DELIMITER = "&";
 
     private Map<String, String> requestBodyMap;
 
@@ -20,7 +20,7 @@ public class RequestBody {
         makeRequestBodyMap(bufferedReader, contentLength);
     }
 
-    public void makeRequestBodyMap(BufferedReader bufferedReader, int contentLength) throws IOException {
+    private void makeRequestBodyMap(BufferedReader bufferedReader, int contentLength) throws IOException {
         String requestBodyString = IOUtils.readData(bufferedReader, contentLength);
         String[] splitRequestBodyString = requestBodyString.split(REQUEST_BODY_PAIR_SPLIT_DELIMITER);
         Map<String, String> requestBodyMap = new HashMap<>();

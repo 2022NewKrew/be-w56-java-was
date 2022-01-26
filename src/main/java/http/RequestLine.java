@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class RequestLine {
     private static final Logger log = LoggerFactory.getLogger(RequestLine.class);
-    public static final String REQUEST_LINE_SPLIT_DELIMITER = " ";
-    public static final String PATH_QUERY_STRING_SPLIT_DELIMITER = "\\?";
+    private static final String REQUEST_LINE_SPLIT_DELIMITER = " ";
+    private static final String PATH_QUERY_STRING_SPLIT_DELIMITER = "\\?";
 
     private String method;
     private String path;
