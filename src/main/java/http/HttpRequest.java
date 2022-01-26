@@ -11,9 +11,13 @@ public class HttpRequest {
     public HttpRequest(BufferedReader bufferedReader) throws IOException {
         this.requestLine = new RequestLine(bufferedReader);
         this.header = new HttpHeader(bufferedReader);
-        if (header.getHeaders().get("Content-Length") != null) {
-            this.requestBody = new RequestBody(bufferedReader, Integer.parseInt(header.getHeaders().get("Content-Length")));
+        if (hasRequestBody()) {
+            this.requestBody = new RequestBody(bufferedReader, Integer.parseInt(header.getContentLength()));
         }
+    }
+
+    private boolean hasRequestBody() {
+        return header.getContentLength() != null && Integer.parseInt(header.getContentLength()) != 0;
     }
 
     public String getPath() {
