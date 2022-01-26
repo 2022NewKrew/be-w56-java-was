@@ -9,10 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.HttpRequest;
 
-import java.net.Socket;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import static mapper.MappingConst.*;
 
 public class UrlMapper {
     private final Map<String, Controller> controllerMap;
@@ -29,23 +28,23 @@ public class UrlMapper {
         errorController = new ErrorController();
         userController = new UserController();
 
-        controllerMap.put("/js", staticController);
-        controllerMap.put("/css", staticController);
-        controllerMap.put("/fonts", staticController);
-        controllerMap.put("/images", staticController);
-        controllerMap.put("/favicon.ico", staticController);
-        controllerMap.put("/error", errorController);
-        controllerMap.put("/users", userController);
+        controllerMap.put(JS, staticController);
+        controllerMap.put(CSS, staticController);
+        controllerMap.put(FONT, staticController);
+        controllerMap.put(IMAGE, staticController);
+        controllerMap.put(ICON, staticController);
+        controllerMap.put(ERROR, errorController);
+        controllerMap.put(USER, userController);
 
-        controllerMap.put("/", rootController);
+        controllerMap.put(ROOT, rootController);
     }
 
     public Map<String, Object> mappingResult(HttpRequest httpRequest){
         String method = httpRequest.getMethod();
         String url = httpRequest.getUrl();
-        Map<String, String> message = httpRequest.getData();
+        Map<String, String> model = httpRequest.makeModel();
 
-        return controllerMap.get(createMappingUrl(url)).run(method, url, message);
+        return controllerMap.get(createMappingUrl(url)).run(method, url, model);
     }
 
     private String createMappingUrl(String url){

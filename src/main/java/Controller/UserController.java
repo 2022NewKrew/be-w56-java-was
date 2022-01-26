@@ -1,5 +1,7 @@
 package Controller;
 
+import mapper.AssignedModelKey;
+import mapper.MappingConst;
 import model.UserAccount;
 import model.UserAccountDTO;
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ public class UserController implements Controller{
     private Map<String, Object> getForm(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
 
-        result.put("name", "/user/form.html");
+        result.put(AssignedModelKey.NAME, "/user/form.html");
 
         return result;
     }
@@ -54,7 +56,7 @@ public class UserController implements Controller{
             log.info("아이디 {}로 중복으로 회원 가입을 신청했습니다", userId);
         }
 
-        result.put("name", "redirect:/");
+        result.put(AssignedModelKey.NAME, "redirect:/");
 
         return result;
     }
@@ -62,7 +64,7 @@ public class UserController implements Controller{
     private Map<String, Object> getLogin(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
 
-        result.put("name", "/user/login.html");
+        result.put(AssignedModelKey.NAME, "/user/login.html");
 
         return result;
     }
@@ -76,8 +78,8 @@ public class UserController implements Controller{
 
         if(findUserAccount.isEmpty()){
             log.info("[UserController > login] DB 에서 유저 계정에서 {}로 검색에 실패했습니다.", userId);
-            result.put("login", false);
-            result.put("name", "redirect:/users/login_failed");
+            result.put(AssignedModelKey.LOGIN, false);
+            result.put(AssignedModelKey.NAME, "redirect:/users/login_failed");
             return result;
         }
 
@@ -85,14 +87,14 @@ public class UserController implements Controller{
 
         if(!userService.isPasswordEqual(userAccount, password)){
             log.error("[UserController > login] {} 아이디로 로그인 시 입력한 비밀번호가 DB와 일치하지 않습니다.", userAccount.getUserId());
-            result.put("login", false);
-            result.put("name", "redirect:/users/login_failed");
+            result.put(AssignedModelKey.LOGIN, false);
+            result.put(AssignedModelKey.NAME, "redirect:/users/login_failed");
             return result;
         }
 
-        result.put("sessionedUser", userAccount);
-        result.put("login", true);
-        result.put("name", "redirect:/");
+        result.put(AssignedModelKey.SESSIONED_USER, userAccount);
+        result.put(AssignedModelKey.LOGIN, true);
+        result.put(AssignedModelKey.NAME, "redirect:/");
 
         return result;
     }
@@ -100,14 +102,14 @@ public class UserController implements Controller{
     private Map<String, Object> getLoginFailed(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
 
-        result.put("name", "/user/login_failed.html");
+        result.put(AssignedModelKey.NAME, "/user/login_failed.html");
 
         return result;
     }
 
     @Override
     public Function<Map<String, String>, Map<String, Object>> decideMethod(String method, String url) {
-        url = method + " " + url.substring(6);
+        url = method + " " + url.substring(MappingConst.USER.length());
 
         return methodMapper.get(url);
     }

@@ -1,5 +1,7 @@
 package Controller;
 
+import mapper.AssignedModelKey;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -17,7 +19,7 @@ public class ErrorController implements Controller{
     private Map<String, Object> notFoundError(Map<String, String> model){
         Map<String, Object> result = new HashMap<>();
 
-        result.put("name", "/404_error.html");
+        result.put(AssignedModelKey.NAME, "/404_error.html");
 
         return result;
     }

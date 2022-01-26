@@ -1,5 +1,7 @@
 package webserver;
 
+import mapper.AssignedModelKey;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,49 +12,15 @@ public class HttpRequest {
     private final String url;
     private final String protocol;
     private Map<String, String> header;
-    private Map<String, String> data;
+    private Map<String, String> body;
 
-    public HttpRequest(String[] firstLineSplit){
+    public HttpRequest(String[] firstLineSplit, Map<String, String> header, Map<String, String> body){
         this.method = firstLineSplit[0];
         this.url = firstLineSplit[1];
         this.protocol = firstLineSplit[2];
 
-        header = new HashMap<>();
-        data = new HashMap<>();
-        data.put("request_url", url);
-    }
-
-    public void reBuildHttpRequest(BufferedReader br) throws IOException{
-        bringHeader(br);
-
-        if(!"GET".equals(method)){
-            int len = Integer.parseInt(header.get("Content-Length"));
-            data.putAll(getRequestData(br, len));
-        }
-    }
-
-    private void bringHeader(BufferedReader br) throws IOException {
-        Map<String, String> headerMap = new HashMap<>();
-
-        String line = br.readLine();
-        while(line != null && !"".equals(line)){
-            headerMap.put(line.split(":")[0].trim(), line.split(":")[1].trim());
-            line = br.readLine();
-        }
-
-        header = headerMap;
-    }
-
-    private Map<String, String> getRequestData(BufferedReader br, int len) throws IOException{
-        Map<String, String> message = new HashMap<>();
-        char[] a = new char[len];
-
-        br.read(a, 0, a.length);
-        for(String data: new String(a).split("&")){
-            message.put(data.split("=")[0], data.split("=")[1]);
-        }
-
-        return message;
+        this.header = header;
+        this.body = body;
     }
 
     public String getMethod() {
@@ -63,7 +31,11 @@ public class HttpRequest {
         return url;
     }
 
-    public Map<String, String> getData() {
-        return data;
+    public Map<String, String> makeModel(){
+        Map<String, String> model = new HashMap<>(body);
+
+        model.put(AssignedModelKey.REQUEST_URL, url);
+
+        return model;
     }
 }
