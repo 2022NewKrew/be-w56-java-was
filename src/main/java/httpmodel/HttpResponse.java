@@ -10,18 +10,18 @@ public class HttpResponse {
     private static final String CONTENT_LENGTH = "Content-Length: ";
 
     private final List<String> header = new ArrayList<>();
-    private String body = "";
+    private byte[] body;
     private HttpStatus httpStatus = HttpStatus.OK;
 
     public void setErrorResponse(String errorMessage, HttpStatus httpStatus) {
         addHeader("Content-Type", "application/json");
-        body = errorMessage;
+        body = errorMessage.getBytes(StandardCharsets.UTF_8);
         this.httpStatus = httpStatus;
     }
 
-    public void set200OK(HttpRequest httpRequest, String responseBody) {
+    public void set200OK(HttpRequest httpRequest, byte[] responseBody) {
         header.add("Content-Type: " + httpRequest.acceptType() + ";charset=utf-8");
-        header.add(CONTENT_LENGTH + responseBody.getBytes(StandardCharsets.UTF_8).length);
+        header.add(CONTENT_LENGTH + responseBody.length);
         httpStatus = HttpStatus.OK;
         body = responseBody;
     }
@@ -34,8 +34,11 @@ public class HttpResponse {
         return String.join(NEW_LINE,
             String.format("HTTP/1.1 %d %s", httpStatus.getStatus(), httpStatus.getStatusMessage()),
             String.join(NEW_LINE, header),
-            "",
-            body
+            NEW_LINE
         );
+    }
+
+    public byte[] getBody() {
+        return body;
     }
 }

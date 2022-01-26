@@ -43,6 +43,7 @@ public class RequestHandler implements Runnable {
         ) {
             HttpResponse response = messageConvert(bufferedReader);
             outputStream.write(response.message().getBytes());
+            outputStream.write(response.getBody());
             outputStream.flush();
         } catch (IOException exception) {
             logger.error("Exception stream", exception);

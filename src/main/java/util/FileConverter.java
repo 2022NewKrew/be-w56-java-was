@@ -9,9 +9,8 @@ public class FileConverter {
     private FileConverter() {
     }
 
-    public static String fileToString(String uri) throws IOException {
-        byte[] bytes = Files.readAllBytes(
+    public static byte[] fileToString(String uri) throws IOException {
+        return Files.readAllBytes(
             new File("webapp" + uri).toPath());
-        return new String(bytes);
     }
 }
