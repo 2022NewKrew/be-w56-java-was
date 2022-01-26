@@ -10,6 +10,11 @@ public class HttpRequestUtils {
 
     private static final String REQUEST_DELIMITER = " ";
     private static final String ACCEPT_TYPE_DELIMITER = ",";
+    private static final String PATH_DELIMITER = "\\?";
+
+    public static String[] parsePath(String path) {
+        return path.split(PATH_DELIMITER);
+    }
 
     /**
      * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
