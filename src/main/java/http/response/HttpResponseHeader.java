@@ -20,7 +20,7 @@ public class HttpResponseHeader {
         headers += key + ": " + value + "\r\n";
     }
 
-    public void writeToDataOutputStream(DataOutputStream dos) throws IOException {
+    public void writeToDataOutputStream(final DataOutputStream dos) throws IOException {
         try {
             statusLine.writeToDataOutputStream(dos);
             dos.writeBytes(headers + "\r\n");
@@ -29,7 +29,7 @@ public class HttpResponseHeader {
         }
     }
 
-    private ContentType contentTypeOf(String url) {
+    private ContentType contentTypeOf(final String url) {
         String[] tokens = url.split("\\.");
         String extension = tokens[tokens.length - 1];
 

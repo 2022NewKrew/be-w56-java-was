@@ -16,8 +16,8 @@ public class HttpRequest {
     }
 
     public static HttpRequest readWithBufferedReader(BufferedReader br) throws IOException{
-        HttpRequestHeader requestHeader = null;
-        HttpRequestLine requestLine = null;
+        HttpRequestHeader requestHeader;
+        HttpRequestLine requestLine;
 
         try {
             // Read request line

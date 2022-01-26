@@ -1,4 +1,4 @@
-package service;
+package controller;
 
 import db.DataBase;
 import http.HttpStatus;
@@ -19,7 +19,7 @@ import java.util.Map;
  *  process 메소드를 통해 HttpRequest 를 넘겨주면
  *  필요한 작업 후 HttpResponse 를 반환
  */
-public class UserController {
+public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController() {

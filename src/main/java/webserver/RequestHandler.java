@@ -1,10 +1,11 @@
 package webserver;
 
+import controller.Controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.UserController;
+import controller.UserController;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,7 +15,7 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private UserController userController = new UserController();
+    private Controller userController = new UserController();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -30,6 +31,8 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(out);) {
 
             HttpRequest request = HttpRequest.readWithBufferedReader(br);
+
+            // TODO : url mapping
 
             HttpResponse response = userController.process(request);
             response.writeToDataOutputStream(dos);
