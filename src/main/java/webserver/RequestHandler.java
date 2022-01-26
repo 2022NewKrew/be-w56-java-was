@@ -9,6 +9,8 @@ import util.HttpStatus;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +24,9 @@ import static util.HttpRequestUtils.parseRequest;
 
 @Slf4j
 public class RequestHandler extends Thread {
+    private static final String HTTP_VERSION = "HTTP/1.1";
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
+
     private static final Map<Predicate<HttpRequest>, BiConsumer<HttpRequest, HttpResponse>> handlers;
     static {
         // TODO: Handlers probably deserve an dedicated object
@@ -61,7 +66,7 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
             HttpRequest httpRequest = parseRequest(br);
             // TODO: Http version should be provided by the handler. Copying from request is wrong.
-            HttpResponse httpResponse = new HttpResponse(httpRequest.getHttpVersion());
+            HttpResponse httpResponse = new HttpResponse(HTTP_VERSION, ENCODING);
             handlers.entrySet().stream()
                     .filter(entry -> entry.getKey().test(httpRequest))
                     .findFirst()

@@ -5,21 +5,20 @@ import org.apache.tika.Tika;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
     private static final Tika tika = new Tika();
-    private static final Charset ENCODING = StandardCharsets.UTF_8;
-
-    private final String httpVersion;
+    private final Charset ENCODING;
+    private final String HTTP_VERSION;
     private final Map<String, String> headers = new HashMap<>();
     private HttpStatus httpStatus;
     private byte[] body;
 
-    public HttpResponse(String httpVersion) {
-        this.httpVersion = httpVersion;
+    public HttpResponse(String HTTP_VERSION, Charset ENCODING) {
+        this.HTTP_VERSION = HTTP_VERSION;
+        this.ENCODING = ENCODING;
     }
 
     public void setHttpStatus(HttpStatus httpStatus) {
@@ -42,7 +41,7 @@ public class HttpResponse {
         // Status Line
         // https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.2
         // status-line = HTTP-version SP status-code SP reason-phrase CRLF
-        baos.write(httpVersion.getBytes());
+        baos.write(HTTP_VERSION.getBytes());
         baos.write(0x20); // Space
         baos.write(httpStatus.getStatusCode());
         baos.write(0x20); // Space
