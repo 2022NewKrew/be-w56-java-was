@@ -113,28 +113,13 @@ public class HttpRequestUtils {
         }
     }
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-
-    public static Map<String, String> readRequest(BufferedReader br) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        String line = br.readLine();
+    public static Map<String, String> parseRequestLine(String line) {
         String[] splitLine = line.split(" ");
-        map.put("httpMethod", splitLine[0]);
-        map.put("httpUrl", splitLine[1]);
-        map.put("httpProtocol", splitLine[2]);
-        return map;
+        return new HashMap<>() {{
+            put("method", splitLine[0]);
+            put("url", splitLine[1]);
+            put("protocol", splitLine[2]);
+        }};
     }
 
-    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        String line = br.readLine();
-        while (true) {
-            if (line == null || line.equals("")) {
-                return map;
-            }
-            String[] splitLine = line.split(": ");
-            map.put(splitLine[0], splitLine[1]);
-            line = br.readLine();
-        }
-    }
 }

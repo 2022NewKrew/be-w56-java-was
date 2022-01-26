@@ -1,14 +1,12 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.file.Files;
-import java.util.Map;
-
+import http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static util.HttpRequestUtils.*;
+import java.io.*;
+import java.net.Socket;
+import java.nio.file.Files;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,16 +21,27 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+        try (InputStream in = connection.getInputStream();
+             OutputStream out = connection.getOutputStream();
+             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            Map<String, String> requestMap = readRequest(br);
-            Map<String, String> headerMap = readHeader(br);
-            String requestUrl = requestMap.get("httpUrl");
-            String contentType = headerMap.get("Accept").split(",")[0];
+            HttpRequest httpRequest = new HttpRequest();
+            // RequestLine 처리
+            String requestLine = br.readLine();
+            httpRequest.setRequestLine(requestLine);
+            // Header 처리
+            String headerSingleline = " ";
+            while (true) {
+                headerSingleline = br.readLine();
+                if (headerSingleline == null || headerSingleline.equals("")) {
+                    break;
+                }
+                httpRequest.setHeaderValue(headerSingleline);
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./webapp" + requestUrl).toPath());
-            response200Header(dos, body.length, contentType);
+            byte[] body = Files.readAllBytes(new File("./webapp" + httpRequest.getRequestLine().getUrl()).toPath());
+            response200Header(dos, body.length, "");
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());

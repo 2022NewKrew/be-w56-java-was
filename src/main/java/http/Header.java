@@ -11,18 +11,6 @@ public class Header {
     private String referer;
     private String userAgent;
 
-    public Header(String accept, String acceptEncoding, String acceptLanguage, String cacheControl, String connection, String cookie, String host, String referer, String userAgent) {
-        this.accept = accept;
-        this.acceptEncoding = acceptEncoding;
-        this.acceptLanguage = acceptLanguage;
-        this.cacheControl = cacheControl;
-        this.connection = connection;
-        this.cookie = cookie;
-        this.host = host;
-        this.referer = referer;
-        this.userAgent = userAgent;
-    }
-
     public String getAccept() {
         return accept;
     }
@@ -58,4 +46,35 @@ public class Header {
     public String getUserAgent() {
         return userAgent;
     }
+
+    public void setValue(String fieldName, String value) {
+        if (fieldName.equals("Accept")) {
+            this.accept = value;
+        }
+        if (fieldName.equals("Accept-Encoding")) {
+            this.acceptEncoding = value;
+        }
+        if (fieldName.equals("Accept-Language")) {
+            this.acceptLanguage = value;
+        }
+        if (fieldName.equals("Cache-Control")) {
+            this.cacheControl = value;
+        }
+        if (fieldName.equals("Connection")) {
+            this.connection = value;
+        }
+        if (fieldName.equals("Cookie")) {
+            this.cookie = value;
+        }
+        if (fieldName.equals("Host")) {
+            this.host = value;
+        }
+        if (fieldName.equals("Referer")) {
+            this.referer = value;
+        }
+        if (fieldName.equals("User-Agent")) {
+            this.userAgent = value;
+        }
+    }
+
 }
