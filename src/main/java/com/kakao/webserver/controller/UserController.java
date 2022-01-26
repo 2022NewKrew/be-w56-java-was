@@ -8,6 +8,7 @@ import com.kakao.http.response.HttpResponse;
 import com.kakao.http.response.HttpStatus;
 import com.kakao.model.User;
 import com.kakao.service.UserService;
+import com.kakao.util.HttpRequestUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,13 +25,13 @@ public class UserController implements HttpController {
 
     @Override
     public boolean isValidRequest(HttpMethod method, String path) {
-        return HttpMethod.GET.equals(method)
+        return HttpMethod.POST.equals(method)
                 && path.matches("/user/create");
     }
 
     @Override
     public void handleRequest(HttpRequest request, OutputStream os) throws Exception {
-        Map<String, String> queryMap = request.getUrl().getQueryMap();
+        Map<String, String> queryMap = HttpRequestUtils.parseQueryString(request.getBody());
         String userId = URLDecoder.decode(queryMap.get("userId"), StandardCharsets.UTF_8);
         String password = URLDecoder.decode(queryMap.get("password"), StandardCharsets.UTF_8);
         String name = URLDecoder.decode(queryMap.get("name"), StandardCharsets.UTF_8);
