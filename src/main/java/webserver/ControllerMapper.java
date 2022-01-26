@@ -17,6 +17,13 @@ public class ControllerMapper {
         controllerMap.put("user", UserController.getInstance());
     }
 
+    /**
+     * @param request  http 요청 객체
+     *
+     * url에서 key가 되는 값을 parsing (ex. /user/create -> user)
+     * 이를 담당하는 controller가 존재하면 처리 위임
+     * default controller = MainController
+     */
     public static HttpResponse map(HttpRequest request) throws IOException {
         String url = request.line().url();
         String[] tokens = url.split("/");
