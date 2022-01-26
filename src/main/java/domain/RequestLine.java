@@ -3,6 +3,9 @@ package domain;
 public class RequestLine {
 
     private static final int REQUEST_LINE_SIZE = 3;
+    private static final int METHOD_INDEX = 0;
+    private static final int PATH_INDEX = 1;
+    private static final int VERSION_INDEX = 2;
 
     private final HttpMethod method;
     private final String path;
@@ -12,9 +15,9 @@ public class RequestLine {
         validateRequestLine(requestLine);
         String[] tokens = splitRequestLine(requestLine);
 
-        this.method = HttpMethod.valueOf(tokens[0]);
-        this.path = tokens[1];
-        this.version = tokens[2];
+        this.method = HttpMethod.valueOf(tokens[METHOD_INDEX]);
+        this.path = tokens[PATH_INDEX];
+        this.version = tokens[VERSION_INDEX];
     }
 
     private void validateRequestLine(String requestLine) {
@@ -27,8 +30,11 @@ public class RequestLine {
         return requestLine.split(Constants.SPACE_DELIMITER);
     }
 
-    public HttpMethod getMethod() {
-        return method;
+    public boolean isGetMethod() {
+        return method == HttpMethod.GET;
+    }
+    public boolean isPostMethod() {
+        return method == HttpMethod.POST;
     }
 
     public String getPath() {
@@ -37,5 +43,10 @@ public class RequestLine {
 
     public String getVersion() {
         return version;
+    }
+
+    @Override
+    public String toString() {
+        return method + " " + path + " " +  version;
     }
 }
