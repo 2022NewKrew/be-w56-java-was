@@ -10,10 +10,23 @@ public class HttpResponse {
     private HttpHeaders headers;
     private byte[] body;
 
-    public HttpResponse(HttpStatus status, HttpHeaders headers, byte[] body) {
+    public HttpResponse() {
+        this.status = HttpStatus.OK;
+        this.headers = new HttpHeaders();
+        this.body = new byte[0];
+    }
+
+    public void addHeader(String key, String value) {
+        headers.add(key, value);
+    }
+
+    public void status(HttpStatus status) {
         this.status = status;
-        this.headers = headers;
+    }
+
+    public void body(byte[] body) {
         this.body = body;
+        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
     }
 
     public byte[] getStatus() {

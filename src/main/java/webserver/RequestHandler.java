@@ -10,6 +10,7 @@ import java.util.Map;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.status.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,8 @@ public class RequestHandler extends Thread {
     }
 
     private void handleResponse(HttpRequest request, DataOutputStream dos) throws IOException {
-        HttpResponse response = Router.route(request);
+        HttpResponse response = new HttpResponse();
+        Router.route(request, response);
         writeResponse(response, dos);
     }
 

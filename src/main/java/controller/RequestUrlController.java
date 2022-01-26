@@ -1,18 +1,22 @@
 package controller;
 
+import controller.annotation.RequestMapping;
 import db.DataBase;
 import http.request.HttpRequest;
+import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 
 @Slf4j
-public class Controller {
+public class RequestUrlController {
 
-    public static String index(HttpRequest request) {
-        return "/index.html";
+    @RequestMapping("/")
+    public String index(HttpRequest request, HttpResponse response) {
+        return "/index";
     }
 
-    public static String createUser(HttpRequest request) {
+    @RequestMapping("/create")
+    public String createUser(HttpRequest request, HttpResponse response) {
         String userId = request.getParam("userId");
         String password = request.getParam("password");
         String name = request.getParam("name");
@@ -21,6 +25,6 @@ public class Controller {
         DataBase.addUser(user);
 
         log.info("user created");
-        return "/index.html";
+        return "/index";
     }
 }
