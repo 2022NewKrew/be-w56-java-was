@@ -38,7 +38,6 @@ public class RequestHandler extends Thread {
 
         // Http 클래스 분리
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             String request = bufferedReader.readLine();
@@ -115,6 +114,7 @@ public class RequestHandler extends Thread {
         String method = splited[0];
         log.debug(method);
         if (method.matches("/users(.*)")) {
+            log.debug("hi: " + method);
             UserController userController = new UserController(method, HttpRequestUtils.parseQueryString(splited[1]));
             return userController.run(method);
         }
