@@ -1,9 +1,4 @@
-package util;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+package util.request;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -11,11 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class HttpRequestUtils {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+
     /**
      * @param queryString 은 URL 에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     *
      */
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
@@ -23,7 +26,6 @@ public class HttpRequestUtils {
 
     /**
      * @param cookies 값은 name1=value1; name2=value2 형식임
-     *
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
@@ -63,25 +65,24 @@ public class HttpRequestUtils {
             if (line.equals("")) {
                 break;
             }
-            log.debug("header : {}",line);
             Pair keyValue = parseHeader(line);
-            header.put(keyValue.getKey(),keyValue.getValue());
+            header.put(keyValue.getKey(), keyValue.getValue());
         }
         return header;
     }
 
-    public static Map<String, String> parseRequestLine(BufferedReader br) throws IOException {
-        Map<String, String> parameters = new HashMap<>();
+    public static RequestLine parseRequestLine(BufferedReader br) throws IOException {
         String requestLine = br.readLine();
         String[] tokens = requestLine.split(" ");
         if (tokens.length != 3) {
             throw new IOException("request line error : " + requestLine);
         }
-        log.debug("request line : {}",requestLine);
-        parameters.put("method", tokens[0]);
-        parameters.put("url", tokens[1]);
-        parameters.put("version", tokens[2]);
-        return parameters;
+        log.debug("request line : {}", requestLine);
+        String method = tokens[0];
+        String url = tokens[1];
+        String version = tokens[2];
+
+        return new RequestLine(method, url, version);
     }
 
     public static class Pair {
