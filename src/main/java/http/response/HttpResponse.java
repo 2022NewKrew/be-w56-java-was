@@ -1,8 +1,8 @@
-package webserver.http.response;
+package http.response;
 
-import webserver.http.common.HttpHeaders;
-import webserver.http.common.HttpVersion;
-import webserver.http.request.HttpRequest;
+import http.common.HttpHeaders;
+import http.common.HttpVersion;
+import http.request.HttpRequest;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -35,7 +35,8 @@ public class HttpResponse {
             viewByteArray = Files.readAllBytes(new File("./webapp" + viewName).toPath());
             status = HttpStatus.OK;
         } catch (NoSuchFileException e) {
-            viewByteArray = Files.readAllBytes(new File("./webapp" + "error.html").toPath());
+            viewName = "/error.html";
+            viewByteArray = Files.readAllBytes(new File("./webapp" + viewName).toPath());
             status = HttpStatus.NOT_FOUND;
         }
         HttpResponseBody body = HttpResponseBody.of(viewByteArray, viewName);

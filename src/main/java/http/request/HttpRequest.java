@@ -1,9 +1,9 @@
-package webserver.http.request;
+package http.request;
 
 import util.HttpRequestUtils;
 import util.IOUtils;
-import webserver.http.common.HttpHeaders;
-import webserver.http.common.HttpVersion;
+import http.common.HttpHeaders;
+import http.common.HttpVersion;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class HttpRequest {
         HttpMethod httpMethod = HttpMethod.valueOf(tokenizedRequestLine[0]);
         String[] tokenizedRequestUri = HttpRequestUtils.tokenizeUriAndPath(tokenizedRequestLine[1]);
         HttpUri httpUri = new HttpUri(tokenizedRequestUri[0]);
-        HttpQueries httpQueries = new HttpQueries();
+        HttpQueries httpQueries = new HttpQueries(HttpRequestUtils.parseQueryString(tokenizedRequestUri[1]));
         HttpVersion httpVersion = HttpVersion.fromString(tokenizedRequestLine[2]);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -63,6 +63,14 @@ public class HttpRequest {
 
     public String getHttpUri() {
         return httpUri.getValue();
+    }
+
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
+    }
+
+    public String getQuery(String name) {
+        return httpQueries.getQuery(name);
     }
 
     @Override

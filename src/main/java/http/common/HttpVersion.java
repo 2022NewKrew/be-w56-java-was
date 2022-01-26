@@ -1,4 +1,4 @@
-package webserver.http.common;
+package http.common;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package webserver.http.request;
+package http.request;
 
 public class HttpUri {
     private final String value;

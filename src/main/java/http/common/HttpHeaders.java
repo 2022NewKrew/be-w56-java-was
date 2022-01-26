@@ -1,6 +1,6 @@
-package webserver.http.common;
+package http.common;
 
-import webserver.http.response.HttpResponseBody;
+import http.response.HttpResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;

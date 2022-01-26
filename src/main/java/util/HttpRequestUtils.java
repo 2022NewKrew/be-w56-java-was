@@ -66,7 +66,13 @@ public class HttpRequestUtils {
     }
 
     public static String[] tokenizeUriAndPath(String requestUri) {
-        return requestUri.split(URI_QUERY_DELIMITER);
+        String[] tokens = requestUri.split(URI_QUERY_DELIMITER);
+
+        if (tokens.length < 2) {
+            return new String[]{requestUri, ""};
+        }
+
+        return tokens;
     }
 
     public static class Pair {

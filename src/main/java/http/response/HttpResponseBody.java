@@ -1,6 +1,6 @@
-package webserver.http.response;
+package http.response;
 
-import webserver.http.common.Mime;
+import http.common.Mime;
 
 public class HttpResponseBody {
     private final byte[] content;

@@ -1,4 +1,4 @@
-package webserver.http.request;
+package http.request;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,10 @@ public class HttpQueries {
 
     public HttpQueries() {
         this(new HashMap<>());
+    }
+
+    public String getQuery(String name) {
+        return queries.get(name);
     }
 
     @Override
