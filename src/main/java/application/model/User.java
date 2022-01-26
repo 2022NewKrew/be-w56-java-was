@@ -53,7 +53,7 @@ public class User {
     }
 
     private static void validateEmail(String email) throws IllegalArgumentException {
-        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        String regex = "[a-z0-9]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);
         if (!matcher.matches()) {

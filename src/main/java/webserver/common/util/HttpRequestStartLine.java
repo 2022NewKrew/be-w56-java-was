@@ -36,7 +36,7 @@ public class HttpRequestStartLine {
             throw new NullPointerException(HTTP_METHOD_NOT_FOUND_EXCEPTION.getMessage());
         }
 
-        if (!Objects.equals(method, "GET")) {
+        if (!(Objects.equals(method, "GET") || Objects.equals(method, "POST"))) {
             throw new UnsupportedOperationException(UNSUPPORTED_HTTP_METHOD_EXCEPTION.getMessage());
         }
     }
