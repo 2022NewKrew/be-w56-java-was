@@ -1,17 +1,12 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 public class HttpRequestUtils {
     /**
@@ -113,30 +108,13 @@ public class HttpRequestUtils {
         }
     }
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-
-    public static Map<String, String> readRequest(BufferedReader br) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        String line = br.readLine();
-        log.debug(line);
-        String[] splitLine = line.split(" ");
-        map.put("httpMethod", splitLine[0]);
-        map.put("httpUrl", splitLine[1]);
-        map.put("httpProtocol", splitLine[2]);
-        return map;
+    public static Map<String, String> parseStartLine(String startLine) {
+        String[] splitStartLine = startLine.split(" ");
+        return new HashMap<>() {{
+            put("method", splitStartLine[0]);
+            put("url", splitStartLine[1]);
+            put("protocol", splitStartLine[2]);
+        }};
     }
 
-    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        String line = br.readLine();
-        while (true) {
-            if (line == null || line.equals("")) {
-                return map;
-            }
-            log.debug(line);
-            String[] splitLine = line.split(": ");
-            map.put(splitLine[0], splitLine[1]);
-            line = br.readLine();
-        }
-    }
 }
