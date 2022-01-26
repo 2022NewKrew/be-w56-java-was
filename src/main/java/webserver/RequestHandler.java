@@ -1,26 +1,30 @@
 package webserver;
 
-import http.*;
+import http.ContentType;
+import http.Headers;
+import http.Request;
+import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import router.RouterFunction;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final Map<Route, Function<Request, Response>> routes;
+    private final List<RouterFunction> routers;
 
-    public RequestHandler(Socket connectionSocket, Map<Route, Function<Request, Response>> routes) {
+    public RequestHandler(Socket connectionSocket, List<RouterFunction> routers) {
         this.connection = connectionSocket;
-        this.routes = routes;
+        this.routers = routers;
     }
 
     public void run() {
@@ -37,9 +41,10 @@ public class RequestHandler extends Thread {
     }
 
     private Response handleRequest(Request request) throws IOException {
-        for (Map.Entry<Route, Function<Request, Response>> route : routes.entrySet()) {
-            if (route.getKey().matches(request)) {
-                return route.getValue().apply(request);
+        for (RouterFunction router : routers) {
+            Response response = router.handle(request);
+            if (response != null) {
+                return response;
             }
         }
         return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
