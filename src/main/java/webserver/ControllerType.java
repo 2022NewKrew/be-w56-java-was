@@ -2,6 +2,7 @@ package webserver;
 
 import controller.Controller;
 import controller.StaticFileController;
+import controller.UserCreateController;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,9 +11,10 @@ import org.slf4j.LoggerFactory;
 
 public enum ControllerType {
 
-    STATIC_FILE_CONTROLLER("", StaticFileController.getInstance());
+    STATIC_FILE_CONTROLLER("", StaticFileController.getInstance()),
+    USER_CREATE_CONTROLLER("/user/create", UserCreateController.getInstance());
     public static final Logger log = LoggerFactory.getLogger(ControllerType.class);
-    public static final Map<String, Controller> controllerMap = new HashMap<>();
+    public static final Map<String, Controller> controllerMap = new ConcurrentHashMap<>();
 
     static {
         for (ControllerType controllerType : ControllerType.values()) {

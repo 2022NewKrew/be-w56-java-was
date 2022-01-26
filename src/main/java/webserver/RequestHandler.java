@@ -1,27 +1,21 @@
 package webserver;
 
-import com.google.common.io.Files;
 import controller.Controller;
 import http.request.HttpRequest;
-import http.response.ContentType;
 import http.response.HttpResponse;
-import http.response.StatusCode;
+import http.response.HttpResponseFactory;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constant;
-import view.ViewMaker;
 
 public class RequestHandler extends Thread {
 
@@ -43,11 +37,10 @@ public class RequestHandler extends Thread {
             HttpRequest request = new HttpRequest(inputStreamToStrings(in));
             Map<String, String> model = new HashMap<>();
             Controller controller = ControllerType.getControllerType(request.getUrl());
-            String result = controller.run(request, model);
-            byte[] body = ViewMaker.getView(result, model);
-            String resultExtension = getExtension(result);
+            Map<String, String> result = controller.run(request, model);
+
             DataOutputStream dos = new DataOutputStream(out);
-            HttpResponse response = new HttpResponse(dos, StatusCode.OK, ContentType.getContentType(resultExtension), body);
+            HttpResponse response = HttpResponseFactory.getHttpResponse(result, model, dos);
             response.sendResponse();
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -61,16 +54,9 @@ public class RequestHandler extends Thread {
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         String line;
-        while(!(line = bufferedReader.readLine()).equals("")){
-            log.info(line);
+        while (!(line = bufferedReader.readLine()).equals("")) {
             result.append(line).append(Constant.lineBreak);
         }
         return result.toString();
-    }
-
-    private String getExtension(String result) {
-        List<String> splitResult =  List.of(result.split("\\."));
-        int length = splitResult.size();
-        return splitResult.get(length - 1);
     }
 }

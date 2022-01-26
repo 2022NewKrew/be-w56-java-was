@@ -9,9 +9,9 @@ public class RequestHeader {
 
     private String method;
     private String url;
-    private Map<String, String> query = new HashMap<>();
+    private final Map<String, String> query = new HashMap<>();
     private String protocol;
-    private Map<String, String> components = new HashMap<>();
+    private final Map<String, String> components = new HashMap<>();
 
     public RequestHeader(String rawHeader) {
         List<String> headerLines = parsingRawHeader(rawHeader);
@@ -31,7 +31,7 @@ public class RequestHeader {
         this.protocol = components.get(2);
 
         if (components.get(1).contains("?")) {
-            components = List.of(components.get(1));
+            components = List.of(components.get(1).split("\\?"));
             this.url = components.get(0);
             setQuery(components.get(1));
             return;
@@ -58,5 +58,9 @@ public class RequestHeader {
 
     public String getUrl() {
         return url;
+    }
+
+    public Map<String, String> getQuery() {
+        return query;
     }
 }
