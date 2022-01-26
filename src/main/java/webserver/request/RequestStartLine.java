@@ -7,7 +7,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestInfo{
+public class RequestStartLine {
     @NonNull
     private String method;
     @NonNull
