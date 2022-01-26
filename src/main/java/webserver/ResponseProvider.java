@@ -6,17 +6,13 @@ import webserver.http.MIME;
 import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-
-import static webserver.WebServer.DEFAULT_RESOURCES_DIR;
 
 public class ResponseProvider {
 
     public static MyHttpResponse responseStaticResource(DataOutputStream dos, String path) {
         try {
-            byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + path).toPath());
+            byte[] body = StaticResourceManager.getBytesFromPath(path);
             MIME mime = MIME.from(path);
 
             return MyHttpResponse.builder(dos)
