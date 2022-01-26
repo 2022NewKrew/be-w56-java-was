@@ -26,10 +26,9 @@ public class MainController {
         return "/index.html";
     }
 
-    @RequestMapping(value = "/user/create", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/create", method = RequestMethod.POST)
     public String createUser(UserDto dto) {
         log.info("KinaController - createUser() " + dto);
         return "redirect:/index.html";
     }
-
 }

@@ -26,9 +26,6 @@ public class DispatcherServlet extends Thread {
     }
 
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
-
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             DataOutputStream dos = new DataOutputStream(out);
@@ -36,20 +33,16 @@ public class DispatcherServlet extends Thread {
             WebHttpRequest httpRequest = WebHttpRequest.of(buffer);
             WebHttpResponse httpResponse = WebHttpResponse.of(dos);
 
-            log.info(httpRequest.toString());
-
-            if (HandlerMapping.isRegistered(httpRequest)) {
-                invoke(httpRequest, httpResponse);
-                resolver.resolve(httpRequest, httpResponse);
-            } else {
-                resolver.resolve(httpRequest, httpResponse);
-            }
+            invoke(httpRequest, httpResponse);
+            resolver.resolve(httpRequest, httpResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
     private void invoke(WebHttpRequest httpRequest, WebHttpResponse httpResponse) {
+        if (!HandlerMapping.isRegistered(httpRequest))
+            return;
         RequestMethod requestMethod = RequestMethod.valueOf(httpRequest.method());
         String uri = httpRequest.uri().getPath();
         String queryString = httpRequest.uri().getQuery();
