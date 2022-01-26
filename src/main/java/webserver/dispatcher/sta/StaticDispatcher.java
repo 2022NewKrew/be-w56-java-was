@@ -1,5 +1,6 @@
-package webserver.dispatcher;
+package webserver.dispatcher.sta;
 
+import webserver.dispatcher.Dispatcher;
 import webserver.request.HttpRequestUri;
 import webserver.request.RequestContext;
 import webserver.response.*;

@@ -1,8 +1,7 @@
 package webserver;
 
-import webserver.dispatcher.DynamicDispatcher;
-import webserver.dispatcher.StaticDispatcher;
-import webserver.request.HttpRequest;
+import webserver.dispatcher.dynamic.DynamicDispatcher;
+import webserver.dispatcher.sta.StaticDispatcher;
 import webserver.request.HttpRequestUri;
 import webserver.request.RequestContext;
 import webserver.response.HttpResponse;
