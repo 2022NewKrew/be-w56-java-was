@@ -25,40 +25,21 @@ public class ResponseProvider {
         }
     }
 
-    public static MyHttpResponse response404NotFound(WebServerException e) {
-        byte[] body = HttpStatus.NOT_FOUND.toString().getBytes();
+    public static MyHttpResponse responseClientException(WebServerException e) {
+        byte[] body = e.getErrorMessage().getBytes();
 
         return MyHttpResponse.builder(e.getDos())
-                .status(HttpStatus.NOT_FOUND)
+                .status(e.getHttpStatus())
                 .body(body)
                 .build();
     }
 
-    public static MyHttpResponse response400BadRequest(WebServerException e) {
-        byte[] body = (HttpStatus.BAD_REQUEST + ":" + e.getMessage()).getBytes();
+    public static MyHttpResponse responseServerException(WebServerException e) {
+        byte[] body = ("서버 내부 에러 발생 : " + e.getErrorMessage()).getBytes();
 
         return MyHttpResponse.builder(e.getDos())
-                .status(HttpStatus.BAD_REQUEST)
+                .status(e.getHttpStatus())
                 .body(body)
                 .build();
     }
-
-    public static MyHttpResponse response405MethodNotAllowed(WebServerException e) {
-        byte[] body = HttpStatus.METHOD_NOT_ALLOWED.toString().getBytes();
-
-        return MyHttpResponse.builder(e.getDos())
-                .status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(body)
-                .build();
-    }
-
-    public static MyHttpResponse response500InternalServerError(WebServerException e) {
-        byte[] body = HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes();
-
-        return MyHttpResponse.builder(e.getDos())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(body)
-                .build();
-    }
-
 }

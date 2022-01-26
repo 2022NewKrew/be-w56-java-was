@@ -1,24 +1,16 @@
 package webserver;
 
-import webserver.exception.BadRequestException;
-import webserver.exception.InvalidMethodException;
-import webserver.exception.ResourceNotFoundException;
 import webserver.exception.WebServerException;
+import webserver.http.HttpStatus;
 import webserver.http.MyHttpResponse;
 
 public class RequestExceptionHandler {
 
     public static MyHttpResponse handle(WebServerException e) {
-        if (e instanceof BadRequestException) {
-            return ResponseProvider.response400BadRequest(e);
+        if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+            return ResponseProvider.responseServerException(e);
         }
-        if (e instanceof ResourceNotFoundException) {
-            return ResponseProvider.response404NotFound(e);
-        }
-        if (e instanceof InvalidMethodException) {
-            return ResponseProvider.response405MethodNotAllowed(e);
-        }
-        return ResponseProvider.response500InternalServerError(e);
+        return ResponseProvider.responseClientException(e);
     }
 
 }
