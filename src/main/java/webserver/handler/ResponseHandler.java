@@ -19,7 +19,7 @@ public class ResponseHandler {
             log.error(e.getMessage());
         }
     }
-    public static void responseRedirect200Header(DataOutputStream dos,String location) {
+    public static void responseRedirect302Header(DataOutputStream dos,String location) {
         try {
             dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
             dos.writeBytes("Location: "+location+" \r\n");

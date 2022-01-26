@@ -3,7 +3,7 @@ package util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.handler.RequestHandler;
-import webserver.request.RequestInfo;
+import webserver.request.RequestStartLine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,15 +14,15 @@ public class HttpServletRequestUtils {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    public static RequestInfo parseRequestLine(String requestLine) {
-        RequestInfo requestInfo;
-        String[] tokens = requestLine.split(" ");
+    public static RequestStartLine parseRequestLine(String startLine) {
+        RequestStartLine requestStartLine;
+        String[] tokens = startLine.split(" ");
         String[] split = tokens[1].split("\\?", 2);
         if(split.length == 2)
-            requestInfo = new RequestInfo(tokens[0],tokens[2],split[0],split[1]);
+            requestStartLine = new RequestStartLine(tokens[0],tokens[2],split[0],split[1]);
         else
-            requestInfo = new RequestInfo(tokens[0],tokens[2],split[0]);
-        return requestInfo;
+            requestStartLine = new RequestStartLine(tokens[0],tokens[2],split[0]);
+        return requestStartLine;
     }
     public static Map<String,String> readHeader(BufferedReader br) throws IOException {
         Map<String,String> headerMap = new HashMap<>();
