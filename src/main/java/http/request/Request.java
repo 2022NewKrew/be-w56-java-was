@@ -3,6 +3,7 @@ package http.request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +17,9 @@ public class Request {
 
     private String method;
     private String url;
-    private Queries queries;
+    private Queries requestQueries;
     private final RequestHeaders requestHeaders = new RequestHeaders();
+    private Queries requestBody;
 
     public Request(BufferedReader br){
         this.br = br;
@@ -30,7 +32,10 @@ public class Request {
         while(!line.equals("")) {
             line = br.readLine();
             requestHeaders.add(HttpRequestUtils.parseHeader(line));
-//            log.debug("[Request] header : {}", line);
+            log.debug("[Request] header : {}", line);
+        }
+        if(requestHeaders.get("Content-Length") != null){
+            requestBody = convertString(IOUtils.readData(br, Integer.parseInt(requestHeaders.get("Content-Length"))));
         }
     }
 
@@ -41,17 +46,23 @@ public class Request {
         separateQuery(uri);
     }
 
-    private void separateQuery(String uri){
-        String[] uriSplit = uri.split(QUERY_REGEX);
+    private void separateQuery(String requestLine){
+        String[] uriSplit = requestLine.split(QUERY_REGEX);
         url = uriSplit[URL_IDX];
         String queryString = (uriSplit.length == NO_QUERY) ? null : uriSplit[QUERY_IDX];
-        queries = new Queries(HttpRequestUtils.parseQueryString(queryString));
+        requestQueries = convertString(queryString);
+    }
+
+    public Queries convertString(String data){
+        return new Queries(HttpRequestUtils.parseQueryString(data));
     }
 
     public String getMethod() { return  method; }
 
     public String getUrl(){ return url; }
 
-    public Queries getQueries(){ return queries; }
+    public Queries getRequestQueries(){ return requestQueries; }
+
+    public Queries getRequestBody() { return requestBody; }
 
 }

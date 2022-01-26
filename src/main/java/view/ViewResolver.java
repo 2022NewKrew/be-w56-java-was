@@ -14,7 +14,6 @@ public class ViewResolver {
     private ViewResolver(){
         viewMap.put("/", "/index.html");
         viewMap.put("/users/form", "/user/form.html");
-        viewMap.put("/users/create", "redirect:/");
     }
 
     public static ViewResolver getInstance(){

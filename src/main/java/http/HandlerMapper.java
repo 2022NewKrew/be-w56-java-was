@@ -15,7 +15,7 @@ public class HandlerMapper {
     private HandlerMapper(){
         controllerTable.put("GET", "/", new IndexController());
         controllerTable.put("GET", "/users/form", new UserFormController());
-        controllerTable.put("GET", "/users/create", new SignUpController());
+        controllerTable.put("POST", "/users", new SignUpController());
     }
 
     public static HandlerMapper getInstance(){
