@@ -1,4 +1,4 @@
-package model;
+package domain.user.model;
 
 import lombok.Builder;
 
