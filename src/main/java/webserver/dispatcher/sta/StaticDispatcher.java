@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Singleton
@@ -38,8 +39,14 @@ public class StaticDispatcher extends Dispatcher {
         }
     }
 
-    private byte[] readFiles(String uri) throws IOException {
-        return Files.readAllBytes(new File(DEFAULT_LOCATION_OF_RESOURCES + uri).toPath());
+    private byte[] readFiles(String url) throws IOException {
+        ResourceCache cache = ResourceCache.getInstance();
+        Optional<byte[]> fileBytesOptional = cache.getFile(url);
+        if (fileBytesOptional.isEmpty()) {
+            byte[] fileToBytes = Files.readAllBytes(new File(DEFAULT_LOCATION_OF_RESOURCES + url).toPath());
+            return cache.addFile(url, fileToBytes);
+        }
+        return fileBytesOptional.get();
     }
 
     private HttpResponse getResponseForFile(byte[] fileToBytes) {

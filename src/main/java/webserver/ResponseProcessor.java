@@ -1,5 +1,7 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.dispatcher.dynamic.DynamicDispatcher;
 import webserver.dispatcher.sta.StaticDispatcher;
 import webserver.request.HttpRequestUri;
@@ -12,6 +14,8 @@ import webserver.response.ResponseContext;
  * Singleton
  */
 public class ResponseProcessor {
+
+    private static final Logger log = LoggerFactory.getLogger(ResponseProcessor.class);
 
     private static ResponseProcessor INSTANCE = new ResponseProcessor();
 
@@ -27,6 +31,7 @@ public class ResponseProcessor {
         try {
             processRequestByDispatcher();
         } catch (RuntimeException e) {
+            log.debug("Exception: {}", e.getMessage());
             setResponseForInternalServerError(response);
         }
 
