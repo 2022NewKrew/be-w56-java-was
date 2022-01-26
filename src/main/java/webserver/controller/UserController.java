@@ -1,5 +1,7 @@
 package webserver.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
 import util.response.HttpResponse;
 import util.response.HttpResponseDataType;
@@ -8,8 +10,11 @@ import webserver.domain.User;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 public class UserController implements Controller<String>{
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
     private static final String BASE_URL = "/user";
     private static final String JOIN_URL = "/user/create";
 
@@ -31,11 +36,11 @@ public class UserController implements Controller<String>{
 
     private HttpResponse<String> handleJoin(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
         User user = createUser(httpRequest);
+        log.info("created user {}", user);
 
         return HttpResponse.<String>builder()
-                .status(HttpResponseStatus.SUCCESS)
-                .data("가입이 완료되었습니다.")
-                .dataType(HttpResponseDataType.STRING)
+                .status(HttpResponseStatus.REDIRECT)
+                .headers(Map.of("Location", "/"))
                 .build();
     }
 
