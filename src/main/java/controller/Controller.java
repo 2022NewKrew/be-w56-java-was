@@ -1,7 +1,10 @@
 package controller;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
+import annotation.RequestBody;
 import annotation.RequestParam;
+import controller.dto.EnrollUserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -24,6 +27,20 @@ public class Controller {
             @RequestParam(name = "email") String email) {
 
         UserService.enroll(new EnrollUserCommand(userId, password, name, email));
+
+        return "redirect:/";
+    }
+
+    @PostMapping(path = "/user/create")
+    public String signUp(@RequestBody(names = {"userId", "password", "name", "email"}) EnrollUserRequest enrollUserRequest) {
+
+        UserService.enroll(
+                new EnrollUserCommand(
+                        enrollUserRequest.getUserId(),
+                        enrollUserRequest.getPassword(),
+                        enrollUserRequest.getName(),
+                        enrollUserRequest.getEmail()
+                ));
 
         return "redirect:/";
     }
