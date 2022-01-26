@@ -31,7 +31,7 @@ public class Router {
     }
 
 
-    public static MyHttpResponse routing(MyHttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
+    public static MyHttpResponse routing(MyHttpRequest request) throws InvocationTargetException, IOException, IllegalAccessException {
 
         switch (request.getMethod()) {
             case Constants.HTTP_METHOD_POST:
@@ -48,7 +48,7 @@ public class Router {
 
     }
 
-    private static MyHttpResponse getRouting(MyHttpRequest request) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
+    private static MyHttpResponse getRouting(MyHttpRequest request) throws InvocationTargetException, IllegalAccessException, IOException {
         MyHttpResponse.Builder responseBuilder = new MyHttpResponse.Builder();
         Method responseMethod = getRoutingMap.get(request.getPath());
         if (responseMethod != null) {
@@ -73,7 +73,7 @@ public class Router {
     }
 
 
-    private static MyHttpResponse postRouting(MyHttpRequest request) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static MyHttpResponse postRouting(MyHttpRequest request) throws InvocationTargetException, IllegalAccessException {
         MyHttpResponse.Builder responseBuilder = new MyHttpResponse.Builder();
         Method responseMethod = postRoutingMap.get(request.getPath());
         if (responseMethod != null) {
@@ -85,8 +85,8 @@ public class Router {
         return responseBuilder.build();
     }
 
-    private static void routing(Method responseMethod, MyHttpRequest request, MyHttpResponse.Builder responseBuilder) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        String body = (String) responseMethod.invoke(responseMethod.getDeclaringClass().getConstructor().newInstance(), request);
+    private static void routing(Method responseMethod, MyHttpRequest request, MyHttpResponse.Builder responseBuilder) throws InvocationTargetException, IllegalAccessException {
+        String body = (String) responseMethod.invoke(AnnotationProcessor.getInstanceByClass(responseMethod.getDeclaringClass()), request);
         if (body.startsWith(REDIRECT)) {
             body = body.replace(REDIRECT, "");
             responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_302)

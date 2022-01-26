@@ -8,7 +8,9 @@ import bin.jayden.annotation.RequestMapping;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -16,10 +18,19 @@ import java.util.stream.Collectors;
 
 public class AnnotationProcessor {
     private static final Set<Class<?>> controllers;
+    private static final Map<Class<?>, Object> controllerInstanceMap;
 
     static {
         Reflections reflections = new Reflections("bin.jayden", new SubTypesScanner(false));
         controllers = reflections.getSubTypesOf(Object.class).stream().filter(aClass -> aClass.getAnnotation(Controller.class) != null).collect(Collectors.toSet());
+        controllerInstanceMap = Collections.unmodifiableMap(controllers.stream().collect(Collectors.toMap(controller -> controller, controller -> {
+            try {
+                return controller.getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new NullPointerException(e.getMessage());
+            }
+        })));
+
     }
 
 
@@ -55,5 +66,9 @@ public class AnnotationProcessor {
             }
         }
         return routingMap;
+    }
+
+    public static Object getInstanceByClass(Class<?> c) {
+        return controllerInstanceMap.get(c);
     }
 }
