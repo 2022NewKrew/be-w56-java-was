@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.Constant;
 
 public class HttpResponse {
 
@@ -13,20 +14,15 @@ public class HttpResponse {
     private final DataOutputStream dos;
     private final StatusCode statusCode;
     private final String contentType;
-    private final String requiredUrl;
     private final byte[] body;
 
-    public HttpResponse(DataOutputStream dos, StatusCode statusCode, String requiredUrl,
+    public HttpResponse(DataOutputStream dos, StatusCode statusCode, String contentType,
             byte[] body) {
         log.info(String.valueOf(body.length));
         this.dos = dos;
         this.statusCode = statusCode;
-        this.requiredUrl = requiredUrl;
+        this.contentType = contentType;
         this.body = body;
-
-        List<String> splitUrl = List.of(requiredUrl.split("\\."));
-        String extension = splitUrl.get(splitUrl.size() - 1);
-        contentType = ContentType.findTypeByExtension(extension).getType();
     }
 
     public void sendResponse() {
@@ -36,9 +32,9 @@ public class HttpResponse {
 
     private void responseHeader() {
         try {
-            dos.writeBytes("HTTP/1.1 " + statusCode.getStatus() + " \r\n");
-            dos.writeBytes("Content-Type: " + contentType + "\r\n");
-            dos.writeBytes("\r\n");
+            dos.writeBytes("HTTP/1.1 " + statusCode.getStatus() + " " + Constant.lineBreak);
+            dos.writeBytes("Content-Type: " + contentType + Constant.lineBreak);
+            dos.writeBytes(Constant.lineBreak);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
