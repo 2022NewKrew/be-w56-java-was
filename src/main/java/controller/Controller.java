@@ -1,9 +1,12 @@
 package controller;
 
 import http.request.HttpRequest;
-import java.util.Map;
+import http.response.HttpResponse;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public interface Controller {
 
-    Map<String, String> run(HttpRequest request, Map<String, String> model);
+    HttpResponse run(HttpRequest request, DataOutputStream dos)
+            throws IOException;
 }
