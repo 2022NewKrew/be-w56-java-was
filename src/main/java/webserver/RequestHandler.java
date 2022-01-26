@@ -42,9 +42,12 @@ public class RequestHandler extends Thread {
         try {
             request = Request.create(in);
             response = Response.create(out);
+            log.debug("request and response have been created");
 
             handler = HandlerFactory.createHandler(request);
+            log.debug("handler has been created");
             handler.handle(request, response);
+            log.debug("handler.handle called");
         } catch (CustomException e) {
             log.error("CustomException occurred: {}", e.getMessage());
             e.printStackTrace();

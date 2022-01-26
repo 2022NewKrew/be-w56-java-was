@@ -63,9 +63,10 @@ public final class Context {
         return postMappingMethods.containsKey(uri);
     }
 
-    public static Response invokePostMappingMethod(String uri, Request request) throws Exception {
+    public static void invokePostMappingMethod(String uri, Request request, Response response)
+        throws Exception {
         Pair pair = postMappingMethods.get(uri);
-        return (Response) pair.getMethod().invoke(pair.getObject(), request);
+        pair.getMethod().invoke(pair.getObject(), request, response);
     }
 
     static class Pair {
