@@ -1,5 +1,7 @@
 package http;
 
+import util.HttpRequestUtils;
+
 import java.net.URI;
 
 public class HttpRequest {
@@ -7,14 +9,25 @@ public class HttpRequest {
     private HttpHeaders headers;
     private HttpRequestParams httpRequestParams;
     private URI requestUri;
-    private Object body;
+    private String body;
 
-    public HttpRequest(HttpMethod httpMethod, URI requestUri, HttpRequestParams httpRequestParams, HttpHeaders headers, Object body) {
+    public HttpRequest(HttpMethod httpMethod, URI requestUri, HttpRequestParams httpRequestParams, HttpHeaders headers, String body) {
         this.httpMethod = httpMethod;
-        this.httpRequestParams = httpRequestParams;
         this.requestUri = requestUri;
         this.headers = headers;
         this.body = body;
+        if(hasContentType() && getContentType().equals(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)) {
+            httpRequestParams.putAll(HttpRequestUtils.parseQueryString(body));
+        }
+        this.httpRequestParams = httpRequestParams;
+    }
+
+    public ContentType getContentType() {
+        return ContentType.getContentType(headers.getHeaderByName("Content-Type"));
+    }
+
+    public boolean hasContentType() {
+        return headers.getHeaderByName("Content-Type") != null;
     }
 
     public HttpHeaders getHeaders() {

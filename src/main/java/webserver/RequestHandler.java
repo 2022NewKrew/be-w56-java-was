@@ -2,11 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.SocketErrorException;
-import webserver.processor.HttpProcessor;
 
 public class RequestHandler implements Runnable {
 

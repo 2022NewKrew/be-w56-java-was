@@ -1,4 +1,4 @@
-package webserver.processor.controller;
+package webserver.processor.handler.controller;
 
 import app.model.User;
 import db.DataBase;
@@ -8,16 +8,8 @@ import java.util.Map;
 
 public class UserController implements Controller {
 
-    private static final String PATH = "/user/create";
-
-    @Override
-    public boolean supports(HttpRequest httpRequest) {
-        String requestPath = httpRequest.getPath();
-        return requestPath.equals(PATH);
-    }
-
-    @Override
-    public HttpResponse process(HttpRequest httpRequest) {
+    @Request(method = HttpMethod.POST, value = "/user/create")
+    public HttpResponse handle(HttpRequest httpRequest) {
         User user = createUser(httpRequest);
         DataBase.addUser(user);
         HttpHeaders headers = new HttpHeaders(Map.of("Location", "/"));

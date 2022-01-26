@@ -12,4 +12,8 @@ public class HttpRequestParams {
     public String getRequestParamName(String name) {
         return requestParams.get(name);
     }
+
+    public void putAll(Map<String, String> params) {
+        this.requestParams.putAll(params);
+    }
 }

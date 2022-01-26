@@ -3,22 +3,22 @@ package webserver.processor;
 import http.HttpRequest;
 import http.HttpResponse;
 import webserver.exception.ResourceNotFoundException;
-import webserver.processor.controller.Controller;
+import webserver.processor.handler.Handler;
 
 import java.util.List;
 
 public class HttpProcessor {
 
-    private final List<Controller> controllers;
+    private final List<Handler> handlers;
 
-    public HttpProcessor(List<Controller> controllers) {
-        this.controllers = controllers;
+    public HttpProcessor(List<Handler> handlers) {
+        this.handlers = handlers;
     }
 
     public HttpResponse process(HttpRequest httpRequest) {
-        for(Controller controller : controllers) {
-            if(controller.supports(httpRequest)) {
-                return controller.process(httpRequest);
+        for(Handler handler : handlers) {
+            if(handler.supports(httpRequest)) {
+                return handler.handle(httpRequest);
             }
         }
         throw new ResourceNotFoundException();
