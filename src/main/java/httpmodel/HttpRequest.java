@@ -9,6 +9,8 @@ public class HttpRequest {
     private final String httpVersion;
     private final HttpRequestHeader httpRequestHeader;
     private final Map<String, String> body;
+    private final HttpCookie httpCookie;
+    private final HttpSession httpSession;
 
     private HttpRequest(Builder builder) {
         this.method = builder.method;
@@ -16,6 +18,8 @@ public class HttpRequest {
         this.httpVersion = builder.httpVersion;
         this.httpRequestHeader = builder.httpRequestHeader;
         this.body = builder.body;
+        this.httpCookie = builder.httpCookie;
+        this.httpSession = builder.httpSession;
     }
 
     public String getParameter(String key) {
@@ -54,6 +58,18 @@ public class HttpRequest {
         return httpVersion;
     }
 
+    public HttpCookie getHttpCookie() {
+        return httpCookie;
+    }
+
+    public HttpSession getHttpSession() {
+        return httpSession;
+    }
+
+    public String getCookie(String key) {
+        return httpCookie.getCookie(key);
+    }
+
     public static class Builder {
 
         private HttpMethod method;
@@ -61,6 +77,8 @@ public class HttpRequest {
         private String httpVersion = "";
         private HttpRequestHeader httpRequestHeader;
         private Map<String, String> body;
+        private HttpCookie httpCookie;
+        private HttpSession httpSession;
 
         public Builder method(HttpMethod method) {
             this.method = method;
@@ -89,6 +107,16 @@ public class HttpRequest {
 
         public Builder body(Map<String, String> body) {
             this.body = body;
+            return this;
+        }
+
+        public Builder cookie(HttpCookie cookie) {
+            this.httpCookie = cookie;
+            return this;
+        }
+
+        public Builder httpSession(HttpSession httpSession) {
+            this.httpSession = httpSession;
             return this;
         }
 

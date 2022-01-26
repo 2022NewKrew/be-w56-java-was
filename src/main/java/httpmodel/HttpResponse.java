@@ -3,6 +3,7 @@ package httpmodel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HttpResponse {
 
@@ -26,8 +27,19 @@ public class HttpResponse {
         body = responseBody;
     }
 
+    public void set302Found(String location) {
+        header.add("Location: " + location);
+        httpStatus = HttpStatus.FOUND;
+    }
+
     public void addHeader(String key, String value) {
         header.add(String.format("%s: %s", key, value));
+    }
+
+    public void addCookie(HttpRequest httpRequest) {
+        if (Objects.isNull(httpRequest.getCookie("JSESSIONID"))) {
+            addHeader("Set-Cookie", "JSESSIONID=" + httpRequest.getHttpSession().getId());
+        }
     }
 
     public String message() {
