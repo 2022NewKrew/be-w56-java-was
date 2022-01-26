@@ -17,10 +17,11 @@ public class ResponseProvider {
     public static MyHttpResponse responseStaticResource(DataOutputStream dos, String path) {
         try {
             byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + path).toPath());
+            MIME mime = MIME.from(path);
 
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)
-                    .contentType(MIME.parse(path))
+                    .contentType(mime.getContentType())
                     .body(body)
                     .build();
         } catch (IOException e) {
