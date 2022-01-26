@@ -13,8 +13,6 @@ import com.kakao.util.HttpRequestUtils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +30,10 @@ public class UserController implements HttpController {
     @Override
     public void handleRequest(HttpRequest request, OutputStream os) throws Exception {
         Map<String, String> queryMap = HttpRequestUtils.parseQueryString(request.getBody());
-        String userId = URLDecoder.decode(queryMap.get("userId"), StandardCharsets.UTF_8);
-        String password = URLDecoder.decode(queryMap.get("password"), StandardCharsets.UTF_8);
-        String name = URLDecoder.decode(queryMap.get("name"), StandardCharsets.UTF_8);
-        String email = URLDecoder.decode(queryMap.get("email"), StandardCharsets.UTF_8);
+        String userId = queryMap.get("userId");
+        String password = queryMap.get("password");
+        String name = queryMap.get("name");
+        String email = queryMap.get("email");
         User user = new User(userId, password, name, email);
         userService.addUser(user);
         response(os);
