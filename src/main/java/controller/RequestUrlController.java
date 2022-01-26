@@ -25,6 +25,6 @@ public class RequestUrlController {
         DataBase.addUser(user);
 
         log.info("user created = {}", user);
-        return "/index";
+        return "redirect:/";
     }
 }

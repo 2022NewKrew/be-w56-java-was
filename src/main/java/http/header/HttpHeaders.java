@@ -7,6 +7,8 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     public static final String ACCEPT = "Accept";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
+    public static final String HOST = "Host";
+    public static final String ORIGIN = "Origin";
 
     private final Map<String, List<String>> headers;
 
