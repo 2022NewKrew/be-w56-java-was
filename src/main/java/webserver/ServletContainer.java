@@ -1,10 +1,14 @@
-package util;
+package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.annotation.Controller;
 import util.annotation.GetMapping;
 import util.annotation.PostMapping;
+import util.http.HttpMethod;
+import util.http.HttpRequest;
+import util.http.HttpResponse;
+import util.http.HttpResponseUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,11 +33,9 @@ public class ServletContainer {
 
         AccessingAllClassesInPackage aac = new AccessingAllClassesInPackage();
         Set<Class> s = aac.findAllClassesUsingClassLoader("controller");
-        Iterator<Class> classIterator = s.iterator();
-        while(classIterator.hasNext()){
-            Class controllerClass = Class.forName(classIterator.next().getName());
-            if(controllerClass.getAnnotation(Controller.class) == null) continue;
-            componentMapping(controllerClass, controllerClass.getMethods());
+        for (Class controller : s.toArray(new Class[0])) {
+            if (controller.getAnnotation(Controller.class) == null) continue;
+            componentMapping(controller, controller.getMethods());
         }
     }
 
@@ -109,25 +111,16 @@ public class ServletContainer {
 
 
     public void service(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
-        Method method = null;
-        Object controller = null;
-        Map data = null;
-
-        method = methodFromUrl(request);
-        log.debug("url : {}, method : {}", request.url(), method);
-
+        Method method = methodFromUrl(request);
         if (method == null) {
             HttpResponseUtils.staticResponse(response, request.url());
             return;
         }
-
-        data = dataFromRequest(request);
-        controller = this.methodClassMap.get(method);
+        Map data = dataFromRequest(request);
+        Object controller = this.methodClassMap.get(method);
         List<Object> arguments = methodArguments(method, data, request, response);
-
         String controllerResult = (String) method.invoke(controller, arguments.toArray());
         controllerResponse(controllerResult, request, response);
-
     }
 
 

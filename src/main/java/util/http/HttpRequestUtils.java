@@ -1,9 +1,11 @@
-package util;
+package util.http;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.IOUtils;
+import util.URL;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,7 +46,7 @@ public class HttpRequestUtils {
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    static Pair getKeyValue(String keyValue, String regex) {
+    public static Pair getKeyValue(String keyValue, String regex) {
         if (Strings.isNullOrEmpty(keyValue)) {
             return null;
         }
@@ -65,7 +67,7 @@ public class HttpRequestUtils {
         String key;
         String value;
 
-        Pair(String key, String value) {
+        public Pair(String key, String value) {
             this.key = key.trim();
             this.value = value.trim();
         }

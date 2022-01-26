@@ -4,10 +4,10 @@ import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpResponse;
 import util.annotation.Controller;
 import util.annotation.GetMapping;
 import util.annotation.PostMapping;
+import util.http.HttpResponse;
 
 import java.util.Map;
 

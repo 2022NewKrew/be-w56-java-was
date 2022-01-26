@@ -5,6 +5,7 @@ import db.DataBase;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.http.HttpRequest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 

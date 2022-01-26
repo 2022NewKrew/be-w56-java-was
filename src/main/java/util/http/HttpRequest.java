@@ -1,4 +1,6 @@
-package util;
+package util.http;
+
+import util.URL;
 
 import java.util.Map;
 

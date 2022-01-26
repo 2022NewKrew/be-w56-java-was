@@ -1,4 +1,4 @@
-package util;
+package util.http;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -15,7 +15,6 @@ public class HttpResponseUtils {
         }
         dos.flush();
     }
-
 
     public static void staticResponse(HttpResponse httpResponse, String location) throws IOException {
         httpResponse.setStatus(HttpStatus.OK);
