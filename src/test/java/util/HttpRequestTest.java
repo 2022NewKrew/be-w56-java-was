@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpRequestTest {
@@ -24,6 +26,26 @@ class HttpRequestTest {
         assertEquals(myHttpRequest.getMethod(), "GET");
         assertEquals(myHttpRequest.getUri(), "/index.html");
         assertEquals(myHttpRequest.getProtocol(), "HTTP/1.1");
+    }
+
+    @DisplayName("URL을 잘 분리하는 지 확인")
+    @Test
+    void setUriTest() {
+        // given
+        MyHttpRequest myHttpRequest = new MyHttpRequest();
+        String request = "/user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
+
+        // when
+        myHttpRequest.setUri(request);
+
+        // then
+        String uri = myHttpRequest.getUri();
+        Map<String, String> parameters = myHttpRequest.getParameters();
+        assertEquals(uri, "/user/create");
+        assertEquals(parameters.get("userId"), "javajigi");
+        assertEquals(parameters.get("password"), "password");
+        assertEquals(parameters.get("name"), "%EB%B0%95%EC%9E%AC%EC%84%B1");
+        assertEquals(parameters.get("email"), "javajigi%40slipp.net");
     }
 
     @DisplayName("header를 map에 잘 저장하는 지 테스트")
