@@ -1,8 +1,11 @@
 package webserver;
 
 import lombok.extern.slf4j.Slf4j;
+import util.HttpRequestUtils;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
+import webserver.exception.ControllerMethodNotFoundException;
+import webserver.model.WebHttpRequest;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -23,7 +26,6 @@ public class HandlerMapping {
     }
 
     public static void initRequestMapping(Class<?> clazz) {
-
         Method[] methods = clazz.getDeclaredMethods();
 
         for (Method method : methods) {
@@ -47,18 +49,36 @@ public class HandlerMapping {
         }
     }
 
-    public static Method getMethod(RequestMethod method, String uriString) {
+    public static Method getControllerMethod(RequestMethod method, String uri) throws ControllerMethodNotFoundException {
         switch (method) {
             case GET:
-                return getRequestMap.get(uriString);
+                return getRequestMap.get(uri);
             case POST:
-                return postRequestMap.get(uriString);
+                return postRequestMap.get(uri);
             case PUT:
-                return putRequestMap.get(uriString);
+                return putRequestMap.get(uri);
             case DELETE:
-                return deleteRequestMap.get(uriString);
+                return deleteRequestMap.get(uri);
             default:
-                return null;
+                throw new ControllerMethodNotFoundException("No controller was found to handle the uri");
+        }
+    }
+
+    public static boolean isRegistered(WebHttpRequest httpRequest) {
+        RequestMethod requestMethod = RequestMethod.valueOf(httpRequest.method());
+        String uri = httpRequest.uri().getPath();
+
+        switch (requestMethod) {
+            case GET:
+                return getRequestMap.containsKey(uri);
+            case POST:
+                return postRequestMap.containsKey(uri);
+            case PUT:
+                return putRequestMap.containsKey(uri);
+            case DELETE:
+                return deleteRequestMap.containsKey(uri);
+            default:
+                return false;
         }
     }
 

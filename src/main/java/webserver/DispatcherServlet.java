@@ -1,10 +1,12 @@
 package webserver;
 
-import controller.KinaController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import controller.MainController;
 import lombok.extern.slf4j.Slf4j;
 import util.HttpRequestUtils;
 import webserver.annotation.RequestMethod;
-import webserver.model.KinaHttpRequest;
+import webserver.model.WebHttpRequest;
+import webserver.model.WebHttpResponse;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -15,8 +17,8 @@ import java.util.Map;
 
 @Slf4j
 public class DispatcherServlet extends Thread {
-    private static final KinaController CONTROLLER = KinaController.getInstance();
-    private static final ViewRenderer RENDERER = ViewRenderer.getInstance();
+    private final MainController controller = MainController.getInstance();
+    private final ViewResolver resolver = ViewResolver.getInstance();
     private Socket connection;
 
     public DispatcherServlet(Socket connectionSocket) {
@@ -29,28 +31,46 @@ public class DispatcherServlet extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            KinaHttpRequest httpRequest = KinaHttpRequest.of(buffer);
             DataOutputStream dos = new DataOutputStream(out);
+
+            WebHttpRequest httpRequest = WebHttpRequest.of(buffer);
+            WebHttpResponse httpResponse = WebHttpResponse.of(dos);
+
             log.info(httpRequest.toString());
-            Map<String, String> queryMap = HttpRequestUtils.parseQueryString(httpRequest.uri().getQuery());
-            String uriString = httpRequest.uri().getPath();
-            Method method = HandlerMapping.getMethod(RequestMethod.valueOf(httpRequest.method()), uriString);
-            if (method == null) { // 정적 파일 요청
-                RENDERER.render(dos, httpRequest.uri().getPath());
-            } else { // controller 호출
-                String result = (String) method.invoke(CONTROLLER, queryMap);
-                if (result.startsWith("redirect:")) {
-                    RENDERER.redirect(dos, httpRequest.headers().map().get("Host").get(0) + result.split(":")[1]);
-                } else {
-                    RENDERER.render(dos, result);
-                }
+
+            if (HandlerMapping.isRegistered(httpRequest)) {
+                invoke(httpRequest, httpResponse);
+                resolver.resolve(httpRequest, httpResponse);
+            } else {
+                resolver.resolve(httpRequest, httpResponse);
             }
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    private void invoke(WebHttpRequest httpRequest, WebHttpResponse httpResponse) {
+        RequestMethod requestMethod = RequestMethod.valueOf(httpRequest.method());
+        String uri = httpRequest.uri().getPath();
+        String queryString = httpRequest.uri().getQuery();
+        Method controllerMethod = HandlerMapping.getControllerMethod(requestMethod, uri);
+        Map<String, String> map = HttpRequestUtils.parseQueryString(queryString);
+
+        int parameterCount = controllerMethod.getParameterCount();
+        Class[] parameters = controllerMethod.getParameterTypes();
+
+        ObjectMapper mapper = new ObjectMapper();
+        Object[] params = new Object[parameterCount];
+        for (int index = 0; index < parameterCount; index++) {
+            params[index] = mapper.convertValue(map, parameters[index]);
+        }
+        try {
+            String result = (String) controllerMethod.invoke(controller, params);
+            httpResponse.setResult(result);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 }
