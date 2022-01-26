@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RequestController {
@@ -28,7 +29,7 @@ public class RequestController {
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
                 log.debug("User: {}", user);
                 DataBase.addUser(user);
-                return generateStaticResponse("/user/list.html");
+                return generateResponse302("/user/list.html");
             } catch (Exception e) {
                 return generateResponse400(e);
             }
@@ -52,6 +53,13 @@ public class RequestController {
             log.error(e.getMessage());
             return generateResponse500();
         }
+    }
+
+    private static HttpResponse generateResponse302(String path) {
+        return HttpResponse.builder()
+                .status(HttpStatus.FOUND)
+                .header("Location", path)
+                .build();
     }
 
     private static HttpResponse generateResponse400(Exception e) {
