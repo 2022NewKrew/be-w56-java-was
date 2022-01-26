@@ -1,36 +1,28 @@
 package model;
 
+import lombok.*;
+
+
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class User {
     private String userId;
     private String password;
     private String name;
     private String email;
 
-    public User(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
+    public void changeName(String name) {
         this.name = name;
+    }
+
+    public void changeEmail(String email) {
         this.email = email;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+    public void changePassword(String password) {
+        this.password = password;
     }
 }

@@ -12,14 +12,14 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class KinaHttpRequest extends HttpRequest {
+public class WebHttpRequest extends HttpRequest {
     private final RequestMethod method;
     private final String requestURI;
     private final String version;
     private final Map<String, List<String>> headers;
 
 
-    private KinaHttpRequest(BufferedReader in) throws IOException {
+    private WebHttpRequest(BufferedReader in) throws IOException {
         String[] request = in.readLine().split(" ");
         this.method = RequestMethod.valueOf(request[0]);
         this.requestURI = request[1];
@@ -38,8 +38,8 @@ public class KinaHttpRequest extends HttpRequest {
         });
     }
 
-    public static KinaHttpRequest of(BufferedReader in) throws IOException {
-        return new KinaHttpRequest(in);
+    public static WebHttpRequest of(BufferedReader in) throws IOException {
+        return new WebHttpRequest(in);
     }
 
     @Override
