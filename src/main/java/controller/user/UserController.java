@@ -3,7 +3,10 @@ package controller.user;
 import annotation.Controller;
 import annotation.RequestMapping;
 import db.DataBase;
-import http.*;
+import http.HttpHeader;
+import http.HttpRequest;
+import http.HttpResponse;
+import http.HttpStatus;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +26,11 @@ public class UserController {
         this.httpRequest = httpRequest;
     }
 
-    @RequestMapping(value = "/user", method = "GET")
+    @RequestMapping(value = "/user", method = "POST")
     public HttpResponse createUser() {
         try {
-            RequestLine requestLine = httpRequest.getRequestLine();
-            Map<String, String> queryStringMap = requestLine.getQueryStringMap();
-            User user = new User(queryStringMap.get("userId"), queryStringMap.get("password"), queryStringMap.get("name"), queryStringMap.get("email"));
+            Map<String, String> requestBodyMap = httpRequest.getRequestBody().getRequestBodyMap();
+            User user = new User(requestBodyMap.get("userId"), requestBodyMap.get("password"), requestBodyMap.get("name"), requestBodyMap.get("email"));
             DataBase.addUser(user);
 
             File file = new File("./webapp/index.html");
