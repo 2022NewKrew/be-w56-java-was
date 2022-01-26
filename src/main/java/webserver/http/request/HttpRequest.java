@@ -1,8 +1,5 @@
 package webserver.http.request;
 
-import static webserver.http.HttpMeta.ROOT_PATH_OF_WEB_RESOURCE_FILES;
-
-import java.io.File;
 import java.net.URI;
 import java.util.Map;
 import util.HttpRequestUtils;
@@ -48,10 +45,5 @@ public class HttpRequest {
     private Map<String, String> getQueryDataFromBody() {
         String body = getRequestBody();
         return HttpRequestUtils.parseQueryString(body);
-    }
-
-    public File getFile() {
-        URI uri = getUri();
-        return new File(ROOT_PATH_OF_WEB_RESOURCE_FILES + uri.getPath());
     }
 }

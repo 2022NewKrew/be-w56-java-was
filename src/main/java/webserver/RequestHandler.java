@@ -5,18 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestDecoder;
 import webserver.http.request.Method;
-import webserver.http.response.EncodedHttpResponse;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpResponseEncoder;
 import webserver.http.response.HttpResponseHeaders;
 
 public class RequestHandler extends Thread {
@@ -35,32 +31,29 @@ public class RequestHandler extends Thread {
         );
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            DataOutputStream dos = new DataOutputStream(out);
             HttpRequest httpRequest = HttpRequestDecoder.decode(in);
-            HttpResponse httpResponse = new HttpResponse(
-                httpRequest.getHttpVersion(),
-                new HttpResponseHeaders(),
-                dos
-            );
+            HttpResponse httpResponse = handle(httpRequest);
 
-            handle(httpRequest, httpResponse);
+            DataOutputStream dos = new DataOutputStream(out);
+            ResponseHandler responseHandler = new ResponseHandler(dos, httpResponse);
+            responseHandler.sendResponse();
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void handle(HttpRequest request, HttpResponse response) throws IOException, IllegalAccessException {
+    private HttpResponse handle(HttpRequest request) throws IOException {
+        HttpResponse response = new HttpResponse(request.getHttpVersion(), new HttpResponseHeaders());
         Method method = request.getMethod();
         MethodHandler methodHandler = method == Method.GET ? new GetMethodHandler() : new PostMethodHandler();
 
         try {
-            String filePath = methodHandler.handle(request, response);
-            EncodedHttpResponse encodedHttpResponse = HttpResponseEncoder.encode(response, Path.of(filePath));
-            response.sendNormalResponse(encodedHttpResponse);
-        } catch (FileNotFoundException | AccessDeniedException e) {
-            response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+            methodHandler.handle(request, response);
+            return response;
+        } catch (FileNotFoundException | AccessDeniedException | PageNotFoundException e) {
             ExceptionHandler.handleException(response, e);
+            return response;
         }
     }
 }

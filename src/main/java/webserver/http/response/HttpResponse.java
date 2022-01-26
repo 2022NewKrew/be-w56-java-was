@@ -8,27 +8,27 @@ import static webserver.http.HttpMeta.SUFFIX_OF_CSS_FILE;
 import static webserver.http.HttpMeta.SUFFIX_OF_JS_FILE;
 import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 public class HttpResponse {
 
     private final String httpVersion;
     private final HttpResponseHeaders headers;
-    private final DataOutputStream dos;
+    private String viewPage;
+    private String message;
     private int statusCode;
     private String status;
 
-    public HttpResponse(String httpVersion, HttpResponseHeaders headers, DataOutputStream dos) {
+    public HttpResponse(String httpVersion, HttpResponseHeaders headers) {
         this.httpVersion = httpVersion;
         this.headers = headers;
-        this.dos = dos;
         this.statusCode = HttpURLConnection.HTTP_OK;
         this.status = HTTP_STATUS_OK;
+        this.viewPage = null;
+        this.message = null;
     }
 
     public String getHttpVersion() {
@@ -50,8 +50,24 @@ public class HttpResponse {
         return status;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public HttpResponseHeaders getHeaders() {
         return headers;
+    }
+
+    public String getViewPage() {
+        return viewPage;
+    }
+
+    public void setViewPage(String viewPage) {
+        this.viewPage = viewPage;
     }
 
     public void setHeader(HttpResponseHeader httpResponseHeader, String value) {
@@ -84,28 +100,6 @@ public class HttpResponse {
 
     public void setLocation(String redirectPath) {
         setHeader(HttpResponseHeader.Location, redirectPath);
-    }
-
-    public void sendNormalResponse(EncodedHttpResponse encodedResponse) throws IOException {
-        buildOutputStreamOfHeaders(encodedResponse);
-        dos.write(encodedResponse.getBody(), 0, encodedResponse.getBodyLength());
-    }
-
-    private void buildOutputStreamOfHeaders(EncodedHttpResponse encodedResponse) throws IOException {
-        dos.writeBytes(encodedResponse.getStatusLine());
-        List<String> responseHeader = encodedResponse.getResponseHeaders();
-        for (String header : responseHeader) {
-            dos.writeBytes(header);
-        }
-    }
-
-    public void sendRedirectResponse(EncodedHttpResponse encodedResponse) throws IOException {
-        buildOutputStreamOfHeaders(encodedResponse);
-    }
-
-    public void sendErrorResponse(EncodedHttpResponse encodedResponse, String message) throws IOException {
-        buildOutputStreamOfHeaders(encodedResponse);
-        dos.writeBytes(message);
     }
 
     public void redirect() {

@@ -20,21 +20,20 @@ public class PostMethodHandler implements MethodHandler {
         controllerMap.put("/user/create", new SignUpUserController());
     }
 
-    public String handle(HttpRequest request, HttpResponse response)
-        throws IOException, IllegalAccessException {
+    public void handle(HttpRequest request, HttpResponse response)
+        throws IOException, PageNotFoundException {
         if (request.getMethod() != Method.POST) {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-            throw new IllegalAccessException("잘못된 접근 입니다.");
+            throw new PageNotFoundException();
         }
 
         URI uri = request.getUri();
         Controller controller = getController(uri);
 
-        if (controller != null) {
-            return controller.process(request, response);
+        if (controller == null) {
+            throw new PageNotFoundException();
         }
-
-        return null;
+        controller.process(request, response);
     }
 
     private Controller getController(URI uri) {

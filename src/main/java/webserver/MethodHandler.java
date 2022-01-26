@@ -6,5 +6,6 @@ import webserver.http.response.HttpResponse;
 
 public interface MethodHandler {
 
-    String handle(HttpRequest request, HttpResponse response) throws IOException, IllegalAccessException;
+    void handle(HttpRequest request, HttpResponse response)
+        throws IOException, PageNotFoundException;
 }

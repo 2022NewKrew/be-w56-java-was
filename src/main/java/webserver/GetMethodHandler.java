@@ -16,24 +16,25 @@ public class GetMethodHandler implements MethodHandler {
     private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     static {
-        // POST Method Controller 추가
+        // GET Method Controller 추가
     }
 
-    public String handle(HttpRequest request, HttpResponse response)
-        throws IOException, IllegalAccessException {
+    public void handle(HttpRequest request, HttpResponse response)
+        throws IOException, PageNotFoundException {
         if (request.getMethod() != Method.GET) {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-            throw new IllegalAccessException("잘못된 접근 입니다.");
+            throw new PageNotFoundException();
         }
 
         URI uri = request.getUri();
         Controller controller = getController(uri);
 
-        if (controller != null) {
-            return controller.process(request, response);
+        if (controller == null) {
+            new StaticFileController().process(request, response);
+            return;
         }
 
-        return new StaticFileController().process(request, response);
+        controller.process(request, response);
     }
 
     private Controller getController(URI uri) {

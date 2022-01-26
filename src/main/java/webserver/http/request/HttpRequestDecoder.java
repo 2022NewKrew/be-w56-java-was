@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
+import util.IOUtils;
 
 public class HttpRequestDecoder {
 
@@ -28,7 +29,7 @@ public class HttpRequestDecoder {
 
         HttpRequestLine requestLine = createRequestLine(br);
         HttpRequestHeaders requestHeaders = createRequestHeaders(br);
-        HttpRequestBody requestBody = createRequestBody(br);
+        HttpRequestBody requestBody = createRequestBody(br, requestHeaders.getContentLength());
 
         return new HttpRequest(requestLine, requestHeaders, requestBody);
     }
@@ -77,18 +78,9 @@ public class HttpRequestDecoder {
         return requestHeaders;
     }
 
-    private static HttpRequestBody createRequestBody(BufferedReader br) throws IOException {
-        StringBuilder body = new StringBuilder();
-
-        while (br.ready()) {
-            String line = br.readLine();
-            if (line.isEmpty()) {
-                break;
-            }
-            body.append(line);
-            body.append("\n");
-        }
-        HttpRequestBody httpRequestBody = new HttpRequestBody(body.toString());
+    private static HttpRequestBody createRequestBody(BufferedReader br, int contentLength) throws IOException {
+        String body = IOUtils.readData(br, contentLength);
+        HttpRequestBody httpRequestBody = new HttpRequestBody(body);
         log.debug("Request Body(size:{}) decoded", httpRequestBody.getBodySize());
         return httpRequestBody;
     }

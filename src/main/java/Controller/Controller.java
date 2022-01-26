@@ -6,5 +6,5 @@ import webserver.http.response.HttpResponse;
 
 public interface Controller {
 
-    String process(HttpRequest request, HttpResponse response) throws IOException;
+    void process(HttpRequest request, HttpResponse response) throws IOException;
 }

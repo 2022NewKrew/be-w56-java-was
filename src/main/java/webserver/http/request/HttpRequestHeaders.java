@@ -14,4 +14,12 @@ public class HttpRequestHeaders {
     public int getSize() {
         return headers.size();
     }
+
+    public int getContentLength() {
+        String contentLengthStr = headers.get("Content-Length");
+        if (contentLengthStr == null) {
+            return 0;
+        }
+        return Integer.parseInt(contentLengthStr);
+    }
 }
