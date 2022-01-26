@@ -22,17 +22,21 @@ public class HandlerMapper {
     public static ResponseBody requestMapping(HttpRequest httpRequest) throws IOException {
         HttpMethod httpMethod = httpRequest.getMethod();
         String path = httpRequest.getPath();
-        Map<String, String> queryString = httpRequest.getQueryString();
 
         if (httpMethod.equals(HttpMethod.GET)) {
             switch (path) {
                 case "/" : return indexView();
                 case "/user/signup" : return signupView();
-                case "/user/create" : return signup(queryString);
-                default : return defaultPath(path);
             }
         }
-        return null;
+
+        if (httpMethod.equals(HttpMethod.POST)) {
+            switch (path) {
+                case "/user/create" : return signup(httpRequest);
+            }
+        }
+
+        return defaultPath(path);
     }
 
     private static ResponseBody indexView() throws IOException {
@@ -45,20 +49,23 @@ public class HandlerMapper {
         return new ResponseBody(HttpStatus.OK, body);
     }
 
-    private static ResponseBody signup(Map<String, String> queryString) throws IOException {
-        String userId = URLDecoder.decode(queryString.get("userId"), StandardCharsets.UTF_8);
-        String password = URLDecoder.decode(queryString.get("password"), StandardCharsets.UTF_8);
-        String name = URLDecoder.decode(queryString.get("name"), StandardCharsets.UTF_8);
-        String email = URLDecoder.decode(queryString.get("email"), StandardCharsets.UTF_8);
+    private static ResponseBody signup(HttpRequest httpRequest) throws IOException {
+        String requestBody = httpRequest.getBody();
+        Map<String, String> data = HttpRequestUtils.parseQueryString(requestBody);
+
+        String userId = URLDecoder.decode(data.get("userId"), StandardCharsets.UTF_8);
+        String password = URLDecoder.decode(data.get("password"), StandardCharsets.UTF_8);
+        String name = URLDecoder.decode(data.get("name"), StandardCharsets.UTF_8);
+        String email = URLDecoder.decode(data.get("email"), StandardCharsets.UTF_8);
         User user = new User(userId, password, name, email);
 
         log.debug(user.toString());
 
-        byte[] body = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
-        return new ResponseBody(HttpStatus.OK, body);
+        byte[] b = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
+        return new ResponseBody(HttpStatus.OK, b);
     }
 
-    private static ResponseBody defaultPath(String path) throws IOException{
+    private static ResponseBody defaultPath(String path) throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
         return new ResponseBody(HttpStatus.OK, body);
     }

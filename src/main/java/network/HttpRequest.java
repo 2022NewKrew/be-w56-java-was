@@ -3,6 +3,7 @@ package network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +17,6 @@ public class HttpRequest {
     private HttpMethod method;
     private String path;
     private Map<String, String> queryString;
-    private String version;
     private final Map<String, String> headers = new HashMap<>();
     private String body;
 
@@ -27,32 +27,35 @@ public class HttpRequest {
 
     private void parseRequest() {
         try {
-            String line = bufferedReader.readLine();
-            parseRequestLine(line);
-
-            line = bufferedReader.readLine();
-            while (!"".equals(line)) {
-                parseHeader(line);
-                line = bufferedReader.readLine();
-            }
-
+            parseRequestLine();
+            parseHeader();
+            parseBody();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
 
     }
 
-    private void parseRequestLine(String line) {
+    private void parseRequestLine() throws IOException {
+        String line = bufferedReader.readLine();
         Map<String, String> tokens = HttpRequestUtils.parseRequestLine(line);
-        this.method = HttpMethod.valueOf(tokens.get("method"));
-        this.path = tokens.get("path");
-        this.queryString = HttpRequestUtils.parseQueryString(tokens.get("queryString"));
-        this.version = tokens.get("version");
+        method = HttpMethod.valueOf(tokens.get("method"));
+        path = tokens.get("path");
+        queryString = HttpRequestUtils.parseQueryString(tokens.get("queryString"));
     }
 
-    private void parseHeader(String line) {
-        HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
-        headers.put(pair.getKey(), pair.getValue());
+    private void parseHeader() throws IOException {
+        String line = bufferedReader.readLine();
+        while (!"".equals(line)) {
+            HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
+            headers.put(pair.getKey(), pair.getValue());
+            line = bufferedReader.readLine();
+        }
+    }
+
+    private void parseBody() throws IOException {
+        int contentLength = Integer.parseInt(headers.get("Content-Length"));
+        body = IOUtils.readData(bufferedReader, contentLength);
     }
 
     public HttpMethod getMethod() {
@@ -65,6 +68,10 @@ public class HttpRequest {
 
     public Map<String, String> getQueryString() {
         return queryString;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public String getContentType() {
