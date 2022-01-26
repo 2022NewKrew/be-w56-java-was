@@ -1,5 +1,6 @@
 package webserver;
 
+import util.request.MethodType;
 import webserver.controller.Controller;
 import webserver.controller.StaticController;
 import webserver.controller.UserController;
@@ -13,9 +14,9 @@ public class ControllerMapping {
             new UserController()
     );
 
-    Optional<Controller<?>> getController(String url){
+    Optional<Controller<?>> getController(MethodType methodType, String url){
         return controllers.stream()
-                .filter(controller -> controller.supports(url))
+                .filter(controller -> controller.supports(methodType, url))
                 .findFirst();
     }
 }

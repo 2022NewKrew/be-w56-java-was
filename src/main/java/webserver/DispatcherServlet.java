@@ -39,6 +39,6 @@ public class DispatcherServlet extends Thread {
 
     private Controller<?> getController(HttpRequest httpRequest){
         String url = httpRequest.getUrl();
-        return controllerMapping.getController(url).orElseThrow();
+        return controllerMapping.getController(httpRequest.getMethod(), url).orElseThrow();
     }
 }

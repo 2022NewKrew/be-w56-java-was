@@ -3,6 +3,7 @@ package webserver.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
+import util.request.MethodType;
 import util.response.HttpResponse;
 import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
@@ -16,8 +17,12 @@ public class StaticController implements Controller<String>{
     private static final Set<String> supportExtensions = Set.of("html", "css", "js", "ico", "eot", "svg", "ttf", "woff", "woff2", "png");
 
     @Override
-    public boolean supports(String url) {
-        if(isIndexUrl(url)){
+    public boolean supports(MethodType methodType, String url) {
+        if(methodType != MethodType.GET){
+            return false;
+        }
+
+        if(isRootUrl(url)){
             return true;
         }
 
@@ -28,7 +33,7 @@ public class StaticController implements Controller<String>{
 
     @Override
     public HttpResponse<String> handle(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
-        String fileName = isIndexUrl(httpRequest.getUrl())
+        String fileName = isRootUrl(httpRequest.getUrl())
                 ? "/index.html"
                 : httpRequest.getUrl();
 
@@ -41,7 +46,7 @@ public class StaticController implements Controller<String>{
                 .build();
     }
 
-    private boolean isIndexUrl(String url){
+    private boolean isRootUrl(String url){
         return url.equals("/") || url.equals("");
     }
 }

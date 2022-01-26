@@ -23,12 +23,12 @@ class StaticControllerTest {
     @ParameterizedTest
     @DisplayName("url 지원 여부 확인")
     @MethodSource("getUrlSupportStream")
-    void supports(String url, boolean expected) {
+    void supports(MethodType methodType, String url, boolean expected) {
         //given
         final Controller<String> controller = new StaticController();
 
         //when
-        final boolean actual = controller.supports(url);
+        final boolean actual = controller.supports(methodType, url);
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -36,21 +36,23 @@ class StaticControllerTest {
 
     private static Stream<Arguments> getUrlSupportStream(){
         return Stream.of(
-                Arguments.of("hello.html", true),
-                Arguments.of("hello.ico", true),
-                Arguments.of("hello.css", true),
-                Arguments.of("hello.js", true),
-                Arguments.of("hello.eot", true),
-                Arguments.of("hello.svg", true),
-                Arguments.of("hello.ttf", true),
-                Arguments.of("hello.woff", true),
-                Arguments.of("hello.woff2", true),
-                Arguments.of("hello.png", true),
-                Arguments.of("hello.min.js", true),
-                Arguments.of("hello", false),
-                Arguments.of("hello.java", false),
-                Arguments.of("hello.c", false),
-                Arguments.of("hello.jpeg", false)
+                Arguments.of(MethodType.GET,"hello.html", true),
+                Arguments.of(MethodType.GET,"hello.ico", true),
+                Arguments.of(MethodType.GET,"hello.css", true),
+                Arguments.of(MethodType.GET,"hello.js", true),
+                Arguments.of(MethodType.GET,"hello.eot", true),
+                Arguments.of(MethodType.GET,"hello.svg", true),
+                Arguments.of(MethodType.GET,"hello.ttf", true),
+                Arguments.of(MethodType.GET,"hello.woff", true),
+                Arguments.of(MethodType.GET,"hello.woff2", true),
+                Arguments.of(MethodType.GET,"hello.png", true),
+                Arguments.of(MethodType.GET,"hello.min.js", true),
+                Arguments.of(MethodType.GET,"hello", false),
+                Arguments.of(MethodType.GET,"hello.java", false),
+                Arguments.of(MethodType.GET,"hello.c", false),
+                Arguments.of(MethodType.POST,"hello.html", false),
+                Arguments.of(MethodType.PUT,"hello.html", false),
+                Arguments.of(MethodType.DELETE,"hello.html", false)
         );
     }
 

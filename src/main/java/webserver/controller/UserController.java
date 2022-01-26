@@ -3,6 +3,7 @@ package webserver.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
+import util.request.MethodType;
 import util.response.HttpResponse;
 import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
@@ -19,8 +20,8 @@ public class UserController implements Controller<String>{
     private static final String JOIN_URL = "/user/create";
 
     @Override
-    public boolean supports(String url) {
-        return url.startsWith(BASE_URL);
+    public boolean supports(MethodType methodType, String url) {
+        return url.startsWith(JOIN_URL) && methodType == MethodType.GET;
     }
 
     @Override
