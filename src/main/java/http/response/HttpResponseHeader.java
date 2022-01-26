@@ -29,6 +29,9 @@ public class HttpResponseHeader {
     }
 
     private ContentType contentTypeOf(final String url) {
+        if (!url.contains("\\."))
+            return ContentType.DEFAULT;
+
         String[] tokens = url.split("\\.");
         String extension = tokens[tokens.length - 1];
 

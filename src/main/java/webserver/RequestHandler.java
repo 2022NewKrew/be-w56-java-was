@@ -31,7 +31,7 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest request = HttpRequest.readWithBufferedReader(br);
-            HttpResponse response = ControllerMapper.map(request);
+            HttpResponse response = ControllerContainer.map(request);
             response.writeToDataOutputStream(dos);
         } catch (IOException e) {
             log.error(e.getMessage());

@@ -8,9 +8,16 @@ import http.response.HttpResponseHeader;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 public interface Controller {
     HttpResponse process(HttpRequest request) throws IOException;
+
+    default boolean isStaticFileSRequest(HttpRequest request) {
+        String url = request.line().url();
+        Path path = Path.of("./webapp", url);
+        return path.toFile().isFile();
+    }
 
     default HttpResponse readStaticFile(String url) throws IOException {
         HttpResponseBody responseBody = HttpResponseBody.createFromUrl(url);

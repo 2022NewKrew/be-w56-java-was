@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ControllerMapper {
+public class ControllerContainer {
     private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     static {
