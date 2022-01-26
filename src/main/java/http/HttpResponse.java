@@ -46,9 +46,7 @@ public class HttpResponse {
         if (url.equals("/")) {
             return "*/*";
         }
-        System.out.println(url);
         String[] splitUrl = url.split("\\.");
-        System.out.println(splitUrl.length);
         String extension = splitUrl[splitUrl.length-1];
         if (extension.equals("html")) {
             return "text/html";
