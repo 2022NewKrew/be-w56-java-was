@@ -24,6 +24,10 @@
 - 빈 줄
   - 요청에 대한 모든 메타 정보가 전송되었음을 알림
   
+> Java 관련
+- Try with Resource는 try 블록을 빠져나오면 close 된다.
+- java 리플렉션 사용에 실패했지만, 개념 공부를 할 수 있었다.
+
 > 참고 자료
 - https://ko.wikipedia.org/wiki/HTTP
 - https://developer.mozilla.org/ko/docs/Web/HTTP/Messages
