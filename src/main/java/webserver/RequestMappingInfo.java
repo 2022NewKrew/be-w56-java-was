@@ -72,15 +72,15 @@ public enum RequestMappingInfo {
 
     public static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
         if (!requestMap.containsKey(path)) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(dos);
         }
         try {
             RequestMappingInfo requestMappingInfo = requestMap.get(path);
             return requestMappingInfo.handle(request, dos);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException();
+            throw new BadRequestException(dos);
         } catch (Exception e) {
-            throw new WebServerException();
+            throw new WebServerException(dos);
         }
     }
 
