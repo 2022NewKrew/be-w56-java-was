@@ -1,5 +1,7 @@
 package util;
 
+import util.http.HttpRequestUtils;
+
 import java.util.Map;
 
 public class URL {

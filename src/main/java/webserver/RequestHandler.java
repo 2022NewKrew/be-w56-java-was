@@ -1,25 +1,27 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.http.HttpRequest;
+import util.http.HttpRequestUtils;
+import util.http.HttpResponse;
+import util.http.HttpResponseUtils;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import util.HttpRequest;
-import util.HttpResponse;
-import util.HttpResponseUtils;
-import util.ServletContainer;
+import java.nio.charset.StandardCharsets;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
+    @Override
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
@@ -32,14 +34,15 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            HttpRequest httpRequest = new HttpRequest(br);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            // http request 인지 검증하는 부분이 필요?
+            HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
             HttpResponse httpResponse = new HttpResponse();
             DataOutputStream dos = new DataOutputStream(out);
             servletContainer.service(httpRequest, httpResponse);
             log.debug("response header");
             log.debug(httpResponse.headerText());
-            HttpResponseUtils.res(httpResponse, dos);
+            HttpResponseUtils.response(httpResponse, dos);
 
         } catch (IOException | InvocationTargetException | IllegalAccessException e) {
             log.error(e.getMessage());

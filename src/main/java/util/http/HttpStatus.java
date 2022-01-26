@@ -1,4 +1,4 @@
-package util;
+package util.http;
 
 public enum HttpStatus {
     OK(200, "OK"), FOUND(302, "Found"), INTERNAL_SERVER_ERROR(500, "Internal Server Error");
@@ -6,7 +6,7 @@ public enum HttpStatus {
     private final int code;
     private final String message;
 
-    private HttpStatus(int code, String message) {
+    HttpStatus(int code, String message) {
         this.code = code;
         this.message = message;
     }

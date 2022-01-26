@@ -3,6 +3,9 @@ package util;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.http.HttpMethod;
+import util.http.HttpRequest;
+import util.http.HttpRequestUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,20 +22,22 @@ public class HttpRequestTest {
     void initHttpRequest(){
         String path = "GET /index.html HTTP/1.1";
         HttpRequest httpRequest = new HttpRequest(path);
-        assertThat(httpRequest.method() == HttpMethod.GET).isTrue();
-        assertThat(httpRequest.url().equals("/index.html"));
-        assertThat(httpRequest.getHttpVersion().equals("HTTP/1.1"));
+        assertThat(httpRequest.method()).isSameAs(HttpMethod.GET);
+        assertThat(httpRequest.url()).isEqualTo("/index.html");
+        assertThat(httpRequest.getHttpVersion()).isEqualTo("HTTP/1.1");
     }
 
     @Test
-    void httpRequestGetParameterTest(){
+    void httpRequestGetParameterTest() {
         String url = "GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1\n";
         HttpRequest httpRequest = new HttpRequest(url);
         Map<String, String> params = httpRequest.params();
-        assertThat(params.get("userId")).isEqualTo("javajigi");
-        assertThat(params.get("password")).isEqualTo("password");
-        assertThat(params.get("name")).isEqualTo("박재성");
-        assertThat(params.get("email")).isEqualTo("javajigi@slipp.net");
+
+        assertThat(params).containsEntry("userId", "javajigi")
+                .containsEntry("password", "password")
+                .containsEntry("name", "박재성")
+                .containsEntry("email", "javajigi@slipp.net");
+
     }
 
     @Test
@@ -48,12 +53,14 @@ public class HttpRequestTest {
 
         InputStream is = new ByteArrayInputStream(request.getBytes(StandardCharsets.UTF_8));
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        HttpRequest httpRequest = new HttpRequest(br);
+        HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
         Map<String, String> body = httpRequest.body();
-        assertThat(body.get("userId")).isEqualTo("javajigi");
-        assertThat(body.get("password")).isEqualTo("password");
-        assertThat(body.get("name")).isEqualTo("박재성");
-        assertThat(body.get("email")).isEqualTo("javajigi@slipp.net");
+
+        assertThat(body).containsEntry("userId", "javajigi")
+                .containsEntry("password", "password")
+                .containsEntry("name", "박재성")
+                .containsEntry("email", "javajigi@slipp.net");
+
     }
 
 }

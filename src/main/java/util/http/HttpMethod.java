@@ -1,4 +1,4 @@
-package util;
+package util.http;
 
 public enum HttpMethod {
     NONE(""), GET("GET"), POST("POST"), PUT("PUT"), DELETE("DELETE");
