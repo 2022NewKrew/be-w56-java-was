@@ -7,6 +7,8 @@ import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import static util.ConstantValues.*;
 
@@ -17,7 +19,7 @@ public class Request {
 
     private String method;
     private String url;
-    private Queries requestQueries;
+    private Queries requestQueries = null;
     private final RequestHeaders requestHeaders = new RequestHeaders();
     private Queries requestBody;
 
@@ -32,7 +34,7 @@ public class Request {
         while(!line.equals("")) {
             line = br.readLine();
             requestHeaders.add(HttpRequestUtils.parseHeader(line));
-            log.debug("[Request] header : {}", line);
+//            log.debug("[Request] header : {}", line);
         }
         if(requestHeaders.get("Content-Length") != null){
             requestBody = convertString(IOUtils.readData(br, Integer.parseInt(requestHeaders.get("Content-Length"))));
@@ -49,12 +51,13 @@ public class Request {
     private void separateQuery(String requestLine){
         String[] uriSplit = requestLine.split(QUERY_REGEX);
         url = uriSplit[URL_IDX];
-        String queryString = (uriSplit.length == NO_QUERY) ? null : uriSplit[QUERY_IDX];
-        requestQueries = convertString(queryString);
+        if(uriSplit.length != NO_QUERY){
+            requestQueries = convertString(uriSplit[QUERY_IDX]);
+        }
     }
 
     public Queries convertString(String data){
-        return new Queries(HttpRequestUtils.parseQueryString(data));
+        return new Queries(HttpRequestUtils.parseQueryString(URLDecoder.decode(data, StandardCharsets.UTF_8)));
     }
 
     public String getMethod() { return  method; }
