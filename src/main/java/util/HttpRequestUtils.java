@@ -4,9 +4,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,24 +18,16 @@ public class HttpRequestUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
-    public static String getPathFromRequestLine(String requestLine) {
-        String[] token = requestLine.split(" ");
-        return token[1];
-    }
-
-    public static Map<String, String> readHeader(BufferedReader bufferedReader) throws IOException {
-        Map<String, String> header = new HashMap<>();
-
+    public static List<String> convertToStringList(BufferedReader bufferedReader) throws IOException {
+        List<String> requestLineList = new ArrayList<>();
         String line = bufferedReader.readLine();
         while (!Strings.isNullOrEmpty(line)) {
             log.debug("header: {}", line);
 
-            Pair p = parseHeader(line);
-
-            header.put(p.getKey(), p.getValue());
+            requestLineList.add(line);
             line = bufferedReader.readLine();
         }
-        return header;
+        return requestLineList;
     }
 
     /**
@@ -57,8 +52,8 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
