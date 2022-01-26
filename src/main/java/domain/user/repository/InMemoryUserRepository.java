@@ -8,10 +8,19 @@ import java.util.Optional;
 
 public class InMemoryUserRepository implements UserRepository {
 
+    private static InMemoryUserRepository instance;
+
     private final Map<String, User> users;
 
-    public InMemoryUserRepository() {
-        this.users = new HashMap<>();
+    public static InMemoryUserRepository get() {
+        if (instance == null) {
+            instance = new InMemoryUserRepository(new HashMap<>());
+        }
+        return instance;
+    }
+
+    private InMemoryUserRepository(Map<String, User> users) {
+        this.users = users;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package domain.user.service;
 
-import domain.user.dto.UserCreateRequest;
+import domain.user.dto.UserCreate;
 import domain.user.model.User;
 import domain.user.repository.InMemoryUserRepository;
 import domain.user.repository.UserRepository;
@@ -9,16 +9,20 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService() {
-        this.userRepository = new InMemoryUserRepository();
+    public static UserService create() {
+        return new UserService(InMemoryUserRepository.get());
     }
 
-    public void create(UserCreateRequest userCreateRequest) {
+    private UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void create(UserCreate userCreate) {
         User user = User.builder()
-            .userId(userCreateRequest.getUserId())
-            .password(userCreateRequest.getPassword())
-            .name(userCreateRequest.getName())
-            .email(userCreateRequest.getEmail())
+            .userId(userCreate.getUserId())
+            .password(userCreate.getPassword())
+            .name(userCreate.getName())
+            .email(userCreate.getEmail())
             .build();
         userRepository.save(user);
     }

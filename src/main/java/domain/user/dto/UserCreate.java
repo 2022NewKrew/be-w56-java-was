@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UserCreateRequest {
+public class UserCreate {
 
     private final String userId;
     private final String password;
@@ -12,7 +12,7 @@ public class UserCreateRequest {
     private final String email;
 
     @Builder
-    public UserCreateRequest(String userId, String password, String name, String email) {
+    public UserCreate(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
