@@ -11,6 +11,9 @@ import java.util.Map;
 public class HttpHeader {
     private static final Logger log = LoggerFactory.getLogger(HttpHeader.class);
     public static final String HEADER_KEY_VALUE_SPLIT_DELIMITER = ": ";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_LENGTH = "Content-Length";
+    public static final String LOCATION = "Location";
 
     private Map<String, String> headers;
 
@@ -20,16 +23,6 @@ public class HttpHeader {
 
     public HttpHeader(BufferedReader bufferedReader) throws IOException {
         makeHeaders(bufferedReader);
-    }
-
-    public HttpHeader(String contentType, int lengthOfBodyContent) {
-        headers = new HashMap<>();
-        headers.put("Content-Type", contentType);
-        headers.put("Content-Length", String.valueOf(lengthOfBodyContent));
-    }
-
-    public void addHeader(String key, String value) {
-        headers.put(key, value);
     }
 
     public void makeHeaders(BufferedReader bufferedReader) throws IOException {
@@ -53,7 +46,35 @@ public class HttpHeader {
         return headers;
     }
 
+    public void setHeader(String key, String value) {
+        headers.put(key, value);
+    }
+
+    public void setContentType(String contentType) {
+        headers.put(CONTENT_TYPE, contentType);
+    }
+
+    public void setContentLength(int contentLength) {
+        headers.put(CONTENT_LENGTH, String.valueOf(contentLength));
+    }
+
+    public void setLocation(String location) {
+        headers.put(LOCATION, location);
+    }
+
     public String getValue(String key) {
         return headers.get(key);
+    }
+
+    public String getContentType() {
+        return headers.get(CONTENT_TYPE);
+    }
+
+    public String getContentLength() {
+        return headers.get(CONTENT_LENGTH);
+    }
+
+    public String getLocation() {
+        return headers.get(LOCATION);
     }
 }

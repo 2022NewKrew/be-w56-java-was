@@ -30,8 +30,8 @@ public class ViewController {
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
-            responseHeader.addHeader("Content-Type", "text/html");
-            responseHeader.addHeader("Content-Length", String.valueOf(body.length));
+            responseHeader.setContentType("text/html");
+            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {

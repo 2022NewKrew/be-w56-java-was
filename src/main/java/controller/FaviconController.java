@@ -30,8 +30,8 @@ public class FaviconController {
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
-            responseHeader.addHeader("Content-Type", "image/avif");
-            responseHeader.addHeader("Content-Length", String.valueOf(body.length));
+            responseHeader.setContentType("image/avif");
+            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {

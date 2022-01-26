@@ -36,9 +36,9 @@ public class UserController {
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
-            responseHeader.addHeader("Content-Type", "text/html");
-            responseHeader.addHeader("Content-Length", String.valueOf(body.length));
-            responseHeader.addHeader("Location", "/index.html");
+            responseHeader.setContentType("text/html");
+            responseHeader.setContentLength(body.length);
+            responseHeader.setLocation("/index.html");
 
             return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
         } catch (IOException e) {

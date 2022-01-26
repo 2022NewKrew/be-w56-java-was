@@ -30,8 +30,8 @@ public class CssController {
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
-            responseHeader.addHeader("Content-Type", "text/css");
-            responseHeader.addHeader("Content-Length", String.valueOf(body.length));
+            responseHeader.setContentType("text/css");
+            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {
