@@ -13,23 +13,27 @@ public class HttpRequest {
     private static final String BODY_SEPARATOR = "";
 
     private static int getBodyIndex(List<String> requestLineList) {
-        for (int i = 0; i < requestLineList.size(); i++)
-            if (Objects.equals(requestLineList.get(i), BODY_SEPARATOR))
+        for (int i = 0; i < requestLineList.size(); i++) {
+            if (Objects.equals(requestLineList.get(i), BODY_SEPARATOR)) {
                 return i;
+            }
+        }
         return requestLineList.size();
     }
 
     private static List<String> getHeaderLineList(List<String> requestLineList, int bodyIndex) {
         List<String> headerLineList = new ArrayList<>();
-        for (int i = 1; i < bodyIndex; i++)
+        for (int i = 1; i < bodyIndex; i++) {
             headerLineList.add(requestLineList.get(i));
+        }
         return headerLineList;
     }
 
     private static List<String> getBodyLineList(List<String> requestLineList, int bodyIndex) {
         List<String> bodyLineList = new ArrayList<>();
-        for (int i = bodyIndex + 1; i < requestLineList.size(); i++)
+        for (int i = bodyIndex + 1; i < requestLineList.size(); i++) {
             bodyLineList.add(requestLineList.get(i));
+        }
         return bodyLineList;
     }
 

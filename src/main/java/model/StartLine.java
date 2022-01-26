@@ -8,7 +8,7 @@ public class StartLine {
         return new StartLine(token[0], token[1], token[2]);
     }
 
-    private final String httpMethod;
+    private final String httpMethod; // TODO - 메소드 같은 경우는 enum으로 처리해도 괜찮을 것 같음
     private final String requestTarget;
     private final String httpVersion;
 
