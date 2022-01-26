@@ -1,10 +1,10 @@
 package was.domain.event;
 
 import was.domain.controller.Controller;
-import was.domain.requestHandler.FrontRequestHandler;
-import was.domain.requestHandler.RequestHandler;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
+import was.domain.requestHandler.FrontRequestHandler;
+import was.domain.requestHandler.RequestHandler;
 import was.meta.HttpStatus;
 import was.meta.UrlPath;
 import was.util.HttpMapper;
@@ -21,12 +21,12 @@ public class EventService {
     }
 
     public static EventService getInstance(Map<UrlPath, Controller> controllers) {
-        final EventService instance = FrontServiceWrapper.INSTANCE;
+        final EventService instance = EventServiceWrapper.INSTANCE;
         instance.frontRequestHandler = FrontRequestHandler.getInstance(controllers);
         return instance;
     }
 
-    private static class FrontServiceWrapper {
+    private static class EventServiceWrapper {
         private static final EventService INSTANCE = new EventService();
     }
 
