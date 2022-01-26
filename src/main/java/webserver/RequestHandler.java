@@ -17,12 +17,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
+import util.IOUtils;
 
 public class RequestHandler extends Thread {
+
+    private static final String RESPONSE_MESSAGE_HEADER_FORMAT = "%s %s%n";
+    private static final String RESPONSE_MESSAGE_CONTENT_TYPE_AND_CHARSET_FORMAT = "Content-Type: %s;charset=utf-8%n";
+    private static final String RESPONSE_MESSAGE_CONTENT_LENGTH_FORMAT = "Content-Length: %s%n";
+    private static final String HTTP_HEADER_ACCEPT_KEY = "Accept";
 
     private static final int REQUEST_METHOD_INDEX = 0;
     private static final int REQUEST_TARGET_INDEX = 1;
     private static final int REQUEST_VERSION_INDEX = 2;
+
+    private static final String WEB_APP_DIRECTORY = "./webapp";
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -46,8 +54,7 @@ public class RequestHandler extends Thread {
 
             sendResponse(dos, request, response);
         } catch (IOException e) {
-            log.error(e.getMessage());
-            log.error("{}", e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -61,11 +68,16 @@ public class RequestHandler extends Thread {
             headers.put(header.getKey(), header.getValue());
         }
 
+        int length = Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
+        String body = IOUtils.readData(br, length);
+        log.info(body);
+
         return Request.builder()
             .method(Method.valueOf(requestTokens[REQUEST_METHOD_INDEX]))
             .target(requestTokens[REQUEST_TARGET_INDEX])
             .version(requestTokens[REQUEST_VERSION_INDEX])
             .headers(headers)
+            .body(body)
             .build();
     }
 
@@ -89,14 +101,14 @@ public class RequestHandler extends Thread {
 
     private Response doGet(Request request) {
         try {
-            byte[] body = Files.readAllBytes(new File("./webapp" + request.getTarget()).toPath());
+            byte[] body = Files.readAllBytes(
+                new File(WEB_APP_DIRECTORY + request.getTarget()).toPath());
             return Response.builder()
                 .status(Status.OK)
                 .body(body)
                 .build();
         } catch (IOException e) {
-            log.error(e.getMessage());
-            log.error("{}", e);
+            log.error(e.getMessage(), e);
             return Response.builder()
                 .status(Status.NOT_FOUND)
                 .build();
@@ -123,16 +135,18 @@ public class RequestHandler extends Thread {
 
     private void sendResponse(DataOutputStream dos, Request request, Response response) {
         try {
-            dos.writeBytes("HTTP/1.1 " + response.getHttpStatus() + System.lineSeparator());
-            dos.writeBytes("Content-Type: " +
-                HttpRequestUtils.parseAcceptContextType(request.getHeader("Accept"))
-                + ";charset=utf-8" + System.lineSeparator());
-            dos.writeBytes("Content-Length: " + response.getBodyLength() + System.lineSeparator());
+            dos.writeBytes(String.format(RESPONSE_MESSAGE_HEADER_FORMAT, request.getVersion(),
+                response.getHttpStatus()));
+            dos.writeBytes(String.format(RESPONSE_MESSAGE_CONTENT_TYPE_AND_CHARSET_FORMAT,
+                HttpRequestUtils.parseAcceptContextType(
+                    request.getHeader(HTTP_HEADER_ACCEPT_KEY))));
+            dos.writeBytes(String.format(RESPONSE_MESSAGE_CONTENT_LENGTH_FORMAT,
+                response.getBodyLength()));
             dos.writeBytes(System.lineSeparator());
             dos.write(response.getBody(), 0, response.getBodyLength());
             dos.flush();
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 }
