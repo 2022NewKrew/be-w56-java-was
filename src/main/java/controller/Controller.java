@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface Controller {
 
-    String run(HttpRequest request, Map<String, String> model);
+    Map<String, String> run(HttpRequest request, Map<String, String> model);
 }
