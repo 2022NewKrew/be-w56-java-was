@@ -3,6 +3,7 @@ package com.kakao.webserver.controller;
 import com.kakao.http.header.ContentLengthHeader;
 import com.kakao.http.header.ContentTypeHeader;
 import com.kakao.http.header.HttpHeader;
+import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
 import com.kakao.http.response.HttpResponse;
 import com.kakao.http.response.HttpStatus;
@@ -23,7 +24,7 @@ public class StaticFileController implements Controller {
     private static final Logger logger = LoggerFactory.getLogger(StaticFileController.class);
 
     @Override
-    public boolean isValidPath(String path) {
+    public boolean isValidRequest(String path, HttpMethod method) {
         return buildProperPath(path).toFile()
                 .exists();
     }

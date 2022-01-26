@@ -2,6 +2,7 @@ package com.kakao.webserver.controller;
 
 import com.kakao.http.header.HttpHeader;
 import com.kakao.http.header.LocationHeader;
+import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
 import com.kakao.http.response.HttpResponse;
 import com.kakao.http.response.HttpStatus;
@@ -22,7 +23,7 @@ public class UserController implements Controller {
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public boolean isValidPath(String path) {
+    public boolean isValidRequest(String path, HttpMethod method) {
         return path.matches("/user/create");
     }
 
