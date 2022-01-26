@@ -13,3 +13,8 @@
 - Content-Type이 파일과 맞지 않으면, 웹 브라우저에서 로드를 막을 수 있다는 것을 알게됨.
 - Http 301 Response에는 body 없이도 작동하는 것을 확인함.
 - ParameterizedTest의 CsvSource를 사용할 때, 테스트 함수의 매개 변수로 input, expected 만 사용이 가능한 것을 알게됨.
+
+### 3단계
+
+- HTTP 301, 302가 브라우저 레벨에서는 유사하지만, 검색엔진의 봇이 처리하는 방식이 다르다는 것을 알게됨.
+- favicon의 content type이 별도로 있다는 것을 알게됨.
