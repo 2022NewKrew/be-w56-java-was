@@ -32,5 +32,4 @@ public class HttpResponseUtils {
         httpResponse.setHeader("Location", String.format("http://%s%s", host, location));
     }
 
-
 }
