@@ -63,11 +63,11 @@ public class RequestHandler extends Thread {
     }
 
     private void writeResponseLine(DataOutputStream dos, HttpResponseLine responseLine) throws IOException {
-        dos.writeBytes(responseLine.getHttpVersion() + StringUtils.SPACE + responseLine.getStatusCode() + StringUtils.CR + StringUtils.LF);
+        dos.writeBytes(String.format("%s %s\r\n", responseLine.getHttpVersion(), responseLine.getStatusCode()));
     }
 
     private void writeResponseHeader(DataOutputStream dos, HttpResponseHeader responseHeader) throws IOException {
-        dos.writeBytes(responseHeader.getHeaders() + StringUtils.CR + StringUtils.LF);
+        dos.writeBytes(String.format("%s\r\n", responseHeader.getHeaders()));
     }
 
     private void setResponseForBadRequest(BadRequestException e) {
