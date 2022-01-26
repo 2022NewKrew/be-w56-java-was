@@ -22,6 +22,17 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.9.0'
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    implementation 'org.reflections:reflections:0.10.2'
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
+
 }
 
 test {
