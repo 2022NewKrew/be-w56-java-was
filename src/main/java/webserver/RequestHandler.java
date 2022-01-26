@@ -15,7 +15,7 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private Controller userController = new UserController();
+    private Controller userController = UserController.getInstance();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -34,7 +34,8 @@ public class RequestHandler extends Thread {
 
             // TODO : url mapping
 
-            HttpResponse response = userController.process(request);
+            //HttpResponse response = userController.process(request);
+            HttpResponse response = ControllerMapper.map(request);
             response.writeToDataOutputStream(dos);
         } catch (IOException e) {
             log.error(e.getMessage());

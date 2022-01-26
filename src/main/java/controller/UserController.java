@@ -16,13 +16,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
+ *  싱글톤
+ *
  *  process 메소드를 통해 HttpRequest 를 넘겨주면
  *  필요한 작업 후 HttpResponse 를 반환
  */
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static UserController INSTANCE;
 
-    public UserController() {
+    private UserController() {
+    }
+
+    public static synchronized UserController getInstance() {
+        if (INSTANCE == null)
+            INSTANCE = new UserController();
+        return INSTANCE;
     }
 
     public HttpResponse process(HttpRequest request) throws IOException {
@@ -39,13 +48,6 @@ public class UserController implements Controller {
         }
     }
 
-    private HttpResponse readStaticFile(String url) throws IOException {
-        HttpResponseBody responseBody = HttpResponseBody.createFromUrl(url);
-        HttpResponseHeader responseHeader = new HttpResponseHeader(url, HttpStatus.OK, responseBody.length());
-
-        return new HttpResponse(responseHeader, responseBody);
-    }
-
     private HttpResponse createUser(HttpRequestLine requestLine) {
         Map<String, String> queryString = requestLine.queryString();
         System.out.println(queryString);
@@ -57,14 +59,5 @@ public class UserController implements Controller {
 
         DataBase.addUser(newUser);
         return redirect("/index.html");
-    }
-
-    private HttpResponse redirect(String redirectUrl) {
-        HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
-        responseHeader.putToHeaders("Location", redirectUrl);
-        byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
-        HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
-
-        return new HttpResponse(responseHeader, responseBody);
     }
 }
