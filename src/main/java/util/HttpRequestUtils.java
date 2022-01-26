@@ -33,7 +33,7 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, Constants.EQUAL)).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
@@ -51,7 +51,7 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseRequest(String requestLine) {
-        String[] tokens = requestLine.split(" ");
+        String[] tokens = requestLine.split(Constants.SPACE);
 
         Map<String, String> requestMap = new HashMap<>();
 
@@ -63,7 +63,7 @@ public class HttpRequestUtils {
     }
 
     public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
+        return getKeyValue(header, Constants.SEMICOLON + Constants.SPACE);
     }
 
     public static class Pair {

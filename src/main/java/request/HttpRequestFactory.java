@@ -1,5 +1,6 @@
 package request;
 
+import util.Constants;
 import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
@@ -28,7 +29,10 @@ public class HttpRequestFactory {
     private HttpRequestLine createHttpRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
         Map<String, String> requestLine = HttpRequestUtils.parseRequest(line);
-        return new HttpRequestLine(requestLine.get("method"), requestLine.get("url"), requestLine.get("httpVersion"));
+        return new HttpRequestLine(
+                requestLine.get(Constants.HTTP_METHOD),
+                requestLine.get(Constants.HTTP_URL),
+                requestLine.get(Constants.HTTP_VERSION));
     }
 
 

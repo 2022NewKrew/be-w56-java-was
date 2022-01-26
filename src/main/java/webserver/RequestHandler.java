@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import request.HttpRequestFactory;
 import service.UserService;
+import util.Constants;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -40,14 +41,14 @@ public class RequestHandler extends Thread {
             // mapper 로 각각의 상황 분리 후 controller 로 전달할 예정
             if (httpRequest.getUrl().contains("/user/create") && Objects.equals(httpRequest.getMethod(), "GET")) {
                 UserService userService = new UserService();
-                String queries = httpRequest.getUrl().split("\\?")[1];
+                String queries = httpRequest.getUrl().split(Constants.QUESTION)[1];
                 Map<String, String> queriesMap = HttpRequestUtils.parseQueryString(queries);
                 userService.join(new UserSignUpDto(queriesMap.get("userId"), queriesMap.get("password"), queriesMap.get("name"), queriesMap.get("email")));
             }
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = Files.readAllBytes(new File("./webapp" + httpRequest.getUrl()).toPath());
+            byte[] body = Files.readAllBytes(new File(Constants.BASE_FILE_PATH + httpRequest.getUrl()).toPath());
 
             String extension = IOUtils.parseExtension(httpRequest);
             log.debug("extension : {}", extension);

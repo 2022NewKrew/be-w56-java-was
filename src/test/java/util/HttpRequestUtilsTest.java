@@ -79,8 +79,8 @@ public class HttpRequestUtilsTest {
         String[] tokens = requestLine.split(" ");
 
         // when & then
-        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("method"));
-        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("url"));
-        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("httpVersion"));
+        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_METHOD));
+        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_URL));
+        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_VERSION));
     }
 }

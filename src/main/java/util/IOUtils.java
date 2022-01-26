@@ -32,7 +32,7 @@ public class IOUtils {
         extensionMap.put("png", "image/png");
 
         String url = httpRequest.getUrl();
-        String[] tokens = url.split("\\.");
+        String[] tokens = url.split(Constants.DOT);
         return extensionMap.get(tokens[tokens.length - 1]);
     }
 }
