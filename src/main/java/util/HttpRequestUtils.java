@@ -1,5 +1,7 @@
 package util;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,7 +11,7 @@ import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString은
+     * @paramqueryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
@@ -18,7 +20,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
+     * @param쿠키
      *            값은 name1=value1; name2=value2 형식임
      * @return
      */
@@ -33,7 +35,7 @@ public class HttpRequestUtils {
 
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                .collect(Collectors.toMap(p -> p.getKey(), p -> URLDecoder.decode(p.getValue())));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
