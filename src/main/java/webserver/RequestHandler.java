@@ -75,7 +75,7 @@ public class RequestHandler extends Thread {
             }
 
             log.debug("\n");
-            
+
             ResponseHandler responseHandler = new ResponseHandler(out, log);
             responseHandler.response(url, httpStatus, cookie);
 
