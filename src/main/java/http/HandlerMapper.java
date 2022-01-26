@@ -4,8 +4,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import controller.Controller;
 import controller.IndexController;
-import controller.SignUpController;
-import controller.UserFormController;
+import controller.user.SignUpController;
+import controller.user.UserFormController;
 
 public class HandlerMapper {
     private final Table<String, String, Controller> controllerTable = HashBasedTable.create();

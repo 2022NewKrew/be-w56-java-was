@@ -1,4 +1,4 @@
-package controller;
+package controller.user;
 
 import http.request.Request;
 import model.ModelAndView;

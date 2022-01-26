@@ -3,12 +3,36 @@
 
 <br>
 
+## Step 2 & 3. 회원가입 구현
+
+> Step1에서 Step2, Step3으로 진행하는 과정 중 전반적인 코드 리팩토링 과정을 진행했습니다.
+> 구조적으로 엉켜있고, 제대로 구성되지 않은 부분들이 많았는데, 해당 부분들을 `Spring MVC` 동작 방식을 기반으로 수정했습니다.
+> 유사하게 구현하려고 하였으나, 일부 다른 부분이 있습니다.(ViewResolver에서 view가 아닌 ModelAndView를 그대로 사용하는 부분)
+
+<br>
+
+### HTTP REQUEST & RESPONSE 동작 방식
+1. 클라이언트가 요청을 보낸다.
+2. `DispatchServlet`(기존 `RequestHandler`)가 요청을 받는다.
+3. `DispatchServlet`이 수신한 Http Request Message를 `Request` 클래스를 통해 request line, header, body를 확인한다.
+4. 요청 URL에 매핑되는 Controller가 존재하는 지 `HandlerMapper`를 통해 확인한다. 
+5. 존재하는 경우, 해당 `Controller`를 반환하고, 아니면 `null`을 반환한다.
+6. `DispatchServlet`에서 `.checkController` 메소드를 통해 컨트롤러가 존재하는 경우, `HandlerAdapter`가 `Controller`에 따른 메소드를 호출하도록 요청한다. 존재하지 않는 경우, `ModelAndView`에 URL을 바로 담는다.(이 경우, 바로 (8) 로 진행한다.)
+7. `HandlerAdapter`가 `Controller`의 메소드를 호출하면, 로직에 따라 처리하고, 결과를 `ModelAndView`에 담아 반환한다.
+8. `DispatchServlet`은 반환받은 `ModelAndView`를 `ViewResolver`로 전송한다.
+9. `ViewResolver`는 해당하는 `view`를 찾아 `ModelAndView` 내부의 `viewName`을 바꿔 반환한다. 해당하는 `view`가 없다면, 원래 값을 그대로 반환한다.
+10. 최종 처리된 `ModelAndView`을 `Response`로 보낸다.
+11. `Response`는 `HttpStatusCode`를 생성하고, Http Response Message를 응답한다.
+
+
+<br>
+
 ----
 
 ## Step1. 정적인 html 파일 응답
 
 > Request Header를 출력하고, Request Line에서 path를 분리한다. 
-> 또한, 이것을 읽어내 `localhost:8080/index.html`을 실행하였을 때, `webapp/index.html`을 응답할 수 있도록 한다.
+> 또한, 이것을 읽어내 `localhost:8080/index.html`을 실행하였을 때, `.webapp/index.html`을 응답할 수 있도록 합니다.
 
 - `IOUtils.readMimeType` : url에 해당하는 파일의 mime type을 반환하는 메서드
 - `HttpRequestUtils.parseRequestUrl` : request 요청 중 url만 분리하는 메서드
