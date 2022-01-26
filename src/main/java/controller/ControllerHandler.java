@@ -19,7 +19,7 @@ import java.util.Set;
 public class ControllerHandler {
     public static HttpResponse run(HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         String path = httpRequest.getPath();
-        if (path.startsWith("/css") || path.startsWith("/favicon.ico") || path.endsWith(".html") || path.startsWith("/fonts")) {
+        if (path.startsWith("/css") || path.startsWith("/favicon.ico") || path.endsWith(".html") || path.startsWith("/fonts") || path.startsWith("/js")) {
             return treatUnspecifiedRequest(httpRequest);
         }
 
