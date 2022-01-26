@@ -1,4 +1,4 @@
-package webserver.requesthandler;
+package webserver.requesthandler.httprequest;
 
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
@@ -12,33 +12,23 @@ import static webserver.common.exception.ExceptionMessage.*;
 @Getter
 @AllArgsConstructor
 public class HttpRequestStartLine {
-    private final String method;
+    private final HttpMethod method;
     private final String url;
     private final Map<String, String> queryParameters;
     private final String version;
 
     public static HttpRequestStartLine valueOf(
-            String method,
+            String methodString,
             String url,
             String version,
             Map<String, String> queryParameters
     ) {
-        validateMethod(method);
+        HttpMethod method = HttpMethod.of(methodString);
         validateUrl(url);
         url = initializeUrlToIndexPage(url);
         validateHttpVersion(version);
 
         return new HttpRequestStartLine(method, url, queryParameters, version);
-    }
-
-    private static void validateMethod(String method) throws UnsupportedOperationException, NullPointerException {
-        if (Strings.isNullOrEmpty(method)) {
-            throw new NullPointerException(HTTP_METHOD_NOT_FOUND_EXCEPTION.getMessage());
-        }
-
-        if (!(Objects.equals(method, "GET") || Objects.equals(method, "POST"))) {
-            throw new UnsupportedOperationException(UNSUPPORTED_HTTP_METHOD_EXCEPTION.getMessage());
-        }
     }
 
     private static void validateUrl(String url) throws NullPointerException {

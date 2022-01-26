@@ -2,11 +2,16 @@ package webserver.requesthandler;
 
 import application.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import webserver.requesthandler.httprequest.HttpRequest;
+import webserver.requesthandler.httprequest.HttpRequestStartLine;
+import webserver.requesthandler.httpresponse.HttpResponse;
+import webserver.requesthandler.httpresponse.HttpStatus;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,26 +31,35 @@ public class RequestHandler extends Thread {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = HttpRequest.doRequest(br);
-            byte[] responseBody = handleRequest(httpRequest);
+            HttpResponse httpResponse = handleRequest(httpRequest);
 
-            HttpResponse.doResponse(out, httpRequest.getHeaders(), responseBody);
+            httpResponse.doResponse(out);
         } catch (IOException | RuntimeException e) {
             log.error(e.getMessage());
         }
     }
 
-    private byte[] handleRequest(HttpRequest httpRequest) throws IOException {
+    private HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         HttpRequestStartLine startLine = httpRequest.getStartLine();
-        Map<String, String> requestBody = httpRequest.getRequestBody();
-        String url = startLine.getUrl();
+        Map<String, String> requestBody = httpRequest.getBody();
+        Map<String, String> requestHeader = httpRequest.getHeader();
+        String contentType = requestHeader.get("Accept").split(",")[0];
+        Map<String, String> responseHeader = new HashMap<>();
+        responseHeader.put("Content-Type", contentType);
 
+        String url = startLine.getUrl();
+        HttpStatus httpStatus = HttpStatus.valueOf(200);
         String redirectTo = "./webapp" + url;
+
         if (Objects.equals(url, "/users")) {
+            log.debug("Request to: /users");
             UserService.create(requestBody);
+            httpStatus = HttpStatus.valueOf(302);
             redirectTo = "./webapp/index.html";
         }
 
         log.debug("[Redirect] " + redirectTo);
-        return Files.readAllBytes(new File(redirectTo).toPath());
+        byte[] responseBody = Files.readAllBytes(new File(redirectTo).toPath());
+        return HttpResponse.valueOf(httpStatus, responseHeader, startLine.getVersion(), responseBody);
     }
 }

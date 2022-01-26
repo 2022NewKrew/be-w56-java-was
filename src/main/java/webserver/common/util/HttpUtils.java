@@ -2,16 +2,14 @@ package webserver.common.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.requesthandler.HttpRequestStartLine;
+import webserver.requesthandler.httprequest.HttpRequestStartLine;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class HttpRequestUtils {
+public class HttpUtils {
     /**
-     * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -47,8 +45,10 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens)
+                .map(t -> getKeyValue(t, "="))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     public static Pair getKeyValue(String keyValue, String regex) {
@@ -66,6 +66,12 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static List<String> mappedHeaderToList(Map<String, String> mappedHeader) {
+        List<String> header = new ArrayList<>();
+        mappedHeader.forEach((key, value) -> header.add(key + ": " + value + "\r\n"));
+        return header;
     }
 
     public static class Pair {
