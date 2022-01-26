@@ -12,7 +12,7 @@ public class HttpResponse {
     public HttpResponse(String viewPath) {
         this.viewPath = viewPath;
         this.cookies = new Cookies();
-        this.httpStatus = HttpStatus.OK;
+        this.httpStatus = isRedirect() ? HttpStatus.FOUND : HttpStatus.OK;
     }
 
     public HttpResponse(String viewPath, HttpStatus httpStatus) {
