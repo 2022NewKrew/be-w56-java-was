@@ -11,6 +11,12 @@ public class ResponseBody {
         this.body = body;
     }
 
+    public ResponseBody(HttpStatus httpStatus, byte[] body, String location) {
+        this.httpStatus = httpStatus;
+        this.body = body;
+        this.location = location;
+    }
+
     public HttpStatus getHttpStatus() {
         return httpStatus;
     }

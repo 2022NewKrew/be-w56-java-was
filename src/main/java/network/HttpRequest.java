@@ -29,7 +29,9 @@ public class HttpRequest {
         try {
             parseRequestLine();
             parseHeader();
-            parseBody();
+            if (!method.equals(HttpMethod.GET)) {
+                parseBody();
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }

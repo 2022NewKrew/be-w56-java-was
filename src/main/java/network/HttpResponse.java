@@ -23,7 +23,11 @@ public class HttpResponse {
         try {
             ResponseBody responseBody = HandlerMapper.requestMapping(httpRequest);
             byte[] body = responseBody.getBody();
-            response200Header(body.length, httpRequest.getContentType());
+            if (responseBody.getHttpStatus().equals(HttpStatus.FOUND)) {
+                response302Header(body.length, httpRequest.getContentType(), responseBody.getLocation());
+            } else {
+                response200Header(body.length, httpRequest.getContentType());
+            }
             responseBody(body);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -33,6 +37,18 @@ public class HttpResponse {
     private void response200Header(int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(int lengthOfBodyContent, String contentType, String location) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: http://localhost:8080" + location + "\r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");

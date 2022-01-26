@@ -59,10 +59,8 @@ public class HandlerMapper {
         String email = URLDecoder.decode(data.get("email"), StandardCharsets.UTF_8);
         User user = new User(userId, password, name, email);
 
-        log.debug(user.toString());
-
-        byte[] b = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
-        return new ResponseBody(HttpStatus.OK, b);
+        byte[] body = new byte[0];
+        return new ResponseBody(HttpStatus.FOUND, body, "/");
     }
 
     private static ResponseBody defaultPath(String path) throws IOException {
