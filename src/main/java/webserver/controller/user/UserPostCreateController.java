@@ -2,7 +2,6 @@ package webserver.controller.user;
 
 import dto.UserCreateDto;
 import webserver.Request;
-import webserver.Response;
 
 public class UserPostCreateController implements UserController {
     @Override
