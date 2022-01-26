@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class ControllerContainer {
 
-    private static final String DEFAULT_COMPONENT_SCAN_DIR = "webserver.api";
+    private static final String DEFAULT_COMPONENT_SCAN_DIR = "api";
 
     private static final ControllerContainer INSTANCE = new ControllerContainer();
 

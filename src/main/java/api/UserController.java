@@ -1,4 +1,4 @@
-package webserver.api.user;
+package api;
 
 import webserver.dispatcher.dynamic.bind.annotation.*;
 

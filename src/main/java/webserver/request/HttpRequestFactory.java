@@ -34,7 +34,7 @@ public class HttpRequestFactory {
         HttpRequestMethod requestMethod = HttpRequestMethod.valueOf(elements[0]);
         String uri = elements[1];
         String httpVersion = elements[2];
-        return new HttpRequestLine(requestMethod, new HttpRequestUri(uri), httpVersion);
+        return new HttpRequestLine(requestMethod, HttpRequestUri.Builder.createFromStringUri(uri), httpVersion);
     }
 
     private HttpRequestHeader createRequestHeader(BufferedReader br) throws IOException {
