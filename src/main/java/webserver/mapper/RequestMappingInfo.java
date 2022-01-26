@@ -69,13 +69,13 @@ public enum RequestMappingInfo {
 
     public static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
         if (!requestMap.containsKey(path)) {
-            throw new ResourceNotFoundException(dos);
+            throw new ResourceNotFoundException(dos, "에러: 존재하지 않은 리소스입니다.");
         }
         try {
             RequestMappingInfo requestMappingInfo = requestMap.get(path);
             return requestMappingInfo.handle(request, dos);
         } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new BadRequestException(dos);
+            throw new BadRequestException(dos, "에러: 부적절한 요청입니다.");
         } catch (Exception e) {
             throw new WebServerException(dos);
         }
