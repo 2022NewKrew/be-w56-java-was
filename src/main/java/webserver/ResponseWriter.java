@@ -1,7 +1,5 @@
 package webserver;
 
-import db.DataBase;
-import model.User;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +11,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 public class ResponseWriter {
     private static final Logger log = LoggerFactory.getLogger(ResponseWriter.class);
@@ -28,13 +25,12 @@ public class ResponseWriter {
     private static final String HEADER_VALUE_SEPARATOR = ": ";
     private static final String HEADER_NEWLINE = "\r\n";
 
-    private final DataBase dataBase = new DataBase();
+    private final Tika tika = new Tika();
 
     public void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
         final File file = new File(FILE_PREFIX + filePath);
         if (file.exists() && file.isFile()) {
             final Path path = file.toPath();
-            final Tika tika = new Tika();
             final byte[] body = Files.readAllBytes(path);
             writeResponse(out, body, tika.detect(path));
 
@@ -44,19 +40,8 @@ public class ResponseWriter {
         writeErrorResponse(out);
     }
 
-    public void writeUserCreateResponse(
-            final OutputStream out,
-            final Map<String, String> parameterMap
-    )
+    public void writeSuccessResponse(final OutputStream out)
     {
-        final User user = new User(
-                parameterMap.get("id"),
-                parameterMap.get("password"),
-                parameterMap.get("name"),
-                parameterMap.get("email"));
-
-        dataBase.addUser(user);
-
         final byte[] body = "OK".getBytes(StandardCharsets.UTF_8);
         writeResponse(out, body, MIME_PLAIN_TEXT);
     }

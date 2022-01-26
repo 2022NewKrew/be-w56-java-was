@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.UserController;
 import model.HttpRequest;
 import model.Pair;
 import model.ValueMap;
@@ -32,10 +33,17 @@ public class RequestHandler implements Callable<Void> {
     private static final String LOCATION_USER_CREATE = "/user/create";
 
     private final Socket connection;
+    private final UserController userController;
     private final ResponseWriter responseWriter;
 
-    public RequestHandler(final Socket connectionSocket, final ResponseWriter responseWriter) {
+    public RequestHandler(
+            final Socket connectionSocket,
+            final UserController userController,
+            final ResponseWriter responseWriter
+    )
+    {
         this.connection = connectionSocket;
+        this.userController = userController;
         this.responseWriter = responseWriter;
     }
 
@@ -58,6 +66,9 @@ public class RequestHandler implements Callable<Void> {
 
             if (method == HttpMethod.GET) {
                 processGet(out, location, httpRequest.getParameterMap());
+            }
+            else if (method == HttpMethod.POST) {
+//                processPost(out, location, httpRequest.getBody());
             }
             else {
                 responseWriter.writeErrorResponse(out);
@@ -129,7 +140,21 @@ public class RequestHandler implements Callable<Void> {
     ) throws IOException
     {
         if (LOCATION_USER_CREATE.equals(location)) {
-            responseWriter.writeUserCreateResponse(out, parameterMap);
+            userController.add(parameterMap);
+            responseWriter.writeSuccessResponse(out);
+        }
+
+        responseWriter.writeFileResponse(out, location);
+    }
+
+    private void processPost(
+            final OutputStream out,
+            final String location,
+            final Map<String, String> parameterMap
+    ) throws IOException
+    {
+        if (LOCATION_USER_CREATE.equals(location)) {
+            responseWriter.writeSuccessResponse(out);
         }
 
         responseWriter.writeFileResponse(out, location);
