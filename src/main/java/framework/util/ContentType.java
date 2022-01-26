@@ -1,8 +1,12 @@
-package webserver.utils;
+package framework.util;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContentType {
     private String mime;
     private String charset;
@@ -10,7 +14,11 @@ public class ContentType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(mime);
+        StringBuilder sb = new StringBuilder();
+
+        if (mime != null) {
+            sb.append(mime);
+        }
 
         if (charset != null) {
             sb.append(";").append(charset);
@@ -19,8 +27,6 @@ public class ContentType {
         if (boundary != null) {
             sb.append(";").append(boundary);
         }
-
-        sb.append("\r\n");
 
         return sb.toString();
     }

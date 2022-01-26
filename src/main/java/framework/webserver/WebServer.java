@@ -1,4 +1,4 @@
-package webserver;
+package framework.webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +25,8 @@ public class WebServer {
             Socket connection;
 
             while ((connection = listenSocket.accept()) != null) {
-                ConnectionHandler requestHandler = new ConnectionHandler(connection);
-                requestHandler.start();
+                ConnectionThread connectionHandler = new ConnectionThread(connection);
+                connectionHandler.start();
             }
         }
     }

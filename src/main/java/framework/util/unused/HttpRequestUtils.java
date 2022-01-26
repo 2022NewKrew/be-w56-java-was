@@ -1,4 +1,4 @@
-package webserver.utils;
+package framework.util.unused;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
