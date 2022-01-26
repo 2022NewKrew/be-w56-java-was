@@ -1,6 +1,8 @@
 package http;
 
 public class StatusLine {
+    private static final String EMPTY_SPACE = " ";
+
     private String protocol;
     private HttpStatus httpStatus;
 
@@ -9,15 +11,7 @@ public class StatusLine {
         this.httpStatus = httpStatus;
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public int getStatusCode() {
-        return httpStatus.getStatusCode();
-    }
-
-    public String getStatusText() {
-        return httpStatus.getStatusText();
+    public String getStatusLineText() {
+        return protocol + EMPTY_SPACE + httpStatus.getStatusCode() + EMPTY_SPACE + httpStatus.getStatusText();
     }
 }

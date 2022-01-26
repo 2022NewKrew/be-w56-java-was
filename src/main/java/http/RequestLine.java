@@ -6,12 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Map;
 
 public class RequestLine {
     private static final Logger log = LoggerFactory.getLogger(RequestLine.class);
-    public static final String REQUEST_LINE_SPLIT_DELIMITER = " ";
-    public static final String PATH_QUERY_STRING_SPLIT_DELIMITER = "\\?";
+    private static final String REQUEST_LINE_SPLIT_DELIMITER = " ";
+    private static final String PATH_QUERY_STRING_SPLIT_DELIMITER = "\\?";
 
     private String method;
     private String path;
@@ -55,15 +54,7 @@ public class RequestLine {
         return path;
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public QueryString getQueryString() {
-        return queryString;
-    }
-
-    public Map<String, String> getQueryStringMap() {
-        return queryString.getQueryStringMap();
+    public String getQueryString(String key) {
+        return queryString.getValue(key);
     }
 }

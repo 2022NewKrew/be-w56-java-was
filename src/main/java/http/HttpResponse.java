@@ -1,8 +1,6 @@
 package http;
 
 public class HttpResponse {
-    public static final String EMPTY_SPACE = " ";
-
     private StatusLine statusLine;
     private HttpHeader header;
     private byte[] body;
@@ -24,7 +22,7 @@ public class HttpResponse {
     }
 
     public String getStatusLineText() {
-        return statusLine.getProtocol() + EMPTY_SPACE + statusLine.getStatusCode() + EMPTY_SPACE + statusLine.getStatusText();
+        return statusLine.getStatusLineText();
     }
 
     public int getBodyLength() {
