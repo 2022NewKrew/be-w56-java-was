@@ -1,5 +1,12 @@
 package webserver.http.request;
 
+import static webserver.http.HttpMeta.ROOT_PATH_OF_WEB_RESOURCE_FILES;
+
+import java.io.File;
+import java.net.URI;
+import java.util.Map;
+import util.HttpRequestUtils;
+
 public class HttpRequest {
 
     private final HttpRequestLine requestLine;
@@ -12,27 +19,39 @@ public class HttpRequest {
         this.requestBody = requestBody;
     }
 
-    public HttpRequestLine getRequestLine() {
-        return requestLine;
-    }
-
-    public HttpRequestHeaders getRequestHeaders() {
-        return requestHeaders;
-    }
-
-    public HttpRequestBody getRequestBody() {
-        return requestBody;
+    public String getRequestBody() {
+        return requestBody.getBody();
     }
 
     public String getHttpVersion() {
         return requestLine.getHttpVersion();
     }
 
-    public String getUri() {
+    public URI getUri() {
         return requestLine.getUri();
     }
 
     public Method getMethod() {
         return requestLine.getMethod();
+    }
+
+    public Map<String, String> getQueryData() {
+        Method method = getMethod();
+        return method == Method.GET ? getQueryDataFromUri() : getQueryDataFromBody();
+    }
+
+    private Map<String, String> getQueryDataFromUri() {
+        URI uri = getUri();
+        return HttpRequestUtils.parseQueryString(uri.getQuery());
+    }
+
+    private Map<String, String> getQueryDataFromBody() {
+        String body = getRequestBody();
+        return HttpRequestUtils.parseQueryString(body);
+    }
+
+    public File getFile() {
+        URI uri = getUri();
+        return new File(ROOT_PATH_OF_WEB_RESOURCE_FILES + uri.getPath());
     }
 }

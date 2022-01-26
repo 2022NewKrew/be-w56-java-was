@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ public class HttpRequestDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestDecoder.class);
 
-    public static HttpRequest decode(InputStream in) throws IOException, NullRequestException {
+    public static HttpRequest decode(InputStream in) throws IOException, NullRequestException, URISyntaxException {
         Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(reader);
 
@@ -32,7 +34,7 @@ public class HttpRequestDecoder {
     }
 
     private static HttpRequestLine createRequestLine(BufferedReader br)
-        throws IOException, NullRequestException {
+        throws IOException, NullRequestException, URISyntaxException {
         String httpRequestLineString = br.readLine();
 
         if (httpRequestLineString == null) {
@@ -44,7 +46,7 @@ public class HttpRequestDecoder {
         String[] httpRequestLineSplitArray = httpRequestLineString.split(SEPARATOR_OF_REQUEST_LINE);
         HttpRequestLine httpRequestLine = new HttpRequestLine(
             Method.getMethodFromString(httpRequestLineSplitArray[INDEX_OF_METHOD_IN_REQUEST_LINE]),
-            httpRequestLineSplitArray[INDEX_OF_URI_IN_REQUEST_LINE],
+            new URI(httpRequestLineSplitArray[INDEX_OF_URI_IN_REQUEST_LINE]),
             httpRequestLineSplitArray[INDEX_OF_HTTP_VERSION_IN_REQUEST_LINE]
         );
 
