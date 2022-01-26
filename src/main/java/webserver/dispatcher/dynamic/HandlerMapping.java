@@ -2,6 +2,7 @@ package webserver.dispatcher.dynamic;
 
 import webserver.container.ControllerContainer;
 import webserver.dispatcher.dynamic.bind.handler.*;
+import webserver.exception.UnSupportedHttpMethodException;
 import webserver.request.HttpRequest;
 import webserver.request.HttpRequestMethod;
 import webserver.request.RequestContext;
@@ -40,13 +41,16 @@ public class HandlerMapping {
     private void initEachMethodHandlerMappings() {
         Set<Class<?>> restControllerTypes = ControllerContainer.getInstance().getRestControllerTypes();
         methodHandlerMappings.entrySet().stream()
-                .forEach( entry -> entry.getValue().initMappingTable(restControllerTypes));
+                .forEach(entry -> entry.getValue().initMappingTable(restControllerTypes));
     }
 
     public ClassAndMethod getControllerClassAndMethodForRequest() {
         HttpRequest request = RequestContext.getInstance().getHttpRequest();
         HttpRequestMethod requestMethod = request.getHttpRequestMethod();
-        return methodHandlerMappings.get(requestMethod)
-                .getMethod(request.getUri().getUrl());
+        MethodHandlerMapping methodHandlerMapping = methodHandlerMappings.get(requestMethod);
+        if (methodHandlerMapping == null) {
+            throw new UnSupportedHttpMethodException();
+        }
+        return methodHandlerMapping.getMethod(request.getUri().getUrl());
     }
 }

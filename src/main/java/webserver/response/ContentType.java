@@ -8,7 +8,8 @@ public enum ContentType {
     IMAGE_PNG("image/png", "png"),
     IMAGE_JPEG("image/jpeg", "jpeg"),
     IMAGE_X_ICON("image/x-icon", "ico"),
-    APPLICATION_OCTET_STREAM("application/octet-stream", "default");
+    APPLICATION_JSON("application/json", "json"),
+    APPLICATION_OCTET_STREAM("application/octet-stream", "");
 
     private String value;
     private String extension;

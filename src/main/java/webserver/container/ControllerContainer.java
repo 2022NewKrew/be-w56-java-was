@@ -4,6 +4,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import webserver.dispatcher.dynamic.bind.annotation.RestController;
 import webserver.exception.ContainerInitializationException;
+import webserver.exception.NoSuchControllerException;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -32,8 +33,8 @@ public class ControllerContainer {
     private void scanAndCreateRestControllers() {
         restControllers = new HashMap<>();
         Reflections reflections = new Reflections(DEFAULT_COMPONENT_SCAN_DIR, Scanners.TypesAnnotated);
-        Set<Class<?>> types =  reflections.getTypesAnnotatedWith(RestController.class);
-        for(Class<?> type : types) {
+        Set<Class<?>> types = reflections.getTypesAnnotatedWith(RestController.class);
+        for (Class<?> type : types) {
             try {
                 Constructor<?> constructor = type.getDeclaredConstructor();
                 Object controller = constructor.newInstance();
@@ -49,6 +50,10 @@ public class ControllerContainer {
     }
 
     public Object getControllerInstance(Class<?> type) {
-        return restControllers.get(type);
+        Object controller = restControllers.get(type);
+        if (controller == null) {
+            throw new NoSuchControllerException();
+        }
+        return controller;
     }
 }

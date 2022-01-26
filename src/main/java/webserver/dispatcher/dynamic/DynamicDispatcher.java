@@ -3,14 +3,16 @@ package webserver.dispatcher.dynamic;
 import webserver.container.ControllerContainer;
 import webserver.dispatcher.Dispatcher;
 import webserver.dispatcher.dynamic.bind.handler.ClassAndMethod;
-import webserver.request.HttpRequest;
-import webserver.request.RequestContext;
-import webserver.response.*;
+import webserver.exception.ControllerAccessDeniedException;
+import webserver.json.JsonParser;
+import webserver.response.ContentType;
+import webserver.response.HttpResponse;
+import webserver.response.HttpResponseHeader;
+import webserver.response.ResponseContext;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
 
-// todo
 /**
  * Singleton
  */
@@ -27,28 +29,31 @@ public class DynamicDispatcher extends Dispatcher {
 
     @Override
     protected HttpResponse processRequest() {
-        HttpRequest request = RequestContext.getInstance().getHttpRequest();
-        // todo RequestMethodNotFoundException 처리 로직
         ClassAndMethod classAndMethod = getClassAndMethodForRequest();
-
-        // todo 해당하는 Controller 없을 때 예외 처리 로직
         Object controller = ControllerContainer.getInstance().getControllerInstance(classAndMethod.getClazz());
 
-        Object responseBody = null;
-        // todo try catch 문 정리
         try {
-            responseBody = classAndMethod.getMethod().invoke(controller);
+            Object responseBody = classAndMethod.getMethod().invoke(controller);
+            if (responseBody != null) {
+                writeResponseBodyToResponse(responseBody);
+            }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new ControllerAccessDeniedException();
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            new RuntimeException(e.getTargetException());
         }
 
-        // todo Response Factory 이용
-        return new HttpResponse(new HttpResponseLine(HttpStatus.OK), new HttpResponseHeader(new HashMap<>()), new HttpResponseBody(new byte[]{}));
+        return ResponseContext.getInstance().getHttpResponse();
     }
 
     private ClassAndMethod getClassAndMethodForRequest() {
         return HandlerMapping.getInstance().getControllerClassAndMethodForRequest();
+    }
+
+    private void writeResponseBodyToResponse(Object responseBody) {
+        HttpResponse response = ResponseContext.getInstance().getHttpResponse();
+        String jsonString = JsonParser.getInstance().objectToJsonString(responseBody);
+        response.setResponseBody(jsonString.getBytes(StandardCharsets.UTF_8));
+        response.setHeaderIfAbsent(HttpResponseHeader.KEY_FOR_CONTENT_TYPE, new String[]{ContentType.APPLICATION_JSON.getValue()});
     }
 }

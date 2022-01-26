@@ -7,7 +7,7 @@ public class UserController {
 
     @GetMapping("/join")
     public String join() {
-        return "join";
+        return "hello world";
     }
 
     @PostMapping
