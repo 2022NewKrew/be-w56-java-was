@@ -18,6 +18,7 @@ import java.util.function.Function;
 public class Router {
     private static final Logger log = LoggerFactory.getLogger(Router.class);
     private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
+    private static final String REDIRECT = "redirect:";
     private static final Map<String, Function<MyHttpRequest, String>> postRoutingMap;
     private static final Map<String, Function<MyHttpRequest, String>> getRoutingMap;
 
@@ -28,6 +29,7 @@ public class Router {
         getRoutingMap = Collections.unmodifiableMap(tmpMap);
 
         tmpMap = new HashMap<>();
+        tmpMap.put("/user/create", controller::createUser);
         postRoutingMap = Collections.unmodifiableMap(tmpMap);
     }
 
@@ -53,8 +55,14 @@ public class Router {
         Function<MyHttpRequest, String> responseMethod = getRoutingMap.get(request.getPath());
         if (responseMethod != null) {
             String body = responseMethod.apply(request);
-            responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_200)
-                    .setBody(body);
+            if (body.startsWith(REDIRECT)) {
+                body = body.replace(REDIRECT, "");
+                responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_302)
+                        .setLocation(body);
+            } else {
+                responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_200)
+                        .setBody(body);
+            }
 
         } else { //라우팅 맵에 URL에 해당하는 리소스를 찾아본다.
 
@@ -79,8 +87,14 @@ public class Router {
         Function<MyHttpRequest, String> responseMethod = postRoutingMap.get(request.getPath());
         if (responseMethod != null) {
             String body = responseMethod.apply(request);
-            responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_200)
-                    .setBody(body);
+            if (body.startsWith(REDIRECT)) {
+                body = body.replace(REDIRECT, "");
+                responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_302)
+                        .setLocation(body);
+            } else {
+                responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_200)
+                        .setBody(body);
+            }
         } else {
             responseBuild.setStatusCode(HttpStatusCode.STATUS_CODE_404)
                     .setBody(NOT_FOUNT_MESSAGE);

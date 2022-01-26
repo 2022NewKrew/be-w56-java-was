@@ -16,6 +16,6 @@ public class UserController {
         User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
         DataBase.addUser(user);
         log.info("new User (userId : {}, name : {})", user.getUserId(), user.getName());
-        return "등록되었습니다.";
+        return "redirect:/index.html";
     }
 }

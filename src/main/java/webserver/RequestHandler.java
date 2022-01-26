@@ -3,9 +3,9 @@ package webserver;
 import http.HttpStatusCode;
 import http.MyHttpRequest;
 import http.MyHttpResponse;
+import http.MyHttpResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils.Pair;
 import util.Router;
 
 import java.io.DataOutputStream;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.List;
+import java.util.Map;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -56,9 +56,9 @@ public class RequestHandler extends Thread {
         dos.flush();
     }
 
-    private void printHeaders(List<Pair> header) {
-        for (Pair pair : header) {
-            log.info("Header : [{} : {}]", pair.getKey(), pair.getValue());
+    private void printHeaders(MyHttpResponseHeader header) {
+        for (Map.Entry<String, String> entry : header.getEntrySet()) {
+            log.info("Header : [{} : {}]", entry.getKey(), entry.getValue());
         }
     }
 }

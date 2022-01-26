@@ -3,6 +3,7 @@ package http;
 import com.google.common.base.Strings;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,20 +11,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class MyHttpRequest {
     private final static String DEFAULT_PAGE = "/index.html";
+    private final static String HTTP_METHOD_GET = "GET";
+    private final static String HTTP_METHOD_POST = "POST";
     private final String method;
     private final String path;
-    private final List<Pair> header;
+    private final MyHttpResponseHeader header;
     private final Map<String, String> params;
     private final Mime mime;
 
-    private MyHttpRequest(String method, String path, Map<String, String> params, List<Pair> header, Mime mime) {
-        this.method = method.toUpperCase();
+    private MyHttpRequest(String method, String path, Map<String, String> params, MyHttpResponseHeader header, Mime mime) {
+        this.method = method;
         if (path.isEmpty() || path.equals("/"))
             this.path = DEFAULT_PAGE;
         else
@@ -45,7 +46,7 @@ public class MyHttpRequest {
         return params;
     }
 
-    public List<Pair> getHeader() {
+    public MyHttpResponseHeader getHeader() {
         return header;
     }
 
@@ -56,24 +57,31 @@ public class MyHttpRequest {
     public static class Builder {
         public MyHttpRequest build(InputStream inputStream) throws IOException {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            List<Pair> headers = new ArrayList<>();
+            MyHttpResponseHeader headers = new MyHttpResponseHeader();
             String line = reader.readLine();
             String[] tokens = line.split(" ");
-            String method = tokens[0];
+            String method = tokens[0].toUpperCase();
             String url = tokens[1];
             String[] urlTokens = url.split("\\?", 2);
             String path = urlTokens[0];
             Mime mime = Mime.getMineByPath(path.toLowerCase());
-            line = reader.readLine();
-            while (!Strings.isNullOrEmpty(line)) {
-                Pair header = HttpRequestUtils.parseHeader(line);
-                headers.add(header);
+            while (true) {
                 line = reader.readLine();
+                if (Strings.isNullOrEmpty(line))
+                    break;
+                Pair header = HttpRequestUtils.parseHeader(line);
+                headers.addHeader(header);
             }
             Map<String, String> params = null;
-            if (urlTokens.length > 1) {
-                params = HttpRequestUtils.parseQueryString(urlTokens[1]);
-                params.replaceAll((k, v) -> URLDecoder.decode(v, StandardCharsets.UTF_8));
+            if (method.equals(HTTP_METHOD_GET)) {
+                if (urlTokens.length > 1) {
+                    params = HttpRequestUtils.parseQueryString(urlTokens[1]);
+                    params.replaceAll((k, v) -> URLDecoder.decode(v, StandardCharsets.UTF_8));
+                }
+            } else if (method.equals(HTTP_METHOD_POST)) {
+
+                line = IOUtils.readData(reader, Integer.parseInt(headers.getHeaderValue("Content-Length")));
+                params = HttpRequestUtils.parseQueryString(line);
             }
 
             return new MyHttpRequest(method, path, params, headers, mime);
