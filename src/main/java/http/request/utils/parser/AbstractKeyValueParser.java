@@ -1,42 +1,28 @@
-package util;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
+package http.request.utils.parser;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-public class HttpRequestUtils {
-    /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
-    public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, "&");
-    }
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-    /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
-     */
-    public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, ";");
-    }
+public abstract class AbstractKeyValueParser {
 
-    private static Map<String, String> parseValues(String values, String separator) {
+    protected static Map<String, String> parseInternal(String values, String itemDelimiter, String keyValueDelimiter) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
 
-        String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        String[] tokens = values.split(itemDelimiter);
+        return Arrays.stream(tokens)
+                .map(t -> getKeyValue(t, keyValueDelimiter))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    static Pair getKeyValue(String keyValue, String regex) {
+    private static Pair getKeyValue(String keyValue, String regex) {
         if (Strings.isNullOrEmpty(keyValue)) {
             return null;
         }
@@ -49,11 +35,7 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
-    }
-
-    public static class Pair {
+    private static class Pair {
         String key;
         String value;
 
@@ -94,11 +76,8 @@ public class HttpRequestUtils {
             } else if (!key.equals(other.key))
                 return false;
             if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+                return other.value == null;
+            } else return value.equals(other.value);
         }
 
         @Override

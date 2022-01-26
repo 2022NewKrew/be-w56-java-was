@@ -1,4 +1,4 @@
-package webserver.http.message.common;
+package http.common;
 
 import java.util.Arrays;
 
@@ -13,7 +13,8 @@ public enum Mime {
     WOFF(".woff", "font/woff"),
     WOFF2(".woff2", "font/woff2"),
     EOT(".eot", "application/vnd.ms-fontobject"),
-    PLAIN_TEXT(".*", "text/plain");
+    PLAIN_TEXT(".*", "text/plain"),
+    X_URL_FORM_ENCODED(".*", "application/x-url-form-encoded");
 
     private final String extension;
     private final String contentType;
@@ -23,11 +24,14 @@ public enum Mime {
         this.contentType = contentType;
     }
 
-    public static String contentTypeOf(String target) {
+    public static Mime of(String target) {
         return Arrays.stream(Mime.values())
                 .filter((mime -> target.endsWith(mime.extension)))
                 .findAny()
-                .orElse(Mime.PLAIN_TEXT)
-                .contentType;
+                .orElse(Mime.PLAIN_TEXT);
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }
