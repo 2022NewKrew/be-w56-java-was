@@ -1,8 +1,11 @@
 package model;
 
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public class RequestHeader {
     private final Map<String, String> header;
     private final Map<String, String> parameter;
@@ -12,7 +15,7 @@ public class RequestHeader {
         parameter = new HashMap<>();
     }
 
-    public String getAccept(){
+    public String getAccept() {
         return header.get("Accept").split(",")[0];
     }
 
@@ -30,11 +33,5 @@ public class RequestHeader {
 
     public void putParameter(String key, String value) {
         parameter.put(key, value);
-    }
-
-    @Override
-    public String toString(){
-        return "method: " + header.get("method") +
-                " uri: " + header.get("uri");
     }
 }

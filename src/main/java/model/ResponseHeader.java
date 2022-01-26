@@ -1,40 +1,33 @@
 package model;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import util.HtmlResponseHeader;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+@Slf4j
+@Data
+@Builder
 public class ResponseHeader {
     private String uri;
     private String accept;
-    private int statusCode;
     private String host;
+    private byte[] body;
+    private HtmlResponseHeader htmlResponseHeader;
 
-    public String getHost() {
-        return host;
+    public int getLengthOfBodyContent() {
+        return body.length;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public String getAccept() {
-        return accept;
-    }
-
-    public void setAccept(String accept) {
-        this.accept = accept;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
+    public void responseBody(DataOutputStream dos) {
+        try {
+            dos.write(body, 0, body.length);
+            dos.flush();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 }
