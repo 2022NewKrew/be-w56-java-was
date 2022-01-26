@@ -1,7 +1,7 @@
-package webserver.http;
+package http;
 
 import service.UserService;
-import webserver.http.request.Request;
+import http.request.Request;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +19,8 @@ public enum HttpGetMapper{
     SIGN_UP("/user/create"){
         @Override
         public ResponseData service(Request request){
-            UserService.createUser(request.getQueries());
+            UserService userService = UserService.getInstance();
+            userService.createUser(request.getQueries());
             return new ResponseData(HttpStatusCode.REDIRECT, "/");
         }
     },

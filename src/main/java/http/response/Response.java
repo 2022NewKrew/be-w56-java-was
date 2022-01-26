@@ -1,10 +1,10 @@
-package webserver.http.response;
+package http.response;
 
+import http.HttpStatusCode;
+import http.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
-import webserver.http.HttpStatusCode;
-import webserver.http.ResponseData;
 
 import java.io.DataOutputStream;
 import java.io.File;

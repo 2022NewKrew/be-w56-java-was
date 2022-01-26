@@ -1,4 +1,4 @@
-package webserver.http.request;
+package http.request;
 
 import java.util.Map;
 
@@ -11,5 +11,9 @@ public class Queries {
 
     public Map<String, String> getQueries(){
         return queries;
+    }
+
+    public String get(String key){
+        return queries.get(key);
     }
 }

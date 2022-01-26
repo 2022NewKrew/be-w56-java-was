@@ -1,4 +1,4 @@
-package webserver.http;
+package http;
 
 public class ResponseData {
     private HttpStatusCode statusCode;
