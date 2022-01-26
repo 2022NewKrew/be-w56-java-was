@@ -10,7 +10,11 @@ public class MyHeaders {
     private final Map<String, Pair> info = new LinkedHashMap<>();
 
     public String get(String key) {
-        return info.get(key.toLowerCase(Locale.ROOT)).getValue();
+        if (info.containsKey(key.toLowerCase(Locale.ROOT))) {
+            return info.get(key.toLowerCase(Locale.ROOT)).getValue();
+        }
+
+        return null;
     }
 
     public void set(final String header) {

@@ -18,14 +18,25 @@ public class MyRequestDispatcher {
     }
 
     public void forward(MyHttpRequest request, MyHttpResponse response) throws IOException {
-            response.setBody(viewPath);
 
-            if(response.getStatus() == MyHttpResponseStatus.OK) {
-                response200Header(response.getDos(), request.getAccept(), response.getBody().length);
-                responseBody(response.getDos(), response.getBody());
-            }
+        // TODO : 패턴을 쓰면 좋을것 같은데.. 어떻게??
+        // redirect
+        if (viewPath.indexOf("redirect:") == 0) {
+            String redirect[] = viewPath.split("redirect:");
 
+            response302(response.getDos(), redirect[1]);
+            log.debug("redirectURI : {}", request.getHost() + redirect[1]);
+            return;
+        }
+
+        response.setBody(viewPath);
+
+        if (response.getStatus() == MyHttpResponseStatus.OK) {
+            response200Header(response.getDos(), request.getAccept(), response.getBody().length);
+            responseBody(response.getDos(), response.getBody());
+        }
     }
+
 
     private void response200Header(DataOutputStream dos, String accept, int lengthOfBodyContent) {
         try {
@@ -33,6 +44,16 @@ public class MyRequestDispatcher {
             dos.writeBytes("Content-Type: " + accept + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302(DataOutputStream dos, String location) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + location);
+            dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

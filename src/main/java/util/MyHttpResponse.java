@@ -9,6 +9,7 @@ import java.nio.file.Files;
 public class MyHttpResponse {
 
     private static final String PRE_FIX = "./webapp";
+    private String redirectURI;
     private DataOutputStream dos;
     private String accept;
     private String viewPath;
@@ -60,5 +61,17 @@ public class MyHttpResponse {
 
     public void setStatus(MyHttpResponseStatus status) {
         this.status = status;
+    }
+
+    public String getRedirectURI() {
+        return redirectURI;
+    }
+
+    public void setRedirectURI(String redirectURI) {
+        this.redirectURI = redirectURI;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 }
