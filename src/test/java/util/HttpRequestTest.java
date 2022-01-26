@@ -1,6 +1,6 @@
 package util;
 
-import model.RequestHeader;
+import model.MyHttpRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,22 +8,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HttpRequestHeaderUtilsTest {
+class HttpRequestTest {
 
     @DisplayName("Request 첫 줄을 잘 저장하는 지 테스트")
     @Test
     void setRequestTest() {
         // given
-        RequestHeader requestHeader = new RequestHeader();
+        MyHttpRequest myHttpRequest = new MyHttpRequest();
         String request = "GET /index.html HTTP/1.1";
 
         // when
-        HttpRequestHeaderUtils.setRequest(requestHeader, request);
+        myHttpRequest.setRequest(request);
 
         // then
-        assertEquals(requestHeader.getMethod(), "GET");
-        assertEquals(requestHeader.getUri(), "/index.html");
-        assertEquals(requestHeader.getProtocol(), "HTTP/1.1");
+        assertEquals(myHttpRequest.getMethod(), "GET");
+        assertEquals(myHttpRequest.getUri(), "/index.html");
+        assertEquals(myHttpRequest.getProtocol(), "HTTP/1.1");
     }
 
     @DisplayName("header를 map에 잘 저장하는 지 테스트")
@@ -33,12 +33,12 @@ class HttpRequestHeaderUtilsTest {
             "Accept: */*, Accept, */*"})
     void setHeaderTest(String header, String key, String value) {
         // given
-        RequestHeader requestHeader = new RequestHeader();
+        MyHttpRequest myHttpRequest = new MyHttpRequest();
 
         // when
-        HttpRequestHeaderUtils.setHeader(requestHeader, header);
+        myHttpRequest.setHeader(header);
 
         // then
-        assertEquals(requestHeader.getHeader(key), value);
+        assertEquals(myHttpRequest.getHeader(key), value);
     }
 }
