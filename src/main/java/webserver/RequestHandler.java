@@ -1,26 +1,23 @@
 package webserver;
 
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.UserService;
-import util.HttpRequestUtils;
+import util.HttpStatusCode;
+import util.ParseRequest;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.Map;
 
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final UserService userService;
-
-    private Socket connection;
+    private final Controller controller;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.userService = UserService.INSTANCE;
+        this.controller = Controller.INSTANCE;
     }
 
     public void run() {
@@ -30,43 +27,36 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String message = br.readLine();
             byte[] body = new byte[0];
             DataOutputStream dos = new DataOutputStream(out);
-            String targetResource = null;
+            ParseRequest parseRequest = new ParseRequest(br);
+            Map<String, String> requestInfo = parseRequest.getRequestMap();
 
-            while (message != null && !"".equals(message)) {
-                String[] tokens = message.split(" ");
-
-                if (tokens[0].equals("GET")) {
-                    targetResource = tokens[1];
-                    if (targetResource.startsWith("/user/create")) {
-                        signUp(targetResource.split("\\?")[1]);
-                        targetResource = targetResource.split("\\?")[0];
-                    }
-                    body = getBody(targetResource);
-                }
-                if (tokens[0].equals("Accept:")) {
-                    String contentType = tokens[1].split(",")[0];
-                    response200Header(dos, body.length, contentType);
-                    responseBody(dos, body);
-                    log.info("GET " + targetResource + " 200");
-                }
-                message = br.readLine();
+            if (requestInfo.get("method").equals("GET")) {
+                body = controller.getRequest(requestInfo);
+                responseHeader(dos, "OK", body.length, requestInfo);
             }
+            if (requestInfo.get("method").equals("POST")) {
+                requestInfo.put("location", controller.postRequest(requestInfo));
+                responseHeader(dos, "FOUND", body.length, requestInfo);
+            }
+            responseBody(dos, body);
 
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        String contentTypeMessage = "Content-Type: " + contentType + ";charset=utf-8\r\n";
+    private void responseHeader(DataOutputStream dos, String statusCode, int lengthOfBodyContent, Map<String, String> additionalInfo) {
+        String contentTypeMessage = "Content-Type: " + additionalInfo.get("Accept").split(",")[0] + ";charset=utf-8\r\n";
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("HTTP/1.1 " + HttpStatusCode.valueOf(statusCode).getStatusCode() + " " + statusCode + "\r\n");
+            System.out.println("HTTP/1.1 " + statusCode + " " + HttpStatusCode.valueOf(statusCode).getStatusCode());
             dos.writeBytes(contentTypeMessage);
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            if (statusCode.equals("FOUND")) {
+                dos.writeBytes("Location: " + additionalInfo.get("location") + "\r\n");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -80,22 +70,6 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-    }
-
-    private void signUp(String signUpInfo) {
-        Map<String, String> userInfo = HttpRequestUtils.parseQueryString(signUpInfo);
-        User newUser = new User(userInfo.get("userId"), userInfo.get("password"), userInfo.get("name"), userInfo.get("email"));
-        userService.addUser(newUser);
-    }
-
-    private byte[] getBody(String targetResource) {
-        byte[] body;
-        try {
-            body = Files.readAllBytes(new File("./webapp" + targetResource).toPath());
-        } catch (IOException e) {
-            body = "Hello World".getBytes();
-        }
-        return body;
     }
 
 }
