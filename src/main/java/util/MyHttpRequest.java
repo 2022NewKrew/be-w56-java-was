@@ -87,7 +87,11 @@ public class MyHttpRequest {
 
     // accept 값중 첫번째 인자를 accept로 호출합니다.
     public String getAccept() {
-        return headers.get("accept").split(",")[0].trim();
+        return headers.get("Accept").split(",")[0].trim();
+    }
+
+    public String getHost() {
+        return headers.get("Host");
     }
 
     private void updateRequestUri(String uri) {
@@ -132,7 +136,6 @@ public class MyHttpRequest {
     }
 
     public MyRequestDispatcher getRequestDispatcher(String viewPath) {
-        //TODO redirectURI 만들기
         return new MyRequestDispatcher(viewPath);
     }
 }

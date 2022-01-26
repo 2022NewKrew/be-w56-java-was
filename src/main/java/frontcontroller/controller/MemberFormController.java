@@ -3,10 +3,7 @@ package frontcontroller.controller;
 import db.DataBase;
 import frontcontroller.MyController;
 import model.User;
-import util.MyHttpRequest;
-import util.MyHttpResponse;
-import util.MyHttpStatus;
-import util.MyRequestDispatcher;
+import util.*;
 
 import java.io.IOException;
 
@@ -37,9 +34,8 @@ public class MemberFormController implements MyController {
         User user = new User(userId, password, name, email);
         DataBase.addUser(user);
 
-        System.out.println(user);
-
-        MyRequestDispatcher dispatcher = request.getRequestDispatcher("/index.html");
+        response.setStatus(MyHttpResponseStatus.FOUND);
+        MyRequestDispatcher dispatcher = request.getRequestDispatcher("redirect:/index.html");
         dispatcher.forward(request, response);
     }
 }

@@ -1,5 +1,5 @@
 # 웹 서버 구현
-- 그림으로 배우는 HTTP 책구입 (설 연휴에 읽을 예정)
+- 그림으로 배우는 HTTP 책구입
 ## HTTP 학습
 ###[쿨라임의 HTTP/1.1, HTTP/2, 그리고 QUIC](https://www.youtube.com/watch?v=xcrjamphIp4)
 - HTTP는 어플리케이션 계층에서 존재
@@ -26,4 +26,33 @@
 ## Thread Pool
 - https://limkydev.tistory.com/55
 - https://postitforhooney.tistory.com/entry/JavaThread-Java-Thread-Pool%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-Thread%EB%A5%BC-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0Thread-Runnable
-- 
+
+## 그림으로 배우는 HTTP 책 공부내용
+GET /index.html HTTP /1.1
+Host: www.hackr.jp
+
+if-Modified-Since: Thu. 12 Jul 2012 ~~ GMT
+
+if-Modified는 갱신된 경우에만 돌려주고 아니면 304 반환
+
+Post는 request안 Entity 전송에 목적을 둠
+
+PUT 성공시 204
+
+HEAD 는 GET과 비슷하지만 body는 안돌려줌 유효성과 리소스 갱신 유무 따질때 씀
+
+OPTIONS * HTTP /1.1
+
+제공하고있는 메소드 문의
+
+TRACE / HTTP /1.1
+
+(프록시)서버 같은 곳을 경유할때마다 초기설정한 Max-Forards를 1식 줄이고 0이 되는순간 동작확인
+
+근데 사용 안함 보안문제
+
+CONNECT proxy.hackr.jp:8080 HTTP /1.1
+
+SSL 프로토콜로 암호화 된것을 프록시서버 터널링 할때사용
+
+응답으로 200오면 그 뒤에 터널링 게시
