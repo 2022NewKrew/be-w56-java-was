@@ -1,10 +1,8 @@
 package webserver;
 
 import db.DB;
-import http.HttpHeaders;
 import http.request.HttpRequest;
-import http.request.HttpRequestMethod;
-import http.util.HttpRequestUtils;
+import http.request.HttpRequestDecoder;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 
@@ -12,8 +10,6 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +32,8 @@ public class RequestHandler extends Thread {
              OutputStream out = connection.getOutputStream();
              BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
-            HttpRequest request = readHttpRequest(br);
-            String queryStr = request.getUri().split("\\?", 2)[1];
-            Map<String, String> queryParams = HttpRequestUtils.parseQueryString(queryStr);
+            HttpRequest request = HttpRequestDecoder.decode(br);
+            Map<String, String> queryParams = request.getQueryParams();
             List<String> userProperties = List.of("userId", "password", "name", "email");
 
             if (request.getUri().startsWith("/user/create") && userProperties.stream().allMatch(queryParams::containsKey)) {
@@ -62,26 +57,6 @@ public class RequestHandler extends Thread {
     }
 
     /* ---------------------------------------------------------------------- */
-    private HttpRequest readHttpRequest(BufferedReader br) throws IOException {
-        String line;
-        String[] tokens;
-
-        line = br.readLine();
-        tokens = line.split(" ");
-
-        if (tokens.length != 3) {
-            throw new IOException();
-        }
-
-        HttpHeaders headers = HttpRequestUtils.parseHttpHeaders(br);
-
-        return HttpRequest.builder()
-                .method(HttpRequestMethod.valueOf(tokens[0]))
-                .uri(tokens[1])
-                .protocolVersion(tokens[2])
-                .headers(headers)
-                .build();
-    }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         // TODO: content-type

@@ -1,9 +1,12 @@
 package http.request;
 
-import http.HttpHeaders;
+import http.header.HttpHeaders;
 import http.HttpMessage;
+import http.util.HttpRequestUtils;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Map;
 
 @Getter
 public class HttpRequest extends HttpMessage {
@@ -18,5 +21,10 @@ public class HttpRequest extends HttpMessage {
         this.method = method;
         this.uri = uri;
         this.body = body;
+    }
+
+    public Map<String, String> getQueryParams() {
+        String queryStr = uri.split("\\?", 2)[1];
+        return HttpRequestUtils.parseQueryString(queryStr);
     }
 }
