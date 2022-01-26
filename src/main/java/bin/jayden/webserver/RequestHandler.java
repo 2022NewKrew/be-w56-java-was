@@ -1,12 +1,11 @@
-package webserver;
+package bin.jayden.webserver;
 
-import http.HttpStatusCode;
-import http.MyHttpRequest;
-import http.MyHttpResponse;
-import http.MyHttpResponseHeader;
+import bin.jayden.http.HttpStatusCode;
+import bin.jayden.http.MyHttpRequest;
+import bin.jayden.http.MyHttpResponse;
+import bin.jayden.http.MyHttpResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Router;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class RequestHandler extends Thread {
             MyHttpResponse response;
             try {
                 MyHttpRequest request = new MyHttpRequest.Builder().build(in);
-                printHeaders(request.getHeader());
+                //printHeaders(request.getHeader());
                 response = Router.routing(request);
             } catch (Exception exception) {
                 log.error(exception.getMessage());

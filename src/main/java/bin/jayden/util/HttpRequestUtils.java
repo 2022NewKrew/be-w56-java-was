@@ -1,4 +1,4 @@
-package util;
+package bin.jayden.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;

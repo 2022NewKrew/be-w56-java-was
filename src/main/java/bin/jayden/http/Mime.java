@@ -1,4 +1,4 @@
-package http;
+package bin.jayden.http;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package http;
+package bin.jayden.http;
 
 public enum HttpStatusCode {
     STATUS_CODE_200(200, "OK"),
@@ -13,6 +13,7 @@ public enum HttpStatusCode {
         this.code = code;
         this.status = status;
     }
+
     @Override
     public String toString() {
         return code + " " + status;

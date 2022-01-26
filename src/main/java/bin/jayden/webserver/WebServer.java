@@ -1,17 +1,22 @@
-package webserver;
-
-import java.net.ServerSocket;
-import java.net.Socket;
+package bin.jayden.webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String args[]) throws Exception {
-        int port = 0;
+    public static void run(String[] args) throws Exception {
+        openServer(args);
+    }
+
+    private static void openServer(String[] args) throws IOException {
+        int port;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
         } else {

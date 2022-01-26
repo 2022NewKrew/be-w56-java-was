@@ -1,6 +1,7 @@
-package http;
+package bin.jayden.http;
 
-import util.HttpRequestUtils;
+
+import bin.jayden.util.HttpRequestUtils;
 
 import java.util.HashMap;
 import java.util.Map;

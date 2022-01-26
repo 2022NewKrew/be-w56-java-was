@@ -1,9 +1,9 @@
-package http;
+package bin.jayden.http;
 
+import bin.jayden.util.Constants;
+import bin.jayden.util.HttpRequestUtils;
+import bin.jayden.util.IOUtils;
 import com.google.common.base.Strings;
-import util.HttpRequestUtils;
-import util.HttpRequestUtils.Pair;
-import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +15,6 @@ import java.util.Map;
 
 public class MyHttpRequest {
     private final static String DEFAULT_PAGE = "/index.html";
-    private final static String HTTP_METHOD_GET = "GET";
-    private final static String HTTP_METHOD_POST = "POST";
     private final String method;
     private final String path;
     private final MyHttpResponseHeader header;
@@ -69,16 +67,16 @@ public class MyHttpRequest {
                 line = reader.readLine();
                 if (Strings.isNullOrEmpty(line))
                     break;
-                Pair header = HttpRequestUtils.parseHeader(line);
+                HttpRequestUtils.Pair header = HttpRequestUtils.parseHeader(line);
                 headers.addHeader(header);
             }
             Map<String, String> params = null;
-            if (method.equals(HTTP_METHOD_GET)) {
+            if (method.equals(Constants.HTTP_METHOD_GET)) {
                 if (urlTokens.length > 1) {
                     params = HttpRequestUtils.parseQueryString(urlTokens[1]);
                     params.replaceAll((k, v) -> URLDecoder.decode(v, StandardCharsets.UTF_8));
                 }
-            } else if (method.equals(HTTP_METHOD_POST)) {
+            } else if (method.equals(Constants.HTTP_METHOD_POST)) {
 
                 line = IOUtils.readData(reader, Integer.parseInt(headers.getHeaderValue("Content-Length")));
                 params = HttpRequestUtils.parseQueryString(line);

@@ -1,4 +1,4 @@
-package http;
+package bin.jayden.http;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +48,7 @@ public class MyHttpResponse {
         }
         return header;
     }
+
     public static class Builder {
         private byte[] body = new byte[0];
         private HttpStatusCode statusCode = HttpStatusCode.STATUS_CODE_200;
