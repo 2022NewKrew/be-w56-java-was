@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class HttpRequest {
     private Map<String, String> headers;
     private Map<String, String> queryParameter;
+    private Map<String, String> body;
     private HttpMethod httpMethod;
     private String url;
 
@@ -18,6 +19,7 @@ public class HttpRequest {
 
         requestParsingQueryParam(HttpRequestUtils.parseUrl(reqLine));
         requestParsingHeader(reqHeader);
+        body = new HashMap<>();
     }
 
     private void requestParsingQueryParam(String url){
@@ -39,8 +41,8 @@ public class HttpRequest {
                 ));
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public String getHeader(String key) {
+        return headers.get(key);
     }
 
     public HttpMethod getMethod() {
@@ -51,7 +53,15 @@ public class HttpRequest {
         return url;
     }
 
-    public Map<String, String> getQueryParameter() {
-        return queryParameter;
+    public String getQueryParameter(String key) {
+        return queryParameter.get(key);
+    }
+
+    public String getBody(String key) {
+        return body.get(key);
+    }
+
+    public void setBody(String body) {
+        this.body = HttpRequestUtils.parseQueryString(body);
     }
 }

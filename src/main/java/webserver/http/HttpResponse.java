@@ -11,10 +11,15 @@ public class HttpResponse {
     private Map<String, String> headers;
     private byte[] body = new byte[0];
 
-    public HttpResponse(HttpStatus status, String url){
+    public HttpResponse(HttpStatus status){
         this.status = status;
-        this.url = url;
+        this.url = "/";
         this.headers = new HashMap<>();
+    }
+
+    public HttpResponse(HttpStatus status, String url){
+        this(status);
+        this.url = url;
     }
 
     public HttpResponse(HttpStatus status, String url, Map<String, String> headers) {
@@ -36,6 +41,10 @@ public class HttpResponse {
 
     public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    public void setHeader(String key, String value){
+        headers.put(key, value);
     }
 
     public void send(DataOutputStream dos) throws IOException {
