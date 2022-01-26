@@ -1,31 +1,31 @@
-package model;
+package model.user;
 
 public class User {
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+    private final UserId userId;
+    private final Password password;
+    private final Name name;
+    private final Email email;
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
