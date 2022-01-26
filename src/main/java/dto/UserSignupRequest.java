@@ -1,5 +1,7 @@
 package dto;
 
+import model.User;
+
 public class UserSignupRequest {
 
     private String userId;
@@ -15,6 +17,15 @@ public class UserSignupRequest {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User toEntity() {
+        return new User.Builder()
+            .userId(userId)
+            .password(password)
+            .name(name)
+            .email(email)
+            .build();
     }
 
     public void setUserId(String userId) {

@@ -1,4 +1,4 @@
-package webserver;
+package webserver.resolver;
 
 import http.HttpRequest;
 import java.lang.reflect.Field;
@@ -35,6 +35,6 @@ public class ControllerArgumentResolver implements HandlerMethodArgumentResolver
 
     private static String getField(String methodName) {
         String field = methodName.substring(SETTER_METHOD_PREFIX.length());
-        return field.toLowerCase();
+        return Character.toLowerCase(field.charAt(0)) + field.substring(1);
     }
 }

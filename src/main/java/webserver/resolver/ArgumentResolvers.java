@@ -1,4 +1,4 @@
-package webserver;
+package webserver.resolver;
 
 import com.google.common.collect.Lists;
 import http.HttpRequest;
