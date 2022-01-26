@@ -1,16 +1,12 @@
 package http.response;
 
 import http.HttpStatusCode;
-import http.ResponseData;
 import model.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.IOUtils;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -25,8 +21,6 @@ public class Response {
     private final DataOutputStream dos;
     private final ModelAndView mv;
     private HttpStatusCode statusCode = HttpStatusCode.NOT_FOUND;
-    private String urlWithDirectory;
-
 
     public Response(DataOutputStream dos, ModelAndView mv){
         this.dos = dos;
@@ -46,6 +40,7 @@ public class Response {
     public void write() throws IOException {
         generateHttpStatus();
         log.info("HTTP STATUS : " + statusCode.getStatusCode() + ", " + statusCode.getMessage());
+        log.info(("View : " + mv.getViewName()));
         statusCode.response(dos, mv);
     }
 }

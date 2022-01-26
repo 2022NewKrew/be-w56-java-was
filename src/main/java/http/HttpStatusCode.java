@@ -8,8 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static util.ConstantValues.ROOT_DIRECTORY;
-import static util.ConstantValues.ROOT_URL;
+import static util.ConstantValues.*;
 
 public enum HttpStatusCode {
     SUCCESS(200, "Ok"){
@@ -30,6 +29,7 @@ public enum HttpStatusCode {
     REDIRECT(302, "Found"){
         @Override
         public void response(DataOutputStream dos, ModelAndView mv) throws IOException {
+            mv.setViewName(mv.getViewName().replaceFirst(REDIRECT_COMMAND, ""));
             dos.writeBytes("HTTP/1.1 "+ getStatusCode() + " " + getMessage() + "\r\n");
             dos.writeBytes("Location: "+ ROOT_URL + mv.getViewName() + "\r\n");
         }

@@ -14,19 +14,18 @@ import http.request.Request;
 import http.response.Response;
 
 /*
-DispatchServlet 역할
+DispatchServlet 역할, 기존 RequestHandler
  */
-public class RequestHandler extends Thread {
-    private static final String ROOT_DIRECTORY = "./webapp";
+public class DispatchServlet extends Thread {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(DispatchServlet.class);
 
     private final Socket connection;
     private final HandlerMapper handlerMapper = HandlerMapper.getInstance();
     private final HandlerAdapter handlerAdapter = HandlerAdapter.getInstance();
     private final ViewResolver viewResolver = ViewResolver.getInstance();
 
-    public RequestHandler(Socket connectionSocket) {
+    public DispatchServlet(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 

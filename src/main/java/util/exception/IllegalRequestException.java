@@ -1,4 +1,4 @@
-package exception;
+package util.exception;
 
 public class IllegalRequestException extends RuntimeException{
     public IllegalRequestException(String message){

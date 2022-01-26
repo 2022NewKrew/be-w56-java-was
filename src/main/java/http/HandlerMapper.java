@@ -4,6 +4,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import controller.Controller;
 import controller.IndexController;
+import controller.SignUpController;
+import controller.UserFormController;
 
 public class HandlerMapper {
     private final Table<String, String, Controller> controllerTable = HashBasedTable.create();
@@ -12,6 +14,8 @@ public class HandlerMapper {
 
     private HandlerMapper(){
         controllerTable.put("GET", "/", new IndexController());
+        controllerTable.put("GET", "/users/form", new UserFormController());
+        controllerTable.put("GET", "/users/create", new SignUpController());
     }
 
     public static HandlerMapper getInstance(){
