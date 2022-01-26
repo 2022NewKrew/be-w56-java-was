@@ -8,6 +8,7 @@ import controller.HttpController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 import util.LogUtils;
 
 public class RequestHandler extends Thread {
@@ -27,10 +28,10 @@ public class RequestHandler extends Thread {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
-            Map<String, String> requestMap = HttpRequestUtils.readRequest(br);
+            Map<String, String> requestMap = IOUtils.readRequest(br);
             LogUtils.requestLog(requestMap, log);
 
-            Map<String,String> headerMap = HttpRequestUtils.readHeader(br);
+            Map<String,String> headerMap = IOUtils.readHeader(br);
             LogUtils.headerLog(headerMap, log);
 
             HttpController httpController = new HttpController(requestMap, headerMap, log, br, out);

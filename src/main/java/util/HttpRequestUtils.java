@@ -11,6 +11,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
+    public static String CONTENT_LENGTH = "Content-Length";
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -30,6 +32,8 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseQueryUrl(String queryUrl) {
+        if(Strings.isNullOrEmpty(queryUrl))
+            return new HashMap<>();
         String[] tokens = queryUrl.split("\\?");
         if(tokens.length == 1)
             return new HashMap<>();
@@ -37,43 +41,33 @@ public class HttpRequestUtils {
         return parseQueryString(queryString);
     }
 
-    public static Map<String, String> parseRequestBody(BufferedReader br, int contentLength) throws IOException {
-        String requestBody = IOUtils.readData(br, contentLength);
-        return parseQueryString(requestBody);
-    }
-
-    public static Map<String, String> readRequest(BufferedReader br) throws IOException {
-        String request = br.readLine();
-        Map<String, String> requestMap = new HashMap<>();
-        String[] tokens = request.split(" ");
-        if(tokens.length != 3)
-            throw new IOException("Incorrect Request Header");
-        requestMap.put("httpMethod", tokens[0]);
-        requestMap.put("httpUrl", tokens[1]);
-        requestMap.put("httpProtocol", tokens[2]);
-        return requestMap;
-    }
-
-    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
-        String line;
-        Map<String, String> headerMap = new HashMap<>();
-        Pair pair;
-        while(true) {
-            line = br.readLine();
-            if(line == null || line.equals(""))
-                return headerMap;
-            pair = parseHeader(line);
-            headerMap.put(pair.getKey(), pair.getValue());
-        }
+    private static void checkHasContentLength(Map<String, String> headerMap) throws IOException {
+        if(!headerMap.containsKey(CONTENT_LENGTH))
+            throw new IOException("No Content Length");
     }
 
     public static Map<String, String> parseParams(String httpMethod, String url, Map<String, String> headerMap,
                                                   BufferedReader br) throws IOException {
         if(httpMethod.equals("POST")) {
-            int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
-            return parseRequestBody(br, contentLength);
+            checkHasContentLength(headerMap);
+            int contentLength = Integer.parseInt(headerMap.get(CONTENT_LENGTH));
+            String requestBody = IOUtils.readData(br, contentLength);
+            return parseQueryString(requestBody);
         }
         return parseQueryUrl(url);
+    }
+
+    public static Map<String, String> parseRequest(String request) throws IOException {
+        if(Strings.isNullOrEmpty(request))
+            return new HashMap<>();
+        String[] tokens = request.split(" ");
+        if(tokens.length != 3)
+            throw new IOException("Incorrect Request Header");
+        Map<String, String> requestMap = new HashMap<>();
+        requestMap.put("httpMethod", tokens[0]);
+        requestMap.put("httpUrl", tokens[1]);
+        requestMap.put("httpProtocol", tokens[2]);
+        return requestMap;
     }
 
     private static Map<String, String> parseValues(String values, String separator) {

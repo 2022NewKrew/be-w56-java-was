@@ -2,6 +2,8 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IOUtils {
     /**
@@ -16,5 +18,23 @@ public class IOUtils {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
+    }
+
+    public static Map<String, String> readRequest(BufferedReader br) throws IOException {
+        String request = br.readLine();
+        return HttpRequestUtils.parseRequest(request);
+    }
+
+    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
+        String line;
+        Map<String, String> headerMap = new HashMap<>();
+        HttpRequestUtils.Pair pair;
+        while(true) {
+            line = br.readLine();
+            if(line == null || line.equals(""))
+                return headerMap;
+            pair = HttpRequestUtils.parseHeader(line);
+            headerMap.put(pair.getKey(), pair.getValue());
+        }
     }
 }
