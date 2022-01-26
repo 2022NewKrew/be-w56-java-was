@@ -49,7 +49,7 @@ public class HttpResponse {
         }
     }
 
-    private String contentTypeFromUrl(String url) {
+    public String contentTypeFromUrl(String url) {
         String[] splitUrl = url.split("\\.");
         if (splitUrl.length == 1) {
             return "application/octet-stream";
