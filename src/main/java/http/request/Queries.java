@@ -1,5 +1,8 @@
 package http.request;
 
+import util.PasswordEncoder;
+
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 public class Queries {
@@ -15,5 +18,11 @@ public class Queries {
 
     public String get(String key){
         return queries.get(key);
+    }
+
+    public void encode(String key){
+        if(queries.get(key) != null){
+            queries.put(key, PasswordEncoder.encrypt(queries.get(key)));
+        }
     }
 }

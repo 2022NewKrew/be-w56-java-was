@@ -57,7 +57,9 @@ public class Request {
     }
 
     public Queries convertString(String data){
-        return new Queries(HttpRequestUtils.parseQueryString(URLDecoder.decode(data, StandardCharsets.UTF_8)));
+        Queries queries = new Queries(HttpRequestUtils.parseQueryString(URLDecoder.decode(data, StandardCharsets.UTF_8)));
+        queries.encode("password");
+        return queries;
     }
 
     public String getMethod() { return  method; }
