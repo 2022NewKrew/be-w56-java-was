@@ -28,7 +28,7 @@ public class StaticFile {
 
         String extension = "";
         if(fileFullName.lastIndexOf('.') != -1) {
-            extension = fileFullName.substring(fileName.lastIndexOf('.'));
+            extension = fileFullName.substring(fileFullName.lastIndexOf('.'));
         }
         return new StaticFile(fileFullName, fileName, extension, contents);
     }

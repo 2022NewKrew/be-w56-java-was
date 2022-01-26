@@ -1,22 +1,23 @@
 package http.request;
 
-import http.util.HttpRequestUtils;
-
 import java.util.Map;
 
 public class RequestParams {
 
-    private Map<String, String> params;
+    private Map<String, Object> params;
 
-    private RequestParams(Map<String, String> params) {
+    private RequestParams(Map<String, Object> params) {
         this.params = params;
     }
 
-    public static RequestParams createRequestParams(String queryString) {
-        return new RequestParams(HttpRequestUtils.parseQueryString(queryString));
+    public static RequestParams of(Map<String, Object> params) {
+        return new RequestParams(params);
     }
 
-    public String getValue(String key) {
-        return params.getOrDefault(key, "");
+    public Object getValue(String key) {
+        if(!params.containsKey(key)) {
+            throw new NullPointerException("해당 파라미터가 존재하지 않습니다.");
+        }
+        return params.get(key);
     }
 }

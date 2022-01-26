@@ -1,5 +1,7 @@
 package http.response;
 
+import http.HttpStatus;
+
 public class StatusLine {
 
     private String protocolVersion;
@@ -8,15 +10,9 @@ public class StatusLine {
 
     private String statusText;
 
-    public void updateProtocolVersion(String protocolVersion) {
+    private StatusLine(String protocolVersion, String statusCode, String statusText) {
         this.protocolVersion = protocolVersion;
-    };
-
-    public void updateStatusCode(String statusCode) {
         this.statusCode = statusCode;
-    }
-
-    public void updateStatusText(String statusText) {
         this.statusText = statusText;
     }
 
@@ -30,5 +26,9 @@ public class StatusLine {
 
     public String getStatusText() {
         return statusText;
+    }
+
+    public static StatusLine of(String protocolVersion, HttpStatus httpStatus) {
+        return new StatusLine(protocolVersion, httpStatus.getCode(), httpStatus.getText());
     }
 }

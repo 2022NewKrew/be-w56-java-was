@@ -1,5 +1,6 @@
 package webserver.writer;
 
+import http.HttpHeaders;
 import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,8 @@ public class ResponseWriter {
     public static void write(DataOutputStream dos, HttpResponse response) {
         try {
             dos.writeBytes(response.getProtocolVersion() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n");
-            Map<String, String> headers = response.getHeaders();
-            for(Map.Entry<String, String> header : headers.entrySet()) {
+            HttpHeaders headers = response.getHeaders();
+            for(Map.Entry<String, String> header : headers.getHeaders().entrySet()) {
                 dos.writeBytes(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
             }
             dos.writeBytes("\r\n");

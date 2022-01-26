@@ -1,62 +1,77 @@
 package http.request;
 
+import http.HttpHeaders;
+import http.HttpMethod;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import static http.util.HttpRequestUtils.parseQueryString;
 
 public class HttpRequest {
 
-    private StartLine startLine;
+    private final StartLine startLine;
 
-    private RequestHeaders headers;
+    private final HttpHeaders headers;
 
-    private RequestBody body;
+    private final RequestBody body;
 
-    private RequestParams params;
+    private final RequestParams params;
 
-    private HttpRequest(StartLine startLine, RequestHeaders headers, RequestBody body, RequestParams params) {
+    private HttpRequest(StartLine startLine, HttpHeaders headers, RequestBody body, RequestParams params) {
         this.startLine = startLine;
         this.headers = headers;
         this.body = body;
         this.params = params;
     }
 
-    /**
-     * To-do : parsing 에러가 발생할 경우 500 Error 를 발생시켜 예외 처리할 것
-     */
     public static HttpRequest createHttpRequest(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        StartLine startLine = StartLine.createStartLine(br);
-        RequestHeaders header = RequestHeaders.createRequestHeader(br);
-        String contentLength = header.getHeader("Content-Length");
-        if(!"".equals(contentLength) && Integer.valueOf(contentLength) >= 0) {
+        StartLine startLine = StartLine.create(br);
+        HttpHeaders header = HttpHeaders.create(br);
+
+        Integer contentLength = Integer.valueOf(header.getHeader(HttpHeaders.CONTENT_LENGTH).orElse("0"));
+        RequestBody body = RequestBody.create(br, contentLength, StandardCharsets.UTF_8);
+
+        Map<String, Object> parameterMap = new HashMap<>();
+        Map<String, String> queryMap = parseQueryString(startLine.getUrl().getQueryString());
+        for(Map.Entry<String, String> query : queryMap.entrySet()) {
+            parameterMap.put(query.getKey(), query.getValue());
         }
-        RequestParams params = RequestParams.createRequestParams(startLine.getUrl().getQueryString());
-        return new HttpRequest(startLine, header, null, params);
+
+        if(header.getHeader(HttpHeaders.CONTENT_TYPE).orElseGet(()->"").equals("application/x-www-form-urlencoded")
+        && startLine.getHttpMethod().equals(HttpMethod.POST)) {
+            Map<String, String> queryMap2 = parseQueryString(body.toString(StandardCharsets.UTF_8));
+            for(Map.Entry<String, String> query : queryMap2.entrySet()) {
+                parameterMap.put(query.getKey(), query.getValue());
+            }
+        }
+
+        return new HttpRequest(startLine, header, body, RequestParams.of(parameterMap));
     }
 
     public String getUrl() {
         return startLine.getUrl().getPath();
     }
 
-    public String getMethod() {
-        return startLine.getMethod();
+    public HttpMethod getMethod() {
+        return startLine.getHttpMethod();
     }
 
     public String getHttpVersion() {
         return startLine.getHttpVersion();
     }
 
-    public RequestHeaders getHeaders() {
-        return headers;
-    }
-
     public RequestBody getBody() {
         return body;
     }
 
-    public RequestParams getParams() {
-        return params;
+    public Object getParameter(String key) {
+        return params.getValue(key);
     }
 }

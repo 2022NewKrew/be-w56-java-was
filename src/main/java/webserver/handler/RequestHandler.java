@@ -3,6 +3,7 @@ package webserver.handler;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 import http.request.HttpRequest;
 import http.response.HttpResponse;
@@ -27,6 +28,8 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = HttpRequest.createHttpRequest(in);
+            log.info(httpRequest.getBody().toString(StandardCharsets.UTF_8));
+
             HttpResponse httpResponse = HttpProcessor.handle(httpRequest);
             ResponseWriter.write(new DataOutputStream(out), httpResponse);
         } catch (SocketException e) {
