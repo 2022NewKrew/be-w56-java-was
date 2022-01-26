@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
-public class RequestHandler extends Thread {
+public class RequestHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
@@ -22,6 +22,7 @@ public class RequestHandler extends Thread {
         controllerList = ReflectionUtils.getInstancesImplementedInterface(Controller.class);
     }
 
+    @Override
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
