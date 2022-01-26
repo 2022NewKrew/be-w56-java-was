@@ -3,7 +3,7 @@ package webserver;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.request.HttpRequest;
+import webserver.exception.request.BadRequestException;
 import webserver.request.RequestContext;
 import webserver.response.HttpResponse;
 import webserver.response.HttpResponseHeader;
@@ -43,8 +43,12 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private HttpRequest createRequest(BufferedReader br) throws IOException {
-        return RequestContext.getInstance().startRequest(br);
+    private void createRequest(BufferedReader br) throws IOException {
+        try {
+            RequestContext.getInstance().startRequest(br);
+        } catch (BadRequestException e) {
+            setResponseForBadRequest(e);
+        }
     }
 
     private HttpResponse getResponse() {
@@ -64,6 +68,12 @@ public class RequestHandler extends Thread {
 
     private void writeResponseHeader(DataOutputStream dos, HttpResponseHeader responseHeader) throws IOException {
         dos.writeBytes(responseHeader.getHeaders() + StringUtils.CR + StringUtils.LF);
+    }
+
+    private void setResponseForBadRequest(BadRequestException e) {
+        HttpResponse response = ResponseContext.getInstance().getHttpResponse();
+        response.setHttpStatus(e.getMsg().getStatus());
+        response.setResponseBody(e.getMsg().getMessage().getBytes(StandardCharsets.UTF_8));
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {

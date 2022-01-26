@@ -1,6 +1,10 @@
 package webserver.request;
 
 import org.apache.commons.lang3.StringUtils;
+import webserver.exception.msg.RequestErrorMsg;
+import webserver.exception.request.BadRequestException;
+import webserver.exception.request.BadRequestLineException;
+import webserver.exception.request.BadRequestMethodException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,11 +34,27 @@ public class HttpRequestFactory {
 
     private HttpRequestLine createRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
-        String[] elements = line.split(StringUtils.SPACE);
-        HttpRequestMethod requestMethod = HttpRequestMethod.valueOf(elements[0]);
+        String[] elements = parseRequestLineString(line);
+        HttpRequestMethod requestMethod = parseHttpMethod(elements[0]);
         String uri = elements[1];
         String httpVersion = elements[2];
         return new HttpRequestLine(requestMethod, HttpRequestUri.Builder.createFromStringUri(uri), httpVersion);
+    }
+
+    private String[] parseRequestLineString(String line) {
+        String[] elements = line.split(StringUtils.SPACE);
+        if (elements.length != 3) {
+            throw new BadRequestLineException(RequestErrorMsg.BAD_REQUEST_LINE);
+        }
+        return elements;
+    }
+
+    private HttpRequestMethod parseHttpMethod(String requestMethodString) {
+        try {
+            return HttpRequestMethod.valueOf(requestMethodString);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestMethodException(RequestErrorMsg.INVALID_HTTP_METHOD);
+        }
     }
 
     private HttpRequestHeader createRequestHeader(BufferedReader br) throws IOException {
