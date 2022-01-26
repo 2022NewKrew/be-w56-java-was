@@ -24,7 +24,10 @@ public class RequestHandler extends Thread {
 
         MyHttpResponse response = null;
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream())); OutputStream out = connection.getOutputStream()) {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            OutputStream out = connection.getOutputStream();
+
             MyHttpRequest request = MyHttpRequest.of(in);
             response = RequestMapper.process(request, out);
         } catch (WebServerException e) {
@@ -33,6 +36,7 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         } finally {
             sendResponse(response);
+            closeSocket(connection);
         }
     }
 
@@ -40,6 +44,14 @@ public class RequestHandler extends Thread {
         if (response != null) {
             response.writeBytes();
             response.flush();
+        }
+    }
+
+    private void closeSocket(Socket connection) {
+        try {
+            connection.close();
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
     }
 }
