@@ -43,6 +43,7 @@ public class RequestHandler implements Runnable {
         ) {
             HttpResponse response = messageConvert(bufferedReader);
             outputStream.write(response.message().getBytes());
+            outputStream.write(response.getBody());
             outputStream.flush();
         } catch (IOException exception) {
             logger.error("Exception stream", exception);
@@ -56,7 +57,7 @@ public class RequestHandler implements Runnable {
         try {
             final HttpRequest httpRequest = HttpRequestConverter.createdRequest(bufferedReader);
             logger.info("요청한 url : {}", httpRequest.getUri());
-            Controller controller = REQUEST_MAPPING.getController();
+            Controller controller = REQUEST_MAPPING.getController(httpRequest);
             controller.service(httpRequest, response);
             return response;
         } catch (Exception exception) {

@@ -12,14 +12,14 @@ public class FrontController extends AbstractController {
     @Override
     protected void doGet(HttpRequest request, HttpResponse response) throws IOException {
         try {
-            String responseBody = getResponseBody(request);
+            byte[] responseBody = getResponseBody(request);
             response.set200OK(request, responseBody);
         } catch (NullPointerException exception) {
             throw new IllegalArgumentException("[ERROR] 해당파일은 존재하지 않습니다.");
         }
     }
 
-    private String getResponseBody(HttpRequest request) throws IOException {
+    private byte[] getResponseBody(HttpRequest request) throws IOException {
         String uri = request.getUri();
         if (INDEX.equals(uri)) {
             return FileConverter.fileToString("/index.html");
