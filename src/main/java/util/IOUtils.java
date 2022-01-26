@@ -21,18 +21,4 @@ public class IOUtils {
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
     }
-
-    public static String parseExtension(HttpRequest httpRequest) {
-        Map<String, String> extensionMap = new HashMap<>();
-
-        extensionMap.put("html", "text/html");
-        extensionMap.put("css", "text/css");
-        extensionMap.put("js", "text/javascript");
-        extensionMap.put("ico", "image/x-icon");
-        extensionMap.put("png", "image/png");
-
-        String url = httpRequest.getUrl();
-        String[] tokens = url.split(Constants.DOT);
-        return extensionMap.get(tokens[tokens.length - 1]);
-    }
 }

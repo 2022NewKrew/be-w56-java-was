@@ -62,6 +62,11 @@ public class HttpRequestUtils {
         return requestMap;
     }
 
+    public static String getContentTypeFromUrl(String url) {
+        String[] tokens = url.split(Constants.DOT);
+        return tokens[tokens.length - 1];
+    }
+
     public static Pair parseHeader(String header) {
         return getKeyValue(header, Constants.SEMICOLON + Constants.SPACE);
     }

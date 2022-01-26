@@ -13,6 +13,7 @@ import request.HttpRequest;
 import request.HttpRequestFactory;
 import service.UserService;
 import util.Constants;
+import util.ContentType;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -50,9 +51,11 @@ public class RequestHandler extends Thread {
 
             byte[] body = Files.readAllBytes(new File(Constants.BASE_FILE_PATH + httpRequest.getUrl()).toPath());
 
-            String extension = IOUtils.parseExtension(httpRequest);
+            String extension = HttpRequestUtils.getContentTypeFromUrl(httpRequest.getUrl());
+            ContentType contentType = ContentType.getContentType(extension);
+
             log.debug("extension : {}", extension);
-            response200Header(dos, body.length, extension);
+            response200Header(dos, body.length, contentType.getExtension());
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
