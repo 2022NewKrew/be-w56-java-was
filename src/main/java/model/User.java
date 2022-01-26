@@ -8,7 +8,7 @@ public class User {
     private String name;
     private String email;
 
-    public User(Map<String, String> query){
+    public User(Map<String, String> query) {
         this.userId = query.get("userId");
         this.password = query.get("password");
         this.name = query.get("name");

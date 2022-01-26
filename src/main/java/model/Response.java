@@ -20,20 +20,34 @@ public class Response {
         this.dos = dos;
     }
 
-    public void buildBody(Request request) throws IOException{
+    public void buildBody(Request request) throws IOException {
         this.url = request.getRequestHeader().getRequestLine().getUrl();
         this.body = Files.readAllBytes(
                 new File("webapp/" + url).toPath());
     }
 
-    public void buildBody(String url) throws IOException{
+    public void buildBody(String url) throws IOException {
         this.url = url;
         this.body = Files.readAllBytes(
                 new File("webapp/" + this.url).toPath());
     }
 
+    public void build302Response() {
+        response302Header();
+        flushResponseBody();
+    }
 
-    public void buildResponse() {
+    private void response302Header() {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: /index.html");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void build200Response() {
         response200Header();
         flushResponseBody();
     }
@@ -50,25 +64,19 @@ public class Response {
     }
 
     private String getContentType() {
-        if(url.endsWith("html")){
+        if (url.endsWith("html")) {
             return "Content-Type: text/html;charset=utf-8\r\n";
-        }
-        else if(url.endsWith("js")){
+        } else if (url.endsWith("js")) {
             return "Content-Type: application/javascript;charset=utf-8\r\n";
-        }
-        else if(url.endsWith("css")){
+        } else if (url.endsWith("css")) {
             return "Content-Type: text/css;charset=utf-8\r\n";
-        }
-        else if(url.endsWith("ico")){
+        } else if (url.endsWith("ico")) {
             return "Content-Type: image/x-icon;charset=utf-8\r\n";
-        }
-        else if(url.endsWith("ttf")){
+        } else if (url.endsWith("ttf")) {
             return "Content-Type: font/ttf;charset=utf-8\r\n";
-        }
-        else if(url.endsWith("woff")){
+        } else if (url.endsWith("woff")) {
             return "Content-Type: font/woff;charset=utf-8\r\n";
-        }
-        else{
+        } else {
             return null;
         }
     }
