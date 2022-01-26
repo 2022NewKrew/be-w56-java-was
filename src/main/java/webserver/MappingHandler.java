@@ -40,14 +40,14 @@ public class MappingHandler {
             });
     }
 
-    public static void invoke(HttpRequest httpRequest)
+    public static String invoke(HttpRequest httpRequest)
         throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Method method = mappings.get(httpRequest.getUrl());
         if (method == null) {
-            return;
+            return httpRequest.getUrl().getPath();
         }
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        String view = (String) method.invoke(instance, httpRequest);
-        httpRequest.postProcessing(view);
+
+        return (String) method.invoke(instance, httpRequest);
     }
 }

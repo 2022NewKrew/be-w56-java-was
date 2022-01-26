@@ -1,82 +1,65 @@
 package http;
 
-import static http.HttpHeaders.ACCEPT;
-import static http.HttpHeaders.CONTENT_TYPE;
-
+import com.google.common.collect.Maps;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import util.HttpRequestUtils;
-import util.HttpRequestUtils.Pair;
+import util.IOUtils;
 
 public class HttpRequest {
 
-    private HttpMethod httpMethod;
+    private Url url;
     private HttpVersion version;
-    private HttpHeaders headers;
-    private String path;
-    private String body;
-    private String view;
-    private HttpStatus status;
+    private final Map<HttpHeader, String> headers;
+    private Map<String, String> values;
 
-    private HttpRequest(HttpMethod httpMethod, HttpVersion version, HttpHeaders headers,
-        String path, String body, String view, HttpStatus status) {
-        this.httpMethod = httpMethod;
-        this.version = version;
-        this.headers = headers;
-        this.path = path;
-        this.body = body;
-        this.view = view;
-        this.status = status;
+    public HttpRequest() {
+        version = HttpVersion.HTTP_1_1;
+        headers = Maps.newTreeMap();
+        values = Maps.newHashMap();
     }
 
-    public HttpRequest(InputStream in) throws IOException {
+    public void parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        parseRequestLine(br);
-        parseHeaders(br);
-        view = path;
-        status = HttpStatus.OK;
+        parseRequestLine(IOUtils.readRequestLine(br));
+        parseHeaders(IOUtils.readHeaders(br));
+        String contentLength = headers.get(HttpHeader.CONTENT_LENGTH);
+        if (contentLength != null) {
+            parseBody(
+                IOUtils.readBody(br, Integer.parseInt(headers.get(HttpHeader.CONTENT_LENGTH))));
+        }
     }
 
-    private void parseRequestLine(BufferedReader br) throws IOException {
-        String[] tokens = br.readLine().split(" ");
-
-        if (tokens.length != 3) {
-            throw new IllegalArgumentException();
-        }
-
-        httpMethod = HttpMethod.resolve(tokens[0]);
-        path = tokens[1];
+    private void parseRequestLine(String[] tokens) {
+        url = new Url(HttpMethod.of(tokens[0]), tokens[1]);
         version = HttpVersion.of(tokens[2]);
     }
 
-    private void parseHeaders(BufferedReader br) throws IOException {
-        Map<String, String> headerMap = new TreeMap<>();
-        String header;
-        while (!(header = br.readLine()).equals("")) {
-            Pair pair = HttpRequestUtils.parseHeader(header);
-            headerMap.put(pair.getKey(), pair.getValue());
-        }
-        headers = HttpHeaders.of(headerMap);
+    private void parseHeaders(List<String> lines) {
+        lines.stream()
+            .map(HttpRequestUtils::parseHeader)
+            .filter(pair -> HttpHeader.of(pair.getKey()) != null)
+            .forEach(pair -> putHeader(HttpHeader.of(pair.getKey()), pair.getValue()));
     }
 
-    public HttpResponse respond() {
-        Map<String, String> headers = new TreeMap<>();
-        headers.put(ACCEPT, this.headers.getAccept());
-        return new HttpResponse(version, HttpStatus.OK, HttpHeaders.of(headers), view, null);
+    private void parseBody(String body) {
+        values = HttpRequestUtils.parseQueryString(body);
+    }
+
+    public void putHeader(HttpHeader header, String value) {
+        headers.put(header, value);
     }
 
     public Url getUrl() {
-        return new Url(httpMethod, path);
+        return url;
     }
 
-    public void postProcessing(String view) {
-        this.view = view;
-        this.headers.put(CONTENT_TYPE, "text/html;charset=utf-8");
-        status = HttpStatus.OK;
+    public HttpResponse respond() {
+        return new HttpResponse(version, HttpStatus.OK, Maps.newTreeMap(), null, null);
     }
 }
