@@ -3,7 +3,7 @@
 
 ## 요구사항 1-1 : 정적인 HTML 파일 응답
 
-```html
+```
 <!-- Request Line -->
 GET /index.html HTTP/1.1
 <!-- Headers -->
@@ -52,3 +52,36 @@ ___
 #### 참고자료
 - [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 - [HTTP Message Format](https://velog.io/@rosewwross/Http-and-Request-and-Response-hok6exbnfb)
+
+___
+
+## 요구사항 1-2 : GET 으로 회원가입 기능 구현
+
+```
+GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Accept: */*
+```
+
+## 요구사항 1-3 : POST 로 회원가입 기능 구현
+
+```
+POST /user/create HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 59
+Content-Type: application/x-www-form-urlencoded
+Accept: */*
+
+userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+```
+
+요구사항 `1-2` 와 `1-3` 은 Http 요청 Method 가 GET 이냐? POST 이냐? 의 차이 (와 더불어 회원 가입을 위한 정보가 URI Query String 으로 전달되는지, Request Body 의 차이로 전달되는지) 만 있다 생각해 함께 구현했다. \
+처음에는 먼저 `1-2` 를 구현한 뒤 `1-3` 을 진행하려 했으나, 전체적인 설계를 고민하느라 시간을 많이 소비해 한 번에 두 단계를 진행하게 됐다.
+
+프로젝트는 다음과 같이 구성했다. \
+`RequestHandler` 는 클라이언트의 요청 정보를 읽고, 해당 정보를 `ControllerMapper` 에 전달한다. \
+`ControllerMapper` 는 클라이언트의 요청을 타겟 URI 를 기준으로 적절한 `Controller` 에 매핑한다. \
+`Controller` 는 요청의 URI 와 Method 를 읽어 컨트롤러 내부에 정의된 적절한 메소드를 호출한다. \
+URI 에 대한 적절한 `Controller` 가 존재하지 않거나, `Controller` 에서 적절한 처리가 이루어지지 않은 경우 `StaticFileReader` 에 요청을 전달해 정적 파일을 응답하도록 한다.

@@ -1,13 +1,9 @@
 package util;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
@@ -74,31 +70,32 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    void parseRequest() throws IOException {
+    void parseRequestLine() {
         // Given
-        BufferedReader bufferedReader = Mockito.mock(BufferedReader.class);
-        given(bufferedReader.readLine())
-            .willReturn("GET /index.html HTTP/1.1")
-            .willReturn("Host: localhost:8080")
-            .willReturn("Connection: keep-alive")
-            .willReturn("Accept: */*")
-            .willReturn("");
+        String requestLine = "GET /index.html HTTP/1.1";
 
         // When
-        Request request = HttpRequestUtils.parseRequest(bufferedReader);
+        String[] requestTokens = HttpRequestUtils.parseRequestLine(requestLine);
 
         // Then
-        assertThat(request.getMethod())
+        assertThat(requestTokens[0])
             .isEqualTo("GET");
-        assertThat(request.getTarget())
+        assertThat(requestTokens[1])
             .isEqualTo("/index.html");
-        assertThat(request.getHeaderSize())
-            .isEqualTo(3);
-        assertThat(request.getHeader("Host"))
-            .isEqualTo("localhost:8080");
-        assertThat(request.getHeader("Connection"))
-            .isEqualTo("keep-alive");
-        assertThat(request.getHeader("Accept"))
-            .isEqualTo("*/*");
+        assertThat(requestTokens[2])
+            .isEqualTo("HTTP/1.1");
+    }
+
+    @Test
+    void parseAcceptContextType() {
+        // Given
+        String acceptHeader = "text/html,*/*";
+
+        // When
+        String parsedAcceptHeader = HttpRequestUtils.parseAcceptContextType(acceptHeader);
+
+        // Then
+        assertThat(parsedAcceptHeader)
+            .isEqualTo("text/html");
     }
 }

@@ -1,28 +1,43 @@
 package webserver;
 
+import controller.ControllerMapper;
+import http.HttpMethod;
+import http.HttpRequest;
+import http.HttpResponse;
+import http.RequestBody;
+import http.RequestParams;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import util.Request;
-import util.Response;
+import util.HttpRequestUtils.Pair;
+import util.IOUtils;
 
 public class RequestHandler extends Thread {
 
+    private static final int REQUEST_METHOD_INDEX = 0;
+    private static final int REQUEST_PATH_INDEX = 1;
+    private static final int REQUEST_VERSION_INDEX = 2;
+    private static final String WHITE_SPACE = " ";
+
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
+    private final ControllerMapper mapper;
 
-    public RequestHandler(Socket connectionSocket) {
-        this.connection = connectionSocket;
+    public static RequestHandler of(Socket connection) {
+        return new RequestHandler(connection, ControllerMapper.create());
+    }
+
+    private RequestHandler(Socket connection, ControllerMapper mapper) {
+        this.connection = connection;
+        this.mapper = mapper;
     }
 
     @Override
@@ -30,56 +45,65 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
             connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            DataOutputStream dos = new DataOutputStream(out);
+        try (BufferedReader br =
+            new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
-            Request request = HttpRequestUtils.parseRequest(bufferedReader);
-            Response response = handleRequest(request);
+            HttpRequest httpRequest = parseRequest(br);
+            HttpResponse httpResponse = mapper.handleRequest(httpRequest);
 
-            sendResponse(dos, response);
+            sendResponse(dos, httpRequest, httpResponse);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 
-    private Response handleRequest(Request request) {
-        if (!request.getMethod().equals("GET")) {
-            return Response.builder()
-                .statusCode("405")
-                .statusText("Method Not Allowed")
-                .body(new byte[0])
-                .build();
+    private HttpRequest parseRequest(BufferedReader br) throws IOException {
+        String buffer = br.readLine();
+        log.info(buffer);
+
+        String[] requestTokens = HttpRequestUtils.parseRequestLine(buffer);
+        HttpMethod method = HttpMethod.valueOf(requestTokens[REQUEST_METHOD_INDEX]);
+        String path = requestTokens[REQUEST_PATH_INDEX];
+        String version = requestTokens[REQUEST_VERSION_INDEX];
+
+        String[] parsedPath = HttpRequestUtils.parsePath(path);
+        Map<String, String> pathQueryString = Map.of();
+        if (parsedPath.length == 2) {
+            path = parsedPath[0];
+            pathQueryString = HttpRequestUtils.parseQueryString(parsedPath[1]);
         }
-        try {
-            byte[] body = Files.readAllBytes(new File("./webapp" + request.getTarget()).toPath());
-            return Response.builder()
-                .statusCode("200")
-                .statusText("OK")
-                .contextType(request.getHeader("Accept").split(",")[0])
-                .body(body)
-                .build();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return Response.builder()
-                .statusCode("404")
-                .statusText("Not Found")
-                .body(new byte[0])
-                .build();
+
+        Map<String, String> headers = new HashMap<>();
+        while ((buffer = br.readLine()) != null && !buffer.isBlank()) {
+            log.info(buffer);
+            Pair header = HttpRequestUtils.parseHeader(buffer);
+            headers.put(header.getKey(), header.getValue());
         }
+
+        int length = Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
+        String body = IOUtils.readData(br, length);
+        log.info(body);
+
+        return HttpRequest.builder()
+            .method(method)
+            .path(path)
+            .version(version)
+            .requestParams(RequestParams.of(pathQueryString))
+            .requestBody(RequestBody.of(HttpRequestUtils.parseQueryString(body)))
+            .build();
     }
 
-    private void sendResponse(DataOutputStream dos, Response response) {
-        try {
-            dos.writeBytes("HTTP/1.1 " + response.getHttpStatus() + "\r\n");
-            dos.writeBytes("Content-Type: " + response.getContextType() + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
-            dos.writeBytes("\r\n");
-            dos.write(response.getBody(), 0, response.getBodyLength());
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private void sendResponse(DataOutputStream dos, HttpRequest httpRequest,
+        HttpResponse httpResponse) throws IOException {
+        dos.writeBytes(httpRequest.getVersion() + WHITE_SPACE + httpResponse.respondStatus()
+            + System.lineSeparator());
+        dos.writeBytes(httpResponse.respondHeader() + System.lineSeparator());
+        dos.writeBytes(System.lineSeparator());
+
+        if (httpResponse.getResponseBody() != null) {
+            dos.write(httpResponse.getResponseBody());
         }
+        dos.flush();
     }
 }

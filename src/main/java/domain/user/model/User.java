@@ -1,4 +1,6 @@
-package model;
+package domain.user.model;
+
+import lombok.Builder;
 
 public class User {
 
@@ -7,6 +9,7 @@ public class User {
     private String name;
     private String email;
 
+    @Builder
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
@@ -16,18 +19,6 @@ public class User {
 
     public String getUserId() {
         return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override
