@@ -2,6 +2,7 @@ package http;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +18,13 @@ public class QueryString {
 
     private void makeQueryStringMap(String queryString) {
         String[] splitQueryString = queryString.split(QUERY_STRING_PAIR_SPLIT_DELIMITER);
-        queryStringMap = new HashMap<>();
+        Map<String, String> queryStringMap = new HashMap<>();
         for (String pair : splitQueryString) {
             String[] split = pair.split(QUERY_STRING_KEY_VALUE_SPLIT_DELIMITER);
             queryStringMap.put(URLDecoder.decode(split[0], StandardCharsets.UTF_8), URLDecoder.decode(split[1], StandardCharsets.UTF_8));
         }
+
+        this.queryStringMap = Collections.unmodifiableMap(queryStringMap);
     }
 
     public Map<String, String> getQueryStringMap() {
