@@ -6,7 +6,7 @@ import webserver.request.HttpRequest;
 import webserver.request.HttpRequestMethod;
 import webserver.request.RequestContext;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +29,7 @@ public class HandlerMapping {
     }
 
     private void registerMethodHandlerMappings() {
-        Map<HttpRequestMethod, MethodHandlerMapping> methodHandlerMappingMap = new HashMap<>();
+        Map<HttpRequestMethod, MethodHandlerMapping> methodHandlerMappingMap = new EnumMap<>(HttpRequestMethod.class);
         methodHandlerMappingMap.put(HttpRequestMethod.GET, GetHandlerMapping.getInstance());
         methodHandlerMappingMap.put(HttpRequestMethod.POST, PostHandlerMapping.getInstance());
         methodHandlerMappingMap.put(HttpRequestMethod.PUT, PutHandlerMapping.getInstance());

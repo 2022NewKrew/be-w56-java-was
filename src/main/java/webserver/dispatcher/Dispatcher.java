@@ -5,11 +5,11 @@ import webserver.response.HttpResponse;
 
 public abstract class Dispatcher {
 
-    public HttpResponse getResponse() {
-        HttpResponse response = createResponse();
+    public HttpResponse dispatch() {
+        HttpResponse response = processRequest();
         Handlers.getInstance().handleResponse(response);
         return response;
     }
 
-    protected abstract HttpResponse createResponse();
+    protected abstract HttpResponse processRequest();
 }

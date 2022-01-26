@@ -8,6 +8,7 @@ import webserver.request.RequestContext;
 import webserver.response.HttpResponse;
 import webserver.response.HttpResponseHeader;
 import webserver.response.HttpResponseLine;
+import webserver.response.ResponseContext;
 
 import java.io.*;
 import java.net.Socket;
@@ -38,6 +39,7 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         } finally {
             RequestContext.getInstance().endRequest();
+            ResponseContext.getInstance().endResponse();
         }
     }
 
@@ -46,7 +48,7 @@ public class RequestHandler extends Thread {
     }
 
     private HttpResponse getResponse() {
-        return ResponseProcessor.getInstance().response();
+        return ResponseProcessor.getInstance().process();
     }
 
     private void response(HttpResponse response, DataOutputStream dos) throws IOException {

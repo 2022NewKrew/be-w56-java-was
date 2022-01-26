@@ -28,7 +28,15 @@ public class HttpResponse {
         return responseBody.getLengthOfBody();
     }
 
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.responseLine.setStatusCode(httpStatus);
+    }
+
     public void setHeaderIfAbsent(String key, String[] values) {
         responseHeader.putHeaderIfAbsent(key, values);
+    }
+
+    public void setResponseBody(byte[] content) {
+        this.responseBody.setBody(content);
     }
 }

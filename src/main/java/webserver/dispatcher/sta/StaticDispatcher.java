@@ -28,7 +28,7 @@ public class StaticDispatcher extends Dispatcher {
     }
 
     @Override
-    protected HttpResponse createResponse() {
+    protected HttpResponse processRequest() {
         HttpRequestUri requestUri = RequestContext.getInstance().getHttpRequest().getUri();
         try {
             byte[] fileToBytes = readFiles(requestUri.getUrl());
@@ -43,25 +43,24 @@ public class StaticDispatcher extends Dispatcher {
     }
 
     private HttpResponse getResponseForFile(byte[] fileToBytes) {
-        HttpResponseLine responseLine = new HttpResponseLine(HttpStatus.OK);
+        HttpResponse response = ResponseContext.getInstance().getHttpResponse();
+        setHttpStatusForResponse(response, HttpStatus.OK);
 
-        Map<String, String[]> headers = new HashMap<>();
-        HttpResponseHeader responseHeader = new HttpResponseHeader(headers);
+        response.setResponseBody(fileToBytes);
 
-        HttpResponseBody responseBody = new HttpResponseBody(fileToBytes);
-
-        return new HttpResponse(responseLine, responseHeader, responseBody);
+        return response;
     }
 
     private HttpResponse getResponseForNotFound() {
-        HttpResponseLine responseLine = new HttpResponseLine(HttpStatus.NOT_FOUND);
+        HttpResponse response = ResponseContext.getInstance().getHttpResponse();
+        setHttpStatusForResponse(response, HttpStatus.NOT_FOUND);
 
-        Map<String, String[]> headers = new HashMap<>();
-        headers.put(HttpResponseHeader.KEY_FOR_CONTENT_TYPE, new String[]{ContentType.TEXT_HTML.getValue()});
-        HttpResponseHeader responseHeader = new HttpResponseHeader(headers);
+        response.setHeaderIfAbsent(HttpResponseHeader.KEY_FOR_CONTENT_TYPE, new String[]{ContentType.TEXT_HTML.getValue()});
 
-        HttpResponseBody responseBody = new HttpResponseBody(new byte[]{});
+        return response;
+    }
 
-        return new HttpResponse(responseLine, responseHeader, responseBody);
+    private void setHttpStatusForResponse(HttpResponse response, HttpStatus status) {
+        response.setHttpStatus(status);
     }
 }

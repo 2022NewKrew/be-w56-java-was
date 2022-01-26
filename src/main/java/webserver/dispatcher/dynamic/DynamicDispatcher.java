@@ -26,10 +26,10 @@ public class DynamicDispatcher extends Dispatcher {
     }
 
     @Override
-    protected HttpResponse createResponse() {
+    protected HttpResponse processRequest() {
         HttpRequest request = RequestContext.getInstance().getHttpRequest();
         // todo RequestMethodNotFoundException 처리 로직
-        ClassAndMethod classAndMethod = HandlerMapping.getInstance().getControllerClassAndMethodForRequest();
+        ClassAndMethod classAndMethod = getClassAndMethodForRequest();
 
         // todo 해당하는 Controller 없을 때 예외 처리 로직
         Object controller = ControllerContainer.getInstance().getControllerInstance(classAndMethod.getClazz());
@@ -48,5 +48,7 @@ public class DynamicDispatcher extends Dispatcher {
         return new HttpResponse(new HttpResponseLine(HttpStatus.OK), new HttpResponseHeader(new HashMap<>()), new HttpResponseBody(new byte[]{}));
     }
 
-
+    private ClassAndMethod getClassAndMethodForRequest() {
+        return HandlerMapping.getInstance().getControllerClassAndMethodForRequest();
+    }
 }

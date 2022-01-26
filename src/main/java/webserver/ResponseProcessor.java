@@ -5,6 +5,8 @@ import webserver.dispatcher.sta.StaticDispatcher;
 import webserver.request.HttpRequestUri;
 import webserver.request.RequestContext;
 import webserver.response.HttpResponse;
+import webserver.response.HttpStatus;
+import webserver.response.ResponseContext;
 
 /**
  * Singleton
@@ -20,20 +22,35 @@ public class ResponseProcessor {
         return INSTANCE;
     }
 
-    public HttpResponse response() {
+    public HttpResponse process() {
+        HttpResponse response = ResponseContext.getInstance().createResponse();
+        try {
+            processRequestByDispatcher();
+        } catch (RuntimeException e) {
+            setResponseForInternalServerError(response);
+        }
+
+        return response;
+    }
+
+    private HttpResponse processRequestByDispatcher() {
         HttpRequestUri uri = RequestContext.getInstance().getHttpRequest().getUri();
         if (uri.isForStaticContent()) {
-            return getResponseForStaticContent();
+            return processForStaticContent();
         }
-        return getResponseForDynamicContent();
+        return processForDynamicContent();
     }
 
-    private HttpResponse getResponseForStaticContent() {
-        return StaticDispatcher.getInstance().getResponse();
+    private HttpResponse processForStaticContent() {
+        return StaticDispatcher.getInstance().dispatch();
     }
 
-    private HttpResponse getResponseForDynamicContent() {
-        return DynamicDispatcher.getInstance().getResponse();
+    private HttpResponse processForDynamicContent() {
+        return DynamicDispatcher.getInstance().dispatch();
     }
 
+    private void setResponseForInternalServerError(HttpResponse response) {
+        response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        response.setResponseBody(new byte[]{});
+    }
 }
