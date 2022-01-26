@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import model.RequestHeader;
 import model.RequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class HttpRequestUtils {
         return new RequestLine(split[0], pathSplit[0], pathSplit[1], split[2]);
     }
 
-    public static String readHeaderAccept(BufferedReader br) throws IOException {
+    public static RequestHeader parseRequestHeader(BufferedReader br) throws IOException {
         String line;
         Map<String, String> header = new HashMap<>();
         while (!(line = br.readLine()).equals("")) {
@@ -51,7 +52,8 @@ public class HttpRequestUtils {
             String[] split = line.split(":", 2);
             header.put(split[0].trim(), split[1].trim());
         }
-        return Optional.ofNullable(header.get("Accept")).orElse("").split(",")[0];
+        return new RequestHeader(Integer.parseInt(Optional.ofNullable(header.get("Content-Length")).orElse("0")),
+                Optional.ofNullable(header.get("Accept")).orElse("").split(",")[0]);
     }
 
     private static Map<String, String> parseValues(String values, String separator) {

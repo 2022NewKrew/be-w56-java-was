@@ -18,6 +18,10 @@ public class RequestLine {
         this.query = query;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
     public String getUrl() {
         return url;
     }
