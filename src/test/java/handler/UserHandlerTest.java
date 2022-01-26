@@ -1,6 +1,5 @@
 package handler;
 
-import http.Locator;
 import http.Request;
 import http.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +18,8 @@ class UserHandlerTest {
 
     @Test
     void create() {
-        Locator locator = Locator.parse("?name=test&password=test&email=foo@example.com&userId=foobar");
-        Request request = Request.newBuilder().locator(locator).build();
+        String body = "userId=javajigi&password=password&name=자바지기&email=javajigi@slipp.net\n";
+        Request request = Request.newBuilder().body(body).build();
 
         Response result = subject.create(request);
 
