@@ -20,7 +20,7 @@ import java.util.List;
 
 import static com.kakao.webserver.WebServerConfig.DEFAULT_HTTP_VERSION;
 
-public class StaticFileController implements Controller {
+public class StaticFileController implements HttpController {
     private static final Logger logger = LoggerFactory.getLogger(StaticFileController.class);
 
     @Override

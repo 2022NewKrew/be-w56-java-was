@@ -3,7 +3,7 @@ package com.kakao.webserver;
 import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
 import com.kakao.util.ReflectionUtils;
-import com.kakao.webserver.controller.Controller;
+import com.kakao.webserver.controller.HttpController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +16,11 @@ public class RequestHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final List<Controller> controllerList;
+    private final List<HttpController> controllerList;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerList = ReflectionUtils.getInstancesImplementedInterface(Controller.class);
+        controllerList = ReflectionUtils.getInstancesImplementedInterface(HttpController.class);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class RequestHandler implements Runnable {
     }
 
     private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
-        for (Controller controller : controllerList) {
+        for (HttpController controller : controllerList) {
             if (controller.isValidRequest(httpRequest.getUrl().getPath(), HttpMethod.GET)) {
                 controller.handleRequest(httpRequest, out);
                 return;

@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static com.kakao.webserver.WebServerConfig.DEFAULT_HTTP_VERSION;
 
-public class UserController implements Controller {
+public class UserController implements HttpController {
     private final UserService userService = UserService.getInstance();
 
     @Override
