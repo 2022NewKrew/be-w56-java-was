@@ -1,4 +1,4 @@
-package webserver.http.request.exceptions;
+package webserver.http.request;
 
 public class NullRequestException extends Exception{
 

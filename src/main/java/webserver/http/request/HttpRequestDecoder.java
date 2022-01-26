@@ -10,19 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
-import webserver.http.request.exceptions.NullRequestException;
 
 public class HttpRequestDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestDecoder.class);
 
-    public static HttpRequest decode(InputStream in) throws IOException, NullRequestException, URISyntaxException {
+    public static HttpRequest decode(InputStream in) throws IOException, NullRequestException {
         Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(reader);
 

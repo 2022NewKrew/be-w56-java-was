@@ -1,7 +1,11 @@
 package webserver;
 
+import static webserver.http.HttpMeta.ROOT_PATH_OF_WEB_RESOURCE_FILES;
+import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
+
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,21 +13,19 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.SignUpService;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestDecoder;
-import webserver.http.request.exceptions.NullRequestException;
 import webserver.http.response.EncodedHttpResponse;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseHeaders;
 import webserver.http.response.HttpResponseHeadersEncoder;
 
 public class RequestHandler extends Thread {
-
-    private static final String ROOT_PATH_OF_WEB_RESOURCE_FILES = "./webapp";
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -48,13 +50,10 @@ public class RequestHandler extends Thread {
             );
 
             handle(httpRequest, httpResponse);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
-        } catch (NullRequestException | URISyntaxException e) {
-            // TODO : Exception Handler required
             e.printStackTrace();
         }
-
     }
 
     private void handle(HttpRequest request, HttpResponse response) throws IOException {
@@ -64,7 +63,7 @@ public class RequestHandler extends Thread {
             uri = new URI(requestPath);
         } catch (URISyntaxException e) {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-            // TODO : Exception Handler required
+            handleError(response, e);
             return;
         }
 
@@ -75,13 +74,15 @@ public class RequestHandler extends Thread {
 
         File file = new File(ROOT_PATH_OF_WEB_RESOURCE_FILES + uri.getPath());
 
-        if (!file.exists()) {
+        if (!file.exists() || !file.isFile()) {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-            // TODO : Exception Handler required
+            handleError(response, new FileNotFoundException("File Not Found for requested URI '" + uri + "'"));
+            return;
         }
         if (!file.canRead()) {
             response.setStatusCode(HttpURLConnection.HTTP_FORBIDDEN);
-            // TODO : Exception Handler required
+            handleError(response, new AccessDeniedException(file.getPath()));
+            return;
         }
 
         handleFile(response, file);
@@ -90,7 +91,7 @@ public class RequestHandler extends Thread {
     private void handleQuery(HttpResponse response, URI uri) throws IOException {
         SignUpService.signUp(uri.getQuery());
         response.setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
-        response.setLocation("/index.html");
+        response.setLocation(VIEW_BASIC_PAGE);
 
         EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, null);
         response.sendRedirectResponse(encodedHttpResponse);
@@ -98,12 +99,16 @@ public class RequestHandler extends Thread {
 
     private void handleFile(HttpResponse response, File file) throws IOException {
         Path filePath = file.toPath();
-        response.setContentType(filePath);
+        response.setContentTypeWithFilePath(filePath);
 
         long contentLength = file.length();
         response.setContentLength(contentLength);
 
         EncodedHttpResponse encodedHttpResponse = HttpResponseHeadersEncoder.encode(response, filePath);
         response.sendNormalResponse(encodedHttpResponse);
+    }
+
+    private void handleError(HttpResponse response, Exception e) throws IOException {
+        ExceptionHandler.handleException(response, e);
     }
 }

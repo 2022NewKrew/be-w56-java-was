@@ -30,6 +30,10 @@ public class HttpResponse {
         this.status = HTTP_STATUS_OK;
     }
 
+    public DataOutputStream getDos() {
+        return dos;
+    }
+
     public String getHttpVersion() {
         return httpVersion;
     }
@@ -40,7 +44,7 @@ public class HttpResponse {
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
-        if (statusCode != HttpURLConnection.HTTP_OK) {
+        if (statusCode != HttpURLConnection.HTTP_OK && statusCode != HttpURLConnection.HTTP_MOVED_TEMP) {
             this.status = HTTP_STATUS_NOT_OK;
         }
     }
@@ -57,34 +61,13 @@ public class HttpResponse {
         headers.addHeader(httpResponseHeader, value);
     }
 
-    public void setContentType(Path filePath) throws IOException {
+    public void setContentTypeWithFilePath(Path filePath) throws IOException {
         String contentType = getContentTypeFromFilePath(filePath);
+        setContentType(contentType);
+    }
+
+    public void setContentType(String contentType) {
         setHeader(HttpResponseHeader.Content_Type, contentType);
-    }
-
-    public void setContentLength(long contentLength) {
-        setHeader(HttpResponseHeader.Content_Length, Long.toString(contentLength));
-    }
-
-    public void setLocation(String redirectPath) {
-        setHeader(HttpResponseHeader.Location, redirectPath);
-    }
-
-    public void sendNormalResponse(EncodedHttpResponse encodedResponse) throws IOException {
-        dos.writeBytes(encodedResponse.getStatusLine());
-        List<String> responseHeader = encodedResponse.getResponseHeaders();
-        for (String header : responseHeader) {
-            dos.writeBytes(header);
-        }
-        dos.write(encodedResponse.getBody(), 0, encodedResponse.getBodyLength());
-    }
-
-    public void sendRedirectResponse(EncodedHttpResponse encodedResponse) throws IOException {
-        dos.writeBytes(encodedResponse.getStatusLine());
-        List<String> responseHeader = encodedResponse.getResponseHeaders();
-        for (String header : responseHeader) {
-            dos.writeBytes(header);
-        }
     }
 
     private String getContentTypeFromFilePath(Path filePath) throws IOException {
@@ -96,5 +79,35 @@ public class HttpResponse {
             return MIME_TYPE_OF_CSS;
         }
         return Files.probeContentType(filePath);
+    }
+
+    public void setContentLength(long contentLength) {
+        setHeader(HttpResponseHeader.Content_Length, Long.toString(contentLength));
+    }
+
+    public void setLocation(String redirectPath) {
+        setHeader(HttpResponseHeader.Location, redirectPath);
+    }
+
+    public void sendNormalResponse(EncodedHttpResponse encodedResponse) throws IOException {
+        buildOutputStreamOfHeaders(encodedResponse);
+        dos.write(encodedResponse.getBody(), 0, encodedResponse.getBodyLength());
+    }
+
+    private void buildOutputStreamOfHeaders(EncodedHttpResponse encodedResponse) throws IOException {
+        dos.writeBytes(encodedResponse.getStatusLine());
+        List<String> responseHeader = encodedResponse.getResponseHeaders();
+        for (String header : responseHeader) {
+            dos.writeBytes(header);
+        }
+    }
+
+    public void sendRedirectResponse(EncodedHttpResponse encodedResponse) throws IOException {
+        buildOutputStreamOfHeaders(encodedResponse);
+    }
+
+    public void sendErrorResponse(EncodedHttpResponse encodedResponse, String message) throws IOException {
+        buildOutputStreamOfHeaders(encodedResponse);
+        dos.writeBytes(message);
     }
 }
