@@ -4,8 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import webserver.requesthandler.RequestHandler;
 
 @Slf4j
 public class WebServer {
