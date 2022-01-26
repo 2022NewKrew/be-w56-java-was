@@ -1,11 +1,18 @@
 package util;
 
+import org.apache.tika.Tika;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
+    private static final Tika tika = new Tika();
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
+
     private final HttpRequest httpRequest;
     private final String httpVersion;
     private final Map<String, String> headers = new HashMap<>();
@@ -21,8 +28,9 @@ public class HttpResponse {
         this.httpStatus = httpStatus;
     }
 
-    public void setContentType(String contentType) {
-        headers.put("Content-type", contentType);
+    public void setContentTypeWithURI(String uri) {
+        String contentType = tika.detect(uri);
+        headers.put("Content-type", contentType + ";charset=" + ENCODING.name());
     }
 
     public void setBody(byte[] body) {

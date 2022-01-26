@@ -74,9 +74,8 @@ public class RequestHandler extends Thread {
     }
 
     private static void getUserCreateHandler(HttpRequest httpRequest, HttpResponse httpResponse) {
-        log.info("In getUserCreateHandler - {}", httpRequest.getUri());
         Map<String, String> queryStrings = httpRequest.getQueryStrings();
-        httpResponse.setContentType("text/plain;charset=utf-8");
+        httpResponse.setContentTypeWithURI("text/plain;charset=utf-8");
         httpResponse.setBody(queryStrings.entrySet().toString().getBytes());
         httpResponse.setHttpStatus(HttpStatus.OK);
     }
@@ -92,22 +91,12 @@ public class RequestHandler extends Thread {
     }
 
     private static void getStaticHandler(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        log.info("In getStaticHandler - {}", httpRequest.getUri());
-        String filePath = httpRequest.getUri();
-        if (filePath.equals("/")) {
-            filePath = "/index.html";
+        String uri = httpRequest.getUri();
+        if (uri.equals("/")) {
+            uri = "/index.html";
         }
-        Path path = Paths.get("./webapp" + filePath);
-
-        String fileType = filePath.substring(filePath.lastIndexOf(".") + 1);
-
-        // TODO: Need better content-type support.
-        if (fileType.equals("js")) {
-            httpResponse.setContentType("Application/javascript;charset=utf-8");
-        }
-        if (fileType.equals("html") || fileType.equals("css")) {
-            httpResponse.setContentType("text/" + fileType + ";charset=utf-8");
-        }
+        Path path = Paths.get("./webapp" + uri);
+        httpResponse.setContentTypeWithURI(uri);
         httpResponse.setBody(Files.readAllBytes(path));
         httpResponse.setHttpStatus(HttpStatus.OK);
     }
