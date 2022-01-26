@@ -1,6 +1,4 @@
-package http.response;
-
-import http.HttpStatus;
+package web.http.response;
 
 public class HttpResponse {
     private final HttpResponseStatusLine statusLine;

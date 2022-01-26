@@ -1,4 +1,4 @@
-package http.request;
+package web.http.request;
 
 import util.IOUtils;
 

@@ -1,13 +1,13 @@
-package webserver;
+package web.server;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import controller.HttpResponseMapper;
-import controller.RequestController;
-import http.request.HttpRequest;
-import http.response.HttpResponse;
+import web.controller.HttpResponseMapper;
+import web.controller.RequestController;
+import web.http.request.HttpRequest;
+import web.http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

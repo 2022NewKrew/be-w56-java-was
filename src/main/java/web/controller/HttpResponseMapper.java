@@ -1,7 +1,7 @@
-package controller;
+package web.controller;
 
-import http.response.HttpResponse;
-import http.response.HttpResponseBody;
+import web.http.response.HttpResponse;
+import web.http.response.HttpResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

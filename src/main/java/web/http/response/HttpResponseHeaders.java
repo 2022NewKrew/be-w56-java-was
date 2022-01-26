@@ -1,4 +1,4 @@
-package http.response;
+package web.http.response;
 
 import util.Pair;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpResponseHeaders {
-    private List<Pair> headers;
+    private final List<Pair> headers;
 
     public HttpResponseHeaders(List<Pair> headers) {
         this.headers = headers;

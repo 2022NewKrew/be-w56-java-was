@@ -1,13 +1,12 @@
-package controller;
+package web.controller;
 
-import http.HttpStatus;
-import http.request.HttpRequest;
-import http.request.HttpRequestBody;
-import http.request.HttpRequestLine;
-import http.response.HttpResponse;
-import http.response.HttpResponseBody;
-import http.response.HttpResponseHeaders;
-import http.response.HttpResponseStatusLine;
+import web.http.response.HttpStatus;
+import web.http.request.HttpRequest;
+import web.http.request.HttpRequestLine;
+import web.http.response.HttpResponse;
+import web.http.response.HttpResponseBody;
+import web.http.response.HttpResponseHeaders;
+import web.http.response.HttpResponseStatusLine;
 import service.UserService;
 import util.Pair;
 

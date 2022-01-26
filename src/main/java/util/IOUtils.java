@@ -1,14 +1,13 @@
 package util;
 
-import http.request.HttpRequestBody;
-import http.request.HttpRequestHeaders;
-import http.request.HttpRequestLine;
+import web.http.request.HttpRequestBody;
+import web.http.request.HttpRequestHeaders;
+import web.http.request.HttpRequestLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
