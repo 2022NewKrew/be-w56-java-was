@@ -14,6 +14,15 @@ import domain.ContentType;
 
 public class HttpRequestUtils {
 
+    private static final int QUERY_STRING_INDEX = 1;
+    private static final int PAIR_KEY_INDEX = 0;
+    private static final int PAIR_VALUE_INDEX = 1;
+    private static final int PAIR_SIZE = 2;
+
+    public static String getQueryStringByUrl(String url) {
+        return url.split(Constants.REQUEST_PARAM_DELIMITER)[QUERY_STRING_INDEX];
+    }
+
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, Constants.QUERY_STRING_DELIMITER);
     }
@@ -40,11 +49,11 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = keyValue.split(regex);
-        if (tokens.length != 2) {
+        if (tokens.length != PAIR_SIZE) {
             return null;
         }
 
-        return new Pair(tokens[0], tokens[1]);
+        return new Pair(tokens[PAIR_KEY_INDEX], tokens[PAIR_VALUE_INDEX]);
     }
 
     public static Map<String, String> parseHeaders(BufferedReader bufferedReader) throws IOException {
