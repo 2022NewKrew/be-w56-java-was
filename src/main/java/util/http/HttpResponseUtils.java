@@ -7,7 +7,7 @@ import java.nio.file.Files;
 
 public class HttpResponseUtils {
 
-    public static void res(HttpResponse httpResponse, DataOutputStream dos) throws IOException {
+    public static void response(HttpResponse httpResponse, DataOutputStream dos) throws IOException {
         dos.writeBytes(httpResponse.headerText());
         if (httpResponse.getBody() != null) {
             byte[] body = httpResponse.getBody();

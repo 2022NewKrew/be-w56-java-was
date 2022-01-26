@@ -62,7 +62,6 @@ public class UserController {
         return "redirect:/index.html";
     }
 
-    //TODO cookie가 만료되지 않는 오류를 처리해야함
     @GetMapping(url = "/user/logout")
     public String logout(HttpResponse httpResponse) {
         httpResponse.setCookie("logined", false);

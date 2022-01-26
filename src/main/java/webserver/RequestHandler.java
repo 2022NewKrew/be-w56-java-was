@@ -35,13 +35,14 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            // http request 인지 검증하는 부분이 필요?
             HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
             HttpResponse httpResponse = new HttpResponse();
             DataOutputStream dos = new DataOutputStream(out);
             servletContainer.service(httpRequest, httpResponse);
             log.debug("response header");
             log.debug(httpResponse.headerText());
-            HttpResponseUtils.res(httpResponse, dos);
+            HttpResponseUtils.response(httpResponse, dos);
 
         } catch (IOException | InvocationTargetException | IllegalAccessException e) {
             log.error(e.getMessage());
