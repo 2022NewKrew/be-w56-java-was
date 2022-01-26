@@ -10,5 +10,6 @@ public class UserService {
 
     public void create(UserCreateDto userCreateDto){
         userRepository.save(UserMapper.INSTANCE.toEntityFromSaveDto(userCreateDto));
+        System.out.println(userRepository.findAll().get(0).toString());
     }
 }
