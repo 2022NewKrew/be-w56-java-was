@@ -1,8 +1,8 @@
 package controller.adapter;
 
 import constant.GlobalConfig;
-import controller.annotation.RequestMapping;
 import controller.RequestUrlController;
+import controller.annotation.RequestMapping;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
@@ -12,13 +12,15 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 @Slf4j
 public class UrlMappingHandlerAdapter implements HandlerAdapter {
+    private static final Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
+
+
     @Override
     public boolean supports(HttpRequest request) {
         Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
@@ -32,8 +34,21 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
     public void handle(HttpRequest request, HttpResponse response) {
-        Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
+        Method handlerMethod = findHandlerMethod(request);
 
+        try {
+            String viewName = invokeHandlerMethod(request, response, handlerMethod);
+            if (viewName.contains("redirect:")) {
+                redirect(request, response, viewName);
+                return;
+            }
+            ok(response, viewName);
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+        }
+    }
+
+    private Method findHandlerMethod(HttpRequest request) {
         Method handlerMethod = Arrays.stream(requestUrlControllerClass.getDeclaredMethods())
                 .filter(method -> {
                     RequestMapping annotation = method.getAnnotation(RequestMapping.class);
@@ -41,31 +56,28 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
                 })
                 .findAny()
                 .orElseThrow();
+        return handlerMethod;
+    }
 
-        try {
-            RequestUrlController requestUrlController = requestUrlControllerClass.getConstructor().newInstance();
-            Object methodReturn = handlerMethod.invoke(requestUrlController, request, response);
-            if (!(methodReturn instanceof String)) {
-                throw new IllegalStateException("invalid return type");
-            }
-            String viewName = (String) methodReturn;
-            if (viewName.contains("redirect:")) {
-                // redirect
-                String redirectUrl = viewName.replace("redirect:", "");
-                response.status(HttpStatus.FOUND);
-                response.addHeader("Location", request.getHeader("Origin") + redirectUrl);
-                return;
-            }
-            String url = GlobalConfig.WEB_ROOT + viewName + GlobalConfig.SUFFIX;
-            byte[] body = Files.readAllBytes(Paths.get(url));
-            response.body(body);
-            response.addHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
-        } catch (IllegalAccessException | InvocationTargetException | IOException exception) {
-            log.error(exception.getMessage());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+    private String invokeHandlerMethod(HttpRequest request, HttpResponse response, Method handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        RequestUrlController requestUrlController = requestUrlControllerClass.getConstructor().newInstance();
+        Object methodReturn = handlerMethod.invoke(requestUrlController, request, response);
+        if (!(methodReturn instanceof String)) {
+            throw new IllegalStateException("invalid return type");
         }
+        return (String) methodReturn;
+    }
+
+    private void redirect(HttpRequest request, HttpResponse response, String viewName) {
+        String redirectUrl = viewName.replace("redirect:", "");
+        response.status(HttpStatus.FOUND);
+        response.addHeader(HttpHeaders.LOCATION, request.getHeader(HttpHeaders.ORIGIN) + redirectUrl);
+    }
+
+    private void ok(HttpResponse response, String viewName) throws IOException {
+        String url = GlobalConfig.WEB_ROOT + viewName + GlobalConfig.SUFFIX;
+        byte[] body = Files.readAllBytes(Paths.get(url));
+        response.body(body);
+        response.addHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
     }
 }
