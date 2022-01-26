@@ -16,7 +16,7 @@ import webserver.RequestHandler;
 
 @Getter
 public class Request {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(Request.class);
 
     private HttpMethod method;
     private String uri;
@@ -46,7 +46,7 @@ public class Request {
         request.headers = new ArrayList<>();
         String headerLine = br.readLine();
         while (!headerLine.equals("")) {
-            log.info("http header line: {}", headerLine);
+            log.debug("http header line: {}", headerLine);
             request.headers.add(HttpRequestUtils.parseHeader(headerLine));
             headerLine = br.readLine();
         }

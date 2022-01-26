@@ -3,12 +3,13 @@ package webserver.handler;
 import exception.InvalidRequestException;
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import org.apache.tika.Tika;
 import webserver.request.Request;
 import webserver.response.Response;
 import webserver.response.StatusCode;
 
-public class GetStaticFileHandler implements Handler{
+public class GetStaticFileHandler implements Handler {
+
     private static final String STATIC_FILE_ROOT_PATH = "./webapp";
 
     @Override
@@ -16,11 +17,11 @@ public class GetStaticFileHandler implements Handler{
         response.setVersion(request.getVersion());
         response.setStatusCode(StatusCode.OK);
 
-        Path path = new File(STATIC_FILE_ROOT_PATH + request.getUri()).toPath();
-        String mimeType = Files.probeContentType(path);
+        File file = new File(STATIC_FILE_ROOT_PATH + request.getUri());
+        String mimeType = new Tika().detect(file);
         if (mimeType == null) {
-            throw new InvalidRequestException("요청한 파일을 처리할 수 없음");
+            throw new InvalidRequestException("file " + file + "의 mimeType 이 " + mimeType);
         }
-        response.setContents(mimeType + ";charset=utf-8", Files.readAllBytes(path));
+        response.setContents(mimeType, Files.readAllBytes(file.toPath()));
     }
 }
