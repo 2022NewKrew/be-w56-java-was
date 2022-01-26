@@ -1,16 +1,13 @@
 package http.util;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import http.HttpHeaders;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,36 +30,11 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
-//    public static HttpRequestInfo parseRequestInfo(String initialLine) {
-//        return HttpRequestInfo.builder().method()
-//    }
-    public static HttpHeaders parseHttpHeaders(BufferedReader br) throws IOException {
-        HttpHeaders headers = new HttpHeaders();
-        String line;
-        String[] tokens;
-
-        while (true) {
-            line = br.readLine();
-            if (Strings.isNullOrEmpty(line)) {
-                break;
-            }
-
-            tokens = line.split(": ");
-            if (tokens.length != 2) {
-                throw new IOException();
-            }
-
-            headers.add(tokens[0], tokens[1]);
-        }
-
-        return headers;
-    }
-
     /* ---------------------------------------------------------------------- */
 
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
-            return Maps.newHashMap();
+            return new HashMap<>();
         }
 
         String[] tokens = values.split(separator);
