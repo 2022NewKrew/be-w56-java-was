@@ -73,7 +73,7 @@ public enum RequestMappingInfo {
         try {
             RequestMappingInfo requestMappingInfo = requestMap.get(path);
             return requestMappingInfo.handle(request, dos);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             throw new BadRequestException(dos);
         } catch (Exception e) {
             throw new WebServerException(dos);
