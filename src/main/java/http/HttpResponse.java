@@ -22,7 +22,7 @@ public class HttpResponse {
         dos = new DataOutputStream(out);
     }
 
-    public void getResponse(String url) {
+    public void forward(String url) {
         byte[] body;
         try {
             body = Files.readAllBytes(new File("./webapp" + url).toPath());
