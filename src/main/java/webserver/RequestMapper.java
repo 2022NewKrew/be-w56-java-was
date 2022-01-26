@@ -13,24 +13,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static webserver.WebServer.DEFAULT_RESOURCES_DIR;
 
 public class RequestMapper {
+
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
-    private static final Map<String, RequestMappingInfo> requestMap;
 
-    static {
-        requestMap = new HashMap<>();
-        for (RequestMappingInfo value : RequestMappingInfo.values()) {
-            requestMap.put(value.getPath(), value);
-        }
-    }
-
-    public static MyHttpResponse process(MyHttpRequest in, OutputStream out) {
-        String path = in.uri().getPath();
+    public static MyHttpResponse process(MyHttpRequest request, OutputStream out) {
+        String path = request.uri().getPath();
         DataOutputStream dos = new DataOutputStream(out);
 
         boolean isRequestStaticResource = Arrays.stream(MIME.values())
@@ -40,17 +31,7 @@ public class RequestMapper {
             return responseStaticResource(dos, path);
         }
 
-        if (!requestMap.containsKey(path)) {
-            return response404NotFound(dos);
-        }
-        try {
-            return requestMap.get(path).handle(in, dos);
-        } catch (IllegalArgumentException e) {
-            return response400BadRequest(dos, e);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return response500InternalServerError(dos);
-        }
+        return RequestMappingInfo.handleRequest(request, dos, path);
     }
 
     private static MyHttpResponse responseStaticResource(DataOutputStream dos, String path) {

@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.exception.WebServerException;
 import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;
 
@@ -27,7 +28,11 @@ public class RequestHandler extends Thread {
             MyHttpResponse response = RequestMapper.process(request, out);
             response.writeBytes();
             response.flush();
-        } catch (IOException e) {
+        } catch (WebServerException e) {
+            // TODO - 웹서버 예외 처리
+            log.error(e.getMessage());
+        } catch (Exception e) {
+            // TODO - 비정상 예외 처리
             log.error(e.getMessage());
         }
     }
