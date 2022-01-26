@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
+import webserver.view.ViewResolver;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -32,7 +33,9 @@ public class RequestHandler extends Thread {
 
             HttpResponse response = FrontController.getInstance().process(request);
             DataOutputStream dos = new DataOutputStream(out);
-            response.send(dos);
+
+            ViewResolver resolver = ViewResolver.getInstance();
+            resolver.render(dos, response);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

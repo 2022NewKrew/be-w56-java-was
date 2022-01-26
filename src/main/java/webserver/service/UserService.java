@@ -1,6 +1,7 @@
 package webserver.service;
 
 import db.DataBase;
+import exception.UnAuthorizedException;
 import model.User;
 
 public class UserService {
@@ -10,5 +11,9 @@ public class UserService {
         }
 
         DataBase.addUser(user);
+    }
+
+    public User findUser(String userId){
+        return DataBase.findUserById(userId);
     }
 }

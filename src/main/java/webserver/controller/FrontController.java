@@ -2,8 +2,8 @@ package webserver.controller;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import exception.UnAuthorizedException;
 import webserver.http.*;
-import webserver.view.ViewResolver;
 
 
 public class FrontController implements HttpController{
@@ -24,16 +24,18 @@ public class FrontController implements HttpController{
     @Override
     public HttpResponse process(HttpRequest request){
         try{
-            ViewResolver resolver = ViewResolver.getInstance();
-
             if(controllerMap.contains(request.getMethod(), request.getUrl())){
                 HttpController controller = controllerMap.get(request.getMethod(), request.getUrl());
-                return resolver.findView(controller.process(request));
+                return controller.process(request);
             }
-
-            return resolver.findView(new HttpResponse(HttpStatus.OK, request.getUrl()));
+            return new HttpResponse(HttpStatus.OK, request.getUrl());
         } catch(IllegalArgumentException e){
             return new HttpResponse(HttpStatus.BAD_REQUEST, HttpConst.ERROR_PAGE);
+        } catch (UnAuthorizedException e){
+            return new HttpResponse(HttpStatus.UNAUTHORIZED, HttpConst.LOGIN_PAGE);
+        }
+        catch(Exception e){
+            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpConst.ERROR_PAGE);
         }
     }
 }

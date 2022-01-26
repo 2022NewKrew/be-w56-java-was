@@ -8,23 +8,18 @@ import java.util.Map;
 public class HttpResponse {
     private HttpStatus status;
     private String url;
-    private Map<String, String> headers;
+    private Map<String, String> headers = new HashMap<>();
+    private Map<String, String> cookie = new HashMap<>();
     private byte[] body = new byte[0];
 
     public HttpResponse(HttpStatus status){
         this.status = status;
         this.url = "/";
-        this.headers = new HashMap<>();
     }
 
     public HttpResponse(HttpStatus status, String url){
-        this(status);
+        this.status = status;
         this.url = url;
-    }
-
-    public HttpResponse(HttpStatus status, String url, Map<String, String> headers) {
-        this(status, url);
-        this.headers = headers;
     }
 
     public String getUrl() {
@@ -47,7 +42,14 @@ public class HttpResponse {
         headers.put(key, value);
     }
 
+    public void setCookie(String key, String value){
+        cookie.put(key, value);
+    }
+
     public void send(DataOutputStream dos) throws IOException {
+        if(cookie.size() > 0){
+            responseSetCookie();
+        }
         responseSetHeader(dos, body.length);
         responseSetBody(dos, body);
     }
@@ -59,6 +61,20 @@ public class HttpResponse {
             dos.writeBytes(key + ": " + headers.get(key) + "\r\n");
         }
         dos.writeBytes("\r\n");
+    }
+
+    private void responseSetCookie(){
+        StringBuilder sb = new StringBuilder();
+        for (String key : cookie.keySet()) {
+            sb.append(key)
+              .append("=")
+              .append(cookie.get(key))
+              .append(";");
+        }
+
+        sb.deleteCharAt(sb.length()-1);
+
+        headers.put("Set-Cookie", sb.toString());
     }
 
     private void responseSetBody(DataOutputStream dos, byte[] body) throws IOException{

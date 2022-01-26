@@ -11,6 +11,7 @@ public class HttpRequest {
     private Map<String, String> headers;
     private Map<String, String> queryParameter;
     private Map<String, String> body;
+    private Map<String, String> cookies;
     private HttpMethod httpMethod;
     private String url;
 
@@ -20,6 +21,10 @@ public class HttpRequest {
         requestParsingQueryParam(HttpRequestUtils.parseUrl(reqLine));
         requestParsingHeader(reqHeader);
         body = new HashMap<>();
+        cookies = new HashMap<>();
+        if(headers.containsKey("Cookie")){
+            requestParsingCookie(headers.get("Cookie"));
+        }
     }
 
     private void requestParsingQueryParam(String url){
@@ -39,6 +44,10 @@ public class HttpRequest {
                         HttpRequestUtils.Pair::getKey,
                         HttpRequestUtils.Pair::getValue
                 ));
+    }
+
+    private void requestParsingCookie(String cookies){
+        this.cookies = HttpRequestUtils.parseCookies(cookies);
     }
 
     public String getHeader(String key) {
@@ -63,5 +72,10 @@ public class HttpRequest {
 
     public void setBody(String body) {
         this.body = HttpRequestUtils.parseQueryString(body);
+    }
+
+
+    public String getCookie(String key) {
+        return cookies.get(key);
     }
 }
