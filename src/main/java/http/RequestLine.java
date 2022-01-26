@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Map;
 
 public class RequestLine {
     private static final Logger log = LoggerFactory.getLogger(RequestLine.class);
@@ -55,15 +54,7 @@ public class RequestLine {
         return path;
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public QueryString getQueryString() {
-        return queryString;
-    }
-
-    public Map<String, String> getQueryStringMap() {
-        return queryString.getQueryStringMap();
+    public String getQueryString(String key) {
+        return queryString.getValue(key);
     }
 }

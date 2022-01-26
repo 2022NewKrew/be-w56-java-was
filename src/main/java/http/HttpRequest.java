@@ -16,23 +16,23 @@ public class HttpRequest {
         }
     }
 
-    public HttpHeader getHeader() {
-        return header;
-    }
-
-    public RequestLine getRequestLine() {
-        return requestLine;
-    }
-
-    public RequestBody getRequestBody() {
-        return requestBody;
-    }
-
     public String getPath() {
         return requestLine.getPath();
     }
 
     public String getMethod() {
         return requestLine.getMethod();
+    }
+
+    public String getQueryString(String key) {
+        return requestLine.getQueryString(key);
+    }
+
+    public String getHeader(String key) {
+        return header.getValue(key);
+    }
+
+    public String getRequestBody(String key) {
+        return requestBody.getValue(key);
     }
 }

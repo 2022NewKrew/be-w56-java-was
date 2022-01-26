@@ -27,7 +27,7 @@ public class QueryString {
         this.queryStringMap = Collections.unmodifiableMap(queryStringMap);
     }
 
-    public Map<String, String> getQueryStringMap() {
-        return queryStringMap;
+    public String getValue(String key) {
+        return queryStringMap.get(key);
     }
 }

@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Map;
 
 @Controller
 public class UserController {
@@ -29,8 +28,8 @@ public class UserController {
     @RequestMapping(value = "/user", method = "POST")
     public HttpResponse createUser() {
         try {
-            Map<String, String> requestBodyMap = httpRequest.getRequestBody().getRequestBodyMap();
-            User user = new User(requestBodyMap.get("userId"), requestBodyMap.get("password"), requestBodyMap.get("name"), requestBodyMap.get("email"));
+            User user = new User(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"),
+                    httpRequest.getRequestBody("name"), httpRequest.getRequestBody("email"));
             DataBase.addUser(user);
 
             File file = new File("./webapp/index.html");

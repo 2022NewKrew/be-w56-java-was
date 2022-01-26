@@ -52,4 +52,8 @@ public class HttpHeader {
     public Map<String, String> getHeaders() {
         return headers;
     }
+
+    public String getValue(String key) {
+        return headers.get(key);
+    }
 }

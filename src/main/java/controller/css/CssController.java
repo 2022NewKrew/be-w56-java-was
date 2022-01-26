@@ -26,7 +26,7 @@ public class CssController {
     @RequestMapping(value = "/css", method = "GET")
     public HttpResponse getCss() {
         try {
-            File file = new File("./webapp" + httpRequest.getRequestLine().getPath());
+            File file = new File("./webapp" + httpRequest.getPath());
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();

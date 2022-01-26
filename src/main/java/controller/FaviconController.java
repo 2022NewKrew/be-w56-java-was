@@ -26,7 +26,7 @@ public class FaviconController {
     @RequestMapping(value = "/favicon", method = "GET")
     public HttpResponse getFavicon() {
         try {
-            File file = new File("./webapp" + httpRequest.getRequestLine().getPath());
+            File file = new File("./webapp" + httpRequest.getPath());
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();

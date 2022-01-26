@@ -58,7 +58,7 @@ public class ControllerHandler {
     }
 
     private static HttpResponse treatUnspecifiedRequest(HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        String path = httpRequest.getRequestLine().getPath();
+        String path = httpRequest.getPath();
         Class<?> klass = null;
 
         if (path.startsWith("/css")) {

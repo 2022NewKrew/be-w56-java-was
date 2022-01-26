@@ -32,7 +32,7 @@ public class RequestBody {
         this.requestBodyMap = Collections.unmodifiableMap(requestBodyMap);
     }
 
-    public Map<String, String> getRequestBodyMap() {
-        return requestBodyMap;
+    public String getValue(String key) {
+        return requestBodyMap.get(key);
     }
 }

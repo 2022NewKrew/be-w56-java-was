@@ -26,7 +26,7 @@ public class ViewController {
     @RequestMapping(value = "/view", method = "GET")
     public HttpResponse getView() {
         try {
-            File file = new File("./webapp" + httpRequest.getRequestLine().getPath());
+            File file = new File("./webapp" + httpRequest.getPath());
             byte[] body = Files.readAllBytes(file.toPath());
 
             HttpHeader responseHeader = new HttpHeader();
