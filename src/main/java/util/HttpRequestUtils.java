@@ -1,7 +1,6 @@
 package util;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -53,7 +52,8 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static Pair parseRequestLine(String requestLine) {
+    public static List<Pair> parseRequestLine(String requestLine) {
+        List<Pair> requestLineList = new ArrayList<>();
         String[] tokens = requestLine.split(" ");
         if (tokens.length != 3) {
             return null;
@@ -61,7 +61,10 @@ public class HttpRequestUtils {
         if (!tokens[2].equals("HTTP/1.1")) {
             return null;
         }
-        return new Pair(tokens[0], tokens[1]);
+        requestLineList.add(new Pair("Method", tokens[0]));
+        requestLineList.add(new Pair("Url", tokens[1]));
+        requestLineList.add(new Pair("Version", tokens[2]));
+        return requestLineList;
     }
 
     public static String getUrlExtension(String url) {
