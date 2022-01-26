@@ -1,27 +1,22 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
 
     private String version;
-    private int statusCode;
-    private String statusMessage;
+    private HttpStatus httpStatus;
     private Map<String, String> headers;
     private byte[] body;
 
     public HttpResponse() {
         this.headers = new HashMap<>();
+        this.version = "HTTP/1.1";
     }
 
-    public void set200Header() {
-        this.version = "HTTP/1.1";
-        this.statusCode = 200;
-        this.statusMessage = "OK";
+    public void setStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 
     public void setHeader(String key, String value) {
@@ -33,18 +28,11 @@ public class HttpResponse {
         this.body = body;
     }
 
-
     public String getVersion() {
         return version;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
+    public HttpStatus getHttpStatus() { return httpStatus; }
 
     public Map<String, String> getHeaders() {
         return headers;
@@ -55,7 +43,7 @@ public class HttpResponse {
     }
 
     public String toHeader() {
-        String responseMessage = String.format("%s %d %s \r\n", version, statusCode, statusMessage);
+        String responseMessage = String.format("%s %d %s \r\n", version, httpStatus.getCode(), httpStatus.getMessage());
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             responseMessage += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
         }

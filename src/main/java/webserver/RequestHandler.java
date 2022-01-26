@@ -23,10 +23,9 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            DataOutputStream dos = new DataOutputStream(out);
+            DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = createHttpRequest(br);
             log.debug(httpRequest.toMessage());
@@ -36,8 +35,6 @@ public class RequestHandler extends Thread {
             FrontController.getResponse(httpRequest, httpResponse);
             response(dos, httpResponse);
 
-            br.close();
-            dos.close();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -52,7 +49,7 @@ public class RequestHandler extends Thread {
             headers.put(line.split(":")[0].trim(), line.split(":")[1].trim());
             line = br.readLine();
         }
-        return new HttpRequest(tokens[0], tokens[1], tokens[2], headers, "");
+        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, "");
     }
 
     public static HttpResponse createHttpResponse(){

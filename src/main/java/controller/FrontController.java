@@ -2,6 +2,7 @@ package controller;
 
 import webserver.HttpRequest;
 import webserver.HttpResponse;
+import webserver.HttpStatus;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class FrontController {
             view = httpRequest.getPath();
         }
 
-        httpResponse.set200Header();
+        httpResponse.setStatus(HttpStatus.OK);
         httpResponse.setBody(ViewMapper.getBytes(view));
     }
 }

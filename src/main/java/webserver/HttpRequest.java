@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class HttpRequest {
 
-    private final String method; // TODO : enum 클래스로?!
+    private final HttpMethod method;
     private final String uri;
     private final String path;
     private final String version;
@@ -18,7 +18,7 @@ public class HttpRequest {
     private Map<String, String> queryString;
     private Map<String, String> cookies;
 
-    public HttpRequest(String method, String uri, String version, Map<String, String> headers, String body) {
+    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> headers, String body) {
         this.method = method;
         this.uri = uri;
         this.version = version;
@@ -37,7 +37,7 @@ public class HttpRequest {
     }
 
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 

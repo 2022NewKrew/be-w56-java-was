@@ -13,7 +13,7 @@ class HttpRequestTest {
     @Test
     @DisplayName("파라미터를 가지지 않는 GET 요청 메세지 테스트")
     void constructorTest() {
-        String method = "GET";
+        HttpMethod method = HttpMethod.GET;
         String uri = "/user/create";
         String version = "HTTP/1.1";
         Map<String, String> headers = new HashMap<>();
@@ -35,7 +35,7 @@ class HttpRequestTest {
     @Test
     @DisplayName("파라미터를 가지는 GET 요청 메세지 테스트")
     void constructorTest2() {
-        String method = "GET";
+        HttpMethod method = HttpMethod.GET;
         String uri = "/user/create?userId=jjj&password=123&name=123&email=dhso%40nnnn.nnn";
         String version = "HTTP/1.1";
         Map<String, String> headers = new HashMap<>();
