@@ -1,50 +1,28 @@
-package util;
+package http.request.utils.parser;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
+public abstract class AbstractKeyValueParser {
 
-public class HttpRequestUtils {
-    private static final String QUERY_STRING_DELIMITER = "&";
-    private static final String COOKIE_DELIMITER = ";";
-    private static final String PARAMETER_KEY_VALUE_DELIMITER = "=";
-    private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
-    private static final String REQUEST_LINE_DELIMITER = " ";
-    private static final String URI_QUERY_DELIMITER = "\\?";
-
-    /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
-    public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, QUERY_STRING_DELIMITER);
-    }
-
-    /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
-     */
-    public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, COOKIE_DELIMITER);
-    }
-
-    private static Map<String, String> parseValues(String values, String separator) {
+    protected static Map<String, String> parseInternal(String values, String itemDelimiter, String keyValueDelimiter) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
 
-        String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, PARAMETER_KEY_VALUE_DELIMITER)).filter(Objects::nonNull)
+        String[] tokens = values.split(itemDelimiter);
+        return Arrays.stream(tokens)
+                .map(t -> getKeyValue(t, keyValueDelimiter))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    static Pair getKeyValue(String keyValue, String regex) {
+    private static Pair getKeyValue(String keyValue, String regex) {
         if (Strings.isNullOrEmpty(keyValue)) {
             return null;
         }
@@ -57,25 +35,7 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, HEADER_KEY_VALUE_DELIMITER);
-    }
-
-    public static String[] tokenizeRequestLine(String requestLine) {
-        return requestLine.split(REQUEST_LINE_DELIMITER);
-    }
-
-    public static String[] tokenizeUriAndPath(String requestUri) {
-        String[] tokens = requestUri.split(URI_QUERY_DELIMITER);
-
-        if (tokens.length < 2) {
-            return new String[]{requestUri, ""};
-        }
-
-        return tokens;
-    }
-
-    public static class Pair {
+    private static class Pair {
         String key;
         String value;
 

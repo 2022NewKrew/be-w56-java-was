@@ -1,7 +1,11 @@
 package http.request;
 
-import util.HttpRequestUtils;
-import util.IOUtils;
+import http.common.HttpHeaderKeys;
+import http.request.utils.parser.BodyParser;
+import http.request.utils.parser.QueryParser;
+import http.request.utils.tokenizer.RequestLineTokenizer;
+import http.request.utils.tokenizer.UriTokenizer;
+import http.request.utils.IOUtils;
 import http.common.HttpHeaders;
 import http.common.HttpVersion;
 
@@ -31,11 +35,11 @@ public class HttpRequest {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
         String requestLine = br.readLine();
-        String[] tokenizedRequestLine = HttpRequestUtils.tokenizeRequestLine(requestLine);
+        String[] tokenizedRequestLine = RequestLineTokenizer.tokenize(requestLine);
         HttpMethod httpMethod = HttpMethod.valueOf(tokenizedRequestLine[0]);
-        String[] tokenizedRequestUri = HttpRequestUtils.tokenizeUriAndPath(tokenizedRequestLine[1]);
+        String[] tokenizedRequestUri = UriTokenizer.tokenize(tokenizedRequestLine[1]);
         HttpUri httpUri = new HttpUri(tokenizedRequestUri[0]);
-        HttpQueries httpQueries = new HttpQueries(HttpRequestUtils.parseQueryString(tokenizedRequestUri[1]));
+        HttpQueries httpQueries = new HttpQueries(QueryParser.parseQuery(tokenizedRequestUri[1]));
         HttpVersion httpVersion = HttpVersion.fromString(tokenizedRequestLine[2]);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -48,8 +52,8 @@ public class HttpRequest {
 
         HttpRequestBody httpRequestBody;
         try {
-            int contentLength = Integer.parseInt(httpHeaders.getHeader("Content-Length"));
-            httpRequestBody = new HttpRequestBody(IOUtils.readData(br, contentLength));
+            int contentLength = Integer.parseInt(httpHeaders.getHeader(HttpHeaderKeys.CONTENT_LENGTH));
+            httpRequestBody = new HttpRequestBody(BodyParser.parseBody(IOUtils.readData(br, contentLength)));
         } catch (NumberFormatException e) {
             httpRequestBody = HttpRequestBody.empty();
         }
@@ -71,6 +75,10 @@ public class HttpRequest {
 
     public String getQuery(String name) {
         return httpQueries.getQuery(name);
+    }
+
+    public String getBody(String name) {
+        return httpRequestBody.getBody(name);
     }
 
     @Override

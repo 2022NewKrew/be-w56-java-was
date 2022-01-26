@@ -3,7 +3,6 @@ package webserver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 import handler.HandlerMapping;
@@ -13,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 
-public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class RequestDispatcher extends Thread {
+    private static final Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
 
     private final Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestDispatcher(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
@@ -36,20 +35,18 @@ public class RequestHandler extends Thread {
                 httpResponse.send(out);
                 return;
             }
-            String viewName = handlerMethod.invoke(httpRequest);
-            HttpResponse httpResponse = HttpResponse.of(httpRequest, viewName);
+            HttpResponse httpResponse;
+            try {
+                String viewName = handlerMethod.invoke(httpRequest);
+                httpResponse = HttpResponse.of(httpRequest, viewName);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                httpResponse = HttpResponse.error();
+            }
             log.info(httpResponse.toString());
             httpResponse.send(out);
         } catch (IOException e) {
             log.error(e.getMessage());
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
         }
     }
 

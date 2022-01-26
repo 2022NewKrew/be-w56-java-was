@@ -32,4 +32,18 @@ public class UserController {
         userService.signupUser(user);
         return "/index.html";
     }
+
+    @RequestMapping(method = HttpMethod.POST, uri = "/user/create")
+    public String signupByPost(HttpRequest httpRequest) {
+        User user = new User(
+                httpRequest.getBody("userId"),
+                httpRequest.getBody("password"),
+                httpRequest.getBody("name"),
+                httpRequest.getBody("email"));
+
+        log.info(user.toString());
+
+        userService.signupUser(user);
+        return "/index.html";
+    }
 }

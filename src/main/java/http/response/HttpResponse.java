@@ -12,6 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 
 public class HttpResponse {
+    private static final String VIEW_FILE_ROOT_PATH = "./webapp";
+    private static final String ERROR_VIEW_URI = "/error.html";
+
     private static final String HTTP_RESPONSE_STATUS_LINE_DELIMITER = " ";
     private static final String HTTP_RESPONSE_LINE_DELIMITER = "\r\n";
 
@@ -32,13 +35,27 @@ public class HttpResponse {
         HttpStatus status;
         byte[] viewByteArray;
         try {
-            viewByteArray = Files.readAllBytes(new File("./webapp" + viewName).toPath());
+            viewByteArray = Files.readAllBytes(new File(VIEW_FILE_ROOT_PATH + viewName).toPath());
             status = HttpStatus.OK;
         } catch (NoSuchFileException e) {
-            viewName = "/error.html";
-            viewByteArray = Files.readAllBytes(new File("./webapp" + viewName).toPath());
+            viewName = ERROR_VIEW_URI;
+            viewByteArray = Files.readAllBytes(new File(VIEW_FILE_ROOT_PATH + viewName).toPath());
             status = HttpStatus.NOT_FOUND;
         }
+        HttpResponseBody body = HttpResponseBody.of(viewByteArray, viewName);
+        HttpHeaders httpHeaders = HttpHeaders.from(body);
+
+        return new HttpResponse(version, status, httpHeaders, body);
+    }
+
+    public static HttpResponse error() throws IOException {
+        HttpVersion version = HttpVersion.HTTP_1_1;
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        byte[] viewByteArray;
+
+        String viewName = ERROR_VIEW_URI;
+        viewByteArray = Files.readAllBytes(new File(VIEW_FILE_ROOT_PATH + viewName).toPath());
+
         HttpResponseBody body = HttpResponseBody.of(viewByteArray, viewName);
         HttpHeaders httpHeaders = HttpHeaders.from(body);
 

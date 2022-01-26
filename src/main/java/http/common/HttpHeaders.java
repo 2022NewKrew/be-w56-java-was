@@ -21,12 +21,14 @@ public class HttpHeaders {
 
     public static HttpHeaders from(HttpResponseBody body) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", body.getContentType() + ";charset=utf-8");
-        headers.put("Content-Length", String.valueOf(body.getLength()));
+        headers.put(HttpHeaderKeys.CONTENT_TYPE.getKey(), body.getContentType() + ";charset=utf-8");
+        headers.put(HttpHeaderKeys.CONTENT_LENGTH.getKey(), String.valueOf(body.getLength()));
         return new HttpHeaders(headers);
     }
 
-    public String getHeader(String name) {
+    public String getHeader(HttpHeaderKeys key) {
+        String name = key.getKey();
+
         if (headers.containsKey(name)) {
             return headers.get(name);
         }

@@ -2,7 +2,6 @@ package handler;
 
 import annotation.Controller;
 import annotation.RequestMapping;
-import http.request.HttpMethod;
 import http.request.HttpRequest;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
