@@ -18,6 +18,7 @@ public class ViewResolver {
     private static final ViewResolver instance = new ViewResolver();
     private static final Logger log = LoggerFactory.getLogger(ViewResolver.class);
 
+    private final HttpResponse responseToIndex = new HttpResponse("/index.html");
     private final HttpResponse response404 = new HttpResponse("/error/404.html");
 
     private ViewResolver() {}
@@ -31,19 +32,24 @@ public class ViewResolver {
 
     public void render(DataOutputStream dos, HttpResponse response) {
         if (response.isRedirect()) {
-            redirect(dos, response.getRedirectUrl());
+            redirect(dos, response);
             return;
         }
         render(dos, response, HttpStatus.OK);
     }
 
-    private void redirect(DataOutputStream dos, String urlPath) {
+    private void redirect(DataOutputStream dos, HttpResponse response) {
         try {
-            dos.writeBytes(HttpStatus.FOUND.getHttpResponseHeader());
-            dos.writeBytes(getLocation(urlPath));
+            writeRedirectHeader(dos, response.getRedirectUrl());
+            writeCookies(dos, response);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void writeRedirectHeader(DataOutputStream dos, String urlPath) throws IOException {
+        dos.writeBytes(HttpStatus.FOUND.getHttpResponseHeader());
+        dos.writeBytes(getLocation(urlPath));
     }
 
     private String getLocation(String urlPath) {
@@ -55,6 +61,7 @@ public class ViewResolver {
         try {
             byte[] body = getBytesOfFile(viewPath);
             writeResponseHeader(dos, viewPath, httpStatus);
+            writeCookies(dos, response);
             writeResponseBody(dos, body);
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,6 +83,12 @@ public class ViewResolver {
         return String.format("Content-Type: %s;charset=utf-8" + NEW_LINE, MimeParser.parseMimeType(DEFAULT_PREFIX + viewPath));
     }
 
+    private void writeCookies(DataOutputStream dos, HttpResponse response) throws IOException {
+        if (response.hasCookies()) {
+            dos.writeBytes(response.getHttpHeaderOfSetCookie());
+        }
+    }
+
     private void writeResponseBody(DataOutputStream dos, byte[] body) throws IOException {
         dos.write(body, 0, body.length);
     }
@@ -84,18 +97,14 @@ public class ViewResolver {
         render(dos, response404, HttpStatus.NOT_FOUND);
     }
 
-    public void renderBadRequest(DataOutputStream dos, Exception e) {
-        render(dos, e, HttpStatus.BAD_REQUEST);
-    }
-
-    public void render(DataOutputStream dos, Exception exception, HttpStatus httpStatus) {
+    public void renderExceptionPage(DataOutputStream dos, Exception exception, HttpStatus httpStatus) {
         try {
             byte[] body = exception.getMessage().getBytes();
             writeResponseHeader(dos, httpStatus);
             writeResponseBody(dos, body);
         } catch (IOException e) {
             e.printStackTrace();
-            redirect(dos, "/index.html");
+            redirect(dos, responseToIndex);
         }
     }
 

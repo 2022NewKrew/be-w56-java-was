@@ -36,4 +36,9 @@ public class HttpResponse {
     public String getViewPath() {
         return viewPath;
     }
+
+    public boolean hasCookies() {
+        return !cookies.isEmpty();
+    }
+
 }

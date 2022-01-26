@@ -27,4 +27,8 @@ public class Cookies {
                 .collect(Collectors.joining("; "));
     }
 
+    public boolean isEmpty() {
+        return cookies.isEmpty();
+    }
+
 }

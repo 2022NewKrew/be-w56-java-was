@@ -2,11 +2,13 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.exception.AuthenticationFailureException;
 import webserver.exception.InvalidInputException;
 import webserver.infra.Router;
 import webserver.infra.ViewResolver;
 import webserver.model.HttpRequest;
 import webserver.model.HttpResponse;
+import webserver.model.HttpStatus;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -46,7 +48,11 @@ public class RequestHandler extends Thread {
             viewResolver.render(dos, response);
         } catch (InvalidInputException | IllegalArgumentException e) {
             e.printStackTrace();
-            viewResolver.renderBadRequest(dos, e);
+            viewResolver.renderExceptionPage(dos, e, HttpStatus.BAD_REQUEST);
+        } catch (AuthenticationFailureException e2) {
+            e2.printStackTrace();
+            viewResolver.renderExceptionPage(dos, e2, HttpStatus.UNAUTHORIZED);
         }
     }
+
 }
