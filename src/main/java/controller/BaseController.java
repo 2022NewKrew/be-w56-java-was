@@ -1,7 +1,8 @@
 package controller;
 
 import webserver.model.HttpRequest;
+import webserver.model.HttpResponse;
 
 public interface BaseController {
-    String process(HttpRequest request);
+    HttpResponse process(HttpRequest request);
 }

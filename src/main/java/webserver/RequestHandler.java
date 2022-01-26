@@ -6,6 +6,7 @@ import webserver.exception.InvalidInputException;
 import webserver.infra.Router;
 import webserver.infra.ViewResolver;
 import webserver.model.HttpRequest;
+import webserver.model.HttpResponse;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -41,8 +42,8 @@ public class RequestHandler extends Thread {
         HttpRequest request = new HttpRequest(br);
 
         try {
-            String viewPath = router.route(request);
-            viewResolver.render(dos, viewPath);
+            HttpResponse response = router.route(request);
+            viewResolver.render(dos, response);
         } catch (InvalidInputException | IllegalArgumentException e) {
             e.printStackTrace();
             viewResolver.renderBadRequest(dos, e);

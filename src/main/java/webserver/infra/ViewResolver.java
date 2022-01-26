@@ -3,6 +3,7 @@ package webserver.infra;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.MimeParser;
+import webserver.model.HttpResponse;
 import webserver.model.HttpStatus;
 
 import java.io.DataOutputStream;
@@ -11,12 +12,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class ViewResolver {
-    private static final String PREFIX_OF_REDIRECTION = "redirect:";
     private static final String NEW_LINE = "\r\n";
     private static final String DEFAULT_PREFIX = "./webapp";
 
     private static final ViewResolver instance = new ViewResolver();
     private static final Logger log = LoggerFactory.getLogger(ViewResolver.class);
+
+    private final HttpResponse response404 = new HttpResponse("/error/404.html");
 
     private ViewResolver() {}
 
@@ -27,12 +29,12 @@ public class ViewResolver {
         return instance;
     }
 
-    public void render(DataOutputStream dos, String viewPath) {
-        if (viewPath.startsWith(PREFIX_OF_REDIRECTION)) {
-            redirect(dos, viewPath.substring(PREFIX_OF_REDIRECTION.length()));
+    public void render(DataOutputStream dos, HttpResponse response) {
+        if (response.isRedirect()) {
+            redirect(dos, response.getRedirectUrl());
             return;
         }
-        render(dos, viewPath, HttpStatus.OK);
+        render(dos, response, HttpStatus.OK);
     }
 
     private void redirect(DataOutputStream dos, String urlPath) {
@@ -48,7 +50,8 @@ public class ViewResolver {
         return String.format("Location: %s" + NEW_LINE, urlPath);
     }
 
-    public void render(DataOutputStream dos, String viewPath, HttpStatus httpStatus) {
+    public void render(DataOutputStream dos, HttpResponse response, HttpStatus httpStatus) {
+        String viewPath = response.getViewPath();
         try {
             byte[] body = getBytesOfFile(viewPath);
             writeResponseHeader(dos, viewPath, httpStatus);
@@ -78,7 +81,7 @@ public class ViewResolver {
     }
 
     private void renderNotFound(DataOutputStream dos) {
-        render(dos, "/error/404.html", HttpStatus.NOT_FOUND);
+        render(dos, response404, HttpStatus.NOT_FOUND);
     }
 
     public void renderBadRequest(DataOutputStream dos, Exception e) {

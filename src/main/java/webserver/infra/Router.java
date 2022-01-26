@@ -1,6 +1,7 @@
 package webserver.infra;
 
 import webserver.model.HttpRequest;
+import webserver.model.HttpResponse;
 import webserver.model.Routes;
 
 public class Router {
@@ -17,7 +18,7 @@ public class Router {
         return instance;
     }
 
-    public String route(HttpRequest request) {
+    public HttpResponse route(HttpRequest request) {
         return routes.getController(request.getHttpMethod(), request.getUrl())
                 .process(request);
     }

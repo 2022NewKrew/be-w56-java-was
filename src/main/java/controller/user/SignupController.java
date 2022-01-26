@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.user.SignupService;
 import webserver.model.HttpRequest;
+import webserver.model.HttpResponse;
 
 public class SignupController implements BaseController {
 
@@ -14,12 +15,12 @@ public class SignupController implements BaseController {
     private final SignupService signupService = new SignupService();
 
     @Override
-    public String process(HttpRequest request) {
+    public HttpResponse process(HttpRequest request) {
         UserSignupRequest signupRequest = request.getRequestParams().mapModelObject(UserSignupRequest.class);
         log.info("Signup Request : {}", signupRequest);
 
         signupService.signup(signupRequest);
         log.info("Signup Success!");
-        return "redirect:/index.html";
+        return new HttpResponse("redirect:/index.html");
     }
 }
