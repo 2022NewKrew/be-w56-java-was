@@ -1,6 +1,7 @@
 package controller;
 
 import controller.request.Request;
+import controller.response.Response;
 
 /**
  * Created by melodist
@@ -8,5 +9,5 @@ import controller.request.Request;
  * Time: 오후 6:26
  */
 public interface WebController {
-    String process(Request request);
+    Response process(Request request);
 }

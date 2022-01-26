@@ -1,8 +1,10 @@
 package controller;
 
 import controller.request.Request;
+import controller.response.Response;
 import db.DataBase;
 import model.User;
+import util.HttpStatus;
 
 /**
  * Created by melodist
@@ -12,13 +14,13 @@ import model.User;
 public class UserController implements WebController{
 
     @Override
-    public String process(Request request) {
+    public Response process(Request request) {
         User user = new User(request.getQueryStringParams("userId"),
                 request.getQueryStringParams("password"),
                 request.getQueryStringParams("name"),
                 request.getQueryStringParams("email"));
         DataBase.addUser(user);
 
-        return "/index.html";
+        return new Response(HttpStatus.REDIRECT, "/index.html");
     }
 }
