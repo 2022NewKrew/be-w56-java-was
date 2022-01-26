@@ -1,18 +1,12 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
     /**
@@ -114,34 +108,37 @@ public class HttpRequestUtils {
         }
     }
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-
-    @Getter
-    public static class RequestInfo{
-        private String method;
-        private String url;
-        private String protocol;
-
-        RequestInfo(String[] tokens){
-            method = tokens[0];
-            url = tokens[1];
-            protocol = tokens[2];
-        }
+    public static List<String> readRequestMainHeader(BufferedReader br) throws IOException {
+        String line = br.readLine();
+        return List.of(line.split(" "));
     }
 
-    public static RequestInfo parseRequestLine(String requestLine) {;
-        RequestInfo requestInfo = new RequestInfo(requestLine.split(" "));
-        return requestInfo;
-    }
-
-    public static Map<String,String> readHeader(BufferedReader br) throws IOException {
+    public static Map<String, String> readHeader(BufferedReader br) throws IOException {
         Map<String, String> headerMap = new HashMap<>();
         String line;
-        while (!(line = br.readLine()).equals("")) {
-            String[] split = line.split(":", 2);
-            headerMap.put(split[0].trim(), split[1].trim());
-            log.debug("{} : {}", split[0], split[1]);
+        while ((line = br.readLine()) != null) {
+            if (line.equals("")) {
+                break;
+            }
+            String key = line.split(":")[0];
+            String value = line.split(":")[1].trim();
+            headerMap.put(key, value);
         }
+
         return headerMap;
+    }
+
+    public static Map<String, String> readBody(BufferedReader br, List<String> requestLine, Map<String, String> header) throws IOException {
+
+        if (header.containsKey("Content-Length")){
+            String body = IOUtils.readData(br, Integer.valueOf(header.get("Content-Length")));
+            return parseValues(body, "&");
+        }
+
+        String[] uri = requestLine.get(1).split("\\?");
+        if(uri.length > 1) {
+            return parseValues(uri[1], "&");
+        }
+        return Maps.newHashMap();
     }
 }
