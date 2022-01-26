@@ -34,7 +34,16 @@
   - Header 에 Location 정보를 입력하면, 클라이언트는 해당 Location 을 GET 으로 요청 ( redirect )
   - 클라이언트의 URL 도 함께 바뀌게되고, 해당 페이지가 허용하는 경로 내에선 Path 정보만으로 자유롭게 이동도 가능
 - interface 의 default Method 는 별도의 접근 지정자 선언이 불가능
-
+- 303 상태값을 사용하니 set-cookie 명령이 작동하지 않는 문제 발생
+  - https://stackoverflow.com/questions/63049618/browser-does-not-send-cookies-when-cookie-is-set-on-a-303-redirect
+  - ~~-정확한 설명은 찾기 힘들지만, 다른 페이지로도 완전히 넘길 수 있는 redirect 특징때문에 적용되지 않는 것으로 유추됨~~
+  - 근데 또 내용상으로는 가능하다고 언급은 되는 것 같은데, 코드상 뭐가 문제가 생긴건지 잘 파악이 안되는 상태
+    - https://bugs.chromium.org/p/chromium/issues/detail?id=696204
+    - Cookie 세팅 과정에서 데이터 삽입 조건에서 문제를 발견 
+      - cookie!=null && [ ! ] "".equals(cookie.trim())
+      - 항상 조건식이 false 로 나와서 적용이 안되었던 것
+      - 또한 각 Header 는 \r\n 을 반드시 필요로 한다는 점에 유의
+    
 # 참고 사이트
 - HTTP Header
   - https://dev-ezic.tistory.com/8?category=773711
@@ -48,5 +57,7 @@
   - https://developer.mozilla.org/ko/docs/Web/HTTP/Status/302
   - https://nsinc.tistory.com/168
   - https://cherrypick.co.kr/avoid-location-header-cache-in-brower-using-303-http-code/
-
+- 303 with set-cookie
+  - https://stackoverflow.com/questions/63049618/browser-does-not-send-cookies-when-cookie-is-set-on-a-303-redirect
+  - https://bugs.chromium.org/p/chromium/issues/detail?id=696204
 
