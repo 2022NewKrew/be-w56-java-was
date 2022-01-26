@@ -1,41 +1,37 @@
-package controller;
+package http;
 
-import dto.UserCreateRequestDto;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.Service;
-import webserver.ParsedRequest;
 
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
-public class Controller {
+public class HttpResponse {
 
-    private final Service service = new Service();
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
+    private final DataOutputStream dos;
 
-    public void makeResponse(ParsedRequest parsedRequest, DataOutputStream dos) throws IOException {
-        String url = parsedRequest.getUrl();
-        switch(url) {
-            case "/user/create":
-                Map<String, String> parsedQueryString = parsedRequest.getParsedQueryString();
-                service.signUp(new UserCreateRequestDto(parsedQueryString.get("userId"), parsedQueryString.get("password"), parsedQueryString.get("name"), parsedQueryString.get("email")));
-                response302Header(dos);
-                break;
-            default:
-                Path filePath = Paths.get("./webapp" + url);
-                File file = new File(filePath.toString());
-                String mimeType = new Tika().detect(file);
-                byte[] body = Files.readAllBytes(filePath);
-                response200Header(dos, mimeType, body.length);
-                responseBody(dos, body);
-        }
+    public HttpResponse(OutputStream out) throws IOException {
+        dos = new DataOutputStream(out);
+    }
+
+    public void makeStaticFileResponse(String url) throws IOException {
+        Path filePath = Paths.get("./webapp" + url);
+        File file = new File(filePath.toString());
+        String mimeType = new Tika().detect(file);
+        byte[] body = Files.readAllBytes(filePath);
+        response200Header(dos, mimeType, body.length);
+        responseBody(dos, body);
+    }
+
+    public void makeMainPageRedirectResponse() {
+        response302Header(dos);
     }
 
     private void response200Header(DataOutputStream dos, String mimeType, int lengthOfBodyContent) {
