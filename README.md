@@ -12,3 +12,18 @@
 
 - css 적용이 안되서 팀원들의 pr을 보고 해결했다. content-type에 Accept를 적용했다.
 - Stream.takeWhile : Stream.filter와 달리 조건이 참이 아닐 경우 멈춘다.
+
+# Step 2
+### 구현 내용
+
+- 로저 코드 보면서 리팩토링
+- GET 으로 회원가입 기능 구현
+
+### 새롭게 알게 된 내용
+
+- MIME
+    - (이메일과 함께 동봉할) 바이너리 파일을 텍스트 파일로 변환하는 기술
+    - MIME로 인코딩한 파일은 Content-type 정보를 파일 앞 부분에 담는다.
+    - Content-type
+    - type/subtype
+    - text/html, text/css, text/javascript
