@@ -19,7 +19,7 @@ public class RequestHeader {
         this.paramMap = paramMap;
     }
 
-    public static RequestHeader of(List<String> requestHeaderStrings) {
+    public static RequestHeader from(List<String> requestHeaderStrings) {
         Map<String, String> paramMap = new HashMap<>();
         for (String requestHeaderString : requestHeaderStrings) {
             HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(requestHeaderString);

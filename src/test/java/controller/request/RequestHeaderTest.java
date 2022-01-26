@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by melodist
@@ -19,7 +18,7 @@ class RequestHeaderTest {
         List<String> headerStrings = List.of("Host: test", "Content-Type: test");
 
         // when
-        RequestHeader requestHeader = RequestHeader.of(headerStrings);
+        RequestHeader requestHeader = RequestHeader.from(headerStrings);
 
         // then
         assertThat(requestHeader.getParameter("Host")).isEqualTo("test");
@@ -32,7 +31,7 @@ class RequestHeaderTest {
         List<String> headerStrings = List.of("Host: test", "Content-Type: test");
 
         // when
-        RequestHeader requestHeader = RequestHeader.of(headerStrings);
+        RequestHeader requestHeader = RequestHeader.from(headerStrings);
 
         // then
         assertThat(requestHeader.getParameter("Content-Length")).isNull();
