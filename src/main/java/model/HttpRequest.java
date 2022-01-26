@@ -46,7 +46,7 @@ public class HttpRequest {
         return headers;
     }
 
-    public String getBody() {
-        return body.get();
+    public Body getBody() {
+        return body;
     }
 }

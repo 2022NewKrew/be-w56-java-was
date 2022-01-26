@@ -19,10 +19,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class RequestHandler implements Callable<Void> {
@@ -31,8 +28,7 @@ public class RequestHandler implements Callable<Void> {
     private static final String TOP_HEADER_SEPARATOR = " ";
     private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
 
-    private static final String LOCATION_USER_CREATE = "/user/create";
-
+    private static final String LOCATION_USER_PREFIX = "/user/";
 
     private final Socket connection;
     private final UserController userController;
@@ -70,7 +66,7 @@ public class RequestHandler implements Callable<Void> {
                 processGet(out, location);
             }
             else if (method == HttpMethod.POST) {
-//                processPost(out, location, httpRequest.getBody());
+                processPost(out, location, httpRequest.getBody());
             }
             else {
                 responseWriter.writeErrorResponse(out);
@@ -159,13 +155,14 @@ public class RequestHandler implements Callable<Void> {
     private void processPost(
             final OutputStream out,
             final String location,
-            final Map<String, String> parameterMap
+            final Body body
     ) throws IOException
     {
-        if (LOCATION_USER_CREATE.equals(location)) {
-            responseWriter.writeSuccessResponse(out);
+        if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
+            responseWriter.writeRedirectResponse(out, userController.process(location, body));
+            return;
         }
 
-        responseWriter.writeFileResponse(out, location);
+        responseWriter.writeErrorResponse(out);
     }
 }

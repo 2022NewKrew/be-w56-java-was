@@ -20,7 +20,8 @@ public class ResponseWriter {
 
     private static final String MIME_PLAIN_TEXT = "text/plain";
 
-    private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK \r\n";
+    private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK\r\n";
+    private static final String RESPONSE_TOP_HEADER_MOVED_PERMANENTLY = "HTTP/1.1 301 Moved Permanently\r\n";
     private static final String RESPONSE_BODY_SEPARATOR = "\r\n";
 
     private final Tika tika = new Tika();
@@ -30,7 +31,7 @@ public class ResponseWriter {
         if (file.exists() && file.isFile()) {
             final Path path = file.toPath();
             final byte[] body = Files.readAllBytes(path);
-            writeResponse(out, body, tika.detect(path));
+            write200Response(out, body, tika.detect(path));
 
             return;
         }
@@ -38,22 +39,27 @@ public class ResponseWriter {
         writeErrorResponse(out);
     }
 
-    public void writeSuccessResponse(final OutputStream out)
+    public void writeRedirectResponse(final OutputStream out, final String redirectLocation)
     {
-        final byte[] body = "OK".getBytes(StandardCharsets.UTF_8);
-        writeResponse(out, body, MIME_PLAIN_TEXT);
+        write301Response(out, redirectLocation);
     }
 
     public void writeErrorResponse(final OutputStream out) {
         byte[] body = "Error".getBytes(StandardCharsets.UTF_8);
-        writeResponse(out, body, MIME_PLAIN_TEXT);
+        write200Response(out, body, MIME_PLAIN_TEXT);
     }
 
-    private void writeResponse(final OutputStream out, final byte[] body, final String mime) {
+    private void write200Response(final OutputStream out, final byte[] body, final String mime) {
         final DataOutputStream dos = new DataOutputStream(out);
 
         response200Header(dos, body.length, mime);
         responseBody(dos, body);
+    }
+
+    private void write301Response(final OutputStream out, final String redirectLocation) {
+        final DataOutputStream dos = new DataOutputStream(out);
+
+        response301Header(dos, redirectLocation);
     }
 
     private String createHeaderString(final String key, final String value) {
@@ -69,6 +75,17 @@ public class ResponseWriter {
             dos.flush();
         } catch (IOException e) {
             log.error("response200Header: " + e.getMessage());
+        }
+    }
+
+    private void response301Header(DataOutputStream dos, final String location) {
+        try {
+            dos.writeBytes(RESPONSE_TOP_HEADER_MOVED_PERMANENTLY);
+            dos.writeBytes(createHeaderString("Location", location));
+            dos.writeBytes(RESPONSE_BODY_SEPARATOR);
+            dos.flush();
+        } catch (IOException e) {
+            log.error("response301Header: " + e.getMessage());
         }
     }
 
