@@ -6,7 +6,7 @@ import java.io.*;
 
 public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
-    private DataOutputStream dos;
+    private final DataOutputStream dos;
 
     public Response(OutputStream out) throws IOException {
         this.dos = new DataOutputStream(out);
@@ -16,6 +16,12 @@ public class Response {
         dos.writeBytes("HTTP/1.1 "+Integer.toString(status)+" OK \r\n");
         //dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+        dos.writeBytes("\r\n");
+    }
+
+    public void writeRedirectHeader(String redirectUri) throws IOException {
+        dos.writeBytes("HTTP/1.1 302 OK \r\n");
+        dos.writeBytes("Location: " + redirectUri + "\r\n");
         dos.writeBytes("\r\n");
     }
 

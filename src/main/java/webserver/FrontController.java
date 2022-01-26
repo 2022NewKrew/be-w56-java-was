@@ -5,11 +5,13 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class FrontController extends Thread {
+    private static final Logger log = LoggerFactory.getLogger(FrontController.class);
+    private static final HandlerMapper handlerMapper = new HandlerMapper();
+    private static final ViewResolver viewResolver = new ViewResolver();
     private Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public FrontController(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
@@ -20,8 +22,7 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             Request request = new Request(in);
             Response response = new Response(out);
-            Controller controller = new Controller(request, response);
-            controller.start();
+            viewResolver.resolve(response, handlerMapper.map(request));
         } catch (IOException e) {
             log.error(e.getMessage());
         }
