@@ -20,8 +20,7 @@ public class ViewRenderer {
         return INSTANCE;
     }
 
-    public void redirect(DataOutputStream dos, String urlString) throws IOException {
-
+    public void redirect(DataOutputStream dos, String urlString) {
         response302Header(dos, urlString);
     }
 

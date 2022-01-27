@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebServer {
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         HandlerMapping.initRequestMapping(MainController.class);
         int port = 0;
         if (args == null || args.length == 0) {

@@ -5,6 +5,7 @@ import util.HttpRequestUtils;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
 import webserver.exception.ControllerMethodNotFoundException;
+import webserver.exception.InvalidRequestMethodException;
 import webserver.model.WebHttpRequest;
 
 import java.lang.reflect.Method;
@@ -13,6 +14,10 @@ import java.util.Map;
 
 @Slf4j
 public class HandlerMapping {
+    
+    private HandlerMapping() {
+    }
+
     private static Map<String, Method> getRequestMap;
     private static Map<String, Method> postRequestMap;
     private static Map<String, Method> putRequestMap;
@@ -37,12 +42,18 @@ public class HandlerMapping {
                     switch (requestMethod) {
                         case GET:
                             getRequestMap.put(path, method);
+                            break;
                         case POST:
                             postRequestMap.put(path, method);
+                            break;
                         case PUT:
                             putRequestMap.put(path, method);
+                            break;
                         case DELETE:
                             deleteRequestMap.put(path, method);
+                            break;
+                        default:
+                            throw new InvalidRequestMethodException("Unsupported request method");
                     }
                 }
             }

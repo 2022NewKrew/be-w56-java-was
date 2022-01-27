@@ -19,12 +19,13 @@ import java.util.Map;
 public class DispatcherServlet extends Thread {
     private final MainController controller = MainController.getInstance();
     private final ViewResolver resolver = ViewResolver.getInstance();
-    private Socket connection;
+    private final Socket connection;
 
     public DispatcherServlet(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
+    @Override
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
@@ -60,9 +61,7 @@ public class DispatcherServlet extends Thread {
         try {
             String result = (String) controllerMethod.invoke(controller, params);
             httpResponse.setResult(result);
-        } catch (InvocationTargetException e) {
-            log.error(e.getMessage());
-        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
             log.error(e.getMessage());
         }
     }

@@ -93,27 +93,4 @@ public class WebHttpRequest extends HttpRequest {
                 ", headers=" + headers.toString() +
                 '}';
     }
-//    private String getMimeTypeFromPath() {
-//        if (method.equals("GET")) {
-//            try {
-//                Path path = new File("./webapp" + requestURI).toPath();
-//                String fileName = path.getFileName().toString();
-//                String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-//                Path tmpPath = new File("file" + fileExtension).toPath();
-//                String mimeType = Files.probeContentType(tmpPath);
-//                if (mimeType == null) {
-//                    if (fileExtension.equals(".woff")) {
-//                        return "application/font-woff";
-//                    } else {
-//                        return null;
-//                    }
-//                }
-//                return mimeType;
-//            } catch (IOException e) {
-//                return null;
-//            }
-//        } else {
-//            return null;
-//        }
-//    }
 }
