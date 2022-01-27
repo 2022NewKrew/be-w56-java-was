@@ -12,7 +12,7 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public static void addUser(String body){
+    private static void addUser(String body){
         Map<String, String> queries = HttpRequestUtils.parseBody(body);
         String userId = queries.get("userId");
         String name = queries.get("name");
