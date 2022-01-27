@@ -1,6 +1,7 @@
 package collections;
 
 import java.util.Map;
+import java.util.Set;
 
 public class RequestHeaders {
 
@@ -12,5 +13,9 @@ public class RequestHeaders {
 
     public String getHeader(String headerName) {
         return headers.get(headerName);
+    }
+
+    public Set<String> getHeaderKeys() {
+        return headers.keySet();
     }
 }
