@@ -4,7 +4,6 @@ import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
 import webserver.exception.BadRequestException;
@@ -15,7 +14,6 @@ import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,10 +33,7 @@ public enum RequestMappingInfo {
     SIGN_UP("/user/create") {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
-            URI uri = request.uri();
-            Map<String, String> parameterMap = HttpRequestUtils.parseQueryString(uri.getQuery());
-
-            UserCreateRequest userCreateRequest = UserCreateRequest.of(parameterMap);
+            UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
             User user = userCreateRequest.toEntity();
             DataBase.addUser(user);
             log.info("New user created : {}", user);

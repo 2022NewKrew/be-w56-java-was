@@ -1,6 +1,7 @@
 package dto;
 
 import model.User;
+import util.HttpRequestUtils;
 
 import java.util.Map;
 
@@ -19,7 +20,10 @@ public class UserCreateRequest {
         this.email = parameterMap.get("email");
     }
 
-    public static UserCreateRequest of(Map<String, String> parameterMap) {
+    public static UserCreateRequest from(String requestBody) {
+        requestBody = requestBody.replace("%40", "@");
+
+        Map<String, String> parameterMap = HttpRequestUtils.parseQueryString(requestBody);
         return new UserCreateRequest(parameterMap);
     }
 
