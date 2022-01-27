@@ -55,7 +55,7 @@
   - 네트워크로 넘어오는 값들의 특수문자가 아스키코드값으로 들어와서, 출력에 영향을 받음
   - 따라서 중간에 변환과정이 필요할 것 같음 ( 아스키 -> 특수문자 )
   - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
-
+  
 # 참고 사이트
 - HTTP Header
   - https://dev-ezic.tistory.com/8?category=773711
@@ -79,3 +79,4 @@
   - https://allg.tistory.com/20
   - https://www.tutorialspoint.com/h2_database/h2_database_jdbc_connection.htm
   - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
+

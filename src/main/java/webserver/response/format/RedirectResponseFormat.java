@@ -33,6 +33,9 @@ public class RedirectResponseFormat implements ResponseFormat {
             case STATUS_303:
                 responseHeader(status);
                 break;
+            case STATUS_303:
+                response303Header();
+                break;
             case STATUS_403:
             case STATUS_404:
                 responseErrorHeader();
@@ -43,7 +46,11 @@ public class RedirectResponseFormat implements ResponseFormat {
 
     private void responseHeader(ResponseCode status) {
         try {
+<<<<<<< HEAD:src/main/java/webserver/response/format/RedirectResponseFormat.java
             dos.writeBytes("HTTP/1.1 "+status.getStatusCode()+" "+status.getStatusName()+"\r\n");
+=======
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
+>>>>>>> 1798648 (3-4일차 PR (#190)):src/main/java/webserver/response/PostResponseFormat.java
             dos.writeBytes("Location: "+redirectPath+"\r\n");
             responseCookieHeader();
             dos.writeBytes("\r\n");
@@ -52,13 +59,31 @@ public class RedirectResponseFormat implements ResponseFormat {
         }
     }
 
+<<<<<<< HEAD:src/main/java/webserver/response/format/RedirectResponseFormat.java
+=======
+    private void response303Header() {
+        try {
+            dos.writeBytes("HTTP/1.1 303 See Other\r\n");
+            dos.writeBytes("Location: "+redirectPath+"\r\n");
+            responseCookieHeader();
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+>>>>>>> 1798648 (3-4일차 PR (#190)):src/main/java/webserver/response/PostResponseFormat.java
     private void responseCookieHeader() throws IOException {
         if(cookie != null && !"".equals(cookie.trim())) {
             dos.writeBytes("Set-Cookie: " + cookie + "\r\n");
         }
     }
 
+<<<<<<< HEAD:src/main/java/webserver/response/format/RedirectResponseFormat.java
     private void responseErrorHeader() {
+=======
+    private void responseError() {
+>>>>>>> 1798648 (3-4일차 PR (#190)):src/main/java/webserver/response/PostResponseFormat.java
         try {
             dos.writeBytes("HTTP/1.1 303 See Other\r\n");
             dos.writeBytes("Location: "+ERROR_PATH+"\r\n");
