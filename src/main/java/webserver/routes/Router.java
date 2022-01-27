@@ -1,17 +1,16 @@
 package webserver.routes;
 
 import application.controller.UserController;
+import http.HttpBody;
 import http.HttpHeaders;
 import http.HttpMethod;
 import http.HttpStatus;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
-import http.response.ResponseBody;
 import http.response.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -71,14 +70,14 @@ public class Router {
             HttpResponse result = routeMap.get(routeKey).apply(httpRequest);
             builder = builder.headers(result.getHeaders())
                     .statusLine(result.getStatusLine())
-                    .body(result.getResponseBody());
+                    .body(result.getBody());
 
         } catch (Exception exception) {
             log.info("{} : {}", Router.class.getName(), exception.getMessage());
             return builder
                     .headers(HttpHeaders.of(new HashMap<>()))
                     .statusLine(StatusLine.of(httpRequest.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR))
-                    .body(ResponseBody.of(new byte[0]))
+                    .body(HttpBody.of(new byte[0]))
                     .build();
         }
 

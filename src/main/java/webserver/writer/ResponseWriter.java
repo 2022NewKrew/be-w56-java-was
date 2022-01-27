@@ -1,8 +1,8 @@
 package webserver.writer;
 
+import http.HttpBody;
 import http.HttpHeaders;
 import http.response.HttpResponse;
-import http.response.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +24,10 @@ public class ResponseWriter {
             }
             dos.writeBytes("\r\n");
 
-            ResponseBody responseBody = response.getBody();
-            if(!Objects.isNull(responseBody)) {
-                byte[] body = responseBody.getBody();
-                if(body != null) { dos.write(body, 0, body.length); }
+            HttpBody httpBody = response.getBody();
+            if(!Objects.isNull(httpBody)) {
+                byte[] data = httpBody.getBody();
+                if(data != null) { dos.write(data, 0, data.length); }
             }
             dos.flush();
         } catch (IOException e) {

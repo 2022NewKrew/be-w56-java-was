@@ -1,6 +1,7 @@
 package http.request;
 
 import http.HttpMethod;
+import http.Url;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,10 +20,8 @@ public class StartLine {
         this.httpVersion = httpVersion;
     }
 
-    public static StartLine create(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        String[] elements = line.split(" ");
-        return new StartLine(HttpMethod.getHttpMethod(elements[0]), Url.of(elements[1]), elements[2]);
+    public static StartLine of(HttpMethod method, Url url, String httpVersion) {
+        return new StartLine(method, url, httpVersion);
     }
 
     public HttpMethod getHttpMethod() {

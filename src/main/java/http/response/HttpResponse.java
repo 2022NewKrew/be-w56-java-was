@@ -1,9 +1,9 @@
 package http.response;
 
+import http.HttpBody;
 import http.HttpHeaders;
 import http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
@@ -12,25 +12,25 @@ public class HttpResponse {
 
     private final HttpHeaders headers;
 
-    private final ResponseBody body;
+    private final HttpBody body;
 
-    private HttpResponse(StatusLine statusLine, HttpHeaders headers, ResponseBody body) {
+    private HttpResponse(StatusLine statusLine, HttpHeaders headers, HttpBody body) {
         this.statusLine = statusLine;
         this.headers = headers;
         this.body = body;
     }
 
-    public  HttpResponse(Builder builder) {
+    public HttpResponse(Builder builder) {
         this.statusLine = builder.statusLine;
         this.headers = builder.headers;
         this.body = builder.body;
     }
 
     public static HttpResponse of(String protocolVersion, HttpStatus httpStatus, Map<String, String> headerMap, byte[] body) {
-        return new HttpResponse(StatusLine.of(protocolVersion, httpStatus), HttpHeaders.of(headerMap), ResponseBody.of(body));
+        return new HttpResponse(StatusLine.of(protocolVersion, httpStatus), HttpHeaders.of(headerMap), HttpBody.of(body));
     }
 
-    public ResponseBody getBody() {
+    public HttpBody getBody() {
         return this.body;
     }
 
@@ -54,15 +54,11 @@ public class HttpResponse {
         return statusLine;
     }
 
-    public ResponseBody getResponseBody() {
-        return body;
-    }
-
     public static class Builder {
 
         private StatusLine statusLine;
         private HttpHeaders headers;
-        private ResponseBody body;
+        private HttpBody body;
 
         public static Builder newInstance()
         {
@@ -81,7 +77,7 @@ public class HttpResponse {
             this.headers = headers;
             return this;
         }
-        public Builder body(ResponseBody body)
+        public Builder body(HttpBody body)
         {
             this.body = body;
             return this;

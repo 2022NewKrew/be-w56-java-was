@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.util.HttpRequestParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.processor.HttpProcessor;
@@ -27,7 +28,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = HttpRequest.createHttpRequest(in);
+            HttpRequest httpRequest = HttpRequestParser.parse(in);
             log.info(httpRequest.getBody().toString(StandardCharsets.UTF_8));
 
             HttpResponse httpResponse = HttpProcessor.handle(httpRequest);
