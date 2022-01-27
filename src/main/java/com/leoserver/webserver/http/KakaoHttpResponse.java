@@ -1,11 +1,12 @@
 package com.leoserver.webserver.http;
 
+import com.google.gson.Gson;
 import lombok.Getter;
 
 @Getter
 public class KakaoHttpResponse<T> {
 
-  private KakaoHttpBody<T> body;
+  private KakaoHttpBody body;
   private HttpStatus status;
   private MIME mimeType;
 
@@ -15,7 +16,7 @@ public class KakaoHttpResponse<T> {
 
 
   public KakaoHttpResponse(HttpStatus status, T body, MIME mimeType) {
-    this.body = new KakaoHttpBody<>(body);
+    this.body = new KakaoHttpBody(body);
     this.status = status;
     this.mimeType = mimeType;
   }

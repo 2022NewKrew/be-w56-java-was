@@ -23,7 +23,7 @@ public class ResponseHandler {
 
   public byte[] handleResponseEntity(KakaoHttpResponse<?> response) throws IOException {
 
-    KakaoHttpBody<?> body = response.getBody();
+    KakaoHttpBody body = response.getBody();
     HttpStatus status = response.getStatus();
     MIME mimeType = response.getMimeType();
 

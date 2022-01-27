@@ -11,6 +11,8 @@ public class KakaoHttpHeader {
   private Method method;
   private Uri uri;
   private Host host;
+  private int contentLength;
+  private MIME contentType;
   private Version version;
   private QueryParam queryParam;
   private LocalDateTime date;
@@ -57,6 +59,17 @@ public class KakaoHttpHeader {
 
     if("Host".equals(key)) {
       this.host = new Host(value);
+      return;
+    }
+
+    if("Content-Length".equals(key)) {
+      this.contentLength = Integer.parseInt(value);
+      return;
+    }
+
+    if("Content-Type".equals(key)) {
+      this.contentType = MIME.from(value);
+      return;
     }
 
   }

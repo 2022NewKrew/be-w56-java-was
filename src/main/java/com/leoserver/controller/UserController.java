@@ -5,6 +5,7 @@ import com.leoserver.model.User;
 import com.leoserver.service.UserService;
 import com.leoserver.webserver.annotation.Autowired;
 import com.leoserver.webserver.annotation.Controller;
+import com.leoserver.webserver.annotation.RequestBody;
 import com.leoserver.webserver.annotation.RequestMapping;
 import com.leoserver.webserver.annotation.RequestParam;
 import com.leoserver.webserver.http.HttpStatus;
@@ -37,20 +38,29 @@ public class UserController {
 
     User user = new User(userId, password, name, email);
 
-    userService.test();
+    userService.createUser(user);
 
-    return new KakaoHttpResponse<DefaultDTO>(
+    return new KakaoHttpResponse<>(
         HttpStatus.OK,
         new DefaultDTO("회원이 생성되었습니다.", HttpStatus.OK.name())
     );
   }
 
+
   @RequestMapping(method = Method.POST, path = "/user/create")
-  public KakaoHttpResponse createUserWithRedirect() {
+  public KakaoHttpResponse<DefaultDTO> createUserWithRedirect(@RequestBody User user) {
 
-    //TODO
+    logger.debug("userId : {}", user.getUserId());
+    logger.debug("password : {}", user.getPassword());
+    logger.debug("name : {}", user.getName());
+    logger.debug("email : {}", user.getEmail());
 
-    return null;
+    userService.createUser(user);
+
+    return new KakaoHttpResponse<>(
+        HttpStatus.OK,
+        new DefaultDTO("회원이 생성되었습니다.", HttpStatus.OK.name())
+    );
   }
 
 

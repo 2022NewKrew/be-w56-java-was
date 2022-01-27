@@ -53,18 +53,29 @@ public class ServletHandler {
     Object[] invokeParams = new Object[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
 
-      Parameter parameter = parameters[i];
-      RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
-      String paramKey = requestParam.value();
-
-      QueryParam queryParam = header.getQueryParam();
-      invokeParams[i] = queryParam.get(paramKey)
-          .orElseThrow(IllegalArgumentException::new);    // queryParam 의 요청값이 없음.
+      handleRequestParam(invokeParams, parameters, i, header.getQueryParam());
 
     }
 
     KakaoHttpResponse<?> response = (KakaoHttpResponse<?>) method.invoke(bean, invokeParams);
     return responseHandler.handleResponseEntity(response);
+  }
+
+
+  private void handleRequestParam(Object[] invokeParams, Parameter[] parameters, int index, QueryParam queryParam) {
+
+    Parameter parameter = parameters[index];
+    RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
+
+    if(requestParam == null) {
+      return;
+    }
+
+    String paramKey = requestParam.value();
+
+    invokeParams[index] = queryParam.get(paramKey)
+        .orElseThrow(IllegalArgumentException::new);    // queryParam 의 요청값이 없음.
+
   }
 
 

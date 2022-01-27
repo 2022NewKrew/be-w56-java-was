@@ -18,15 +18,24 @@ public enum MIME {
   IMAGE_X_ICON("image/x-icon", "ico"),
   IMAGE_JPEG("image/jpeg", "jpeg", "jpg"),
   APPLICATION_OCTET_STREAM("application/octet-stream"),
+  APPLICATION_X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded"),
   APPLICATION_JSON("application/json", "json");
 
 
-  private String name;
+  private String value;
   private String[] extensions;
 
-  MIME(String name, String ... extensions) {
-    this.name = name;
+  MIME(String value, String ... extensions) {
+    this.value = value;
     this.extensions = extensions;
+  }
+
+
+  public static MIME from(String contentType) {
+    return Arrays.stream(values())
+        .filter(type -> type.value.equals(contentType))
+        .findAny()
+        .orElseThrow(IllegalArgumentException::new);    // 지원 타입 아님
   }
 
 
@@ -42,8 +51,9 @@ public enum MIME {
         .orElse(APPLICATION_OCTET_STREAM);
   }
 
+
   public String getContentType() {
-    return name;
+    return value;
   }
 
 }

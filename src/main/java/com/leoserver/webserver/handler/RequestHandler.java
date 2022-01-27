@@ -29,13 +29,13 @@ public class RequestHandler extends Thread {
 
   public void run() {
 
-    log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-        connection.getPort());
+    log.debug("New Client Connect! Connected IP : {}, Port : {}, Connection : {}", connection.getInetAddress(),
+        connection.getPort(), connection);
 
     try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
       // Request
-      KakaoHttpRequest request = HttpParser.toRequest(in);
+      KakaoHttpRequest request = new HttpParser(in).toRequest();
       byte[] response;
       log.debug(request.toString());
 

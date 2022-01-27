@@ -11,7 +11,7 @@ public class KakaoHttpRequest {
 
   private UUID id;
   private KakaoHttpHeader header;
-  private KakaoHttpBody<?> body;
+  private KakaoHttpBody body;
 
   private KakaoHttpRequest() {
     this.id = UUID.randomUUID();
@@ -27,7 +27,7 @@ public class KakaoHttpRequest {
 
 
   public static KakaoHttpRequest create(KakaoHttpHeader header) {
-    return create(header, new KakaoHttpBody<>());
+    return create(header, new KakaoHttpBody());
   }
 
 
