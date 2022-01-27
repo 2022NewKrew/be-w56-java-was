@@ -12,7 +12,6 @@ import webserver.http.PathInfo;
 import java.util.Map;
 
 public class UserController implements Controller{
-
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public HttpResponse controlRequest(HttpRequest httpRequest) {
@@ -44,6 +43,7 @@ public class UserController implements Controller{
             log.debug("Login failed: Password mismatch");
             return ResponseGenerator.generateLoginFailedResponse();
         } else {
+            log.debug("Page not found");
             return ResponseGenerator.generateResponse404();
         }
     }
