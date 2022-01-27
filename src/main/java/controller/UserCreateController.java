@@ -6,6 +6,9 @@ import db.DataBase;
 import model.User;
 import util.HttpStatus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by melodist
  * Date: 2022-01-25 025
@@ -21,6 +24,12 @@ public class UserCreateController implements WebController{
                 request.getQueryStringParams("email"));
         DataBase.addUser(user);
 
-        return new Response(HttpStatus.REDIRECT, "/index.html");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Location", "/index.html");
+
+        return new Response.Builder()
+                .redirect()
+                .headers(headers)
+                .build();
     }
 }
