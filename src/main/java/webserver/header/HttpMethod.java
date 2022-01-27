@@ -2,6 +2,7 @@ package webserver.header;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,5 +21,9 @@ public enum HttpMethod {
     public static HttpMethod match(String method) {
         return Optional.ofNullable(methodMap.get(method))
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 HttpMethod"));
+    }
+
+    public boolean isSame(HttpMethod method) {
+        return Objects.equals(this.name(), method.name());
     }
 }

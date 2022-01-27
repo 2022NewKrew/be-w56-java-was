@@ -49,7 +49,7 @@ public class RequestProcessor {
             throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         PostMapping postMapping = method.getAnnotation(PostMapping.class);
-        if(postMapping != null && HttpMethod.POST == httpMethod && postMapping.path().equals(path)) {
+        if(postMapping != null && httpMethod.isSame(HttpMethod.POST) && postMapping.path().equals(path)) {
             log.debug("method : {}  url : {} ", httpMethod, path);
 
             Parameter[] parameters = method.getParameters();
@@ -90,7 +90,7 @@ public class RequestProcessor {
             throws IllegalAccessException, InvocationTargetException {
 
         GetMapping getMapping = method.getAnnotation(GetMapping.class);
-        if(getMapping != null && HttpMethod.GET == httpMethod && getMapping.path().equals(path)) {
+        if(getMapping != null && httpMethod.isSame(HttpMethod.GET) && getMapping.path().equals(path)) {
             log.debug("method : {}  url : {} ", httpMethod, path);
 
             Parameter[] parameters = method.getParameters();
