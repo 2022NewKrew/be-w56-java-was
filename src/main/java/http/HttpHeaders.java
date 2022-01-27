@@ -9,11 +9,6 @@ public class HttpHeaders {
     private Map<String, String> headers = new HashMap<>();
 
     public void addHeader(String headerName, String headerContent) {
-        if (headers.containsKey(headerName)) {
-            String header = headers.get(headerName);
-            return;
-        }
-
         headers.put(headerName, headerContent);
     }
 

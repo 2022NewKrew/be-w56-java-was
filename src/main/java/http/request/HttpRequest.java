@@ -3,17 +3,18 @@ package http.request;
 import http.HttpHeaders;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 public class HttpRequest {
 
     private HttpRequestLine requestLine;
-    private HttpHeaders requestHeader;
+    private HttpHeaders requestHeaders;
     private String body;
 
     public HttpRequest(HttpRequestLine httpRequestLine, HttpHeaders httpRequestHeader, String body) throws IOException {
         requestLine = httpRequestLine;
-        requestHeader = httpRequestHeader;
+        requestHeaders = httpRequestHeader;
         this.body = body;
     }
 
@@ -26,7 +27,7 @@ public class HttpRequest {
     }
 
     public Optional<String> getHeader(String headerName) {
-        return requestHeader.getHeader(headerName);
+        return requestHeaders.getHeader(headerName);
     }
 
     public boolean isMethod(HttpMethod method) {
@@ -37,9 +38,11 @@ public class HttpRequest {
         return body;
     }
 
-    public void loggingRequestHeader() {
-//        for (String header : requestHeader.keySet()) {
-//            log.info(header + ": " + requestHeader.get(header));
-//        }
+    public HttpHeaders getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    public Map<String, String> getHeaders() {
+        return requestHeaders.getHeaders();
     }
 }
