@@ -1,6 +1,9 @@
 package controller.adapter;
 
+import http.header.HttpHeaders;
 import http.request.HttpRequest;
+import http.request.HttpRequestBody;
+import http.request.HttpRequestLine;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +19,7 @@ class StaticHandlerAdapterTest {
     public void staticSupports() {
         // given
         StaticHandlerAdapter staticHandlerAdapter = new StaticHandlerAdapter();
-        HttpRequest request = new HttpRequest("GET /index.html HTTP/1.1", new ArrayList<>(), new ArrayList<>());
+        HttpRequest request = new HttpRequest(new HttpRequestLine("GET /index.html HTTP/1.1"), new HttpHeaders(), new HttpRequestBody(""));
 
         // when
         boolean supports = staticHandlerAdapter.supports(request);

@@ -34,8 +34,10 @@ public class RequestUrlController {
         String password = request.getParam("password");
         User user = DataBase.findUserById(userId);
         if (user == null || !user.getPassword().equals(password)) {
+            response.addCookie("logined", "false");
             return "redirect:/login-failed";
         }
+        response.addCookie("logined", "true");
         return "redirect:/";
     }
 

@@ -4,11 +4,14 @@ import http.header.HttpHeaders;
 import http.status.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 public class HttpResponse {
     private HttpStatus status;
     private HttpHeaders headers;
     private byte[] body;
+    private Map<String, String> cookie;
 
     public HttpResponse() {
         this.status = HttpStatus.OK;
@@ -41,11 +44,17 @@ public class HttpResponse {
     public byte[] getHeaders() {
         StringBuilder sb = new StringBuilder();
         for (String key : headers.keySet()) {
-            String value = headers.getFirst(key);
-            sb.append(key + ": " + value + "\r\n");
+            sb.append(key).append(": ");
+            List<String> values = headers.get(key);
+            String headerValue = String.join(";", values);
+            sb.append(headerValue).append("\r\n");
         }
         sb.append("\r\n");
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public void addCookie(String key, String value) {
+        headers.add(HttpHeaders.SET_COOKIE, key + "=" + value);
     }
 }
