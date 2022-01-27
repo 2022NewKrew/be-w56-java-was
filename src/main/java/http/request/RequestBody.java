@@ -1,6 +1,6 @@
 package http.request;
 
-import java.io.UnsupportedEncodingException;
+import exception.BadRequestException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class RequestBody {
                 bodyData.put(key, value);
             }
         } catch (Exception exception) {
-            throw new IllegalArgumentException("body decoding에 실패하였습니다");
+            throw new BadRequestException("body decoding에 실패하였습니다");
         }
     }
 
