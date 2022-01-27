@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MyHttpRequest {
@@ -19,9 +20,10 @@ public class MyHttpRequest {
     private final String path;
     private final MyHttpResponseHeader header;
     private final Map<String, String> params;
+    private final Map<String, String> cookies;
     private final Mime mime;
 
-    private MyHttpRequest(String method, String path, Map<String, String> params, MyHttpResponseHeader header, Mime mime) {
+    private MyHttpRequest(String method, String path, Map<String, String> params, MyHttpResponseHeader header, Map<String, String> cookies, Mime mime) {
         this.method = method;
         if (path.isEmpty() || path.equals("/"))
             this.path = DEFAULT_PAGE;
@@ -29,6 +31,7 @@ public class MyHttpRequest {
             this.path = path;
         this.params = params;
         this.header = header;
+        this.cookies = cookies;
         this.mime = mime;
     }
 
@@ -52,6 +55,10 @@ public class MyHttpRequest {
         return mime;
     }
 
+    public Map<String, String> getCookies() {
+        return cookies;
+    }
+
     public static class Builder {
         public MyHttpRequest build(InputStream inputStream) throws IOException {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -63,11 +70,14 @@ public class MyHttpRequest {
             String[] urlTokens = url.split("\\?", 2);
             String path = urlTokens[0];
             Mime mime = Mime.getMineByPath(path.toLowerCase());
+            Map<String, String> cookies = new HashMap<>();
             while (true) {
                 line = reader.readLine();
                 if (Strings.isNullOrEmpty(line))
                     break;
                 HttpRequestUtils.Pair header = HttpRequestUtils.parseHeader(line);
+                if (header.getKey().equals("Cookie"))
+                    cookies = HttpRequestUtils.parseCookies(header.getValue());
                 headers.addHeader(header);
             }
             Map<String, String> params = null;
@@ -82,7 +92,7 @@ public class MyHttpRequest {
                 params = HttpRequestUtils.parseQueryString(line);
             }
 
-            return new MyHttpRequest(method, path, params, headers, mime);
+            return new MyHttpRequest(method, path, params, headers, cookies, mime);
         }
     }
 }
