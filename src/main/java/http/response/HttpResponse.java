@@ -1,44 +1,43 @@
 package http.response;
 
+import http.HttpHeaders;
 import http.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.util.Map;
 
 public class HttpResponse {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
+    private HttpStatusCode httpStatusCode = HttpStatusCode.OK;
+    private HttpHeaders httpHeaders = new HttpHeaders();
+    private Resource body;
 
-    private DataOutputStream dos;
+    public HttpResponse() {
 
-    public HttpResponse(DataOutputStream dataOutputStream) {
-        this.dos = dataOutputStream;
     }
 
-    public void send(Resource resource) {
-        writeHeader(resource);
-        writeBody(resource.getContent());
+    public Map<String, String> getHeaders() {
+        return httpHeaders.getHeaders();
     }
 
-    private void writeHeader(Resource resource) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + resource.getType() + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + resource.getContent().length + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    public HttpStatusCode getHttpStatusCode() {
+        return httpStatusCode;
     }
 
-    private void writeBody(byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    public Resource getHttpResponseBody() {
+        return body;
+    }
+
+    public void redirect(String redirectUri) {
+        httpStatusCode = HttpStatusCode.FOUND;
+        httpHeaders.addHeader("Location", redirectUri);
+    }
+
+    public void body(Resource resource) {
+        httpHeaders.addHeader("Content-Type", resource.getType() + ";charset=utf-8");
+        body = resource;
+    }
+
+    public void addCookieAttribute(String cookieName, String cookieValue) {
+        httpHeaders.addHeader("Set-Cookie", String.format("%s=%s; Path=/", cookieName, cookieValue));
     }
 }

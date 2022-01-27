@@ -1,21 +1,19 @@
 package controller;
 
+import db.DataBase;
+import http.request.HttpMethod;
 import http.request.HttpRequest;
-import http.resource.JavaObject;
-import http.resource.JavaObjectJsonParser;
-import http.resource.Resource;
 import http.response.HttpResponse;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
+
+import java.util.Map;
 
 public class SignUpController implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(SignUpController.class);
-
     @Override
     public boolean isSupported(HttpRequest httpRequest) {
-        if ("/user/create".equals(httpRequest.getPath())) {
+        if ("/user/create".equals(httpRequest.getPath()) && httpRequest.isMethod(HttpMethod.POST)) {
             return true;
         }
 
@@ -24,10 +22,11 @@ public class SignUpController implements Controller {
 
     @Override
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) {
-        User user = new User(httpRequest.getParam("userId"), httpRequest.getParam("password"),
-                httpRequest.getParam("name"), httpRequest.getParam("email"));
+        Map<String, String> param = HttpRequestUtils.parseQueryString(httpRequest.getBody());
+        User user = new User(param.get("userId"), param.get("password"),
+                param.get("name"), param.get("email"));
 
-        Resource resource = new JavaObject(user, new JavaObjectJsonParser());
-        httpResponse.send(resource);
+        DataBase.addUser(user);
+        httpResponse.redirect("/");
     }
 }
