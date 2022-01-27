@@ -3,7 +3,6 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.Request;
-import util.request.RequestUrlMapper;
 import util.response.HttpResponseUtils;
 import util.response.Response;
 
@@ -15,7 +14,7 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final RequestUrlMapper requestUrlMapper = RequestUrlMapper.getRequestUrlMapper();
+    private final ControllerMapper controllerMapper = ControllerMapper.getControllerMapper();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -30,7 +29,7 @@ public class RequestHandler extends Thread {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             Request request = new Request(br);
             DataOutputStream dos = new DataOutputStream(out);
-            Response response = requestUrlMapper.mapping(request);
+            Response response = controllerMapper.mapping(request);
             HttpResponseUtils.httpResponse(dos, response);
         } catch (IOException e) {
             log.error(e.getMessage());
