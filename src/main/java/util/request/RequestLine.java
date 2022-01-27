@@ -1,17 +1,19 @@
 package util.request;
 
+import util.HttpMethod;
+
 public class RequestLine {
-    private final String method;
+    private final HttpMethod method;
     private final String url;
     private final String version;
 
     public RequestLine(String method, String url, String version) {
-        this.method = method;
+        this.method = HttpMethod.valueOf(method);
         this.url = url;
         this.version = version;
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 

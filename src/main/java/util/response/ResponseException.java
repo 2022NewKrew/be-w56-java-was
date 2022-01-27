@@ -17,7 +17,7 @@ public class ResponseException {
                 .build();
     }
 
-    public static Response inputErrorResponse() throws IOException {
+    public static Response badRequestResponse() throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp/error.html").toPath());
         return new ResponseBuilder()
                 .setHttpStatus(HttpStatus.BAD_REQUEST)

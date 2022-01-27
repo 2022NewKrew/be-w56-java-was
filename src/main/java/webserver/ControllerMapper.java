@@ -1,8 +1,10 @@
-package util.request;
+package webserver;
 
 import controller.Controller;
 import controller.StaticController;
 import controller.UserController;
+import util.request.Request;
+import util.request.RequestLine;
 import util.response.Response;
 import util.response.ResponseException;
 
@@ -10,12 +12,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestUrlMapper {
+public class ControllerMapper {
 
-    private static final RequestUrlMapper requestUrlMapper = new RequestUrlMapper();
+    private static final ControllerMapper controllerMapper = new ControllerMapper();
     private final Map<String, Controller> controllerMap = new HashMap<>();
 
-    private RequestUrlMapper() {
+    private ControllerMapper() {
         controllerMap.put("static",StaticController.getController());
         controllerMap.put("user",UserController.getUserController());
     }
@@ -27,7 +29,6 @@ public class RequestUrlMapper {
         if (url.matches(".+\\.(html|css|js|woff|ttf|ico)$")) {
             return controllerMap.get("static").view(request, url);
         }
-
         // Controller Mapping
         String key = url.split("/")[1];
         try {
@@ -39,7 +40,7 @@ public class RequestUrlMapper {
 
     }
 
-    public static RequestUrlMapper getRequestUrlMapper() {
-        return requestUrlMapper;
+    public static ControllerMapper getControllerMapper() {
+        return controllerMapper;
     }
 }
