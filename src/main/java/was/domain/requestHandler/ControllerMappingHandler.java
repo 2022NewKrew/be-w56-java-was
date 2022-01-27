@@ -1,6 +1,7 @@
 package was.domain.requestHandler;
 
 import di.annotation.Bean;
+
 import was.domain.controller.Controller;
 import was.domain.controller.StaticResourceController;
 import was.domain.http.HttpRequest;

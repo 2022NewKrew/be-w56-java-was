@@ -72,6 +72,7 @@ public class HttpMapper {
 
     private String createBody(StringTokenizer st) {
         final StringBuilder sb = new StringBuilder();
+
         while (st.hasMoreTokens()) {
             sb.append(getNextToken(st));
         }
@@ -140,6 +141,7 @@ public class HttpMapper {
         final Map<String, String> headers = new HashMap<>();
 
         boolean isPreBlank = false;
+
         while (st.hasMoreTokens()) {
             final String headerLine = getNextToken(st);
 

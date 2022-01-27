@@ -19,6 +19,7 @@ public class StaticResourceController implements Controller {
 
     @Override
     public void handle(HttpRequest req, HttpResponse res) throws IOException {
+
         res.setViewPath(req.getPath());
 
         res.setStatus(HttpStatus.OK);
