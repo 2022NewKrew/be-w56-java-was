@@ -10,6 +10,7 @@ import util.request.MethodType;
 import util.response.HttpResponse;
 import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
+import webserver.controller.common.StaticController;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -26,9 +27,13 @@ class StaticControllerTest {
     void supports(MethodType methodType, String url, boolean expected) {
         //given
         final Controller<String> controller = new StaticController();
+        final HttpRequest httpRequest = HttpRequest.builder()
+                .method(methodType)
+                .url(url)
+                .build();
 
         //when
-        final boolean actual = controller.supports(methodType, url);
+        final boolean actual = controller.supports(httpRequest);
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -71,7 +76,7 @@ class StaticControllerTest {
                 .build();
 
         //when
-        HttpResponse<String> httpResponse = (HttpResponse<String>) controller.handle(httpRequest, dos);
+        HttpResponse<String> httpResponse = (HttpResponse<String>) controller.handle(httpRequest);
 
         //then
         assertThat(httpResponse.getStatus()).isEqualTo(HttpResponseStatus.SUCCESS);
