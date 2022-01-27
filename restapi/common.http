@@ -1,0 +1,5 @@
+### index
+GET http://localhost:8080
+
+### 없는 url
+GET http://localhost:8080/not
