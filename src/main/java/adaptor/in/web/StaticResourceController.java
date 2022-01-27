@@ -27,7 +27,7 @@ public class StaticResourceController {
             return new HttpResponse(
                     ResponseLine.valueOf(HttpStatus.OK),
                     HttpHeader.of(Pair.of("Content-Type", httpRequest.getRequestPath().getContentType().convertToResponse())),
-                    HttpBody.valueOfFile(path.getValue())
+                    HttpByteArrayBody.setFile(path.getValue())
             );
         } catch (IOException e) {
             throw new FileNotFoundException();

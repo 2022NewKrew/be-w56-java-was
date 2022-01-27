@@ -28,6 +28,10 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
+    public static Map<String, String> parseBody(String body) {
+        return parseValues(body, "&");
+    }
+
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();

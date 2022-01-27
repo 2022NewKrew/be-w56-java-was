@@ -5,7 +5,8 @@ import java.util.Optional;
 
 public enum RequestMethod {
 
-    GET("GET");
+    GET("GET"),
+    POST("POST");
 
     private final String value;
 

@@ -6,7 +6,12 @@ public class HttpRequest {
 
     private final RequestLine requestLine;
     private final HttpHeader httpHeader;
-    private final HttpBody httpBody;
+    private HttpBody httpBody;
+
+    public HttpRequest(RequestLine requestLine, HttpHeader httpHeader) {
+        this.requestLine = requestLine;
+        this.httpHeader = httpHeader;
+    }
 
     public HttpRequest(RequestLine requestLine, HttpHeader httpHeader, HttpBody httpBody) {
         this.requestLine = requestLine;
@@ -16,6 +21,10 @@ public class HttpRequest {
 
     public Path getRequestPath() {
         return requestLine.getPath();
+    }
+
+    public HttpBody getRequestBody() {
+        return httpBody;
     }
 
     @Override

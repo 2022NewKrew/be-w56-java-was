@@ -37,7 +37,7 @@ public class HomeController {
         return new HttpResponse(
                 ResponseLine.valueOf(HttpStatus.OK),
                 HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
-                HttpBody.valueOfFile("/index.html")
+                HttpByteArrayBody.setFile("/index.html")
         );
     }
 }

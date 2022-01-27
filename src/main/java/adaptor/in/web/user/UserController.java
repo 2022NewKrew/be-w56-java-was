@@ -5,6 +5,7 @@ import adaptor.in.web.exception.UriNotFoundException;
 import application.SignUpUserService;
 import domain.user.User;
 import infrastructure.model.*;
+import infrastructure.util.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class UserController {
 
         try {
             if (path.matchHandler(REQUEST_MAPPING + "/create")) {
-                return signUpWithResponse(httpRequest);
+                return signUp(httpRequest);
             }
         } catch (IOException e) {
             throw new FileNotFoundException();
@@ -39,16 +40,15 @@ public class UserController {
         throw new UriNotFoundException();
     }
 
-    private HttpResponse signUpWithResponse(HttpRequest request) throws IOException {
+    private HttpResponse signUp(HttpRequest request) throws IOException {
         log.debug("User SignUp Method Called!!");
 
-
-        Map<String, String> pathVariables = request.getRequestPath().getVariables();
+        Map<String, String> body = HttpRequestUtils.parseBody(((HttpStringBody) request.getRequestBody()).getValue());
         User user = User.builder()
-                .userId(pathVariables.get("userId"))
-                .password(pathVariables.get("password"))
-                .name(pathVariables.get("name"))
-                .email(pathVariables.get("email"))
+                .userId(body.get("userId"))
+                .password(body.get("password"))
+                .name(body.get("name"))
+                .email(body.get("email"))
                 .build();
 
         signUpUserService.signUp(user);
@@ -56,7 +56,7 @@ public class UserController {
         return new HttpResponse(
                 ResponseLine.valueOf(HttpStatus.OK),
                 HttpHeader.of(Pair.of("Content-Type", "text/html; charset=utf-8")),
-                HttpBody.valueOfFile("/index.html")
+                HttpByteArrayBody.setFile("/index.html")
         );
     }
 }

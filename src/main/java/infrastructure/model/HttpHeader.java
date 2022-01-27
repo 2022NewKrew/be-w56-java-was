@@ -1,32 +1,35 @@
 package infrastructure.model;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class HttpHeader {
 
-    private final Set<Pair> headers;
+    private final Map<String, String> headers;
 
-    public HttpHeader(Set<Pair> headers) {
+    public HttpHeader(Map<String, String> headers) {
         this.headers = headers;
     }
 
     public static HttpHeader of(Pair... pairs) {
-        return new HttpHeader(
-                Arrays.stream(pairs)
-                        .collect(Collectors.toSet())
-        );
+        Map<String, String> headers = new HashMap<>();
+        Arrays.stream(pairs)
+                .forEach(e -> headers.put(e.key, e.value));
+        return new HttpHeader(headers);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public void addHeader(Pair pair) {
-        headers.add(pair);
+        headers.put(pair.key, pair.value);
     }
 
-    public Set<Pair> getHeaders() {
-        return Collections.unmodifiableSet(headers);
+    public String getHeader(String key) {
+        return headers.get(key);
     }
 
     @Override
@@ -47,5 +50,26 @@ public class HttpHeader {
         return "HttpHeader{" +
                 "headers=" + headers +
                 '}';
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public static class Builder {
+        private final Map<String, String> headers;
+
+        private Builder() {
+            this.headers = new HashMap<>();
+        }
+
+        public Builder setHeader(Pair pair) {
+            this.headers.put(pair.key, pair.value);
+            return this;
+        }
+
+        public HttpHeader build() {
+            return new HttpHeader(this.headers);
+        }
     }
 }

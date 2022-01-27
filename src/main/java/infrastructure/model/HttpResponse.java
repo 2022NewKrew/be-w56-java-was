@@ -16,7 +16,7 @@ public class HttpResponse {
     public HttpResponse(ResponseLine responseLine, HttpHeader httpHeader, HttpBody responseBody) {
         this.responseLine = responseLine;
         this.httpHeader = httpHeader;
-        httpHeader.addHeader(Pair.of("Content-Length", String.valueOf(responseBody.getValue().length)));
+        httpHeader.addHeader(Pair.of("Content-Length", String.valueOf(responseBody.length())));
         this.responseBody = responseBody;
     }
 

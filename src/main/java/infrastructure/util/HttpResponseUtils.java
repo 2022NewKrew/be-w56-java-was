@@ -19,7 +19,7 @@ public class HttpResponseUtils {
     }
 
     public static String convertHeader(HttpHeader httpHeader) {
-        return httpHeader.getHeaders()
+        return httpHeader.getHeaders().entrySet()
                 .stream()
                 .map(e -> e.getKey() + ": " + e.getValue())
                 .collect(Collectors.joining(EMPTY_LINE));
@@ -29,7 +29,7 @@ public class HttpResponseUtils {
         return new HttpResponse(
                 ResponseLine.valueOf(HttpStatus.NOT_FOUND),
                 HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
-                HttpBody.valueOfFile("/error.html")
+                HttpByteArrayBody.setFile("/error.html")
         );
     }
 
@@ -37,7 +37,7 @@ public class HttpResponseUtils {
         return new HttpResponse(
                 ResponseLine.valueOf(HttpStatus.BAD_REQUEST),
                 HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
-                HttpBody.valueOfFile("/error.html")
+                HttpByteArrayBody.setFile("/error.html")
         );
     }
 }

@@ -7,15 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
 
 import static infrastructure.util.ResponseHandler.response;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String REQUEST_SEPARATE_TOKEN = " ";
     private final FrontController frontController = FrontController.getINSTANCE();
     private final Socket connection;
 
@@ -35,10 +32,12 @@ public class RequestHandler extends Thread {
             response(dos, handle(bufferedReader));
         } catch (IOException e) {
             log.error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
         }
     }
 
-    private HttpResponse handle(BufferedReader bufferedReader) throws IOException {
+    private HttpResponse handle(BufferedReader bufferedReader) throws IOException, IllegalArgumentException {
         HttpRequest httpRequest = getRequest(bufferedReader);
 
         return frontController.handle(httpRequest);
@@ -48,12 +47,20 @@ public class RequestHandler extends Thread {
         String line = bufferedReader.readLine();
         RequestLine requestLine = HttpRequestUtils.parseRequestLine(line);
 
-        Set<Pair> headers = new HashSet<>();
+        HttpHeader.Builder headerBuilder = HttpHeader.builder();
         while (!"".equals(line = bufferedReader.readLine())) {
-            headers.add(HttpRequestUtils.parseHeader(line));
+            headerBuilder.setHeader(HttpRequestUtils.parseHeader(line));
+        }
+        HttpHeader httpHeader = headerBuilder.build();
+
+        String contentLength = httpHeader.getHeader("Content-Length");
+        if (contentLength != null) {
+            String value = IOUtils.readData(bufferedReader, Integer.parseInt(contentLength));
+            HttpBody httpBody = new HttpStringBody(value);
+
+            return new HttpRequest(requestLine, httpHeader, httpBody);
         }
 
-        HttpHeader httpHeader = new HttpHeader(headers);
-        return new HttpRequest(requestLine, httpHeader, null);
+        return new HttpRequest(requestLine, httpHeader);
     }
 }

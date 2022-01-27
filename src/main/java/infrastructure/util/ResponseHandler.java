@@ -1,5 +1,6 @@
 package infrastructure.util;
 
+import infrastructure.model.HttpByteArrayBody;
 import infrastructure.model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,17 @@ public class ResponseHandler {
             dos.writeBytes(HttpResponseUtils.convertHeader(response.getHttpHeader()));
             dos.writeBytes("\r\n");
             if (response.getResponseBody() != null) {
-                dos.writeBytes("\r\n");
-                dos.write(response.getResponseBody().getValue());
+                writeBody(dos, response);
             }
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    private static void writeBody(DataOutputStream dos, HttpResponse response) throws IOException {
+        dos.writeBytes("\r\n");
+        if (response.getResponseBody() instanceof HttpByteArrayBody) {
+            dos.write(response.getResponseBody().toByteStream());
         }
     }
 }
