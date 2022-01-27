@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.HttpMethod;
 
 public class HttpRequest {
-
-    Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
     private final RequestHeader header;
     private final RequestBody body;
@@ -23,5 +22,9 @@ public class HttpRequest {
 
     public Map<String, String> getQuery() {
         return header.getQuery();
+    }
+
+    public HttpMethod getMethod() {
+        return header.getMethod();
     }
 }

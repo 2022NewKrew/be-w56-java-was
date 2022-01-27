@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import util.Constant;
+import webserver.HttpMethod;
 
 public class RequestHeader {
 
-    private String method;
+    private HttpMethod method;
     private String url;
     private final Map<String, String> query = new HashMap<>();
     private String protocol;
@@ -27,7 +28,7 @@ public class RequestHeader {
 
     private void setFirstLineComponents(String firstLine) {
         List<String> components = List.of(firstLine.split(" "));
-        this.method = components.get(0);
+        this.method = HttpMethod.valueOf(components.get(0));
         this.protocol = components.get(2);
 
         if (components.get(1).contains("?")) {
@@ -62,5 +63,9 @@ public class RequestHeader {
 
     public Map<String, String> getQuery() {
         return query;
+    }
+
+    public HttpMethod getMethod() {
+        return method;
     }
 }
