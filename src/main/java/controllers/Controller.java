@@ -1,4 +1,4 @@
-package Controllers;
+package controllers;
 
 import model.Request;
 import model.Response;

@@ -1,7 +1,8 @@
-package Controllers;
+package controllers;
 
 import model.Request;
 import model.Response;
+import util.IOUtils;
 
 import java.io.IOException;
 
@@ -9,8 +10,9 @@ public class FormController extends Controller {
 
     @Override
     public void getMethod(Request request, Response response) throws IOException {
-        response.buildBody(request);
-        response.build200Response();
+        byte[] body = IOUtils.readFromFile(request);
+        String extension = IOUtils.getExtension(request);
+        response.build200Response(body, extension);
     }
 
     @Override

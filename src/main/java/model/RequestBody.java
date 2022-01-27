@@ -6,7 +6,6 @@ import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
 
 public class RequestBody {
     private final Logger logger = LoggerFactory.getLogger(RequestBody.class);

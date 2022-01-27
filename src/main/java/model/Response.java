@@ -3,38 +3,28 @@ package model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.crypto.Data;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 public class Response {
     private final Logger logger = LoggerFactory.getLogger(Response.class);
 
     private byte[] body;
     private final DataOutputStream dos;
-    private String url;
 
     public Response(DataOutputStream dos) {
         this.dos = dos;
     }
 
-    public void buildBody(Request request) throws IOException {
-        this.url = request.getRequestHeader().getRequestLine().getUrl();
-        this.body = Files.readAllBytes(
-                new File("webapp/" + url).toPath());
-    }
-
-    public void buildBody(String url) throws IOException {
-        this.url = url;
-        this.body = Files.readAllBytes(
-                new File("webapp/" + this.url).toPath());
+    public void build200Response(byte[] body, String extension) {
+        this.body = body;
+        response200Header(extension);
+        flushResponseBody();
     }
 
     public void build302Response() {
         response302Header();
-        flushResponseBody();
+        flushWithoutBody();
     }
 
     private void response302Header() {
@@ -47,15 +37,26 @@ public class Response {
         }
     }
 
-    public void build200Response() {
-        response200Header();
-        flushResponseBody();
+    public void build302ResponseWithCookie(String redirectUrl, String cookieStatus) {
+        response302HeaderWithCookie(redirectUrl, cookieStatus);
+        flushWithoutBody();
     }
 
-    private void response200Header() {
+    private void response302HeaderWithCookie(String redirectUrl, String cookieStatus) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("Set-Cookie: logined=" + cookieStatus + "; Path=/\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+
+    private void response200Header(String extension) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes(getContentType());
+            dos.writeBytes(getContentType(extension));
             dos.writeBytes("Content-Length: " + body.length + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -63,18 +64,18 @@ public class Response {
         }
     }
 
-    private String getContentType() {
-        if (url.endsWith("html")) {
+    private String getContentType(String extension) {
+        if (extension.equals("html")) {
             return "Content-Type: text/html;charset=utf-8\r\n";
-        } else if (url.endsWith("js")) {
+        } else if (extension.equals("js")) {
             return "Content-Type: application/javascript;charset=utf-8\r\n";
-        } else if (url.endsWith("css")) {
+        } else if (extension.equals("css")) {
             return "Content-Type: text/css;charset=utf-8\r\n";
-        } else if (url.endsWith("ico")) {
+        } else if (extension.equals("ico")) {
             return "Content-Type: image/x-icon;charset=utf-8\r\n";
-        } else if (url.endsWith("ttf")) {
+        } else if (extension.equals("ttf")) {
             return "Content-Type: font/ttf;charset=utf-8\r\n";
-        } else if (url.endsWith("woff")) {
+        } else if (extension.equals("woff")) {
             return "Content-Type: font/woff;charset=utf-8\r\n";
         } else {
             return null;
@@ -84,6 +85,14 @@ public class Response {
     private void flushResponseBody() {
         try {
             dos.write(body, 0, body.length);
+            dos.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void flushWithoutBody() {
+        try {
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());

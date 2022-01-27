@@ -2,9 +2,8 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
-import Controllers.Controller;
+import controllers.Controller;
 import model.Request;
 import model.Response;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ public class RequestHandler extends Thread {
     private final RequestMapper requestMapper = new RequestMapper();
 
     private Socket connection;
-
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
