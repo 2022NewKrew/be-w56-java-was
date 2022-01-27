@@ -1,10 +1,13 @@
 package controller;
 
-import model.User;
+import dto.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import viewresolver.GetViewResolver;
+import viewresolver.PostViewResolver;
 
+import java.io.DataOutputStream;
 import java.util.Map;
 
 public class UserController implements Controller {
@@ -13,47 +16,70 @@ public class UserController implements Controller {
     private static final UserController INSTANCE;
     private static final UserService USER_SERVICE;
 
+    private static final PostViewResolver POST_VIEW_RESOLVER;
+    private static final GetViewResolver GET_VIEW_RESOLVER;
+
     static {
         log = LoggerFactory.getLogger(UserController.class);
         INSTANCE = new UserController();
         USER_SERVICE = UserService.getInstance();
+        POST_VIEW_RESOLVER = PostViewResolver.getInstance();
+        GET_VIEW_RESOLVER = GetViewResolver.getInstance();
     }
+
+    private UserController() {}
 
     public static UserController getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public String handleRequest(String requestMethod, String requestPath, Map<String, String> queryParams) {
-        if(requestMethod.equals("POST")) {
-            return this.doPost(requestPath);
-        }
+    public void handleRequest(RequestInfo requestInfo, DataOutputStream dos) {
+        String requestMethod = requestInfo.getRequestMethod();
 
-        return this.doGet(requestPath, queryParams);
+        switch(requestMethod) {
+            case "POST":
+                this.doPost(requestInfo, dos);
+                break;
+            default:
+                this.doGet(requestInfo, dos);
+        }
     }
 
     @Override
-    public String doPost(String requestPath) {
-        return null;
-    }
-
-    @Override
-    public String doGet(String requestPath, Map<String, String> queryParams) {
-        String viewPath = null;
-        if(requestPath.equals("/user/create")) {
-            viewPath = registerUser(queryParams);
+    public void doPost(RequestInfo requestInfo, DataOutputStream dos) {
+        String requestPath = requestInfo.getRequestPath();
+        switch(requestPath) {
+            case "/user/create":
+                registerUser(requestInfo, dos);
+                break;
+            case "/user/login":
+                loginUser(requestInfo, dos);
+                break;
         }
-
-        return viewPath;
     }
 
-    private String registerUser(Map<String, String> queryParams) {
+    private void registerUser(RequestInfo requestInfo, DataOutputStream dos) {
+        Map<String, String> bodyParams = requestInfo.getBodyParams();
         try {
-            USER_SERVICE.createUser(queryParams);
-            return "/index.html";
+            USER_SERVICE.createUser(bodyParams);
+            POST_VIEW_RESOLVER.response(requestInfo, dos);
         } catch(IllegalArgumentException e) {
             log.error("[ERROR] - {}", e.getMessage());
-            return "/error.html";
+
+            GET_VIEW_RESOLVER.errorResponse("/error.html", requestInfo.getVersion(), dos);
+        }
+    }
+
+    private void loginUser(RequestInfo requestInfo, DataOutputStream dos) {
+        Map<String, String> bodyParams = requestInfo.getBodyParams();
+        try {
+            USER_SERVICE.loginUser(bodyParams);
+            String cookieHeader = "Set-Cookie: loggedin=true; Path=/ \r\n";
+            POST_VIEW_RESOLVER.response(requestInfo, dos, cookieHeader);
+        } catch(IllegalArgumentException e) {
+            log.error("[ERROR] - {}", e.getMessage());
+            GET_VIEW_RESOLVER.errorResponse("/user/login_failed.html", requestInfo.getVersion(), dos);
         }
     }
 }

@@ -1,9 +1,11 @@
 package controller;
 
-import java.util.Map;
+import dto.RequestInfo;
+
+import java.io.DataOutputStream;
 
 public interface Controller {
-    String handleRequest(String requestMethod, String requestPath, Map<String, String> queryParams);
-    String doPost(String requestPath);
-    String doGet(String requestPath, Map<String, String> queryParams);
+    void handleRequest(RequestInfo requestInfo, DataOutputStream dos);
+    default void doPost(RequestInfo requestInfo, DataOutputStream dos) {}
+    default void doGet(RequestInfo requestInfo, DataOutputStream dos) {}
 }

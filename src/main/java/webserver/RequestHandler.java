@@ -6,9 +6,13 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import controller.FrontController;
+import dto.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
+
+import static util.HttpRequestUtils.Pair;
 
 public class RequestHandler extends Thread {
     private static final Logger log;
@@ -30,36 +34,59 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader httpRequestHeaderReader = new BufferedReader(new InputStreamReader(in));
+            BufferedReader httpRequestReader = new BufferedReader(new InputStreamReader(in));
 
-            String[] requestInfo = this.parseRequestInfo(httpRequestHeaderReader);
-
-            String requestMethod = requestInfo[0];
-            String requestPath = requestInfo[1];
-            Map<String, String> queryParams = Maps.newHashMap();
-            if(requestInfo.length == 3) {
-                queryParams = HttpRequestUtils.parseQueryString(requestInfo[2]);
-            }
+            RequestInfo requestInfo = this.parseRequestInfo(httpRequestReader);
 
             DataOutputStream dos = new DataOutputStream(out);
-            frontController.dispatch(requestMethod, requestPath, queryParams, dos);
+            frontController.dispatch(requestInfo, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private String[] parseRequestInfo(BufferedReader httpRequestHeaderReader) throws IOException {
-        String requestInfo = httpRequestHeaderReader.readLine();
+    private RequestInfo parseRequestInfo(BufferedReader httpRequestReader) throws IOException {
+        String firstLine = httpRequestReader.readLine();
+        String[] firstLineTokens = firstLine.split(" ");
 
-        String[] requestInfoTokens = requestInfo.split(" ");
+        String requestMethod = firstLineTokens[0];
+        String[] requestUrl = firstLineTokens[1].split("\\?");
+        String requestPath = requestUrl[0];
+        Map<String, String> queryParams = requestUrl.length == 2 ? HttpRequestUtils.parseQueryString(requestUrl[1]) : Maps.newHashMap();
+        String version = firstLineTokens[2];
 
-        String requestMethod = requestInfoTokens[0];
-        String[] requestUrl = requestInfoTokens[1].split("\\?");
 
-        if(requestUrl.length == 1) {
-            return new String[] { requestMethod, requestUrl[0] };
+        Map<String, String> headers = this.parseHeader(httpRequestReader);
+        Map<String, String> bodyParams = this.parseBody(httpRequestReader, Integer.parseInt(headers.getOrDefault("Content-Length", "0")));
+
+        return RequestInfo.builder()
+                          .requestMethod(requestMethod)
+                          .requestPath(requestPath)
+                          .version(version)
+                          .queryParams(queryParams)
+                          .headers(headers)
+                          .bodyParams(bodyParams)
+                          .build();
+    }
+
+    private Map<String, String> parseHeader(BufferedReader httpRequestReader) throws IOException {
+        Map<String, String> headers = Maps.newHashMap();
+        String line;
+        while(!(line = httpRequestReader.readLine()).equals("")) {
+            Pair keyAndValue = HttpRequestUtils.parseHeader(line);
+            headers.put(keyAndValue.getKey(), keyAndValue.getValue());
         }
 
-        return new String[] { requestMethod, requestUrl[0], requestUrl[1] };
+        return headers;
+    }
+
+    private Map<String, String> parseBody(BufferedReader httpRequestReader, int contentLength) throws IOException {
+        if(contentLength == 0) {
+            return Maps.newHashMap();
+        }
+
+        String requestBody = IOUtils.readData(httpRequestReader, contentLength);
+
+        return HttpRequestUtils.parseQueryString(requestBody);
     }
 }

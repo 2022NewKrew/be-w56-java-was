@@ -8,7 +8,7 @@ public class User {
     private String name;
     private String email;
 
-    public User(String userId, String password, String name, String email) {
+    private User(String userId, String password, String name, String email) {
         validateUserInfo(userId, password, name, email);
 
         this.userId = userId;
