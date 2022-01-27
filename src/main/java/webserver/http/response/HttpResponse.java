@@ -70,7 +70,7 @@ public class HttpResponse {
         this.viewPage = viewPage;
     }
 
-    public void setHeader(HttpResponseHeader httpResponseHeader, String value) {
+    private void setHeader(HttpResponseHeader httpResponseHeader, String value) {
         headers.addHeader(httpResponseHeader, value);
     }
 
@@ -102,7 +102,11 @@ public class HttpResponse {
         setHeader(HttpResponseHeader.Location, redirectPath);
     }
 
-    public void redirect() {
+    public void setCookie(boolean loginResult) {
+        setHeader(HttpResponseHeader.Set_Cookie, "logined=" + loginResult + "; Path=/");
+    }
+
+    public void redirectBasicPage() {
         setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
         setLocation(VIEW_BASIC_PAGE);
     }

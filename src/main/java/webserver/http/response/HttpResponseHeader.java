@@ -3,7 +3,8 @@ package webserver.http.response;
 public enum HttpResponseHeader {
     Content_Type("Content-Type"),
     Content_Length("Content-Length"),
-    Location("Location");
+    Location("Location"),
+    Set_Cookie("Set-Cookie");
 
     private final String header;
 

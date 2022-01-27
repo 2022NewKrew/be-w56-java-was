@@ -10,7 +10,6 @@ public class SignUpService {
 
     private static final Logger log = LoggerFactory.getLogger(SignUpService.class);
 
-
     public static void signUp(Map<String, String> queryData) {
 
         User user = new User(

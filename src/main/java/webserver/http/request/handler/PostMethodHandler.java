@@ -1,15 +1,16 @@
 package webserver.http.request.handler;
 
 import Controller.Controller;
+import Controller.LoginController;
 import Controller.SignUpUserController;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import webserver.http.request.exceptions.PageNotFoundException;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
+import webserver.http.request.exceptions.PageNotFoundException;
 import webserver.http.response.HttpResponse;
 
 public class PostMethodHandler implements MethodHandler {
@@ -19,6 +20,7 @@ public class PostMethodHandler implements MethodHandler {
     static {
         // POST Method Controller 추가
         controllerMap.put("/user/create", new SignUpUserController());
+        controllerMap.put("/user/login", new LoginController());
     }
 
     public void handle(HttpRequest request, HttpResponse response)

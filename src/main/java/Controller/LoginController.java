@@ -1,16 +1,18 @@
 package Controller;
 
 import java.util.Map;
-import service.SignUpService;
+import service.LoginService;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 
-public class SignUpUserController implements Controller {
+public class LoginController implements Controller {
 
     @Override
     public void process(HttpRequest request, HttpResponse response) {
         Map<String, String> queryData = request.getQueryData();
-        SignUpService.signUp(queryData);
+        boolean loginResult = LoginService.login(queryData);
+
+        response.setCookie(loginResult);
         response.redirectBasicPage();
     }
 }

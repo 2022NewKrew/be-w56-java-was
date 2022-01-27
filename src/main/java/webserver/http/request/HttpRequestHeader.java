@@ -5,7 +5,8 @@ public enum HttpRequestHeader {
     Connection("Connection"),
     Content_Length("Content-Length"),
     Content_Type("Content-Type"),
-    Accept("Accept");
+    Accept("Accept"),
+    Cookie("Cookie");
 
     private final String header;
 
