@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpHeaderUtils;
+import util.HttpRequestUtils;
 import util.IOUtils;
 
 public class RequestHandler extends Thread {
@@ -50,39 +52,68 @@ public class RequestHandler extends Thread {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            execByRequestUrl(method, urlPath, urlQuery, headers, requestBody, dos);
+            byte[] response = execByRequestUrl(method, urlPath, urlQuery, headers, requestBody);
+            dos.write(response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void execByRequestUrl(String method, String requestUrlPath, String requestUrlQuery, Map<String, String> headers, String requestBody, DataOutputStream dos) throws IOException {
+    private byte[] execByRequestUrl(String method, String requestUrlPath, String requestUrlQuery, Map<String, String> headers, String requestBody) throws IOException {
         switch(requestUrlPath) {
-            case "/user/create": postUserCreate(requestBody);
-            case "/user/login": postUserLogin();
-            default: staticPageResponse(dos, requestUrlPath);
+            case "/user/create": return postUserCreate(requestBody);
+            case "/user/login": return postUserLogin(requestUrlPath, requestBody);
+            default: return staticPageResponse(requestUrlPath);
         }
     }
 
-    private void postUserCreate(String requestBody) {
+    private byte[] postUserCreate(String requestBody) {
         Optional<User> user = HttpHeaderUtils.parseUserInfo(requestBody);
         user.ifPresent(DataBase::addUser);
         log.info("user = {}", user);
+        Map<String, String> headers = Map.of("Content-Type", "text/html;charset=utf-8",
+                "Content-Length", "0",
+                "Location","/index.html"
+        );
+        return getResponseHeader(302, headers).toString().getBytes();
     }
 
-    private void postUserLogin() {
-        // Check login info
-        // Send Set-Cookie: logined=true; Path=/
+    private byte[] postUserLogin(String requestUrlPath, String requestBody) {
+        final String contentType = HttpHeaderUtils.getContentTypeFromUrl(requestUrlPath);
+        Map<String, String> requestBodyMap = HttpRequestUtils.parseQueryString(requestBody);
+        Map<String, String> responseHeaders = new HashMap<>() {{
+            put("Content-Type", contentType + ";charset=utf-8");
+            put("Content-Length", "0");
+        }};
+        User user = DataBase.findUserById(requestBodyMap.get("userId"));
+        if(user == null || !user.getPassword().equals(requestBodyMap.get("password"))) {
+            responseHeaders.put("Set-Cookie", "logined=false; Path=/");
+            responseHeaders.put("Location", "/user/login_failed.html");
+            return getResponseHeader(302, responseHeaders).toString().getBytes();
+        }
+        responseHeaders.put("Set-Cookie", "logined=true; Path=/");
+        responseHeaders.put("Location", "index.html");
+        return getResponseHeader(302, responseHeaders).toString().getBytes();
     }
 
-    private void staticPageResponse(DataOutputStream dos, String requestUrlPath) throws IOException {
+    private byte[] staticPageResponse(String requestUrlPath) throws IOException {
+        String contentType = HttpHeaderUtils.getContentTypeFromUrl(requestUrlPath);
         if(new File("./webapp" + requestUrlPath).exists()) {
             byte[] responseBody = Files.readAllBytes(new File("./webapp" + requestUrlPath).toPath());
-            response200Header(dos, responseBody.length, HttpHeaderUtils.getContentTypeFromUrl(requestUrlPath));
-            responseBody(dos, responseBody);
+            Map<String, String> headers = Map.of(
+                    "Content-Type",contentType + ";charset=utf-8",
+                    "Content-Length", Integer.toString(responseBody.length)
+            );
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(getResponseHeader(200, headers).toString().getBytes());
+            baos.write(responseBody);
+            return baos.toByteArray();
         }
-        final String redirectUrl = "/index.html";
-        response302Header(dos, redirectUrl, HttpHeaderUtils.getContentTypeFromUrl(redirectUrl));
+        Map<String, String> headers = Map.of("Content-Type", "text/html;charset=utf-8",
+                "Content-Length", "0",
+                "Location","/index.html"
+        );
+        return getResponseHeader(302, headers).toString().getBytes();
     }
 
     private Map<String, String> getHeaders(BufferedReader br) throws IOException {
@@ -97,35 +128,14 @@ public class RequestHandler extends Thread {
         return headers;
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private StringBuilder getResponseHeader(int httpCode, Map<String, String> headers) {
+        StringBuilder sb = new StringBuilder();
+        switch(httpCode) {
+            case(200): sb.append("HTTP/1.1 200 OK \n");
+            case(302): sb.append("HTTP/1.1 302 Found \n");
         }
-    }
-
-    private void response302Header(DataOutputStream dos, String redirectUrl, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + redirectUrl + "\r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: 0\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        sb.append(headers.entrySet().stream().map(x -> x.getKey() + ": " + x.getValue() + "\r\n").collect(Collectors.joining()));
+        sb.append("\r\n");
+        return sb;
     }
 }
