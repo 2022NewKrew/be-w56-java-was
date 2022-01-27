@@ -1,22 +1,22 @@
-package http;
+package webserver.http;
 
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import lombok.Getter;
 
-import util.HttpRequestUtils;
+import webserver.util.HttpRequestUtils;
 
 @Getter
 public class HttpRequestLine {
-    private String method;
+    private HttpRequestMethod method;
     private String url;
     private String version;
     private Map<String, String> queryParams;
 
     public HttpRequestLine(String requestLine) {
         StringTokenizer st = new StringTokenizer(requestLine);
-        this.method = st.nextToken();
+        this.method = HttpRequestMethod.valueOf(st.nextToken());
         setUrlAndParams(st.nextToken());
         this.version = st.nextToken();
     }
