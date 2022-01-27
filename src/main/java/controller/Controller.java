@@ -5,22 +5,24 @@ import annotation.PostMapping;
 import annotation.RequestBody;
 import annotation.RequestParam;
 import controller.dto.EnrollUserRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import controller.dto.LoginUserRequest;
 import service.UserService;
 import service.dto.EnrollUserCommand;
+import service.dto.LoginUserCommand;
+import service.dto.LoginUserResult;
+import webserver.header.Cookie;
+import webserver.response.Response;
+
 
 public class Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
-
     @GetMapping(path = "/")
-    public String getIndex() {
-        return "/index.html";
+    public Response getIndex() {
+        return new Response("/index.html");
     }
 
     @GetMapping(path = "/user/create")
-    public String signUp(
+    public Response signUp(
             @RequestParam(name = "userId") String userId,
             @RequestParam(name = "password") String password,
             @RequestParam(name = "name") String name,
@@ -28,11 +30,11 @@ public class Controller {
 
         UserService.enroll(new EnrollUserCommand(userId, password, name, email));
 
-        return "redirect:/";
+        return new Response("redirect:/");
     }
 
     @PostMapping(path = "/user/create")
-    public String signUp(@RequestBody(names = {"userId", "password", "name", "email"}) EnrollUserRequest enrollUserRequest) {
+    public Response signUp(@RequestBody(names = {"userId", "password", "name", "email"}) EnrollUserRequest enrollUserRequest) {
 
         UserService.enroll(
                 new EnrollUserCommand(
@@ -42,6 +44,24 @@ public class Controller {
                         enrollUserRequest.getEmail()
                 ));
 
-        return "redirect:/";
+        return new Response("redirect:/");
+    }
+
+    @PostMapping(path = "/user/login")
+    public Response login(@RequestBody(names = {"userId", "password"}) LoginUserRequest loginUserRequest) {
+
+        LoginUserResult result = UserService.getUserInfo(
+                new LoginUserCommand(
+                        loginUserRequest.getUserId(),
+                        loginUserRequest.getPassword()));
+
+        if(!result.isSame()) {
+            return new Response("/user/login_failed.html");
+        }
+
+        Cookie cookie = Cookie.create("logined", "true");
+        Response response = new Response("redirect:/");
+        response.addCookie(cookie);
+        return response;
     }
 }
