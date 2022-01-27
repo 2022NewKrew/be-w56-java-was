@@ -8,7 +8,7 @@ import view.ViewMaker;
 
 public class HttpResponseFactory {
 
-    private static NewHttpResponse getHttpResponse(StatusCode statusCode,
+    public static HttpResponse getHttpResponse(StatusCode statusCode,
             Map<String, String> result,
             Map<String, String> model, String protocol, DataOutputStream dos) {
 
@@ -16,7 +16,7 @@ public class HttpResponseFactory {
         String status = StatusCode
                 .getStatusString(result.get("status"))
                 .getStatus();
-        
+
         ResponseStatusLine statusLine = new ResponseStatusLine(protocol, status);
         ResponseHeader header = new ResponseHeader();
 
@@ -41,31 +41,31 @@ public class HttpResponseFactory {
         return ContentType.getContentType(extension);
     }
 
-    private static NewHttpResponse getHttpResponse200(ResponseStatusLine statusLine,
+    private static HttpResponse getHttpResponse200(ResponseStatusLine statusLine,
             ResponseHeader header, String url, DataOutputStream dos) {
         ResponseBody body = getResponseBody(header, url);
-        return new NewHttpResponse(statusLine, header, body, dos);
+        return new HttpResponse(statusLine, header, body, dos);
     }
 
-    private static NewHttpResponse getHttpResponse302(ResponseStatusLine statusLine,
+    private static HttpResponse getHttpResponse302(ResponseStatusLine statusLine,
             ResponseHeader header, String url, DataOutputStream dos) {
         ResponseBody body = new ResponseBody(ViewMaker.getView(url, new HashMap<>()));
         header.addComponent("Location", url);
-        return new NewHttpResponse(statusLine, header, body, dos);
+        return new HttpResponse(statusLine, header, body, dos);
     }
 
-    private static NewHttpResponse getHttpResponse401(ResponseStatusLine statusLine,
+    private static HttpResponse getHttpResponse401(ResponseStatusLine statusLine,
             ResponseHeader header, String url, DataOutputStream dos) {
         ResponseBody body = getResponseBody(header, url);
-        return new NewHttpResponse(statusLine, header, body, dos);
+        return new HttpResponse(statusLine, header, body, dos);
     }
 
-    private static NewHttpResponse getHttpResponse404(ResponseStatusLine statusLine,
+    private static HttpResponse getHttpResponse404(ResponseStatusLine statusLine,
             ResponseHeader header, String url, DataOutputStream dos) {
         ResponseBody body = new ResponseBody(ViewMaker.getNotFoundView());
         header.addComponent("Content-Type", getContentType(url));
         header.addComponent("Content-Length", String.valueOf(body.getBodyLength()));
-        return new NewHttpResponse(statusLine, header, body, dos);
+        return new HttpResponse(statusLine, header, body, dos);
     }
 
     private static ResponseBody getResponseBody(ResponseHeader header, String url) {
