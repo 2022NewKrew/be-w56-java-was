@@ -1,17 +1,20 @@
 package controller;
 
-import http.HttpRequest;
-import http.HttpResponse;
+import dto.UserCreateDto;
+import http.request.HttpRequest;
+import http.response.HttpResponse;
 import http.HttpStatus;
 import service.UserService;
 
 public class UserCreateController extends AbstractController {
 
-    private static final String PATH = "/user/create";
+    private static final String PATH = "/users/create";
 
     private static UserCreateController instance;
+    private final UserService userService;
 
     private UserCreateController() {
+        userService = UserService.getInstance();
     }
 
     public static UserCreateController getInstance() {
@@ -29,7 +32,8 @@ public class UserCreateController extends AbstractController {
 
     @Override
     protected HttpResponse doPost(HttpRequest request) {
-        UserService.register(request.getParams());
+        UserCreateDto userCreateDto = UserCreateDto.from(request.getBody());
+        userService.register(userCreateDto);
         return HttpResponse.redirect("/index.html");
     }
 

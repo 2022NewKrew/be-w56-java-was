@@ -1,8 +1,8 @@
 package controller;
 
 import http.HttpMethod;
-import http.HttpRequest;
-import http.HttpResponse;
+import http.request.HttpRequest;
+import http.response.HttpResponse;
 import http.HttpStatus;
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ public abstract class AbstractController implements Controller {
 
     @Override
     public HttpResponse service(HttpRequest request) throws IOException {
-        HttpMethod method = request.getMethod();
+        HttpMethod method = request.getRequestLine().getMethod();
 
         if (method.equals(HttpMethod.GET)) {
             return doGet(request);
@@ -18,7 +18,7 @@ public abstract class AbstractController implements Controller {
         if (method.equals(HttpMethod.POST)) {
             return doPost(request);
         }
-        return HttpResponse.error(HttpStatus.NOT_IMPLEMENTED);
+        return HttpResponse.error(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     protected abstract HttpResponse doGet(HttpRequest request) throws IOException;
