@@ -1,7 +1,6 @@
 package http;
 
-import util.HttpRequestUtils;
-
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
@@ -9,7 +8,8 @@ public class HttpRequest {
     private Method method;
     private String url;
     private Protocol protocol;
-    private Header header = new Header();
+    private Map<String, String> header = new HashMap<>();
+    private Map<String, String> body = new HashMap<>();
 
     public String getMethod() {
         return method.getName();
@@ -23,8 +23,12 @@ public class HttpRequest {
         return protocol.getName();
     }
 
-    public Header getHeader() {
+    public Map<String, String> getHeader() {
         return header;
+    }
+
+    public Map<String, String> getBody() {
+        return body;
     }
 
     public void setStartLine(String method, String url, String protocol) {
@@ -47,10 +51,6 @@ public class HttpRequest {
                 this.protocol = p;
             }
         }
-    }
-
-    public void setHeaderValue(String key, String value) {
-        this.header.setValue(key, value);
     }
 
     private enum Method {

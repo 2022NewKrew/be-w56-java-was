@@ -22,7 +22,7 @@ public class HttpRequestParser {
                 break;
             }
             HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(headerSingleLine);
-            httpRequest.setHeaderValue(pair.getKey(), pair.getValue());
+            httpRequest.getHeader().put(pair.getKey(), pair.getValue());
         }
     }
 
