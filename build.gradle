@@ -24,6 +24,7 @@ dependencies {
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
 }
 
+
 test {
     useJUnitPlatform()
 }

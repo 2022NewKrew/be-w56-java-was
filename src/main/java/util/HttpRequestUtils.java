@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import webserver.controller.request.RequestHeader;
+
 public class HttpRequestUtils {
     /**
      * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -50,6 +52,16 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static RequestHeader parseWholeHeader(BufferedReader br) throws IOException {
+        RequestHeader requestHeader = new RequestHeader();
+        String line;
+        while (!("".equals(line = br.readLine()))) {
+            Pair pair = parseHeader(line);
+            requestHeader.put(pair.getKey(), pair.getValue());
+        }
+        return requestHeader;
     }
 
     public static class Pair {
@@ -113,22 +125,4 @@ public class HttpRequestUtils {
         }
     }
 
-    public static Map<String, String> parseBody(BufferedReader br) throws IOException {
-        Map<String, String> body = Maps.newHashMap();
-        String line;
-        while (!"".equals(line = br.readLine()) && line != null) {
-            HttpRequestUtils.parseBodyLine(body, line);
-        }
-        return body;
-    }
-
-    private static void parseBodyLine(Map<String, String> map, String line) {
-        if (Strings.isNullOrEmpty(line)) {
-            return;
-        }
-        System.out.println("line = " + line);
-        String[] tokens = line.split(": ");
-        Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-              .forEach(p -> map.put(p.getKey(), p.getValue()));
-    }
 }

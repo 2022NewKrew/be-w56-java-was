@@ -1,7 +1,12 @@
 package webserver.controller.request;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -15,12 +20,15 @@ public class RequestLine {
     private String http;
     private Map<String, String> queryString = Maps.newHashMap();
 
+    private static final Logger log = LoggerFactory.getLogger(RequestLine.class);
+
     public static RequestLine from(String RequestLine) {
         if (RequestLine == null) {
             return null;
         }
-        RequestLine requestLine = new RequestLine();
+        log.info("Request Line : {}", RequestLine);
 
+        RequestLine requestLine = new RequestLine();
         String[] lineTokens = RequestLine.split(" ");
         requestLine.method = HttpMethod.findMethod(lineTokens[0]);
         requestLine.URL = lineTokens[1];

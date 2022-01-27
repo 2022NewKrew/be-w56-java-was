@@ -1,7 +1,5 @@
 package webserver.common;
 
-import java.util.Locale;
-
 public enum HttpMethod {
     GET, POST, UNKNOWN;
 

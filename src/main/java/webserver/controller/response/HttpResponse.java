@@ -1,6 +1,7 @@
 package webserver.controller.response;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 
@@ -9,13 +10,12 @@ import webserver.common.Status;
 public class HttpResponse {
     private String path;
     private Status status;
-    private Map<String, String> model = Maps.newHashMap();
+    private Map<String, String> header = Maps.newHashMap();
 
-    public static HttpResponse of(String path, Status status, Map<String, String> model) {
+    public static HttpResponse of(String path, Status status) {
         HttpResponse httpResponse = new HttpResponse();
         httpResponse.path = path;
         httpResponse.status = status;
-        httpResponse.model = model;
         return httpResponse;
     }
 
@@ -27,7 +27,17 @@ public class HttpResponse {
         return status;
     }
 
-    public Map<String, String> getModel() {
-        return model;
+    public void addHeaderAttribute(String key, String value) {
+        System.out.println("add key = " + key+" header val = "+ value);
+        header.put(key, value);
     }
+
+    public String getHeaderString(){
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, String> e : header.entrySet()) {
+            sb.append(String.format("%s: %s\r\n", e.getKey(), e.getValue()));
+        }
+        return sb.toString();
+    }
+
 }
