@@ -21,21 +21,25 @@ public class UserController {
 
     public String process(final String location, final Body body) {
         if (LOCATION_USER_CREATE.equals(location)) {
-            final String decodedParameters = URLDecoder.decode(body.get(), StandardCharsets.UTF_8);
-            final Map<String, String> map = HttpRequestUtils.parseQueryString(decodedParameters);
-
-            try {
-                add(map);
-            } catch (IllegalArgumentException e) {
-                return "/error.html";
-            } catch (IllegalStateException e) {
-                return "/user/dupId.html";
-            }
-
-            return "/index.html";
+            return userCreate(body);
         }
 
         return "/";
+    }
+
+    private String userCreate(final Body body) {
+        final String decodedParameters = URLDecoder.decode(body.get(), StandardCharsets.UTF_8);
+        final Map<String, String> map = HttpRequestUtils.parseQueryString(decodedParameters);
+
+        try {
+            add(map);
+        } catch (IllegalArgumentException e) {
+            return "/error.html";
+        } catch (IllegalStateException e) {
+            return "/user/dupId.html";
+        }
+
+        return "/index.html";
     }
 
     private void add(final Map<String, String> parameterMap) {
