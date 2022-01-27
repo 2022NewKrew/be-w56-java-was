@@ -12,14 +12,9 @@ public class HttpRequest {
     private final RequestHeader header;
     private final RequestBody body;
 
-    public HttpRequest(String rawData) {
-        List<String> splitRawData = parsingRawData(rawData);
-        this.header = new RequestHeader(splitRawData.get(0));
-        this.body = (splitRawData.size() > 1) ? new RequestBody(splitRawData.get(1)) : null;
-    }
-
-    private List<String> parsingRawData(String rawData) {
-        return List.of(rawData.split("\r\n\r\n"));
+    public HttpRequest(String header, String body) {
+        this.header = new RequestHeader(header);
+        this.body = new RequestBody(body);
     }
 
     public String getUrl() {
