@@ -3,13 +3,13 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import controller.UserController;
+import controller.UserCreateController;
+import controller.UserLoginController;
 import controller.ViewController;
 import controller.WebController;
 import controller.request.Request;
@@ -20,6 +20,7 @@ import controller.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ContentType;
+import util.HttpResponseUtils;
 import util.HttpStatus;
 import util.IOUtils;
 
@@ -31,7 +32,8 @@ public class RequestHandler extends Thread {
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerMap.put("/user/create", new UserController());
+        controllerMap.put("/user/create", new UserCreateController());
+        controllerMap.put("/user/login", new UserLoginController());
     }
 
     public void run() {
@@ -39,6 +41,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            // Request
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String requestLineString = br.readLine();
             if (requestLineString == null) {
@@ -53,15 +56,14 @@ public class RequestHandler extends Thread {
                 requestHeaderStrings.add(line);
                 line = br.readLine();
             }
-            log.debug("request header : {}", requestHeaderStrings);
             RequestHeader requestHeader = RequestHeader.from(requestHeaderStrings);
 
             String requestBodyString = null;
             if (requestHeader.getParameter("Content-Length") != null) {
                 requestBodyString = IOUtils.readData(br,
                         Integer.parseInt(requestHeader.getParameter("Content-Length")));
+                log.debug("request body : {}", requestBodyString);
             }
-            log.debug("request body : {}", requestBodyString);
             RequestBody requestBody = RequestBody.from(requestBodyString);
 
             Request request = new Request(requestLine, requestHeader, requestBody);
@@ -70,49 +72,17 @@ public class RequestHandler extends Thread {
 
             String contentType = ContentType.of(request.getContentType()).getContentType();
             log.debug("request content type : {}", contentType);
+
+            // Response
             Response response = webController.process(request);
+            DataOutputStream dos = new DataOutputStream(out);
+
+            dos.writeBytes(HttpResponseUtils.createResponseString(response));
 
             if (response.getHttpStatus().equals(HttpStatus.OK)) {
-                byte[] body = Files.readAllBytes(new File("./webapp" + response.getResponseUrl()).toPath());
-                DataOutputStream dos = new DataOutputStream(out);
-                response200Header(dos, contentType, body.length);
-                responseBody(dos, body);
+                responseBody(dos, response.getResponseBody());
             }
 
-            if (response.getHttpStatus().getStatusName().equals(HttpStatus.REDIRECT.getStatusName())) {
-                DataOutputStream dos = new DataOutputStream(out);
-                response302Header(dos, response.getResponseUrl());
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, String contentType, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/" + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String redirectUrl) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 FOUND \r\n");
-            dos.writeBytes("Location: " + redirectUrl + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 NOT FOUND \r\n");
-            dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }

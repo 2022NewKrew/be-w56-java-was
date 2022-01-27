@@ -102,3 +102,17 @@ public enum ContentType {
 
 - `BufferedReader::readLine` 사용 시 `\r` 또는 `\n`이 없을 경우 메소드가 종료되지 않음.  
 따라서 POST body를 가져올 경우 `BufferedReader::read` 사용
+- 응답 헤더, 바디 생성 역할은 `RequestHandler` 가 아닌 `Response` 측에 위임하는 것이 좋음
+
+### 2022-01-27 (목)
+
+#### 구현 내용
+
+- 회원 가입 컨트롤러 POST 방식에 맞게 변경
+- `Response` 클래스에 빌더 패턴 적용
+- `HttpResponseUtils` 추가
+- 로그인 기능 추가
+
+#### 구현 관련 고찰
+
+- 헤더와 바디를 구분하기 위하여 빈 줄을 삽입해야 함. 즉, CRLF 가 2번 사용됨.
