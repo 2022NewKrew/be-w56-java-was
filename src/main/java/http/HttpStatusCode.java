@@ -32,6 +32,9 @@ public enum HttpStatusCode {
             mv.setViewName(mv.getViewName().replaceFirst(REDIRECT_COMMAND, ""));
             dos.writeBytes("HTTP/1.1 "+ getStatusCode() + " " + getMessage() + "\r\n");
             dos.writeBytes("Location: "+ ROOT_URL + mv.getViewName() + "\r\n");
+            if (mv.getValue("login") != null && mv.getValue("login").equals(true)){
+                dos.writeBytes("Set-Cookie: logined=" + mv.getValue("login") + "; Path=/\r\n");
+            }
         }
     },
     BAD_REQUEST(400, "Bad Request"){
