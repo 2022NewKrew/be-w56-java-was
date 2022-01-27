@@ -17,4 +17,46 @@
     - Content-Type 이 text로 되어있어서 적절한 파일 형식을 제대로 읽어오지 못해서 발생하는 문제
     - Header에서 Accept가 존재하면 해당 부분을 content type으로 헤더에 넣어주면 문제가 해결이 됨
 
+## Step2
+- 요구사항 
+  - GET으로 회원가입 기능 구현
+  - HTTP Request Header 예
+  ```
+  GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1
+  Host: localhost:8080
+  Connection: keep-alive
+  Accept: */*
+  ```
+- RequestLine에 있는 QeuryString을 파싱해서 사용
+- Reflection을 사용해서 어노테이션이 사용된 클래스, 메소드를 찾는 것이 가능
+
+## Step3
+- 요구사항
+  - POST로 회원가입 구현
+  - HTTP Request Header 예
+  ```
+  POST /user/create HTTP/1.1
+  Host: localhost:8080
+  Connection: keep-alive
+  Content-Length: 59
+  Content-Type: application/x-www-form-urlencoded
+  Accept: */*
+
+  userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+  ```
+- Request Body는 Http Header 이후 빈 공백을 가지는 한출 뒤부터 시작한다.
+- IOUtils 클래스의 readData로 request body를 가져올 수 있지만, 이 때 Content-Length 값이 필요하다
+- HTTP 응답해더는 정말 많다. 용도에 맞도록 적절히 사용할 수 있도록 알아두면 용이할 것 같다.
+
+## Step4
+- 요구사항
+  - Cookie를 이용한 로그인 구현
+  - Http ResponseHeader 예
+  ```
+  HTTP/1.1 200 OK
+  Content-Type: text/html
+  Set-Cookie: logined=true; Path=/
+  ```
+- Reflection 을 사용해 Exception Handler를 구현
+- Http Header 가 Request, Response 에 따라 필드가 많이 상이함
 

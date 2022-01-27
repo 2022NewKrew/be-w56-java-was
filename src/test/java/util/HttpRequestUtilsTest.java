@@ -2,13 +2,12 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.*;
 import java.util.Map;
 
 
-import org.junit.jupiter.api.DisplayName;
+import framework.util.HttpRequestUtils;
 import org.junit.jupiter.api.Test;
-import util.HttpRequestUtils.Pair;
+import framework.util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
     @Test
