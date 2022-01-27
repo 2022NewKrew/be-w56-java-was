@@ -7,7 +7,7 @@ import webserver.response.Response;
 public class PostHandler implements Handler {
 
     @Override
-    public void handle(Request request, Response response) throws Exception {
-        Context.invokePostMappingMethod(request.getUri(), request, response);
+    public Response handle(Request request) throws Exception {
+        return (Response) Context.invokePostMappingMethod(request.getUri(), request);
     }
 }

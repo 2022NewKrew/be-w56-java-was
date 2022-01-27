@@ -1,26 +1,15 @@
 package webserver.handler;
 
-import exception.InvalidRequestException;
-import java.io.File;
-import java.nio.file.Files;
-import org.apache.tika.Tika;
 import webserver.request.Request;
 import webserver.response.Response;
-import webserver.response.StatusCode;
+import webserver.response.ResponseFactory;
 
 public class GetStaticFileHandler implements Handler {
 
     private static final String STATIC_FILE_ROOT_PATH = "./webapp";
 
     @Override
-    public void handle(Request request, Response response) throws Exception {
-        response.setStatusCode(StatusCode.OK);
-
-        File file = new File(STATIC_FILE_ROOT_PATH + request.getUri());
-        String mimeType = new Tika().detect(file);
-        if (mimeType == null) {
-            throw new InvalidRequestException("file " + file + ": 지원하지 않는 타입");
-        }
-        response.setContents(mimeType, Files.readAllBytes(file.toPath()));
+    public Response handle(Request request) throws Exception {
+        return ResponseFactory.staticFileResponse(STATIC_FILE_ROOT_PATH + request.getUri());
     }
 }

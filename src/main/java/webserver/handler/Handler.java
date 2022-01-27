@@ -5,5 +5,5 @@ import webserver.response.Response;
 
 public interface Handler {
 
-    void handle(Request request, Response response) throws Exception;
+    Response handle(Request request) throws Exception;
 }

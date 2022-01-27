@@ -12,8 +12,6 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.request.Request;
-import webserver.response.Response;
 
 public final class Context {
 
@@ -63,10 +61,10 @@ public final class Context {
         return postMappingMethods.containsKey(uri);
     }
 
-    public static void invokePostMappingMethod(String uri, Request request, Response response)
+    public static Object invokePostMappingMethod(String uri, Object... object)
         throws Exception {
         Pair pair = postMappingMethods.get(uri);
-        pair.getMethod().invoke(pair.getObject(), request, response);
+        return pair.getMethod().invoke(pair.getObject(), object);
     }
 
     static class Pair {
