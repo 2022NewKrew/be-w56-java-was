@@ -2,6 +2,7 @@ package webserver.response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponseHeader {
@@ -10,6 +11,10 @@ public class HttpResponseHeader {
     public static final String SEPARATOR_FOR_VALUES = ",";
 
     private Map<String, String[]> headers;
+
+    public HttpResponseHeader() {
+        this(new HashMap<>());
+    }
 
     public HttpResponseHeader(Map<String, String[]> headers) {
         this.headers = headers;

@@ -1,5 +1,7 @@
 package webserver.request;
 
+import webserver.response.HttpStatus;
+
 public class HttpRequest {
     private HttpRequestLine httpRequestLine;
     private HttpRequestHeader httpRequestHeader;
@@ -9,6 +11,10 @@ public class HttpRequest {
         this.httpRequestLine = httpRequestLine;
         this.httpRequestHeader = httpRequestHeader;
         this.httpRequestBody = httpRequestBody;
+    }
+
+    public HttpRequestMethod getHttpRequestMethod() {
+        return httpRequestLine.getMethod();
     }
 
     public HttpRequestLine getHttpRequestLine() {

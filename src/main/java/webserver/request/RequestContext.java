@@ -8,15 +8,12 @@ import java.io.IOException;
  */
 public class RequestContext {
 
-    private static RequestContext INSTANCE;
+    private static final RequestContext INSTANCE = new RequestContext();
 
     private RequestContext() {
     }
 
     public static RequestContext getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new RequestContext();
-        }
         return INSTANCE;
     }
 

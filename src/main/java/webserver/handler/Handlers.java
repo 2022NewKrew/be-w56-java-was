@@ -45,16 +45,14 @@ public class Handlers {
     }
 
     public HttpRequest handleRequest(HttpRequest request) {
-        for (InboundHandler handler : inboundHandlers) {
-            handler.handle(request);
-        }
+        inboundHandlers.stream()
+                .forEach(inboundHandler -> inboundHandler.handle(request));
         return request;
     }
 
     public HttpResponse handleResponse(HttpResponse response) {
-        for (OutboundHandler handler : outboundHandlers) {
-            handler.handle(response);
-        }
+        outboundHandlers.stream()
+                .forEach(outboundHandler -> outboundHandler.handle(response));
         return response;
     }
 }

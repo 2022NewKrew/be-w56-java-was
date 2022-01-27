@@ -3,14 +3,16 @@ package webserver;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.request.HttpRequest;
+import webserver.exception.request.BadRequestException;
 import webserver.request.RequestContext;
 import webserver.response.HttpResponse;
 import webserver.response.HttpResponseHeader;
 import webserver.response.HttpResponseLine;
+import webserver.response.ResponseContext;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,28 +27,35 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = createRequest(in);
-            HttpResponse response = getResponse(httpRequest);
-            response(response, out);
+        try (
+                InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                DataOutputStream dos = new DataOutputStream(out)
+        ) {
+            createRequest(br);
+            HttpResponse response = getResponse();
+            response(response, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         } finally {
             RequestContext.getInstance().endRequest();
+            ResponseContext.getInstance().endResponse();
         }
     }
 
-    private HttpRequest createRequest(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        return RequestContext.getInstance().startRequest(br);
+    private void createRequest(BufferedReader br) throws IOException {
+        try {
+            RequestContext.getInstance().startRequest(br);
+        } catch (BadRequestException e) {
+            setResponseForBadRequest(e);
+        }
     }
 
-    private HttpResponse getResponse(HttpRequest httpRequest) {
-        return ResponseProcessor.getInstance().response(httpRequest);
+    private HttpResponse getResponse() {
+        return ResponseProcessor.getInstance().process();
     }
 
-    private void response(HttpResponse response, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
+    private void response(HttpResponse response, DataOutputStream dos) throws IOException {
         writeResponseLine(dos, response.getResponseLine());
         writeResponseHeader(dos, response.getResponseHeader());
         byte[] body = response.getBytesForBodyContent();
@@ -54,11 +63,17 @@ public class RequestHandler extends Thread {
     }
 
     private void writeResponseLine(DataOutputStream dos, HttpResponseLine responseLine) throws IOException {
-        dos.writeBytes(responseLine.getHttpVersion() + StringUtils.SPACE + responseLine.getStatusCode() + StringUtils.CR + StringUtils.LF);
+        dos.writeBytes(String.format("%s %s\r\n", responseLine.getHttpVersion(), responseLine.getStatusCode()));
     }
 
     private void writeResponseHeader(DataOutputStream dos, HttpResponseHeader responseHeader) throws IOException {
-        dos.writeBytes(responseHeader.getHeaders() + StringUtils.CR + StringUtils.LF);
+        dos.writeBytes(String.format("%s\r\n", responseHeader.getHeaders()));
+    }
+
+    private void setResponseForBadRequest(BadRequestException e) {
+        HttpResponse response = ResponseContext.getInstance().getHttpResponse();
+        response.setHttpStatus(e.getMsg().getStatus());
+        response.setResponseBody(e.getMsg().getMessage().getBytes(StandardCharsets.UTF_8));
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {

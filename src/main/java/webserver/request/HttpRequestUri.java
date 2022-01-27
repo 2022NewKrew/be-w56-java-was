@@ -1,43 +1,49 @@
 package webserver.request;
 
 import org.apache.commons.lang3.StringUtils;
+import util.HttpRequestUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestUri {
     private String url;
-    private Map<String, String[]> queries;
+    private Map<String, String> queries;
 
-    public HttpRequestUri(String uri) {
-        String[] urlAndQueries = StringUtils.split(uri, "?");
-        this.url = urlAndQueries[0];
-
-        this.queries = new HashMap<>();
-        if (isContainQueries(urlAndQueries)) {
-            String[] queriesBeforeFormat = urlAndQueries[1].split("&");
-            setQueries(queriesBeforeFormat);
-        }
+    public HttpRequestUri(String url) {
+        this(url, new HashMap<>());
     }
 
-    private boolean isContainQueries(String[] urlAndQueries) {
-        return urlAndQueries.length > 1;
-    }
-
-    private void setQueries(String[] queriesBeforeFormat) {
-        for (String query : queriesBeforeFormat) {
-            String[] keyAndValues = StringUtils.split(query, "=");
-            String key = keyAndValues[0];
-            String[] values = StringUtils.split(keyAndValues[1], ",");
-            this.queries.put(key, values);
-        }
+    public HttpRequestUri(String url, Map<String, String> queries) {
+        this.url = url;
+        this.queries = queries;
     }
 
     public String getUrl() {
         return url;
     }
 
+    public Map<String, String> getQueries() {
+        return queries;
+    }
+
     public boolean isForStaticContent() {
         return url.contains(".");
+    }
+
+    public static class Builder {
+        public static HttpRequestUri createFromStringUri(String uri) {
+            String[] urlAndQueries = StringUtils.split(uri, "?");
+            String url = urlAndQueries[0];
+            if(isContainQueryString(urlAndQueries)) {
+                Map<String, String> queries = HttpRequestUtils.parseQueryString(urlAndQueries[1]);
+                return new HttpRequestUri(url, queries);
+            }
+            return new HttpRequestUri(url);
+        }
+
+        private static boolean isContainQueryString(String[] urlAndQueries) {
+            return urlAndQueries.length > 1;
+        }
     }
 }

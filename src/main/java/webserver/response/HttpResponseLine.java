@@ -7,6 +7,10 @@ public class HttpResponseLine {
     private String httpVersion;
     private HttpStatus status;
 
+    public HttpResponseLine() {
+        this(HttpStatus.OK);
+    }
+
     public HttpResponseLine(HttpStatus status) {
         this.httpVersion = DEFAULT_HTTP_VERSION;
         this.status = status;
@@ -18,5 +22,9 @@ public class HttpResponseLine {
 
     public String getStatusCode() {
         return status.getNum() + " " + status;
+    }
+
+    public void setStatusCode(HttpStatus status) {
+        this.status = status;
     }
 }
