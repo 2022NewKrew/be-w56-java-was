@@ -1,4 +1,4 @@
-package webserver.core.http.response;
+package webserver.framwork.http.response;
 
 public enum HttpStatus {
     Ok(200, "OK"),

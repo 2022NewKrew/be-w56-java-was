@@ -1,7 +1,5 @@
-package webserver.core.http;
+package webserver.framwork.http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,11 +8,11 @@ public class Header implements Iterable<String>{
 
     private final Map<String, String> attributes = new HashMap<>();
 
-    public void addHeaderValue(String key, String value){
+    public void addValue(String key, String value){
         attributes.put(key, value);
     }
 
-    public String getHeaderValue(String key){
+    public String getValue(String key){
         return attributes.get(key);
     }
 

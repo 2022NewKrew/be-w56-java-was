@@ -22,7 +22,9 @@ public class UserService {
     }
 
     public boolean login(String id, String password){
+        System.out.println("id:"+id+",pw:"+password);
         User user = DataBase.findUserById(id);
+        System.out.println(user);
         return user != null && password.equals(user.getPassword());
     }
 }
