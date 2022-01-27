@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.DefaultHttpRequestBuilder;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.servlet.HttpRequestResponsible;
@@ -31,8 +32,10 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-            HttpRequest request = HttpRequest.create(reader);
+            HttpRequest request = new DefaultHttpRequestBuilder()
+                .init(reader.readLine())
+                .headers(reader)
+                .build();
             HttpResponse response = new HttpResponse();
 
             HttpResponse handledResponse = controller.handle(request, response);
