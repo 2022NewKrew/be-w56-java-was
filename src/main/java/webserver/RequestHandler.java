@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
 
+import controller.Controller;
 import db.DataBase;
 import domain.*;
 import model.User;
@@ -18,9 +19,11 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
+    private final Map<String, Controller> controllerMap;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, Map<String, Controller> controllerMap) {
         this.connection = connectionSocket;
+        this.controllerMap = controllerMap;
     }
 
     public void run() {
@@ -35,49 +38,11 @@ public class RequestHandler extends Thread {
             RequestLine requestLine = new RequestLine(bufferedReader.readLine());
             log.info("HTTP Request Line : {}", requestLine);
 
-            HttpRequest httpRequest = new HttpRequest(requestLine, HttpRequestUtils.parseHeaders(bufferedReader));
-            String requestUrl = httpRequest.getRequestPath();
+            Controller controller = controllerMap.get(requestLine.getMethod());
+            controller.control(dos, bufferedReader, requestLine);
 
-            byte[] body;
-
-            if (requestLine.isGetMethod()) {
-                if (requestUrl.startsWith("/user/create")) {
-                    String queryString = HttpRequestUtils.getQueryStringByUrl(requestUrl);
-                    Map<String, String> queryMap = HttpRequestUtils.parseQueryString(queryString);
-                    User user = new User(queryMap.get("userId"), queryMap.get("password"), queryMap.get("name"), queryMap.get("email"));
-                    DataBase.addUser(user);
-                    log.info("findUser : {}", DataBase.findUserById(queryMap.get("userId")));
-                    body = DataBase.findUserById(queryMap.get("userId")).toString().getBytes(StandardCharsets.UTF_8);
-                } else {
-                    body = Files.readAllBytes(new File("./webapp", requestUrl).toPath());
-                }
-                response200(dos, body, HttpRequestUtils.parseContentType(requestUrl));
-            } else if (requestLine.isPostMethod()) {
-                String httpBodyString = IOUtils.readData(bufferedReader, httpRequest.getContentLength());
-                log.info(httpBodyString);
-
-                httpRequest.addHttpBody(HttpRequestUtils.parseQueryString(httpBodyString));
-                if (requestUrl.startsWith("/user/create")) {
-                    HttpBody httpBody = httpRequest.getHttpBody();
-                    User user = new User(httpBody.get("userId"), httpBody.get("password"), httpBody.get("name"), httpBody.get("email"));
-                    DataBase.addUser(user);
-                    log.info("findUser : {}", DataBase.findUserById(httpBody.get("userId")));
-                    response302(dos, "/index.html");
-                }
-            }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-    }
-
-    private void response200(DataOutputStream dos, byte[] body, ContentType contentType) {
-        ResponseHandler responseHandler = new ResponseHandler(dos);
-        responseHandler.response200Header(body.length, contentType.getContentType());
-        responseHandler.responseBody(body);
-    }
-
-    private void response302(DataOutputStream dos, String location) {
-        ResponseHandler responseHandler = new ResponseHandler(dos);
-        responseHandler.response302Header(location);
     }
 }

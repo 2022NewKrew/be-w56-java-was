@@ -12,10 +12,15 @@ import domain.ContentType;
 
 public class HttpRequestUtils {
 
+    private static final int REQUEST_PATH_INDEX = 0;
     private static final int QUERY_STRING_INDEX = 1;
     private static final int PAIR_KEY_INDEX = 0;
     private static final int PAIR_VALUE_INDEX = 1;
     private static final int PAIR_SIZE = 2;
+
+    public static String getRequestPath(String url) {
+        return url.split(Constants.REQUEST_PARAM_DELIMITER)[REQUEST_PATH_INDEX];
+    }
 
     public static String getQueryStringByUrl(String url) {
         return url.split(Constants.REQUEST_PARAM_DELIMITER)[QUERY_STRING_INDEX];
