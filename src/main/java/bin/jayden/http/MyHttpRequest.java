@@ -90,6 +90,7 @@ public class MyHttpRequest {
 
                 line = IOUtils.readData(reader, Integer.parseInt(headers.getHeaderValue("Content-Length")));
                 params = HttpRequestUtils.parseQueryString(line);
+                params.replaceAll((k, v) -> URLDecoder.decode(v, StandardCharsets.UTF_8));
             }
 
             return new MyHttpRequest(method, path, params, headers, cookies, mime);
