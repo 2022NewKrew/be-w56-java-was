@@ -19,6 +19,6 @@ public class UserController {
 
         DataBase.addUser(user);
 
-        return "/index.html";
+        return "redirect:/index.html";
     }
 }
