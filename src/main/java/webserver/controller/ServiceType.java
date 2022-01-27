@@ -11,7 +11,8 @@ import webserver.controller.response.HttpResponse;
 
 public enum ServiceType {
     GET_HOME(HttpMethod.GET, "/", Service::getHome),
-    GET_CREATE(HttpMethod.GET, "/create", Service::getCreate),
+    GET_CREATE(HttpMethod.GET, "/user/create", Service::getCreate),
+    POST_CREATE(HttpMethod.POST, "/user/create", Service::postCreate),
     GET_STATIC(HttpMethod.GET, "/", Service::getStatic),
     ERR_405(HttpMethod.UNKNOWN, "/", Service::err405);
 

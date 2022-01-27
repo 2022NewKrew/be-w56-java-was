@@ -113,21 +113,4 @@ public class HttpRequestUtils {
         }
     }
 
-    public static Map<String, String> parseBody(BufferedReader br) throws IOException {
-        Map<String, String> body = Maps.newHashMap();
-        String line;
-        while (!"".equals(line = br.readLine()) && line != null) {
-            HttpRequestUtils.parseBodyLine(body, line);
-        }
-        return body;
-    }
-
-    private static void parseBodyLine(Map<String, String> map, String line) {
-        if (Strings.isNullOrEmpty(line)) {
-            return;
-        }
-        String[] tokens = line.split(": ");
-        Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-              .forEach(p -> map.put(p.getKey(), p.getValue()));
-    }
 }
