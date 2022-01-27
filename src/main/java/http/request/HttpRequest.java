@@ -1,9 +1,7 @@
 package http.request;
 
-import java.util.List;
+import exception.BadRequestException;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webserver.HttpMethod;
 
 public class HttpRequest {
@@ -12,8 +10,12 @@ public class HttpRequest {
     private final RequestBody body;
 
     public HttpRequest(String header, String body) {
-        this.header = new RequestHeader(header);
-        this.body = new RequestBody(body);
+        try {
+            this.header = new RequestHeader(header);
+            this.body = new RequestBody(body);
+        } catch (Exception exception) {
+            throw new BadRequestException(exception.getMessage());
+        }
     }
 
     public String getUrl() {
