@@ -4,20 +4,19 @@ import java.io.DataOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import util.Constant;
 import view.ViewMaker;
 
 public class HttpResponseFactory {
 
-    public static HttpResponse getHttpResponse(StatusCode statusCode,
-            Map<String, String> result,
-            Map<String, String> model, String protocol, DataOutputStream dos) {
+    public static HttpResponse getHttpResponse(Map<String, String> result,
+            Map<String, String> model, DataOutputStream dos) {
 
         String url = result.get("url");
-        String status = StatusCode
-                .getStatusString(result.get("status"))
-                .getStatus();
+        StatusCode statusCode = StatusCode.getStatusString(result.get("status"));
+        String statusText = statusCode.getStatus();
 
-        ResponseStatusLine statusLine = new ResponseStatusLine(protocol, status);
+        ResponseStatusLine statusLine = new ResponseStatusLine(Constant.protocol, statusText);
         ResponseHeader header = new ResponseHeader();
 
         switch (statusCode) {
