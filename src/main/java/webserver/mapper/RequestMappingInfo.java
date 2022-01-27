@@ -4,6 +4,8 @@ import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.exception.InvalidMethodException;
+import webserver.http.HttpMethod;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
 import webserver.exception.BadRequestException;
@@ -19,7 +21,7 @@ import java.util.Map;
 
 public enum RequestMappingInfo {
 
-    ROOT("/") {
+    ROOT("/", HttpMethod.GET) {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
@@ -30,7 +32,7 @@ public enum RequestMappingInfo {
                     .build();
         }
     },
-    SIGN_UP("/user/create") {
+    SIGN_UP("/user/create", HttpMethod.POST) {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
@@ -57,9 +59,11 @@ public enum RequestMappingInfo {
     }
 
     private final String path;
+    private final HttpMethod method;
 
-    RequestMappingInfo(String path) {
+    RequestMappingInfo(String path, HttpMethod method) {
         this.path = path;
+        this.method = method;
     }
 
     public static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
@@ -68,12 +72,21 @@ public enum RequestMappingInfo {
         }
         try {
             RequestMappingInfo requestMappingInfo = requestMap.get(path);
-            return requestMappingInfo.handle(request, dos);
+            return handleIfValidMethod(requestMappingInfo, request, dos);
         } catch (IllegalArgumentException | IllegalStateException e) {
             throw new BadRequestException("에러: 부적절한 요청입니다.");
+        } catch (WebServerException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebServerException();
         }
+    }
+
+    private static MyHttpResponse handleIfValidMethod(RequestMappingInfo requestMappingInfo, MyHttpRequest request, DataOutputStream dos) throws Exception {
+        if (!requestMappingInfo.method.name().equals(request.method())) {
+            throw new InvalidMethodException("에러: 부적절한 요청 메서드입니다.");
+        }
+        return requestMappingInfo.handle(request, dos);
     }
 
     public String getPath() {
