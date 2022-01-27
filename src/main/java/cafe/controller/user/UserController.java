@@ -40,7 +40,7 @@ public class UserController {
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setLocation("/index.html");
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
+        return new HttpResponse(HttpStatus.FOUND, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/login", method = "POST")
@@ -59,7 +59,7 @@ public class UserController {
         responseHeader.setCookie("logined=true; Path=/");
         responseHeader.setLocation("/index.html");
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
+        return new HttpResponse(HttpStatus.FOUND, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/login.html", method = "GET")
@@ -70,7 +70,7 @@ public class UserController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/login_failed.html", method = "GET")
@@ -81,7 +81,7 @@ public class UserController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
 
     }
 
@@ -94,7 +94,7 @@ public class UserController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/profile.html", method = "GET")
@@ -105,7 +105,7 @@ public class UserController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/list.html", method = "GET")
@@ -116,6 +116,6 @@ public class UserController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 }

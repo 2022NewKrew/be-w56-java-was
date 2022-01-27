@@ -32,7 +32,7 @@ public class IndexController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(method = "GET")
@@ -44,7 +44,7 @@ public class IndexController {
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setContentLength(body.length);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 
 }

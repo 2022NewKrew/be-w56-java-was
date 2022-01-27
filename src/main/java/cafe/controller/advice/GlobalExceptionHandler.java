@@ -3,10 +3,10 @@ package cafe.controller.advice;
 import cafe.controller.exception.IncorrectLoginUserException;
 import framework.annotation.ControllerAdvice;
 import framework.annotation.ExceptionHandler;
-import framework.http.response.HttpResponse;
-import framework.http.response.HttpResponseHeader;
 import framework.http.enums.HttpStatus;
 import framework.http.enums.MediaType;
+import framework.http.response.HttpResponse;
+import framework.http.response.HttpResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +30,12 @@ public class GlobalExceptionHandler {
         responseHeader.setCookie("logined=fail; Path=/");
         responseHeader.setLocation("/user/login_failed.html");
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
+        return new HttpResponse(HttpStatus.FOUND, responseHeader, body);
     }
 
     @ExceptionHandler(values = IOException.class)
     public HttpResponse handleIOException(IOException ioException) {
         log.error(ioException.getMessage());
-        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpResponseHeader());
+        return new HttpResponse(HttpStatus.NOT_FOUND, new HttpResponseHeader());
     }
 }

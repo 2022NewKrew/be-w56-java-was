@@ -32,6 +32,6 @@ public class CssController {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_CSS);
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, body);
     }
 }
