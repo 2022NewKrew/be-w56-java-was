@@ -1,82 +1,92 @@
 package webserver.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponse {
-    private static final String URI_BASE = "./webapp";
-    private static final String CRLF = "\r\n";
-    private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
+    private static final String DEFAULT_VERSION = "HTTP/1.1";
+    private static final HttpStatus DEFAULT_STATUS = HttpStatus.OK;
+    private static final String[] DEFAULT_CONTENT_TYPE = new String[]{"text/html", "charset=utf-8"};
 
-    private String version;
-    private String uri;
-    private HttpStatus statusCode;
-    private String contentType;
+    private final Map<String, String> headers;
+    private final String version;
+    private final HttpStatus statusCode;
+    private final String[] contentType;
+    private final byte[] body;
+
+    private HttpResponse(Builder builder) {
+        this.headers = builder.headers;
+        this.version = builder.version;
+        this.statusCode = builder.statusCode;
+        this.contentType = builder.contentType;
+        this.body = builder.body;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
     public String getVersion() {
         return version;
-    }
-
-    public String getUri() {
-        return uri;
     }
 
     public HttpStatus getStatusCode() {
         return statusCode;
     }
 
-    public String getContentType() {
+    public String[] getContentType() {
         return contentType;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public byte[] getBody() {
+        return body;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public void setStatusCode(HttpStatus statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public void response(DataOutputStream dos) {
-        try {
-            byte[] body = Files.readAllBytes(new File(URI_BASE + uri).toPath());
-            responseHeader(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    public int getContentLength() {
+        if (this.body != null) {
+            return this.body.length;
         }
+        return 0;
     }
 
-    private void responseHeader(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes(version + " " + statusCode + CRLF);
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8" + CRLF);
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + CRLF);
-            dos.writeBytes(CRLF);
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    public static class Builder {
+        private final Map<String, String> headers = new HashMap<>();
+        private String version = DEFAULT_VERSION;
+        private HttpStatus statusCode = DEFAULT_STATUS;
+        private String[] contentType = DEFAULT_CONTENT_TYPE;
+        private byte[] body;
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
         }
-    }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        public Builder status(HttpStatus statusCode) {
+            this.statusCode = statusCode;
+            return this;
+        }
+
+        public Builder header(String key, String value) {
+            headers.put(key, value);
+            return this;
+        }
+
+        public Builder contentType(String... contentType) {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder body(byte[] body) {
+            this.body = body;
+            return this;
+        }
+
+        public HttpResponse build() {
+            return new HttpResponse(this);
         }
     }
 }
