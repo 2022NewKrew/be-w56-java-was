@@ -6,10 +6,9 @@ import java.net.Socket;
 import framework.Beans;
 import framework.FrontController;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private final Logger log = Beans.log;
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -21,7 +20,6 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-//            FrontController frontController = new FrontController();
             FrontController frontController = Beans.frontController;
             DataOutputStream dos = frontController.request(in, out);
             dos.close();

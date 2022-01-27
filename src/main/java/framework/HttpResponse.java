@@ -1,5 +1,6 @@
-package framework.response;
+package framework;
 
+import framework.variable.HttpStatusCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,9 +8,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * View를 FrontController에 송신
- */
 @Getter
 @Setter
 public class HttpResponse {

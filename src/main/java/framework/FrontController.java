@@ -1,7 +1,6 @@
 package framework;
 
 import com.google.common.collect.Maps;
-import framework.response.HttpResponse;
 import framework.util.HttpRequestUtils;
 import framework.util.IOUtils;
 

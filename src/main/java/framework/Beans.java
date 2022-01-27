@@ -7,6 +7,9 @@ import mvc.controller.Controller;
 import mvc.controller.ResourceController;
 import mvc.controller.UserController;
 import mvc.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
  * 의존성 주입을 위한 Beans 클래스, 의존 관계의 역순으로 인스턴스를 생성
  */
 public class Beans {
+    public static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     // controller
     public static final UserService userService = new UserService();
     // handlerMapping

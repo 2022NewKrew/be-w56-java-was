@@ -1,7 +1,6 @@
 package framework;
 
-import framework.response.HttpResponse;
-import framework.response.HttpStatusCode;
+import framework.variable.HttpStatusCode;
 import org.apache.tika.Tika;
 
 import java.io.File;

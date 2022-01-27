@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
  * FrontController로부터 요청을 전달받아 해당 요청을 매핑한 컨트롤러가 있는지 검색
  */
 public class HandlerMapping {
-    private Method matchedMethod;
     private final Controller resourceController;
     private final List<Controller> controllerList;
+    private Method matchedMethod;
 
     public HandlerMapping(Controller resourceController, List<Controller> controllerList) {
         this.resourceController = resourceController;
@@ -30,7 +30,7 @@ public class HandlerMapping {
     }
 
     /**
-     * static resource 파일에 대한 접근을 처리
+     * static resource 파일 요청에 매핑된 메서드를 호출
      */
     public String requestToResourceController(HttpRequest request) throws IllegalAccessException, InvocationTargetException {
         Arrays.stream(resourceController.getClass().getMethods())
@@ -41,7 +41,7 @@ public class HandlerMapping {
     }
 
     /**
-     * 확장자를 가지지 않는 url에 대한 접근 처리
+     * 확장자를 가지지 않는 url 요청에 매핑된 메서드 호출
      */
     public String requestToSpecificController(HttpRequest request) throws IllegalAccessException, InvocationTargetException {
         Controller controller = findController(request.getUrl(), request.getMethod())
@@ -61,6 +61,9 @@ public class HandlerMapping {
                 .anyMatch(method -> setMatchedMethod(method, url, httpMethod));
     }
 
+    /**
+     * request에 일치하는 method, url을 가진 method를 찾을 시 matchedMethod를 해당 method로 할당해주고 찾았다는 표시로 true를 리턴
+     */
     private boolean setMatchedMethod(Method method, String url, String httpMethod) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping == null) return false;

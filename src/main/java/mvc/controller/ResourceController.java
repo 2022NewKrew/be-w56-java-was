@@ -26,12 +26,8 @@ public class ResourceController implements Controller {
     }
 
     @RequestMapping(value = "/*.woff", method = RequestMethod.GET)
-    public String getWoff(String url) {
-        return url;
-    }
+    public String getWoff(String url) { return url; }
 
     @RequestMapping(value = "/*.ttf", method = RequestMethod.GET)
-    public String getTtf(String url) {
-        return url;
-    }
+    public String getTtf(String url) { return url; }
 }
