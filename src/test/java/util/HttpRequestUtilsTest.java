@@ -2,6 +2,7 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -12,19 +13,28 @@ public class HttpRequestUtilsTest {
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
+        Map<String, List<String>> parameters = HttpRequestUtils.parseQueryString(queryString);
+        assertThat(parameters.get("userId").get(0)).isEqualTo("javajigi");
         assertThat(parameters.get("password")).isNull();
 
         queryString = "userId=javajigi&password=password2";
         parameters = HttpRequestUtils.parseQueryString(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isEqualTo("password2");
+        assertThat(parameters.get("userId").get(0)).isEqualTo("javajigi");
+        assertThat(parameters.get("password").get(0)).isEqualTo("password2");
+    }
+
+    @Test
+    public void parseQueryString_multipleValue() {
+        String queryString = "role=ADMIN&role=USER";
+        Map<String, List<String>> parameters = HttpRequestUtils.parseQueryString(queryString);
+        assertThat(parameters.size()).isEqualTo(1);
+        assertThat(parameters.get("role").size()).isEqualTo(2);
+        assertThat(parameters.get("role")).containsExactly("ADMIN", "USER");
     }
 
     @Test
     public void parseQueryString_null() {
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(null);
+        Map<String, List<String>> parameters = HttpRequestUtils.parseQueryString(null);
         assertThat(parameters.isEmpty()).isTrue();
 
         parameters = HttpRequestUtils.parseQueryString("");
@@ -37,8 +47,8 @@ public class HttpRequestUtilsTest {
     @Test
     public void parseQueryString_invalid() {
         String queryString = "userId=javajigi&password";
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
+        Map<String, List<String>> parameters = HttpRequestUtils.parseQueryString(queryString);
+        assertThat(parameters.get("userId").get(0)).isEqualTo("javajigi");
         assertThat(parameters.get("password")).isNull();
     }
 
