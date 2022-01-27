@@ -20,6 +20,7 @@ import java.util.HashMap;
 public class GetController implements Controller {
 
     private final UserService userService;
+    private static final Tika tika = new Tika();
 
     public GetController(UserService userService) {
         this.userService = userService;
@@ -60,7 +61,6 @@ public class GetController implements Controller {
         temp.put("Content-Length", String.valueOf(body.length));
         String contentType = Files.probeContentType(filePath);
         if (contentType == null || contentType.equals("")) {
-            Tika tika = new Tika();
             contentType = tika.detect(file);
         }
         temp.put("Content-Type", contentType);
