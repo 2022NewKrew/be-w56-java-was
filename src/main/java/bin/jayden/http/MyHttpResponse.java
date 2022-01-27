@@ -2,19 +2,21 @@ package bin.jayden.http;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyHttpResponse {
     private static final byte[] CLRF = "\r\n".getBytes(StandardCharsets.UTF_8);
     private final byte[] body;
     private final HttpStatusCode statusCode;
+    private final Map<String, String> addedHeader;
     private final Mime mime;
-    private final String location;
 
-    private MyHttpResponse(byte[] body, HttpStatusCode statusCode, Mime mime, String location) {
+    private MyHttpResponse(byte[] body, HttpStatusCode statusCode, Mime mime, Map<String, String> header) {
         this.body = body;
         this.statusCode = statusCode;
         this.mime = mime;
-        this.location = location;
+        this.addedHeader = header;
     }
 
     public byte[] getBody() {
@@ -36,24 +38,19 @@ public class MyHttpResponse {
 
 
     private String getHeader(int lengthOfBodyContent) {
-        String header = "HTTP/1.1 " + statusCode + " \r\n";
-
-        if (statusCode == HttpStatusCode.STATUS_CODE_302) {
-            header += "Location: " + location + "\r\n" +
-                    "\r\n";
-        } else {
-            header += "Content-Type: " + mime.getContentType() + ";charset=utf-8\r\n" +
-                    "Content-Length: " + lengthOfBodyContent + "\r\n" +
-                    "\r\n";
+        StringBuilder header = new StringBuilder("HTTP/1.1 " + statusCode + " \r\n");
+        for (Map.Entry<String, String> entry : addedHeader.entrySet()) {
+            header.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
         }
-        return header;
+        header.append("Content-Type: ").append(mime.getContentType()).append(";charset=utf-8\r\n").append("Content-Length: ").append(lengthOfBodyContent).append("\r\n").append("\r\n");
+        return header.toString();
     }
 
     public static class Builder {
+        private final Map<String, String> header = new HashMap<>();
         private byte[] body = new byte[0];
         private HttpStatusCode statusCode = HttpStatusCode.STATUS_CODE_200;
         private Mime mime = Mime.HTML;
-        private String location = null;
 
         public Builder setBody(byte[] body) {
             this.body = body;
@@ -64,8 +61,8 @@ public class MyHttpResponse {
             return setBody(body.getBytes(StandardCharsets.UTF_8));
         }
 
-        public Builder setLocation(String location) {
-            this.location = location;
+        public Builder addHeader(String key, String value) {
+            header.put(key, value);
             return this;
         }
 
@@ -80,7 +77,7 @@ public class MyHttpResponse {
         }
 
         public MyHttpResponse build() {
-            return new MyHttpResponse(body, statusCode, mime, location);
+            return new MyHttpResponse(body, statusCode, mime, header);
         }
     }
 }

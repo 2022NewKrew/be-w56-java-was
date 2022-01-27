@@ -1,26 +1,24 @@
 package bin.jayden.webserver;
 
 
-import bin.jayden.http.HttpStatusCode;
-import bin.jayden.http.MyHttpRequest;
-import bin.jayden.http.MyHttpResponse;
+import bin.jayden.http.*;
 import bin.jayden.util.AnnotationProcessor;
 import bin.jayden.util.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import bin.jayden.util.ParameterProcessor;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
 
 public class Router {
-    private static final Logger log = LoggerFactory.getLogger(Router.class);
     private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
     private static final String REDIRECT = "redirect:";
+    private static final String RESOURCE_PATH = "./webapp";
     private static final Map<String, Method> postRoutingMap;
     private static final Map<String, Method> getRoutingMap;
 
@@ -41,10 +39,7 @@ public class Router {
         }
 
 
-        return new MyHttpResponse.Builder()
-                .setBody(NOT_FOUNT_MESSAGE)
-                .setStatusCode(HttpStatusCode.STATUS_CODE_404)
-                .build();
+        return new MyHttpResponse.Builder().setBody(NOT_FOUNT_MESSAGE).setStatusCode(HttpStatusCode.STATUS_CODE_404).build();
 
     }
 
@@ -57,16 +52,13 @@ public class Router {
 
         } else { //라우팅 맵에 URL에 해당하는 리소스를 찾아본다.
 
-            File file = new File("./webapp" + request.getPath());
+            File file = new File(RESOURCE_PATH + request.getPath());
 
             if (file.isFile()) {
                 byte[] body = Files.readAllBytes(file.toPath());
-                responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_200)
-                        .setMime(request.getMime())
-                        .setBody(body);
+                responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_200).setMime(request.getMime()).setBody(body);
             } else {
-                responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_404)
-                        .setBody(NOT_FOUNT_MESSAGE);
+                responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_404).setBody(NOT_FOUNT_MESSAGE);
             }
         }
         return responseBuilder.build();
@@ -79,21 +71,21 @@ public class Router {
         if (responseMethod != null) {
             routing(responseMethod, request, responseBuilder);
         } else {
-            responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_404)
-                    .setBody(NOT_FOUNT_MESSAGE);
+            responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_404).setBody(NOT_FOUNT_MESSAGE);
         }
         return responseBuilder.build();
     }
 
     private static void routing(Method responseMethod, MyHttpRequest request, MyHttpResponse.Builder responseBuilder) throws InvocationTargetException, IllegalAccessException {
-        String body = (String) responseMethod.invoke(AnnotationProcessor.getInstanceByClass(responseMethod.getDeclaringClass()), request);
+        MyHttpSession session = MyHttpSessionFactory.getSession(request.getCookies().get(Constants.COOKIE_SESSION_KEY), responseBuilder);
+        Parameter[] methodParameters = responseMethod.getParameters();
+        Object[] parameters = ParameterProcessor.getParameterObjects(methodParameters, request, session);
+        String body = (String) responseMethod.invoke(AnnotationProcessor.getInstanceByClass(responseMethod.getDeclaringClass()), parameters);
         if (body.startsWith(REDIRECT)) {
             body = body.replace(REDIRECT, "");
-            responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_302)
-                    .setLocation(body);
+            responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_302).addHeader("Location", body);
         } else {
-            responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_200)
-                    .setBody(body);
+            responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_200).setBody(body);
         }
     }
 }
