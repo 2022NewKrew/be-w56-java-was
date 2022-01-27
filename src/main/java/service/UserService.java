@@ -49,15 +49,27 @@ public class UserService {
 
     public static HttpResponse login(HttpRequest httpRequest) {
         HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+        String requestBody = httpRequest.getBodyData();
 
         HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.REDIRECT);
         HttpResponseHeaders headers = new HttpResponseHeaders();
-
-        headers.addHeader(new Pair("Set-Cookie", "logined=true; Path=/"));
-        headers.addHeader(new Pair("Location", "http://localhost:8080/index.html"));
-
         HttpResponseBody body = new HttpResponseBody();
 
+        if(canUserLogin(requestBody)){
+            headers.addHeader(new Pair("Set-Cookie", "logined=true; Path=/"));
+            headers.addHeader(new Pair("Location", "http://localhost:8080/index.html"));
+            return new HttpResponse(statusLine, headers, body);
+        }
+
+        headers.addHeader(new Pair("Set-Cookie", "logined=false; Path=/"));
+        headers.addHeader(new Pair("Location", "http://localhost:8080/user/login_failed.html"));
+
         return new HttpResponse(statusLine, headers, body);
+    }
+
+    private static boolean canUserLogin(String body){
+        Map<String, String> userInfo = HttpRequestUtils.parseBody(body);
+        User user = DataBase.findUserById(userInfo.get("userId"));
+        return user.getPassword().equals(userInfo.get("password"));
     }
 }
