@@ -10,8 +10,10 @@ public class UserCreateController extends AbstractController {
     private static final String PATH = "/user/create";
 
     private static UserCreateController instance;
+    private final UserService userService;
 
     private UserCreateController() {
+        userService = UserService.getInstance();
     }
 
     public static UserCreateController getInstance() {
@@ -29,7 +31,7 @@ public class UserCreateController extends AbstractController {
 
     @Override
     protected HttpResponse doPost(HttpRequest request) {
-        UserService.register(request.getBody().getParams());
+        userService.register(request.getBody().getParams());
         return HttpResponse.redirect("/index.html");
     }
 
