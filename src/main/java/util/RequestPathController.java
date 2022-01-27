@@ -18,6 +18,7 @@ public class RequestPathController {
     private static final Logger log = LoggerFactory.getLogger(RequestPathController.class);
     private static final String URL_PREFIX = "./webapp";
     private static final String DEFAULT_CONTENT_TYPE = "text/html";
+    private static final String REDIRECT_PATH = "http://localhost:8080/index.html";
 
     public static void urlMapping(RequestLine requestLine, RequestHeader requestHeader,
                                   Map<String, String> requestBody, DataOutputStream dos) throws IOException {
@@ -41,14 +42,12 @@ public class RequestPathController {
         responseBody(dos, body);
     }
 
-    private static void userCreatePath(RequestHeader requestHeader, Map<String, String> requestBody, DataOutputStream dos) throws IOException {
+    private static void userCreatePath(RequestHeader requestHeader, Map<String, String> requestBody, DataOutputStream dos) {
         User user = new User(requestBody.get("userId"), requestBody.get("password"), requestBody.get("name"), requestBody.get("email"));
         DataBase.addUser(user);
 
         log.info("Added User : {}", DataBase.findUserById(requestBody.get("userId")).toString());
-        byte[] body = Files.readAllBytes(new File(URL_PREFIX + "/index.html").toPath());
-        responseHeader(ResponseStatus.FOUND, requestHeader.getContentType(), dos, body.length);
-        responseBody(dos, body);
+        responseHeader(ResponseStatus.FOUND, requestHeader.getContentType(), dos, 0);
     }
 
     private static void defaultPath(RequestLine requestLine, RequestHeader requestHeader, DataOutputStream dos) throws IOException {
@@ -68,6 +67,9 @@ public class RequestPathController {
     private static void responseHeader(ResponseStatus status, String contentType, DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 " + status.getValue() + " " + status.name() + " \r\n");
+            if (status == ResponseStatus.FOUND) {
+                dos.writeBytes("Location: " + REDIRECT_PATH + "\r\n");
+            }
             dos.writeBytes("Content-Type: " + contentType + "; charset = utf - 8\r\n ");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
