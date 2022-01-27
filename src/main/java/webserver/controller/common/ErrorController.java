@@ -13,7 +13,7 @@ public class ErrorController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> handle(HttpRequest httpRequest) throws IOException {
+    public HttpResponse<String> handle(HttpRequest httpRequest){
 
         return null;
     }

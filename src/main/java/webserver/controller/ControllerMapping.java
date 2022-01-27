@@ -1,21 +1,25 @@
 package webserver.controller;
 
+import factory.ControllerFactory;
 import util.request.HttpRequest;
-import webserver.controller.common.StaticController;
-import webserver.controller.user.UserJoinController;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ControllerMapping {
-    private final List<Controller<?>> controllers = List.of(
-            new StaticController(),
-            new UserJoinController()
-    );
+    private final List<Controller<?>> controllers = ControllerFactory.getNormalControllers();
+    private final Controller<?> errorController = ControllerFactory.getErrorController();
 
-    public Optional<Controller<?>> getController(HttpRequest httpRequest){
-        return controllers.stream()
+    public Controller<?> getController(HttpRequest httpRequest){
+        Optional<Controller<?>> controllerOptional
+                = controllers.stream()
                 .filter(controller -> controller.supports(httpRequest))
                 .findFirst();
+
+        if(controllerOptional.isPresent()){
+            return controllerOptional.get();
+        }
+
+        return errorController;
     }
 }

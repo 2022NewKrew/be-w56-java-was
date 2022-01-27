@@ -30,7 +30,7 @@ public class DispatcherServlet extends Thread {
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
             HttpRequest httpRequest = hr.read();
-            Controller<?> controller = controllerMapping.getController(httpRequest).orElseThrow();
+            Controller<?> controller = controllerMapping.getController(httpRequest);
 
             HttpResponse<?> httpResponse = controller.handle(httpRequest);
             ViewRenderer.render(httpResponse, dos);

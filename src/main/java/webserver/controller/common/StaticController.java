@@ -9,7 +9,6 @@ import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
 import webserver.controller.Controller;
 
-import java.io.IOException;
 import java.util.Set;
 
 public class StaticController implements Controller<String> {
@@ -32,7 +31,7 @@ public class StaticController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> handle(HttpRequest httpRequest) throws IOException {
+    public HttpResponse<String> handle(HttpRequest httpRequest){
         String fileName = isRootUrl(httpRequest.getUrl())
                 ? "/index.html"
                 : httpRequest.getUrl();
