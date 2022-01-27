@@ -1,5 +1,6 @@
 package web.controller;
 
+import util.Pair;
 import web.http.response.HttpResponse;
 import web.http.response.HttpResponseBody;
 import org.slf4j.Logger;
@@ -24,7 +25,9 @@ public class HttpResponseMapper {
     public static void response302Header(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusString() +"\r\n");
-            dos.writeBytes(httpResponse.getRedirectHeader() + "\r\n");
+            for(Pair header: httpResponse.getHeadersList()){
+                dos.writeBytes(header.toString() + "\r\n");
+            }
             dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

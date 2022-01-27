@@ -5,14 +5,22 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.Pair;
+import web.http.request.HttpRequest;
+import web.http.request.HttpRequestHeaders;
+import web.http.request.HttpRequestLine;
+import web.http.response.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 
 public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public static void addUser(String body){
+    private static void addUser(String body){
         Map<String, String> queries = HttpRequestUtils.parseBody(body);
         String userId = queries.get("userId");
         String name = queries.get("name");
@@ -22,5 +30,46 @@ public class UserService {
         User user = new User(userId, password, name, email);
         log.info("Insert User : {} ", user);
         DataBase.addUser(user);
+    }
+
+    public static HttpResponse signUp(HttpRequest httpRequest) {
+        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+        String requestBody = httpRequest.getBodyData();
+
+        addUser(requestBody);
+
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.REDIRECT);
+        HttpResponseHeaders headers = new HttpResponseHeaders();
+        headers.addHeader(new Pair("Location", "http://localhost:8080/index.html"));
+
+        HttpResponseBody body = new HttpResponseBody();
+
+        return new HttpResponse(statusLine, headers, body);
+    }
+
+    public static HttpResponse login(HttpRequest httpRequest) {
+        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+        String requestBody = httpRequest.getBodyData();
+
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.REDIRECT);
+        HttpResponseHeaders headers = new HttpResponseHeaders();
+        HttpResponseBody body = new HttpResponseBody();
+
+        if(canUserLogin(requestBody)){
+            headers.addHeader(new Pair("Set-Cookie", "logined=true; Path=/"));
+            headers.addHeader(new Pair("Location", "http://localhost:8080/index.html"));
+            return new HttpResponse(statusLine, headers, body);
+        }
+
+        headers.addHeader(new Pair("Set-Cookie", "logined=false; Path=/"));
+        headers.addHeader(new Pair("Location", "http://localhost:8080/user/login_failed.html"));
+
+        return new HttpResponse(statusLine, headers, body);
+    }
+
+    private static boolean canUserLogin(String body){
+        Map<String, String> userInfo = HttpRequestUtils.parseBody(body);
+        User user = DataBase.findUserById(userInfo.get("userId"));
+        return user.getPassword().equals(userInfo.get("password"));
     }
 }

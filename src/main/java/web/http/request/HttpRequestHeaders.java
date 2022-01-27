@@ -11,6 +11,10 @@ public class HttpRequestHeaders {
         this.headers = headers;
     }
 
+    public List<Pair> getHeaders() {
+        return headers;
+    }
+
     public boolean isHeader(String key){
         return headers.stream().anyMatch(pair -> pair.getKey().equals(key));
     }
