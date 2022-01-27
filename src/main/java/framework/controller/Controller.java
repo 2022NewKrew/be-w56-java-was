@@ -1,16 +1,21 @@
 package framework.controller;
 
 import framework.util.annotation.RequestMapping;
-import framework.util.exception.InternalServerException;
+import framework.util.exception.ClassNotFoundException;
 import framework.util.exception.MethodNotFoundException;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
-import org.checkerframework.checker.units.qual.Current;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.Scanners;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Set;
+
+import static framework.util.Constants.CONTROLLER_PACKAGE;
 
 /**
  * Controller 클래스가 구현할 인터페이스
@@ -26,12 +31,14 @@ public interface Controller {
         Class<?> currentClass = getClass();
 
         Controller currentInstance = null;
+
         try {
             currentInstance = (Controller) currentClass.getMethod("getInstance").invoke(null);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new ClassNotFoundException();
         }
-        Method method = findMethod(request.getUri(), request.getRequestMethod(), currentClass);
+
+        Method method = findMethod(request.getUri(), request.getRequestMethod());
 
         return invokeMethod(currentInstance, method, request, response);
     }
@@ -43,9 +50,11 @@ public interface Controller {
      * @param currentClass 현재 Controller 클래스
      * @return 찾은 메소드
      */
-    default Method findMethod(String uri, String requestMethod, Class<?> currentClass) {
-        return Arrays.stream(currentClass.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(RequestMapping.class))
+    default Method findMethod(String uri, String requestMethod) {
+        Reflections reflections = new Reflections(CONTROLLER_PACKAGE, Scanners.MethodsAnnotated);
+        Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
+
+        return methods.stream()
                 .filter(m -> {
                     RequestMapping requestPath = m.getAnnotation(RequestMapping.class);
                     return uri.endsWith(requestPath.value()) &&
