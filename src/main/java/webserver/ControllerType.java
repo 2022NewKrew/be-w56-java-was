@@ -14,12 +14,15 @@ public enum ControllerType {
 
     STATIC_FILE_CONTROLLER(HttpMethod.GET, "", StaticFileController.getInstance()),
     USER_CREATE_CONTROLLER(HttpMethod.POST, "/user/create", UserCreateController.getInstance());
-    public static final Logger log = LoggerFactory.getLogger(ControllerType.class);
+
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
-    public static final Map<String, Controller> controllerMap = new ConcurrentHashMap<>();
 
     static {
         methodMap = Collections.synchronizedMap(new EnumMap<>(HttpMethod.class));
+
+        for(HttpMethod method : HttpMethod.values()){
+            methodMap.put(method, new ConcurrentHashMap<>());
+        }
 
         for (ControllerType controllerType : ControllerType.values()) {
             methodMap
@@ -31,7 +34,7 @@ public enum ControllerType {
     public static Controller getControllerType(HttpMethod httpMethod, String path) {
         return methodMap
                 .get(httpMethod)
-                .get(path);
+                .getOrDefault(path, STATIC_FILE_CONTROLLER.getController());
     }
 
     private final HttpMethod method;
