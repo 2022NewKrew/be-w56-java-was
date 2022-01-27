@@ -22,6 +22,9 @@ public class RequestStartLine {
         this(method, url, protocol, new HashMap<>());
         setQuery(queryString);
     }
+    public RequestStartLine(HttpMethod method, String url, String protocol) {
+        this(method, url, protocol, new HashMap<>());
+    }
 
     private void setQuery(String queriesString) {
         List<String> queries = List.of(queriesString.split("&"));
@@ -38,5 +41,9 @@ public class RequestStartLine {
 
     public String getUrl() {
         return url;
+    }
+
+    public Map<String, String> getQuery() {
+        return query;
     }
 }
