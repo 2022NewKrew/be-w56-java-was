@@ -15,7 +15,7 @@ public class RequestHandler extends Thread {
     public static final ControllerResolver controllerResolver = ControllerResolver.getInstance();
     public static final ViewResolver viewResolver = ViewResolver.getInstance();
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -32,7 +32,7 @@ public class RequestHandler extends Thread {
             Request request = new Request(br);
 
             String resultFromController = controllerResolver.resolveRequest(request);
-            Response response = viewResolver.resolveResponse(resultFromController);
+            Response response = viewResolver.resolveResponse(resultFromController, request.getCookie());
 
             responseHeader(dos, response.getHeader());
             responseBody(dos, response.getBody());
@@ -44,6 +44,7 @@ public class RequestHandler extends Thread {
     private void responseHeader(DataOutputStream dos, String header) throws IOException {
         dos.writeBytes(header);
     }
+
     private void responseBody(DataOutputStream dos, byte[] body) throws IOException {
         dos.write(body, 0, body.length);
         dos.flush();

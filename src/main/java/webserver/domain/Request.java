@@ -14,16 +14,22 @@ public class Request {
     private String bodyString;
     private String acceptType;
     private Map<String, String> body;
+    private Cookie cookie;
 
     public Request(BufferedReader br) throws IOException {
         Map<String, String> headerDatas;
 
         getMethodUrlQueryParam(br);
         headerDatas = getHeaderDatas(br);
+
         if (headerDatas.containsKey("Content-Length"))
             bodyString = IOUtils.readData(br, Integer.valueOf(headerDatas.get("Content-Length")));
         if (bodyString != null)
             body = HttpRequestUtils.parseQueryString(bodyString);
+
+        cookie = new Cookie();
+        if (headerDatas.containsKey("Cookie"))
+            cookie.addExistingData(HttpRequestUtils.parseCookies(headerDatas.get("Cookie")));
     }
 
     public Request(RequestMethod method, String url) {
@@ -45,6 +51,10 @@ public class Request {
 
     public String getAcceptType() {
         return acceptType;
+    }
+
+    public Cookie getCookie() {
+        return cookie;
     }
 
     private void getMethodUrlQueryParam(BufferedReader br) throws IOException {
