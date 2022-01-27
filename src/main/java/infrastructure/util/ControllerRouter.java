@@ -14,17 +14,15 @@ import java.io.IOException;
 
 public class ControllerRouter {
 
-    private static final ControllerRouter INSTANCE = new ControllerRouter();
     private static final Logger log = LoggerFactory.getLogger(ControllerRouter.class);
-    private final StaticResourceController staticResourceController = StaticResourceController.getInstance();
-    private final HomeController homeController = HomeController.getInstance();
-    private final UserController userController = UserController.getInstance();
+    private final StaticResourceController staticResourceController;
+    private final HomeController homeController;
+    private final UserController userController;
 
-    private ControllerRouter() {
-    }
-
-    public static ControllerRouter getINSTANCE() {
-        return INSTANCE;
+    public ControllerRouter(StaticResourceController staticResourceController, HomeController homeController, UserController userController) {
+        this.staticResourceController = staticResourceController;
+        this.homeController = homeController;
+        this.userController = userController;
     }
 
     public HttpResponse handle(HttpRequest httpRequest) throws IOException {

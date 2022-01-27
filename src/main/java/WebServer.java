@@ -1,4 +1,14 @@
+import adaptor.in.web.HomeController;
+import adaptor.in.web.StaticResourceController;
+import adaptor.in.web.user.UserController;
+import adaptor.out.persistence.user.SignUpUserInMemoryAdaptor;
+import adaptor.out.persistence.user.UserInMemoryDao;
+import application.SignUpUserService;
+import application.in.SignUpUserUseCase;
+import application.out.SignUpUserPort;
+import application.out.UserDao;
 import infrastructure.config.ServerConfig;
+import infrastructure.util.ControllerRouter;
 import infrastructure.util.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +22,14 @@ public class WebServer {
 
     public static void main(String args[]) throws Exception {
         int port;
+        final UserDao userDao = new UserInMemoryDao();
+        final SignUpUserPort signUpUserPort = new SignUpUserInMemoryAdaptor(userDao);
+        final SignUpUserUseCase signUpUserUseCase = new SignUpUserService(signUpUserPort);
+        final UserController userController = new UserController(signUpUserUseCase);
+        final HomeController homeController = new HomeController();
+        final StaticResourceController staticResourceController = new StaticResourceController();
+        final ControllerRouter controllerRouter = new ControllerRouter(staticResourceController, homeController, userController);
+
         if (args == null || args.length == 0) {
             port = ServerConfig.DEFAULT_PORT;
         } else {
@@ -25,7 +43,7 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection);
+                RequestHandler requestHandler = new RequestHandler(controllerRouter, connection);
                 requestHandler.start();
             }
         }

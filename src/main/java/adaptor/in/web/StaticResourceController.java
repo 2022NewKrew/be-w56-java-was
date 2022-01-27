@@ -9,15 +9,7 @@ import java.io.IOException;
 
 public class StaticResourceController {
 
-    private static final StaticResourceController INSTANCE = new StaticResourceController();
     private static final Logger log = LoggerFactory.getLogger(StaticResourceController.class);
-
-    private StaticResourceController() {
-    }
-
-    public static StaticResourceController getInstance() {
-        return INSTANCE;
-    }
 
     public HttpResponse handleFileRequest(HttpRequest httpRequest) {
         Path path = httpRequest.getRequestPath();

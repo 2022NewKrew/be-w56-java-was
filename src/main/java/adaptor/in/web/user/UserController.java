@@ -2,7 +2,7 @@ package adaptor.in.web.user;
 
 import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
-import application.SignUpUserService;
+import application.in.SignUpUserUseCase;
 import domain.user.User;
 import infrastructure.model.*;
 import infrastructure.util.HttpRequestUtils;
@@ -15,15 +15,11 @@ import java.util.Map;
 public class UserController {
 
     private static final String REQUEST_MAPPING = "/user";
-    private static final UserController INSTANCE = new UserController();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static final SignUpUserService signUpUserService = SignUpUserService.getINSTANCE();
+    private final SignUpUserUseCase signUpUserUseCase;
 
-    private UserController() {
-    }
-
-    public static UserController getInstance() {
-        return INSTANCE;
+    public UserController(SignUpUserUseCase signUpUserUseCase) {
+        this.signUpUserUseCase = signUpUserUseCase;
     }
 
     public HttpResponse handleWithResponse(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {
@@ -51,7 +47,7 @@ public class UserController {
                 .email(body.get("email"))
                 .build();
 
-        signUpUserService.signUp(user);
+        signUpUserUseCase.signUp(user);
 
         return new HttpResponse(
                 ResponseLine.valueOf(HttpStatus.OK),

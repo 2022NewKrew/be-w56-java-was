@@ -6,11 +6,10 @@ import domain.user.User;
 
 public class SignUpUserInMemoryAdaptor implements SignUpUserPort {
 
-    private static final SignUpUserInMemoryAdaptor INSTANCE = new SignUpUserInMemoryAdaptor();
-    private final UserDao userDao = UserInMemoryDao.getINSTANCE();
+    private final UserDao userDao;
 
-    public static SignUpUserInMemoryAdaptor getINSTANCE() {
-        return INSTANCE;
+    public SignUpUserInMemoryAdaptor(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override

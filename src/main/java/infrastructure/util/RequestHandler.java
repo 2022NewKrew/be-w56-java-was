@@ -12,10 +12,11 @@ import static infrastructure.util.ResponseHandler.response;
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final ControllerRouter controllerRouter = ControllerRouter.getINSTANCE();
+    private final ControllerRouter controllerRouter;
     private final Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(ControllerRouter controllerRouter, Socket connectionSocket) {
+        this.controllerRouter = controllerRouter;
         this.connection = connectionSocket;
     }
 

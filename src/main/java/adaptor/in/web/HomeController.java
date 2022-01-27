@@ -10,14 +10,9 @@ import java.io.IOException;
 
 public class HomeController {
 
-    private static final HomeController INSTANCE = new HomeController();
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
-    private HomeController() {
-    }
-
-    public static HomeController getInstance() {
-        return INSTANCE;
+    public HomeController() {
     }
 
     public HttpResponse handle(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {
