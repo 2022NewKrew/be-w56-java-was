@@ -1,7 +1,7 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
-### step1-1
+## step1-1
 > HTTP
 - 하이퍼본문전송규약
 - 클라이언트 - 서버 사이의 소통
@@ -31,3 +31,13 @@
 > 참고 자료
 - https://ko.wikipedia.org/wiki/HTTP
 - https://developer.mozilla.org/ko/docs/Web/HTTP/Messages
+
+## step2-2
+> Response Content Type
+- 응답을 내려줄 때 어떤 종류의 데이터인지 명시
+- 확장자에 따라 다른 방식으로 명시해줄 수 있고, 특정 범주에 없다면 application/octet-stream 으로 default
+- 똑같이 html 파일을 응답한다해도, text/html 로 명시하면 브라우저에 html 파일이 표시되지만 default 값으로 내려주면 html 파일 자체가 다운로드 처리됨
+- Request Header에서 브라우저가 받아들일 수 있는 타입(들)을 명시해주면, 이에 맞춰 내려주고 브라우저는 응답으로 온 content-type에 따라 데이터를 해석하는 듯 보임.
+
+> 참고 자료
+- https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types

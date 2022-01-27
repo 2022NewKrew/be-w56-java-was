@@ -3,6 +3,7 @@ package util;
 import http.HttpRequest;
 
 import java.io.*;
+import java.util.Map;
 
 public class HttpRequestParser {
 
@@ -11,7 +12,8 @@ public class HttpRequestParser {
     public void parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String startLine = br.readLine();
-        httpRequest.setStartLine(startLine);
+        Map<String, String> startLineMap = HttpRequestUtils.parseStartLine(startLine);
+        httpRequest.setStartLine(startLineMap.get("method"), startLineMap.get("url"), startLineMap.get("protocol"));
 
         String headerSingleLine = " ";
         while (true) {
@@ -19,7 +21,8 @@ public class HttpRequestParser {
             if (headerSingleLine == null || headerSingleLine.equals("")) {
                 break;
             }
-            httpRequest.setHeaderValue(headerSingleLine);
+            HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(headerSingleLine);
+            httpRequest.setHeaderValue(pair.getKey(), pair.getValue());
         }
     }
 
