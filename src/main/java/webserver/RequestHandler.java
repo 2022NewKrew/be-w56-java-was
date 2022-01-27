@@ -8,7 +8,6 @@ import model.MyHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpResponseUtils;
-import webserver.enums.MIME;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,7 +26,7 @@ public class RequestHandler extends Thread {
 
             MyHttpRequest myHttpRequest = new MyHttpRequest(in);
             MyHttpResponse myHttpResponse = new MyHttpResponse(myHttpRequest);
-            HttpResponseUtils.response(out, myHttpResponse, MIME.parse(myHttpRequest.getUri()));
+            HttpResponseUtils.response(out, myHttpResponse, myHttpRequest.getUri());
         } catch (IOException e) {
             log.error(e.getMessage());
         }

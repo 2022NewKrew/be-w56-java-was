@@ -34,14 +34,16 @@ public class MyHttpResponse {
     private HttpStatus get(MyHttpRequest request) {
         try {
             String uri = request.getUri();
-            uri = processStaticUri(uri);
 
             if (uri.equals("/")) {
                 body = Files.readAllBytes(new File(MAIN_PAGE).toPath());
             }
             else if (uri.equals("/user/create")) {
                 userController.signUp(request.getParameters());
+
+                request.setUri("/");
                 body = Files.readAllBytes(new File(MAIN_PAGE).toPath());
+                return HttpStatus.REDIRECT;
             }
             else {
                 body = Files.readAllBytes(new File(DEFAULT_PATH + uri).toPath());
@@ -50,18 +52,6 @@ public class MyHttpResponse {
         } catch (IOException e) {
             return HttpStatus.NOT_FOUND;
         }
-    }
-
-    private String processStaticUri(String uri) {
-        String[] staticUri= {"/css", "/js", "/fonts", "/images"};
-        for (String s : staticUri) {
-            if (uri.contains(s)) {
-                uri = uri.substring(1);
-                int idx = uri.indexOf('/');
-                return uri.substring(idx);
-            }
-        }
-        return uri;
     }
 
     public String getStatusLine() {
