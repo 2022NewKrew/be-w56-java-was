@@ -3,21 +3,21 @@ package di;
 import annotation.Bean;
 import annotation.Inject;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 class DependencyInjectorTest {
 
     @Test
-    void inject() throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-        DependencyInjector di = new DependencyInjector();
+    void inject() {
+        DependencyInjector di = new DependencyInjector(mock(Logger.class));
         Stub stub = new Stub();
 
         di.inject("di", stub);

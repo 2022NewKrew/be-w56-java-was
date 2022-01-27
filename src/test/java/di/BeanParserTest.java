@@ -2,18 +2,19 @@ package di;
 
 import annotation.Bean;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class BeanParserTest {
 
     @Test
-    void parse() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
-        BeanParser subject = new BeanParser();
+    void parse() {
+        BeanParser subject = new BeanParser(mock(Logger.class));
 
         BeanContainer result = subject.parse(new Class[] {Foo.class});
 

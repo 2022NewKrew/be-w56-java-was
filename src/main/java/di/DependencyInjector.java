@@ -1,22 +1,22 @@
 package di;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import org.slf4j.Logger;
 
 public class DependencyInjector {
 
-    public void inject(String packageName, Object target)
-            throws IOException,
-            ClassNotFoundException,
-            IllegalAccessException,
-            NoSuchMethodException,
-            InvocationTargetException,
-            InstantiationException {
-        PackageAnalyzer analyzer = new PackageAnalyzer();
-        BeanParser parser = new BeanParser();
+    private final PackageAnalyzer analyzer;
+    private final BeanParser parser;
+    private final BeanInjector injector;
+
+    public DependencyInjector(Logger logger) {
+        analyzer = new PackageAnalyzer(logger);
+        parser = new BeanParser(logger);
+        injector = new BeanInjector(logger);
+    }
+
+    public void inject(String packageName, Object target) {
         Class<?>[] classes = analyzer.getClasses(packageName);
         BeanContainer container = parser.parse(classes);
-        BeanInjector injector = new BeanInjector();
         injector.inject(container, target);
     }
 }

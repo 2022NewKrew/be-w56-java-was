@@ -2,15 +2,17 @@ package di;
 
 import annotation.Inject;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class BeanInjectorTest {
 
     @Test
-    void inject() throws ClassNotFoundException, IllegalAccessException {
+    void inject() {
         BeanContainer container = new BeanContainer();
         container.put(String.class, "Hello");
         container.put(String.class, "World");
@@ -18,7 +20,7 @@ class BeanInjectorTest {
         container.put(Integer.class, 2);
         container.put(Integer.class, 3);
         container.put(Boolean.class, true);
-        BeanInjector subject = new BeanInjector();
+        BeanInjector subject = new BeanInjector(mock(Logger.class));
 
         Foo foo = new Foo();
         subject.inject(container, foo);

@@ -1,20 +1,21 @@
 package di;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class PackageAnalyzerTest {
 
     @Test
-    void getClasses() throws IOException, ClassNotFoundException {
+    void getClasses() {
         String packageName = "test.dummy";
-        PackageAnalyzer analyzer = new PackageAnalyzer();
+        PackageAnalyzer analyzer = new PackageAnalyzer(mock(Logger.class));
 
         Class<?>[] classes = analyzer.getClasses(packageName);
 

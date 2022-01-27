@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import router.RouterFunction;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -19,18 +18,12 @@ public class WebServer {
     @Inject
     private List<RouterFunction> routers;
 
-    public WebServer()
-            throws IOException,
-            ClassNotFoundException,
-            InvocationTargetException,
-            IllegalAccessException,
-            NoSuchMethodException,
-            InstantiationException {
-        DependencyInjector injector = new DependencyInjector();
+    public WebServer() {
+        DependencyInjector injector = new DependencyInjector(log);
         injector.inject("", this);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         int port;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
@@ -40,7 +33,7 @@ public class WebServer {
         new WebServer().start(port);
     }
 
-    public void start(int port) throws Exception {
+    public void start(int port) {
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
@@ -51,6 +44,8 @@ public class WebServer {
                 RequestHandler requestHandler = new RequestHandler(connection, routers);
                 requestHandler.start();
             }
+        } catch (IOException e) {
+            log.error("Web Application Server failed to start.", e);
         }
     }
 }

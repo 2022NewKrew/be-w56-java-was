@@ -15,6 +15,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
+    def mockitoVersion = '4+'
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
