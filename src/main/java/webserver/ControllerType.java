@@ -3,6 +3,7 @@ package webserver;
 import controller.Controller;
 import controller.StaticFileController;
 import controller.UserCreateController;
+import controller.UserLoginController;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -13,7 +14,8 @@ import org.slf4j.LoggerFactory;
 public enum ControllerType {
 
     STATIC_FILE_CONTROLLER(HttpMethod.GET, "", StaticFileController.getInstance()),
-    USER_CREATE_CONTROLLER(HttpMethod.POST, "/user/create", UserCreateController.getInstance());
+    USER_CREATE_CONTROLLER(HttpMethod.POST, "/user/create", UserCreateController.getInstance()),
+    USER_LOGIN_CONTROLLER(HttpMethod.POST, "/user/login", UserLoginController.getInstance());
 
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
 
@@ -32,6 +34,9 @@ public enum ControllerType {
     }
 
     public static Controller getControllerType(HttpMethod httpMethod, String path) {
+        Logger log = LoggerFactory.getLogger(ControllerType.class);
+        log.info("method : {}, path : {}" , httpMethod, path);
+        log.info("methodMap : {}", methodMap.toString());
         return methodMap
                 .get(httpMethod)
                 .getOrDefault(path, STATIC_FILE_CONTROLLER.getController());
