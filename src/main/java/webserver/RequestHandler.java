@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.DefaultHttpRequestBuilder;
@@ -51,7 +52,7 @@ public class RequestHandler extends Thread {
             dos.writeBytes(HttpResponseUtil.responseLineString(response));
             dos.writeBytes(HttpResponseUtil.headerString(response));
             if (response.getBody() != null && response.getBody().length > 0) {
-                dos.writeBytes(HttpResponseUtil.bodyString(response));
+                dos.write(HttpResponseUtil.bodyString(response).getBytes(StandardCharsets.UTF_8));
             }
             dos.flush();
         } catch (IOException e) {
