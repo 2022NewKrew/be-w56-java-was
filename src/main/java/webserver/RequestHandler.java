@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,33 +31,58 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String request = br.readLine();
-            log.info("Request line = {}", request);
-            String urlWithQuery = HttpHeaderUtils.getHttpRequestUrl(request);
-            log.info("url = {}", urlWithQuery);
-            String url = HttpHeaderUtils.getUrl(urlWithQuery);
 
-            if(url.equals("/user/create")) {
-                Map<String, String> headers = getHeaders(br);
+            String requestLine = br.readLine();
+            log.info("Request line = {}", requestLine);
+            List<String> request = HttpHeaderUtils.parseRequestLine(requestLine);
+            log.info("request = {}", request);
+            String method = request.get(0);
+            String urlPath = request.get(1);
+            String urlQuery = request.get(2);
+            String httpVersion = request.get(3);
+
+            Map<String, String> headers = getHeaders(br);
+            String requestBody = "";
+            if(headers.containsKey("Content-Length")) {
                 int contentLength = Integer.parseInt(headers.get("Content-Length"));
-                String requestBody = IOUtils.readData(br, contentLength);
-                Optional<User> user = HttpHeaderUtils.parseUserInfo(requestBody);
-                user.ifPresent(DataBase::addUser);
-                log.info("user = {}", user);
+                requestBody = IOUtils.readData(br, contentLength);
+                log.info("requestBody = {}", requestBody);
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            if(new File("./webapp" + url).exists()) {
-                byte[] responseBody = Files.readAllBytes(new File("./webapp" + url).toPath());
-                response200Header(dos, responseBody.length, HttpHeaderUtils.getContentTypeFromUrl(url));
-                responseBody(dos, responseBody);
-                return;
-            }
-            final String redirectUrl = "/index.html";
-            response302Header(dos, redirectUrl, HttpHeaderUtils.getContentTypeFromUrl(redirectUrl));
+            execByRequestUrl(method, urlPath, urlQuery, headers, requestBody, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private void execByRequestUrl(String method, String requestUrlPath, String requestUrlQuery, Map<String, String> headers, String requestBody, DataOutputStream dos) throws IOException {
+        switch(requestUrlPath) {
+            case "/user/create": postUserCreate(requestBody);
+            case "/user/login": postUserLogin();
+            default: staticPageResponse(dos, requestUrlPath);
+        }
+    }
+
+    private void postUserCreate(String requestBody) {
+        Optional<User> user = HttpHeaderUtils.parseUserInfo(requestBody);
+        user.ifPresent(DataBase::addUser);
+        log.info("user = {}", user);
+    }
+
+    private void postUserLogin() {
+        // Check login info
+        // Send Set-Cookie: logined=true; Path=/
+    }
+
+    private void staticPageResponse(DataOutputStream dos, String requestUrlPath) throws IOException {
+        if(new File("./webapp" + requestUrlPath).exists()) {
+            byte[] responseBody = Files.readAllBytes(new File("./webapp" + requestUrlPath).toPath());
+            response200Header(dos, responseBody.length, HttpHeaderUtils.getContentTypeFromUrl(requestUrlPath));
+            responseBody(dos, responseBody);
+        }
+        final String redirectUrl = "/index.html";
+        response302Header(dos, redirectUrl, HttpHeaderUtils.getContentTypeFromUrl(redirectUrl));
     }
 
     private Map<String, String> getHeaders(BufferedReader br) throws IOException {
