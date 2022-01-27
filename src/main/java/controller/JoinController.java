@@ -6,22 +6,13 @@ import model.User;
 import service.UserService;
 import java.util.Map;
 
-public class UserController implements Controller{
-
-    private final UserService userService = new UserService();
+public class JoinController implements Controller{
 
     @Override
     public void makeResponse(Request request, Response response) {
-        createUser(request);
-        response.redirectResponse("/index.html");
-    }
-
-    private void createUser(Request request) {
         Map<String, String> newUser = request.getBody();
         User user = new User(newUser.get("userId"), newUser.get("password"), newUser.get("name"), newUser.get("email"));
-        userService.join(user);
+        UserService.join(user);
+        response.redirectResponse("/index.html");
     }
-
-
-
 }

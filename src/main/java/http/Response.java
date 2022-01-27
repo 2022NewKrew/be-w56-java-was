@@ -34,6 +34,10 @@ public class Response {
         response302Header(location);
     }
 
+    public void redirectResponse(String location, String cookie) {
+        response302HeaderWithCookie(location, cookie);
+    }
+
     private void response200Header(String typeOfBodyContent, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
@@ -48,7 +52,18 @@ public class Response {
     private void response302Header(String location) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: http://localhost:8080" + location);
+            dos.writeBytes("Location: http://localhost:8080" + location + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302HeaderWithCookie(String location, String cookie) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: http://localhost:8080" + location + "\r\n");
+            dos.writeBytes("Set-Cookie: " + cookie + " Path=/\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
