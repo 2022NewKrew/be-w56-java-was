@@ -1,10 +1,12 @@
 package model;
 
+import exception.PasswordMissMatchException;
+
 public class User {
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+    private final String userId;
+    private final String password;
+    private final String name;
+    private final String email;
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
@@ -33,4 +35,16 @@ public class User {
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
+
+    public void validateEqualsPassword(String inputPassword) throws PasswordMissMatchException {
+        if (!equalsPassword(inputPassword)) {
+            throw new PasswordMissMatchException("기존 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    public boolean equalsPassword(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
+
+
 }
