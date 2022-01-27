@@ -2,9 +2,11 @@ package framework;
 
 
 import framework.annotation.Controller;
+import framework.annotation.ControllerAdvice;
+import framework.annotation.ExceptionHandler;
 import framework.annotation.RequestMapping;
-import framework.controller.css.CssController;
 import framework.controller.FaviconController;
+import framework.controller.css.CssController;
 import framework.controller.view.ViewController;
 import framework.http.HttpHeader;
 import framework.http.HttpRequest;
@@ -16,6 +18,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Set;
 
 public class ControllerHandler {
@@ -39,13 +42,18 @@ public class ControllerHandler {
                         continue;
                     }
                     Object routerObject = controller.getConstructor(HttpRequest.class).newInstance(httpRequest);
-                    return (HttpResponse) classMethod.invoke(routerObject);
+                    try {
+                        return (HttpResponse) classMethod.invoke(routerObject);
+                    } catch (InvocationTargetException e) {
+                        return handlingException(e.getCause());
+                    }
                 }
             }
         }
 
         return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
     }
+
 
     private static boolean isValidMethod(RequestMapping requestMapping, String path, String method) {
         if (!requestMapping.method().equals(method)) {
@@ -57,6 +65,29 @@ public class ControllerHandler {
         }
 
         return true;
+    }
+
+    private static HttpResponse handlingException(Throwable exception) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+        Set<Class<?>> typesAnnotatedWith = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage("cafe")))
+                .getTypesAnnotatedWith(ControllerAdvice.class);
+
+        for (Class<?> controller : typesAnnotatedWith) {
+            for (Method classMethod : controller.getDeclaredMethods()) {
+                if (classMethod.isAnnotationPresent(ExceptionHandler.class)) {
+                    ExceptionHandler annotation = classMethod.getAnnotation(ExceptionHandler.class);
+                    Object routerObject = controller.getConstructor().newInstance();
+                    isValidMethodForExceptionHandler(annotation, exception);
+                    return (HttpResponse) classMethod.invoke(routerObject, exception);
+                }
+            }
+        }
+
+        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+    }
+
+    private static boolean isValidMethodForExceptionHandler(ExceptionHandler exceptionHandler, Throwable exception) {
+        return Arrays.asList(exceptionHandler.values()).contains(exception);
     }
 
     private static HttpResponse treatUnspecifiedRequest(HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
