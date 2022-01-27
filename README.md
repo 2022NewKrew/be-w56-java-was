@@ -15,8 +15,7 @@
 - Controller 를 통해 앞으로 추가될 요청에 대해 좀 더 자세하게 관리
 
 ## 3단계
-- 404 page를 던질때 try catch 한번더 사용되는 문제
-- buffered reader 에서 readline 으로 body가 읽히지 않는 문제
+- 기존의 GET method가 아닌 POST method를 이용한 회원가입 구현
 
 ## 4단계
 - cookie를 이용한 로그인 구현
@@ -32,3 +31,6 @@
   - lombok에 대해 알아보고 적용 예정
 - 코드 품질 개선 및 파일 구조에 대한 고민
   - 지속적으로 고민해야 함
+  - response header를 깔끔하게 작성
+  - 입출력 관련 코드 정비
+  - 
