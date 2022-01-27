@@ -1,4 +1,4 @@
-package util;
+package framework.variable;
 
 public enum RequestMethod {
     GET,

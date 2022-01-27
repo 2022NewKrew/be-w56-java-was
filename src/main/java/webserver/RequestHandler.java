@@ -3,7 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
-import controller.FrontController;
+import framework.Beans;
+import framework.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +21,10 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            FrontController frontController = new FrontController();
+//            FrontController frontController = new FrontController();
+            FrontController frontController = Beans.frontController;
             DataOutputStream dos = frontController.request(in, out);
-            dos.flush();
+            dos.close();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
