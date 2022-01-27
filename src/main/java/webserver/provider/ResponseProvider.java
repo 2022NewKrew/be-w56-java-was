@@ -27,6 +27,10 @@ public class ResponseProvider {
     }
 
     public static MyHttpResponse responseClientException(DataOutputStream dos, WebServerException e) {
+        if (e instanceof UserUnauthorizedException) {
+            return response401Unauthorized(dos, e);
+        }
+
         byte[] body = e.getMessage().getBytes();
 
         return MyHttpResponse.builder(dos)
@@ -36,9 +40,6 @@ public class ResponseProvider {
     }
 
     public static MyHttpResponse responseServerException(DataOutputStream dos, Exception e) {
-        if (e instanceof UserUnauthorizedException) {
-            return response401Unauthorized(dos, e);
-        }
 
         if (e instanceof WebServerException) {
             WebServerException exception = (WebServerException) e;
