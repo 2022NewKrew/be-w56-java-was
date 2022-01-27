@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import controller.UserCreateController;
+import controller.UserLoginController;
 import controller.ViewController;
 import controller.WebController;
 import controller.request.Request;
@@ -32,6 +33,7 @@ public class RequestHandler extends Thread {
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         controllerMap.put("/user/create", new UserCreateController());
+        controllerMap.put("/user/login", new UserLoginController());
     }
 
     public void run() {
@@ -54,15 +56,14 @@ public class RequestHandler extends Thread {
                 requestHeaderStrings.add(line);
                 line = br.readLine();
             }
-            log.debug("request header : {}", requestHeaderStrings);
             RequestHeader requestHeader = RequestHeader.from(requestHeaderStrings);
 
             String requestBodyString = null;
             if (requestHeader.getParameter("Content-Length") != null) {
                 requestBodyString = IOUtils.readData(br,
                         Integer.parseInt(requestHeader.getParameter("Content-Length")));
+                log.debug("request body : {}", requestBodyString);
             }
-            log.debug("request body : {}", requestBodyString);
             RequestBody requestBody = RequestBody.from(requestBodyString);
 
             Request request = new Request(requestLine, requestHeader, requestBody);
