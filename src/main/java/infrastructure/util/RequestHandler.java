@@ -1,6 +1,5 @@
 package infrastructure.util;
 
-import adaptor.in.web.FrontController;
 import infrastructure.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,7 @@ import static infrastructure.util.ResponseHandler.response;
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final FrontController frontController = FrontController.getINSTANCE();
+    private final ControllerRouter controllerRouter = ControllerRouter.getINSTANCE();
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -40,7 +39,7 @@ public class RequestHandler extends Thread {
     private HttpResponse handle(BufferedReader bufferedReader) throws IOException, IllegalArgumentException {
         HttpRequest httpRequest = getRequest(bufferedReader);
 
-        return frontController.handle(httpRequest);
+        return controllerRouter.handle(httpRequest);
     }
 
     private HttpRequest getRequest(BufferedReader bufferedReader) throws IOException, IllegalArgumentException {
