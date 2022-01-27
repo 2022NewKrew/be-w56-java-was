@@ -54,7 +54,7 @@ public class HttpResponse {
     }
 
     public static class Builder {
-        private Map<String, String> headers = new HashMap<>();
+        private final Map<String, String> headers = new HashMap<>();
         private String version = DEFAULT_VERSION;
         private HttpStatus statusCode = DEFAULT_STATUS;
         private String[] contentType = DEFAULT_CONTENT_TYPE;
