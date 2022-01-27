@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class RequestHandler extends Thread {
                 int contentLength = Integer.parseInt(headers.get("Content-Length"));
                 String requestBody = IOUtils.readData(br, contentLength);
                 Optional<User> user = HttpHeaderUtils.parseUserInfo(requestBody);
+                user.ifPresent(DataBase::addUser);
                 log.info("user = {}", user);
             }
 
