@@ -5,9 +5,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,6 +35,21 @@ public class HttpHeaderUtils {
         return urlWithQuery.split("\\?")[0];
     }
 
+    public static List<String> parseRequestLine(String requestLine) {
+        String[] token = requestLine.split(" ");
+        String method = token[0];
+        String url = token[1];
+        String[] urlToken = url.split("\\?");
+
+        String urlPath = urlToken[0];
+        String urlQuery = "";
+        if(urlToken.length >= 2) {
+            urlQuery = urlToken[1];
+        }
+        String httpVersion = token[2];
+        return Arrays.asList(method, urlPath, urlQuery, httpVersion);
+    }
+
     public static User getUserInfoFromUrl(String query) {
         Map<String, String> userInfo = HttpRequestUtils.parseQueryString(query);
         String userId = URLDecoder.decode(userInfo.get("userId"), StandardCharsets.UTF_8);
@@ -55,7 +71,7 @@ public class HttpHeaderUtils {
         }
     }
 
-    public static Optional<User> parseUserInfo(String requestBody) throws UnsupportedEncodingException {
+    public static Optional<User> parseUserInfo(String requestBody) {
         log.info("requestBody = {}", requestBody);
         if (requestBody.length() > 0) {
             User user = HttpHeaderUtils.getUserInfoFromUrl(requestBody);
