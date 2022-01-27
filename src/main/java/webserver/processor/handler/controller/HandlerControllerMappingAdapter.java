@@ -2,9 +2,14 @@ package webserver.processor.handler.controller;
 
 import http.HttpRequest;
 import http.HttpResponse;
+import webserver.HttpFactory;
+import webserver.http.HttpEntityConverter;
+import webserver.http.RequestEntity;
+import webserver.http.ResponseEntity;
 import webserver.processor.handler.Handler;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +18,7 @@ import java.util.stream.Collectors;
 public class HandlerControllerMappingAdapter implements Handler {
 
     private List<ControllerMethod> controllerMethods;
+    private HttpEntityConverter httpEntityConverter;
 
     public HandlerControllerMappingAdapter(List<Controller> controllers) {
         List<ControllerMethod> controllerMethods = new ArrayList<>();
@@ -20,6 +26,7 @@ public class HandlerControllerMappingAdapter implements Handler {
             controllerMethods.addAll(getControllerMethods(controller));
         }
         this.controllerMethods = controllerMethods;
+        this.httpEntityConverter = HttpFactory.httpEntityConverter();
     }
 
     @Override
@@ -29,7 +36,11 @@ public class HandlerControllerMappingAdapter implements Handler {
 
     @Override
     public HttpResponse handle(HttpRequest httpRequest) {
-        return getSupportsMethod(httpRequest).handle(httpRequest);
+        ControllerMethod controllerMethod = getSupportsMethod(httpRequest);
+        Type methodArgumentInnerType = controllerMethod.getMethodArgumentGenericInnerType();
+        RequestEntity<?> requestEntity = httpEntityConverter.convertRequest(httpRequest, methodArgumentInnerType);
+        ResponseEntity<?> responseEntity = controllerMethod.handle(requestEntity);
+        return httpEntityConverter.convertResponse(responseEntity);
     }
 
     private ControllerMethod getSupportsMethod(HttpRequest request) {

@@ -2,11 +2,15 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.stream.Collectors;
 
+import http.HttpRequest;
+import http.HttpResponse;
+import http.exception.BadHttpFormatException;
+import http.parser.HttpRequestParser;
+import http.render.HttpResponseRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.exception.SocketErrorException;
+import webserver.processor.HttpProcessor;
 
 public class RequestHandler implements Runnable {
 
@@ -20,11 +24,31 @@ public class RequestHandler implements Runnable {
 
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        HttpProcessor processor = HttpFactory.httpProcessor();
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            RequestHandlerInternal requestHandlerInternal = new RequestHandlerInternal();
-            requestHandlerInternal.run(in, out);
+            HttpRequest httpRequest = parseHttpRequest(in);
+            HttpResponse response = processor.process(httpRequest);
+            ByteArrayOutputStream bos = renderOutputStream(response);
+            bos.writeTo(out);
+        } catch (BadHttpFormatException e) {
+            log.info("Not Http Request : {}", e.getMessage());
         } catch (IOException e) {
-            throw new SocketErrorException("Already Socket Closed or Socket Connection Refused", e);
+            log.info("Already Socket Closed or Socket Connection Refused : {}", e.getMessage());
+        } catch (Exception e) {
+            log.info("Unknown Exception");
+            e.printStackTrace();
+        } finally {
+            log.info("Connection Closed IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
         }
+    }
+
+    private HttpRequest parseHttpRequest(InputStream in) throws IOException {
+        HttpRequestParser parser = HttpFactory.httpRequestParser();
+        return parser.parse(in);
+    }
+
+    private ByteArrayOutputStream renderOutputStream(HttpResponse httpResponse) {
+        HttpResponseRenderer httpResponseRenderer = HttpFactory.httpResponseRenderer();
+        return httpResponseRenderer.render(httpResponse);
     }
 }

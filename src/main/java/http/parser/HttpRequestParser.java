@@ -1,17 +1,16 @@
 package http.parser;
 
 import http.*;
-import util.HttpRequestUtils;
+import http.exception.BadHttpFormatException;
 import util.Pair;
 import util.StringUtils;
 import webserver.exception.BadRequestException;
+import webserver.processor.handler.controller.Request;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,32 +20,66 @@ public class HttpRequestParser {
     private static final String REQUEST_HEADER_SEPARATOR = ":";
     private static final String REQUEST_LINE_SEPARATOR = "\\s+";
 
+    private static final char CR = '\r';
+    private static final char LF = '\n';
+    private static final int EOF = -1;
+
     public HttpRequest parse(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        List<String> headerLines = readBufferedReaderRequestHeader(br);
+        BufferedInputStream bis = new BufferedInputStream(in);
+        List<String> headerLines = readRequestHeaderLines(bis);
+        checkHeaderEmpty(headerLines);
         RequestLine requestInfo = parseRequestInfo(headerLines.remove(0));
         HttpHeaders headers = parseHeaders(headerLines);
-        String requestBody = null;
-        if(hasBody(headers)) {
-            requestBody = readBufferedReaderRequestBody(br, headers);
-        }
-        return new HttpRequest(requestInfo.httpMethod, requestInfo.requestUri, requestInfo.httpRequestParams, headers, requestBody);
+        byte[] requestBody = readRequestBody(bis, headers);
+        return new HttpRequest(requestInfo.httpMethod, requestInfo.requestUri, headers, requestBody);
     }
 
-    private List<String> readBufferedReaderRequestHeader(BufferedReader br) throws IOException {
-        List<String> lines = new ArrayList<>();
-        String line = null;
-        while(((line = br.readLine()) != null) && !line.equals("")) {
-            lines.add(line);
+    private void checkHeaderEmpty(List<String> headerLines) {
+        if(headerLines.size() <= 0) {
+            throw new BadHttpFormatException("RequestLine and Headers are Empty");
         }
-        return lines;
     }
 
-    private String readBufferedReaderRequestBody(BufferedReader br, HttpHeaders headers) throws IOException {
-        int contentLength = Integer.parseInt(headers.getHeaderByName("Content-Length"));
-        char[] bytes = new char[contentLength];
-        int readBytes = br.read(bytes, 0, contentLength);
-        return String.valueOf(bytes);
+    private String readLine(BufferedInputStream bis) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int readByte = Integer.MIN_VALUE;
+        int buffer = Integer.MIN_VALUE;
+        while (true) {
+            readByte = bis.read();
+            if (readByte == EOF) {
+                break;
+            }
+            if (readByte == LF && buffer == CR) {
+                break;
+            } else if (readByte != LF && buffer == CR) {
+                bos.write(buffer);
+            }
+            if (readByte == CR) {
+                buffer = readByte;
+                continue;
+            }
+            bos.write(readByte);
+        }
+        return bos.toString(StandardCharsets.US_ASCII);
+    }
+
+    private List<String> readRequestHeaderLines(BufferedInputStream bis) throws IOException {
+        List<String> headerLines = new ArrayList<>();
+        String line = "";
+        while (!(line = readLine(bis)).equals("")) {
+            headerLines.add(line);
+        }
+        return headerLines;
+    }
+
+    private byte[] readRequestBody(BufferedInputStream inputStream, HttpHeaders httpHeaders) throws IOException {
+        if (!hasBody(httpHeaders)) {
+            return null;
+        }
+        int contentLength = Integer.parseInt(httpHeaders.getHeaderByName("Content-Length"));
+        byte[] readBytes = new byte[contentLength];
+        inputStream.read(readBytes, 0, contentLength);
+        return readBytes;
     }
 
     private boolean hasBody(HttpHeaders headers) {
@@ -59,26 +92,16 @@ public class HttpRequestParser {
             String[] splitRequestLine = requestLineString.split(REQUEST_LINE_SEPARATOR);
             HttpMethod method = HttpMethod.valueOf(splitRequestLine[0]);
             URI uri = new URI(splitRequestLine[1]);
-            HttpRequestParams requestParams = parseQueryString(uri.getQuery());
-            requestLine = new RequestLine(method, uri, requestParams);
+            requestLine = new RequestLine(method, uri);
         } catch (URISyntaxException e) {
             throw new BadRequestException(e.getClass().getName(), e);
         }
         return requestLine;
     }
 
-    private HttpRequestParams parseQueryString(String queryString) {
-        Map<String, String> requestParams = new HashMap<>();
-        if(StringUtils.isEmpty(queryString)) {
-            return new HttpRequestParams(requestParams);
-        }
-        requestParams.putAll(HttpRequestUtils.parseQueryString(queryString));
-        return new HttpRequestParams(requestParams);
-    }
-
     private HttpHeaders parseHeaders(List<String> headers) {
         Map<String, String> headerMap = new HashMap<>();
-        for(String header : headers) {
+        for (String header : headers) {
             Pair<String, String> headerPair = splitHeader(header);
             headerMap.put(headerPair.getFirst(), headerPair.getSecond());
         }
@@ -92,13 +115,11 @@ public class HttpRequestParser {
 
     private static class RequestLine {
         HttpMethod httpMethod;
-        HttpRequestParams httpRequestParams;
         URI requestUri;
 
-        private RequestLine(HttpMethod httpMethod, URI requestUri, HttpRequestParams httpRequestParams) {
+        private RequestLine(HttpMethod httpMethod, URI requestUri) {
             this.httpMethod = httpMethod;
             this.requestUri = requestUri;
-            this.httpRequestParams = httpRequestParams;
         }
     }
 }
