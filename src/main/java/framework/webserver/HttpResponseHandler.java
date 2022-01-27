@@ -1,6 +1,7 @@
 package framework.webserver;
 
 import framework.util.Cookies;
+import framework.util.exception.InternalServerException;
 import framework.view.ModelView;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,23 +35,27 @@ public class HttpResponseHandler {
         this.dos = dos;
     }
 
-    public void flush(ModelView modelView) throws IOException {
-        dos.writeBytes(httpVersion + " " + modelView.getStatusCode() + " "
-                + modelView.getStatusCodeString() + "\r\n");
-        if (modelView.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
-            dos.writeBytes("Location: " + modelView.getUri() + "\r\n");
-        }
-        dos.writeBytes("Content-Length: " + modelView.getContentLength() + "\r\n");
-        dos.writeBytes("Connection: " + connection + "\r\n");
-        dos.writeBytes("Content-Type: " + modelView.getContentType() +  "\r\n");
+    public void flush(ModelView modelView) {
+        try {
+            dos.writeBytes(httpVersion + " " + modelView.getStatusCode() + " "
+                    + modelView.getStatusCodeString() + "\r\n");
+            if (modelView.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
+                dos.writeBytes("Location: " + modelView.getUri() + "\r\n");
+            }
+            dos.writeBytes("Content-Length: " + modelView.getContentLength() + "\r\n");
+            dos.writeBytes("Connection: " + connection + "\r\n");
+            dos.writeBytes("Content-Type: " + modelView.getContentType() +  "\r\n");
 
-        if (!cookies.isEmpty()) {
-            dos.writeBytes("Set-Cookie: " + cookies);
-        }
+            if (!cookies.isEmpty()) {
+                dos.writeBytes("Set-Cookie: " + cookies);
+            }
 
-        dos.writeBytes("\r\n");
-        dos.write(modelView.getContent(), 0, modelView.getContentLength());
-        dos.flush();
+            dos.writeBytes("\r\n");
+            dos.write(modelView.getContent(), 0, modelView.getContentLength());
+            dos.flush();
+        } catch (IOException e) {
+            throw new InternalServerException();
+        }
     }
 
     public void setCookie(String key, String value) {

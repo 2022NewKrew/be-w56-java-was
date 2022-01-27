@@ -1,9 +1,13 @@
 package framework.controller;
 
 import framework.util.annotation.RequestMapping;
+import framework.util.exception.InternalServerException;
+import framework.util.exception.MethodNotFoundException;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
+import org.checkerframework.checker.units.qual.Current;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
@@ -17,23 +21,19 @@ public interface Controller {
      * @param request Client로부터 받은 요청 정보
      * @param response Client에게 응답해줄 정보
      * @return 메소드 실행 후 반환된 데이터, String형 또는 ModelView형만 가능
-     * @throws Exception: 원하는 메소드를 실행하지 못했을 때 발생
      */
-    default Object process(HttpRequestHandler request, HttpResponseHandler response) throws Exception {
+    default Object process(HttpRequestHandler request, HttpResponseHandler response) {
         Class<?> currentClass = getClass();
 
-        Controller currentInstance = (Controller) currentClass.getMethod("getInstance").invoke(null);
+        Controller currentInstance = null;
+        try {
+            currentInstance = (Controller) currentClass.getMethod("getInstance").invoke(null);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
         Method method = findMethod(request.getUri(), request.getRequestMethod(), currentClass);
 
-        try {
-            return method.invoke(currentInstance, request, response);
-        } catch (IllegalArgumentException e1) {
-            try {
-                return method.invoke(currentInstance, request);
-            } catch (IllegalArgumentException e2) {
-                return method.invoke(currentInstance);
-            }
-        }
+        return invokeMethod(currentInstance, method, request, response);
     }
 
     /**
@@ -52,6 +52,45 @@ public interface Controller {
                             requestPath.requestMethod().toUpperCase(Locale.ROOT).equals(requestMethod);
                 })
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(MethodNotFoundException::new);
+    }
+
+    /**
+     * 현재 Controller 객체 내에서 찾은 메소드를 호출시켜 그 값을 반환해주는 메소드
+     * @param currentInstance 현재 Controller 객체
+     * @param method Controller 객체에서 호출할 메소드
+     * @param request Client로부터 받은 요청 정보
+     * @param response Client에게 응답해줄 정보
+     * @return 메소드 실행 후 반환된 데이터, String형 또는 ModelView형만 가능
+     */
+    default Object invokeMethod(Controller currentInstance, Method method, HttpRequestHandler request, HttpResponseHandler response) {
+        // 메소드의 매개변수에 따라 호출
+        try {
+            // HttpRequestHandler, HttpResponseHandler 모두 받는 메소드
+            return method.invoke(currentInstance, request, response);
+        } catch (IllegalArgumentException e1) {
+            try {
+                // HttpRequestHandler만 받는 메소드
+                return method.invoke(currentInstance, request);
+            } catch (IllegalArgumentException e2) {
+                try {
+                    // HttpResponseHandler만 받는 메소드
+                    return method.invoke(currentInstance, response);
+                } catch (IllegalArgumentException e3) {
+                    try {
+                        // 아무 매개변수도 받지 않는 메소드
+                        return method.invoke(currentInstance);
+                    } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+                        throw new MethodNotFoundException();
+                    }
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new MethodNotFoundException();
+                }
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new MethodNotFoundException();
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new MethodNotFoundException();
+        }
     }
 }

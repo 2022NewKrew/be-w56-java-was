@@ -1,15 +1,18 @@
 package framework.controller;
 
+import framework.util.exception.InternalServerException;
 import framework.view.ModelView;
 import framework.view.ViewResolver;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 import static framework.util.Constants.CONTEXT_PATH;
+import static framework.util.Constants.DEFAULT_ERROR_PAGE;
 
 /**
  * Front Contoller (Dispatcher Servlet),
@@ -50,6 +53,17 @@ public class FrontController {
             ViewResolver.resolve(modelView);
 
             // Controller에게 응답
+            response.flush(modelView);
+        } catch (InternalServerException e) {
+            LOGGER.error(e.getMessage());
+
+            ModelView modelView = ModelView.builder()
+                    .isStatic(true)
+                    .statusCode(HttpStatus.SC_NOT_FOUND)
+                    .uri(DEFAULT_ERROR_PAGE)
+                    .build();
+
+            ViewResolver.resolve(modelView);
             response.flush(modelView);
         } catch (Exception e) {
             e.printStackTrace();

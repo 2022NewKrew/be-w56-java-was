@@ -2,6 +2,7 @@ package framework.view;
 
 import framework.util.ContentType;
 import framework.util.ModelViewAttributes;
+import framework.util.exception.StaticFileNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import org.apache.tika.Tika;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import static framework.util.Constants.*;
 
@@ -46,7 +48,7 @@ public class ModelView {
         return EnglishReasonPhraseCatalog.INSTANCE.getReason(statusCode, null);
     }
 
-    public void readStaticFile() throws Exception {
+    public void readStaticFile() {
         String filePath = uri;
         statusCode = HttpStatus.SC_OK;
 
@@ -57,15 +59,20 @@ public class ModelView {
         }
 
         File file = new File(CONTEXT_PATH + filePath);
-        contentType = ContentType.builder()
-                .mime(TIKA.detect(file))
-                .build();
 
-        FileInputStream fis = new FileInputStream(file);
-        contentLength = (int) file.length();
-        content = new byte[contentLength];
-        fis.read(content);
-        fis.close();
+        try {
+            contentType = ContentType.builder()
+                    .mime(TIKA.detect(file))
+                    .build();
+
+            FileInputStream fis = new FileInputStream(file);
+            contentLength = (int) file.length();
+            content = new byte[contentLength];
+            fis.read(content);
+            fis.close();
+        } catch (IOException e) {
+            throw new StaticFileNotFoundException();
+        }
     }
 
     public void readAttributes() {

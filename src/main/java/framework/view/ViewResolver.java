@@ -9,7 +9,7 @@ public class ViewResolver {
      * @param modelView Front Controller로부터 전달받은 ModelView 객체, 요청에 필요한 정보를 담음
      * @throws Exception Static file을 찾지 못했을 때 발생
      */
-    public static void resolve(ModelView modelView) throws Exception {
+    public static void resolve(ModelView modelView) {
         // Redirect & Static Files
         if (modelView.isStatic()) {
             modelView.readStaticFile();
