@@ -1,15 +1,17 @@
 package application.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Map;
 
 @AllArgsConstructor
+@Getter
 public class UserCreateRequest {
-    public String userId;
-    public String password;
-    public String name;
-    public String email;
+    private String userId;
+    private String password;
+    private String name;
+    private String email;
 
     public static UserCreateRequest mapToUserCreateRequest(Map<String, String> httpRequestBody) {
         String userId = httpRequestBody.get("userId");

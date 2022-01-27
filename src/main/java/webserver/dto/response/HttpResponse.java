@@ -1,10 +1,10 @@
 package webserver.dto.response;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import webserver.common.util.HttpUtils;
-import common.controller.ControllerResponse;
+import common.dto.ControllerResponse;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Slf4j
 @Getter
-@AllArgsConstructor
+@Builder
 public class HttpResponse {
     private final HttpResponseStartLine startLine;
     private final List<String> header;
@@ -31,9 +31,11 @@ public class HttpResponse {
         byte[] body = Files.readAllBytes(new File(redirectTo).toPath());
         mappedHeader.put("Content-Length", String.valueOf(body.length));
 
-        List<String> header = HttpUtils.mappedHeaderToList(mappedHeader);
-        HttpResponseStartLine startLine = new HttpResponseStartLine(httpVersion, httpStatus);
-        return new HttpResponse(startLine, header, body);
+        return HttpResponse.builder()
+                .startLine(new HttpResponseStartLine(httpVersion, httpStatus))
+                .header(HttpUtils.mappedHeaderToList(mappedHeader))
+                .body(body)
+                .build();
     }
 
     public void respond(OutputStream out) {

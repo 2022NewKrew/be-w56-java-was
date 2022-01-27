@@ -1,25 +1,22 @@
 package webserver.controller;
 
-import common.controller.Controller;
-import common.controller.ControllerResponse;
+import common.controller.AbstractController;
+import common.dto.ControllerRequest;
+import common.dto.ControllerResponse;
 import common.controller.ControllerType;
-import webserver.dto.request.HttpMethod;
+import lombok.extern.slf4j.Slf4j;
 import webserver.dto.response.HttpStatus;
 
-import java.util.Map;
-
-public class StaticResourceController extends Controller {
+@Slf4j
+public class StaticResourceController extends AbstractController {
 
     @Override
-    public ControllerResponse doService(
-            HttpMethod httpMethod,
-            String url,
-            Map<String, String> header,
-            Map<String, String> requestBody
-    ) {
-        HttpStatus httpStatus = HttpStatus.OK;
-        String redirectTo = ControllerType.STATIC.getUrl() + url;
-
-        return new ControllerResponse(httpStatus, header, redirectTo);
+    public ControllerResponse doService(ControllerRequest request) {
+        log.debug("[" + StaticResourceController.log.getName() + "] doService()");
+        return ControllerResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .header(request.getHeader())
+                .redirectTo(ControllerType.STATIC.getUrl() + request.getUrl())
+                .build();
     }
 }

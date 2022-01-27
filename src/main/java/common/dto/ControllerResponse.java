@@ -1,12 +1,12 @@
-package common.controller;
+package common.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import webserver.dto.response.HttpStatus;
 
 import java.util.Map;
 
-@AllArgsConstructor
+@Builder
 @Getter
 public class ControllerResponse {
     private final HttpStatus httpStatus;

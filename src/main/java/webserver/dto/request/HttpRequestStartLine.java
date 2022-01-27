@@ -1,7 +1,7 @@
 package webserver.dto.request;
 
 import com.google.common.base.Strings;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import static webserver.common.exception.ExceptionMessage.*;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class HttpRequestStartLine {
     private final HttpMethod method;
     private final String url;
@@ -23,12 +23,15 @@ public class HttpRequestStartLine {
             String version,
             Map<String, String> queryParameters
     ) {
-        HttpMethod method = HttpMethod.of(methodString);
         validateUrl(url);
-        url = initializeUrlToIndexPage(url);
         validateHttpVersion(version);
 
-        return new HttpRequestStartLine(method, url, queryParameters, version);
+        return HttpRequestStartLine.builder()
+                .method(HttpMethod.of(methodString))
+                .url(initializeUrlToIndexPage(url))
+                .queryParameters(queryParameters)
+                .version(version)
+                .build();
     }
 
     private static void validateUrl(String url) throws NullPointerException {

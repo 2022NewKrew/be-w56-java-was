@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @Getter
 public enum ControllerType {
-    USER("/users"),
+    USER("users"),
     STATIC("webapp");
 
     private final String url;

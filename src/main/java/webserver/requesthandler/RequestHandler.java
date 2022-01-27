@@ -1,9 +1,10 @@
 package webserver.requesthandler;
 
+import common.dto.ControllerRequest;
 import lombok.extern.slf4j.Slf4j;
-import common.controller.Controller;
-import common.controller.ControllerMapper;
-import common.controller.ControllerResponse;
+import common.controller.AbstractController;
+import common.util.ControllerMapper;
+import common.dto.ControllerResponse;
 import webserver.dto.request.HttpRequest;
 import webserver.dto.request.HttpRequestStartLine;
 import webserver.dto.response.HttpResponse;
@@ -11,7 +12,6 @@ import webserver.dto.response.HttpResponse;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -40,16 +40,17 @@ public class RequestHandler extends Thread {
 
     private HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         HttpRequestStartLine startLine = httpRequest.getStartLine();
-        Map<String, String> requestBody = httpRequest.getBody();
-        Map<String, String> requestHeader = httpRequest.getHeader();
-        String contentType = requestHeader.get("Accept").split(",")[0];
-        Map<String, String> responseHeader = new HashMap<>();
-        responseHeader.put("Content-Type", contentType);
-        String url = startLine.getUrl();
+        String contentType = httpRequest.getHeader().get("Accept").split(",")[0];
 
-        Controller controller = ControllerMapper.getController(url);
-        ControllerResponse controllerResponse =
-                controller.doService(startLine.getMethod(), url, responseHeader, requestBody);
+        ControllerRequest controllerRequest = ControllerRequest.builder()
+                .httpMethod(startLine.getMethod())
+                .url(startLine.getUrl())
+                .header(Map.of("Content-Type", contentType))
+                .body(httpRequest.getBody())
+                .build();
+
+        AbstractController controller = ControllerMapper.getController(startLine.getUrl());
+        ControllerResponse controllerResponse = controller.doService(controllerRequest);
 
         return HttpResponse.valueOf(controllerResponse, startLine.getVersion());
     }
