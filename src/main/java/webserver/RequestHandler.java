@@ -39,42 +39,46 @@ public class RequestHandler extends Thread {
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) throws IOException {
         dos.writeBytes("HTTP/1.1 200 OK \r\n");
-        dos.writeBytes("Content-Type: text/html; charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-        dos.writeBytes("\r\n");
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) throws IOException {
         dos.write(body, 0, body.length);
-        dos.flush();
     }
 
-    private void response302Header(DataOutputStream dos, int lengthOfBodyContent, String url) throws IOException {
+    private void response302Header(DataOutputStream dos, String url) throws IOException {
         dos.writeBytes("HTTP/1.1 302 FOUND \r\n");
         dos.writeBytes("Location: " + url + "\r\n");
-        dos.writeBytes("Content-Type: text/html; charset=utf-8\r\n");
-        dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-        dos.writeBytes("\r\n");
-        dos.flush();
+        dos.writeBytes("Content-Length: " + 0 + "\r\n");
     }
 
     private void response404Header(DataOutputStream dos) throws IOException {
         dos.writeBytes("HTTP/1.1 404 NOT FOUND \r\n");
+    }
+
+    private void responseHeader(DataOutputStream dos, Map<String, String> responseHeader) throws IOException {
+        for (Map.Entry<String, String> entry : responseHeader.entrySet()) {
+            dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+        }
         dos.writeBytes("\r\n");
+    }
+
+    private void sendResponse(DataOutputStream dos) throws IOException {
         dos.flush();
     }
 
     private void handleRequest(BufferedReader br, DataOutputStream dos) throws IOException, InvalidHttpRequestException {
         Map<String, String> startLine = parseStartLine(br);
-        Map<String, String> header = parseHeader(br);
+        Map<String, String> requestHeader = parseHeader(br);
+        Map<String, String> responseHeader = new HashMap<>();
 
         switch (startLine.get("method")) {
             case "GET":
-                handleGetRequest(dos, startLine.get("url"), header);
+                handleGetRequest(dos, startLine.get("url"), requestHeader, responseHeader);
                 break;
 
             case "POST":
-                handlePostRequest(br, dos, startLine.get("url"), header);
+                handlePostRequest(br, dos, startLine.get("url"), requestHeader, responseHeader);
                 break;
 
             default:
@@ -118,26 +122,38 @@ public class RequestHandler extends Thread {
         return header;
     }
 
-    private void handleGetRequest(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
+    private void handleGetRequest(DataOutputStream dos, String url,
+                                  Map<String, String> requestHeader, Map<String, String> responseHeader) throws IOException {
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
             response200Header(dos, body.length);
+            responseHeader(dos, responseHeader);
             responseBody(dos, body);
         } catch (FileNotFoundException e) {
             response404Header(dos);
+        } finally {
+            sendResponse(dos);
         }
     }
 
-    private void handlePostRequest(BufferedReader br, DataOutputStream dos, String url, Map<String, String> header) throws IOException {
+    private void handlePostRequest(BufferedReader br, DataOutputStream dos, String url,
+                                   Map<String, String> requestHeader, Map<String, String> responseHeader) throws IOException {
         try {
-            int contentLength = Integer.parseInt(header.get("Content-Length"));
+            int contentLength = Integer.parseInt(requestHeader.get("Content-Length"));
             switch (url) {
                 case "/user":
-                    handleUserPostRequest(br, dos, contentLength);
+                    handleUserPostRequest(br, dos, contentLength, responseHeader);
+                    break;
+
+                case "/login":
+                    handleLoginPostRequest(br, dos, contentLength, responseHeader);
+                    break;
 
                 default:
                     response404Header(dos);
             }
+            sendResponse(dos);
+
         } catch (NoSuchElementException e) {
             log.debug("Content-Length 필드가 없음: {}", e.getMessage());
         } catch (NumberFormatException e) {
@@ -148,18 +164,44 @@ public class RequestHandler extends Thread {
     }
 
     @Synchronized
-    private void handleUserPostRequest(BufferedReader br, DataOutputStream dos, int contentLength)
+    private void handleUserPostRequest(BufferedReader br, DataOutputStream dos, int contentLength, Map<String, String> responseHeader)
             throws IOException, InvalidPostBodyException {
         String body = IOUtils.readData(br, contentLength);
         Map<String, String> parseQueryString = HttpRequestUtils.parseQueryString(body);
-        try {
-            DataBase.addUser(new User(parseQueryString.get("userId"),
-                    parseQueryString.get("password"),
-                    parseQueryString.get("name"),
-                    parseQueryString.get("email")));
-            response302Header(dos, 0, "/index.html");
-        } catch (NoSuchElementException e) {
-            throw new InvalidPostBodyException("/user 잘못된 body 형식", e);
+
+        if (!(parseQueryString.containsKey("userId") && parseQueryString.containsKey("password")
+                && parseQueryString.containsKey("name") && parseQueryString.containsKey("email"))) {
+            throw new InvalidPostBodyException("/user 잘못된 body 형식");
         }
+
+        DataBase.addUser(new User(parseQueryString.get("userId"),
+                parseQueryString.get("password"),
+                parseQueryString.get("name"),
+                parseQueryString.get("email")));
+        response302Header(dos, "/index.html");
+        responseHeader(dos, responseHeader);
+    }
+
+    private void handleLoginPostRequest(BufferedReader br, DataOutputStream dos, int contentLength, Map<String, String> responseHeader)
+            throws IOException, InvalidPostBodyException {
+        String body = IOUtils.readData(br, contentLength);
+        Map<String, String> parseQueryString = HttpRequestUtils.parseQueryString(body);
+
+        if (!(parseQueryString.containsKey("userId") && parseQueryString.containsKey("password"))) {
+            throw new InvalidPostBodyException("/login 잘못된 body 형식");
+        }
+
+        User user = DataBase.findUserById(parseQueryString.get("userId"));
+
+        if(user == null || !user.getPassword().equals(parseQueryString.get("password"))) {
+            responseHeader.put("Set-Cookie", "login=false");
+            response302Header(dos, "/user/login_failed.html");
+            responseHeader(dos, responseHeader);
+            return;
+        }
+
+        responseHeader.put("Set-Cookie", "login=true");
+        response302Header(dos, "/index.html");
+        responseHeader(dos, responseHeader);
     }
 }
