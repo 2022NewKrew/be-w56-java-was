@@ -4,12 +4,24 @@ import webserver.WebServerConfig;
 
 public class HttpRequest {
 
+    private final HttpVersion version;
     private final HttpMethod method;
     private final String uri;
+    private final HttpHeader trailingHeaders;
+    private final HttpRequestParams params;
 
-    public HttpRequest(HttpMethod method, String uri) {
+
+    public HttpRequest(HttpVersion version, HttpMethod method, String uri, HttpRequestParams params,
+        HttpHeader headers) {
+        this.version = version;
         this.method = method;
         this.uri = uri.equals(WebServerConfig.ROOT_PATH) ? WebServerConfig.ENTRY_FILE : uri;
+        this.params = params;
+        this.trailingHeaders = headers;
+    }
+
+    public HttpVersion getVersion() {
+        return version;
     }
 
     public HttpMethod getMethod() {
@@ -18,5 +30,13 @@ public class HttpRequest {
 
     public String getUri() {
         return uri;
+    }
+
+    public HttpHeader getTrailingHeaders() {
+        return trailingHeaders;
+    }
+
+    public HttpRequestParams getParams() {
+        return params;
     }
 }

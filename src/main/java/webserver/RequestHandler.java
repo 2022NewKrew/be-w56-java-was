@@ -2,25 +2,25 @@ package webserver;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpResponseUtil;
-import webserver.http.HttpMethod;
+import webserver.http.DefaultHttpRequestBuilder;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.http.HttpResponseStatus;
+import webserver.servlet.HttpHandleable;
+import webserver.servlet.HttpHandler;
+import webserver.util.HttpResponseUtil;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-
+    private final HttpHandleable httpRequestServlet = HttpHandler.getInstance();
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -31,18 +31,16 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
             connection.getPort());
 
-        try {
-            InputStream in = connection.getInputStream();
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String[] tokens = reader.readLine().split(" ");
-            HttpRequest request = new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1]);
-            log.info("request {} {}", tokens[0], tokens[1]);
+            HttpRequest request = new DefaultHttpRequestBuilder()
+                .init(reader.readLine())
+                .readHeaders(reader)
+                .build();
+            HttpResponse response = new HttpResponse();
 
-            HttpResponse response = new HttpResponse(
-                HttpResponseStatus.OK,
-                Files.readAllBytes(new File(WebServerConfig.BASE_PATH + request.getUri()).toPath())
-            );
-            respond(connection.getOutputStream(), response);
+            HttpResponse handledResponse = httpRequestServlet.handle(request, response);
+            respond(out, handledResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -51,7 +49,11 @@ public class RequestHandler extends Thread {
     private void respond(OutputStream out, HttpResponse response) {
         try {
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes(HttpResponseUtil.write(response));
+            dos.writeBytes(HttpResponseUtil.responseLineString(response));
+            dos.writeBytes(HttpResponseUtil.headerString(response));
+            if (response.getBody() != null && response.getBody().length > 0) {
+                dos.write(HttpResponseUtil.bodyString(response).getBytes(StandardCharsets.UTF_8));
+            }
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
