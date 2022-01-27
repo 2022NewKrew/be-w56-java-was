@@ -27,11 +27,10 @@ public class HttpRequest {
         return header;
     }
 
-    public void setStartLine(String startLine) {
-        Map<String, String> startLineMap = HttpRequestUtils.parseStartLine(startLine);
-        setMethod(startLineMap.get("method"));
-        setUrl(startLineMap.get("url"));
-        setProtocol(startLineMap.get("protocol"));
+    public void setStartLine(String method, String url, String protocol) {
+        setMethod(method);
+        setUrl(url);
+        setProtocol(protocol);
     }
 
     private void setMethod(String method) {
@@ -50,9 +49,8 @@ public class HttpRequest {
         }
     }
 
-    public void setHeaderValue(String line) {
-        HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
-        this.header.setValue(pair.getKey(), pair.getValue());
+    public void setHeaderValue(String key, String value) {
+        this.header.setValue(key, value);
     }
 
     private enum Method {

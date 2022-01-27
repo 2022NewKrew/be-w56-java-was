@@ -12,23 +12,32 @@ import java.nio.file.Files;
 public class HttpResponse {
 
     private byte[] body;
+    private String responseContentType;
     private DataOutputStream dos;
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
+
+    public void sendResponse() {
+        response200Header();
+        responseBody();
+    }
 
     public byte[] getBody() {
         return body;
     }
 
-    public void setBody(String url) throws IOException {
-        body = Files.readAllBytes(new File("./webapp" + url).toPath());
+    public void setBody(String responseDataPath) throws IOException {
+        body = Files.readAllBytes(new File("./webapp" + responseDataPath).toPath());
     }
 
     public void setDos(OutputStream out) {
         dos = new DataOutputStream(out);
     }
 
-    public void response200Header(String url) {
-        String responseContentType = contentTypeFromUrl(url);
+    public void setResponseContentType(String responseDataPath) {
+        responseContentType = contentTypeFromPath(responseDataPath);
+    }
+
+    public void response200Header() {
         int lengthOfBodyContent = body.length;
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
@@ -40,7 +49,7 @@ public class HttpResponse {
         }
     }
 
-    public void responseBody(byte[] body) {
+    public void responseBody() {
         try {
             dos.write(body, 0, body.length);
             dos.flush();
@@ -49,12 +58,12 @@ public class HttpResponse {
         }
     }
 
-    public String contentTypeFromUrl(String url) {
-        String[] splitUrl = url.split("\\.");
-        if (splitUrl.length == 1) {
-            return "application/octet-stream";
+    String contentTypeFromPath(String responseDataPath) {
+        String[] splitPath = responseDataPath.split("\\.");
+        if (splitPath.length == 1) {
+            return "text/html";
         }
-        String extension = splitUrl[splitUrl.length-1];
+        String extension = splitPath[splitPath.length-1];
         if (extension.equals("html")) {
             return "text/html";
         }
