@@ -42,10 +42,8 @@ public class UserController {
         User user = DataBase.findUserById(body.get("userId"));
 
         if (ObjectUtils.isNotEmpty(user) && StringUtils.equals(user.getPassword(), body.get("password"))) {
-            System.out.println("UserController.logineddddddd");
             response.sendRedirectWithCookie("/index.html");
         } else {
-            System.out.println("UserController.login failedddddd");
             response.sendRedirect("/user/login_failed.html");
         }
 
