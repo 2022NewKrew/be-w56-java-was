@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import common.controller.Controller;
 import common.controller.ControllerMapper;
 import common.controller.ControllerResponse;
-import webserver.requesthandler.httprequest.HttpRequest;
-import webserver.requesthandler.httprequest.HttpRequestStartLine;
-import webserver.requesthandler.httpresponse.HttpResponse;
+import webserver.dto.request.HttpRequest;
+import webserver.dto.request.HttpRequestStartLine;
+import webserver.dto.response.HttpResponse;
 
 import java.io.*;
 import java.net.Socket;

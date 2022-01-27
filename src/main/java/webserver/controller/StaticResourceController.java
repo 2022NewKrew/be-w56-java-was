@@ -3,8 +3,8 @@ package webserver.controller;
 import common.controller.Controller;
 import common.controller.ControllerResponse;
 import common.controller.ControllerType;
-import webserver.requesthandler.httprequest.HttpMethod;
-import webserver.requesthandler.httpresponse.HttpStatus;
+import webserver.dto.request.HttpMethod;
+import webserver.dto.response.HttpStatus;
 
 import java.util.Map;
 

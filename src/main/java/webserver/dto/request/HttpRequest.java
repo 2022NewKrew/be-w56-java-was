@@ -1,4 +1,4 @@
-package webserver.requesthandler.httprequest;
+package webserver.dto.request;
 
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;

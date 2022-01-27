@@ -1,6 +1,6 @@
 package common.controller;
 
-import webserver.requesthandler.httprequest.HttpMethod;
+import webserver.dto.request.HttpMethod;
 
 import java.util.Map;
 public abstract class Controller {

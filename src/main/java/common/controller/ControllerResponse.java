@@ -2,7 +2,7 @@ package common.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import webserver.requesthandler.httpresponse.HttpStatus;
+import webserver.dto.response.HttpStatus;
 
 import java.util.Map;
 

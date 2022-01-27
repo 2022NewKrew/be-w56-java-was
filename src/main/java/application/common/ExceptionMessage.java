@@ -1,5 +1,10 @@
 package application.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ExceptionMessage {
     VALUE_LENGTH_LOWERBOUND_EXCEPTION("길이가 0보다 커야합니다."),
     USER_ID_LENGTH_UPPERBOUND_EXCEPTION("유저 아이디 길이가 20보다 작아야합니다."),
@@ -9,12 +14,4 @@ public enum ExceptionMessage {
     INVALID_EMAIL_FORM_EXCEPTION("유효하지 않은 이메일 형식입니다.");
 
     private final String message;
-
-    ExceptionMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

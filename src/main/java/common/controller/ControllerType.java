@@ -1,17 +1,18 @@
 package common.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@AllArgsConstructor
+@Getter
 public enum ControllerType {
     USER("/users"),
     STATIC("webapp");
 
     private final String url;
-
-    ControllerType(String url) {
-        this.url = url;
-    }
 
     public static Stream<ControllerType> stream() {
         return Stream.of(ControllerType.values());
@@ -26,9 +27,5 @@ public enum ControllerType {
 
     public boolean equals(String url) {
         return Objects.equals(this.url, url);
-    }
-
-    public String getUrl() {
-        return url;
     }
 }
