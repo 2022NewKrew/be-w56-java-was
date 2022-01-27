@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import webserver.common.util.HttpUtils;
+import common.controller.ControllerResponse;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +22,13 @@ public class HttpResponse {
     private final List<String> header;
     private final byte[] body;
 
-    public static HttpResponse valueOf(HttpStatus httpStatus, Map<String, String> mappedHeader, String httpVersion, byte[] body) {
+    public static HttpResponse valueOf(ControllerResponse controllerResponse, String httpVersion) throws IOException {
+        String redirectTo = controllerResponse.getRedirectTo();
+        log.debug("[Redirect]: " + redirectTo);
+
+        Map<String, String> mappedHeader = controllerResponse.getHeader();
+        HttpStatus httpStatus = controllerResponse.getHttpStatus();
+        byte[] body = Files.readAllBytes(new File(redirectTo).toPath());
         mappedHeader.put("Content-Length", String.valueOf(body.length));
 
         List<String> header = HttpUtils.mappedHeaderToList(mappedHeader);
@@ -27,7 +36,7 @@ public class HttpResponse {
         return new HttpResponse(startLine, header, body);
     }
 
-    public void doResponse(OutputStream out) {
+    public void respond(OutputStream out) {
         log.debug("[HTTP Response]");
         DataOutputStream dos = new DataOutputStream(out);
         outputHeader(dos);
