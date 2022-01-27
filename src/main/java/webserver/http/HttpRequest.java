@@ -15,29 +15,29 @@ public class HttpRequest {
     private HttpMethod httpMethod;
     private String url;
 
-    public HttpRequest(String reqLine, String reqHeader){
+    public HttpRequest(String reqLine, String reqHeader) {
         httpMethod = HttpRequestUtils.parseMethod(reqLine);
 
         requestParsingQueryParam(HttpRequestUtils.parseUrl(reqLine));
         requestParsingHeader(reqHeader);
         body = new HashMap<>();
         cookies = new HashMap<>();
-        if(headers.containsKey("Cookie")){
+        if (headers.containsKey("Cookie")) {
             requestParsingCookie(headers.get("Cookie"));
         }
     }
 
-    private void requestParsingQueryParam(String url){
+    private void requestParsingQueryParam(String url) {
         String[] parseUrl = url.split("[?]");
 
         this.url = parseUrl[0];
         queryParameter = new HashMap<>();
-        if(parseUrl.length > 1){
+        if (parseUrl.length > 1) {
             queryParameter = HttpRequestUtils.parseQueryString(parseUrl[1]);
         }
     }
 
-    private void requestParsingHeader(String reqHeader){
+    private void requestParsingHeader(String reqHeader) {
         headers = Arrays.stream(reqHeader.split("\r|\n"))
                 .map(HttpRequestUtils::parseHeader)
                 .collect(Collectors.toMap(
@@ -46,7 +46,7 @@ public class HttpRequest {
                 ));
     }
 
-    private void requestParsingCookie(String cookies){
+    private void requestParsingCookie(String cookies) {
         this.cookies = HttpRequestUtils.parseCookies(cookies);
     }
 

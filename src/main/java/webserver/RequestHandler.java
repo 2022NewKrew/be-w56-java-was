@@ -1,17 +1,16 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.IOUtils;
 import webserver.controller.FrontController;
 import webserver.http.HttpMethod;
-import webserver.http.HttpResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
-import webserver.http.HttpStatus;
+import webserver.http.HttpResponse;
 import webserver.view.ViewResolver;
+
+import java.io.*;
+import java.net.Socket;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -41,9 +40,9 @@ public class RequestHandler extends Thread {
         }
     }
 
-    public HttpRequest requestParser(BufferedReader br) throws IOException{
+    public HttpRequest requestParser(BufferedReader br) throws IOException {
         String requestLine = br.readLine();
-        if(requestLine == null){
+        if (requestLine == null) {
             throw new IllegalArgumentException("요청을 찾을 수 없습니다.");
         }
 
@@ -51,13 +50,13 @@ public class RequestHandler extends Thread {
         String line;
 
         log.info("request : {}", requestLine);
-        while(!(line = br.readLine()).equals("")){
+        while (!(line = br.readLine()).equals("")) {
             requestHeader.append(line).append("\n");
         }
 
         HttpRequest request = new HttpRequest(requestLine, requestHeader.toString());
 
-        if(request.getMethod() == HttpMethod.POST){
+        if (request.getMethod() == HttpMethod.POST) {
             int contentLength = Integer.parseInt(request.getHeader("Content-Length"));
             request.setBody(IOUtils.readData(br, contentLength));
         }

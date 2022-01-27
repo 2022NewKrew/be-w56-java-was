@@ -11,27 +11,29 @@ import java.nio.file.Files;
 
 public class ViewResolver {
     private static ViewResolver instance;
-    private ViewResolver(){}
 
-    public static ViewResolver getInstance(){
-        if(instance == null){
+    private ViewResolver() {
+    }
+
+    public static ViewResolver getInstance() {
+        if (instance == null) {
             instance = new ViewResolver();
         }
 
         return instance;
     }
 
-    public void render(DataOutputStream dos, HttpResponse response){
+    public void render(DataOutputStream dos, HttpResponse response) {
         String url = response.getUrl();
 
-        if(url.equals("/")){
+        if (url.equals("/")) {
             url = "/index.html";
         }
-        try{
+        try {
             byte[] file = Files.readAllBytes(new File(HttpConst.STATIC_ROOT + url).toPath());
             response.setBody(file);
             response.send(dos);
-        } catch(IOException e){
+        } catch (IOException e) {
             render(dos, new HttpResponse(HttpStatus.NOT_FOUND, HttpConst.ERROR_PAGE));
         }
     }

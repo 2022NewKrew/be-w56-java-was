@@ -9,5 +9,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface RequestMapping {
     HttpMethod method();
+
     String url();
 }

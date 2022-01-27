@@ -12,12 +12,12 @@ public class HttpResponse {
     private Map<String, String> cookie = new HashMap<>();
     private byte[] body = new byte[0];
 
-    public HttpResponse(HttpStatus status){
+    public HttpResponse(HttpStatus status) {
         this.status = status;
         this.url = "/";
     }
 
-    public HttpResponse(HttpStatus status, String url){
+    public HttpResponse(HttpStatus status, String url) {
         this.status = status;
         this.url = url;
     }
@@ -38,23 +38,23 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public void setHeader(String key, String value){
+    public void setHeader(String key, String value) {
         headers.put(key, value);
     }
 
-    public void setCookie(String key, String value){
+    public void setCookie(String key, String value) {
         cookie.put(key, value);
     }
 
     public void send(DataOutputStream dos) throws IOException {
-        if(cookie.size() > 0){
+        if (cookie.size() > 0) {
             responseSetCookie();
         }
         responseSetHeader(dos, body.length);
         responseSetBody(dos, body);
     }
 
-    private void responseSetHeader(DataOutputStream dos, int lengthOfBodyContent) throws IOException{
+    private void responseSetHeader(DataOutputStream dos, int lengthOfBodyContent) throws IOException {
         dos.writeBytes("HTTP/1.1 " + status + "\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
         for (String key : headers.keySet()) {
@@ -63,21 +63,21 @@ public class HttpResponse {
         dos.writeBytes("\r\n");
     }
 
-    private void responseSetCookie(){
+    private void responseSetCookie() {
         StringBuilder sb = new StringBuilder();
         for (String key : cookie.keySet()) {
             sb.append(key)
-              .append("=")
-              .append(cookie.get(key))
-              .append(";");
+                    .append("=")
+                    .append(cookie.get(key))
+                    .append(";");
         }
 
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
 
         headers.put("Set-Cookie", sb.toString());
     }
 
-    private void responseSetBody(DataOutputStream dos, byte[] body) throws IOException{
+    private void responseSetBody(DataOutputStream dos, byte[] body) throws IOException {
         dos.write(body, 0, body.length);
         dos.flush();
     }

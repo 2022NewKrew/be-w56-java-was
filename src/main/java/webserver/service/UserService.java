@@ -1,19 +1,18 @@
 package webserver.service;
 
 import db.DataBase;
-import exception.UnAuthorizedException;
 import model.User;
 
 public class UserService {
-    public void join(User user){
-        if(DataBase.findUserById(user.getUserId()) != null){
+    public void join(User user) {
+        if (DataBase.findUserById(user.getUserId()) != null) {
             throw new IllegalArgumentException();
         }
 
         DataBase.addUser(user);
     }
 
-    public User findUser(String userId){
+    public User findUser(String userId) {
         return DataBase.findUserById(userId);
     }
 }
