@@ -45,7 +45,12 @@ public class RequestHandler extends Thread {
 
     private HttpRequest getRequest(BufferedReader bufferedReader) throws IOException, IllegalArgumentException {
         String line = bufferedReader.readLine();
-        RequestLine requestLine = HttpRequestUtils.parseRequestLine(line);
+        RequestLine requestLine = null;
+        try {
+            requestLine = HttpRequestUtils.parseRequestLine(line);
+        } catch (NullPointerException e) {
+            log.error("파싱할 수 없음: {}", line);
+        }
 
         HttpHeader.Builder headerBuilder = HttpHeader.builder();
         while (!"".equals(line = bufferedReader.readLine())) {

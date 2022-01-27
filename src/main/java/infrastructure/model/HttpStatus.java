@@ -3,6 +3,7 @@ package infrastructure.model;
 public enum HttpStatus {
 
     OK(200, "Ok"),
+    FOUND(302, "Found"),
     BAD_REQUEST(400, "Bad Request"),
     FORBIDDEN(403, "Forbidden"),
     NOT_FOUND(404, "Not Found");

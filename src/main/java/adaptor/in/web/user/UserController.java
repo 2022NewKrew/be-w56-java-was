@@ -2,8 +2,10 @@ package adaptor.in.web.user;
 
 import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
+import adaptor.in.web.model.RequestPath;
 import application.in.SignUpUserUseCase;
 import domain.user.User;
+import infrastructure.config.ServerConfig;
 import infrastructure.model.*;
 import infrastructure.util.HttpRequestUtils;
 import org.slf4j.Logger;
@@ -27,7 +29,7 @@ public class UserController {
         log.debug("User Controller: {}", path);
 
         try {
-            if (path.matchHandler(REQUEST_MAPPING + "/create")) {
+            if (RequestPath.SIGN_UP.equalsValue(path)) {
                 return signUp(httpRequest);
             }
         } catch (IOException e) {
@@ -50,9 +52,8 @@ public class UserController {
         signUpUserUseCase.signUp(user);
 
         return new HttpResponse(
-                ResponseLine.valueOf(HttpStatus.OK),
-                HttpHeader.of(Pair.of("Content-Type", "text/html; charset=utf-8")),
-                HttpByteArrayBody.setFile("/index.html")
+                ResponseLine.valueOf(HttpStatus.FOUND),
+                HttpHeader.of(Pair.of("Location", ServerConfig.getAuthority() + RequestPath.HOME.getValue()))
         );
     }
 }

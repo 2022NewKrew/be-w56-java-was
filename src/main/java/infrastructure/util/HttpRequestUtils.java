@@ -55,7 +55,7 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
-    public static RequestLine parseRequestLine(String requestLine) throws IllegalArgumentException {
+    public static RequestLine parseRequestLine(String requestLine) throws NullPointerException, IllegalArgumentException {
         String[] line = requestLine.split(REQUEST_SEPARATE_TOKEN);
         RequestMethod requestMethod = RequestMethod.getMethod(line[0])
                 .orElseThrow(IllegalArgumentException::new);
