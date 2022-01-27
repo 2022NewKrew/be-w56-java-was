@@ -48,8 +48,8 @@ public class ResponseHeaderBuilder {
     }
 
     public ResponseHeader postUserLogin() {
-        String id = requestHeader.getParameter("userId");
-        String password = requestHeader.getParameter("password");
+        String id = requestHeader.getParameters("userId");
+        String password = requestHeader.getParameters("password");
         if (DataBase.isExistUserId(id) &&
                 DataBase.findUserById(id)
                         .getPassword()
@@ -89,10 +89,10 @@ public class ResponseHeaderBuilder {
 
     private User makeUser(RequestHeader requestHeader) {
         return User.builder()
-                .userId(requestHeader.getParameter("userId"))
-                .password(requestHeader.getParameter("password"))
-                .name(requestHeader.getParameter("name"))
-                .email((requestHeader.getParameter("email")))
+                .userId(requestHeader.getParameters("userId"))
+                .password(requestHeader.getParameters("password"))
+                .name(requestHeader.getParameters("name"))
+                .email((requestHeader.getParameters("email")))
                 .build();
     }
 

@@ -2,14 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
 import controller.RequestController;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.ResponseHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -21,6 +18,7 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
+    @Override
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
@@ -42,12 +40,11 @@ public class RequestHandler extends Thread {
 
             bufferedReader.lines()
                     .takeWhile(header -> header.contains(": "))
-                    .peek(log::info)
                     .forEach(header -> HttpRequestUtils.setHeader(requestHeader, header));
 
-            if (requestHeader.getHeader("method").equals("POST")) {
+            if (requestHeader.getHeaders("method").equals("POST")) {
                 String parameters = IOUtils.readData(bufferedReader,
-                        Integer.parseInt(requestHeader.getHeader("Content-Length")));
+                        Integer.parseInt(requestHeader.getHeaders("Content-Length")));
                 HttpRequestUtils.setRequestParameter(requestHeader, parameters);
             }
         } catch (IOException e) {

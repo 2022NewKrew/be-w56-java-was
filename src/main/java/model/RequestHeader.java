@@ -7,31 +7,40 @@ import java.util.Map;
 
 @ToString
 public class RequestHeader {
-    private final Map<String, String> header;
-    private final Map<String, String> parameter;
+    private final Map<String, String> headers;
+    private final Map<String, String> parameters;
+    private Map<String, String> cookies;
 
     public RequestHeader() {
-        header = new HashMap<>();
-        parameter = new HashMap<>();
+        headers = new HashMap<>();
+        parameters = new HashMap<>();
     }
 
     public String getAccept() {
-        return header.get("Accept").split(",")[0];
+        return headers.get("Accept").split(",")[0];
     }
 
-    public String getHeader(String key) {
-        return header.get(key);
+    public String getHeaders(String key) {
+        return headers.get(key);
     }
 
     public void putHeader(String key, String value) {
-        header.put(key, value);
+        headers.put(key, value);
     }
 
-    public String getParameter(String key) {
-        return parameter.get(key);
+    public String getParameters(String key) {
+        return parameters.get(key);
     }
 
     public void putParameter(String key, String value) {
-        parameter.put(key, value);
+        parameters.put(key, value);
+    }
+
+    public void setCookies(Map<String, String> cookies) {
+        this.cookies = cookies;
+    }
+
+    public String getCookie(String key) {
+        return cookies.get(key);
     }
 }
