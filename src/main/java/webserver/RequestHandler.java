@@ -60,7 +60,7 @@ public class RequestHandler extends Thread {
 
     private HttpRequest parseRequest(BufferedReader br) throws IOException {
         String buffer = br.readLine();
-        log.info(buffer);
+        log.debug("HTTP Request Start Line :: {}", buffer);
 
         String[] requestTokens = HttpRequestUtils.parseRequestLine(buffer);
         HttpMethod method = HttpMethod.valueOf(requestTokens[REQUEST_METHOD_INDEX]);
@@ -76,14 +76,14 @@ public class RequestHandler extends Thread {
 
         Map<String, String> headers = new HashMap<>();
         while ((buffer = br.readLine()) != null && !buffer.isBlank()) {
-            log.info(buffer);
+            log.debug("HTTP Request Header :: {}", buffer);
             Pair header = HttpRequestUtils.parseHeader(buffer);
             headers.put(header.getKey(), header.getValue());
         }
 
         int length = Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
         String body = IOUtils.readData(br, length);
-        log.info(body);
+        log.debug("HTTP Request Body :: {}", body);
 
         return HttpRequest.builder()
             .method(method)

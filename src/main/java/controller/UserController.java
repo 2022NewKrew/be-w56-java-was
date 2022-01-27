@@ -27,14 +27,14 @@ public class UserController implements Controller {
     public HttpResponse doPost(HttpRequest request) {
         String path = request.getPath();
         if (!USER_CREATE_PATH.equals(path)) {
-            return notImplemented();
+            return badRequest();
         }
 
         userService.create(UserCreate.builder()
             .userId(request.getRequestBody("userId"))
             .password(request.getRequestBody("password"))
             .name(request.getRequestBody("name"))
-            .password(request.getRequestBody("email"))
+            .email(request.getRequestBody("email"))
             .build());
 
         HttpHeader httpHeader = HttpHeader.of(Map.of("Location", USER_CREATE_REDIRECT_URL));
