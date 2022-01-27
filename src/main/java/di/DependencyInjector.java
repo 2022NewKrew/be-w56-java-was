@@ -16,7 +16,7 @@ public class DependencyInjector {
         BeanParser parser = new BeanParser();
         Class<?>[] classes = analyzer.getClasses(packageName);
         BeanContainer container = parser.parse(classes);
-        BeanInjector injector = new BeanInjector(container);
-        injector.inject(target);
+        BeanInjector injector = new BeanInjector();
+        injector.inject(container, target);
     }
 }

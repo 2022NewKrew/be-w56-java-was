@@ -18,10 +18,10 @@ class BeanInjectorTest {
         container.put(Integer.class, 2);
         container.put(Integer.class, 3);
         container.put(Boolean.class, true);
-        BeanInjector subject = new BeanInjector(container);
+        BeanInjector subject = new BeanInjector();
 
         Foo foo = new Foo();
-        subject.inject(foo);
+        subject.inject(container, foo);
 
         assertEquals("Hello", foo.getString());
         assertEquals(List.of(1, 2, 3), foo.getInts());
