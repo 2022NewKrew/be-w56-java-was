@@ -2,8 +2,7 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import http.Queries;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
@@ -13,12 +12,9 @@ public class HttpRequestUtilsTest {
 
     @Test
     public void parseRequestLine() {
-        List<String> requestLines = new ArrayList<>();
-        requestLines.add("GET /index.html HTTP/1.1");
-        requestLines.add("Host: localhost:8080");
-        requestLines.add("Connection: keep-alive");
+        String requestLine = "GET /index.html HTTP/1.1";
+        String[] tokens = HttpRequestUtils.parseRequestLine(requestLine);
 
-        String[] tokens = HttpRequestUtils.parseRequestLine(requestLines);
         assertThat(tokens[0]).isEqualTo("GET");
         assertThat(tokens[1]).isEqualTo("/index.html");
     }
@@ -52,35 +48,30 @@ public class HttpRequestUtilsTest {
 
     @Test
     public void parseQueries() {
-        String targetToken = "/users/create?userId=javajigi";
-        Map<String, String> parameters = HttpRequestUtils.parseQueries(targetToken);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isNull();
-
-        targetToken = "/create/user?userId=javajigi&password=password2";
-        parameters = HttpRequestUtils.parseQueries(targetToken);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isEqualTo("password2");
+        String targetToken = "/create/user?userId=javajigi&password=password2";
+        Queries queries = HttpRequestUtils.parseQueries(targetToken);
+        assertThat(queries.getValue("userId")).isEqualTo("javajigi");
+        assertThat(queries.getValue("password")).isEqualTo("password2");
     }
 
     @Test
     public void parseQueries_null() {
-        Map<String, String> parameters = HttpRequestUtils.parseQueries("/index.html");
-        assertThat(parameters.isEmpty()).isTrue();
+        Queries queries1 = HttpRequestUtils.parseQueries("/index.html");
+        assertThat(queries1.getParams()).hasSize(0);
 
-        parameters = HttpRequestUtils.parseQueries("");
-        assertThat(parameters.isEmpty()).isTrue();
+        Queries queries2 = HttpRequestUtils.parseQueries("/index.html");
+        assertThat(queries2.getParams()).hasSize(0);
 
-        parameters = HttpRequestUtils.parseQueries(" ");
-        assertThat(parameters.isEmpty()).isTrue();
+        Queries queries3 = HttpRequestUtils.parseQueries("/index.html");
+        assertThat(queries3.getParams()).hasSize(0);
     }
 
     @Test
     public void parseQueries_invalid() {
-        String queryString = "/users/create?userId=javajigi&password";
-        Map<String, String> parameters = HttpRequestUtils.parseQueries(queryString);
-        assertThat(parameters.get("userId")).isEqualTo("javajigi");
-        assertThat(parameters.get("password")).isNull();
+        String targetToken = "/users/create?userId=javajigi";
+        Queries queries = HttpRequestUtils.parseQueries(targetToken);
+        assertThat(queries.getValue("userId")).isEqualTo("javajigi");
+        assertThat(queries.getValue("password")).isNull();
     }
 
     @Test

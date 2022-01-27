@@ -9,4 +9,12 @@ public class Queries {
     public Queries(Map<String, String> params) {
         this.params = params;
     }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public String getValue(String key) {
+        return params.get(key);
+    }
 }

@@ -16,13 +16,23 @@ public class IOUtilsTest {
     private static final Logger logger = LoggerFactory.getLogger(IOUtilsTest.class);
 
     @Test
-    public void getRequestLines() throws IOException {
+    public void readRequestLine() throws IOException {
         String httpRequestHeader = "GET /index.html HTTP/1.1\r\nHost: localhost:8080\r\nConnection: keep-alive\r\n";
         StringReader sr = new StringReader(httpRequestHeader);
 
-        List<String> requestLines = IOUtils.getRequestLines(new BufferedReader(sr));
+        String requestLine = IOUtils.readRequestLine(new BufferedReader(sr));
 
-        assertThat(requestLines).hasSize(3);
+        assertThat(requestLine).isEqualTo("GET /index.html HTTP/1.1");
+    }
+
+    @Test
+    public void readHttpHeaders() throws IOException {
+        String httpRequestHeader = "Host: localhost:8080\r\nConnection: keep-alive\r\n";
+        StringReader sr = new StringReader(httpRequestHeader);
+
+        List<String> httpHeaders = IOUtils.readHttpHeaders(new BufferedReader(sr));
+
+        assertThat(httpHeaders).contains("Host: localhost:8080").contains("Host: localhost:8080");
     }
 
     @Test
