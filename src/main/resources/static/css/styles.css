@@ -68,6 +68,12 @@ textarea {
 .list-group-item:first-child,.list-group-item:last-child {
  border-radius:0;
 }
+h1 {
+ text-align: center;
+}
+h2 {
+ text-align: center;
+}
 h3,h4,h5 { 
  border:0 solid #efefef; 
  border-bottom-width:1px;
