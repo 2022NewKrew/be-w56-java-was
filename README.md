@@ -28,7 +28,7 @@ Accept: */*
   - `ContentType`: 요청 헤더에서 Content-Type의 정보를 담을 자료형
   - `HttpRequestUtils`, `IOUtils`: 기존에 제공된 Utils, 파싱 관련 내용 포함
 
-## 2 ~ 4단계
+## 2, 3, 4단계
 ### 각 링크들
 - [2단계](https://lucas.codesquad.kr/2022-kakao/course/%EC%9B%B9%EB%B0%B1%EC%97%94%EB%93%9C/Java-Web-Server/%EC%9B%B9-%EC%84%9C%EB%B2%84-%EA%B5%AC%ED%98%84-2%EB%8B%A8%EA%B3%84)
 - [3단계](https://lucas.codesquad.kr/2022-kakao/course/%EC%9B%B9%EB%B0%B1%EC%97%94%EB%93%9C/Java-Web-Server/%EC%9B%B9-%EC%84%9C%EB%B2%84-%EA%B5%AC%ED%98%84-3%EB%8B%A8%EA%B3%84)
