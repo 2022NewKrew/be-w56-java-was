@@ -18,6 +18,7 @@ public final class HandlerFactory {
             default:
                 throw new InvalidRequestException("요청을 처리할 수 없음");
         }
+
     }
 
     private static Handler createGetHandler(Request request) throws Exception {

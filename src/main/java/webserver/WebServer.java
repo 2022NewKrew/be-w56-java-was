@@ -12,7 +12,6 @@ public class WebServer {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
-        // init contexts
         Context.init();
 
         int port = 0;

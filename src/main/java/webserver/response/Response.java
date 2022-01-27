@@ -6,17 +6,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Setter
 public class Response {
 
     private static final Logger log = LoggerFactory.getLogger(Response.class);
     private final OutputStream out;
 
-    private String version = "HTTP/1.1";
+    private static final String HTTP_VERSION = "HTTP/1.1";
     private StatusCode statusCode;
     private Map<String, String> headers = Maps.newHashMap();
     private byte[] body;
@@ -34,10 +32,13 @@ public class Response {
     public static Response createErrorResponse(OutputStream out, StatusCode statusCode,
         String message) {
         Response response = new Response(out);
-        response.version = "HTTP/1.1";
         response.statusCode = statusCode;
         response.setContents("text/plain;charset=utf-8", message.getBytes(StandardCharsets.UTF_8));
         return response;
+    }
+
+    public void setStatusCode(StatusCode statusCode) {
+        this.statusCode = statusCode;
     }
 
     public void setContents(String contentType, byte[] content) {
@@ -59,9 +60,10 @@ public class Response {
 
     private void writeHeaders(DataOutputStream dos) throws IOException {
         dos.writeBytes(
-            version + " " + statusCode.getStatus() + " " + statusCode.getDescription() + "\r\n");
+            HTTP_VERSION + " " + statusCode.getStatus() + " " + statusCode.getDescription()
+                + "\r\n");
         log.debug("http response line: {}",
-            version + " " + statusCode.getStatus() + " " + statusCode.getDescription());
+            HTTP_VERSION + " " + statusCode.getStatus() + " " + statusCode.getDescription());
         for (String key : headers.keySet()) {
             dos.writeBytes(key + ": " + headers.get(key) + "\r\n");
             log.debug("http header line: {}", key + ": " + headers.get(key));
@@ -70,7 +72,7 @@ public class Response {
     }
 
     private void writeBody(DataOutputStream dos) throws IOException {
-        if (body.length > 0) {
+        if (body != null && body.length > 0) {
             dos.write(body, 0, body.length);
             //log.debug("http response body: {}", body);
             dos.flush();

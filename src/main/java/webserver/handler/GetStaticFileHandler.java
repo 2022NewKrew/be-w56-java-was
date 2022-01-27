@@ -14,13 +14,12 @@ public class GetStaticFileHandler implements Handler {
 
     @Override
     public void handle(Request request, Response response) throws Exception {
-        response.setVersion(request.getVersion());
         response.setStatusCode(StatusCode.OK);
 
         File file = new File(STATIC_FILE_ROOT_PATH + request.getUri());
         String mimeType = new Tika().detect(file);
         if (mimeType == null) {
-            throw new InvalidRequestException("file " + file + "의 mimeType 이 " + mimeType);
+            throw new InvalidRequestException("file " + file + ": 지원하지 않는 타입");
         }
         response.setContents(mimeType, Files.readAllBytes(file.toPath()));
     }
