@@ -23,7 +23,7 @@ public class RequestGenerator {
         String[] tokens = line.split(" ");
         method = tokens[0];
         switch (method) {
-            case "GET":
+            case "GET": //Request Line에 Parameter가 있음
                 String[] pathAndParams = tokens[1].split("\\?");
                 path = pathAndParams[0];
                 if (pathAndParams.length > 1) {
@@ -35,7 +35,7 @@ public class RequestGenerator {
                 headers = getHeaders(br);
                 break;
 
-            case "POST":
+            case "POST":    //Body에 Parameter가 있음
                 path = tokens[1];
                 version = tokens[2];
                 headers = getHeaders(br);
@@ -44,7 +44,7 @@ public class RequestGenerator {
                 break;
 
             default:
-                throw new IOException();
+                throw new IOException("Invalid method");
         }
         return new HttpRequest(method, path, headers, parameters, version);
     }

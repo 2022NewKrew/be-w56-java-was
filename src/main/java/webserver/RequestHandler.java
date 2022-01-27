@@ -4,7 +4,8 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import controller.RequestController;
+import controller.Controller;
+import controller.UserController;
 import webserver.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +33,11 @@ public class RequestHandler extends Thread {
             log.debug("params: {}", httpRequest.getParameters());
 
             DataOutputStream dos = new DataOutputStream(out);
-            HttpResponse httpResponse = RequestController.controlRequest(httpRequest);
+            Controller controller = ControllerMapper.mapController(httpRequest.getPath());
+            HttpResponse httpResponse = controller.controlRequest(httpRequest);
             writeBytes(httpResponse, dos);
             flush(dos);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
