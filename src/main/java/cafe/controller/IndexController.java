@@ -21,36 +21,26 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/index.html", method = "GET")
-    public HttpResponse getIndexHtml() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse getIndexHtml() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(method = "GET")
-    public HttpResponse getIndex() {
-        try {
-            File file = new File("./webapp/index.html");
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse getIndex() throws IOException {
+        File file = new File("./webapp/index.html");
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
+        responseHeader.setContentLength(body.length);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 
 }

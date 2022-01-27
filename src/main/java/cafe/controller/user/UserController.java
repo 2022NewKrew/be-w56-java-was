@@ -1,5 +1,6 @@
 package cafe.controller.user;
 
+import cafe.controller.exception.IncorrectLoginUserException;
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
 import cafe.db.DataBase;
@@ -23,24 +24,19 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user", method = "POST")
-    public HttpResponse createUser() {
-        try {
-            User user = new User(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"),
-                    httpRequest.getRequestBody("name"), httpRequest.getRequestBody("email"));
-            DataBase.addUser(user);
+    public HttpResponse createUser() throws IOException {
+        User user = new User(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"),
+                httpRequest.getRequestBody("name"), httpRequest.getRequestBody("email"));
+        DataBase.addUser(user);
 
-            File file = new File("./webapp/index.html");
-            byte[] body = Files.readAllBytes(file.toPath());
+        File file = new File("./webapp/index.html");
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setLocation("/index.html");
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
+        responseHeader.setLocation("/index.html");
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/login", method = "POST")
@@ -63,83 +59,59 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/login.html", method = "GET")
-    public HttpResponse userLoginHtml() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse userLoginHtml() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/login_failed.html", method = "GET")
-    public HttpResponse userLoginFailedHtml() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse userLoginFailedHtml() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
+
     }
 
 
     @RequestMapping(value = "/user/form.html", method = "GET")
-    public HttpResponse userSignupHtml() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse userSignupHtml() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/profile.html", method = "GET")
-    public HttpResponse userProfileHtml() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse userProfileHtml() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 
     @RequestMapping(value = "/user/list.html", method = "GET")
-    public HttpResponse userProfileListHtml() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse userProfileListHtml() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_HTML);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 }

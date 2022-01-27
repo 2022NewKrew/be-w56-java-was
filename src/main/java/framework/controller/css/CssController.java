@@ -21,18 +21,13 @@ public class CssController {
     }
 
     @RequestMapping(value = "/css", method = "GET")
-    public HttpResponse getCss() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse getCss() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.TEXT_CSS);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_CSS);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 }

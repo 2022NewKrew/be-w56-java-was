@@ -21,18 +21,13 @@ public class FaviconController {
     }
 
     @RequestMapping(value = "/favicon", method = "GET")
-    public HttpResponse getFavicon() {
-        try {
-            File file = new File("./webapp" + httpRequest.getPath());
-            byte[] body = Files.readAllBytes(file.toPath());
+    public HttpResponse getFavicon() throws IOException {
+        File file = new File("./webapp" + httpRequest.getPath());
+        byte[] body = Files.readAllBytes(file.toPath());
 
-            HttpHeader responseHeader = new HttpHeader();
-            responseHeader.setContentType(MediaType.IMAGE_AVIF);
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.IMAGE_AVIF);
 
-            return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
-        }
+        return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
     }
 }

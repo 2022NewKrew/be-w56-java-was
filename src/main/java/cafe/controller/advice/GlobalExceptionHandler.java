@@ -32,4 +32,10 @@ public class GlobalExceptionHandler {
 
         return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
     }
+
+    @ExceptionHandler(values = IOException.class)
+    public HttpResponse handleIOException(IOException ioException) {
+        log.error(ioException.getMessage());
+        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+    }
 }
