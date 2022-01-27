@@ -23,7 +23,6 @@ public class RequestController {
             return responseHeaderBuilder.postUserCreate();
         }
 
-
         if (uri.equals("/user/login") && method.equals("POST")) {
             return responseHeaderBuilder.postUserLogin();
         }

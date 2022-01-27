@@ -53,7 +53,7 @@ public enum HtmlResponseHeader {
     };
 
     HtmlResponseHeader() {
-        
+
     }
 
     public abstract void response(DataOutputStream dos, ResponseHeader responseHeader);

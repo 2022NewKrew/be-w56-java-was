@@ -34,7 +34,6 @@ public class ResponseHeaderBuilder {
                 .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
                 .body(readBody(uri))
                 .accept(requestHeader.getAccept())
-                .host(requestHeader.getHeader("Host"))
                 .build();
     }
 
@@ -45,14 +44,16 @@ public class ResponseHeaderBuilder {
                 .body(readBody(Links.MAIN))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
-                .host(requestHeader.getHeader("Host"))
                 .build();
     }
 
     public ResponseHeader postUserLogin() {
         String id = requestHeader.getParameter("userId");
         String password = requestHeader.getParameter("password");
-        if (DataBase.isExistUserId(id) && DataBase.findUserById(id).getPassword().equals(password)) {
+        if (DataBase.isExistUserId(id) &&
+                DataBase.findUserById(id)
+                        .getPassword()
+                        .equals(password)) {
             return successLogin();
         }
         return failLogin();
@@ -64,7 +65,6 @@ public class ResponseHeaderBuilder {
                 .body(readBody(Links.MAIN))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGIN_COOKIE)
                 .accept(requestHeader.getAccept())
-                .host(requestHeader.getHeader("Host"))
                 .build();
     }
 
@@ -74,7 +74,6 @@ public class ResponseHeaderBuilder {
                 .body(readBody(Links.LOGIN_FAILED))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
-                .host(requestHeader.getHeader("Host"))
                 .build();
     }
 
@@ -95,11 +94,10 @@ public class ResponseHeaderBuilder {
                 .name(requestHeader.getParameter("name"))
                 .email((requestHeader.getParameter("email")))
                 .build();
-
     }
 
     private byte[] readBody(String uri) {
-        byte[] body = null;
+        byte[] body = null; // 초기화 고민 ..
         try {
             body = Files.readAllBytes(new File(RETURN_BASE + uri).toPath());
         } catch (IOException e) {

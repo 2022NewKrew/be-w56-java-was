@@ -10,15 +10,15 @@ import com.google.common.collect.Maps;
 import model.RequestHeader;
 
 public class HttpRequestUtils {
-    public static void setRequest(RequestHeader requestHeader, String request){
+    public static void setRequest(RequestHeader requestHeader, String request) {
         String[] tokens = request.split(" ");
         requestHeader.putHeader("method", tokens[0]);
         setUri(requestHeader, tokens[1]);
         requestHeader.putHeader("protocol", tokens[2]);
     }
 
-    private static void setUri(RequestHeader requestHeader, String uri){
-        if(uri.contains("?")){
+    private static void setUri(RequestHeader requestHeader, String uri) {
+        if (uri.contains("?")) {
             String[] tokens = uri.split("\\?");
             uri = tokens[0];
             setRequestParameter(requestHeader, tokens[1]);
@@ -27,22 +27,21 @@ public class HttpRequestUtils {
         requestHeader.putHeader("uri", uri);
     }
 
-    public static void setRequestParameter(RequestHeader requestHeader, String token){
+    public static void setRequestParameter(RequestHeader requestHeader, String token) {
         String[] parameters = token.split("&");
-        for(String parameter : parameters){
+        for (String parameter : parameters) {
             String[] tokens = parameter.split("=");
             requestHeader.putParameter(tokens[0], tokens[1]);
         }
     }
 
-    public static void setHeader(RequestHeader requestHeader, String header){
+    public static void setHeader(RequestHeader requestHeader, String header) {
         String[] tokens = header.split(": ");
         requestHeader.putHeader(tokens[0], tokens[1]);
     }
 
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -50,8 +49,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {

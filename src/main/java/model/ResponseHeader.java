@@ -14,7 +14,6 @@ import java.io.IOException;
 public class ResponseHeader {
     private String uri;
     private String accept;
-    private String host;
     private byte[] body;
     private HtmlResponseHeader htmlResponseHeader;
 
