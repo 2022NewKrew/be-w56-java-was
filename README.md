@@ -50,6 +50,7 @@ dos.writeBytes("Content-Type: " + response.getContextType() + ";charset=utf-8\r\
 
 ___
 #### 참고자료
+
 - [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 - [HTTP Message Format](https://velog.io/@rosewwross/Http-and-Request-and-Response-hok6exbnfb)
 
@@ -85,3 +86,35 @@ userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajig
 `ControllerMapper` 는 클라이언트의 요청을 타겟 URI 를 기준으로 적절한 `Controller` 에 매핑한다. \
 `Controller` 는 요청의 URI 와 Method 를 읽어 컨트롤러 내부에 정의된 적절한 메소드를 호출한다. \
 URI 에 대한 적절한 `Controller` 가 존재하지 않거나, `Controller` 에서 적절한 처리가 이루어지지 않은 경우 `StaticFileReader` 에 요청을 전달해 정적 파일을 응답하도록 한다.
+
+### Java MIME Type
+
+MIME Type 이란?
+
+    MIME Type : 클라이언트에게 전송된 문서의 다양성을 알려주기 위한 메커니즘
+    웹에서 파일의 확장자는 큰 의미가 없다. 그러므로, 각 문서와 함께 올바른 MIME Type 을 서버에서 내려주는 것이 중요하다.
+
+Java 에서 MIME Type 얻기
+
+1. Files 객체의 probeContentType() 사용
+   - Java 7부터 지원한다.
+   - 파일의 내용이 아니라 확장자를 통해 MIME Type 을 판단한다.
+   - 파일이 존재하지 않거나 확장자가 없으면 (MIME Type 이 확인되지 않으면) null 을 반환한다.
+```java
+String mimeType = Files.probeContentType(Paths.get("fileName"));
+```
+2. URLConnection 객체를 사용하는 방법
+   - 마찬가지로 확장자를 통해 판단한다.
+   - 파일이 존재하지 않거나 확장자가 없으면 null 을 반환한다.
+3. MimetypesFileTypeMap 객체를 사용하는 방법
+   - 확장자를 이용해 판단한다.
+   - 확장자가 없거나 판단이 불가능한 경우, application/octet-stream 을 반환한다. 
+4. Apache Tika 라이브러리를 사용하는 방법
+   - `Apache Tika` 는 컨텐츠 분석 툴킷이다.
+   - ppt, xls, pdf 와 같은 파일에서 메타 데이터와 텍스트를 탐지하고 추출하는데 사용된다. 
+   - 마임타입을 확인하는 기능도 지원한다.
+
+___
+#### 참고자료
+
+- [Java MIME Type 추출](https://medium.com/@js230023/java-mimetype-얻기-39f9e3f3e766)
