@@ -1,6 +1,77 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
+# TODO
+- [X] Content Type 지원 개선
+- [ ] 매직 리터럴 제거
+- [ ] Handler 추상화 개선
+    - 핸들러 매핑 과정
+    - 핸들러 등록 과정
+    - 핸들러 결과 유형(View Resolving, Templating, ResponseEntity)
+    
+- [ ] 전체적인 패키징 개선
+    - Util 보다는 Rich Domain Model 사용하기
+- [ ] 전역 기본 에러 핸들러 추가
+- [ ] 2,3단계 기능 구현
+
+# 2022.01.27
+## Code
+None yet
+
+## TIL
+### Spring 소스 코드 공부 정리
+**요청 처리 흐름**
+
+Jakarta의 HttpServlet를 상속한  
+HttpServletBean을 상속한  
+FrameworkServlet을 상속한  
+DispatcherServlet
+
+1. 요청이 들어오면 HttpServlet(Servlet)의 service를 호출할 것으로 기대됨.
+2. Jakarta기본 구현에 따라 service콜은 따라 doXXX로 디스패칭함.  
+3. 하지만 FrameworkServlet에서 각 doXXX를 공통적으로 processRequest을 호출하기 때문에,  
+   결과적으로 모든 요청은 processRequest에 도착함.  
+4. processRequest에서는 추상 메소드 doService를 호출함.
+5. 이를 구현한 DispatcherServlet의 doService는 request에 다양한 컨텍스트 정보를 추가하고 doDispatch를 호출함.
+6. doDispatch에서 getHandler를 통해 request에 맞는 핸들러를 가져오고,    
+   이 getHandlerAdapter를 통해 해당되는 HandlerAdapter를 가져와서,  
+   HandlerAdapter의 handle()를 통해 실질적인 요청 핸들링을 진행하고,  
+   모델앤뷰를 선택적으로 반환함.
+   > HandlerAdapter를 통해서 Handler에 request 핸들링을 맡김으로,  
+   > Handler자체의 인터페이스는 굉장히 다양하게 설계할 수 있으면서도,  
+   > HandlerAdapter가 이를 잘 포장함으로,  
+   > doDispatch쪽에서는 굉장히 안정적인 인터페이스를 가진 HandlerAdapter만 마주하여,   
+   > 다양한 인터페이스의 Handler를 동일하고 간소한 HandlerAdapter의 인터페이스를 통해서 호출할 수 있음.   
+   > 구체적으로, HandlerAdapter는 handle(HttpServletRequest, HttpServletResponse, Object)메소드를 제공해야 됨.
+7. doDispatch에서 마지막으로 processDispatchResult에 요청, 응답, 핸들러, 모델앤뷰, 발생한 예외를 담아서 호출함.     
+   핸들러, 모델앤뷰, 발생한 예외는 Null일 수 있음.
+8. processDispatchResult에서 모델앤뷰가 존재하지 않다면 추가 작업 진행하지 않고,  
+   processRequest에서 publishRequestHandledEvent를 통해 프레임워크에 메시지를 공유하고,  
+   요청 처리(HttpServlet/Servlet의 Service콜)을 마무리함. 
+9. processDispatchResult에서 모델앤뷰가 존재한다면 render를 호출함. 
+10. render는 뷰 오브젝트를 resolve하고(되어 있지 않다면) 해당 뷰 오브젝트의 render의 호출하여 렌더링 과정을 위임함.
+11. 뭔가 이후부터는 Spring이 정의한 규격에 맞는 View를 정의한 Template 라이브러리가 바통터치해서 진행할 거 같음
+
+
+**핸들러 등록 과정**
+
+블라블라블라
+
+
+# 2022.01.26
+## Code
+- Content Type 지원 개선
+  - Apache Tika 라이브러리 적용
+  - 소요 시간 테스트(최대 10ms)
+  - HttpRequest도메인 기능 확대
+- 매직 리터럴 일부 제거
+- [스프링의 관련 소스코드 읽기](https://github.com/spring-projects/spring-framework/blob/3600644ed1776dce35c4a42d74799a90b90e359e/spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/RequestMappingHandlerMapping.java)
+
+## TIL
+- 쿼리 Selectivity에 따라서 쿼리 옵티마이저가 index의 활용여부를 결정한다
+- 한번에 한 인덱스만 적용 가능하고, 대신 복합 인덱스 존재하고 순서 중요함
+
+
 # 2022.01.25 TIL
 ### Socket.InputStream을 close하면, Socket도 close된다.
 따라서 다음과 같이 작성할 수 없다
