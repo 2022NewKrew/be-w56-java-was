@@ -13,7 +13,6 @@ import collections.RequestStartLine;
 import controller.Controller;
 import controller.GetController;
 import controller.PostController;
-import db.DataBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -24,8 +23,7 @@ import static util.HttpRequestUtils.*;
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final DataBase DATA_BASE = new DataBase();
-    private static final UserService USER_SERVICE = new UserService(DATA_BASE);
+    private static final UserService USER_SERVICE = new UserService();
 
     private static final GetController GET_CONTROLLER = new GetController(USER_SERVICE);
     private static final PostController POST_CONTROLLER = new PostController(USER_SERVICE);
@@ -36,6 +34,7 @@ public class RequestHandler extends Thread {
     }};
     private static final Map<String, String> PATH_METHOD_MAP = new HashMap<>() {{
         put("/user/create", "userCreate");
+        put("/user/login", "userLogin");
     }};
 
     private Socket connection;
@@ -102,6 +101,7 @@ public class RequestHandler extends Thread {
             log.error("존재하지 않는 페이지입니다.");
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
+            log.error("요청이 잘못되었습니다.");
         }
     }
 

@@ -11,11 +11,6 @@ import java.util.Map;
 public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
-    private final DataBase dataBase;
-
-    public UserService(DataBase dataBase) {
-        this.dataBase = dataBase;
-    }
 
     public void signUp(Map<String, String> parameters) {
         if (parameters == null) {
@@ -23,6 +18,18 @@ public class UserService {
         }
 
         User user = new User(parameters.get("userId"), parameters.get("password"), parameters.get("name"), parameters.get("email"));
-        log.debug(user.toString() + "회원 가입 완료");
+        DataBase.addUser(user);
+        log.debug(user.toString() + " 회원 가입 완료");
+    }
+
+    public boolean signIn(Map<String, String> parameters) {
+        String userId = parameters.getOrDefault("userId", "");
+        String password = parameters.getOrDefault("password", "");
+        User user = DataBase.findUserById(userId);
+        if (user == null || !user.getPassword().equals(password)) {
+            return false;
+        }
+
+        return true;
     }
 }

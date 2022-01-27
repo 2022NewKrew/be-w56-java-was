@@ -49,4 +49,23 @@ public class PostController implements Controller {
         return response;
     }
 
+    public Response userLogin(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
+        byte[] body;
+        var temp = new HashMap<String, String>();
+        if (userService.signIn(requestBody.getBodies())) {
+            body = Files.readAllBytes(new File("./webapp" + "/index.html").toPath());
+            temp.put("Location", "/index.html");
+            temp.put("Set-Cookie", "logined=true; Path=/");
+        } else {
+            body = Files.readAllBytes(new File("./webapp" + "/user/login_failed.html").toPath());
+            temp.put("Set-Cookie", "logined=false; Path=/");
+        }
+
+        temp.put("Content-Length", String.valueOf(body.length));
+        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
+        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
+
+        return response;
+    }
+
 }
