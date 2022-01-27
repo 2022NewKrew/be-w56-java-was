@@ -1,4 +1,4 @@
-package model;
+package next.model;
 
 public class User {
     private String userId;
@@ -32,5 +32,9 @@ public class User {
     @Override
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+    }
+
+    public boolean login(String password) {
+        return this.password.equals(password);
     }
 }
