@@ -1,5 +1,9 @@
 package web.http.response;
 
+import util.Pair;
+
+import java.util.List;
+
 public class HttpResponse {
     private final HttpResponseStatusLine statusLine;
     private final HttpResponseHeaders headers;
@@ -17,6 +21,10 @@ public class HttpResponse {
 
     public HttpResponseHeaders getHeaders() {
         return headers;
+    }
+
+    public List<Pair> getHeadersList() {
+        return headers.getHeaders();
     }
 
     public HttpResponseBody getBody() {

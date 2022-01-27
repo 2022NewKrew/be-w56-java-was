@@ -16,6 +16,10 @@ public class HttpResponseHeaders {
         headers = new ArrayList<>();
     }
 
+    public List<Pair> getHeaders() {
+        return headers;
+    }
+
     public void addHeader(Pair header){
         headers.add(header);
     }
