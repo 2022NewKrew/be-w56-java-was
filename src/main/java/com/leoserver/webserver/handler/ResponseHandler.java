@@ -1,11 +1,11 @@
 package com.leoserver.webserver.handler;
 
 import com.leoserver.webserver.ApplicationContext;
+import com.leoserver.webserver.http.Cookie;
 import com.leoserver.webserver.http.HttpStatus;
 import com.leoserver.webserver.http.KakaoHttpBody;
 import com.leoserver.webserver.http.KakaoHttpHeader;
 import com.leoserver.webserver.http.KakaoHttpResponse;
-import com.leoserver.webserver.http.MIME;
 import com.leoserver.webserver.http.Version;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,8 +52,12 @@ public class ResponseHandler {
     header.getOptions().forEach((name, option) -> {
       sb.append(option.getKey()).append(": ").append(option.getValue()).append("\r\n");
     });
-//    sb.append("Content-Type: ").append(mimeType.getContentType()).append(";charset=utf-8\r\n");
     sb.append("Content-Length: ").append(lengthOfBodyContent).append("\r\n");
+    header.getCookies().forEach(entry -> {
+      Cookie cookie = entry.getValue();
+      sb.append("Set-Cookie: ").append(cookie.getKey()).append("=").append(cookie.getValue())
+          .append("; Path=").append(cookie.getPath());
+    });
 
     sb.append("\r\n");
 

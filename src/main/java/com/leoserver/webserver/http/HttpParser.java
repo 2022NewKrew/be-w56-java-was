@@ -46,7 +46,7 @@ public class HttpParser {
 
     // message header
     String line = reader.readLine();
-    while(line.length() > 0) {
+    while (line.length() > 0) {
 
       logger.debug("header : {}", line);
 
@@ -75,7 +75,7 @@ public class HttpParser {
 
   private JsonObject toObjectByMIME(String body, MIME contentType) {
 
-    if(MIME.APPLICATION_X_WWW_FORM_URLENCODED == contentType) {
+    if (MIME.APPLICATION_X_WWW_FORM_URLENCODED == contentType) {
       String decoded = URLDecoder.decode(body, StandardCharsets.UTF_8);
       Map<String, String> map = HttpRequestUtils.parseQueryString(decoded);
       return new Gson().toJsonTree(map).getAsJsonObject();

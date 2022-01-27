@@ -24,7 +24,8 @@ public class ApplicationContext {
   private final StaticResourceHandler staticResourceHandler;
   private final ServletHandler servletHandler;
   private Set<Object> beans;
-  private final Reflections reflections = new Reflections("com.leoserver", Scanners.TypesAnnotated, Scanners.FieldsAnnotated);
+  private final Reflections reflections = new Reflections("com.leoserver", Scanners.TypesAnnotated,
+      Scanners.FieldsAnnotated);
 
   public ApplicationContext() throws Exception {
     initialize();
@@ -44,8 +45,8 @@ public class ApplicationContext {
 
     Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Component.class);
 
-    for(Class<?> component : annotated) {
-      if(!component.isAnnotation()) {
+    for (Class<?> component : annotated) {
+      if (!component.isAnnotation()) {
         beans.add(component.getConstructor().newInstance());
         logger.debug("Component : {}", component);
       }
@@ -64,7 +65,7 @@ public class ApplicationContext {
           .filter(field -> field.isAnnotationPresent(Autowired.class))
           .collect(Collectors.toUnmodifiableList());
 
-      for(Field field : fields) {
+      for (Field field : fields) {
 
         field.setAccessible(true);
         Object obj = findByType(field.getType());

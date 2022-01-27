@@ -28,7 +28,8 @@ public class UrlHandler {
   }
 
 
-  public Optional<Pair<Method, Object>> find(com.leoserver.webserver.http.Method method, String uri) {
+  public Optional<Pair<Method, Object>> find(com.leoserver.webserver.http.Method method,
+      String uri) {
     String key = getUrlKey(method, uri);
     return Optional.ofNullable(urlMapper.get(key));
   }
@@ -61,7 +62,7 @@ public class UrlHandler {
 
   private void put(String key, Method method, Object bean) {
 
-    if(urlMapper.containsKey(key)) {
+    if (urlMapper.containsKey(key)) {
       // method, path 중복
       throw new IllegalArgumentException();
     }

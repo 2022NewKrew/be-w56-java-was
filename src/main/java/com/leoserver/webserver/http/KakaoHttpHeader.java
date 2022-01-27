@@ -24,13 +24,14 @@ public class KakaoHttpHeader {
   private Version version;
   private QueryParam queryParam;
   private LocalDateTime date;
+  private Cookies cookies;
 
   private Map<HeaderOptionName, HttpHeaderOption> options;
-
 
   private KakaoHttpHeader() {
     this.date = LocalDateTime.now();
     this.options = new HashMap<>();
+    this.cookies = new Cookies();
   }
 
 
@@ -50,7 +51,7 @@ public class KakaoHttpHeader {
 
     String[] split = requestLine.split(" ");
 
-    try{
+    try {
 
       Method method = Method.valueOf(split[0]);
       Uri uri = new Uri(split[1]);
@@ -59,7 +60,7 @@ public class KakaoHttpHeader {
 
       return createRequest(method, uri, queryParam, version);
 
-    }catch(Exception e) {
+    } catch (Exception e) {
       //FIXME exception 구체화
       throw new Exception();
     }
@@ -86,21 +87,26 @@ public class KakaoHttpHeader {
 
   public void set(String key, String value) {
 
-    if(HOST.equals(key)) {
+    if (HOST.equals(key)) {
       options.put(findByHttpName(key).orElseThrow(), new Host(value));
       return;
     }
 
-    if(CONTENT_LENGTH.equals(key)) {
+    if (CONTENT_LENGTH.equals(key)) {
       options.put(findByHttpName(key).orElseThrow(), new ContentLength(value));
       return;
     }
 
-    if(CONTENT_TYPE.equals(key)) {
+    if (CONTENT_TYPE.equals(key)) {
       options.put(findByHttpName(key).orElseThrow(), MIME.from(value));
       return;
     }
 
+  }
+
+
+  public void setCookie(Cookie cookie) {
+    cookies.put(cookie.getKey(), cookie);
   }
 
 

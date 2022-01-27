@@ -25,7 +25,7 @@ public enum MIME implements HttpHeaderOption {
   private String value;
   private String[] extensions;
 
-  MIME(String value, String ... extensions) {
+  MIME(String value, String... extensions) {
     this.value = value;
     this.extensions = extensions;
   }
@@ -42,9 +42,10 @@ public enum MIME implements HttpHeaderOption {
   public static MIME getNameByExtension(String extension) {
     return Arrays.stream(values())
         .filter(mime -> {
-          for(String ext : mime.extensions) {
-            if(ext.equals(extension))
+          for (String ext : mime.extensions) {
+            if (ext.equals(extension)) {
               return true;
+            }
           }
           return false;
         }).findAny()

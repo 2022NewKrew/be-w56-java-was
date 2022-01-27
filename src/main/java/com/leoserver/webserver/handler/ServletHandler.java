@@ -95,7 +95,6 @@ public class ServletHandler {
       return;
     }
 
-
     logger.debug("Parameter Type : {}", parameter.getClass());
     Class<?> cls = parameter.getType();
     Constructor<?> constructor = cls.getConstructor();
@@ -103,11 +102,17 @@ public class ServletHandler {
     Field[] fields = object.getClass().getDeclaredFields();
     for (Field field : fields) {
 
-      String injectParam = body.getFieldAsString(field.getName());
-      field.setAccessible(true);
-      field.set(object, injectParam);
+      body.getFieldAsString(field.getName())
+          .ifPresent(injectParam -> {
+            field.setAccessible(true);
+            try {
+              field.set(object, injectParam);
+            } catch (IllegalAccessException e) {
+              e.printStackTrace();
+            }
+            logger.debug("parameter body objects : {}", injectParam);
+          });
 
-      logger.debug("parameter body objects : {}", injectParam);
     }
 
     invokeParams[index] = object;

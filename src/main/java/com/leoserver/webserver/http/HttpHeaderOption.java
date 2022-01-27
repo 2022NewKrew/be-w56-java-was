@@ -38,6 +38,7 @@ public interface HttpHeaderOption {
   }
 
   String getKey();
+
   String getValue();
 
 }

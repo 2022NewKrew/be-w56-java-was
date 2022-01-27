@@ -25,7 +25,7 @@ public class Uri {
 
   private String separateQueryString(String uri) {
 
-    if(uri.contains("?")) {
+    if (uri.contains("?")) {
       return uri.substring(0, uri.indexOf("?"));
     }
 

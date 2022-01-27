@@ -1,7 +1,9 @@
 package com.leoserver.webserver.http;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.util.Optional;
 
 public class KakaoHttpBody {
 
@@ -10,7 +12,7 @@ public class KakaoHttpBody {
 
   private KakaoHttpBody(Object object) {
 
-    if(object == null) {
+    if (object == null) {
       object = new Object();
     }
 
@@ -33,8 +35,13 @@ public class KakaoHttpBody {
   }
 
 
-  public String getFieldAsString(String key) {
-    return holder.get(key).getAsString();
+  public Optional<String> getFieldAsString(String key) {
+    JsonElement elem = holder.get(key);
+    if (elem == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(elem.getAsString());
   }
 
 

@@ -1,18 +1,17 @@
 package com.leoserver.webserver.handler;
 
 import com.leoserver.webserver.ApplicationContext;
+import com.leoserver.webserver.http.HttpParser;
+import com.leoserver.webserver.http.KakaoHttpRequest;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.leoserver.webserver.http.HttpParser;
-import com.leoserver.webserver.http.KakaoHttpRequest;
-import com.leoserver.webserver.http.Uri;
 
 public class RequestHandler extends Thread {
+
   private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
   private final Socket connection;
@@ -29,7 +28,8 @@ public class RequestHandler extends Thread {
 
   public void run() {
 
-    log.debug("New Client Connect! Connected IP : {}, Port : {}, Connection : {}", connection.getInetAddress(),
+    log.debug("New Client Connect! Connected IP : {}, Port : {}, Connection : {}",
+        connection.getInetAddress(),
         connection.getPort(), connection);
 
     try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -39,9 +39,9 @@ public class RequestHandler extends Thread {
       byte[] response;
       log.debug(request.toString());
 
-      if(servletHandler.hasMappedMethod(request)) {
+      if (servletHandler.hasMappedMethod(request)) {
         response = servletHandler.handle(request);
-      }else {
+      } else {
         response = staticResourceHandler.handle(request);
       }
 
@@ -55,12 +55,6 @@ public class RequestHandler extends Thread {
       log.error(e.getMessage());
       e.printStackTrace();
     }
-  }
-
-
-  private boolean isStaticRequest(KakaoHttpRequest request) {
-    Uri uri = request.getUri();
-    return uri.hasExtension();
   }
 
 }

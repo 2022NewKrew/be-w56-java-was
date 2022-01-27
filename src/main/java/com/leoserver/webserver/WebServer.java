@@ -1,13 +1,13 @@
 package com.leoserver.webserver;
 
+import com.leoserver.webserver.handler.RequestHandler;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.leoserver.webserver.handler.RequestHandler;
 
 public class WebServer {
+
   private static final Logger log = LoggerFactory.getLogger(WebServer.class);
   private static final int DEFAULT_PORT = 8080;
 
@@ -27,8 +27,6 @@ public class WebServer {
       // 클라이언트가 연결될때까지 대기한다.
       Socket connection;
       while ((connection = listenSocket.accept()) != null) {
-
-        log.debug("왜 커넥션이 2개 생기지? : {}", connection);
 
         RequestHandler requestHandler = new RequestHandler(
             connection,
