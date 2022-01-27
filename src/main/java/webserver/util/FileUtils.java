@@ -1,4 +1,4 @@
-package util;
+package webserver.util;
 
 import java.io.File;
 
@@ -12,5 +12,4 @@ public class FileUtils {
         }
         return fileName.substring(lastIndex + 1);
     }
-
 }

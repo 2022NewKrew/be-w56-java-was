@@ -1,15 +1,15 @@
 package webserver.http;
 
-public enum HttpHeaderValue {
+public enum MimeSubtype {
     TEXT_HTML("text/html; charset=UTF-8"),
     TEXT_CSS("text/css"),
-    APPLICATION_JSON("application/json"),
-    APPLICATION_JS("application/javascript"),
+    APPLICATION_JSON("app/json"),
+    TEXT_JS("text/javascript"),
     ;
 
     private final String value;
 
-    HttpHeaderValue(String value) {
+    MimeSubtype(String value) {
         this.value = value;
     }
 

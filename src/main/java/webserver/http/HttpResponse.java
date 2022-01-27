@@ -1,41 +1,45 @@
 package webserver.http;
 
+import webserver.WebServerConfig;
+
 public class HttpResponse {
 
     private final HttpVersion version;
-    private final HttpHeaders trailingHeaders;
-    private final HttpResponseStatus status;
-    private final byte[] body;
+    private HttpHeaders trailingHeaders;
+    private HttpResponseStatus status;
+    private byte[] body;
 
-
-    public HttpResponse(HttpResponseStatus status) {
-        this(new HttpVersion("HTTP/1.1"), status, new byte[0]);
+    public HttpResponse() {
+        this(WebServerConfig.RESPONSE_HTTP_VERSION);
     }
 
-    public HttpResponse(HttpResponseStatus status, byte[] body) {
-        this(new HttpVersion("HTTP/1.1"), status, body);
-    }
-
-    public HttpResponse(HttpVersion version, HttpResponseStatus status, byte[] body) {
+    public HttpResponse(HttpVersion version) {
         this.version = version;
-        this.status = status;
-        this.body = body;
-        this.trailingHeaders = new HttpHeaders();
-    }
-
-    public HttpHeaders headers() {
-        return trailingHeaders;
     }
 
     public HttpVersion getVersion() {
         return version;
     }
 
+    public HttpHeaders headers() {
+        return trailingHeaders;
+    }
+
     public HttpResponseStatus getStatus() {
         return status;
     }
 
+    public HttpResponse setStatus(HttpResponseStatus status) {
+        this.status = status;
+        return this;
+    }
+
     public byte[] getBody() {
         return body;
+    }
+
+    public HttpResponse setBody(byte[] contents) {
+        this.body = contents;
+        return this;
     }
 }

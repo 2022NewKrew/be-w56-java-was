@@ -13,7 +13,7 @@ public class HttpHeaders {
         this.httpHeaders = Collections.synchronizedMap(new EnumMap<>(HttpHeader.class));
     }
 
-    public HttpHeaders set(HttpHeader key, HttpHeaderValue value) {
+    public HttpHeaders set(HttpHeader key, MimeSubtype value) {
         return set(key, value.toString());
     }
 
