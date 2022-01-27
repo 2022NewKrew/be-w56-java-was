@@ -2,6 +2,7 @@ package http.request;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,16 @@ public class RequestBody {
         try {
             for (String line : dataLine) {
                 components = List.of(line.split("="));
-                key = URLDecoder.decode(components.get(0), "utf-8");
-                value = URLDecoder.decode(components.get(1), "utf-8");
+                key = URLDecoder.decode(components.get(0), StandardCharsets.UTF_8);
+                value = URLDecoder.decode(components.get(1), StandardCharsets.UTF_8);
                 bodyData.put(key, value);
             }
-        } catch (UnsupportedEncodingException exception) {
+        } catch (Exception exception) {
             throw new IllegalArgumentException("body decoding에 실패하였습니다");
         }
+    }
+
+    public Map<String, String> getBodyData() {
+        return bodyData;
     }
 }

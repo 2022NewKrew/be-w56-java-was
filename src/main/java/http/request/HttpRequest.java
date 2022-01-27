@@ -27,4 +27,8 @@ public class HttpRequest {
     public HttpMethod getMethod() {
         return header.getMethod();
     }
+
+    public Map<String, String> getBodyData() {
+        return body.getBodyData();
+    }
 }

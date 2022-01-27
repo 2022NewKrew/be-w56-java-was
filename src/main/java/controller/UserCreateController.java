@@ -24,10 +24,10 @@ public class UserCreateController implements Controller {
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) throws IOException {
         Map<String, String> result = new HashMap<>();
-        Map<String, String> queries = request.getQuery();
+        Map<String, String> bodyData = request.getBodyData();
         DataBase.addUser(
-                new User(queries.get("userId"), queries.get("password"), queries.get("name"),
-                        queries.get("email")));
+                new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
+                        bodyData.get("email")));
         result.put("url", "/index.html");
         result.put("status", "302");
         return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
