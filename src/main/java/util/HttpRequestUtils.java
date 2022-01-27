@@ -1,5 +1,7 @@
 package util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -8,18 +10,18 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
-    /**
-     * @param queryStringì€
-     *            URLì—ì„œ ? ì´í›„ì— ì „ë‹¬ë˜ëŠ” field1=value1&field2=value2 í˜•ì‹ì„
+    /*
+     * @param queryStringÀº
+     *            URL¿¡¼­ ? ÀÌÈÄ¿¡ Àü´ŞµÇ´Â field1=value1&field2=value2 Çü½ÄÀÓ
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param ì¿ í‚¤
-     *            ê°’ì€ name1=value1; name2=value2 í˜•ì‹ì„
+    /*
+     * @param
+     *            °ªÀº name1=value1; name2=value2 Çü½ÄÀÓ
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
@@ -33,7 +35,14 @@ public class HttpRequestUtils {
 
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                .collect(Collectors.toMap(p -> p.getKey(), p -> {
+                    try {
+                        return URLDecoder.decode(p.getValue(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

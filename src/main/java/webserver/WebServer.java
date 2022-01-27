@@ -5,6 +5,9 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.custom.ComponentManager;
+import webserver.custom.DispatcherServlet;
+import webserver.custom.HandlerMapping;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
@@ -18,15 +21,20 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        // ì„œë²„ì†Œì¼“ì„ ìƒì„±í•œë‹¤. ì›¹ì„œë²„ëŠ” ê¸°ë³¸ì ìœ¼ë¡œ 8080ë²ˆ í¬íŠ¸ë¥¼ ì‚¬ìš©í•œë‹¤.
+        // Custom DispatcherServlet set-up
+        Dispatcher customDispatcherServlet = new DispatcherServlet(HandlerMapping.of(ComponentManager.of()));
 
+        // ±âÁ¸ dispatcher
+        Dispatcher defaultDispatcherServlet = new DefaultDispatcher();
+
+        // ¼­¹ö¼ÒÄÏÀ» »ı¼ºÇÑ´Ù. À¥¼­¹ö´Â ±âº»ÀûÀ¸·Î 8080¹ø Æ÷Æ®¸¦ »ç¿ëÇÑ´Ù.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
 
-            // í´ë¼ì´ì–¸íŠ¸ê°€ ì—°ê²°ë ë•Œê¹Œì§€ ëŒ€ê¸°í•œë‹¤.
+            // Å¬¶óÀÌ¾ğÆ®°¡ ¿¬°áµÉ¶§±îÁö ´ë±âÇÑ´Ù.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection);
+                RequestHandler requestHandler = new RequestHandler(connection, defaultDispatcherServlet);
                 requestHandler.start();
             }
         }
