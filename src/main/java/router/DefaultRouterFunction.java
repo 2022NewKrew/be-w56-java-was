@@ -28,7 +28,7 @@ public class DefaultRouterFunction implements RouterFunction {
 
     @Override
     public RouterFunction andRoute(RequestPredicate predicate, RouterFunction f) {
-        router.DefaultRouterFunction next = new router.DefaultRouterFunction(predicate, f, null);
-        return new router.DefaultRouterFunction(this.predicate, this.f, next);
+        DefaultRouterFunction next = new DefaultRouterFunction(predicate, f, null);
+        return new DefaultRouterFunction(this.predicate, this.f, next);
     }
 }

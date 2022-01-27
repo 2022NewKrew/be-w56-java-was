@@ -1,13 +1,12 @@
 package webserver;
 
-import handler.StaticHandler;
-import handler.UserHandler;
+import annotation.Inject;
+import di.DependencyInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import router.RouterFunction;
-import router.StaticRouter;
-import router.UserRouter;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -16,21 +15,25 @@ public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String[] args) throws Exception {
+    @Inject
+    private List<RouterFunction> routers;
+
+    public WebServer() {
+        DependencyInjector injector = new DependencyInjector(log);
+        injector.inject("", this);
+    }
+
+    public static void main(String[] args) {
         int port;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
         } else {
             port = Integer.parseInt(args[0]);
         }
+        new WebServer().start(port);
+    }
 
-        StaticHandler staticHandler = new StaticHandler();
-        UserHandler userHandler = new UserHandler();
-        List<RouterFunction> routers = List.of(
-                new UserRouter().route(userHandler),
-                new StaticRouter().route(staticHandler)
-        );
-
+    public void start(int port) {
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
@@ -41,6 +44,8 @@ public class WebServer {
                 RequestHandler requestHandler = new RequestHandler(connection, routers);
                 requestHandler.start();
             }
+        } catch (IOException e) {
+            log.error("Web Application Server failed to start.", e);
         }
     }
 }

@@ -40,7 +40,7 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private Response handleRequest(Request request) throws IOException {
+    private Response handleRequest(Request request) {
         for (RouterFunction router : routers) {
             Response response = router.handle(request);
             if (response != null) {
