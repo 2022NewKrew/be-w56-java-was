@@ -2,13 +2,13 @@ package http.request;
 
 public class HttpRequestLine {
 
-    private String method;
+    private HttpMethod method;
     private HttpRequestUri requestUri;
     private String httpVersion;
 
     public HttpRequestLine(String requestLine) {
         String[] parsedRequestLine = requestLine.split(" ");
-        method = parsedRequestLine[0];
+        method = HttpMethod.getHttpMethodByMethodName(parsedRequestLine[0]);
         requestUri = new HttpRequestUri(parsedRequestLine[1]);
         httpVersion = parsedRequestLine[2];
     }
@@ -19,5 +19,9 @@ public class HttpRequestLine {
 
     public String getParam(String paramName) {
         return requestUri.getParam(paramName);
+    }
+
+    public boolean isMethod(HttpMethod method) {
+        return this.method == method;
     }
 }

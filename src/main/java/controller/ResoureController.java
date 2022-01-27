@@ -20,7 +20,7 @@ public class ResoureController implements Controller {
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) {
         String contentType = getContentType(httpRequest);
         Resource file = getStaticFile(contentType, httpRequest.getPath());
-        httpResponse.send(file);
+        httpResponse.body(file);
     }
 
     private String getContentType(HttpRequest httpRequest) {
