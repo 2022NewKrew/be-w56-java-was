@@ -8,6 +8,7 @@ import webserver.annotation.AnnotationUtils;
 import webserver.annotation.Controller;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestParam;
+import webserver.domain.Cookie;
 import webserver.domain.Request;
 import webserver.domain.RequestMethod;
 
@@ -21,9 +22,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ControllerResolver {
-    private Map<Method, Object> controllerForMethod;
-    private Map<Request, Method> methodForRequest;
-    private Reflections reflector;
+    private final Map<Method, Object> controllerForMethod;
+    private final Map<Request, Method> methodForRequest;
+    private final Reflections reflector;
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final ControllerResolver instance = new ControllerResolver();
 
@@ -40,7 +41,13 @@ public class ControllerResolver {
 
     private Object[] resolveParameter(Method method, Request request) {
         Parameter[] parameters = method.getParameters();
-        return Arrays.stream(parameters).map(p -> request.getBody().get(p.getAnnotation(RequestParam.class).value())).toArray();
+        return Arrays.stream(parameters).map(p -> {
+            if (p.isAnnotationPresent(RequestParam.class))
+                return request.getBody().get(p.getAnnotation(RequestParam.class).value());
+            if (p.getParameterizedType().equals(Cookie.class))
+                return request.getCookie();
+            return null;
+        }).toArray();
     }
 
     private ControllerResolver() {
@@ -68,15 +75,12 @@ public class ControllerResolver {
 
     private Map<Request, Method> getMappingMethodForRequest() {
         Map<Request, Method> ret = new HashMap<>();
-        controllerForMethod.forEach((k, controller) -> {
-            Method[] methods = controller.getClass().getDeclaredMethods();
-            Arrays.stream(methods)
-                    .filter(method -> AnnotationUtils.isMethodHasAnnotation(method, RequestMapping.class))
-                    .forEach(method -> {
-                        RequestMethod requestMethod = RequestMethod.valueOf(AnnotationUtils.getRequestMethodOfController(method));
-                        String requestURL = AnnotationUtils.getRequestURLOfController(method);
-                        ret.put(new Request(requestMethod, requestURL), method);
-                    });
+        controllerForMethod.forEach((method, controller) -> {
+            if (AnnotationUtils.isMethodHasAnnotation(method, RequestMapping.class)) {
+                RequestMethod requestMethod = RequestMethod.valueOf(AnnotationUtils.getRequestMethodOfController(method));
+                String requestURL = AnnotationUtils.getRequestURLOfController(method);
+                ret.put(new Request(requestMethod, requestURL), method);
+            }
         });
         return ret;
     }

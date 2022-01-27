@@ -1,7 +1,7 @@
 package webserver.domain;
 
 public class Response {
-    private String header;
+    private final String header;
     private byte[] body;
 
     public Response() {
@@ -15,6 +15,7 @@ public class Response {
     public Response(String header, byte[] body) {
         this.header = header;
         this.body = body;
+        if (body == null) this.body = " ".getBytes();
     }
 
     public Response(String header) {
