@@ -9,16 +9,16 @@ import java.util.Map;
 
 public class HttpRequest {
 
-    private final String method; // TODO : enum 클래스로?!
+    private final HttpMethod method;
     private final String uri;
     private final String path;
     private final String version;
-    private final String body;
     private Map<String, String> headers;
     private Map<String, String> queryString;
     private Map<String, String> cookies;
+    private String body;
 
-    public HttpRequest(String method, String uri, String version, Map<String, String> headers, String body) {
+    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> headers, String body) {
         this.method = method;
         this.uri = uri;
         this.version = version;
@@ -36,8 +36,7 @@ public class HttpRequest {
         }
     }
 
-
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
@@ -69,12 +68,17 @@ public class HttpRequest {
         return cookies;
     }
 
+    public Map<String, String> getBodyMap() {
+        return HttpRequestUtils.parseQueryString(body);
+    }
+
     public String toMessage() {
         String reqeustMessage = String.format("%s %s %s\r\n", method, uri, version);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             reqeustMessage += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
         }
         reqeustMessage += "\r\n";
+        reqeustMessage += body;
         return reqeustMessage;
     }
 }

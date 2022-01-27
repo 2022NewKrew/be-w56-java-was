@@ -13,7 +13,7 @@ class HttpRequestTest {
     @Test
     @DisplayName("파라미터를 가지지 않는 GET 요청 메세지 테스트")
     void constructorTest() {
-        String method = "GET";
+        HttpMethod method = HttpMethod.GET;
         String uri = "/user/create";
         String version = "HTTP/1.1";
         Map<String, String> headers = new HashMap<>();
@@ -35,7 +35,7 @@ class HttpRequestTest {
     @Test
     @DisplayName("파라미터를 가지는 GET 요청 메세지 테스트")
     void constructorTest2() {
-        String method = "GET";
+        HttpMethod method = HttpMethod.GET;
         String uri = "/user/create?userId=jjj&password=123&name=123&email=dhso%40nnnn.nnn";
         String version = "HTTP/1.1";
         Map<String, String> headers = new HashMap<>();
@@ -47,7 +47,26 @@ class HttpRequestTest {
 
         assertThat(httpRequest.getPath()).isEqualTo("/user/create");
         assertThat(httpRequest.getQueryString().get("userId")).isEqualTo("jjj");
-        }
+    }
+
+    @Test
+    @DisplayName("데이터를 가지는 POST 요청 메세지 테스트")
+    void constructorTest3() {
+        HttpMethod method = HttpMethod.POST;
+        String uri = "/user/create";
+        String version = "HTTP/1.1";
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Length", "84");
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        String body = "userId=jjj&password=123&name=123&email=dhso%40nnnn.nnn";
+
+        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers, body);
+
+        assertThat(httpRequest.getBodyMap().get("userId")).isEqualTo("jjj");
+        assertThat(httpRequest.getBodyMap().get("password")).isEqualTo("123");
+        assertThat(httpRequest.getBodyMap().get("name")).isEqualTo("123");
+        assertThat(httpRequest.getBodyMap().get("email")).isEqualTo("dhso%40nnnn.nnn");
+    }
 
 
 
