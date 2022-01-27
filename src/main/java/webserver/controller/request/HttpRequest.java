@@ -33,7 +33,7 @@ public class HttpRequest {
 
         RequestLine requestLine = RequestLine.from(br.readLine());
         if (!br.ready()) {
-            throw new IOException("입력 스트림이 준비되지 않은 입력입니다.(Postman 에서 요청 시 발생합니다.)");
+            throw new IOException("입력 스트림이 준비되지 않은 입력입니다.(Postman 에서 요청 시 발생)");
         }
 
         // Request Header

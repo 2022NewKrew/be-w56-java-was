@@ -19,7 +19,7 @@ public class View {
     public static void render(OutputStream out, HttpResponse httpResponse) throws IOException {
 
         DataOutputStream dos = new DataOutputStream(out);
-        dos.writeBytes(String.format("HTTP/1.1 %s \r\n", httpResponse.getStatus().getCodeAndMessage()));
+        responseCommonHeader(dos, httpResponse);
 
         if (httpResponse.getStatus() == Status.OK){
             byte[] body = Files.readAllBytes(new File("./webapp" + httpResponse.getPath()).toPath());
@@ -31,6 +31,15 @@ public class View {
         // send 404, 405 and Redirect
         responseNot200Header(dos, httpResponse);
     }
+    private static void responseCommonHeader(DataOutputStream dos, HttpResponse httpResponse) {
+        try {
+            dos.writeBytes(String.format("HTTP/1.1 %s \r\n", httpResponse.getStatus().getCodeAndMessage()));
+            dos.writeBytes(httpResponse.getHeaderString());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, HttpResponse httpResponse){
         try {
             // Content-Type 작성 필요

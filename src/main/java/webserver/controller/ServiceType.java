@@ -13,6 +13,7 @@ public enum ServiceType {
     GET_HOME(HttpMethod.GET, "/", Service::getHome),
     GET_CREATE(HttpMethod.GET, "/user/create", Service::getCreate),
     POST_CREATE(HttpMethod.POST, "/user/create", Service::postCreate),
+    POST_LOGIN(HttpMethod.POST, "/user/login", Service::postLogin),
     GET_STATIC(HttpMethod.GET, "/", Service::getStatic),
     ERR_405(HttpMethod.UNKNOWN, "/", Service::err405);
 
