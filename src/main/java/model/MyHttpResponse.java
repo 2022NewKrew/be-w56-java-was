@@ -25,7 +25,7 @@ public class MyHttpResponse {
             httpStatus = get(myHttpRequest);
         }
         else if (myHttpRequest.getMethod().equals("POST")) {
-            httpStatus = HttpStatus.CREATED;
+            httpStatus = post(myHttpRequest);
         }
 
         statusLine = httpStatus.makeStatusLine(myHttpRequest.getProtocol());
@@ -38,7 +38,20 @@ public class MyHttpResponse {
             if (uri.equals("/")) {
                 body = Files.readAllBytes(new File(MAIN_PAGE).toPath());
             }
-            else if (uri.equals("/user/create")) {
+            else {
+                body = Files.readAllBytes(new File(DEFAULT_PATH + uri).toPath());
+            }
+            return HttpStatus.OK;
+        } catch (IOException e) {
+            return HttpStatus.NOT_FOUND;
+        }
+    }
+
+    private HttpStatus post(MyHttpRequest request) {
+        try {
+            String uri = request.getUri();
+
+            if (uri.equals("/user/create")) {
                 userController.signUp(request.getParameters());
 
                 request.setUri("/");

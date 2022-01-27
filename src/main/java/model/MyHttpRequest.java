@@ -2,6 +2,7 @@ package model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +31,12 @@ public class MyHttpRequest {
 
         br.lines().takeWhile(line -> !line.equals(""))
                 .forEach(this::setHeader);
+
+        if(method.equals("POST")) {
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+            Stream.of(body.split("&"))
+                    .forEach(this::setParameters);
+        }
     }
 
     public void setRequest(String request) {
