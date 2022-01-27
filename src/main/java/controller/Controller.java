@@ -18,13 +18,13 @@ public interface Controller {
     HttpResponse processDynamic(HttpRequest request) throws IOException;
 
     default HttpResponse process(HttpRequest request) throws IOException {
-        if (isStaticFileSRequest(request))
+        if (isStaticFileRequest(request))
             return readStaticFile(request.line().url());
 
         return processDynamic(request);
     }
 
-    default boolean isStaticFileSRequest(HttpRequest request) {
+    default boolean isStaticFileRequest(HttpRequest request) {
         String url = request.line().url();
         Path path = Path.of("./webapp", url);
         return path.toFile().isFile();
