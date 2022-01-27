@@ -1,5 +1,6 @@
 package controller;
 
+import http.ContentType;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
@@ -28,9 +29,8 @@ public class StaticController extends AbstractController {
     @Override
     protected HttpResponse doGet(HttpRequest request) throws IOException {
         Path path = new File(PATHNAME + request.getPath()).toPath();
-
-        // TODO: 파일에 맞는 contentType 으로 변경 하기
-        return HttpResponse.ok("*/*", Files.readAllBytes(path));
+        ContentType contentType = ContentType.match(request.getPath());
+        return HttpResponse.ok(contentType, Files.readAllBytes(path));
     }
 
     @Override
