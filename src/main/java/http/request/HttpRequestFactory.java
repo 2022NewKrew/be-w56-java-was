@@ -6,47 +6,63 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import util.Constant;
+import webserver.HttpMethod;
 
 public class HttpRequestFactory {
+
+    public static final String CONTENT_LENGTH = "Content-Length";
 
     public static HttpRequest getHttpRequest(InputStream inputStream) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        String header = readRequestHeader(bufferedReader);
-        if(header.contains("Content-Length")) {
-            int bodySize = getBodySize(header);
-            return new HttpRequest(header, readRequestBody(bufferedReader, bodySize));
+        List<String> startLineAndHeader = readInputStreamStartLineAndHeader(bufferedReader);
+        String startLineString = startLineAndHeader.get(0);
+        String headerString = startLineAndHeader.get(1);
+
+        RequestStartLine startLine = getStartLine(startLineString);
+        RequestHeader header = new RequestHeader(headerString);
+
+        if (header.has(CONTENT_LENGTH)) {
+            return new HttpRequest(startLine, header,
+                    readRequestBody(bufferedReader, Integer.parseInt(header.get(CONTENT_LENGTH))));
         }
-        return new HttpRequest(header, null);
+        return new HttpRequest(startLine, header, null);
     }
 
-    private static String readRequestHeader(BufferedReader bufferedReader) throws IOException {
+    private static List<String> readInputStreamStartLineAndHeader(BufferedReader bufferedReader)
+            throws IOException {
         StringBuilder result = new StringBuilder();
 
         String line;
         while (!(line = bufferedReader.readLine()).equals("")) {
             result.append(line).append(Constant.lineBreak);
         }
-        return result.toString();
+
+        return List.of(result.toString().split(Constant.lineBreak, 2));
     }
 
-    private static int getBodySize(String header) {
-        List<String> requestLines = List.of(header.split("\r\n"));
+    private static RequestStartLine getStartLine(String startLineString) {
+        List<String> components = List.of(startLineString.split(" "));
+        HttpMethod method = HttpMethod.valueOf(components.get(0));
+        String url = components.get(1);
+        String protocol = components.get(2);
 
-        for (String requestLine : requestLines) {
-            if(requestLine.contains("Content-Length")){
-                return Integer.parseInt(requestLine.split(": ")[1]);
-            }
+        List<String> queryComponents;
+        if (url.contains("?")) {
+            queryComponents = List.of(url.split("\\?"));
+            return new RequestStartLine(method, queryComponents.get(0), protocol,
+                    queryComponents.get(1));
         }
 
-        throw new IllegalArgumentException("BodySize를 찾지 못하였습니다.");
+        return new RequestStartLine(method, url, protocol);
     }
 
-    private static String readRequestBody(BufferedReader bufferedReader, int bodySize)
+    private static RequestBody readRequestBody(BufferedReader bufferedReader, int bodySize)
             throws IOException {
         char[] cbuf = new char[bodySize];
         bufferedReader.read(cbuf);
-        return new String(cbuf);
+
+        return new RequestBody(new String(cbuf));
     }
 }
