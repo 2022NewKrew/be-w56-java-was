@@ -3,6 +3,7 @@ package util.http;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class HttpResponseUtils {
@@ -26,7 +27,24 @@ public class HttpResponseUtils {
         httpResponse.setBody(body);
     }
 
-    public static void redirectResponse(HttpResponse httpResponse, String location, String host) {
+    public static void serverErrorResponse(HttpResponse httpResponse) {
+        httpResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        byte[] body = "500 Internal Server Error".getBytes(StandardCharsets.UTF_8);
+        httpResponse.setHeader("Content-Type", "text/html;charset=utf-8");
+        httpResponse.setHeader("Content-Length", String.valueOf(body.length));
+        httpResponse.setBody(body);
+    }
+
+    public static void notFoundResponse(HttpResponse httpResponse) {
+        httpResponse.setStatus(HttpStatus.NOT_FOUND);
+        byte[] body = "404 Not Found".getBytes(StandardCharsets.UTF_8);
+        httpResponse.setHeader("Content-Type", "text/html;charset=utf-8");
+        httpResponse.setHeader("Content-Length", String.valueOf(body.length));
+        httpResponse.setBody(body);
+
+    }
+
+    public static void redirectResponse(HttpResponse httpResponse, String location, String host) throws IOException {
         httpResponse.setStatus(HttpStatus.FOUND);
         httpResponse.setHeader("Location", String.format("http://%s%s", host, location));
     }

@@ -1,8 +1,8 @@
 package util;
 
-import controller.UserController;
-import db.DataBase;
-import model.User;
+import app.controller.UserController;
+import app.db.DataBase;
+import app.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.http.HttpRequest;
