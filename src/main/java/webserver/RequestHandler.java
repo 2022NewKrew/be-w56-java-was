@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controller.Controller;
+import controller.LoginController;
 import controller.ResoureController;
 import controller.SignUpController;
 import http.request.HttpRequest;
@@ -26,6 +27,7 @@ public class RequestHandler extends Thread {
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         controllers.add(new SignUpController());
+        controllers.add(new LoginController());
         controllers.add(new ResoureController());
     }
 

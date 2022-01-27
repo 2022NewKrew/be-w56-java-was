@@ -17,20 +17,12 @@ public class User {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+    }
+
+    public boolean isCorrectPassword(String password) {
+        return this.password.equals(password);
     }
 }

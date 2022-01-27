@@ -1,15 +1,17 @@
 package http.request;
 
+import http.HttpHeaders;
+
 import java.io.IOException;
 import java.util.Optional;
 
 public class HttpRequest {
 
     private HttpRequestLine requestLine;
-    private HttpRequestHeader requestHeader;
+    private HttpHeaders requestHeader;
     private String body;
 
-    public HttpRequest(HttpRequestLine httpRequestLine, HttpRequestHeader httpRequestHeader, String body) throws IOException {
+    public HttpRequest(HttpRequestLine httpRequestLine, HttpHeaders httpRequestHeader, String body) throws IOException {
         requestLine = httpRequestLine;
         requestHeader = httpRequestHeader;
         this.body = body;

@@ -1,5 +1,6 @@
 package http.response;
 
+import http.HttpHeaders;
 import http.resource.Resource;
 
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Map;
 public class HttpResponse {
 
     private HttpStatusCode httpStatusCode = HttpStatusCode.OK;
-    private HttpResponseHeader httpResponseHeader = new HttpResponseHeader();
+    private HttpHeaders httpHeaders = new HttpHeaders();
     private Resource body;
 
     public HttpResponse() {
@@ -15,7 +16,7 @@ public class HttpResponse {
     }
 
     public Map<String, String> getHeaders() {
-        return httpResponseHeader.getHeaders();
+        return httpHeaders.getHeaders();
     }
 
     public HttpStatusCode getHttpStatusCode() {
@@ -28,11 +29,15 @@ public class HttpResponse {
 
     public void redirect(String redirectUri) {
         httpStatusCode = HttpStatusCode.FOUND;
-        httpResponseHeader.addHeader("Location", redirectUri);
+        httpHeaders.addHeader("Location", redirectUri);
     }
 
     public void body(Resource resource) {
-        httpResponseHeader.addHeader("Content-Type", resource.getType() + ";charset=utf-8");
+        httpHeaders.addHeader("Content-Type", resource.getType() + ";charset=utf-8");
         body = resource;
+    }
+
+    public void addCookieAttribute(String cookieName, String cookieValue) {
+        httpHeaders.addHeader("Set-Cookie", String.format("%s=%s; Path=/", cookieName, cookieValue));
     }
 }
