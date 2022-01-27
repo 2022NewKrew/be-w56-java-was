@@ -1,9 +1,11 @@
 package webserver;
 
 import controller.Controller;
+import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.request.HttpRequestFactory;
 import http.response.HttpResponse;
+import http.response.HttpResponse400;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constant;
+import view.ViewMaker;
 
 public class RequestHandler extends Thread {
 
@@ -32,12 +35,18 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            HttpRequest request = HttpRequestFactory.getHttpRequest(in);
-            Controller controller = ControllerType.getControllerType(request.getMethod(),
-                    request.getUrl());
             DataOutputStream dos = new DataOutputStream(out);
-            HttpResponse httpResponse = controller.run(request, dos);
-            httpResponse.sendResponse();
+            try {
+                HttpRequest request = HttpRequestFactory.getHttpRequest(in);
+                Controller controller = ControllerType.getControllerType(request.getMethod(),
+                        request.getUrl());
+                HttpResponse httpResponse = controller.run(request, dos);
+                httpResponse.sendResponse();
+            } catch (BadRequestException exception) {
+                HttpResponse badRequestResponse = new HttpResponse400(dos,
+                        ViewMaker.getBadRequestView());
+                badRequestResponse.sendResponse();
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
