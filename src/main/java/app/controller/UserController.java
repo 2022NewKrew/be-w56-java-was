@@ -46,6 +46,5 @@ public class UserController {
         } else {
             response.sendRedirect("/user/login_failed.html");
         }
-
     }
 }
