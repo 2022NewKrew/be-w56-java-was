@@ -2,9 +2,10 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
 import domain.User;
+import network.HttpRequest;
+import network.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -29,56 +30,19 @@ public class RequestHandler extends Thread {
             String headerLine = bufferedReader.readLine();
             String query = headerLine.split(" ")[1];
 
-            if(MyUtill.isGetQuery(query)){
-                handleQueryRequest(query);
+            HttpRequest httpRequest = new HttpRequest(bufferedReader);
+
+            ResponseHandler responseHandler = new ResponseHandler(httpRequest);
+            responseHandler.run();
+
+            if(httpRequest.getQueryString() != null){
+                User user = new User(httpRequest.getQueryString());
                 return;
             }
-            handleHtmlRequest(headerLine, out);
+            HttpResponse.handleHtmlResponse(httpRequest.getPath(), out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void handleQueryRequest(String headerLine){
-        String query = headerLine.split("\\?")[1];
-        User user = new User(HttpRequestUtils.parseQueryString(query));
-    }
-
-    private void handleHtmlRequest(String headerLine, OutputStream out) throws IOException {
-        byte[] body = getHtmlBytes(headerLine);
-
-        DataOutputStream dos = new DataOutputStream(out);
-        response200Header(dos, body.length);
-        responseBody(dos, body);
-    }
-
-    private byte[] getHtmlBytes(String headerLine) throws IOException {
-
-        String url = extractPath(headerLine);
-        return Files.readAllBytes(new File("./webapp" + url).toPath());
-    }
-
-    private String extractPath(String headerLine) {
-        return headerLine.split(" ")[1];
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
 }
