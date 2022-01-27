@@ -4,13 +4,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+
+import org.h2.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import webserver.common.HttpMethod;
+import webserver.controller.Controller;
 
 public class HttpRequest {
     private RequestLine requestLine;
     private RequestHeader requestHeader;
     private RequestBody requestBody;
+
+    private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
     private HttpRequest(RequestLine requestLine, RequestHeader requestHeader,
                         RequestBody requestBody) {
@@ -19,24 +27,25 @@ public class HttpRequest {
         this.requestBody = requestBody;
     }
 
-    public static HttpRequest from(InputStream in) throws IOException {
+    public static HttpRequest from(InputStream in) throws IOException, URISyntaxException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-        // Request Line
         RequestLine requestLine = RequestLine.from(br.readLine());
         if (!br.ready()) {
-            throw new IOException("입력 스트림이 준비되지 않은 입력입니다.(Postman 에서 요청 시에 주로 발생합니다.)");
+            throw new IOException("입력 스트림이 준비되지 않은 입력입니다.(Postman 에서 요청 시 발생합니다.)");
         }
 
         // Request Header
         RequestHeader requestHeader = RequestHeader.from(br);
 
         // Request Body
-        if (requestLine.getMethod() == HttpMethod.GET || !br.ready()) {
+        String contentLength = requestHeader.get("Content-Length");
+        if (StringUtils.isNullOrEmpty(contentLength) || !StringUtils.isNumber(contentLength)) {
             return new HttpRequest(requestLine, requestHeader, RequestBody.of());
         }
-        RequestBody requestBody = RequestBody.of(br);
+        int length = Integer.parseInt(contentLength);
+        RequestBody requestBody = RequestBody.of(br, length);
 
         return new HttpRequest(requestLine, requestHeader, requestBody);
     }

@@ -13,6 +13,7 @@ public class RequestHeader {
         RequestHeader requestHeader = new RequestHeader();
         String line;
         while (!("".equals(line = br.readLine()))) {
+            System.out.println("line = " + line);
             String[] token = line.split(": ");
             requestHeader.put(token[0], token[1]);
         }

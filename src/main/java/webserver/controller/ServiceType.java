@@ -43,7 +43,7 @@ public enum ServiceType {
             return ServiceType.GET_STATIC;
         }
 
-        // 3. GET 메서드가 아닐 경우 : 403 에러를 발생시킨다.
+        // 3. 1과 2에 해당하는 요청이 아닐 경우 : 403 에러를 발생시킨다.
         return ServiceType.ERR_405;
     }
 

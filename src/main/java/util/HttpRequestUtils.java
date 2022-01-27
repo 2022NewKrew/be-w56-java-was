@@ -126,7 +126,6 @@ public class HttpRequestUtils {
         if (Strings.isNullOrEmpty(line)) {
             return;
         }
-        System.out.println("line = " + line);
         String[] tokens = line.split(": ");
         Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
               .forEach(p -> map.put(p.getKey(), p.getValue()));

@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Maps;
 
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 public class RequestBody {
 
@@ -15,14 +19,17 @@ public class RequestBody {
 
     private RequestBody() { }
 
-    public static RequestBody of () throws IOException {
+    public static RequestBody of () {
         RequestBody requestBody = new RequestBody();
         requestBody.requestBody = Maps.newHashMap();
         return requestBody;
     }
-    public static RequestBody of (BufferedReader br) throws IOException {
+    public static RequestBody of (BufferedReader br, int length) throws IOException {
         RequestBody requestBody = new RequestBody();
-        requestBody.requestBody = HttpRequestUtils.parseBody(br);
+        
+        String bodyString = IOUtils.readData(br, length);
+        requestBody.requestBody = HttpRequestUtils.parseQueryString(bodyString);
+
         return requestBody;
     }
 
