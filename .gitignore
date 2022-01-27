@@ -130,7 +130,8 @@ replay_pid*
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -155,7 +156,7 @@ Temporary Items
 .gradle
 build/
 
-# Ignore Gradle GUI config
+# Ignore Gradle GUI factory
 gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
