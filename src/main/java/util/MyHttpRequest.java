@@ -49,7 +49,7 @@ public class MyHttpRequest {
             String entity = (read(httpRequestInputStream, Integer.parseInt(contentLength)));
             log.debug("Entity : {}", entity);
             // entity 값을 읽어 Params로 읽을 수 있도록 반영한다.
-            // TODO: 객체바인딩, @RequestBody
+            // TODO: 객체바인딩, @RequestBody, 이거할려면 많은 시간이 걸릴것 같으므로 일단 Keep
             updateRequestParams(entity);
         }
 

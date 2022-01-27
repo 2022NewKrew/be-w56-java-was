@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class FrontController {
 
+    private static final int HAVE_EXTENSION = -1;
     private static final Logger log = LoggerFactory.getLogger(FrontController.class);
     private final Map<String, MyController> controllerMapping = new HashMap<>();
 
@@ -22,16 +23,7 @@ public class FrontController {
         // controller
         controllerMapping.put("/user/create", new MemberFormController());
         controllerMapping.put("/user/login", new MemberLoginController());
-        // static path 정의
-        // TODO: 추상화
-        controllerMapping.put("/index.html", new BaseController("/index.html"));
-        controllerMapping.put("/user/form.html", new BaseController("/user/form.html"));
-        controllerMapping.put("/css/bootstrap.min.css", new BaseController("/css/bootstrap.min.css"));
-        controllerMapping.put("/css/styles.css", new BaseController("/css/styles.css"));
-        controllerMapping.put("/js/jquery-2.2.0.min.js", new BaseController("/js/jquery-2.2.0.min.js"));
-        controllerMapping.put("/js/bootstrap.min.js", new BaseController("/js/bootstrap.min.js"));
-        controllerMapping.put("/js/scripts.js", new BaseController("/js/scripts.js"));
-        controllerMapping.put("/favicon.ico", new BaseController("/favicon.ico"));
+        controllerMapping.put("/", new BaseController("/index.html"));
     }
 
     public void service(MyHttpRequest request, MyHttpResponse response) throws IOException {
@@ -40,7 +32,7 @@ public class FrontController {
 
         log.debug("requestURI : {}", requestURI);
 
-        MyController controller = controllerMapping.get(requestURI);
+        MyController controller = getMapping(requestURI);
 
         if (controller == null) {
             response.setStatus(MyHttpResponseStatus.NOT_FOUND);
@@ -50,5 +42,19 @@ public class FrontController {
         response.setStatus(MyHttpResponseStatus.OK);
         controller.process(request, response);
 
+    }
+
+    private MyController getMapping(String requestURI) {
+        int extensionOf = requestURI.lastIndexOf('.');
+
+        if (haveExtension(extensionOf)) {
+            return new BaseController(requestURI);
+        }
+
+        return controllerMapping.get(requestURI);
+    }
+
+    private boolean haveExtension(int extensionOf) {
+        return extensionOf != HAVE_EXTENSION;
     }
 }
