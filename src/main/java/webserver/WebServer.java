@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,7 @@ public class WebServer {
         // 서버 스레드 풀을 생성한다.
         final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         final ResponseWriter responseWriter = new ResponseWriter();
+        final UserController userController = new UserController();
         do {
             Socket conn;
             try {
@@ -59,7 +61,7 @@ public class WebServer {
                 break;
             }
             
-            threadPool.submit(new RequestHandler(conn, responseWriter));
+            threadPool.submit(new RequestHandler(conn, userController, responseWriter));
         } while (true);
 
         // 종료 시 스레드 풀 처리

@@ -1,8 +1,10 @@
 package webserver;
 
+import controller.UserController;
 import model.HttpRequest;
 import model.Pair;
 import model.ValueMap;
+import model.request.Body;
 import model.request.Headers;
 import model.request.HttpLocation;
 import model.request.HttpMethod;
@@ -17,10 +19,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class RequestHandler implements Callable<Void> {
@@ -29,13 +28,20 @@ public class RequestHandler implements Callable<Void> {
     private static final String TOP_HEADER_SEPARATOR = " ";
     private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
 
-    private static final String LOCATION_USER_CREATE = "/user/create";
+    private static final String LOCATION_USER_PREFIX = "/user/";
 
     private final Socket connection;
+    private final UserController userController;
     private final ResponseWriter responseWriter;
 
-    public RequestHandler(final Socket connectionSocket, final ResponseWriter responseWriter) {
+    public RequestHandler(
+            final Socket connectionSocket,
+            final UserController userController,
+            final ResponseWriter responseWriter
+    )
+    {
         this.connection = connectionSocket;
+        this.userController = userController;
         this.responseWriter = responseWriter;
     }
 
@@ -57,7 +63,10 @@ public class RequestHandler implements Callable<Void> {
                     location);
 
             if (method == HttpMethod.GET) {
-                processGet(out, location, httpRequest.getParameterMap());
+                processGet(out, location);
+            }
+            else if (method == HttpMethod.POST) {
+                processPost(out, location, httpRequest.getBody());
             }
             else {
                 responseWriter.writeErrorResponse(out);
@@ -80,7 +89,15 @@ public class RequestHandler implements Callable<Void> {
 
         final Headers headers = getHeaders(in);
 
-        return new HttpRequest(method, location, params, headers);
+        final Pair contentLengthHeader = headers.getPair(Headers.HEADER_CONTENT_LENGTH);
+        if (contentLengthHeader.isNone()) {
+            return new HttpRequest(method, location, params, headers, Body.EMPTY);
+        }
+
+        final int contentLength = Integer.parseInt(contentLengthHeader.getValue(), 10);
+        final Body body = getBody(in, contentLength);
+
+        return new HttpRequest(method, location, params, headers, body);
     }
 
     private String readOneHeader(final InputStream in) throws IOException {
@@ -122,16 +139,30 @@ public class RequestHandler implements Callable<Void> {
         return new Headers(list);
     }
 
+    private Body getBody(final InputStream in, final int contentLength) throws IOException {
+        byte[] bodyBinary = in.readNBytes(contentLength);
+        return new Body(new String(bodyBinary, StandardCharsets.UTF_8));
+    }
+
     private void processGet(
             final OutputStream out,
-            final String location,
-            final Map<String, String> parameterMap
+            final String location
     ) throws IOException
     {
-        if (LOCATION_USER_CREATE.equals(location)) {
-            responseWriter.writeUserCreateResponse(out, parameterMap);
+        responseWriter.writeFileResponse(out, location);
+    }
+
+    private void processPost(
+            final OutputStream out,
+            final String location,
+            final Body body
+    ) throws IOException
+    {
+        if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
+            responseWriter.writeRedirectResponse(out, userController.process(location, body));
+            return;
         }
 
-        responseWriter.writeFileResponse(out, location);
+        responseWriter.writeErrorResponse(out);
     }
 }

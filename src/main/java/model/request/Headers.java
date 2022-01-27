@@ -7,6 +7,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class Headers {
+    public static final String HEADER_CONTENT_LENGTH = "Content-Length";
+    public static final String HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String HEADER_LOCATION = "Location";
+    public static final String HEADER_SET_COOKIE = "Set-Cookie";
+
+    public static final String HEADER_VALUE_SEPARATOR = ": ";
+    public static final String HEADER_NEWLINE = "\r\n";
+
     private final List<Pair> list;
 
     public Headers(final List<Pair> list) {
@@ -15,5 +23,12 @@ public class Headers {
 
     public List<Pair> getList() {
         return Collections.unmodifiableList(list);
+    }
+
+    public Pair getPair(final String key) {
+        return list.stream()
+                .filter(p -> p.getKey().equals(key))
+                .findFirst()
+                .orElse(Pair.NONE);
     }
 }

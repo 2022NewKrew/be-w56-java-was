@@ -3,6 +3,7 @@ package model;
 import java.util.Objects;
 
 public class Pair {
+    public static final Pair NONE = new Pair("", "");
     private final String key;
     private final String value;
 
@@ -19,6 +20,10 @@ public class Pair {
 
     public String getValue() {
         return value;
+    }
+
+    public boolean isNone() {
+        return NONE.equals(this);
     }
 
     @Override
