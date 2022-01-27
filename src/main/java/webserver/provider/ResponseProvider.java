@@ -1,5 +1,6 @@
 package webserver.provider;
 
+import webserver.exception.UserUnauthorizedException;
 import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.MIME;
@@ -21,25 +22,51 @@ public class ResponseProvider {
                     .body(body)
                     .build();
         } catch (IOException e) {
-            throw new WebServerException(dos);
+            throw new WebServerException();
         }
     }
 
-    public static MyHttpResponse responseClientException(WebServerException e) {
-        byte[] body = e.getErrorMessage().getBytes();
+    public static MyHttpResponse responseClientException(DataOutputStream dos, WebServerException e) {
+        if (e instanceof UserUnauthorizedException) {
+            return response401Unauthorized(dos, e);
+        }
 
-        return MyHttpResponse.builder(e.getDos())
+        byte[] body = e.getMessage().getBytes();
+
+        return MyHttpResponse.builder(dos)
                 .status(e.getHttpStatus())
                 .body(body)
                 .build();
     }
 
-    public static MyHttpResponse responseServerException(WebServerException e) {
-        byte[] body = ("서버 내부 에러 발생 : " + e.getErrorMessage()).getBytes();
+    public static MyHttpResponse responseServerException(DataOutputStream dos, Exception e) {
 
-        return MyHttpResponse.builder(e.getDos())
-                .status(e.getHttpStatus())
-                .body(body)
+        if (e instanceof WebServerException) {
+            WebServerException exception = (WebServerException) e;
+
+            byte[] body = ("서버 내부 에러 발생 : " + exception.getMessage()).getBytes();
+
+            return MyHttpResponse.builder(dos)
+                    .status(exception.getHttpStatus())
+                    .body(body)
+                    .build();
+        }
+
+        return MyHttpResponse.builder(dos)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(e.getMessage().getBytes())
                 .build();
+    }
+
+    private static MyHttpResponse response401Unauthorized(DataOutputStream dos, Exception e) {
+        try {
+            byte[] body = StaticResourceProvider.getBytesFromPath("/user/login_failed.html");
+            return MyHttpResponse.builder(dos)
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(body)
+                    .build();
+        } catch (IOException ex) {
+            throw new WebServerException(ex.getMessage());
+        }
     }
 }

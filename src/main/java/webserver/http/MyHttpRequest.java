@@ -1,11 +1,16 @@
 package webserver.http;
 
+import util.IOUtils;
+import webserver.exception.BadRequestException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -19,23 +24,37 @@ public class MyHttpRequest extends HttpRequest {
     private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
     private static final String HEADER_VALUE_DELIMITER = ",";
 
-    private final String method;
+    private final HttpMethod method;
     private final String requestURI;
     private final String version;
     private final Map<String, List<String>> headers;
+    private final String body;
 
-    private MyHttpRequest(BufferedReader in) throws IOException {
-        String[] requestHeaderParams = in.readLine().split(REQUEST_LINE_DELIMITER);
-        this.method = requestHeaderParams[0];
+    private MyHttpRequest(BufferedReader br) throws IOException {
+        String[] requestHeaderParams = br.readLine().split(REQUEST_LINE_DELIMITER);
+        validateRequestHeader(requestHeaderParams);
+        this.method = HttpMethod.valueOf(requestHeaderParams[0]);
         this.requestURI = requestHeaderParams[1];
         this.version = requestHeaderParams[2];
         this.headers = new HashMap<>();
-        initHeaders(in);
+        initHeaders(br);
+        this.body = readRequestBodyFromBuffer(br, contentLength());
     }
 
-    private void initHeaders(BufferedReader in) throws IOException {
+    private String readRequestBodyFromBuffer(BufferedReader br, int contentLength) throws IOException {
+        String body = IOUtils.readData(br, contentLength);
+        return URLDecoder.decode(body, StandardCharsets.UTF_8);
+    }
+
+    private void validateRequestHeader(String[] requestHeaderParams) {
+        if (requestHeaderParams.length != 3) {
+            throw new BadRequestException("에러: 요청 헤더가 적절하지 않습니다.");
+        }
+    }
+
+    private void initHeaders(BufferedReader br) throws IOException {
         String inputLine;
-        while (!(inputLine = in.readLine()).equals(END_OF_REQUEST_LINE)) {
+        while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
             String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
 
             List<String> values = Arrays.stream(inputs[1].split(HEADER_VALUE_DELIMITER))
@@ -46,19 +65,27 @@ public class MyHttpRequest extends HttpRequest {
         }
     }
 
-    public static MyHttpRequest of(BufferedReader in) throws IOException {
-        return new MyHttpRequest(in);
+    private int contentLength() {
+        if (headers.containsKey("Content-Length")) {
+            List<String> values = headers.get("Content-Length");
+            return Integer.parseInt(values.get(0));
+        }
+        return 0;
+    }
+
+    public static MyHttpRequest from(BufferedReader br) throws IOException {
+        return new MyHttpRequest(br);
     }
 
     @Override
     public Optional<BodyPublisher> bodyPublisher() {
-        // TODO - Request Body 구현
-        return Optional.empty();
+        // 구현 X
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String method() {
-        return method;
+        return method.name();
     }
 
     @Override
@@ -92,6 +119,10 @@ public class MyHttpRequest extends HttpRequest {
     @Override
     public HttpHeaders headers() {
         return HttpHeaders.of(headers, ALLOWED_ALL_HEADERS);
+    }
+
+    public String body() {
+        return body;
     }
 
     @Override

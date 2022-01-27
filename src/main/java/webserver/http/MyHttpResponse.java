@@ -19,6 +19,7 @@ public class MyHttpResponse {
     private final String version;
     private final HttpStatus status;
     private final Map<String, String> headers;
+    private final Map<String, String> cookies;
     private final String[] contentType;
     private final int contentLength;
     private final byte[] body;
@@ -28,6 +29,7 @@ public class MyHttpResponse {
         this.version = builder.version;
         this.status = builder.status;
         this.headers = builder.headers;
+        this.cookies = builder.cookies;
         this.contentType = builder.contentType;
         this.contentLength = getContentLength(builder.body);
         this.body = builder.body;
@@ -50,6 +52,7 @@ public class MyHttpResponse {
             dos.writeBytes(String.format("%s %s %s", version, status, CRLF));
             writeBytesHeaders();
             dos.writeBytes(String.format("Content-Type: %s%s", contentType, CRLF));
+            writeBytesCookies();
             dos.writeBytes(String.format("Content-Length: %s%s", contentLength, CRLF));
             dos.writeBytes(CRLF);
             dos.write(body, 0, contentLength);
@@ -61,6 +64,12 @@ public class MyHttpResponse {
     private void writeBytesHeaders() throws IOException {
         for (String key : headers.keySet()) {
             dos.writeBytes(String.format("%s: %s%s", key, headers.get(key), CRLF));
+        }
+    }
+
+    private void writeBytesCookies() throws IOException {
+        for (String key : cookies.keySet()) {
+            dos.writeBytes(String.format("Set-Cookie: %s=%s%s", key, cookies.get(key), CRLF));
         }
     }
 
@@ -79,6 +88,7 @@ public class MyHttpResponse {
 
         private final DataOutputStream dos;
         private final Map<String, String> headers = new HashMap<>();
+        private final Map<String, String> cookies = new HashMap<>();
         private String version = DEFAULT_VERSION;
         private HttpStatus status = DEFAULT_STATUS;
         private String[] contentType = DEFAULT_CONTENT_TYPE;
@@ -100,6 +110,11 @@ public class MyHttpResponse {
 
         public Builder header(String key, String value) {
             headers.put(key, value);
+            return this;
+        }
+
+        public Builder cookie(String key, String value) {
+            cookies.put(key, value);
             return this;
         }
 

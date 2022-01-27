@@ -37,3 +37,28 @@
 - 예외 처리에 대한 고민
 - 중복되는 I/O 작업에 의한 비용을 캐싱으로 개선
 - 파라미터 중복 파싱에 대한 고민
+
+# 구현 3,4단계
+- [x] 요구사항 3: POST 로 회원 가입 구현
+   - HttpMethod enum 클래스 추가
+   - MyHttpRequest 에서 post 요청으로 넘어오는 body 값을 멤버 변수로 추가
+   - post 요청에 대한 회원가입 처리
+   - UTF-8 decode
+- [x] 요구사항 4: Cookie를 이용한 로그인 구현
+   - UserLoginRequest dto 추가
+   - UserUnauthorizedException 예외 추가
+   - MyHttpResponse 멤버 변수 cookies 추가
+   - 유저 로그인 구현
+
+- __새롭게 알게 된 내용 & 구현 중 학습하게 된 내용__
+   1. 실제 url 요청 파라미터의 경우 동일한 key로 여러 값들이 들어올 수 있다.
+      - `?role=ADMIN&role=USER&name=pug` 와 같이 여러 개의 `role`을 가지는 경우!
+      - 스프링에서도 동일한 key에 대해 여러 값을 받을 수 있도록 `String[]` 값으로 value를 파싱함. ex) `HttpServletRequest.getParameterMap()`
+      - 이번 미션에서 기본 제공된 `HttpRequestUtils.parseQueryString()` 을 수정했음
+      - 다양한 값을 가진 요청 파라미터를 넘기는 방법에 대한 표준은 없다. [(참고)](https://hugomartins.io/essays/2021/02/how-to-pass-multiple-values-to-http-query-parameter/)
+   2. 리다이렉트를 위한 Location 값은 host를 명시해주지 않아도 브라우저에서 현재 host를 따라간다.
+      - `HTTP/1.1 302 Found` `Location: /foo/bar` 로 response 헤더 값이 넘어온 경우
+      - `http://localhost:8080/foo/bar` 로 리다이렉트 하게 됨.
+   3. Set-Cookie 는 반드시 쿠키를 선언한 후, 쿠키에 대한 설정 값들을 추가해주어야 한다. (순서가 중요함)
+      - `Set-Cookie: login=true;Path=/` (O)
+      - `Set-Cookie: Path=/;login=true` (X)

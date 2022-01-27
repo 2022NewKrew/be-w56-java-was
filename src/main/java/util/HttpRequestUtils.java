@@ -1,7 +1,6 @@
 package util;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -13,8 +12,22 @@ public class HttpRequestUtils {
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
-    public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, "&");
+    public static Map<String, List<String>> parseQueryString(String queryString) {
+        if (Strings.isNullOrEmpty(queryString)) {
+            return Maps.newHashMap();
+        }
+        Map<String, List<String>> resultMap = new HashMap<>();
+        String[] tokens = queryString.split("&");
+
+        Arrays.stream(tokens)
+                .map(t -> getKeyValue(t, "="))
+                .filter(Objects::nonNull)
+                .forEach(p -> {
+                    List<String> values = resultMap.getOrDefault(p.getKey(), new ArrayList<>());
+                    values.add(p.getValue());
+                    resultMap.put(p.getKey(), values);
+                });
+        return resultMap;
     }
 
     /**
@@ -23,17 +36,14 @@ public class HttpRequestUtils {
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, ";");
-    }
-
-    private static Map<String, String> parseValues(String values, String separator) {
-        if (Strings.isNullOrEmpty(values)) {
+        if (Strings.isNullOrEmpty(cookies)) {
             return Maps.newHashMap();
         }
 
-        String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        String[] tokens = cookies.split(";");
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "="))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

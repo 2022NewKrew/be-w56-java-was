@@ -1,27 +1,25 @@
 package webserver.mapper;
 
 import db.DataBase;
+import dto.UserLoginRequest;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
+import webserver.exception.*;
+import webserver.http.HttpMethod;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
-import webserver.exception.BadRequestException;
-import webserver.exception.ResourceNotFoundException;
-import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 public enum RequestMappingInfo {
 
-    ROOT("/") {
+    ROOT("/", HttpMethod.GET) {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
@@ -32,13 +30,10 @@ public enum RequestMappingInfo {
                     .build();
         }
     },
-    SIGN_UP("/user/create") {
+    SIGN_UP("/user/create", HttpMethod.POST) {
         @Override
         public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
-            URI uri = request.uri();
-            Map<String, String> parameterMap = HttpRequestUtils.parseQueryString(uri.getQuery());
-
-            UserCreateRequest userCreateRequest = UserCreateRequest.of(parameterMap);
+            UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
             User user = userCreateRequest.toEntity();
             DataBase.addUser(user);
             log.info("New user created : {}", user);
@@ -46,6 +41,26 @@ public enum RequestMappingInfo {
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
+                    .build();
+        }
+    },
+    LOGIN("/user/login", HttpMethod.POST) {
+        @Override
+        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+            UserLoginRequest userLoginRequest = UserLoginRequest.from(request.body());
+
+            User user = DataBase.findUserById(userLoginRequest.getUserId());
+            if (user == null || user.isNotValidPassword(userLoginRequest.getPassword())) {
+                throw new UserUnauthorizedException("에러: 로그인에 실패했습니다.");
+            }
+            log.info("user login: {}", user);
+            byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
+
+            return MyHttpResponse.builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .header("Location", "/")
+                    .cookie("login", "true;Path=/")
+                    .body(body)
                     .build();
         }
     };
@@ -57,32 +72,29 @@ public enum RequestMappingInfo {
     static {
         requestMap = new HashMap<>();
         for (RequestMappingInfo value : values()) {
-            requestMap.put(value.getPath(), value);
+            requestMap.put(value.path, value);
         }
     }
 
     private final String path;
+    private final HttpMethod method;
 
-    RequestMappingInfo(String path) {
+    RequestMappingInfo(String path, HttpMethod method) {
         this.path = path;
+        this.method = method;
     }
 
-    public static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
-        if (!requestMap.containsKey(path)) {
-            throw new ResourceNotFoundException(dos, "에러: 존재하지 않은 리소스입니다.");
-        }
-        try {
-            RequestMappingInfo requestMappingInfo = requestMap.get(path);
-            return requestMappingInfo.handle(request, dos);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new BadRequestException(dos, "에러: 부적절한 요청입니다.");
-        } catch (Exception e) {
-            throw new WebServerException(dos);
-        }
+    public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, String method) {
+        String mappingMethod = requestMappingInfo.method.name();
+        return !mappingMethod.equals(method);
     }
 
-    public String getPath() {
-        return path;
+    public static boolean hasPath(String path) {
+        return requestMap.containsKey(path);
+    }
+
+    public static RequestMappingInfo from(String path) {
+        return requestMap.get(path);
     }
 
     public abstract MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception;

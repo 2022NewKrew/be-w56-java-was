@@ -17,8 +17,8 @@ public class User {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
+    public boolean isNotValidPassword(String password) {
+        return !this.password.equals(password);
     }
 
     public String getName() {
