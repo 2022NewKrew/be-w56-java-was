@@ -1,5 +1,6 @@
 package handler;
 
+import annotation.Bean;
 import db.DataBase;
 import http.ContentType;
 import http.Headers;
@@ -10,6 +11,7 @@ import util.HttpRequestUtils;
 
 import java.util.Map;
 
+@Bean
 public class UserHandler {
 
     public Response create(Request request) {

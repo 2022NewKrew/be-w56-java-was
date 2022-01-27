@@ -1,5 +1,6 @@
 package handler;
 
+import annotation.Bean;
 import http.ContentType;
 import http.Headers;
 import http.Request;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Bean
 public class StaticHandler {
 
     public Response get(Request request) {
