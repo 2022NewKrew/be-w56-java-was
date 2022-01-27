@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
-import util.RequestPathController;
+import controller.RequestPathMapper;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -44,7 +44,7 @@ public class RequestHandler extends Thread {
 
                 // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
                 try (DataOutputStream dos = new DataOutputStream(out)) {
-                    RequestPathController.urlMapping(requestLine, requestHeader, requestBody, dos);
+                    RequestPathMapper.urlMapping(requestLine, requestHeader, requestBody, dos);
                 }
             }
         } catch (IOException e) {

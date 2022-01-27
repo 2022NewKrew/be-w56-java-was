@@ -69,3 +69,4 @@ try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCh
 1. url이 /user/create일 땐 redirection이 제대로 작동하지 않았는데 /user로 수정하니 작동한다.
    1. /user/create일 땐 계속 /user가 남아있어서 404오류가 발생했음 ex) /user/user/form.html, /user/index.html
    2. /user일 땐 위와 같은 현상이 일어나지 않음. 원인은 파악 중
+2. Set-Cookie로 쿠키를 설정했는데, 세션 쿠키가 아닌지 계속 정보가 남아있다. 검색을 해보니 max-age와 같이 유효기간을 설정하지 않는다면 세션 쿠키라고 하는데 내 쿠키는 왜 계속 남아있는걸까?
