@@ -1,10 +1,9 @@
 package webserver.routes;
 
+import application.CookieKeys;
 import application.controller.UserController;
-import http.HttpBody;
-import http.HttpHeaders;
-import http.HttpMethod;
-import http.HttpStatus;
+import application.dto.SignUpRequest;
+import http.*;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.StatusLine;
@@ -25,29 +24,49 @@ public class Router {
 
     private Router() {
         routeMap = new HashMap<>();
-        routeMap.put(RouteUtils.makeKey(HttpMethod.POST.getCode(), "/user/create"), (request) -> {
+        routeMap.put(RouteUtils.makeKey(HttpMethod.POST.getCode(), "/user/create"), this::create);
+        routeMap.put(RouteUtils.makeKey(HttpMethod.POST.getCode(), "/user/login"), this::login);
+    }
 
-            String userId = String.valueOf(request.getParameter("userId"));
-            String password = String.valueOf(request.getParameter("password"));
-            String name = String.valueOf(request.getParameter("name"));
-            String email = String.valueOf(request.getParameter("email"));
+    private HttpResponse create(HttpRequest request) {
+        SignUpRequest signUpRequest = SignUpRequest.Builder.newInstance()
+                .userId(String.valueOf(request.getParameter("userId")))
+                .password(String.valueOf(request.getParameter("password")))
+                .name(String.valueOf(request.getParameter("name")))
+                .email(String.valueOf(request.getParameter("email")))
+                .build();
+        return processReturnType(request, UserController.create(signUpRequest));
+    }
 
-            Object ret = UserController.create(userId, password, name, email);
+    private HttpResponse login(HttpRequest request) {
+        String userId = String.valueOf(request.getParameter("userId"));
+        String password = String.valueOf(request.getParameter("password"));
+        Cookies cookies = new Cookies();
+        HttpResponse response = processReturnType(request, UserController.login(userId, password, cookies));
 
-            if(ret instanceof String) {
-                String viewName = (String) ret;
-                if(viewName.startsWith("redirect:")) {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put(HttpHeaders.LOCATION, viewName.substring("redirect:".length()));
-                    return HttpResponse.Builder.newInstance()
-                            .statusLine(StatusLine.of(request.getHttpVersion(), HttpStatus.SEE_OTHER))
-                            .headers(HttpHeaders.of(headers))
-                            .build();
-                }
+        Map<String, String> headers = response.getHeaders().getHeaders();
+        headers.put(HttpHeaders.SET_COOKIE, cookies.toHeaderString());
+
+        return HttpResponse.Builder.newInstance()
+                .statusLine(response.getStatusLine())
+                .headers(HttpHeaders.of(headers))
+                .body(response.getBody())
+                .build();
+    }
+
+    private HttpResponse processReturnType(HttpRequest request, Object ret) {
+        if(ret instanceof String) {
+            String viewName = (String) ret;
+            if(viewName.startsWith("redirect:")) {
+                Map<String, String> headers = new HashMap<>();
+                headers.put(HttpHeaders.LOCATION, viewName.substring("redirect:".length()));
+                return HttpResponse.Builder.newInstance()
+                        .statusLine(StatusLine.of(request.getHttpVersion(), HttpStatus.SEE_OTHER))
+                        .headers(HttpHeaders.of(headers))
+                        .build();
             }
-
-            return HttpResponse.Builder.newInstance().build();
-        });
+        }
+        return HttpResponse.Builder.newInstance().build();
     }
 
     public static Router getInstance() {

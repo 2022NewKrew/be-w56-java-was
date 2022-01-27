@@ -29,8 +29,6 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = HttpRequestParser.parse(in);
-            log.info(httpRequest.getBody().toString(StandardCharsets.UTF_8));
-
             HttpResponse httpResponse = HttpProcessor.handle(httpRequest);
             ResponseWriter.write(new DataOutputStream(out), httpResponse);
         } catch (SocketException e) {

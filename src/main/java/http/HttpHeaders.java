@@ -11,6 +11,8 @@ public class HttpHeaders {
 
     public static final String LOCATION = "Location";
 
+    public static final String SET_COOKIE = "Set-Cookie";
+
     private final Map<String, String> headers;
 
     private HttpHeaders(Map<String, String> headers) {

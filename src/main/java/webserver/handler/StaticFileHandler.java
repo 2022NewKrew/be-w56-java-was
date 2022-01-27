@@ -1,4 +1,4 @@
-package webserver.reader;
+package webserver.handler;
 
 import http.HttpBody;
 import http.HttpHeaders;
@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.util.HttpResponseUtils;
 import webserver.processor.HttpProcessor;
+import webserver.resource.StaticFile;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;

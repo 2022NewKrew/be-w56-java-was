@@ -1,4 +1,4 @@
-package webserver.reader;
+package webserver.resource;
 
 import java.io.File;
 import java.io.IOException;
