@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Map;
 
 public class HttpResponse {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
+    private final HttpHeader httpHeader = new HttpHeader();
     private final String NOT_FOUND_MESSAGE = "페이지를 찾을 수 없습니다.";
     private final DataOutputStream dos;
 
@@ -38,10 +40,27 @@ public class HttpResponse {
         try {
             dos.writeBytes("HTTP/1.1 302 FOUND \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            writeHeaderParams();
             dos.writeBytes("Location: " + redirectUrl + " \r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    public HttpHeader getHttpHeader() {
+        return httpHeader;
+    }
+
+
+    private void writeHeaderParams() {
+        Map<String, String> header = httpHeader.getHeader();
+        for (String key : header.keySet()) {
+            try {
+                dos.writeBytes(key + ": " + header.get(key) + " \r\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -50,6 +69,7 @@ public class HttpResponse {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            writeHeaderParams();
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -70,6 +90,7 @@ public class HttpResponse {
         try {
             dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            writeHeaderParams();
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

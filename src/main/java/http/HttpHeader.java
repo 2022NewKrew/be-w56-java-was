@@ -2,6 +2,7 @@ package http;
 
 import util.HttpRequestUtils.Pair;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,10 @@ public class HttpHeader {
 
     public int getContentLength() {
         return Integer.parseInt(header.getOrDefault("Content-Length", "0"));
+    }
+
+    public Map<String, String> getHeader() {
+        return Collections.unmodifiableMap(header);
     }
 
 }

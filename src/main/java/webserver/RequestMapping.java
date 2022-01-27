@@ -2,6 +2,7 @@ package webserver;
 
 import controller.Controller;
 import controller.CreateUserController;
+import controller.LoginController;
 import controller.StaticController;
 
 import java.util.HashMap;
@@ -16,6 +17,8 @@ public class RequestMapping {
         mappingController.put("/error", new StaticController("/error.html"));
         mappingController.put("/users/form", new StaticController("/user/form.html"));
         mappingController.put("/users/create", new CreateUserController());
+        mappingController.put("/users/login", new LoginController());
+        mappingController.put("/users/loginFail",new StaticController("/user/login_failed.html"));
     }
 
     public static Controller getController(String url) {
