@@ -3,6 +3,7 @@ package webserver;
 import webserver.model.WebHttpRequest;
 import webserver.model.WebHttpResponse;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class ViewResolver {
@@ -16,16 +17,17 @@ public class ViewResolver {
         return INSTANCE;
     }
 
-    public void resolve(WebHttpRequest httpRequest, WebHttpResponse httpResponse) {
+    public void resolve(WebHttpRequest httpRequest, WebHttpResponse httpResponse, DataOutputStream dos) {
         try {
-            if (httpResponse.getResult() != null) {
-                if (httpResponse.getResult().startsWith("redirect:")) {
-                    renderer.redirect(httpResponse.getDos(), httpRequest.headers().map().get("Host").get(0) + httpResponse.getResult().split(":")[1]);
-                } else {
-                    renderer.render(httpResponse.getDos(), httpResponse.getResult());
-                }
-            } else {
-                renderer.render(httpResponse.getDos(), httpRequest.uri().getPath());
+            switch (httpResponse.getHttpStatus()) {
+                case OK:
+                    renderer.responseResource(dos, httpResponse);
+                    break;
+                case FOUND:
+                    renderer.redirect(dos, httpResponse);
+                    break;
+                default:
+                    renderer.responseResource(dos, httpResponse);
             }
         } catch (IOException e) {
             e.printStackTrace();

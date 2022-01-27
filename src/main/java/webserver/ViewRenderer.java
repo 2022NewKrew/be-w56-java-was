@@ -1,12 +1,11 @@
 package webserver;
 
 import lombok.extern.slf4j.Slf4j;
+import webserver.model.HttpStatus;
+import webserver.model.WebHttpResponse;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Slf4j
 public class ViewRenderer {
@@ -20,47 +19,18 @@ public class ViewRenderer {
         return INSTANCE;
     }
 
-    public void redirect(DataOutputStream dos, String urlString) {
-        response302Header(dos, urlString);
-    }
-
-    public void render(DataOutputStream dos, String pathString) throws IOException {
-        Path path = new File("./webapp" + pathString).toPath();
-
-        byte[] body = Files.readAllBytes(path);
-        String mimeType = getMimeType(pathString);
-        response200Header(dos, body.length, mimeType);
-        responseBody(dos, body);
-    }
-
-    private String getMimeType(String pathString) throws IOException {
-        String extension = pathString.substring(pathString.lastIndexOf("."));
-        Path tmpPath = new File("file" + extension).toPath();
-        String mimeType = Files.probeContentType(tmpPath);
-        if (mimeType == null) {
-            if (extension.equals(".woff")) {
-                return "application/font-woff";
-            }
-            return "text/html";
-        }
-        return mimeType;
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
+    public void redirect(DataOutputStream dos, WebHttpResponse httpResponse) throws IOException {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
+            dos.writeBytes(httpResponse.toString());
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response302Header(DataOutputStream dos, String urlString) {
+    public void responseResource(DataOutputStream dos, WebHttpResponse httpResponse) throws IOException {
         try {
-            dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-            dos.writeBytes("Location: http://" + urlString + "\r\n");
+            dos.writeBytes(httpResponse.toString());
+            responseBody(dos, httpResponse.getBody());
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -74,4 +44,6 @@ public class ViewRenderer {
             log.error(e.getMessage());
         }
     }
+
+
 }

@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import service.UserService;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
+import webserver.model.Cookie;
+import webserver.model.WebHttpResponse;
 
 @Slf4j
 public class MainController {
@@ -27,9 +29,10 @@ public class MainController {
     }
 
     @RequestMapping(value = "/user/create", method = RequestMethod.POST)
-    public String createUser(UserDto dto) {
+    public String createUser(WebHttpResponse httpResponse, UserDto dto) {
         log.info("KinaController - createUser() " + dto);
         userService.register(dto);
+        httpResponse.addCookie("logined", "true");
         return "redirect:/index.html";
     }
 }

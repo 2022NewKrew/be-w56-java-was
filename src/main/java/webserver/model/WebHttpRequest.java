@@ -1,5 +1,6 @@
 package webserver.model;
 
+import util.IOUtils;
 import webserver.annotation.RequestMethod;
 
 import java.io.BufferedReader;
@@ -17,7 +18,7 @@ public class WebHttpRequest extends HttpRequest {
     private final String requestURI;
     private final String version;
     private final Map<String, List<String>> headers;
-
+    private final String body;
 
     private WebHttpRequest(BufferedReader in) throws IOException {
         String[] request = in.readLine().split(" ");
@@ -36,10 +37,19 @@ public class WebHttpRequest extends HttpRequest {
                     .collect(Collectors.toList());
             headers.put(key, values);
         });
+        if (method == RequestMethod.POST && headers.containsKey("Content-Length")) {
+            this.body = IOUtils.readData(in, Integer.parseInt((String) headers.get("Content-Length").get(0)));
+        } else {
+            this.body = "";
+        }
     }
 
     public static WebHttpRequest of(BufferedReader in) throws IOException {
         return new WebHttpRequest(in);
+    }
+
+    public String getBody() {
+        return body;
     }
 
     @Override
