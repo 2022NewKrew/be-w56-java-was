@@ -1,33 +1,46 @@
 package webserver.controller;
 
+import annotation.AnnotationProcessor;
+import exception.UnAuthorizedException;
+import webserver.http.HttpConst;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
-import webserver.view.ViewResolver;
 
 
-import static webserver.config.ControllerConfig.controllerMap;
-
-public class FrontController implements HttpController{
+public class FrontController {
     private static FrontController frontController;
+    private final AnnotationProcessor annotationProcessor = new AnnotationProcessor();
 
-    public static FrontController getInstance(){
-        if(frontController == null){
+    private FrontController() {
+    }
+
+    public static FrontController getInstance() {
+        if (frontController == null) {
             frontController = new FrontController();
         }
-
         return frontController;
     }
 
-    @Override
-    public HttpResponse process(HttpRequest request){
-        ViewResolver resolver = new ViewResolver();
+    public HttpResponse process(HttpRequest request) {
+        try {
+            HttpResponse response = (HttpResponse) annotationProcessor.requestMappingProcessor(request);
 
-        if(controllerMap.containsKey(request.getUrl())){
-            HttpResponse response = controllerMap.get(request.getUrl()).process(request);
-            return resolver.findView(response);
+            if (response == null) {
+                response = new HttpResponse(HttpStatus.OK, request.getUrl());
+            }
+
+            return response;
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new HttpResponse(HttpStatus.BAD_REQUEST, HttpConst.ERROR_PAGE);
+        } catch (UnAuthorizedException e) {
+            e.printStackTrace();
+            return new HttpResponse(HttpStatus.UNAUTHORIZED, HttpConst.LOGIN_PAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpConst.ERROR_PAGE);
         }
-
-        return resolver.findView(new HttpResponse(HttpStatus.OK, request.getUrl()));
     }
 }

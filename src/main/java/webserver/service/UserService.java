@@ -4,11 +4,15 @@ import db.DataBase;
 import model.User;
 
 public class UserService {
-    public void join(User user){
-        if(DataBase.findUserById(user.getUserId()) != null){
+    public void join(User user) {
+        if (DataBase.findUserById(user.getUserId()) != null) {
             throw new IllegalArgumentException();
         }
 
         DataBase.addUser(user);
+    }
+
+    public User findUser(String userId) {
+        return DataBase.findUserById(userId);
     }
 }
