@@ -28,7 +28,7 @@ public class RequestHandler extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             OutputStream out = connection.getOutputStream();
 
-            MyHttpRequest request = MyHttpRequest.of(in);
+            MyHttpRequest request = MyHttpRequest.from(in);
             response = RequestMapper.process(request, out);
         } catch (Exception e) {
             log.error(e.getMessage());

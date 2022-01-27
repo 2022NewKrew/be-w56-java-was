@@ -6,9 +6,11 @@ import webserver.exception.BadRequestException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -28,15 +30,20 @@ public class MyHttpRequest extends HttpRequest {
     private final Map<String, List<String>> headers;
     private final String body;
 
-    private MyHttpRequest(BufferedReader in) throws IOException {
-        String[] requestHeaderParams = in.readLine().split(REQUEST_LINE_DELIMITER);
+    private MyHttpRequest(BufferedReader br) throws IOException {
+        String[] requestHeaderParams = br.readLine().split(REQUEST_LINE_DELIMITER);
         validateRequestHeader(requestHeaderParams);
         this.method = HttpMethod.valueOf(requestHeaderParams[0]);
         this.requestURI = requestHeaderParams[1];
         this.version = requestHeaderParams[2];
         this.headers = new HashMap<>();
-        initHeaders(in);
-        this.body = IOUtils.readData(in, contentLength());
+        initHeaders(br);
+        this.body = readRequestBodyFromBuffer(br, contentLength());
+    }
+
+    private String readRequestBodyFromBuffer(BufferedReader br, int contentLength) throws IOException {
+        String body = IOUtils.readData(br, contentLength);
+        return URLDecoder.decode(body, StandardCharsets.UTF_8);
     }
 
     private void validateRequestHeader(String[] requestHeaderParams) {
@@ -45,9 +52,9 @@ public class MyHttpRequest extends HttpRequest {
         }
     }
 
-    private void initHeaders(BufferedReader in) throws IOException {
+    private void initHeaders(BufferedReader br) throws IOException {
         String inputLine;
-        while (!(inputLine = in.readLine()).equals(END_OF_REQUEST_LINE)) {
+        while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
             String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
 
             List<String> values = Arrays.stream(inputs[1].split(HEADER_VALUE_DELIMITER))
@@ -66,8 +73,8 @@ public class MyHttpRequest extends HttpRequest {
         return 0;
     }
 
-    public static MyHttpRequest of(BufferedReader in) throws IOException {
-        return new MyHttpRequest(in);
+    public static MyHttpRequest from(BufferedReader br) throws IOException {
+        return new MyHttpRequest(br);
     }
 
     @Override
