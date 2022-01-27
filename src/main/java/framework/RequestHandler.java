@@ -1,6 +1,5 @@
-package webserver;
+package framework;
 
-import framework.ControllerHandler;
 import framework.http.HttpHeader;
 import framework.http.HttpRequest;
 import framework.http.HttpResponse;
@@ -42,6 +41,7 @@ public class RequestHandler extends Thread {
     private void responseHeader(DataOutputStream dos, HttpResponse response) {
         try {
             dos.writeBytes(response.getStatusLineText() + "\r\n");
+            dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
 
             HttpHeader header = response.getHeader();
             for (Map.Entry<String, String> headerLine : header.getHeaders().entrySet()) {

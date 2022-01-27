@@ -34,7 +34,6 @@ public class UserController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
             responseHeader.setLocation("/index.html");
 
             return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
@@ -52,7 +51,6 @@ public class UserController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {
@@ -69,7 +67,6 @@ public class UserController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {
@@ -87,7 +84,6 @@ public class UserController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {
@@ -104,7 +100,6 @@ public class UserController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {
@@ -121,7 +116,6 @@ public class UserController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.TEXT_HTML);
-            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {

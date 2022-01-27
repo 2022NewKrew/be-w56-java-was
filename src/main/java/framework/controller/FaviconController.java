@@ -28,7 +28,6 @@ public class FaviconController {
 
             HttpHeader responseHeader = new HttpHeader();
             responseHeader.setContentType(MediaType.IMAGE_AVIF);
-            responseHeader.setContentLength(body.length);
 
             return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
         } catch (IOException e) {
