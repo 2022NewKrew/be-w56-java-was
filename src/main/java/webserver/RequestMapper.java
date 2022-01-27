@@ -4,13 +4,11 @@ import controller.Controller;
 import controller.LoginController;
 import controller.StaticController;
 import controller.JoinController;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMapper {
 
-    private static final Map<String, Controller> requestMap = new HashMap<>(); // concurrent hash map, hash table
+    private static final ConcurrentHashMap<String, Controller> requestMap = new ConcurrentHashMap<>();
 
     static {
         requestMap.put("/user/create", new JoinController());
