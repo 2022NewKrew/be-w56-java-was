@@ -9,6 +9,7 @@ import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
 import model.User;
+import model.UserDBConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -64,10 +65,10 @@ public class UserController implements Controller {
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
 
         User newUser = new User(
-                queryString.get("userId"),
-                queryString.get("password"),
-                queryString.get("name"),
-                queryString.get("email"));
+                queryString.get(UserDBConstants.COLUMN_USER_ID),
+                queryString.get(UserDBConstants.COLUMN_PASSWORD),
+                queryString.get(UserDBConstants.COLUMN_NAME),
+                queryString.get(UserDBConstants.COLUMN_EMAIL));
 
         if (DataBase.findUserById(newUser.getUserId()) == null)
             DataBase.addUser(newUser);
@@ -79,9 +80,9 @@ public class UserController implements Controller {
         HttpRequestBody requestBody = request.body();
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
 
-        User user = DataBase.findUserById(queryString.get("userId"));
+        User user = DataBase.findUserById(queryString.get(UserDBConstants.COLUMN_USER_ID));
 
-        if (user == null || !user.getPassword().equals(queryString.get("password")))
+        if (user == null || !user.getPassword().equals(queryString.get(UserDBConstants.COLUMN_PASSWORD)))
             return redirect("/user/login_failed.html");
 
         HttpResponseHeader responseHeader = new HttpResponseHeader("index.html", HttpStatus.OK, 0);
