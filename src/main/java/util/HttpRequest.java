@@ -1,15 +1,14 @@
-package webserver;
+package util;
 
 import util.HttpRequestUtils;
 import util.IOUtils;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpRequest {
-
-    private Socket connection;
 
     private String method;
     private String path;
@@ -20,12 +19,10 @@ public class HttpRequest {
     private String body;
     private Map<String, String> headers = new HashMap<>();
 
-    public HttpRequest(Socket connection) {
-        this.connection = connection;
+    public HttpRequest(String rawReqeust) {
 
         try {
-            InputStream in = connection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(rawReqeust.getBytes(StandardCharsets.UTF_8))));
             parseFirstLine(br);
             parseHeader(br);
             parseBody(br);
@@ -54,10 +51,6 @@ public class HttpRequest {
 
     private void parseBody(BufferedReader br) throws IOException {
         this.body = IOUtils.readData(br, contentLength);
-    }
-
-    public Socket getConnection() {
-        return connection;
     }
 
     public String getMethod() {

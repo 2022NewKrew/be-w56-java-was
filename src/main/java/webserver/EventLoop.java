@@ -18,7 +18,7 @@ public class EventLoop {
 
     ExecutorService workers = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    RequestDispatcher requestDispatcher = new RequestDispatcher();
+    EventService eventService = new EventService();
 
     public void startLoop(int port) throws IOException {
         selector = Selector.open();
@@ -38,7 +38,7 @@ public class EventLoop {
                 try {
                     if (key.isAcceptable()) {
                         accept(key);
-                    } else if (key.isReadable()) {
+                    } else if (key.isReadable() && key.interestOps() == SelectionKey.OP_READ) {
                         read(key);
                     } else if (key.isWritable()) {
                         write(key);
@@ -50,18 +50,26 @@ public class EventLoop {
         }
     }
 
-    private void write(SelectionKey key) {
-
-    }
-
-    private void read(SelectionKey key) {
-        SocketChannel socketChannel = (SocketChannel) key.channel();
-
-    }
-
     private void accept(SelectionKey key) throws IOException {
         SocketChannel socketChannel = serverSocketChannel.accept();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector, SelectionKey.OP_READ);
     }
+
+    private void read(SelectionKey key) {
+        final int OP_IN_PROGRESS = 0;
+        key.interestOps(OP_IN_PROGRESS);
+        SocketChannel clientChannel = (SocketChannel) key.channel();
+        Runnable t = () -> {
+            try {
+                eventService.doService(clientChannel);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+        workers.execute(t);
+    }
+
+    private void write(SelectionKey key) {}
+
 }

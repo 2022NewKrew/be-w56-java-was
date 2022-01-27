@@ -28,7 +28,6 @@ public class WebServer {
         EventLoop eventLoop = new EventLoop();
         eventLoop.startLoop(port);
 
-
     }
 
 }

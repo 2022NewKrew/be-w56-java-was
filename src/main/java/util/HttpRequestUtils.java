@@ -109,17 +109,4 @@ public class HttpRequestUtils {
         }
     }
 
-
-    private static Map<String, String> mimeMappings = new HashMap<>() {{
-        put("html", "text/html");
-        put("css", "text/css");
-        put("woff2", "application/font-woff2");
-        put("js", "application/javascript");
-        put("ico", "image/x-icon");
-
-    }};
-
-    public static String findMimeMapping(String extension) {
-        return mimeMappings.get(extension.toLowerCase(Locale.ENGLISH));
-    }
 }
