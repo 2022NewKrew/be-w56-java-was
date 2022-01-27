@@ -21,8 +21,6 @@ public class UserCreateRequest {
     }
 
     public static UserCreateRequest from(String requestBody) {
-        requestBody = requestBody.replace("%40", "@");
-
         Map<String, String> parameterMap = HttpRequestUtils.parseQueryString(requestBody);
         return new UserCreateRequest(parameterMap);
     }
