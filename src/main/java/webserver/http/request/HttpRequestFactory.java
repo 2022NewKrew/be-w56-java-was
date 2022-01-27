@@ -1,4 +1,4 @@
-package request;
+package webserver.http.request;
 
 import util.Constants;
 import util.HttpRequestUtils;

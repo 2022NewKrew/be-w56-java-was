@@ -18,3 +18,7 @@
 - builder 패턴 적용(User)
 - MIME mozila 를 보고 각 파일에 적합한 extension 을 반환했으나 적용 X ㅠ
 - InputStream close
+
+## step2 feedback
+- 자바의 동적인 부분은 reflection 으로 처리
+  - 
