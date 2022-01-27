@@ -7,8 +7,9 @@ import java.util.Map;
 public enum StatusCode {
     OK("200 OK"),
     FOUND("302 Found"),
-    NOT_FOUND("404 Not Found"),
-    UNAUTHORIZED("401 UNAUTHORIZED");
+    BAD_REQUEST("400 Bad Request"),
+    UNAUTHORIZED("401 Unauthorized"),
+    NOT_FOUND("404 Not Found");
 
     public static final Map<String, StatusCode> statusCodeMap = new HashMap<>();
 
