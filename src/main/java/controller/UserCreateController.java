@@ -11,7 +11,7 @@ import util.HttpStatus;
  * Date: 2022-01-25 025
  * Time: 오후 4:22
  */
-public class UserController implements WebController{
+public class UserCreateController implements WebController{
 
     @Override
     public Response process(Request request) {

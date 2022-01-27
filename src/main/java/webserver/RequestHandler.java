@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import controller.UserController;
+import controller.UserCreateController;
 import controller.ViewController;
 import controller.WebController;
 import controller.request.Request;
@@ -31,7 +31,7 @@ public class RequestHandler extends Thread {
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerMap.put("/user/create", new UserController());
+        controllerMap.put("/user/create", new UserCreateController());
     }
 
     public void run() {
