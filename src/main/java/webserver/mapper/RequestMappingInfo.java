@@ -1,16 +1,14 @@
 package webserver.mapper;
 
 import db.DataBase;
+import dto.UserLoginRequest;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.exception.InvalidMethodException;
+import webserver.exception.*;
 import webserver.http.HttpMethod;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
-import webserver.exception.BadRequestException;
-import webserver.exception.ResourceNotFoundException;
-import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.MyHttpRequest;
 import webserver.http.MyHttpResponse;
@@ -43,6 +41,26 @@ public enum RequestMappingInfo {
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
+                    .build();
+        }
+    },
+    LOGIN("/user/login", HttpMethod.POST) {
+        @Override
+        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+            UserLoginRequest userLoginRequest = UserLoginRequest.from(request.body());
+
+            User user = DataBase.findUserById(userLoginRequest.getUserId());
+            if (user == null || user.isNotValidPassword(userLoginRequest.getPassword())) {
+                throw new UserUnauthorizedException("에러: 로그인에 실패했습니다.");
+            }
+            log.info("user login: {}", user);
+            byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
+
+            return MyHttpResponse.builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .header("Location", "/")
+                    .cookie("login", "true;Path=/")
+                    .body(body)
                     .build();
         }
     };
