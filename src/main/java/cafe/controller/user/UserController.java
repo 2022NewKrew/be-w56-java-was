@@ -43,6 +43,25 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/user/login", method = "POST")
+    public HttpResponse login() throws IncorrectLoginUserException, IOException {
+        User user = DataBase.findUserById(httpRequest.getRequestBody("userId"));
+
+        if (user == null || !user.isValidPassword(httpRequest.getRequestBody("password"))) {
+            throw new IncorrectLoginUserException();
+        }
+
+        File file = new File("./webapp/index.html");
+        byte[] body = Files.readAllBytes(file.toPath());
+
+        HttpHeader responseHeader = new HttpHeader();
+        responseHeader.setContentType(MediaType.TEXT_HTML);
+        responseHeader.setCookie("logined=true; Path=/");
+        responseHeader.setLocation("/index.html");
+
+        return new HttpResponse("HTTP/1.1", HttpStatus.FOUND, responseHeader, body);
+    }
+
     @RequestMapping(value = "/user/login.html", method = "GET")
     public HttpResponse userLoginHtml() {
         try {
