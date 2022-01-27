@@ -12,12 +12,14 @@ import java.io.OutputStream;
 @Setter
 public class HttpResponse {
     private HttpStatusCode httpStatusCode;
-    private String mimeType = "text/html";
-    private byte[] body = new byte[0];
+    private String mimeType;
+    private byte[] body;
     private String redirectUrl;
 
     public HttpResponse(HttpStatusCode httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
+        this.mimeType = "text/html";
+        this.body = new byte[0];
     }
 
     public DataOutputStream getResponse(OutputStream out) throws IOException {
