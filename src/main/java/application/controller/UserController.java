@@ -1,6 +1,7 @@
 package application.controller;
 
 import application.dto.UserCreateRequest;
+import application.dto.UserLoginRequest;
 import application.service.UserService;
 import common.controller.AbstractController;
 import common.controller.ControllerType;
@@ -8,6 +9,8 @@ import common.dto.ControllerRequest;
 import common.dto.ControllerResponse;
 import lombok.extern.slf4j.Slf4j;
 import webserver.dto.response.HttpStatus;
+
+import java.util.Map;
 
 @Slf4j
 public class UserController extends AbstractController {
@@ -28,25 +31,51 @@ public class UserController extends AbstractController {
     }
 
     private ControllerResponse doPost(ControllerRequest request) {
-        switch (request.getUrl()) {
-            case "/users" -> createUser(UserCreateRequest.mapToUserCreateRequest(request.getBody()));
-            case "/users/login" -> loginUser();
+        return switch (request.getUrl()) {
+            case "/users" -> createUser(request);
+            case "/users/login" -> loginUser(request);
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    public ControllerResponse createUser(ControllerRequest request) {
+        HttpStatus httpStatus;
+        String redirectTo;
+
+        try {
+            UserService.create(UserCreateRequest.mapToUserCreateRequest(request.getBody()));
+            request.getHeader().put("Location", "http://localhost:8080/index.html");
+            redirectTo = ControllerType.STATIC.getUrl() + "/index.html";
+            httpStatus = HttpStatus.FOUND;
+        } catch (IllegalArgumentException e) {
+            redirectTo = ControllerType.STATIC.getUrl() + "/user/join_failed.html";
+            httpStatus = HttpStatus.BAD_REQUEST;
         }
 
-        request.getHeader().put("Location", "http://localhost:8080/index.html");
-
         return ControllerResponse.builder()
-                .httpStatus(HttpStatus.FOUND)
+                .httpStatus(httpStatus)
                 .header(request.getHeader())
-                .redirectTo(ControllerType.STATIC.getUrl() + "/index.html")
+                .redirectTo(redirectTo)
                 .build();
     }
 
-    public void createUser(UserCreateRequest userCreateRequest) {
-        UserService.create(userCreateRequest);
+    public ControllerResponse loginUser(ControllerRequest request) {
+        String redirectTo;
+        Map<String, String> header = request.getHeader();
+        try {
+            UserService.login(UserLoginRequest.mapToUserLoginRequest(request.getBody()));
+            redirectTo = ControllerType.STATIC.getUrl() + "/index.html";
+            header.put("Set-Cookie", "logined=true; Path=/");
+        } catch (IllegalArgumentException e) {
+            redirectTo = ControllerType.STATIC.getUrl() + "/user/login_failed.html";
+            header.put("Set-Cookie", "logined=false");
+        }
+
+        return ControllerResponse.builder()
+                .httpStatus(HttpStatus.FOUND)
+                .header(header)
+                .redirectTo(redirectTo)
+                .build();
     }
 
-    public void loginUser() {
-        // TODO
-    }
 }

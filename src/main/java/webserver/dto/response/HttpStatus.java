@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum HttpStatus {
     OK(200),
-    FOUND(302);
+    FOUND(302),
+    BAD_REQUEST(400);
 
     private final int code;
 

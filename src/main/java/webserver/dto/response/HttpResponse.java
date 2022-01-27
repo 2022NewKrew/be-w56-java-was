@@ -1,10 +1,10 @@
 package webserver.dto.response;
 
+import common.dto.ControllerResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import webserver.common.util.HttpUtils;
-import common.dto.ControllerResponse;
 
 import java.io.DataOutputStream;
 import java.io.File;
