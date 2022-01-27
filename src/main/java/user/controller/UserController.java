@@ -1,7 +1,7 @@
 package user.controller;
 
 import db.DataBase;
-import dto.ControllerDTO;
+import http.Request;
 import model.User;
 
 import java.util.Map;
@@ -9,8 +9,8 @@ import java.util.Map;
 public class UserController {
 
     //회원가입
-    public String createUser(ControllerDTO controllerDTO) {
-        Map<String, String> elements = controllerDTO.getElement();
+    public static String createUser(Request request) {
+        Map<String, String> elements = request.getElements();
 
         User user = new User(elements.get("userId"),
                             elements.get("password"),
@@ -19,6 +19,6 @@ public class UserController {
 
         DataBase.addUser(user);
 
-        return "/index.html";
+        return "redirect:/index.html";
     }
 }

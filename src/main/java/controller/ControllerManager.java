@@ -1,7 +1,8 @@
 package controller;
 
-import dto.ControllerDTO;
 import http.HttpMethod;
+import http.Request;
+import http.RequestType;
 import model.User;
 import user.controller.UserController;
 
@@ -9,30 +10,23 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class ControllerManager {
-    private Function<ControllerDTO, String> function;
-    private ControllerDTO controllerDTO;
+    private static Map<RequestType, Function<Request, String>> map = new HashMap<>();
 
-    public ControllerManager(String path, HttpMethod method, Map<String, String> elements){
-        controllerDTO = new ControllerDTO(path, elements);
-
-        //mapping to method
-
-        //@GetMapping(value = "/user/create") 과 동일
-        if(path.equals("/user/create") && method.equals(HttpMethod.GET)) {
-            function = new UserController()::createUser; //createUser만 메모리에 올릴 수 있는 방법이 없을까...
-        }
+    //mapping path to method.
+    static{
+        //@PostMapping(value = "/user/create") 를 UserController클래스 execute라는 static method를 매핑해줌.
+        map.put(new RequestType(HttpMethod.POST, "/user/create"), UserController::createUser);
     }
 
-    public String execute(){
-        //메소드와 매핑이 되어있지 않은 메소드인경우 요청한 path그대로 정적페이지를 요청한다.
-        if(function == null) {
-            return controllerDTO.getPath();
+
+    public static String matchController(Request request){
+        RequestType key = new RequestType(request.getMethod(), request.getPath());
+        if(map.get(key) != null){
+            return map.get(key).apply(request);
         }
 
-        return function.apply(controllerDTO);
+        return request.getPath();
     }
-
 }

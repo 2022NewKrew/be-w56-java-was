@@ -26,13 +26,18 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
-            //requestHeader객체 생성
-            Request request = new Request(Request.inputStreamToString(in));
+            Request request = new Request(in);
 
-            ControllerManager controllerManager = new ControllerManager(request.getPath(), request.getMethod(), request.getElements());
-            String path = controllerManager.execute();
+            String path = ControllerManager.matchController(request);
 
             DataOutputStream dos = new DataOutputStream(out);
+
+            if(path.startsWith("redirect:")){
+                path = path.substring("redirect:".length(), path.length());
+                response302Header(dos, path);
+                return;
+            }
+
             byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
@@ -46,6 +51,16 @@ public class RequestHandler extends Thread {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos, String path) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + path + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
