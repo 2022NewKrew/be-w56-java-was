@@ -39,6 +39,17 @@ public class ResponseHandler {
         }
     }
 
+    public void response302Header(String location, String cookie) {
+        try {
+            dos.writeBytes("HTTP/1.1 " + HttpStatus.FOUND + Constants.LINE_DELIMITER);
+            dos.writeBytes("Location: " + location + Constants.LINE_DELIMITER);
+            dos.writeBytes("Set-Cookie: " + cookie + Constants.LINE_DELIMITER);
+            dos.writeBytes(Constants.LINE_DELIMITER);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
     public void responseBody(byte[] body) {
         try {
             dos.write(body, 0, body.length);

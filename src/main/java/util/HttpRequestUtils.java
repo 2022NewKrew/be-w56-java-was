@@ -2,9 +2,7 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -14,10 +12,15 @@ import domain.ContentType;
 
 public class HttpRequestUtils {
 
+    private static final int REQUEST_PATH_INDEX = 0;
     private static final int QUERY_STRING_INDEX = 1;
     private static final int PAIR_KEY_INDEX = 0;
     private static final int PAIR_VALUE_INDEX = 1;
     private static final int PAIR_SIZE = 2;
+
+    public static String getRequestPath(String url) {
+        return url.split(Constants.REQUEST_PARAM_DELIMITER)[REQUEST_PATH_INDEX];
+    }
 
     public static String getQueryStringByUrl(String url) {
         return url.split(Constants.REQUEST_PARAM_DELIMITER)[QUERY_STRING_INDEX];
@@ -57,26 +60,25 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseHeaders(BufferedReader bufferedReader) throws IOException {
-        String headers = readHeaders(bufferedReader).toString();
+        List<String> headers = readHeaders(bufferedReader);
 
-        if (Strings.isNullOrEmpty(headers)) {
+        if (headers.isEmpty()) {
             return Maps.newHashMap();
         }
 
-        String[] tokens = headers.split(Constants.LINE_DELIMITER);
-        return Arrays.stream(tokens)
+        return headers.stream()
                 .map(HttpRequestUtils::parseHeader)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    private static StringBuffer readHeaders(BufferedReader bufferedReader) throws IOException {
-        StringBuffer stringBuffer = new StringBuffer();
+    private static List<String> readHeaders(BufferedReader bufferedReader) throws IOException {
+        List<String> readLines = new ArrayList<>();
         String readLine;
         while (!(readLine = bufferedReader.readLine()).equals(Constants.EMPTY_STRING)) {
-            stringBuffer.append(readLine).append(Constants.LINE_DELIMITER);
+            readLines.add(readLine);
         }
-        return stringBuffer;
+        return readLines;
     }
 
     public static Pair parseHeader(String header) {
@@ -86,7 +88,7 @@ public class HttpRequestUtils {
     public static ContentType parseContentType(String path) {
         String[] strings = path.split(Constants.FILE_EXTENSION_DELIMITER);
         String fileExtension = strings[strings.length-1];
-        return ContentType.getIfPresent(fileExtension.toUpperCase());
+        return ContentType.getIfPresentOrHtml(fileExtension.toUpperCase());
     }
 
     public static class Pair {
