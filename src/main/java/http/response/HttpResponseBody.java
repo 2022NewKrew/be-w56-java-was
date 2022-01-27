@@ -18,7 +18,7 @@ public class HttpResponseBody {
         return new HttpResponseBody(Files.readAllBytes(file.toPath()));
     }
 
-    public void writeToDataOutputStream(DataOutputStream dos) throws IOException {
+    public void writeToDataOutputStream(final DataOutputStream dos) throws IOException {
         try {
             dos.write(body);
         } catch (IOException e) {

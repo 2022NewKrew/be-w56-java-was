@@ -1,5 +1,7 @@
 package http.request;
 
+import util.IOUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,16 +10,18 @@ import java.util.List;
 public class HttpRequest {
     private final HttpRequestLine line;
     private final HttpRequestHeader header;
-    // HttpRequestBody body;
+    private final HttpRequestBody body;
 
-    public HttpRequest(HttpRequestLine line, HttpRequestHeader header) {
+    public HttpRequest(HttpRequestLine line, HttpRequestHeader header, HttpRequestBody body) {
         this.line = line;
         this.header = header;
+        this.body = body;
     }
 
     public static HttpRequest readWithBufferedReader(BufferedReader br) throws IOException{
-        HttpRequestHeader requestHeader = null;
-        HttpRequestLine requestLine = null;
+        HttpRequestHeader requestHeader;
+        HttpRequestLine requestLine;
+        HttpRequestBody requestBody;
 
         try {
             // Read request line
@@ -31,14 +35,26 @@ public class HttpRequest {
                 headerArr.add(line);
             }
             requestHeader = HttpRequestHeader.parseHeader(headerArr);
+
+            // Read request body
+            int contentLength;
+            try {
+                contentLength = Integer.parseInt(requestHeader.getIfPresent("Content-Length"));
+                requestBody = new HttpRequestBody(IOUtils.readData(br, contentLength));
+            } catch (NumberFormatException e) { // Request body is empty.
+                requestBody = null;
+            }
+
         } catch (IOException e) {
-            throw new IOException("tmp msg"); // TODO
+            throw new IOException("failed to read HttpRequest");
         }
 
-        return new HttpRequest(requestLine, requestHeader);
+        return new HttpRequest(requestLine, requestHeader, requestBody);
     }
+
+    public HttpRequestLine line() { return line; }
 
     public HttpRequestHeader header() { return header; }
 
-    public HttpRequestLine line() { return line; }
+    public HttpRequestBody body() { return body; }
 }
