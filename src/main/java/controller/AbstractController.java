@@ -18,7 +18,7 @@ public abstract class AbstractController implements Controller {
         if (method.equals(HttpMethod.POST)) {
             return doPost(request);
         }
-        return HttpResponse.error(HttpStatus.NOT_IMPLEMENTED);
+        return HttpResponse.error(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     protected abstract HttpResponse doGet(HttpRequest request) throws IOException;
