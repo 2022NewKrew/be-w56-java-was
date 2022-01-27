@@ -5,7 +5,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class HttpHeaderUtils {
         }
     }
 
-    public static Optional<User> parseUserInfo(String requestBody) throws UnsupportedEncodingException {
+    public static Optional<User> parseUserInfo(String requestBody) {
         log.info("requestBody = {}", requestBody);
         if (requestBody.length() > 0) {
             User user = HttpHeaderUtils.getUserInfoFromUrl(requestBody);
