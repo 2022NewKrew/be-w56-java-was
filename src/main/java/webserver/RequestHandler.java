@@ -1,13 +1,11 @@
 package webserver;
 
-import db.DataBase;
+import Controller.HttpController;
 import http.HttpRequest;
 import http.HttpResponse;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestParser;
-import util.HttpResponseMapper;
+import http.HttpRequestParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,13 +32,15 @@ public class RequestHandler extends Thread {
             httpRequestParser.parse(in);
             HttpRequest httpRequest = httpRequestParser.getHttpRequest();
             // 작업 중 확인을 위한 logging (필요 시 활성화)
-            // log.debug(httpRequest.getUrl());
+//            log.debug(httpRequest.getMethod().getName());
+//            log.debug(httpRequest.getUrl());
+//            log.debug(httpRequest.getProtocol().getName());
+//            log.debug(httpRequest.getBody().toString());
 
             // Response 처리
-            HttpResponseMapper httpResponseMapper = new HttpResponseMapper();
-            httpResponseMapper.buildResponse(httpRequest.getUrl(), out);
-            HttpResponse httpResponse = httpResponseMapper.getHttpResponse();
-            httpResponse.sendResponse();
+            HttpResponse httpResponse = new HttpResponse(httpRequest);
+            HttpController httpController = new HttpController(httpRequest, httpResponse, out);
+            httpController.run();
 
         } catch (IOException e) {
             log.error(e.getMessage());

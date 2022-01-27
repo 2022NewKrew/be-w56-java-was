@@ -32,7 +32,7 @@
 - https://ko.wikipedia.org/wiki/HTTP
 - https://developer.mozilla.org/ko/docs/Web/HTTP/Messages
 
-## step2-2
+## step1-2
 > Response Content Type
 - 응답을 내려줄 때 어떤 종류의 데이터인지 명시
 - 확장자에 따라 다른 방식으로 명시해줄 수 있고, 특정 범주에 없다면 application/octet-stream 으로 default
@@ -41,3 +41,7 @@
 
 > 참고 자료
 - https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+
+## step1-3
+> HTTP Redirection
+- 302 상태코드와, Location을 응답으로 내려주면 브라우저가 해당 Location으로 다시 Get 요청을 보내 redirection이 이루어지는 것으로 보인다.
