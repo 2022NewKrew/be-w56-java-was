@@ -1,5 +1,7 @@
 package com.leoserver.webserver.handler;
 
+import static com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName.CONTENT_LENGTH;
+
 import com.leoserver.webserver.ApplicationContext;
 import com.leoserver.webserver.http.Cookie;
 import com.leoserver.webserver.http.HttpStatus;
@@ -48,11 +50,16 @@ public class ResponseHandler {
     String code = String.valueOf(status.getCode());
     String message = status.getMessage();
 
+    // status line
     sb.append(version).append(" ").append(code).append(" ").append(message).append(" \r\n");
+
+    // header options
     header.getOptions().forEach((name, option) -> {
       sb.append(option.getKey()).append(": ").append(option.getValue()).append("\r\n");
     });
-    sb.append("Content-Length: ").append(lengthOfBodyContent).append("\r\n");
+    sb.append(CONTENT_LENGTH.getHttpName()).append(": ").append(lengthOfBodyContent).append("\r\n");
+
+    // cookie
     header.getCookies().forEach(entry -> {
       Cookie cookie = entry.getValue();
       sb.append("Set-Cookie: ").append(cookie.getKey()).append("=").append(cookie.getValue())

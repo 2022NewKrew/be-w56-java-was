@@ -1,5 +1,7 @@
 package com.leoserver.webserver.http;
 
+import static com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName.HOST;
+
 public class Host implements HttpHeaderOption {
 
   String url;
@@ -15,7 +17,7 @@ public class Host implements HttpHeaderOption {
 
   @Override
   public String getKey() {
-    return "Host";
+    return HOST.getHttpName();
   }
 
   @Override

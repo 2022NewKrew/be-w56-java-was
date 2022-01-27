@@ -1,5 +1,7 @@
 package com.leoserver.webserver.http;
 
+import static com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName.CONTENT_LENGTH;
+
 public class ContentLength implements HttpHeaderOption {
 
   private int contentLength;
@@ -20,7 +22,7 @@ public class ContentLength implements HttpHeaderOption {
 
   @Override
   public String getKey() {
-    return "Content-Length";
+    return CONTENT_LENGTH.getHttpName();
   }
 
   @Override

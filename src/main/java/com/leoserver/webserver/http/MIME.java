@@ -1,5 +1,7 @@
 package com.leoserver.webserver.http;
 
+import static com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName.CONTENT_TYPE;
+
 import java.util.Arrays;
 
 public enum MIME implements HttpHeaderOption {
@@ -60,7 +62,7 @@ public enum MIME implements HttpHeaderOption {
 
   @Override
   public String getKey() {
-    return "Content-Type";
+    return CONTENT_TYPE.getHttpName();
   }
 
   @Override
