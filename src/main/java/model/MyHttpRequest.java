@@ -39,8 +39,12 @@ public class MyHttpRequest {
         }
     }
 
-    public void setRequest(String request) {
+    public void setRequest(String request) throws IOException {
         String[] tokens = request.split(" ");
+
+        if (tokens.length != 3) {
+            throw new IOException("http request 포맷이 잘못 되었습니다.");
+        }
 
         this.method = tokens[0];
         setUri(tokens[1]);
