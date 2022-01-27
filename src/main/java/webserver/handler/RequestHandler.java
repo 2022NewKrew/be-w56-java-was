@@ -3,9 +3,11 @@ package webserver.handler;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.util.HttpRequestParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.processor.HttpProcessor;
@@ -26,7 +28,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = HttpRequest.createHttpRequest(in);
+            HttpRequest httpRequest = HttpRequestParser.parse(in);
             HttpResponse httpResponse = HttpProcessor.handle(httpRequest);
             ResponseWriter.write(new DataOutputStream(out), httpResponse);
         } catch (SocketException e) {
