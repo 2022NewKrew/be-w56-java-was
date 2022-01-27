@@ -18,15 +18,19 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        // ì„œë²„ì†Œì¼“ì„ ìƒì„±í•œë‹¤. ì›¹ì„œë²„ëŠ” ê¸°ë³¸ì ìœ¼ë¡œ 8080ë²ˆ í¬íŠ¸ë¥¼ ì‚¬ìš©í•œë‹¤.
+        // ?„œë²„ì†Œì¼“ì„ ?ƒ?„±?•œ?‹¤. ?›¹?„œë²„ëŠ” ê¸°ë³¸? ?œ¼ë¡? 8080ë²? ?¬?Š¸ë¥? ?‚¬?š©?•œ?‹¤.
 
+        // ±âÁ¸ dispatcher
+        Dispatcher defaultDispatcherServlet = new DefaultDispatcher();
+
+        // ¼­¹ö¼ÒÄÏÀ» »ı¼ºÇÑ´Ù. À¥¼­¹ö´Â ±âº»ÀûÀ¸·Î 8080¹ø Æ÷Æ®¸¦ »ç¿ëÇÑ´Ù.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
 
-            // í´ë¼ì´ì–¸íŠ¸ê°€ ì—°ê²°ë ë•Œê¹Œì§€ ëŒ€ê¸°í•œë‹¤.
+            // Å¬¶óÀÌ¾ğÆ®°¡ ¿¬°áµÉ¶§±îÁö ´ë±âÇÑ´Ù.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection);
+                RequestHandler requestHandler = new RequestHandler(connection, defaultDispatcherServlet);
                 requestHandler.start();
             }
         }
