@@ -28,15 +28,43 @@ public class PostController implements Controller {
 
         String httpBodyString = IOUtils.readData(bufferedReader, httpRequest.getContentLength());
         httpRequest.addHttpBody(HttpRequestUtils.parseQueryString(httpBodyString));
+        HttpBody httpBody = httpRequest.getHttpBody();
 
         switch (requestPath) {
             case "/user/create":
-                HttpBody httpBody = httpRequest.getHttpBody();
                 User user = new User(httpBody.get("userId"), httpBody.get("password"), httpBody.get("name"), httpBody.get("email"));
                 DataBase.addUser(user);
                 log.info("FindUser : {}", DataBase.findUserById(httpBody.get("userId")));
                 httpResponse.response302(dos, "/index.html");
                 break;
+
+            case "/user/login":
+                User findUser = DataBase.findUserById(httpBody.get("userId"));
+                String redirectPath = selectLoginRedirectPath(httpBody.get("password"), findUser.getPassword());
+                String cookie = selectLoginCookie(httpBody.get("password"), findUser.getPassword());
+                httpResponse.response302(dos, redirectPath, cookie);
+                break;
         }
+    }
+
+    private String selectLoginCookie(String loginPassword, String storedPassword) {
+        if (checkPassword(loginPassword, storedPassword)) {
+            return "logined=true; Path=/";
+        }
+        return "logined=false; Path=/";
+    }
+
+    private String selectLoginRedirectPath(String loginPassword, String storedPassword) {
+        if (checkPassword(loginPassword, storedPassword)) {
+            return "/index.html";
+        }
+        return "/user/login_failed.html";
+    }
+
+    private boolean checkPassword(String loginPassword, String storedPassword) {
+        if (loginPassword.equals(storedPassword)) {
+            return true;
+        }
+        return false;
     }
 }
