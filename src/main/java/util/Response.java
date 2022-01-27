@@ -1,5 +1,6 @@
 package util;
 
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
@@ -21,6 +22,7 @@ public class Response {
 
     public Response(OutputStream out) {
         dos = new DataOutputStream(out);
+        headers = Maps.newHashMap();
     }
 
     public void send(String path, String requestContext) throws IOException {
@@ -29,7 +31,17 @@ public class Response {
         HttpResponseUtils.responseBody(dos, body);
     }
 
+    public void setHeader(String key, String value) {
+        headers.put(key, value);
+        log.info("key : {}, value : {}, headers : {}", key, value, headers);
+    }
+
     public void redirect(String path) {
-        HttpResponseUtils.response302Header(dos, path);
+        StringBuilder header = new StringBuilder();
+        log.info("heasers : {}", headers);
+        for (String key : headers.keySet()) {
+            header.append(key).append(": ").append(headers.get(key)).append("\r\n");
+        }
+        HttpResponseUtils.response302Header(dos, path, header.toString());
     }
 }

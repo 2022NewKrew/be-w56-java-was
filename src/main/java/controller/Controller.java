@@ -1,5 +1,6 @@
 package controller;
 
+import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,23 @@ public class Controller {
 
             Map<String, String> userInfo = HttpRequestUtils.parseQueryString(req.getBody());
             User user = new User(userInfo.get("userId"), userInfo.get("password"), userInfo.get("name"), userInfo.get("email"));
+            DataBase.addUser(user);
             log.info(user.toString());
 
+            res.redirect("/");
+        });
+
+        routerService.post("/user/login", (req, res) -> {
+            log.info("registerd /user/login");
+
+            Map<String, String> userInfo = HttpRequestUtils.parseQueryString(req.getBody());
+            User user = DataBase.findUserById(userInfo.get("userId"));
+            if (user.isSameUser(userInfo.get("password"))) {
+                res.setHeader("Set-Cookie", "logined=true; Path=/\r\n");
+                res.redirect("/");
+                return;
+            }
+            res.setHeader("Set-Cookie", "logined=false; Path=/\r\n");
             res.redirect("/");
         });
 

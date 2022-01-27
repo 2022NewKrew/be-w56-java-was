@@ -14,6 +14,7 @@ public class HttpResponseUtils {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + respContextType + ";charset=utf-8\r\n");
+//            dos.writeBytes("Set-Cookie: logined=true; Path=/\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -21,10 +22,12 @@ public class HttpResponseUtils {
         }
     }
 
-    public static void response302Header(DataOutputStream dos, String url) {
+    public static void response302Header(DataOutputStream dos, String url, String headers) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + url + "\r\n");
+            dos.writeBytes(headers);
+//            dos.writeBytes("Set-Cookie: logined=true; Path=/\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
