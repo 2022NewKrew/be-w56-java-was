@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class HttpRequestParser {
 
-    private HttpRequest httpRequest = new HttpRequest();
+    private final HttpRequest httpRequest = new HttpRequest();
 
     public void parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));

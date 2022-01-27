@@ -10,8 +10,8 @@ import java.io.OutputStream;
 
 public class HttpResponseSender {
 
-    private HttpResponse httpResponse;
-    private DataOutputStream dos;
+    private final HttpResponse httpResponse;
+    private final DataOutputStream dos;
     private static final Logger log = LoggerFactory.getLogger(HttpResponseSender.class);
 
     public HttpResponseSender(HttpResponse httpResponse, OutputStream out) {

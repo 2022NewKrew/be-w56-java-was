@@ -10,9 +10,9 @@ import java.io.OutputStream;
 
 public class HttpController {
 
-    private HttpRequest httpRequest;
-    private HttpService httpService = new HttpService();
-    private HttpResponseSender httpResponseSender;
+    private final HttpRequest httpRequest;
+    private final HttpService httpService = new HttpService();
+    private final HttpResponseSender httpResponseSender;
 
     public HttpController(HttpRequest httpRequest, HttpResponse httpResponse, OutputStream out) {
         this.httpRequest = httpRequest;
