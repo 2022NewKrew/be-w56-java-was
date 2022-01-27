@@ -6,8 +6,8 @@ import controller.UserCreateController;
 import controller.UserLoginController;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +22,8 @@ public enum ControllerType {
     static {
         methodMap = Collections.synchronizedMap(new EnumMap<>(HttpMethod.class));
 
-        for(HttpMethod method : HttpMethod.values()){
-            methodMap.put(method, new ConcurrentHashMap<>());
+        for (HttpMethod method : HttpMethod.values()) {
+            methodMap.put(method, new HashMap<>());
         }
 
         for (ControllerType controllerType : ControllerType.values()) {
@@ -35,7 +35,7 @@ public enum ControllerType {
 
     public static Controller getControllerType(HttpMethod httpMethod, String path) {
         Logger log = LoggerFactory.getLogger(ControllerType.class);
-        log.info("method : {}, path : {}" , httpMethod, path);
+        log.info("method : {}, path : {}", httpMethod, path);
         log.info("methodMap : {}", methodMap.toString());
         return methodMap
                 .get(httpMethod)
