@@ -14,6 +14,9 @@ import java.io.IOException;
 import static framework.util.Constants.DEFAULT_CONNECTION;
 import static framework.util.Constants.DEFAULT_HTTP_VERSION;
 
+/**
+ * Client에게 응답할 정보를 담은 클래스
+ */
 @Getter
 public class HttpResponseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpResponseHandler.class);

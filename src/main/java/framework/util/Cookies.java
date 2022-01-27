@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Cookie들을 담을 일급 컬렉션 클래스
+ */
 public class Cookies {
     private final Map<String, String> cookies = new HashMap<>();
 

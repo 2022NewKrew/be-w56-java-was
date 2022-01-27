@@ -12,13 +12,16 @@ import java.nio.charset.StandardCharsets;
 
 import static framework.util.Constants.DEFAULT_HTTP_VERSION;
 
+/**
+ * Client의 요청 정보를 담은 클래스
+ */
 @Getter
 public class HttpRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private String requestMethod;
     private String uri;
-    private String httpVersion;
+    private String httpVersion = DEFAULT_HTTP_VERSION;
     private final RequestHeaders requestHeaders = new RequestHeaders();
     private final RequestAttributes requestAttributes = new RequestAttributes();
 
@@ -32,8 +35,6 @@ public class HttpRequestHandler {
     }
 
     private void parseRequestLine(String requestLine) {
-        clearInfos();
-
         String[] splited = requestLine.split(" ");
 
         requestMethod = splited[0];
@@ -41,14 +42,6 @@ public class HttpRequestHandler {
         httpVersion = splited[2];
 
         LOGGER.debug("Method: {}, URI: {}", requestMethod, uri);
-    }
-
-    private void clearInfos() {
-        requestMethod = null;
-        uri = null;
-        httpVersion = DEFAULT_HTTP_VERSION;
-        requestHeaders.clear();
-        requestAttributes.clear();
     }
 
     private void parseUri(String originUri) {
@@ -59,11 +52,13 @@ public class HttpRequestHandler {
             uri = "/index.html";
         }
 
+        // 만약 URI의 첫 글자가 '/'가 아니라면 붙여줌
         if (uri.charAt(0) != '/') {
             StringBuilder sb = new StringBuilder("/");
             uri = sb.append(uri).toString();
         }
 
+        // GET 요청을 통해 파라미터를 전달했을 경우 해당 파라미터들을 파싱하여 저장
         if (uri.contains("?")) {
             String[] splited = uri.split("\\?");
             uri = splited[0];

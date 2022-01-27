@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 요청 헤더 데이터들을 담을 일급 컬렉션 클래스
+ */
 public class RequestHeaders {
     private final Map<String, Object> requestHeaders = new HashMap<>();
 

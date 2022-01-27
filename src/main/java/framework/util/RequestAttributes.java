@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 요청 정보에 Body가 있는 경우, 해당 정보들을 담을 일급 컬렉션 클래스
+ */
 public class RequestAttributes {
     private final Map<String, String> requestAttributes = new HashMap<>();
 

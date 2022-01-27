@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * ','로 구분되는 정보를 담을 일급 컬렉션 클래스,
+ * 요청 헤더에서 'Accept', 'Accept-Language', 'Accept-Encoding'이 해당 클래스를 사용
+ */
 public class CommaSeries {
     private final List<String> eachInfos;
 

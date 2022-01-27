@@ -23,8 +23,13 @@ public class ConnectionThread extends Thread {
         // try-with-resources
         try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
+            // 요정 정보를 담을 객체
             HttpRequestHandler request = new HttpRequestHandler(br);
+
+            // 응답 정보를 담을 객체
             HttpResponseHandler response = new HttpResponseHandler(dos);
+
+            // Front Controller가 처리
             frontController.process(request, response);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());

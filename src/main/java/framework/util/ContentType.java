@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+/**
+ * 요청 헤더의 Content-Type 정보를 담을 클래스
+ */
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
