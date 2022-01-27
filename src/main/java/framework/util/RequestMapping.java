@@ -1,4 +1,4 @@
-package util;
+package framework.util;
 
 import framework.variable.RequestMethod;
 

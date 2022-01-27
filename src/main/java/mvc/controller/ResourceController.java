@@ -1,6 +1,6 @@
 package mvc.controller;
 
-import framework.RequestMapping;
+import framework.util.RequestMapping;
 import framework.variable.RequestMethod;
 
 public class ResourceController implements Controller {

@@ -1,8 +1,5 @@
 package framework;
 
-import framework.FrontController;
-import framework.HandlerMapping;
-import framework.ViewResolver;
 import mvc.controller.Controller;
 import mvc.controller.ResourceController;
 import mvc.controller.UserController;
