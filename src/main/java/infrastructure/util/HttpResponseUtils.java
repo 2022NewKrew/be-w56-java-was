@@ -1,5 +1,6 @@
 package infrastructure.util;
 
+import infrastructure.config.ServerConfig;
 import infrastructure.model.*;
 
 import java.io.IOException;
@@ -26,18 +27,25 @@ public class HttpResponseUtils {
     }
 
     public static HttpResponse notFound() throws IOException {
-        return new HttpResponse(
-                ResponseLine.valueOf(HttpStatus.NOT_FOUND),
-                HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
-                HttpByteArrayBody.setFile("/error.html")
-        );
+        return HttpResponse.builder()
+                .status(HttpStatus.NOT_FOUND)
+                .setHeader("Content-Type", ContentType.HTML.convertToResponse())
+                .body(HttpByteArrayBody.setFile("/error.html"))
+                .build();
     }
 
     public static HttpResponse badRequest() throws IOException {
-        return new HttpResponse(
-                ResponseLine.valueOf(HttpStatus.BAD_REQUEST),
-                HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
-                HttpByteArrayBody.setFile("/error.html")
-        );
+        return HttpResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .setHeader("Content-Type", ContentType.HTML.convertToResponse())
+                .body(HttpByteArrayBody.setFile("/error.html"))
+                .build();
+    }
+
+    public static HttpResponse found(String path) throws IOException {
+        return HttpResponse.builder()
+                .status(HttpStatus.FOUND)
+                .setHeader("Location", ServerConfig.getAuthority() + path)
+                .build();
     }
 }

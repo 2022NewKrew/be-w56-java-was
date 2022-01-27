@@ -1,7 +1,7 @@
 package adaptor.out.persistence.user;
 
-import application.out.SignUpUserPort;
-import application.out.UserDao;
+import application.out.user.SignUpUserPort;
+import application.out.user.UserDao;
 import domain.user.User;
 
 public class SignUpUserInMemoryAdaptor implements SignUpUserPort {

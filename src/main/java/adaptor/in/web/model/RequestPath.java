@@ -5,7 +5,9 @@ import infrastructure.model.Path;
 public enum RequestPath {
 
     HOME("/"),
-    SIGN_UP("/user/create");
+    SIGN_UP("/user/create"),
+    LOGIN("/user/login"),
+    LOGIN_FAILED("/user/login_failed.html");
 
     private final String value;
 
@@ -18,6 +20,11 @@ public enum RequestPath {
     }
 
     public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
         return value;
     }
 }

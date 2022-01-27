@@ -37,7 +37,7 @@ public class ControllerRouter {
                 return staticResourceController.handleFileRequest(httpRequest);
             }
             if (path.matchHandler("/user")) {
-                return userController.handleWithResponse(httpRequest);
+                return userController.handle(httpRequest);
             }
         } catch (FileNotFoundException e) {
             return HttpResponseUtils.notFound();

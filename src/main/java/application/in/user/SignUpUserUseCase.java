@@ -1,4 +1,4 @@
-package application.in;
+package application.in.user;
 
 import domain.user.User;
 

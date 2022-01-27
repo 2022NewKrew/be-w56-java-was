@@ -19,6 +19,10 @@ public class HttpRequest {
         this.httpBody = httpBody;
     }
 
+    public RequestMethod getMethod() {
+        return requestLine.getRequestMethod();
+    }
+
     public Path getRequestPath() {
         return requestLine.getPath();
     }

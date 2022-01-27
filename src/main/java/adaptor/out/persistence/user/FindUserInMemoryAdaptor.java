@@ -1,0 +1,21 @@
+package adaptor.out.persistence.user;
+
+import application.out.user.FindUserPort;
+import application.out.user.UserDao;
+import domain.user.User;
+
+import java.util.Optional;
+
+public class FindUserInMemoryAdaptor implements FindUserPort {
+
+    private final UserDao userDao;
+
+    public FindUserInMemoryAdaptor(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    @Override
+    public Optional<User> findByUserId(String userId) {
+        return Optional.ofNullable(userDao.findByUserId(userId));
+    }
+}

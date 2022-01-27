@@ -1,7 +1,7 @@
-package application;
+package application.user;
 
-import application.in.SignUpUserUseCase;
-import application.out.SignUpUserPort;
+import application.in.user.SignUpUserUseCase;
+import application.out.user.SignUpUserPort;
 import domain.user.User;
 
 public class SignUpUserService implements SignUpUserUseCase {

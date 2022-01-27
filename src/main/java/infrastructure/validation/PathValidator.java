@@ -2,9 +2,9 @@ package infrastructure.validation;
 
 import infrastructure.model.ContentType;
 
-public class PathValidation {
+public class PathValidator {
 
-    private PathValidation() {
+    private PathValidator() {
     }
 
     public static void assertContentType(ContentType contentType) throws IllegalArgumentException {
