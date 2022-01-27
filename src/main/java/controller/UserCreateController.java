@@ -7,7 +7,7 @@ import service.UserService;
 
 public class UserCreateController extends AbstractController {
 
-    private static final String PATH = "/user/create";
+    private static final String PATH = "/users/create";
 
     private static UserCreateController instance;
     private final UserService userService;
