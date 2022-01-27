@@ -11,7 +11,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public interface Controller {
-    HttpResponse process(HttpRequest request) throws IOException;
+    HttpResponse processDynamic(HttpRequest request) throws IOException;
+
+    default HttpResponse process(HttpRequest request) throws IOException {
+        if (isStaticFileSRequest(request))
+            return readStaticFile(request.line().url());
+
+        return processDynamic(request);
+    }
 
     default boolean isStaticFileSRequest(HttpRequest request) {
         String url = request.line().url();

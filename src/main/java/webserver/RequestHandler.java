@@ -1,11 +1,9 @@
 package webserver;
 
-import controller.Controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import controller.UserController;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,7 +13,6 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final Controller userController = UserController.getInstance();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;

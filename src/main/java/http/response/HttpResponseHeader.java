@@ -11,7 +11,7 @@ public class HttpResponseHeader {
 
     public HttpResponseHeader(String url, String status, int bodyLength) {
         statusLine = new HttpResponseStatusLine(status);
-        headers = "Content-Type: " + contentTypeOf(url).value() + ";charset=utf-8\r\n" +
+        headers = "Content-Type: " + ContentType.getTypeFromUrl(url).value() + ";charset=utf-8\r\n" +
                 "Content-Length: " + bodyLength + "\r\n";
     }
 
@@ -26,16 +26,6 @@ public class HttpResponseHeader {
         } catch (IOException e) {
             throw new IOException("Failed to write response header to dos");
         }
-    }
-
-    private ContentType contentTypeOf(final String url) {
-        if (!url.contains("\\."))
-            return ContentType.DEFAULT;
-
-        String[] tokens = url.split("\\.");
-        String extension = tokens[tokens.length - 1];
-
-        return ContentType.get(extension);
     }
 
     public String getHeaders() { return headers + "\r\n"; }

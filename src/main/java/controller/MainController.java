@@ -22,10 +22,10 @@ public class MainController implements Controller {
     }
 
     @Override
-    public HttpResponse process(HttpRequest request) throws IOException {
+    public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
         log.debug("{} {}", requestLine.method(), requestLine.url());
 
-        return readStaticFile(requestLine.url());
+        return null; // TODO
     }
 }

@@ -39,7 +39,7 @@ public class UserController implements Controller {
         return INSTANCE;
     }
 
-    public HttpResponse process(HttpRequest request) throws IOException {
+    public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
         String[] urlTokens = requestLine.url().split("/");
         String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];

@@ -26,6 +26,13 @@ public enum ContentType {
 
     public String value() { return value; }
 
+    public static ContentType getTypeFromUrl(String url) {
+        String[] tokens = url.split("\\.");
+        String extension = tokens[tokens.length - 1];
+
+        return ContentType.get(extension);
+    }
+
     public static ContentType get(String key) {
         if (!reverseMap.containsKey(key)) {
             return ContentType.DEFAULT;
