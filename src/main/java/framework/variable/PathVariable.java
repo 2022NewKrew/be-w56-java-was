@@ -1,7 +1,8 @@
-package util;
+package framework.variable;
 
 public enum PathVariable {
-    BASEURL("./webapp");
+    BASEURL("http://localhost:8080"),
+    STATIC_RESOURCE_BASE_URL("./webapp/");
 
     private final String path;
 
