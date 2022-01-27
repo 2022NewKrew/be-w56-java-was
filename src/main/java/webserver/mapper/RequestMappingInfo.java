@@ -72,7 +72,7 @@ public enum RequestMappingInfo {
     static {
         requestMap = new HashMap<>();
         for (RequestMappingInfo value : values()) {
-            requestMap.put(value.getPath(), value);
+            requestMap.put(value.path, value);
         }
     }
 
@@ -84,31 +84,17 @@ public enum RequestMappingInfo {
         this.method = method;
     }
 
-    public static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
-        if (!requestMap.containsKey(path)) {
-            throw new ResourceNotFoundException("에러: 존재하지 않은 리소스입니다.");
-        }
-        try {
-            RequestMappingInfo requestMappingInfo = requestMap.get(path);
-            return handleIfValidMethod(requestMappingInfo, request, dos);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new BadRequestException("에러: 부적절한 요청입니다.");
-        } catch (WebServerException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new WebServerException();
-        }
+    public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, String method) {
+        String mappingMethod = requestMappingInfo.method.name();
+        return !mappingMethod.equals(method);
     }
 
-    private static MyHttpResponse handleIfValidMethod(RequestMappingInfo requestMappingInfo, MyHttpRequest request, DataOutputStream dos) throws Exception {
-        if (!requestMappingInfo.method.name().equals(request.method())) {
-            throw new InvalidMethodException("에러: 부적절한 요청 메서드입니다.");
-        }
-        return requestMappingInfo.handle(request, dos);
+    public static boolean hasPath(String path) {
+        return requestMap.containsKey(path);
     }
 
-    public String getPath() {
-        return path;
+    public static RequestMappingInfo from(String path) {
+        return requestMap.get(path);
     }
 
     public abstract MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception;
