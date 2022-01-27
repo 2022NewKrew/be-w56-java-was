@@ -33,10 +33,6 @@ Accept: */*
 - [2단계](https://lucas.codesquad.kr/2022-kakao/course/%EC%9B%B9%EB%B0%B1%EC%97%94%EB%93%9C/Java-Web-Server/%EC%9B%B9-%EC%84%9C%EB%B2%84-%EA%B5%AC%ED%98%84-2%EB%8B%A8%EA%B3%84)
 - [3단계](https://lucas.codesquad.kr/2022-kakao/course/%EC%9B%B9%EB%B0%B1%EC%97%94%EB%93%9C/Java-Web-Server/%EC%9B%B9-%EC%84%9C%EB%B2%84-%EA%B5%AC%ED%98%84-3%EB%8B%A8%EA%B3%84)
 - [4단계](https://lucas.codesquad.kr/2022-kakao/course/%EC%9B%B9%EB%B0%B1%EC%97%94%EB%93%9C/Java-Web-Server/%EC%9B%B9-%EC%84%9C%EB%B2%84-%EA%B5%AC%ED%98%84-4%EB%8B%A8%EA%B3%84)
-### 프로젝트 목표
-- HTTP를 학습하고 학습 지식을 기반으로 웹 서버를 구현한다.
-- Java 멀티스레드 프로그래밍을 경험한다.
-- 유지보수가 용이한 구조에 대해 스스로 고민하고 개선해 본다.
 ### 요구사항
 - 2단계: GET으로 회원가입 기능 구현
   - “회원가입” 메뉴를 클릭하면 `http://localhost:8080/user/form.html` 으로 이동하면서 회원가입 폼을 표시한다.
