@@ -21,4 +21,9 @@ public class DataBase {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    static {
+        User user1 = new User("jm.hong", "jm.hong", "Hongjeongmin", "jm.hong@kakaocorp.com");
+        addUser(user1);
+    }
 }

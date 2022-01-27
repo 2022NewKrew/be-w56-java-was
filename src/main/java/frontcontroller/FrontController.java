@@ -2,6 +2,7 @@ package frontcontroller;
 
 import frontcontroller.controller.BaseController;
 import frontcontroller.controller.MemberFormController;
+import frontcontroller.controller.MemberLoginController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.MyHttpRequest;
@@ -20,7 +21,7 @@ public class FrontController {
     public FrontController() {
         // controller
         controllerMapping.put("/user/create", new MemberFormController());
-
+        controllerMapping.put("/user/login", new MemberLoginController());
         // static path 정의
         // TODO: 추상화
         controllerMapping.put("/index.html", new BaseController("/index.html"));

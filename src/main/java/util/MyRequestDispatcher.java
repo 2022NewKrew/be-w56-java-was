@@ -24,7 +24,7 @@ public class MyRequestDispatcher {
         if (viewPath.indexOf("redirect:") == 0) {
             String redirect[] = viewPath.split("redirect:");
 
-            response302(response.getDos(), redirect[1]);
+            response302(response, redirect[1]);
             log.debug("redirectURI : {}", request.getHost() + redirect[1]);
             return;
         }
@@ -32,16 +32,28 @@ public class MyRequestDispatcher {
         response.setBody(viewPath);
 
         if (response.getStatus() == MyHttpResponseStatus.OK) {
-            response200Header(response.getDos(), request.getAccept(), response.getBody().length);
-            responseBody(response.getDos(), response.getBody());
+            response200Header(request, response);
+            responseBody(response);
         }
     }
 
+    private void response200Header(MyHttpRequest request, MyHttpResponse response) {
 
-    private void response200Header(DataOutputStream dos, String accept, int lengthOfBodyContent) {
+        DataOutputStream dos = response.getDos();
+        String accept = request.getAccept();
+        int lengthOfBodyContent = response.getBody().length;
+
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + accept + ";charset=utf-8\r\n");
+            dos.writeBytes("Connection: close\r\n");
+
+            if (!response.getCookie().isEmpty()) {
+                log.debug("Set-Cookie: {}", response.getCookie());
+                dos.writeBytes("Set-Cookie: " + response.getCookie());
+                dos.writeBytes("\r\n");
+            }
+
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -49,17 +61,29 @@ public class MyRequestDispatcher {
         }
     }
 
-    private void response302(DataOutputStream dos, String location) {
+    private void response302(MyHttpResponse response, String location) {
+        DataOutputStream dos = response.getDos();
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + location);
+            dos.writeBytes("\r\n");
+
+            if (!response.getCookie().isEmpty()) {
+                log.debug("Set-Cookie: {}", response.getCookie());
+                dos.writeBytes("Set-Cookie: " + response.getCookie());
+                dos.writeBytes("\r\n");
+            }
+
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
+    private void responseBody(MyHttpResponse response) {
+        DataOutputStream dos = response.getDos();
+        byte[] body = response.getBody();
+
         try {
             dos.write(body, 0, body.length);
             dos.flush();

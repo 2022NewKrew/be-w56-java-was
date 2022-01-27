@@ -32,13 +32,20 @@ public class RequestHandler implements Callable<Void> {
             MyHttpRequest request = new MyHttpRequest(in);
             MyHttpResponse response = new MyHttpResponse(out);
 
+            // FILTER
+            doFilter(request, response);
+
             new FrontController().service(request, response);
-            
+
         } catch (IOException e) {
             log.error(e.getMessage());
         }
 
         return null;
+    }
+
+    private void doFilter(MyHttpRequest request, MyHttpResponse response) {
+
     }
 
 

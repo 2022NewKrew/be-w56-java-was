@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 
 public class MyHttpResponse {
 
@@ -15,6 +16,7 @@ public class MyHttpResponse {
     private String viewPath;
     private byte[] body;
     private MyHttpResponseStatus status;
+    private final MyCookie cookie = new MyCookie();
 
     private MyHttpResponse() {
     }
@@ -73,5 +75,9 @@ public class MyHttpResponse {
 
     public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    public MyCookie getCookie() {
+        return cookie;
     }
 }
