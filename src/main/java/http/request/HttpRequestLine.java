@@ -35,4 +35,8 @@ public class HttpRequestLine {
     public String getParam(String name) {
         return params.get(name);
     }
+
+    public boolean containsParam(String name) {
+        return params.containsKey(name);
+    }
 }
