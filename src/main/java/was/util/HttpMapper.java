@@ -1,5 +1,6 @@
 package was.util;
 
+import di.annotation.Bean;
 import was.domain.http.Cookie;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
@@ -11,43 +12,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+@Bean
 public class HttpMapper {
     public HttpRequest toHttpRequest(byte[] requestBytes) {
         final String requestMsg = new String(requestBytes, StandardCharsets.UTF_8);
 
-        final StringTokenizer st = new StringTokenizer(requestMsg, "\n", true);
+        final StringTokenizer httpRequestTokenizer = new StringTokenizer(requestMsg, "\n", true);
 
-        final StringTokenizer st2 = new StringTokenizer(getNextToken(st), " ");
-        final String method = getNextToken(st2);
+        final StringTokenizer startLineTokenizer = new StringTokenizer(getNextToken(httpRequestTokenizer), " ");
+        final String method = getNextToken(startLineTokenizer);
 
-        final String pathStr = getNextToken(st2);
-        final StringTokenizer st3 = new StringTokenizer(pathStr, "?=&");
-        final String path = getNextToken(st3);
-        final Map<String, String> queryParams = createQueryParams(st3);
+        final String pathStr = getNextToken(startLineTokenizer);
+        final StringTokenizer pathTokenizer = new StringTokenizer(pathStr, "?=&");
+        final String path = getNextToken(pathTokenizer);
+        final Map<String, String> queryParams = createQueryParams(pathTokenizer);
 
-        final String version = getNextToken(st2);
+        final String version = getNextToken(startLineTokenizer);
 
         // /n 넘김
-        getNextToken(st);
+        getNextToken(httpRequestTokenizer);
 
-        final Map<String, String> headers = createHeaders(st);
-        final String contentLengthStr = headers.get(HttpHeaders.CONTENT_LENGTH);
-
-        int contentLength = 0;
-        if (contentLengthStr != null) {
-            contentLength = Integer.parseInt(contentLengthStr);
-        }
-
-        final String body = createBody(st, contentLength);
-
-        final Map<String, String> requestParams;
-        if (isApplicationXWwwFormUrlEncode(headers)) {
-            requestParams = createRequestParams(body);
-        } else {
-            requestParams = new HashMap<>();
-        }
-
+        final Map<String, String> headers = createHeaders(httpRequestTokenizer);
         final Cookie cookie = createCookie(headers.get(HttpHeaders.COOKIE));
+
+        final String body = createBody(httpRequestTokenizer);
+        final Map<String, String> requestParams = createRequestParams(headers, body);
 
         return HttpRequest.builder
                 .method(method)
@@ -62,6 +51,16 @@ public class HttpMapper {
                 .build();
     }
 
+    private Map<String, String> createRequestParams(Map<String, String> headers, String body) {
+        final Map<String, String> requestParams;
+        if (isApplicationXWwwFormUrlEncode(headers)) {
+            requestParams = createRequestParams(body);
+        } else {
+            requestParams = new HashMap<>();
+        }
+        return requestParams;
+    }
+
     private boolean isApplicationXWwwFormUrlEncode(Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.CONTENT_TYPE);
 
@@ -71,8 +70,9 @@ public class HttpMapper {
         return value.equals(MediaTypes.APPLICATION_X_WWW_FORM_URLENCODED.getValue());
     }
 
-    private String createBody(StringTokenizer st, int contentLength) {
-        StringBuilder sb = new StringBuilder();
+    private String createBody(StringTokenizer st) {
+        final StringBuilder sb = new StringBuilder();
+
         while (st.hasMoreTokens()) {
             sb.append(getNextToken(st));
         }
@@ -139,6 +139,7 @@ public class HttpMapper {
 
     private Map<String, String> createHeaders(StringTokenizer st) {
         final Map<String, String> headers = new HashMap<>();
+
         boolean isPreBlank = false;
 
         while (st.hasMoreTokens()) {

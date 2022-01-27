@@ -1,7 +1,7 @@
-package controller;
+package application.controller;
 
-import domain.User;
-import domain.UserRepository;
+import application.domain.UserRepository;
+import application.domain.User;
 import was.domain.controller.Controller;
 import was.domain.controller.StaticResourceController;
 import was.domain.http.Cookie;
@@ -10,6 +10,7 @@ import was.meta.HttpHeaders;
 import was.meta.HttpStatus;
 import was.meta.UrlPath;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class UserController {
@@ -25,21 +26,22 @@ public class UserController {
         userRepository.save(user);
 
         res.setStatus(HttpStatus.FOUND);
-        res.addHeader(HttpHeaders.LOCATION, UrlPath.LOGIN_FORM.getPath());
+        res.addHeader(HttpHeaders.LOCATION, UrlPath.LOGIN_FORM);
     };
 
     public Controller loginForm = (req, res) -> {
         final Cookie cookie = req.getCookie();
-        final String isLoginStr = cookie.get("isLogin");
+        final String loginAttribute = cookie.get("isLogin");
 
-        if (isLoginStr == null || !isLoginStr.equals("True")) {
-            final StaticResourceController staticResourceController = StaticResourceController.getInstance();
-            staticResourceController.handle(req, res);
+        final boolean isLogin = loginAttribute != null && Objects.equals(loginAttribute, "True");
+
+        if (isLogin) {
+            res.setStatus(HttpStatus.FOUND);
+            res.addHeader(HttpHeaders.LOCATION, UrlPath.HOME);
             return;
         }
 
-        res.setStatus(HttpStatus.FOUND);
-        res.addHeader(HttpHeaders.LOCATION, UrlPath.HOME.getPath());
+        res.setViewPath(req.getPath());
     };
 
     public Controller login = (req, res) -> {
@@ -62,7 +64,7 @@ public class UserController {
         cookie.put("path", "/");
 
         res.setStatus(HttpStatus.FOUND);
-        res.addHeader(HttpHeaders.LOCATION, UrlPath.HOME.getPath());
+        res.addHeader(HttpHeaders.LOCATION, UrlPath.HOME);
         res.addCookie(cookie);
     }
 
@@ -72,7 +74,7 @@ public class UserController {
         cookie.put("path", "/");
 
         res.setStatus(HttpStatus.FOUND);
-        res.addHeader(HttpHeaders.LOCATION, UrlPath.LOGIN_FAIL.getPath());
+        res.addHeader(HttpHeaders.LOCATION, UrlPath.LOGIN_FAIL);
         res.addCookie(cookie);
     }
 

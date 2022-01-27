@@ -1,4 +1,4 @@
-package controller;
+package application.controller;
 
 import was.domain.controller.Controller;
 import was.meta.HttpStatus;

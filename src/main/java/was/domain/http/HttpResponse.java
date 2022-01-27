@@ -6,6 +6,7 @@ import was.meta.HttpStatus;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class HttpResponse {
     private final String version;
@@ -13,12 +14,22 @@ public class HttpResponse {
     private final Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    public static HttpResponse of(HttpRequest httpRequest) {
-        return new HttpResponse(httpRequest.getVersion(), null, null);
+    private String viewPath = null;
+
+    public void setViewPath(String viewPath) {
+        this.viewPath = viewPath;
     }
 
-    public void addAllHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
+    public boolean hasNotViewPath() {
+        return Objects.isNull(viewPath);
+    }
+
+    public String getViewPath() {
+        return viewPath;
+    }
+
+    public static HttpResponse of(HttpRequest httpRequest) {
+        return new HttpResponse(httpRequest.getVersion(), null, null);
     }
 
     public void addHeader(String key, String value) {
