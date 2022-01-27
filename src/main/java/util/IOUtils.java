@@ -17,4 +17,15 @@ public class IOUtils {
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
     }
+
+    public static int parseContentLength(BufferedReader br) throws IOException {
+        int contentLength = 0;
+        String line;
+        while (!(line = br.readLine()).equals("")) {
+            if (line.contains("Content-Length")) {
+                contentLength = Integer.parseInt(line.split(": ")[1]);
+            }
+        }
+        return contentLength;
+    }
 }

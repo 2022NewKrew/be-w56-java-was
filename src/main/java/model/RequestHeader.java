@@ -17,22 +17,21 @@ public class RequestHeader {
 
 
     public RequestHeader(BufferedReader requestHeaderInfo) throws IOException {
-        int contentLength = 0;
+        int contentLength;
+        String rawBody;
         String[] headerToken = requestHeaderInfo.readLine().split(" ");
-        String line;
-        while (!(line = requestHeaderInfo.readLine()).equals("")) {
-            if (line.contains("Content-Length")) {
-                contentLength = Integer.parseInt(line.split(": ")[1]);
-            }
-        }
-        this.body = HttpRequestUtils.parseQueryString(IOUtils.readData(requestHeaderInfo, contentLength));
         String[] uriToken = headerToken[1].split("\\?");
+
         this.method = headerToken[0];
         this.protocol = headerToken[2];
         this.uri = uriToken[0];
         if (uriToken.length > 1) {
             this.params = HttpRequestUtils.parseQueryString(uriToken[1]);
         }
+
+        contentLength = IOUtils.parseContentLength(requestHeaderInfo);
+        rawBody = IOUtils.readData(requestHeaderInfo, contentLength);
+        this.body = HttpRequestUtils.parseQueryString(rawBody);
     }
 
     public Map<String, String> getBody() {
