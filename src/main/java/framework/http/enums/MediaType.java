@@ -1,4 +1,4 @@
-package framework.http;
+package framework.http.enums;
 
 public enum MediaType {
     APPLICATION_ATOM_XML("cafe/atom+xml"),

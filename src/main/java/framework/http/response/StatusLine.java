@@ -1,4 +1,6 @@
-package framework.http;
+package framework.http.response;
+
+import framework.http.enums.HttpStatus;
 
 public class StatusLine {
     private static final String EMPTY_SPACE = " ";

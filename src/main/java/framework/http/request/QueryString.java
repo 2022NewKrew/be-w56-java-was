@@ -1,4 +1,4 @@
-package framework.http;
+package framework.http.request;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

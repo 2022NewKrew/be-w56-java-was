@@ -1,8 +1,8 @@
 package framework;
 
-import framework.http.HttpRequest;
-import framework.http.HttpResponse;
-import framework.http.HttpResponseHeader;
+import framework.http.request.HttpRequest;
+import framework.http.response.HttpResponse;
+import framework.http.response.HttpResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

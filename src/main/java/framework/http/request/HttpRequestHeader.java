@@ -1,5 +1,6 @@
-package framework.http;
+package framework.http.request;
 
+import framework.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

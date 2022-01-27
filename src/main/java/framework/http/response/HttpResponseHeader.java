@@ -1,5 +1,7 @@
-package framework.http;
+package framework.http.response;
 
+import framework.http.HttpHeader;
+import framework.http.enums.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

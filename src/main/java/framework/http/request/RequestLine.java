@@ -1,4 +1,4 @@
-package framework.http;
+package framework.http.request;
 
 import framework.exception.InvalidRequestLineException;
 import org.slf4j.Logger;

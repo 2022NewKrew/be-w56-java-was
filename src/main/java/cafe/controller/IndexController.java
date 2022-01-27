@@ -2,7 +2,11 @@ package cafe.controller;
 
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
-import framework.http.*;
+import framework.http.enums.HttpStatus;
+import framework.http.enums.MediaType;
+import framework.http.request.HttpRequest;
+import framework.http.response.HttpResponse;
+import framework.http.response.HttpResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

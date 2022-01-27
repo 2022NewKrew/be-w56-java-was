@@ -3,10 +3,10 @@ package cafe.controller.advice;
 import cafe.controller.exception.IncorrectLoginUserException;
 import framework.annotation.ControllerAdvice;
 import framework.annotation.ExceptionHandler;
-import framework.http.HttpResponse;
-import framework.http.HttpResponseHeader;
-import framework.http.HttpStatus;
-import framework.http.MediaType;
+import framework.http.response.HttpResponse;
+import framework.http.response.HttpResponseHeader;
+import framework.http.enums.HttpStatus;
+import framework.http.enums.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
