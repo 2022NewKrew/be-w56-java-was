@@ -21,25 +21,34 @@ public class ResponseProvider {
                     .body(body)
                     .build();
         } catch (IOException e) {
-            throw new WebServerException(dos);
+            throw new WebServerException();
         }
     }
 
-    public static MyHttpResponse responseClientException(WebServerException e) {
+    public static MyHttpResponse responseClientException(DataOutputStream dos, WebServerException e) {
         byte[] body = e.getErrorMessage().getBytes();
 
-        return MyHttpResponse.builder(e.getDos())
+        return MyHttpResponse.builder(dos)
                 .status(e.getHttpStatus())
                 .body(body)
                 .build();
     }
 
-    public static MyHttpResponse responseServerException(WebServerException e) {
-        byte[] body = ("서버 내부 에러 발생 : " + e.getErrorMessage()).getBytes();
+    public static MyHttpResponse responseServerException(DataOutputStream dos, Exception e) {
+        if (e instanceof WebServerException) {
+            WebServerException exception = (WebServerException) e;
 
-        return MyHttpResponse.builder(e.getDos())
-                .status(e.getHttpStatus())
-                .body(body)
+            byte[] body = ("서버 내부 에러 발생 : " + exception.getErrorMessage()).getBytes();
+
+            return MyHttpResponse.builder(dos)
+                    .status(exception.getHttpStatus())
+                    .body(body)
+                    .build();
+        }
+
+        return MyHttpResponse.builder(dos)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(e.getMessage().getBytes())
                 .build();
     }
 }
