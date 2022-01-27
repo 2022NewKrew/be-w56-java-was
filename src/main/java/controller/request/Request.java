@@ -43,4 +43,5 @@ public class Request {
         return requestLine.getQueryStringParams(key);
     }
 
+    public String getBody(String key) { return requestBody.getParameter(key); }
 }
