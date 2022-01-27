@@ -5,8 +5,10 @@ import model.UserSignupRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.user.SignupService;
-import util.ObjectMappingUtils;
 import webserver.model.HttpRequest;
+import webserver.model.HttpResponse;
+import webserver.model.HttpStatus;
+import webserver.model.ModelAndView;
 
 public class SignupController implements BaseController {
 
@@ -15,12 +17,12 @@ public class SignupController implements BaseController {
     private final SignupService signupService = new SignupService();
 
     @Override
-    public String process(HttpRequest request) {
-        UserSignupRequest signupRequest = ObjectMappingUtils.mapObject(request.getQueryStrings(), UserSignupRequest.class);
+    public ModelAndView process(HttpRequest request, HttpResponse response) {
+        UserSignupRequest signupRequest = request.getRequestParams().mapModelObject(UserSignupRequest.class);
         log.info("Signup Request : {}", signupRequest);
 
         signupService.signup(signupRequest);
-
-        return "redirect:/index.html";
+        log.info("Signup Success!");
+        return new ModelAndView("/index.html", HttpStatus.FOUND);
     }
 }
