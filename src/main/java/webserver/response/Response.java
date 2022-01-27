@@ -1,14 +1,14 @@
 package webserver.response;
 
 import com.google.common.collect.Maps;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Getter
 public class Response {
 
     private static final Logger log = LoggerFactory.getLogger(Response.class);
@@ -45,38 +45,6 @@ public class Response {
         headers.put("Content-Length", String.valueOf(content.length));
         headers.put("Content-Type", contentType);
         body = content;
-    }
-
-    public void write() {
-        try {
-            DataOutputStream dos = new DataOutputStream(out);
-            writeHeaders(dos);
-            writeBody(dos);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void writeHeaders(DataOutputStream dos) throws IOException {
-        dos.writeBytes(
-            HTTP_VERSION + " " + statusCode.getStatus() + " " + statusCode.getDescription()
-                + "\r\n");
-        log.debug("http response line: {}",
-            HTTP_VERSION + " " + statusCode.getStatus() + " " + statusCode.getDescription());
-        for (String key : headers.keySet()) {
-            dos.writeBytes(key + ": " + headers.get(key) + "\r\n");
-            log.debug("http header line: {}", key + ": " + headers.get(key));
-        }
-        dos.writeBytes("\r\n");
-    }
-
-    private void writeBody(DataOutputStream dos) throws IOException {
-        if (body != null && body.length > 0) {
-            dos.write(body, 0, body.length);
-            //log.debug("http response body: {}", body);
-            dos.flush();
-        }
     }
 
     public void redirectTo(String uri) {

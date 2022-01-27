@@ -11,6 +11,7 @@ import webserver.handler.HandlerFactory;
 import webserver.request.Request;
 import webserver.request.RequestReader;
 import webserver.response.Response;
+import webserver.response.ResponseWriter;
 import webserver.response.StatusCode;
 
 public class RequestHandler extends Thread {
@@ -59,7 +60,8 @@ public class RequestHandler extends Thread {
             response = Response.createErrorResponse(out, StatusCode.INTERNAL_SERVER_ERROR,
                 e.getMessage());
         } finally {
-            response.write();
+            ResponseWriter.write(out, response);
+            //response.write();
         }
     }
 }
