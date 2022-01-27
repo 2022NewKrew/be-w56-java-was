@@ -4,6 +4,7 @@ import dto.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import viewresolver.GetViewResolver;
 import viewresolver.PostViewResolver;
 
 import java.io.DataOutputStream;
@@ -16,12 +17,14 @@ public class UserController implements Controller {
     private static final UserService USER_SERVICE;
 
     private static final PostViewResolver POST_VIEW_RESOLVER;
+    private static final GetViewResolver GET_VIEW_RESOLVER;
 
     static {
         log = LoggerFactory.getLogger(UserController.class);
         INSTANCE = new UserController();
         USER_SERVICE = UserService.getInstance();
         POST_VIEW_RESOLVER = PostViewResolver.getInstance();
+        GET_VIEW_RESOLVER = GetViewResolver.getInstance();
     }
 
     private UserController() {}
@@ -46,10 +49,12 @@ public class UserController implements Controller {
     @Override
     public void doPost(RequestInfo requestInfo, DataOutputStream dos) {
         String requestPath = requestInfo.getRequestPath();
-        Map<String, String> bodyParams = requestInfo.getBodyParams();
         switch(requestPath) {
             case "/user/create":
                 registerUser(requestInfo, dos);
+                break;
+            case "/user/login":
+                loginUser(requestInfo, dos);
                 break;
         }
     }
@@ -58,9 +63,23 @@ public class UserController implements Controller {
         Map<String, String> bodyParams = requestInfo.getBodyParams();
         try {
             USER_SERVICE.createUser(bodyParams);
-            POST_VIEW_RESOLVER.response(requestInfo, "/index.html", dos);
+            POST_VIEW_RESOLVER.response(requestInfo, dos);
         } catch(IllegalArgumentException e) {
             log.error("[ERROR] - {}", e.getMessage());
+
+            GET_VIEW_RESOLVER.errorResponse("/error.html", requestInfo.getVersion(), dos);
+        }
+    }
+
+    private void loginUser(RequestInfo requestInfo, DataOutputStream dos) {
+        Map<String, String> bodyParams = requestInfo.getBodyParams();
+        try {
+            USER_SERVICE.loginUser(bodyParams);
+            String cookieHeader = "Set-Cookie: loggedin=true; Path=/ \r\n";
+            POST_VIEW_RESOLVER.response(requestInfo, dos, cookieHeader);
+        } catch(IllegalArgumentException e) {
+            log.error("[ERROR] - {}", e.getMessage());
+            GET_VIEW_RESOLVER.errorResponse("/user/login_failed.html", requestInfo.getVersion(), dos);
         }
     }
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PostViewResolver {
@@ -21,9 +22,12 @@ public class PostViewResolver {
         return INSTANCE;
     }
 
-    public void response(RequestInfo requestInfo, String redirectPath, DataOutputStream dos) {
-        String addHeader = "Location: /index.html";
-        this.responseHeader(dos, requestInfo.getVersion(), HttpResponseStatus.FOUND, List.of(addHeader));
+    public void response(RequestInfo requestInfo, DataOutputStream dos, String... addedHeaders) {
+        List<String> headers = new ArrayList<>();
+        Collections.addAll(headers, addedHeaders);
+        String redirectHeader = "Location: /index.html";
+        headers.add(redirectHeader);
+        this.responseHeader(dos, requestInfo.getVersion(), HttpResponseStatus.FOUND, headers);
     }
 
     private void responseHeader(DataOutputStream dos, String version, HttpResponseStatus status, List<String> addedHeaders) {

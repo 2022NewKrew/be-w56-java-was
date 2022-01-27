@@ -32,13 +32,13 @@ public class GetViewResolver {
             this.responseBody(dos, body);
         } catch(Exception e) {
             log.error("[ERROR] - {}", e.getMessage());
-            this.errorResponse(version, dos);
+            this.errorResponse("/error.html", version, dos);
         }
     }
 
-    private void errorResponse(String version, DataOutputStream dos) {
+    public void errorResponse(String path, String version, DataOutputStream dos) {
         try {
-            byte[] body = Files.readAllBytes(new File(STATIC_FILE_BASE_DIRECTORY + "/error.html").toPath());
+            byte[] body = Files.readAllBytes(new File(STATIC_FILE_BASE_DIRECTORY + path).toPath());
             this.responseHeader(dos, version, HttpResponseStatus.NOT_FOUND, body.length, new ArrayList<>());
             this.responseBody(dos, body);
         } catch (IOException e) {

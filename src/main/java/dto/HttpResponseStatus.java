@@ -9,7 +9,7 @@ public enum HttpResponseStatus {
     private final int statusCode;
     private final String message;
 
-    private HttpResponseStatus(int statusCode, String message) {
+    HttpResponseStatus(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
     }

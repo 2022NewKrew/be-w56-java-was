@@ -71,7 +71,7 @@ public class RequestHandler extends Thread {
 
     private Map<String, String> parseHeader(BufferedReader httpRequestReader) throws IOException {
         Map<String, String> headers = Maps.newHashMap();
-        String line = null;
+        String line;
         while(!(line = httpRequestReader.readLine()).equals("")) {
             Pair keyAndValue = HttpRequestUtils.parseHeader(line);
             headers.put(keyAndValue.getKey(), keyAndValue.getValue());
