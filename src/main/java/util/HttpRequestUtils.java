@@ -2,9 +2,7 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -57,26 +55,25 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseHeaders(BufferedReader bufferedReader) throws IOException {
-        String headers = readHeaders(bufferedReader).toString();
+        List<String> headers = readHeaders(bufferedReader);
 
-        if (Strings.isNullOrEmpty(headers)) {
+        if (headers.isEmpty()) {
             return Maps.newHashMap();
         }
 
-        String[] tokens = headers.split(Constants.LINE_DELIMITER);
-        return Arrays.stream(tokens)
+        return headers.stream()
                 .map(HttpRequestUtils::parseHeader)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    private static StringBuffer readHeaders(BufferedReader bufferedReader) throws IOException {
-        StringBuffer stringBuffer = new StringBuffer();
+    private static List<String> readHeaders(BufferedReader bufferedReader) throws IOException {
+        List<String> readLines = new ArrayList<>();
         String readLine;
         while (!(readLine = bufferedReader.readLine()).equals(Constants.EMPTY_STRING)) {
-            stringBuffer.append(readLine).append(Constants.LINE_DELIMITER);
+            readLines.add(readLine);
         }
-        return stringBuffer;
+        return readLines;
     }
 
     public static Pair parseHeader(String header) {
@@ -86,7 +83,7 @@ public class HttpRequestUtils {
     public static ContentType parseContentType(String path) {
         String[] strings = path.split(Constants.FILE_EXTENSION_DELIMITER);
         String fileExtension = strings[strings.length-1];
-        return ContentType.getIfPresent(fileExtension.toUpperCase());
+        return ContentType.getIfPresentOrHtml(fileExtension.toUpperCase());
     }
 
     public static class Pair {

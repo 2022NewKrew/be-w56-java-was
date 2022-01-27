@@ -17,7 +17,7 @@ public enum ContentType {
         this.contentType = contentType;
     }
 
-    public static ContentType getIfPresent(String fileExtension) {
+    public static ContentType getIfPresentOrHtml(String fileExtension) {
        return Enums.getIfPresent(ContentType.class, fileExtension).or(HTML);
     }
 

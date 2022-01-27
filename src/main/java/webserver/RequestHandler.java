@@ -49,7 +49,7 @@ public class RequestHandler extends Thread {
                     log.info("findUser : {}", DataBase.findUserById(queryMap.get("userId")));
                     body = DataBase.findUserById(queryMap.get("userId")).toString().getBytes(StandardCharsets.UTF_8);
                 } else {
-                    body = Files.readAllBytes(new File("./webapp" + requestUrl).toPath());
+                    body = Files.readAllBytes(new File("./webapp", requestUrl).toPath());
                 }
                 response200(dos, body, HttpRequestUtils.parseContentType(requestUrl));
             } else if (requestLine.isPostMethod()) {
