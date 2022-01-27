@@ -3,9 +3,13 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,26 +25,10 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        EventLoop eventLoop = new EventLoop();
+        eventLoop.startLoop(port);
 
-        RequestDispatcher requestDispatcher = new RequestDispatcher();
 
-
-        // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
-        try (ServerSocket listenSocket = new ServerSocket(port)) {
-            log.info("Web Application Server started {} port.", port);
-
-            // 클라이언트가 연결될때까지 대기한다.
-            Socket connection;
-            while ((connection = listenSocket.accept()) != null) {
-                Socket finalConnection = connection;
-                Thread t = new Thread(() -> requestDispatcher.doDispatch(finalConnection));
-                executorService.execute(t);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
