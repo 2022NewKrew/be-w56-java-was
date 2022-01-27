@@ -54,7 +54,7 @@ public class HttpRequestUtilsTest {
     @Test
     public void getKeyValue() throws Exception {
         Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
-        assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
+        assertThat(pair).isEqualTo(Pair.of("userId", "javajigi"));
     }
 
     @Test
@@ -67,6 +67,6 @@ public class HttpRequestUtilsTest {
     public void parseHeader() throws Exception {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
-        assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
+        assertThat(pair).isEqualTo(Pair.of("Content-Length", "59"));
     }
 }
