@@ -16,12 +16,4 @@ public enum HttpStatus {
     public String value() {
         return code + " " + name();
     }
-
-    public boolean isClientError() {
-        return code >= 400 && code < 500;
-    }
-
-    public boolean isServerError() {
-        return code >= 500 && code < 600;
-    }
 }

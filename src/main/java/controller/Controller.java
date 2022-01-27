@@ -1,5 +1,6 @@
 package controller;
 
+import controller.exception.ControllerMismatchException;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
@@ -7,7 +8,7 @@ import http.HttpStatus;
 public interface Controller {
 
     default HttpResponse doGet(HttpRequest request) {
-        return notImplemented();
+        throw new ControllerMismatchException("Request Path :: " + request.getPath());
     }
 
     default HttpResponse doPost(HttpRequest request) {

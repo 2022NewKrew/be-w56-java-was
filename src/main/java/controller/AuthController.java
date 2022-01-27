@@ -11,7 +11,8 @@ import java.util.Map;
 public class AuthController implements Controller {
 
     private static final String USER_LOGIN_PATH = "/user/login";
-    private static final String USER_LOGIN_REDIRECT_URL = "/index.html";
+    private static final String USER_LOGIN_SUCCESS_REDIRECT_URL = "/index.html";
+    private static final String USER_LOGIN_FAILED_REDIRECT_URL = "/user/login_failed.html";
 
     private final AuthService authService;
 
@@ -30,13 +31,16 @@ public class AuthController implements Controller {
         }
 
         boolean authentication = authService.login(UserLogin.builder()
-            .userId(request.getRequestBody("userId"))
-            .password(request.getRequestBody("password"))
+            .userId(request.getBodyParameter("userId"))
+            .password(request.getBodyParameter("password"))
             .build());
 
+        String redirectUrl =
+            authentication ? USER_LOGIN_SUCCESS_REDIRECT_URL : USER_LOGIN_FAILED_REDIRECT_URL;
+
         HttpHeader httpHeader = HttpHeader.of(
-            Map.of("Set-Cookie", "logined=" + authentication + " ;Path=/",
-                "Location", USER_LOGIN_REDIRECT_URL));
+            Map.of("Set-Cookie", "logined=" + authentication + "; Path=/",
+                "Location", redirectUrl));
 
         return HttpResponse.builder()
             .status(HttpStatus.FOUND)

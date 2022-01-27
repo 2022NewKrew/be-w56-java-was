@@ -4,6 +4,7 @@ import domain.user.dto.UserLogin;
 import domain.user.model.User;
 import domain.user.repository.InMemoryUserRepository;
 import domain.user.repository.UserRepository;
+import java.util.Optional;
 
 public class AuthService {
 
@@ -18,9 +19,8 @@ public class AuthService {
     }
 
     public boolean login(UserLogin userLogin) {
-        User user = userRepository.findUserByUserId(userLogin.getUserId())
-            .orElseThrow(() -> new RuntimeException("SOME_MESSAGE"));
+        Optional<User> foundUser = userRepository.findUserByUserId(userLogin.getUserId());
 
-        return user.matchPassword(userLogin.getPassword());
+        return foundUser.isPresent() && foundUser.get().matchPassword(userLogin.getPassword());
     }
 }
