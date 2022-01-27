@@ -50,6 +50,11 @@ public class MainController implements Controller {
     }
 
     private HttpResponse index(HttpRequest request) {
+        if ("true".equals(request.header().getCookie("logined"))) {
+            log.debug("logined user"); // TODO
+        }
+
+        log.debug("{}, redirect to index", request.line().url());
         return redirect("index.html");
     }
 }

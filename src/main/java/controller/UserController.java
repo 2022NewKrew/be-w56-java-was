@@ -44,8 +44,11 @@ public class UserController implements Controller {
     public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
         String[] urlTokens = requestLine.url().split("/");
-        String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];
-        String methodAndUrl = requestLine.method() + " /" + urlWithoutQueryString;
+        String methodAndUrl = requestLine.method() + " /";
+        if (urlTokens.length > 0) {
+            String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];
+            methodAndUrl += urlWithoutQueryString;
+        }
 
         if (methodMap.containsKey(methodAndUrl)) {
             log.debug("{} called", methodAndUrl);
@@ -82,7 +85,7 @@ public class UserController implements Controller {
             return redirect("/user/login_failed.html");
 
         HttpResponseHeader responseHeader = new HttpResponseHeader("index.html", HttpStatus.OK, 0);
-        responseHeader.putToHeaders("Set-Cookie", "logined=true; Path=/index.html");
+        responseHeader.putToHeaders("Set-Cookie", "logined=true; Path=/");
 
         return new HttpResponse(responseHeader, HttpResponseBody.empty());
     }
