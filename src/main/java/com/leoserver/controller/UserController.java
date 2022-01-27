@@ -8,8 +8,12 @@ import com.leoserver.webserver.annotation.Controller;
 import com.leoserver.webserver.annotation.RequestBody;
 import com.leoserver.webserver.annotation.RequestMapping;
 import com.leoserver.webserver.annotation.RequestParam;
+import com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName;
 import com.leoserver.webserver.http.HttpStatus;
+import com.leoserver.webserver.http.KakaoHttpHeader;
 import com.leoserver.webserver.http.KakaoHttpResponse;
+import com.leoserver.webserver.http.Location;
+import com.leoserver.webserver.http.MIME;
 import com.leoserver.webserver.http.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +61,14 @@ public class UserController {
 
     userService.createUser(user);
 
+    KakaoHttpHeader header = KakaoHttpHeader.createResponse();
+    header.set(HeaderOptionName.LOCATION, new Location("/index.html"));
+    header.set(HeaderOptionName.CONTENT_TYPE, MIME.APPLICATION_JSON);
+
     return new KakaoHttpResponse<>(
-        HttpStatus.OK,
-        new DefaultDTO("회원이 생성되었습니다.", HttpStatus.OK.name())
+        HttpStatus.FOUND,
+        new DefaultDTO("회원이 생성되었습니다.", HttpStatus.FOUND.name()),
+        header
     );
   }
 

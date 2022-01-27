@@ -40,7 +40,7 @@ public class HttpParser {
 
     // request line
     String requestLine = reader.readLine();
-    KakaoHttpHeader header = KakaoHttpHeader.create(requestLine);
+    KakaoHttpHeader header = KakaoHttpHeader.createRequest(requestLine);
 
     logger.debug("requestLine : {}", requestLine);
 
@@ -69,7 +69,7 @@ public class HttpParser {
 
     logger.debug("body : {}", body);
 
-    return new KakaoHttpBody(toObjectByMIME(body, header.getContentType()));
+    return KakaoHttpBody.create(toObjectByMIME(body, header.getContentType()));
   }
 
 

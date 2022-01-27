@@ -2,7 +2,7 @@ package com.leoserver.webserver.http;
 
 import java.util.Arrays;
 
-public enum MIME {
+public enum MIME implements HttpHeaderOption {
 
   // TODO
   // 모두 구현은 시간날 때..
@@ -52,7 +52,18 @@ public enum MIME {
   }
 
 
-  public String getContentType() {
+  public String toHttp() {
+    return value;
+  }
+
+
+  @Override
+  public String getKey() {
+    return "Content-Type";
+  }
+
+  @Override
+  public String getValue() {
     return value;
   }
 

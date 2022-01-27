@@ -53,11 +53,11 @@ public class StaticResourceHandler {
     String message = status.getMessage();
 
     sb.append(version).append(" ").append(code).append(" ").append(message).append(" \r\n");
-    sb.append("Content-Type: ").append(mimeType.getContentType()).append(";charset=utf-8\r\n");
+    sb.append("Content-Type: ").append(mimeType.toHttp()).append(";charset=utf-8\r\n");
     sb.append("Content-Length: ").append(lengthOfBodyContent).append("\r\n");
     sb.append("\r\n");
 
-    logger.debug("\n" + sb);
+    logger.debug("\n ResponseHeader : {}", sb);
 
     return sb.toString().getBytes();
   }

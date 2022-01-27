@@ -27,7 +27,7 @@ public class KakaoHttpRequest {
 
 
   public static KakaoHttpRequest create(KakaoHttpHeader header) {
-    return create(header, new KakaoHttpBody());
+    return create(header, KakaoHttpBody.createEmpty());
   }
 
 

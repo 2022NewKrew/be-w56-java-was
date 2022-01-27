@@ -7,18 +7,24 @@ public class KakaoHttpBody {
 
   JsonObject holder;
 
-  public KakaoHttpBody() {
-    this.holder = new JsonObject();
-  }
 
-
-  public KakaoHttpBody(Object object) {
+  private KakaoHttpBody(Object object) {
 
     if(object == null) {
       object = new Object();
     }
 
     this.holder = (JsonObject) new Gson().toJsonTree(object);
+  }
+
+
+  public static KakaoHttpBody createEmpty() {
+    return new KakaoHttpBody(null);
+  }
+
+
+  public static KakaoHttpBody create(Object body) {
+    return new KakaoHttpBody(body);
   }
 
 

@@ -1,6 +1,6 @@
 package com.leoserver.webserver.http;
 
-public class Host {
+public class Host implements HttpHeaderOption {
 
   String url;
 
@@ -12,4 +12,15 @@ public class Host {
   public String toString() {
     return url;
   }
+
+  @Override
+  public String getKey() {
+    return "Host";
+  }
+
+  @Override
+  public String getValue() {
+    return url;
+  }
+
 }
