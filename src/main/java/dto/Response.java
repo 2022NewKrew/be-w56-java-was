@@ -4,10 +4,12 @@ import collections.ResponseHeaders;
 
 public class Response {
 
+    private String statusLine;
     private ResponseHeaders headers;
     private byte[] body;
 
-    public Response(ResponseHeaders headers, byte[] body) {
+    public Response(String statusLine, ResponseHeaders headers, byte[] body) {
+        this.statusLine = statusLine;
         this.headers = headers;
         this.body = body;
     }
@@ -20,4 +22,7 @@ public class Response {
         return body;
     }
 
+    public String getStatusLine() {
+        return statusLine;
+    }
 }

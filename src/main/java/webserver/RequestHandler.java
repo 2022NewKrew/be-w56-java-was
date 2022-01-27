@@ -5,24 +5,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import collections.RequestBody;
 import collections.RequestHeaders;
 import collections.RequestStartLine;
 import controller.Controller;
 import controller.GetController;
 import controller.PostController;
-import db.DataBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import util.IOUtils;
 
 import static util.HttpRequestUtils.*;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final DataBase DATA_BASE = new DataBase();
-    private static final UserService USER_SERVICE = new UserService(DATA_BASE);
+    private static final UserService USER_SERVICE = new UserService();
 
     private static final GetController GET_CONTROLLER = new GetController(USER_SERVICE);
     private static final PostController POST_CONTROLLER = new PostController(USER_SERVICE);
@@ -33,6 +34,7 @@ public class RequestHandler extends Thread {
     }};
     private static final Map<String, String> PATH_METHOD_MAP = new HashMap<>() {{
         put("/user/create", "userCreate");
+        put("/user/login", "userLogin");
     }};
 
     private Socket connection;
@@ -75,6 +77,15 @@ public class RequestHandler extends Thread {
             }
             RequestHeaders requestHeaders = new RequestHeaders(tempRequestHeaders);
 
+            // 요청 body 수집
+            RequestBody requestBody = null;
+            Set<String> headerKeys = requestHeaders.getHeaderKeys();
+            if (headerKeys.contains("Content-Length")) {
+                int contentLength = Integer.parseInt(requestHeaders.getHeader("Content-Length"));
+                String content = IOUtils.readData(br, contentLength);
+                requestBody = new RequestBody(content);
+            }
+
             // 적합한 핸들러, 컨트롤러 메소드 찾기 -> 둘 중 하나라도 실패하면 처리 가능한 요청 아님
             String controllerMethodName = searchControllerMethod(requestStartLine);
             Controller controller = (controllerMethodName.equals("staticResource")) ? CONTROLLER_MAP.get("GET") : searchController(requestStartLine);
@@ -83,13 +94,14 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
 
             // 응답 처리
-            controller.doResponse(controllerMethodName, dos, requestStartLine, requestHeaders);
+            controller.doResponse(controllerMethodName, dos, requestStartLine, requestHeaders, requestBody);
 
         } catch (IOException e) {
             log.error(e.getMessage());
             log.error("존재하지 않는 페이지입니다.");
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
+            log.error("요청이 잘못되었습니다.");
         }
     }
 
