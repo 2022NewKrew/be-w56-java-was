@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.request.NullRequestException;
 import webserver.http.response.HttpResponse;
 
 public class ExceptionHandler {
@@ -31,6 +32,10 @@ public class ExceptionHandler {
         }
 
         if (e instanceof PageNotFoundException) {
+            response.setStatusCode(HTTP_NOT_FOUND);
+        }
+
+        if (e instanceof NullRequestException) {
             response.setStatusCode(HTTP_NOT_FOUND);
         }
 

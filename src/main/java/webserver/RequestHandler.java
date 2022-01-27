@@ -1,17 +1,22 @@
 package webserver;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.request.HttpRequest;
-import webserver.http.request.HttpRequestDecoder;
 import webserver.http.request.Method;
+import webserver.http.request.NullRequestException;
+import webserver.http.request.RequestBuilderException;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseHeaders;
 
@@ -31,7 +36,7 @@ public class RequestHandler extends Thread {
         );
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = HttpRequestDecoder.decode(in);
+            HttpRequest httpRequest = getRequest(in);
             HttpResponse httpResponse = handle(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
@@ -43,15 +48,25 @@ public class RequestHandler extends Thread {
         }
     }
 
+    private HttpRequest getRequest(InputStream in) throws IOException, RequestBuilderException {
+        Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+        BufferedReader br = new BufferedReader(reader);
+
+        return new HttpRequest.Builder().requestLine(br)
+                                        .requestHeaders(br)
+                                        .requestBody(br)
+                                        .build();
+    }
+
     private HttpResponse handle(HttpRequest request) throws IOException {
         HttpResponse response = new HttpResponse(request.getHttpVersion(), new HttpResponseHeaders());
         Method method = request.getMethod();
         MethodHandler methodHandler = method == Method.GET ? new GetMethodHandler() : new PostMethodHandler();
-
         try {
+            request.checkRequestValidation();
             methodHandler.handle(request, response);
             return response;
-        } catch (FileNotFoundException | AccessDeniedException | PageNotFoundException e) {
+        } catch (FileNotFoundException | AccessDeniedException | PageNotFoundException | NullRequestException e) {
             ExceptionHandler.handleException(response, e);
             return response;
         }

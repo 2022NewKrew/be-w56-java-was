@@ -1,5 +1,7 @@
 package webserver.http.request;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import util.HttpRequestUtils;
@@ -10,10 +12,10 @@ public class HttpRequest {
     private final HttpRequestHeaders requestHeaders;
     private final HttpRequestBody requestBody;
 
-    public HttpRequest(HttpRequestLine requestLine, HttpRequestHeaders requestHeaders, HttpRequestBody requestBody) {
-        this.requestLine = requestLine;
-        this.requestHeaders = requestHeaders;
-        this.requestBody = requestBody;
+    public HttpRequest(Builder builder) {
+        this.requestLine = builder.requestLine;
+        this.requestHeaders = builder.requestHeaders;
+        this.requestBody = builder.requestBody;
     }
 
     public String getRequestBody() {
@@ -45,5 +47,43 @@ public class HttpRequest {
     private Map<String, String> getQueryDataFromBody() {
         String body = getRequestBody();
         return HttpRequestUtils.parseQueryString(body);
+    }
+
+    public void checkRequestValidation() throws NullRequestException {
+        if (requestLine == null) {
+            throw new NullRequestException();
+        }
+    }
+
+    public static class Builder {
+
+        private HttpRequestLine requestLine;
+        private HttpRequestHeaders requestHeaders;
+        private HttpRequestBody requestBody;
+
+        public Builder requestLine(BufferedReader br) throws IOException {
+            this.requestLine = HttpRequestLine.createRequestLineFromBufferedReader(br);
+            return this;
+        }
+
+        public Builder requestHeaders(BufferedReader br) throws IOException {
+            this.requestHeaders = HttpRequestHeaders.createRequestHeadersFromBufferedReader(br);
+            return this;
+        }
+
+        public Builder requestBody(BufferedReader br) throws IOException, RequestBuilderException {
+            if (requestHeaders == null) {
+                throw new RequestBuilderException();
+            }
+            this.requestBody = HttpRequestBody.createRequestBodyFromBufferedReader(
+                br,
+                requestHeaders.getContentLength()
+            );
+            return this;
+        }
+
+        public HttpRequest build() {
+            return new HttpRequest(this);
+        }
     }
 }

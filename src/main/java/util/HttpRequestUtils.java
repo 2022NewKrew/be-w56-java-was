@@ -1,11 +1,19 @@
 package util;
 
+import static webserver.http.HttpMeta.INDEX_OF_HTTP_VERSION_IN_REQUEST_LINE;
+import static webserver.http.HttpMeta.INDEX_OF_METHOD_IN_REQUEST_LINE;
+import static webserver.http.HttpMeta.INDEX_OF_URI_IN_REQUEST_LINE;
+import static webserver.http.HttpMeta.SEPARATOR_OF_REQUEST_LINE;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import webserver.http.request.HttpRequestLine;
+import webserver.http.request.Method;
 
 public class HttpRequestUtils {
 
@@ -50,6 +58,15 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static HttpRequestLine parseRequestLine(String httpRequestLineString) {
+        String[] httpRequestLineSplitArray = httpRequestLineString.split(SEPARATOR_OF_REQUEST_LINE);
+        return new HttpRequestLine(
+            Method.getMethodFromString(httpRequestLineSplitArray[INDEX_OF_METHOD_IN_REQUEST_LINE]),
+            URI.create(httpRequestLineSplitArray[INDEX_OF_URI_IN_REQUEST_LINE]),
+            httpRequestLineSplitArray[INDEX_OF_HTTP_VERSION_IN_REQUEST_LINE]
+        );
     }
 
     public static class Pair {
@@ -100,7 +117,9 @@ public class HttpRequestUtils {
             }
             if (value == null) {
                 return other.value == null;
-            } else return value.equals(other.value);
+            } else {
+                return value.equals(other.value);
+            }
         }
 
         @Override
