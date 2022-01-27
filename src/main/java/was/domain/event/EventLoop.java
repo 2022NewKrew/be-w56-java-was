@@ -1,7 +1,5 @@
 package was.domain.event;
 
-import was.domain.controller.Controller;
-import was.meta.UrlPath;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,7 +9,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.*;
 
 public class EventLoop extends ThreadPoolExecutor {
@@ -19,10 +16,12 @@ public class EventLoop extends ThreadPoolExecutor {
     private final ByteBuffer buffer = ByteBuffer.allocate(26214400);
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final int port;
 
-    public EventLoop(Map<UrlPath, Controller> controllers) {
+    public EventLoop(int port, EventService eventService) {
         super(1, 1, 0L, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
-        this.eventService = EventService.getInstance(controllers);
+        this.eventService = eventService;
+        this.port = port;
     }
 
     public void run() {
@@ -34,7 +33,7 @@ public class EventLoop extends ThreadPoolExecutor {
              final ServerSocketChannel serverChannel = ServerSocketChannel.open()) {
 
             serverChannel.configureBlocking(false);
-            serverChannel.bind(new InetSocketAddress(8080));
+            serverChannel.bind(new InetSocketAddress(port));
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
             while (true) {
@@ -101,9 +100,10 @@ public class EventLoop extends ThreadPoolExecutor {
 
     private byte[] readBuffer(SocketChannel client) throws IOException {
         client.read(buffer);
+        buffer.flip();
 
-        final byte[] requestMsg = new byte[buffer.position()];
-        buffer.get(requestMsg, 0, buffer.position());
+        final byte[] requestMsg = new byte[buffer.limit()];
+        buffer.get(requestMsg);
 
         buffer.clear();
         return requestMsg;

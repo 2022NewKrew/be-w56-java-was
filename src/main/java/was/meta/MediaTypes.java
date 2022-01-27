@@ -26,7 +26,6 @@ public enum MediaTypes {
                 return mediaTypes;
             }
         }
-
         return TEXT_PLAIN;
     }
 }

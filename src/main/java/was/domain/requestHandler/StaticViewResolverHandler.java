@@ -1,27 +1,28 @@
-package was.domain.controller;
+package was.domain.requestHandler;
 
 import di.annotation.Bean;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
-import was.meta.HttpStatus;
 import was.util.StaticResourceReader;
 
 import java.io.IOException;
 
 @Bean
-public class StaticResourceController implements Controller {
+public class StaticViewResolverHandler implements RequestHandler {
 
     private final StaticResourceReader staticResourceReader;
 
-    public StaticResourceController(StaticResourceReader staticResourceReader) {
+    public StaticViewResolverHandler(StaticResourceReader staticResourceReader) {
         this.staticResourceReader = staticResourceReader;
     }
 
     @Override
     public void handle(HttpRequest req, HttpResponse res) throws IOException {
-        res.setViewPath(req.getPath());
+        if (res.hasNotViewPath()) {
+            return;
+        }
 
-        res.setStatus(HttpStatus.OK);
-        res.setBody(staticResourceReader.read(req.getPath()));
+        final byte[] body = staticResourceReader.read(res.getViewPath());
+        res.setBody(body);
     }
 }

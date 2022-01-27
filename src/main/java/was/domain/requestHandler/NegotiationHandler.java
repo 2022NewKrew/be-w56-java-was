@@ -1,59 +1,72 @@
 package was.domain.requestHandler;
 
+import di.annotation.Bean;
+import was.domain.http.HttpRequest;
+import was.domain.http.HttpResponse;
 import was.meta.HttpHeaders;
 import was.meta.HttpStatus;
 import was.meta.MediaTypes;
-import was.domain.http.HttpRequest;
-import was.domain.http.HttpResponse;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+@Bean
 public class NegotiationHandler implements RequestHandler {
-
-    private NegotiationHandler() {
-    }
-
-    public static NegotiationHandler getInstance() {
-        return NegotiationHandlerWrapper.INSTANCE;
-    }
-
-    private static class NegotiationHandlerWrapper {
-        private static final NegotiationHandler INSTANCE = new NegotiationHandler();
-    }
 
     @Override
     public void handle(HttpRequest req, HttpResponse res) {
-        if (HttpStatus.FOUND.equals(res.getStatus())) {
+        if (isRedirect(res)) {
             return;
         }
 
-        final String fileExtension;
-        if (!req.getPath().contains(".")) {
-            fileExtension = "";
-        } else {
-            fileExtension = req.getPath().split("\\.")[1];
-        }
+        final MediaTypes mediaTypes = findMediaTypeByAcceptTokenAndFileExtension(req, res);
 
-        String acceptStr = req.getHeader(HttpHeaders.ACCEPT);
-        if (acceptStr == null) {
-            acceptStr = "*.*";
-        }
+        res.addHeader(HttpHeaders.CONTENT_TYPE, mediaTypes.getValue());
+        res.addHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(res.getContentLength()));
+    }
 
-        final List<String> accept = Arrays.stream(acceptStr.split(","))
-                .map(token -> token.replaceAll("\\*", "(.*)").trim().split(";")[0])
+    private MediaTypes findMediaTypeByAcceptTokenAndFileExtension(HttpRequest req, HttpResponse res) {
+        final List<String> acceptTokens = Arrays.stream(getAcceptHeader(req).split(","))
+                .map(this::toAcceptToken)
                 .collect(Collectors.toList());
 
-        final MediaTypes mediaTypes = MediaTypes.findMediaType(accept, fileExtension);
+        final String fileExtension = getFileExtension(res);
 
-        final Map<String, String> header = new HashMap<>();
+        return MediaTypes.findMediaType(acceptTokens, fileExtension);
+    }
 
-        header.put(HttpHeaders.CONTENT_TYPE, mediaTypes.getValue());
-        header.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(res.getContentLength()));
+    private boolean isRedirect(HttpResponse res) {
+        return HttpStatus.FOUND.equals(res.getStatus());
+    }
 
-        res.addAllHeaders(header);
+    private String toAcceptToken(String acceptHeader) {
+        return acceptHeader.replaceAll("\\*", "(.*)")
+                .trim().split(";")[0];
+    }
+
+    private String getFileExtension(HttpResponse res) {
+        if (res.hasNotViewPath()) {
+            return "";
+        }
+
+        final String viewPath = res.getViewPath();
+
+        final String fileExtension;
+        if (!viewPath.contains(".")) {
+            fileExtension = "";
+        } else {
+            fileExtension = viewPath.split("\\.")[1];
+        }
+
+        return fileExtension;
+    }
+
+    private String getAcceptHeader(HttpRequest req) {
+        String accept = req.getHeader(HttpHeaders.ACCEPT);
+        if (accept == null) {
+            accept = "*.*";
+        }
+        return accept;
     }
 }

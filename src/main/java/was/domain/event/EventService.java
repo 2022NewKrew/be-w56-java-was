@@ -1,33 +1,24 @@
 package was.domain.event;
 
-import was.domain.controller.Controller;
+import di.annotation.Bean;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
 import was.domain.requestHandler.FrontRequestHandler;
 import was.domain.requestHandler.RequestHandler;
 import was.meta.HttpStatus;
-import was.meta.UrlPath;
 import was.util.HttpMapper;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.function.Consumer;
 
+@Bean
 public class EventService {
-    private RequestHandler frontRequestHandler;
-    private final HttpMapper httpMapper = new HttpMapper();
+    private final RequestHandler frontRequestHandler;
+    private final HttpMapper httpMapper;
 
-    private EventService() {
-    }
-
-    public static EventService getInstance(Map<UrlPath, Controller> controllers) {
-        final EventService instance = EventServiceWrapper.INSTANCE;
-        instance.frontRequestHandler = FrontRequestHandler.getInstance(controllers);
-        return instance;
-    }
-
-    private static class EventServiceWrapper {
-        private static final EventService INSTANCE = new EventService();
+    public EventService(FrontRequestHandler frontRequestHandler, HttpMapper httpMapper) {
+        this.frontRequestHandler = frontRequestHandler;
+        this.httpMapper = httpMapper;
     }
 
     public void doService(byte[] requestBytes, Consumer<byte[]> returnResponse) {
