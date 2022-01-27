@@ -19,23 +19,23 @@ public final class UserController {
 
     @PostMapping("/user/create")
     public Response userAdd(Request request) throws InvalidRequestException {
-        log.debug("userController.userAdd called");
-        if (DataBase.findUserById(request.getQuery("userId")) != null) {
+        log.debug("user {} 생성 시도", request.getParam("userId"));
+        if (DataBase.findUserById(request.getParam("userId")) != null) {
             throw new InvalidRequestException("UserId 중복");
         }
         DataBase.addUser(User.builder()
-            .userId(request.getQuery("userId"))
-            .password(request.getQuery("password"))
-            .name(request.getQuery("name"))
-            .email(request.getQuery("email"))
+            .userId(request.getParam("userId"))
+            .password(request.getParam("password"))
+            .name(request.getParam("name"))
+            .email(request.getParam("email"))
             .build());
         return ResponseFactory.redirect(HOME_URL);
     }
 
     @PostMapping("/user/login")
     public Response userLogin(Request request) {
-        String userId = request.getQuery("userId");
-        String password = request.getQuery("password");
+        String userId = request.getParam("userId");
+        String password = request.getParam("password");
         log.debug("user login 시도: {}, {}", userId, password);
 
         if (DataBase.findUserById(userId) == null ||
@@ -44,6 +44,6 @@ public final class UserController {
                 .setCookie("logined=false");
         }
         return ResponseFactory.redirect(HOME_URL)
-            .setCookie("logined=true&userId=" + request.getQuery("userId"), "Path=/");
+            .setCookie("logined=true&userId=" + request.getParam("userId"), "Path=/");
     }
 }

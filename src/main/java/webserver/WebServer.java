@@ -12,6 +12,7 @@ public class WebServer {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
+        // Context 초기화: @Controller 가 붙은 클래스, @PostMapping 이 붙은 메소드를 모두 읽음
         Context.init();
 
         int port = 0;

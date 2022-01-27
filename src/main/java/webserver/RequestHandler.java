@@ -36,7 +36,6 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     private void handleRequest(InputStream in, OutputStream out) {
@@ -48,7 +47,7 @@ public class RequestHandler extends Thread {
             response = handler.handle(request);
             log.debug("response 생성");
         } catch (Exception e) {
-            log.error("Exception occurred: {}", e.getMessage());
+            log.error("Exception 발생: {}", e.getMessage());
             e.printStackTrace();
             response = ResponseFactory.error(e);
         } finally {

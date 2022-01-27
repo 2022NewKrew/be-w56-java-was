@@ -23,7 +23,7 @@ public class Request {
         return uri;
     }
 
-    public String getQuery(String key) {
+    public String getParam(String key) {
         return body.get(key);
     }
 }

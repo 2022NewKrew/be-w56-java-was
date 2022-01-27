@@ -21,14 +21,14 @@ public final class ResponseWriter {
             writeHeaderLine(dos, response);
             writeBody(dos, response);
             dos.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
     }
 
     private static void writeResponseLine(DataOutputStream dos, Response response)
-        throws IOException {
+        throws Exception {
         dos.writeBytes(
             HTTP_VERSION + " " + response.getStatusCode().getStatus() + " "
                 + response.getStatusCode().getDescription()
