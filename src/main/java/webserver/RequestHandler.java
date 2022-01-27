@@ -34,8 +34,11 @@ public class RequestHandler extends Thread {
                 case "/user/create":
                     userController.signUp(dos, header);
                     break;
+                case "/user/login":
+                    userController.login(dos, header);
+                    break;
                 default:
-                    controller.fetchStaticFile(dos, header);
+                    controller.responseStaticFile(dos, header);
                     break;
             }
         } catch (IOException e) {

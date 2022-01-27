@@ -18,6 +18,9 @@
 - 404 page를 던질때 try catch 한번더 사용되는 문제
 - buffered reader 에서 readline 으로 body가 읽히지 않는 문제
 
+## 4단계
+- cookie를 이용한 로그인 구현
+
 ## 해야할것
 - html의 중복되는 부분처리
   - 우선순위 낮음 

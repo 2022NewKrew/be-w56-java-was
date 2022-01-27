@@ -30,4 +30,22 @@ public class UserController {
         httpResponseUtils.response300Header(dos, outputBody.length);
         HttpResponseUtils.responseBody(dos, outputBody);
     }
+
+    public void login(DataOutputStream dos, RequestHeader header) throws IOException {
+        Map<String, String> body = header.getBody();
+        User user = DataBase.findUserById(body.get("userId"));
+        if (user != null && user.getPassword().equals(body.get("password"))) {
+            String path = "./webapp/index.html";
+            File file = new File(path);
+            outputBody = Files.readAllBytes(file.toPath());
+            httpResponseUtils.responseLoginHeader(dos, outputBody.length);
+            HttpResponseUtils.responseBody(dos, outputBody);
+            return;
+        }
+        String path = "./webapp/user/login_failed.html";
+        File file = new File(path);
+        outputBody = Files.readAllBytes(file.toPath());
+        httpResponseUtils.responseLoginFailedHeader(dos, outputBody.length);
+        HttpResponseUtils.responseBody(dos, outputBody);
+    }
 }
