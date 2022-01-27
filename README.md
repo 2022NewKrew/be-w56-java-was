@@ -27,3 +27,15 @@
     - Content-type
     - type/subtype
     - text/html, text/css, text/javascript
+
+# Step 3
+### 구현 내용
+
+- 응답 헤더에 Location 추가
+- POST로 회원가입 하도록 수정
+
+### 새롭게 알게 된 내용
+
+- response header의 Location
+  - 응답 헤더에 페이지를 리디렉션 할 URL을 나타낸다. 
+  - 3xx (리디렉션) 또는 201 (만든) 상태 응답과 함께 제공될 때만 의미를 제공한다.
