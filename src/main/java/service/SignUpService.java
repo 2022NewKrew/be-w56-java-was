@@ -5,15 +5,12 @@ import java.util.Map;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 public class SignUpService {
 
     private static final Logger log = LoggerFactory.getLogger(SignUpService.class);
 
-
-    public static void signUp(String queryString) {
-        Map<String, String> queryData = HttpRequestUtils.parseQueryString(queryString);
+    public static void signUp(Map<String, String> queryData) {
 
         User user = new User(
             queryData.get("userId"),

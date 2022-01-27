@@ -6,28 +6,29 @@ import static webserver.http.HttpMeta.MIME_TYPE_OF_CSS;
 import static webserver.http.HttpMeta.MIME_TYPE_OF_JAVASCRIPT;
 import static webserver.http.HttpMeta.SUFFIX_OF_CSS_FILE;
 import static webserver.http.HttpMeta.SUFFIX_OF_JS_FILE;
+import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 public class HttpResponse {
 
     private final String httpVersion;
     private final HttpResponseHeaders headers;
-    private final DataOutputStream dos;
+    private String viewPage;
+    private String message;
     private int statusCode;
     private String status;
 
-    public HttpResponse(String httpVersion, HttpResponseHeaders headers, DataOutputStream dos) {
+    public HttpResponse(String httpVersion, HttpResponseHeaders headers) {
         this.httpVersion = httpVersion;
         this.headers = headers;
-        this.dos = dos;
         this.statusCode = HttpURLConnection.HTTP_OK;
         this.status = HTTP_STATUS_OK;
+        this.viewPage = null;
+        this.message = null;
     }
 
     public String getHttpVersion() {
@@ -40,7 +41,7 @@ public class HttpResponse {
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
-        if (statusCode != HttpURLConnection.HTTP_OK) {
+        if (statusCode != HttpURLConnection.HTTP_OK && statusCode != HttpURLConnection.HTTP_MOVED_TEMP) {
             this.status = HTTP_STATUS_NOT_OK;
         }
     }
@@ -49,42 +50,37 @@ public class HttpResponse {
         return status;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public HttpResponseHeaders getHeaders() {
         return headers;
     }
 
-    public void setHeader(Header header, String value) {
-        headers.addHeader(header, value);
+    public String getViewPage() {
+        return viewPage;
     }
 
-    public void setContentType(Path filePath) throws IOException {
+    public void setViewPage(String viewPage) {
+        this.viewPage = viewPage;
+    }
+
+    private void setHeader(HttpResponseHeader httpResponseHeader, String value) {
+        headers.addHeader(httpResponseHeader, value);
+    }
+
+    public void setContentTypeWithFilePath(Path filePath) throws IOException {
         String contentType = getContentTypeFromFilePath(filePath);
-        setHeader(Header.Content_Type, contentType);
+        setContentType(contentType);
     }
 
-    public void setContentLength(long contentLength) {
-        setHeader(Header.Content_Length, Long.toString(contentLength));
-    }
-
-    public void setLocation(String redirectPath) {
-        setHeader(Header.Location, redirectPath);
-    }
-
-    public void sendNormalResponse(EncodedHttpResponse encodedResponse) throws IOException {
-        dos.writeBytes(encodedResponse.getStatusLine());
-        List<String> responseHeader = encodedResponse.getResponseHeaders();
-        for (String header : responseHeader) {
-            dos.writeBytes(header);
-        }
-        dos.write(encodedResponse.getBody(), 0, encodedResponse.getBodyLength());
-    }
-
-    public void sendRedirectResponse(EncodedHttpResponse encodedResponse) throws IOException {
-        dos.writeBytes(encodedResponse.getStatusLine());
-        List<String> responseHeader = encodedResponse.getResponseHeaders();
-        for (String header : responseHeader) {
-            dos.writeBytes(header);
-        }
+    public void setContentType(String contentType) {
+        setHeader(HttpResponseHeader.Content_Type, contentType);
     }
 
     private String getContentTypeFromFilePath(Path filePath) throws IOException {
@@ -98,20 +94,20 @@ public class HttpResponse {
         return Files.probeContentType(filePath);
     }
 
-    enum Header {
-        Content_Type("Content-Type"),
-        Content_Length("Content-Length"),
-        Location("Location");
+    public void setContentLength(long contentLength) {
+        setHeader(HttpResponseHeader.Content_Length, Long.toString(contentLength));
+    }
 
-        private final String header;
+    public void setLocation(String redirectPath) {
+        setHeader(HttpResponseHeader.Location, redirectPath);
+    }
 
-        Header(String header) {
-            this.header = header;
-        }
+    public void setCookie(boolean loginResult) {
+        setHeader(HttpResponseHeader.Set_Cookie, "logined=" + loginResult + "; Path=/");
+    }
 
-        @Override
-        public String toString() {
-            return header;
-        }
+    public void redirectBasicPage() {
+        setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
+        setLocation(VIEW_BASIC_PAGE);
     }
 }
