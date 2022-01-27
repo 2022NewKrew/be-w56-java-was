@@ -1,19 +1,18 @@
-package webserver.requesthandler.httprequest;
+package webserver.dto.request;
+
+import lombok.AllArgsConstructor;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import static webserver.common.exception.ExceptionMessage.UNSUPPORTED_HTTP_METHOD_EXCEPTION;
 
+@AllArgsConstructor
 public enum HttpMethod {
     GET("GET"),
     POST("POST");
 
     private final String method;
-
-    HttpMethod(String method) {
-        this.method = method;
-    }
 
     public static Stream<HttpMethod> stream() {
         return Stream.of(HttpMethod.values());

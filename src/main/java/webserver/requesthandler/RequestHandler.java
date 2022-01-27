@@ -1,19 +1,19 @@
 package webserver.requesthandler;
 
-import application.service.UserService;
+import common.controller.AbstractController;
+import common.dto.ControllerRequest;
+import common.dto.ControllerResponse;
+import common.util.ControllerMapper;
 import lombok.extern.slf4j.Slf4j;
-import webserver.requesthandler.httprequest.HttpRequest;
-import webserver.requesthandler.httprequest.HttpRequestStartLine;
-import webserver.requesthandler.httpresponse.HttpResponse;
-import webserver.requesthandler.httpresponse.HttpStatus;
+import webserver.dto.request.HttpRequest;
+import webserver.dto.request.HttpRequestStartLine;
+import webserver.dto.response.HttpResponse;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 public class RequestHandler extends Thread {
@@ -30,10 +30,10 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-            HttpRequest httpRequest = HttpRequest.doRequest(br);
+            HttpRequest httpRequest = HttpRequest.request(br);
             HttpResponse httpResponse = handleRequest(httpRequest);
 
-            httpResponse.doResponse(out);
+            httpResponse.respond(out);
         } catch (IOException | RuntimeException e) {
             log.error(e.getMessage());
         }
@@ -41,25 +41,20 @@ public class RequestHandler extends Thread {
 
     private HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         HttpRequestStartLine startLine = httpRequest.getStartLine();
-        Map<String, String> requestBody = httpRequest.getBody();
-        Map<String, String> requestHeader = httpRequest.getHeader();
-        String contentType = requestHeader.get("Accept").split(",")[0];
+        String contentType = httpRequest.getHeader().get("Accept").split(",")[0];
         Map<String, String> responseHeader = new HashMap<>();
         responseHeader.put("Content-Type", contentType);
 
-        String url = startLine.getUrl();
-        HttpStatus httpStatus = HttpStatus.valueOf(200);
-        String redirectTo = "./webapp" + url;
+        ControllerRequest controllerRequest = ControllerRequest.builder()
+                .httpMethod(startLine.getMethod())
+                .url(startLine.getUrl())
+                .header(responseHeader)
+                .body(httpRequest.getBody())
+                .build();
 
-        if (Objects.equals(url, "/users")) {
-            log.debug("Request to: /users");
-            UserService.create(requestBody);
-            httpStatus = HttpStatus.valueOf(302);
-            redirectTo = "./webapp/index.html";
-        }
+        AbstractController controller = ControllerMapper.getController(startLine.getUrl());
+        ControllerResponse controllerResponse = controller.doService(controllerRequest);
 
-        log.debug("[Redirect] " + redirectTo);
-        byte[] responseBody = Files.readAllBytes(new File(redirectTo).toPath());
-        return HttpResponse.valueOf(httpStatus, responseHeader, startLine.getVersion(), responseBody);
+        return HttpResponse.valueOf(controllerResponse, startLine.getVersion());
     }
 }

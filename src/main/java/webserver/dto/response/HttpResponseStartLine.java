@@ -1,13 +1,11 @@
-package webserver.requesthandler.httpresponse;
+package webserver.dto.response;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class HttpResponseStartLine {
     private final String version;
     private final HttpStatus httpStatus;
-
-    public HttpResponseStartLine(String httpVersion, HttpStatus httpStatus) {
-        this.version = httpVersion;
-        this.httpStatus = httpStatus;
-    }
 
     @Override
     public String toString() {

@@ -2,7 +2,9 @@ package webserver.common.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.requesthandler.httprequest.HttpRequestStartLine;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import webserver.dto.request.HttpRequestStartLine;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,22 +76,11 @@ public class HttpUtils {
         return header;
     }
 
+    @Getter
+    @AllArgsConstructor
     public static class Pair {
         String key;
         String value;
-
-        public Pair(String key, String value) {
-            this.key = key.trim();
-            this.value = value.trim();
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
 
         @Override
         public int hashCode() {

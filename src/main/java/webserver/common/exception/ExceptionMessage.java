@@ -1,5 +1,10 @@
 package webserver.common.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ExceptionMessage {
     HTTP_METHOD_NOT_FOUND_EXCEPTION("HTTP 메소드가 없습니다."),
     UNSUPPORTED_HTTP_METHOD_EXCEPTION("현재는 지원되지 않는 메소드입니다."),
@@ -9,12 +14,4 @@ public enum ExceptionMessage {
     HTTP_STATUS_NOT_FOUND_EXCEPTION("해당하는 HTTP 상태 코드가 없습니다.");
 
     private final String message;
-
-    ExceptionMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

@@ -1,4 +1,4 @@
-package webserver.requesthandler.httprequest;
+package webserver.dto.request;
 
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class HttpRequest {
     private final Map<String, String> header;
     private final Map<String, String> body;
 
-    public static HttpRequest doRequest(BufferedReader br) throws IOException {
+    public static HttpRequest request(BufferedReader br) throws IOException {
         log.debug("[HTTP Request]");
         HttpRequestStartLine startLine = inputStartLine(br);
         Map<String, String> headers = HttpRequest.inputHeader(br);
