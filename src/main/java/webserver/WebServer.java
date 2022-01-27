@@ -1,16 +1,20 @@
 package webserver;
 
+import context.Context;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WebServer {
+
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
+        // Context 초기화: @Controller 가 붙은 클래스, @PostMapping 이 붙은 메소드를 모두 읽음
+        Context.init();
+
         int port = 0;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
