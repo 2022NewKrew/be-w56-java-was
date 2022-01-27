@@ -1,5 +1,6 @@
 package controller;
 
+import dto.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,13 +14,13 @@ public class FrontController {
     private static final Logger log;
     private static final Map<String, Controller> REQUEST_MAPPINGS;
     private static final FrontController INSTANCE;
-    private static final ViewController DEFAULT_CONTROLLER;
+    private static final DefaultController DEFAULT_CONTROLLER;
 
     static {
         log = LoggerFactory.getLogger(FrontController.class);
         REQUEST_MAPPINGS = new HashMap<>();
         INSTANCE = new FrontController();
-        DEFAULT_CONTROLLER = ViewController.getInstance();
+        DEFAULT_CONTROLLER = DefaultController.getInstance();
         init();
     }
 
@@ -33,15 +34,17 @@ public class FrontController {
         return INSTANCE;
     }
 
-    public void dispatch(String requestMethod, String requestPath, Map<String, String> queryParams, DataOutputStream dos) throws IOException {
+    public void dispatch(RequestInfo requestInfo, DataOutputStream dos) throws IOException {
 
-        log.info("[{}], path - {}, queryParams - {}", requestMethod, requestPath, queryParams);
+        String requestMethod = requestInfo.getRequestMethod();
+        String requestPath = requestInfo.getRequestPath();
+        Map<String, String> queryParams = requestInfo.getQueryParams();
+        Map<String, String> bodyParams = requestInfo.getBodyParams();
 
-        Controller controller = REQUEST_MAPPINGS.get(requestPath);
-        String viewPath = requestPath;
-        if(controller != null) {
-            viewPath = controller.handleRequest(requestMethod, requestPath, queryParams);
-        }
-        DEFAULT_CONTROLLER.viewResolve(viewPath, dos);
+        log.info("[{}], path - {}, params - {}", requestInfo.getRequestMethod(), requestInfo.getRequestPath(), requestMethod.equals("POST") ? bodyParams : queryParams);
+
+        Controller controller = REQUEST_MAPPINGS.getOrDefault(requestPath, DEFAULT_CONTROLLER);
+
+        controller.handleRequest(requestInfo, dos);
     }
 }
