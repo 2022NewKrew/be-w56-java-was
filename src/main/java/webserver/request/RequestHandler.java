@@ -1,18 +1,20 @@
 package webserver.request;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import webserver.response.ResponseHandler;
-import webserver.header.ContentType;
+import util.IOUtils;
 import webserver.header.HttpMethod;
 import webserver.header.RequestLine;
+import webserver.response.ResponseHandler;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -35,21 +37,28 @@ public class RequestHandler extends Thread {
             addRequestLine(br, headerMap);
             addRequestHeader(br, headerMap);
             Map<String, String> queryMap = getQueryStringMap(headerMap);
+            Map<String, String> bodyMap = getRequestBody(br, headerMap);
 
             RequestControllerMatcher requestControllerMatcher = new RequestControllerMatcher(
                     HttpMethod.match(headerMap.get(RequestLine.METHOD.name())),
                     headerMap.get(RequestLine.PATH.name()));
-            String result = requestControllerMatcher.match(queryMap);
-
-            ContentType contentType = HttpRequestUtils.parseExtension(result);
-            byte[] body = Files.readAllBytes(new File("./webapp" + result).toPath());
+            String result = requestControllerMatcher.match(queryMap, bodyMap);
 
             ResponseHandler responseHandler = new ResponseHandler(dos);
-            responseHandler.response(body, contentType);
+            responseHandler.response(result);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
         }
+    }
+
+    private Map<String, String> getRequestBody(BufferedReader br, Map<String, String> headerMap) throws IOException {
+        Map<String, String> bodyMap = new HashMap<>();
+        if (headerMap.get("Content-Length") != null) {
+            String body = IOUtils.readData(br, Integer.parseInt(headerMap.get("Content-Length")));
+            bodyMap = HttpRequestUtils.parseBody(body);
+        }
+        return bodyMap;
     }
 
     private Map<String, String> getQueryStringMap(Map<String, String> headerMap) {
