@@ -12,11 +12,11 @@ import java.io.OutputStream;
 public class HttpResponseUtils {
     private static final Logger logger = LoggerFactory.getLogger(HttpResponseUtils.class);
 
-    public static void response(OutputStream out, MyHttpResponse myHttpResponse, MIME mime) {
+    public static void response(OutputStream out, MyHttpResponse myHttpResponse, String uri) {
         DataOutputStream dos = new DataOutputStream(out);
 
         try {
-            responseHeader(dos, myHttpResponse, mime);
+            responseHeader(dos, myHttpResponse, uri);
             responseBody(dos, myHttpResponse);
             dos.flush();
         } catch (IOException e) {
@@ -24,10 +24,13 @@ public class HttpResponseUtils {
         }
     }
 
-    private static void responseHeader(DataOutputStream dos, MyHttpResponse myHttpResponse, MIME mime) {
+    private static void responseHeader(DataOutputStream dos, MyHttpResponse myHttpResponse, String uri) {
         try {
             dos.writeBytes(myHttpResponse.getStatusLine());
-            dos.writeBytes("Content-Type: " + mime.getContentType() + ";charset=utf-8\r\n");
+            if (myHttpResponse.getStatusLine().split(" ")[1].equals("302")) {
+                dos.writeBytes("Location: " + uri + "\r\n");
+            }
+            dos.writeBytes("Content-Type: " + MIME.parse(uri).getContentType() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + myHttpResponse.getBody().length + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

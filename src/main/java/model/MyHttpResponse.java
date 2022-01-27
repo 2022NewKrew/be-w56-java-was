@@ -25,7 +25,7 @@ public class MyHttpResponse {
             httpStatus = get(myHttpRequest);
         }
         else if (myHttpRequest.getMethod().equals("POST")) {
-            httpStatus = HttpStatus.CREATED;
+            httpStatus = post(myHttpRequest);
         }
 
         statusLine = httpStatus.makeStatusLine(myHttpRequest.getProtocol());
@@ -34,13 +34,8 @@ public class MyHttpResponse {
     private HttpStatus get(MyHttpRequest request) {
         try {
             String uri = request.getUri();
-            uri = processStaticUri(uri);
 
             if (uri.equals("/")) {
-                body = Files.readAllBytes(new File(MAIN_PAGE).toPath());
-            }
-            else if (uri.equals("/user/create")) {
-                userController.signUp(request.getParameters());
                 body = Files.readAllBytes(new File(MAIN_PAGE).toPath());
             }
             else {
@@ -52,16 +47,24 @@ public class MyHttpResponse {
         }
     }
 
-    private String processStaticUri(String uri) {
-        String[] staticUri= {"/css", "/js", "/fonts", "/images"};
-        for (String s : staticUri) {
-            if (uri.contains(s)) {
-                uri = uri.substring(1);
-                int idx = uri.indexOf('/');
-                return uri.substring(idx);
+    private HttpStatus post(MyHttpRequest request) {
+        try {
+            String uri = request.getUri();
+
+            if (uri.equals("/user/create")) {
+                userController.signUp(request.getParameters());
+
+                request.setUri("/");
+                body = Files.readAllBytes(new File(MAIN_PAGE).toPath());
+                return HttpStatus.REDIRECT;
             }
+            else {
+                body = Files.readAllBytes(new File(DEFAULT_PATH + uri).toPath());
+            }
+            return HttpStatus.OK;
+        } catch (IOException e) {
+            return HttpStatus.NOT_FOUND;
         }
-        return uri;
     }
 
     public String getStatusLine() {

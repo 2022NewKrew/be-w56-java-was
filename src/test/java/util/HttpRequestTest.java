@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +15,7 @@ class HttpRequestTest {
 
     @DisplayName("Request 첫 줄을 잘 저장하는 지 테스트")
     @Test
-    void setRequestTest() {
+    void setRequestTest() throws IOException {
         // given
         MyHttpRequest myHttpRequest = new MyHttpRequest();
         String request = "GET /index.html HTTP/1.1";
@@ -62,5 +63,17 @@ class HttpRequestTest {
 
         // then
         assertEquals(myHttpRequest.getHeader(key), value);
+    }
+
+    @DisplayName("request 포맷이 잘못된 경우")
+    @Test
+    void setRequestExceptionTest() {
+        MyHttpRequest myHttpRequest = new MyHttpRequest();
+        String request = "GET /index.html";
+
+        try {
+            myHttpRequest.setRequest(request);
+            fail();
+        } catch (IOException ignored) {}
     }
 }

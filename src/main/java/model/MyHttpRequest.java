@@ -1,5 +1,9 @@
 package model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.IOUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,20 +19,32 @@ public class MyHttpRequest {
     private final Map<String, String> parameters = new HashMap<>();
     private final Map<String, String> headers = new HashMap<>();
 
+    private static final Logger logger = LoggerFactory.getLogger(MyHttpRequest.class);
+
     public MyHttpRequest() {}
 
     public MyHttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String request = br.readLine();
-
+        logger.debug("request : {}", request);
         setRequest(request);
 
         br.lines().takeWhile(line -> !line.equals(""))
                 .forEach(this::setHeader);
+
+        if(method.equals("POST")) {
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+            Stream.of(body.split("&"))
+                    .forEach(this::setParameters);
+        }
     }
 
-    public void setRequest(String request) {
+    public void setRequest(String request) throws IOException {
         String[] tokens = request.split(" ");
+
+        if (tokens.length != 3) {
+            throw new IOException("http request 포맷이 잘못 되었습니다.");
+        }
 
         this.method = tokens[0];
         setUri(tokens[1]);
