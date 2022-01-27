@@ -22,23 +22,24 @@ public class ResponseHandler {
         this.dos = dos;
     }
 
-    public void response(String result) throws IOException {
-        String[] parsed = result.split(":");
+    public void response(Response result) throws IOException {
+        String[] parsed = result.getPath().split(":");
         if(parsed.length == 2) {
-            response302Header(parsed[1]);
+            response302Header(parsed[1], result);
         }
         else {
-            ContentType contentType = HttpRequestUtils.parseExtension(result);
-            byte[] body = Files.readAllBytes(new File("./webapp" + result).toPath());
-            response200Header(body.length, contentType);
+            ContentType contentType = HttpRequestUtils.parseExtension(result.getPath());
+            byte[] body = Files.readAllBytes(new File("./webapp" + result.getPath()).toPath());
+            response200Header(body.length, contentType, result);
             responseBody(body);
         }
     }
 
-    private void response302Header(String location) {
+    private void response302Header(String location, Response response) {
         try {
             dos.writeBytes("HTTP/1.1 302 FOUND "+NEXT_LINE);
             dos.writeBytes("Location: " + location + NEXT_LINE);
+            dos.writeBytes(response.getCookie());
             dos.writeBytes(NEXT_LINE);
             dos.flush();
         } catch (IOException e) {
@@ -47,11 +48,12 @@ public class ResponseHandler {
         }
     }
 
-    private void response200Header(int lengthOfBodyContent, ContentType contentType) {
+    private void response200Header(int lengthOfBodyContent, ContentType contentType, Response response) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK "+NEXT_LINE);
             dos.writeBytes("Content-Type: "+contentType.getType()+";charset=utf-8"+NEXT_LINE);
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + NEXT_LINE);
+            dos.writeBytes(response.getCookie());
             dos.writeBytes(NEXT_LINE);
         } catch (IOException e) {
             e.printStackTrace();

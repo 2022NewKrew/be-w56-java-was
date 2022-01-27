@@ -7,6 +7,7 @@ import annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.header.HttpMethod;
+import webserver.response.Response;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class RequestProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(RequestProcessor.class);
 
-    public static <T> String process(
+    public static <T> Response process(
             Class<T> clazz,
             String path,
             HttpMethod httpMethod,
@@ -30,7 +31,7 @@ public class RequestProcessor {
         T instance = clazz.getDeclaredConstructor().newInstance();
 
         Method[] methods = instance.getClass().getDeclaredMethods();
-        String result = "";
+        Response result = null;
         for(Method method : methods){
             result = getMethodProcess(path, httpMethod, queryMap, instance, result, method);
             result = postMethodProcess(path, httpMethod, bodyMap, instance, result, method);
@@ -39,12 +40,12 @@ public class RequestProcessor {
         return result;
     }
 
-    private static <T> String postMethodProcess(
+    private static <T> Response postMethodProcess(
             String path,
             HttpMethod httpMethod,
             Map<String, String> bodyMap,
             T instance,
-            String result,
+            Response result,
             Method method)
             throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
@@ -54,7 +55,7 @@ public class RequestProcessor {
 
             Parameter[] parameters = method.getParameters();
             Object requestBody = createRequestBody(bodyMap, parameters);
-            result = (String) method.invoke(instance, requestBody);
+            result = (Response) method.invoke(instance, requestBody);
         }
         return result;
     }
@@ -80,12 +81,12 @@ public class RequestProcessor {
         return result;
     }
 
-    private static <T> String getMethodProcess(
+    private static <T> Response getMethodProcess(
             String path,
             HttpMethod httpMethod,
             Map<String, String> queryMap,
             T instance,
-            String result,
+            Response result,
             Method method)
             throws IllegalAccessException, InvocationTargetException {
 
@@ -95,7 +96,7 @@ public class RequestProcessor {
 
             Parameter[] parameters = method.getParameters();
             List<Object> objects = createMethodParam(queryMap, parameters);
-            result = (String) method.invoke(instance, objects.toArray());
+            result = (Response) method.invoke(instance, objects.toArray());
         }
         return result;
     }

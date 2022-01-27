@@ -6,6 +6,7 @@ import util.HttpRequestUtils;
 import util.IOUtils;
 import webserver.header.HttpMethod;
 import webserver.header.RequestLine;
+import webserver.response.Response;
 import webserver.response.ResponseHandler;
 
 import java.io.BufferedReader;
@@ -42,7 +43,7 @@ public class RequestHandler extends Thread {
             RequestControllerMatcher requestControllerMatcher = new RequestControllerMatcher(
                     HttpMethod.match(headerMap.get(RequestLine.METHOD.name())),
                     headerMap.get(RequestLine.PATH.name()));
-            String result = requestControllerMatcher.match(queryMap, bodyMap);
+            Response result = requestControllerMatcher.match(queryMap, bodyMap);
 
             ResponseHandler responseHandler = new ResponseHandler(dos);
             responseHandler.response(result);
