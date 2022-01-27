@@ -6,16 +6,13 @@ import http.request.HttpRequest;
 import http.request.HttpRequestFactory;
 import http.response.HttpResponse;
 import http.response.HttpResponse400;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Constant;
 import view.ViewMaker;
 
 public class RequestHandler extends Thread {
@@ -50,18 +47,5 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-    }
-
-    private String inputStreamToStrings(InputStream inputStream) throws IOException {
-        StringBuilder result = new StringBuilder();
-
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-        String line;
-        while (!(line = bufferedReader.readLine()).equals("")) {
-            result.append(line).append(Constant.lineBreak);
-        }
-        return result.toString();
     }
 }
