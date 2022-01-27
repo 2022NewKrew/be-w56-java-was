@@ -1,4 +1,4 @@
-package db;
+package app.db;
 
 import java.util.Collection;
 import java.util.Map;

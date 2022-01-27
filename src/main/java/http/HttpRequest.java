@@ -1,33 +1,18 @@
 package http;
 
-import util.HttpRequestUtils;
-
 import java.net.URI;
 
 public class HttpRequest {
     private HttpMethod httpMethod;
     private HttpHeaders headers;
-    private HttpRequestParams httpRequestParams;
     private URI requestUri;
-    private String body;
+    private byte[] body;
 
-    public HttpRequest(HttpMethod httpMethod, URI requestUri, HttpRequestParams httpRequestParams, HttpHeaders headers, String body) {
+    public HttpRequest(HttpMethod httpMethod, URI requestUri, HttpHeaders headers, byte[] body) {
         this.httpMethod = httpMethod;
         this.requestUri = requestUri;
         this.headers = headers;
         this.body = body;
-        if(hasContentType() && getContentType().equals(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)) {
-            httpRequestParams.putAll(HttpRequestUtils.parseQueryString(body));
-        }
-        this.httpRequestParams = httpRequestParams;
-    }
-
-    public ContentType getContentType() {
-        return ContentType.getContentType(headers.getHeaderByName("Content-Type"));
-    }
-
-    public boolean hasContentType() {
-        return headers.getHeaderByName("Content-Type") != null;
     }
 
     public HttpHeaders getHeaders() {
@@ -38,19 +23,27 @@ public class HttpRequest {
         return httpMethod;
     }
 
-    public HttpRequestParams getRequestParams() {
-        return httpRequestParams;
-    }
-
     public String getPath() {
         return requestUri.getPath();
+    }
+
+    public String getQuery() {
+        return requestUri.getQuery();
     }
 
     public URI getRequestUri() {
         return requestUri;
     }
 
-    public Object getBody() {
+    public boolean hasBody() {
+        return body != null;
+    }
+
+    public ContentType getContentType() {
+        return ContentType.getContentType(headers.getHeaderByName("Content-Type"));
+    }
+
+    public byte[] getBody() {
         return body;
     }
 }

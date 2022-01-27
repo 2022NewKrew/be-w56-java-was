@@ -13,3 +13,4 @@
 
 - InputStream이 닫히면 Socket도 닫힌다.
 - ClassLoader.getSystemResource()를 통해서 classpath 내의 리소스 파일을 읽을 수 있다.
+- HTTP의 RequestLine과 헤더부는 US-ASCII Encode를 이용한다.

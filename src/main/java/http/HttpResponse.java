@@ -3,9 +3,9 @@ package http;
 public class HttpResponse {
     private HttpHeaders headers;
     private StatusCode statusCode;
-    private Object body;
+    private byte[] body;
 
-    public HttpResponse(HttpHeaders httpHeaders, StatusCode statusCode, Object body) {
+    public HttpResponse(HttpHeaders httpHeaders, StatusCode statusCode, byte[] body) {
         this.headers = httpHeaders;
         this.statusCode = statusCode;
         this.body = body;
@@ -19,7 +19,7 @@ public class HttpResponse {
         headers.addHeader(headerName, headerValue);
     }
 
-    public Object getResponseBody() {
+    public byte[] getResponseBody() {
         return body;
     }
 
