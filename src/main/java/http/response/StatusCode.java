@@ -1,15 +1,17 @@
 package http.response;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public enum StatusCode {
     OK("200 OK"),
     FOUND("302 Found"),
+    BAD_REQUEST("400 Bad Request"),
+    UNAUTHORIZED("401 Unauthorized"),
     NOT_FOUND("404 Not Found");
 
-    public static final Map<String, StatusCode> statusCodeMap = new ConcurrentHashMap<>();
+    public static final Map<String, StatusCode> statusCodeMap = new HashMap<>();
 
     static {
         for (StatusCode statusCode : StatusCode.values()) {

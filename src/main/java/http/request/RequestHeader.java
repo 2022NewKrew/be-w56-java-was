@@ -7,45 +7,16 @@ import util.Constant;
 
 public class RequestHeader {
 
-    private String method;
-    private String url;
-    private final Map<String, String> query = new HashMap<>();
-    private String protocol;
-    private final Map<String, String> components = new HashMap<>();
+    private final Map<String, String> components;
 
-    public RequestHeader(String rawHeader) {
-        List<String> headerLines = parsingRawHeader(rawHeader);
-        String firstLine = headerLines.get(0);
-        List<String> otherLine = headerLines.subList(1, headerLines.size());
-        setFirstLineComponents(firstLine);
-        setComponents(otherLine);
+    public RequestHeader(Map<String, String> components) {
+        this.components = components;
     }
 
-    private List<String> parsingRawHeader(String rawHeader) {
-        return List.of(rawHeader.split(Constant.lineBreak));
-    }
+    public RequestHeader(String headerString) {
+        this(new HashMap<>());
 
-    private void setFirstLineComponents(String firstLine) {
-        List<String> components = List.of(firstLine.split(" "));
-        this.method = components.get(0);
-        this.protocol = components.get(2);
-
-        if (components.get(1).contains("?")) {
-            components = List.of(components.get(1).split("\\?"));
-            this.url = components.get(0);
-            setQuery(components.get(1));
-            return;
-        }
-        this.url = components.get(1);
-    }
-
-    private void setQuery(String queriesString) {
-        List<String> queries = List.of(queriesString.split("&"));
-        List<String> splitQuery;
-        for (String query : queries) {
-            splitQuery = List.of(query.split("="));
-            this.query.put(splitQuery.get(0), splitQuery.get(1));
-        }
+        setComponents(List.of(headerString.split(Constant.lineBreak)));
     }
 
     private void setComponents(List<String> headerLines) {
@@ -56,11 +27,11 @@ public class RequestHeader {
         }
     }
 
-    public String getUrl() {
-        return url;
+    public boolean has(String key) {
+        return components.containsKey(key);
     }
 
-    public Map<String, String> getQuery() {
-        return query;
+    public String get(String key) {
+        return components.get(key);
     }
 }

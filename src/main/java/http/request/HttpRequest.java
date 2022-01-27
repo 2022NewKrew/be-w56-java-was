@@ -1,32 +1,38 @@
 package http.request;
 
-import java.util.List;
+import exception.BadRequestException;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import webserver.HttpMethod;
 
 public class HttpRequest {
 
-    Logger log = LoggerFactory.getLogger(HttpRequest.class);
-
+    private final RequestStartLine startLine;
     private final RequestHeader header;
     private final RequestBody body;
 
-    public HttpRequest(String rawData) {
-        List<String> splitRawData = parsingRawData(rawData);
-        this.header = new RequestHeader(splitRawData.get(0));
-        this.body = (splitRawData.size() > 1) ? new RequestBody(splitRawData.get(1)) : null;
-    }
-
-    private List<String> parsingRawData(String rawData) {
-        return List.of(rawData.split("\r\n\r\n"));
+    public HttpRequest(RequestStartLine startLine, RequestHeader header, RequestBody body) {
+        try {
+            this.startLine = startLine;
+            this.header = header;
+            this.body = body;
+        } catch (Exception exception) {
+            throw new BadRequestException(exception.getMessage());
+        }
     }
 
     public String getUrl() {
-        return header.getUrl();
+        return startLine.getUrl();
     }
 
     public Map<String, String> getQuery() {
-        return header.getQuery();
+        return startLine.getQuery();
+    }
+
+    public HttpMethod getMethod() {
+        return startLine.getMethod();
+    }
+
+    public Map<String, String> getBodyData() {
+        return body.getBodyData();
     }
 }

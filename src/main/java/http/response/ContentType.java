@@ -1,7 +1,7 @@
 package http.response;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public enum ContentType {
 
@@ -12,7 +12,7 @@ public enum ContentType {
     WOFF("woff", "application/font-woff"),
     DEFAULT("", "application/octet-stream");
 
-    private final static Map<String, String> typeMap = new ConcurrentHashMap<>();
+    private final static Map<String, String> typeMap = new HashMap<>();
 
     static {
         for (ContentType contentType : ContentType.values()) {
