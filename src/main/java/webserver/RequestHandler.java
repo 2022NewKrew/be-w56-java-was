@@ -92,7 +92,7 @@ public class RequestHandler extends Thread {
             return getResponseHeader(302, responseHeaders).toString().getBytes();
         }
         responseHeaders.put("Set-Cookie", "logined=true; Path=/");
-        responseHeaders.put("Location", "index.html");
+        responseHeaders.put("Location", "/index.html");
         return getResponseHeader(302, responseHeaders).toString().getBytes();
     }
 
@@ -109,6 +109,7 @@ public class RequestHandler extends Thread {
             baos.write(responseBody);
             return baos.toByteArray();
         }
+        log.warn("Undefined requestUrlPath = {} (redirect to /index.html)", requestUrlPath);
         Map<String, String> headers = Map.of("Content-Type", "text/html;charset=utf-8",
                 "Content-Length", "0",
                 "Location","/index.html"
