@@ -32,9 +32,21 @@ public class MainController implements Controller {
     @Override
     public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
-        log.debug("{} {}", requestLine.method(), requestLine.url());
+        String[] urlTokens = requestLine.url().split("/");
+        String methodAndUrl = requestLine.method() + " /";
+        if (urlTokens.length > 0) {
+            String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];
+            methodAndUrl += urlWithoutQueryString;
+        }
 
-        return null; // TODO
+        log.debug("{} {}", requestLine.method(), requestLine.url());
+        if (methodMap.containsKey(methodAndUrl)) {
+            log.debug("{} called", methodAndUrl);
+            return methodMap.get(methodAndUrl).apply(request);
+        } else {
+            log.debug("{} {}, redirect to error page", requestLine.method(), requestLine.url());
+            return errorPage();
+        }
     }
 
     private HttpResponse index(HttpRequest request) {
