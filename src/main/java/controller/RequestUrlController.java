@@ -27,4 +27,20 @@ public class RequestUrlController {
         log.info("user created = {}", user);
         return "redirect:/";
     }
+
+    @RequestMapping(value = "/login", method = "POST")
+    public String login(HttpRequest request, HttpResponse response) {
+        String userId = request.getParam("userId");
+        String password = request.getParam("password");
+        User user = DataBase.findUserById(userId);
+        if (user == null || !user.getPassword().equals(password)) {
+            return "redirect:/login-failed";
+        }
+        return "redirect:/";
+    }
+
+    @RequestMapping("/login-failed")
+    public String loginFailed(HttpRequest request, HttpResponse response) {
+        return "/user/login_failed";
+    }
 }

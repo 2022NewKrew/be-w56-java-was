@@ -4,14 +4,11 @@ import constant.GlobalConfig;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
-import http.status.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static webserver.Router.WEB_ROOT;
 

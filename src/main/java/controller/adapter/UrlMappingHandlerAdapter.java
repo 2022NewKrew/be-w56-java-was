@@ -20,7 +20,6 @@ import java.util.Arrays;
 public class UrlMappingHandlerAdapter implements HandlerAdapter {
     private static final Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
 
-
     @Override
     public boolean supports(HttpRequest request) {
         Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
