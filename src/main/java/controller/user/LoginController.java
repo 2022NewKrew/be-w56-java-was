@@ -9,6 +9,7 @@ import webserver.exception.AuthenticationFailureException;
 import webserver.model.HttpRequest;
 import webserver.model.HttpResponse;
 import webserver.model.HttpStatus;
+import webserver.model.ModelAndView;
 
 public class LoginController implements BaseController {
 
@@ -17,20 +18,20 @@ public class LoginController implements BaseController {
     private final LoginService loginService = new LoginService();
 
     @Override
-    public HttpResponse process(HttpRequest request) {
+    public ModelAndView process(HttpRequest request, HttpResponse response) {
         UserLoginRequest loginRequest = request.getRequestParams().mapModelObject(UserLoginRequest.class);
         log.info("Login Request : {}", loginRequest);
 
-        HttpResponse response;
+        ModelAndView modelAndView;
         try {
             loginService.login(loginRequest);
-            response = new HttpResponse("redirect:/index.html");
+            modelAndView = new ModelAndView("/index.html", HttpStatus.FOUND);
             response.addCookie("logined", "true");
         } catch (AuthenticationFailureException e) {
             e.printStackTrace();
-            response = new HttpResponse("/user/login_failed.html", HttpStatus.UNAUTHORIZED);
+            modelAndView = new ModelAndView("/user/login_failed.html", HttpStatus.UNAUTHORIZED);
             response.addCookie("logined", "false");
         }
-        return response;
+        return modelAndView;
     }
 }

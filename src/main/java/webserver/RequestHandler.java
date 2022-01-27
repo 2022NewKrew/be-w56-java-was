@@ -2,18 +2,19 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.exception.AuthenticationFailureException;
-import webserver.exception.InvalidInputException;
+import webserver.exception.BaseException;
 import webserver.infra.Router;
 import webserver.infra.ViewResolver;
 import webserver.model.HttpRequest;
 import webserver.model.HttpResponse;
-import webserver.model.HttpStatus;
+import webserver.model.ModelAndView;
+import webserver.view.ErrorView;
+import webserver.view.View;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class RequestHandler extends Thread {
@@ -32,26 +33,25 @@ public class RequestHandler extends Thread {
 
         try (
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+                OutputStream out = connection.getOutputStream();
         ) {
-            handleRequest(br, dos);
+            HttpRequest request = new HttpRequest(br);
+            HttpResponse response = new HttpResponse(out);
+
+            handleRequest(request, response);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private void handleRequest(BufferedReader br, DataOutputStream dos) throws IOException {
-        HttpRequest request = new HttpRequest(br);
-
+    private void handleRequest(HttpRequest request, HttpResponse response) throws IOException {
         try {
-            HttpResponse response = router.route(request);
-            viewResolver.render(dos, response);
-        } catch (InvalidInputException | IllegalArgumentException e) {
-            e.printStackTrace();
-            viewResolver.renderExceptionPage(dos, e, HttpStatus.BAD_REQUEST);
-        } catch (AuthenticationFailureException e2) {
-            e2.printStackTrace();
-            viewResolver.renderExceptionPage(dos, e2, HttpStatus.UNAUTHORIZED);
+            ModelAndView modelAndView = router.route(request, response);
+            View view = viewResolver.resolve(modelAndView);
+            view.render(response);
+        } catch (BaseException e) {
+            ErrorView errorView = new ErrorView(e);
+            errorView.render(response);
         }
     }
 

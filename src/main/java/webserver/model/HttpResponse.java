@@ -1,24 +1,19 @@
 package webserver.model;
 
+import java.io.OutputStream;
 import java.util.Optional;
 
 public class HttpResponse {
-    private static final String PREFIX_OF_REDIRECTION = "redirect:";
+    private static final String NEW_LINE = "\r\n";
 
-    private final String viewPath;
+    private final OutputStream out;
+    private final HttpHeaders headers;
     private final Cookies cookies;
-    private final HttpStatus httpStatus;
 
-    public HttpResponse(String viewPath) {
-        this.viewPath = viewPath;
+    public HttpResponse(OutputStream out) {
+        this.out = out;
+        this.headers = new HttpHeaders();
         this.cookies = new Cookies();
-        this.httpStatus = isRedirect() ? HttpStatus.FOUND : HttpStatus.OK;
-    }
-
-    public HttpResponse(String viewPath, HttpStatus httpStatus) {
-        this.viewPath = viewPath;
-        this.cookies = new Cookies();
-        this.httpStatus = httpStatus;
     }
 
     public void addCookie(String name, String value) {
@@ -29,28 +24,27 @@ public class HttpResponse {
         return cookies.getCookieByName(name);
     }
 
-    public String getHttpHeaderOfSetCookie() {
-        return String.format("Set-Cookie: %s\r\n", cookies.getHttpHeader());
-    }
-
-    public boolean isRedirect() {
-        return viewPath.startsWith(PREFIX_OF_REDIRECTION);
-    }
-
-    public String getRedirectUrl() {
-        return viewPath.substring(PREFIX_OF_REDIRECTION.length());
-    }
-
-    public String getViewPath() {
-        return viewPath;
-    }
-
     public boolean hasCookies() {
         return !cookies.isEmpty();
     }
 
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
+    public OutputStream getOutputStream() {
+        return out;
+    }
+
+    public void setContentType(String contentType) {
+        headers.addHeaders("Content-Type", String.format("%s;charset=utf-8", contentType));
+    }
+
+    public String getStringOfHeaders() {
+        if (hasCookies()) {
+            headers.addHeaders("Set-Cookie", cookies.getHttpHeader());
+        }
+        return headers.join(NEW_LINE) + NEW_LINE + NEW_LINE;
+    }
+
+    public void setLocation(String location) {
+        headers.addHeaders("Location", location);
     }
 
 }

@@ -2,12 +2,13 @@ package controller;
 
 import webserver.model.HttpRequest;
 import webserver.model.HttpResponse;
+import webserver.model.ModelAndView;
 
 public class StaticResourceController implements BaseController {
 
     @Override
-    public HttpResponse process(HttpRequest request) {
-        return new HttpResponse(request.getUrl());
+    public ModelAndView process(HttpRequest request, HttpResponse response) {
+        return new ModelAndView(request.getUrl());
     }
 
 }

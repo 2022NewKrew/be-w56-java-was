@@ -1,8 +1,11 @@
 package webserver.exception;
 
-public class AuthenticationFailureException extends RuntimeException {
+import webserver.model.HttpStatus;
+
+public class AuthenticationFailureException extends BaseException {
 
     public AuthenticationFailureException(String message) {
-        super(message);
+        super(message, HttpStatus.UNAUTHORIZED);
     }
+
 }
