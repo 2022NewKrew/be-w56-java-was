@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import service.RequestService;
 import util.HttpRequestUtils;
 import service.ResponseService;
-import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
