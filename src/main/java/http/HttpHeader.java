@@ -22,7 +22,7 @@ public class HttpHeader {
         return header.getOrDefault(key, "");
     }
 
-    public List<String> toStringList() {
+    public List<String> toFormattedStrings() {
         return header.entrySet().stream()
             .map(entry -> String.format(HEADER_FORMAT, entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());

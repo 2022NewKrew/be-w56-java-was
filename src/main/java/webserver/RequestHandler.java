@@ -1,11 +1,11 @@
 package webserver;
 
 import controller.ControllerMapper;
+import http.HttpHeader;
 import http.HttpMethod;
 import http.HttpRequest;
 import http.HttpResponse;
-import http.RequestBody;
-import http.RequestParams;
+import http.RequestParameters;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -89,8 +89,9 @@ public class RequestHandler extends Thread {
             .method(method)
             .path(path)
             .version(version)
-            .requestParams(RequestParams.of(pathQueryString))
-            .requestBody(RequestBody.of(HttpRequestUtils.parseQueryString(body)))
+            .header(HttpHeader.of(headers))
+            .pathParameters(RequestParameters.of(pathQueryString))
+            .bodyParameters(RequestParameters.of(HttpRequestUtils.parseQueryString(body)))
             .build();
     }
 

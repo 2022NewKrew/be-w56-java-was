@@ -5,22 +5,24 @@ import lombok.Builder;
 public class HttpRequest {
 
     private final HttpMethod method;
+
     private final String path;
     private final String version;
-    private final RequestParams requestParams;
 
     private final HttpHeader header;
-    private final RequestBody requestBody;
+
+    private final RequestParameters pathParameters;
+    private final RequestParameters bodyParameters;
 
     @Builder
-    public HttpRequest(HttpMethod method, String path, String version, RequestParams requestParams,
-        HttpHeader header, RequestBody requestBody) {
+    public HttpRequest(HttpMethod method, String path, String version, HttpHeader header,
+        RequestParameters pathParameters, RequestParameters bodyParameters) {
         this.method = method;
         this.path = path;
         this.version = version;
-        this.requestParams = requestParams;
         this.header = header;
-        this.requestBody = requestBody;
+        this.pathParameters = pathParameters;
+        this.bodyParameters = bodyParameters;
     }
 
     public String getPath() {
@@ -31,12 +33,12 @@ public class HttpRequest {
         return header.get(key);
     }
 
-    public String getRequestParam(String key) {
-        return requestParams.get(key);
+    public String getPathParameter(String key) {
+        return pathParameters.get(key);
     }
 
-    public String getRequestBody(String key) {
-        return requestBody.get(key);
+    public String getBodyParameter(String key) {
+        return bodyParameters.get(key);
     }
 
     public boolean isGet() {
