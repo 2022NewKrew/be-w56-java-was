@@ -1,10 +1,13 @@
 package controller;
 
 import db.DataBase;
+import http.HttpStatus;
 import http.request.HttpRequest;
 import http.request.HttpRequestBody;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
+import http.response.HttpResponseBody;
+import http.response.HttpResponseHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- *  싱글톤
- *
- *  process 메소드를 통해 HttpRequest 를 넘겨주면
- *  필요한 작업 후 HttpResponse 를 반환
+ *  /user 로 시작하는 url request를 담당
  */
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -28,6 +28,7 @@ public class UserController implements Controller {
 
     {
         methodMap.put("POST /create", this::createUser);
+        methodMap.put("POST /login", this::login);
     }
 
     private UserController() {
@@ -39,6 +40,7 @@ public class UserController implements Controller {
         return INSTANCE;
     }
 
+    @Override
     public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
         String[] urlTokens = requestLine.url().split("/");
@@ -48,23 +50,40 @@ public class UserController implements Controller {
         if (methodMap.containsKey(methodAndUrl)) {
             log.debug("{} called", methodAndUrl);
             return methodMap.get(methodAndUrl).apply(request);
-        } else { // TODO : 임시 구현
-            log.debug("{} {}", requestLine.method(), requestLine.url());
-            return readStaticFile(requestLine.url());
+        } else {
+            log.debug("{} {}, redirect to error page", requestLine.method(), requestLine.url());
+            return errorPage();
         }
     }
 
     private HttpResponse createUser(HttpRequest request) {
         HttpRequestBody requestBody = request.body();
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
+
         User newUser = new User(
                 queryString.get("userId"),
                 queryString.get("password"),
                 queryString.get("name"),
                 queryString.get("email"));
 
-        DataBase.addUser(newUser);
-        System.out.println(DataBase.findAll());
+        if (DataBase.findUserById(newUser.getUserId()) == null)
+            DataBase.addUser(newUser);
+
         return redirect("/index.html");
+    }
+
+    private HttpResponse login(HttpRequest request) {
+        HttpRequestBody requestBody = request.body();
+        Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
+
+        User user = DataBase.findUserById(queryString.get("userId"));
+
+        if (user == null || !user.getPassword().equals(queryString.get("password")))
+            return redirect("/user/login_failed.html");
+
+        HttpResponseHeader responseHeader = new HttpResponseHeader("index.html", HttpStatus.OK, 0);
+        responseHeader.putToHeaders("Set-Cookie", "logined=true; Path=/index.html");
+
+        return new HttpResponse(responseHeader, HttpResponseBody.empty());
     }
 }

@@ -7,9 +7,13 @@ import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+/**
+ *  process 가 호출되면 request 객체를 통해
+ *  정적 파일에 대한 요청인지 확인
+ *  정적 파일 요청이 아니면 processDynamic 로 처리 위임
+ */
 public interface Controller {
     HttpResponse processDynamic(HttpRequest request) throws IOException;
 
@@ -42,9 +46,13 @@ public interface Controller {
     default HttpResponse redirect(String redirectUrl) {
         HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
         responseHeader.putToHeaders("Location", redirectUrl);
-        byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
-        HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
 
-        return new HttpResponse(responseHeader, responseBody);
+        return new HttpResponse(responseHeader, HttpResponseBody.empty());
+    }
+
+    default HttpResponse errorPage() {
+        HttpResponseHeader responseHeader = new HttpResponseHeader("/index.html", HttpStatus.BAD_REQUEST, 0);
+
+        return new HttpResponse(responseHeader, HttpResponseBody.empty());
     }
 }
