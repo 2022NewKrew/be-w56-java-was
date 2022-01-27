@@ -2,7 +2,7 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
-import http.Queries;
+import http.request.Queries;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;

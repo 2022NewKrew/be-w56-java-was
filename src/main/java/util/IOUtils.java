@@ -1,6 +1,6 @@
 package util;
 
-import http.HttpResponse;
+import http.response.HttpResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;

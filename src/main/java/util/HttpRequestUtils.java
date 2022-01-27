@@ -1,8 +1,8 @@
 package util;
 
-import http.HttpHeaders;
-import http.Queries;
-import http.RequestBody;
+import http.request.HttpHeaders;
+import http.request.Queries;
+import http.request.RequestBody;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

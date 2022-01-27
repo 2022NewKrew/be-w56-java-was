@@ -1,5 +1,7 @@
-package http;
+package http.response;
 
+import http.ContentType;
+import http.HttpStatus;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
