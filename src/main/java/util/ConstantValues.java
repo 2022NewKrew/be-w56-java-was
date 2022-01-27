@@ -15,4 +15,7 @@ public class ConstantValues {
     public static final int URL_IDX = 0;
     public static final int QUERY_IDX = 1;
     public static final int NO_QUERY = 1;
+
+    public static final String URL_REGEX = "/";
+    public static final int CONTROLLER_MATCH_IDX = 1;
 }

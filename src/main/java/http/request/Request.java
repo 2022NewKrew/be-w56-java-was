@@ -1,5 +1,6 @@
 package http.request;
 
+import http.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -9,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static util.ConstantValues.*;
 
@@ -69,5 +72,14 @@ public class Request {
     public Queries getRequestQueries(){ return requestQueries; }
 
     public Queries getRequestBody() { return requestBody; }
+
+    public boolean isStatic(){
+        return Files.isRegularFile(Path.of(ROOT_DIRECTORY + url));
+    }
+
+    public String getFirstUrl(){
+        String[] urlSplit = url.split(URL_REGEX);
+        return urlSplit.length > 0 ? URL_REGEX + urlSplit[CONTROLLER_MATCH_IDX] : URL_REGEX;
+    }
 
 }

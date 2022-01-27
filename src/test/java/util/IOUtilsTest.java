@@ -1,10 +1,7 @@
 package util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.StringReader;
-
-import org.apache.tika.Tika;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

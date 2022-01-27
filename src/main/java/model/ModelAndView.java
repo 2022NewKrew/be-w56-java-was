@@ -40,6 +40,8 @@ public class ModelAndView {
         return viewName;
     }
 
+    public Object getValue(String name){ return values.get(name); }
+
     public Map<String, Object> getValues(){
         return values;
     }

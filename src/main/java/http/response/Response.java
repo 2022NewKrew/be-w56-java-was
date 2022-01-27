@@ -10,12 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static util.ConstantValues.REDIRECT_COMMAND;
-import static util.ConstantValues.REDIRECT_IDX;
+import static util.ConstantValues.*;
 
 public class Response {
-    private static final String ROOT_URL = "http://localhost:8080";
-    private static final String ROOT_DIRECTORY = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(Response.class);
 
     private final DataOutputStream dos;

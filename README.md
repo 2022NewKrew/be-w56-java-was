@@ -3,6 +3,22 @@
 
 <br>
 
+## Step 4. Cookie를 이용한 로그인 구현
+
+> Step4에서는 쿠키를 이용하여 로그인 여부를 보여줄 수 있도록 설정했습니다.
+> Step4를 구현하는 과정에서, 하나의 기능이 생길 때마다 Controller가 추가되는 단점이 존재하였고, 이를 보완하고자 Custom Annotation인 `@RequestMapping`을 구현하여 리팩토링을 진행하였습니다.
+
+- 유저 로그인 기능 추가
+  - 로그인 성공 시, Cookie를 설정하여 응답
+- `HandlerMapper`, `Controller` 리팩토링
+  - `HandlerMapper`에서 받는 URL을 전체("/users/form")에서 앞부분("/users")으로 감소
+  - 맞는 컨트롤러를 받아오는 부분을 HashBasedTable에서 ConcurrentHashMap으로 변환
+  - `Controller`는 기능에 따라 분리하고, 컨트롤러 내부에서 `@RequestMapping`을 통해 URL에 맞는 메소드를 실행
+- `@RequestMapping` 추가
+  - 컨트롤러의 여러 메서드 중 URL과 method에 맞는 메소드를 활용하기 위해 추가한 어노테이션
+
+<br>
+
 ## Step 2 & 3. 회원가입 구현
 
 > Step1에서 Step2, Step3으로 진행하는 과정 중 전반적인 코드 리팩토링 과정을 진행했습니다.

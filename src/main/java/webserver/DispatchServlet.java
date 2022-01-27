@@ -38,7 +38,7 @@ public class DispatchServlet extends Thread {
             Request request = new Request(br);
             request.read();
 
-            Controller controller = handlerMapper.get(request.getMethod(), request.getUrl());
+            Controller controller = handlerMapper.get(request);
             ModelAndView mv = viewResolver.getView(checkController(controller, request));
 
             Response response = new Response(dos, mv);
