@@ -2,6 +2,7 @@ package controller;
 
 import http.ContentType;
 import http.request.HttpRequest;
+import http.request.RequestLine;
 import http.response.HttpResponse;
 import http.HttpStatus;
 import java.io.File;
@@ -28,8 +29,9 @@ public class StaticController extends AbstractController {
 
     @Override
     protected HttpResponse doGet(HttpRequest request) throws IOException {
-        Path path = new File(PATHNAME + request.getPath()).toPath();
-        ContentType contentType = ContentType.match(request.getPath());
+        RequestLine requestLine = request.getRequestLine();
+        Path path = new File(PATHNAME + requestLine.getPath()).toPath();
+        ContentType contentType = ContentType.match(requestLine.getPath());
         return HttpResponse.ok(contentType, Files.readAllBytes(path));
     }
 

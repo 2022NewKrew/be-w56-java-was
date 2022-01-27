@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import exception.InvalidParameterKeyException;
 import http.request.Queries;
+import http.request.RequestLine;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
@@ -13,11 +14,13 @@ public class HttpRequestUtilsTest {
 
     @Test
     public void parseRequestLine() {
-        String requestLine = "GET /index.html HTTP/1.1";
-        String[] tokens = HttpRequestUtils.parseRequestLine(requestLine);
+        String requestLineString = "GET /index.html HTTP/1.1";
 
-        assertThat(tokens[0]).isEqualTo("GET");
-        assertThat(tokens[1]).isEqualTo("/index.html");
+        RequestLine requestLine = HttpRequestUtils.parseRequestLine(requestLineString);
+
+        assertThat(requestLine.getMethod()).isEqualTo(HttpMethod.GET);
+        assertThat(requestLine.getPath()).isEqualTo("/index.html");
+        assertThat(requestLine.getQueries().getParams()).hasSize(0);
     }
 
     @Test

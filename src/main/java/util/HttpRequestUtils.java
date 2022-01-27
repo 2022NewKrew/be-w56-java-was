@@ -3,6 +3,7 @@ package util;
 import http.request.HttpHeaders;
 import http.request.Queries;
 import http.request.RequestBody;
+import http.request.RequestLine;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,15 +21,19 @@ public class HttpRequestUtils {
     private static final String PATH_QUERY_STRING_DELIMITER = "\\?";
     private static final String PARAMETER_DELIMITER = "&";
     private static final String COOKIE_DELIMITER = ";";
-    private static final String ACCEPT_DELIMITER = ",";
     private static final String PARAMETER_KEY_VALUE_DELIMITER = "=";
     private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
 
     private HttpRequestUtils() {
     }
 
-    public static String[] parseRequestLine(String requestLine) {
-        return requestLine.split(REQUEST_LINE_DELIMITER);
+    public static RequestLine parseRequestLine(String requestLine) {
+        String[] tokens = requestLine.split(REQUEST_LINE_DELIMITER);
+        HttpMethod method = parseHttpMethod(tokens[0]);
+        String path = parsePath(tokens[1]);
+        Queries queries = parseQueries(tokens[1]);
+
+        return new RequestLine(method, path, queries);
     }
 
     public static HttpMethod parseHttpMethod(String methodToken) {
@@ -59,10 +64,6 @@ public class HttpRequestUtils {
         }
 
         return new RequestBody(parseValues(body, PARAMETER_DELIMITER));
-    }
-
-    public static String parseAccepts(String accepts) {
-        return accepts.split(ACCEPT_DELIMITER)[0];
     }
 
     /**

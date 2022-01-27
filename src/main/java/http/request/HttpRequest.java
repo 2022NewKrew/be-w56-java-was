@@ -1,6 +1,5 @@
 package http.request;
 
-import http.HttpMethod;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -9,27 +8,19 @@ import util.IOUtils;
 
 public class HttpRequest {
 
-    private final HttpMethod method;
-    private final String path;
-    private final Queries queries;
+    private final RequestLine requestLine;
     private final HttpHeaders headers;
     private final RequestBody body;
 
-    private HttpRequest(HttpMethod method, String path, Queries queries, HttpHeaders headers, RequestBody body) {
-        this.method = method;
-        this.path = path;
-        this.queries = queries;
+    private HttpRequest(RequestLine requestLine, HttpHeaders headers, RequestBody body) {
+        this.requestLine = requestLine;
         this.headers = headers;
         this.body = body;
     }
 
     public static HttpRequest from(BufferedReader br) throws IOException {
-        String requestLine = IOUtils.readRequestLine(br);
-        String[] tokens = HttpRequestUtils.parseRequestLine(requestLine);
-
-        HttpMethod method = HttpRequestUtils.parseHttpMethod(tokens[0]);
-        String path = HttpRequestUtils.parsePath(tokens[1]);
-        Queries queries = HttpRequestUtils.parseQueries(tokens[1]);
+        String requestLineString = IOUtils.readRequestLine(br);
+        RequestLine requestLine = HttpRequestUtils.parseRequestLine(requestLineString);
 
         List<String> headerStrings = IOUtils.readHttpHeaders(br);
         HttpHeaders headers = HttpRequestUtils.parseHeaders(headerStrings);
@@ -37,15 +28,11 @@ public class HttpRequest {
         String bodyString = IOUtils.readData(br, headers.getContentLength());
         RequestBody body = HttpRequestUtils.parseRequestBody(bodyString);
 
-        return new HttpRequest(method, path, queries, headers, body);
+        return new HttpRequest(requestLine, headers, body);
     }
 
-    public HttpMethod getMethod() {
-        return method;
-    }
-
-    public String getPath() {
-        return path;
+    public RequestLine getRequestLine() {
+        return requestLine;
     }
 
     public RequestBody getBody() {
