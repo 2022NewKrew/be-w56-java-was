@@ -1,9 +1,9 @@
 package webserver;
 
-import controller.ControllerHandler;
-import http.HttpHeader;
-import http.HttpRequest;
-import http.HttpResponse;
+import framework.ControllerHandler;
+import framework.http.HttpHeader;
+import framework.http.HttpRequest;
+import framework.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
