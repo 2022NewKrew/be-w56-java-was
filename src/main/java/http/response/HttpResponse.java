@@ -30,8 +30,8 @@ public class HttpResponse {
         return new HttpResponse(StatusLine.of(protocolVersion, httpStatus), HttpHeaders.of(headerMap), ResponseBody.of(body));
     }
 
-    public byte[] getBody() {
-        return this.body.getBody();
+    public ResponseBody getBody() {
+        return this.body;
     }
 
     public String getProtocolVersion() {

@@ -5,7 +5,6 @@ import http.HttpHeaders;
 import http.HttpMethod;
 import http.HttpStatus;
 import http.request.HttpRequest;
-import http.request.RequestParams;
 import http.response.HttpResponse;
 import http.response.ResponseBody;
 import http.response.StatusLine;
@@ -34,16 +33,21 @@ public class Router {
             String name = String.valueOf(request.getParameter("name"));
             String email = String.valueOf(request.getParameter("email"));
 
-            UserController.create(userId, password, name, email);
+            Object ret = UserController.create(userId, password, name, email);
 
-            String message = "회원 가입이 완료되었습니다.";
-            Map<String, String> header = new HashMap<>();
-            header.put(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
-            header.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(message.getBytes(StandardCharsets.UTF_8).length));
-            return HttpResponse.Builder.newInstance()
-                    .headers(HttpHeaders.of(header))
-                    .body(ResponseBody.of(message.getBytes(StandardCharsets.UTF_8)))
-                    .build();
+            if(ret instanceof String) {
+                String viewName = (String) ret;
+                if(viewName.startsWith("redirect:")) {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put(HttpHeaders.LOCATION, viewName.substring("redirect:".length()));
+                    return HttpResponse.Builder.newInstance()
+                            .statusLine(StatusLine.of(request.getHttpVersion(), HttpStatus.SEE_OTHER))
+                            .headers(HttpHeaders.of(headers))
+                            .build();
+                }
+            }
+
+            return HttpResponse.Builder.newInstance().build();
         });
     }
 
@@ -66,7 +70,7 @@ public class Router {
             String routeKey = RouteUtils.makeKey(httpRequest.getMethod().getCode(), httpRequest.getUrl());
             HttpResponse result = routeMap.get(routeKey).apply(httpRequest);
             builder = builder.headers(result.getHeaders())
-                    .statusLine(StatusLine.of(httpRequest.getHttpVersion(), HttpStatus.OK))
+                    .statusLine(result.getStatusLine())
                     .body(result.getResponseBody());
 
         } catch (Exception exception) {

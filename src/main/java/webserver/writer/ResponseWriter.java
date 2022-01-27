@@ -2,12 +2,14 @@ package webserver.writer;
 
 import http.HttpHeaders;
 import http.response.HttpResponse;
+import http.response.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class ResponseWriter {
 
@@ -22,8 +24,11 @@ public class ResponseWriter {
             }
             dos.writeBytes("\r\n");
 
-            byte[] body = response.getBody();
-            if(body != null) { dos.write(body, 0, body.length); }
+            ResponseBody responseBody = response.getBody();
+            if(!Objects.isNull(responseBody)) {
+                byte[] body = responseBody.getBody();
+                if(body != null) { dos.write(body, 0, body.length); }
+            }
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());

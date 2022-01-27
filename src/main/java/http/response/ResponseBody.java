@@ -1,7 +1,5 @@
 package http.response;
 
-import http.request.RequestBody;
-
 public class ResponseBody {
 
     private byte[] body;
