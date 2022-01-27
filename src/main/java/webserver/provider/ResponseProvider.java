@@ -1,5 +1,6 @@
 package webserver.provider;
 
+import webserver.exception.UserUnauthorizedException;
 import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.MIME;
@@ -35,6 +36,10 @@ public class ResponseProvider {
     }
 
     public static MyHttpResponse responseServerException(DataOutputStream dos, Exception e) {
+        if (e instanceof UserUnauthorizedException) {
+            return response401Unauthorized(dos, e);
+        }
+
         if (e instanceof WebServerException) {
             WebServerException exception = (WebServerException) e;
 
@@ -50,5 +55,17 @@ public class ResponseProvider {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(e.getMessage().getBytes())
                 .build();
+    }
+
+    private static MyHttpResponse response401Unauthorized(DataOutputStream dos, Exception e) {
+        try {
+            byte[] body = StaticResourceProvider.getBytesFromPath("/user/login_failed.html");
+            return MyHttpResponse.builder(dos)
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(body)
+                    .build();
+        } catch (IOException ex) {
+            throw new WebServerException(ex.getMessage());
+        }
     }
 }

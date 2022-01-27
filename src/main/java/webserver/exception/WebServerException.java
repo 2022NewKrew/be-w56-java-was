@@ -12,6 +12,11 @@ public class WebServerException extends RuntimeException {
         this.errorMessage = httpStatus.toString();
     }
 
+    public WebServerException(String errorMessage) {
+        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.errorMessage = errorMessage;
+    }
+
     public WebServerException(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
         this.errorMessage = httpStatus.toString();
