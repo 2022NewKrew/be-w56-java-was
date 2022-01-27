@@ -18,6 +18,4 @@ public enum Status {
     public String getCodeAndMessage() {
         return String.format("%s %s", this.code, this.message);
     }
-
-
 }

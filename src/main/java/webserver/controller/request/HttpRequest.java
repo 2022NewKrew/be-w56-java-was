@@ -7,18 +7,13 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 
 import org.h2.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import webserver.common.HttpMethod;
-import webserver.controller.Controller;
 
 public class HttpRequest {
     private RequestLine requestLine;
     private RequestHeader requestHeader;
     private RequestBody requestBody;
-
-    private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
     private HttpRequest(RequestLine requestLine, RequestHeader requestHeader,
                         RequestBody requestBody) {
@@ -31,23 +26,27 @@ public class HttpRequest {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
+        // Parse Request Line
         RequestLine requestLine = RequestLine.from(br.readLine());
-        if (!br.ready()) {
-            throw new IOException("입력 스트림이 준비되지 않은 입력입니다.(Postman 에서 요청 시 발생)");
-        }
 
-        // Request Header
+        // Parse Request Header
+        validateBufferedReader(br);
         RequestHeader requestHeader = RequestHeader.from(br);
 
-        // Request Body
+        // Parse request Body
         String contentLength = requestHeader.get("Content-Length");
         if (StringUtils.isNullOrEmpty(contentLength) || !StringUtils.isNumber(contentLength)) {
             return new HttpRequest(requestLine, requestHeader, RequestBody.of());
         }
-        int length = Integer.parseInt(contentLength);
-        RequestBody requestBody = RequestBody.of(br, length);
+        RequestBody requestBody = RequestBody.of(br, Integer.parseInt(contentLength));
 
         return new HttpRequest(requestLine, requestHeader, requestBody);
+    }
+
+    private static void validateBufferedReader(BufferedReader br) throws IOException {
+        if (!br.ready()) {
+            throw new IOException("입력 스트림이 준비되지 않은 입력입니다.(Postman 에서 요청 시 발생)");
+        }
     }
 
     // 테스트메서드 용 생성 펙토리

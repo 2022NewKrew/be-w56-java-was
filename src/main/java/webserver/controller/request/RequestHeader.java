@@ -6,17 +6,14 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import util.HttpRequestUtils;
+
+
 public class RequestHeader {
     private Map<String, String> header = Maps.newHashMap();
 
     public static RequestHeader from(BufferedReader br) throws IOException {
-        RequestHeader requestHeader = new RequestHeader();
-        String line;
-        while (!("".equals(line = br.readLine()))) {
-            String[] token = line.split(": ");
-            requestHeader.put(token[0], token[1]);
-        }
-        return requestHeader;
+        return HttpRequestUtils.parseWholeHeader(br);
     }
 
     public void put(String key, String value) {
