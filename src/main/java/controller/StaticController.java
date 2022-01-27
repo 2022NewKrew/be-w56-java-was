@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class StaticController implements Controller{
+public class StaticController extends Controller{
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private static final StaticController staticController = new StaticController();
