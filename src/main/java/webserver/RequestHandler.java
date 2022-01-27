@@ -33,7 +33,8 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest request = HttpRequestFactory.getHttpRequest(in);
-            Controller controller = ControllerType.getControllerType(request.getUrl());
+            Controller controller = ControllerType.getControllerType(request.getMethod(),
+                    request.getUrl());
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse = controller.run(request, dos);
             httpResponse.sendResponse();
