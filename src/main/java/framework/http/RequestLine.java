@@ -29,9 +29,18 @@ public class RequestLine {
     private void makePathAndQueryString(String pathAndQueryString) {
         String[] split = pathAndQueryString.split(PATH_QUERY_STRING_SPLIT_DELIMITER);
         this.path = split[0];
-        if (split.length >= 2) {
+
+        if (hasQueryString(split)) {
             this.queryString = new QueryString(split[1]);
         }
+    }
+
+    private boolean hasQueryString(String[] pathAndQuerySplit) {
+        if (pathAndQuerySplit.length != 2) {
+            return false;
+        }
+
+        return true;
     }
 
     private String[] parseRequestLineString(String requestLineString) {
@@ -41,7 +50,7 @@ public class RequestLine {
     }
 
     private void validateRequestLine(String[] requestLineSplit) {
-        if (requestLineSplit.length < 3) {
+        if (requestLineSplit.length != 3) {
             throw new InvalidRequestLineException();
         }
     }
