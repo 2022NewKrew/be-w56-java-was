@@ -25,7 +25,7 @@ public class IndexController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
@@ -36,7 +36,7 @@ public class IndexController {
         File file = new File("./webapp/index.html");
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setContentLength(body.length);
 

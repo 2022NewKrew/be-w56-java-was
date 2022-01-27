@@ -25,7 +25,7 @@ public class FaviconController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.IMAGE_AVIF);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);

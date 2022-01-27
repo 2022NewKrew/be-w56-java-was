@@ -1,8 +1,8 @@
 package framework;
 
-import framework.http.HttpHeader;
 import framework.http.HttpRequest;
 import framework.http.HttpResponse;
+import framework.http.HttpResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class RequestHandler extends Thread {
             dos.writeBytes(response.getStatusLineText() + "\r\n");
             dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
 
-            HttpHeader header = response.getHeader();
+            HttpResponseHeader header = response.getHeader();
             for (Map.Entry<String, String> headerLine : header.getHeaders().entrySet()) {
                 dos.writeBytes(headerLine.getKey() + ": " + headerLine.getValue() + "\r\n");
             }

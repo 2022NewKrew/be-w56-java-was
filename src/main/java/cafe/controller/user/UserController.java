@@ -1,11 +1,11 @@
 package cafe.controller.user;
 
 import cafe.controller.exception.IncorrectLoginUserException;
+import cafe.db.DataBase;
+import cafe.model.User;
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
-import cafe.db.DataBase;
 import framework.http.*;
-import cafe.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class UserController {
         File file = new File("./webapp/index.html");
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setLocation("/index.html");
 
@@ -50,7 +50,7 @@ public class UserController {
         File file = new File("./webapp/index.html");
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setCookie("logined=true; Path=/");
         responseHeader.setLocation("/index.html");
@@ -63,7 +63,7 @@ public class UserController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
@@ -74,7 +74,7 @@ public class UserController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
@@ -87,7 +87,7 @@ public class UserController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
@@ -98,7 +98,7 @@ public class UserController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);
@@ -109,7 +109,7 @@ public class UserController {
         File file = new File("./webapp" + httpRequest.getPath());
         byte[] body = Files.readAllBytes(file.toPath());
 
-        HttpHeader responseHeader = new HttpHeader();
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
         return new HttpResponse("HTTP/1.1", HttpStatus.OK, responseHeader, body);

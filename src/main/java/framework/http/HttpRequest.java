@@ -5,12 +5,12 @@ import java.io.IOException;
 
 public class HttpRequest {
     private RequestLine requestLine;
-    private HttpHeader header;
+    private HttpRequestHeader header;
     private RequestBody requestBody;
 
     public HttpRequest(BufferedReader bufferedReader) throws IOException {
         this.requestLine = new RequestLine(bufferedReader);
-        this.header = new HttpHeader(bufferedReader);
+        this.header = new HttpRequestHeader(bufferedReader);
         if (hasRequestBody()) {
             this.requestBody = new RequestBody(bufferedReader, Integer.parseInt(header.getContentLength()));
         }

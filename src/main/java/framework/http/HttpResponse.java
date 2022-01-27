@@ -2,22 +2,22 @@ package framework.http;
 
 public class HttpResponse {
     private StatusLine statusLine;
-    private HttpHeader header;
+    private HttpResponseHeader header;
     private byte[] body;
 
-    public HttpResponse(String protocol, HttpStatus httpStatus, HttpHeader header) {
+    public HttpResponse(String protocol, HttpStatus httpStatus, HttpResponseHeader header) {
         this.statusLine = new StatusLine(protocol, httpStatus);
         this.header = header;
         this.body = new byte[1];
     }
 
-    public HttpResponse(String protocol, HttpStatus httpStatus, HttpHeader header, byte[] body) {
+    public HttpResponse(String protocol, HttpStatus httpStatus, HttpResponseHeader header, byte[] body) {
         this.statusLine = new StatusLine(protocol, httpStatus);
         this.header = header;
         this.body = body;
     }
 
-    public HttpHeader getHeader() {
+    public HttpResponseHeader getHeader() {
         return header;
     }
 

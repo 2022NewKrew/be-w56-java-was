@@ -8,9 +8,9 @@ import framework.annotation.RequestMapping;
 import framework.controller.FaviconController;
 import framework.controller.css.CssController;
 import framework.controller.view.ViewController;
-import framework.http.HttpHeader;
 import framework.http.HttpRequest;
 import framework.http.HttpResponse;
+import framework.http.HttpResponseHeader;
 import framework.http.HttpStatus;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
@@ -51,7 +51,7 @@ public class ControllerHandler {
             }
         }
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpResponseHeader());
     }
 
 
@@ -83,7 +83,7 @@ public class ControllerHandler {
             }
         }
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpResponseHeader());
     }
 
     private static boolean isValidMethodForExceptionHandler(ExceptionHandler exceptionHandler, Throwable exception) {
@@ -109,6 +109,6 @@ public class ControllerHandler {
             }
         }
 
-        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpHeader());
+        return new HttpResponse("HTTP/1.1", HttpStatus.NOT_FOUND, new HttpResponseHeader());
     }
 }
