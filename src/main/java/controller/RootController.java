@@ -1,13 +1,15 @@
-package Controller;
+package controller;
 
 import mapper.AssignedModelKey;
+import mapper.ResponseSendDataModel;
+import webserver.HttpRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class RootController implements Controller{
-    private final Map<String, Function<Map<String, String>, Map<String, Object>>> methodMapper;
+    private final Map<String, Function<HttpRequest, ResponseSendDataModel>> methodMapper;
 
     public RootController(){
         methodMapper = new HashMap<>();
@@ -16,16 +18,14 @@ public class RootController implements Controller{
         methodMapper.put("GET /index.html", this::index);
     }
 
-    private Map<String, Object> index(Map<String, String> model){
-        Map<String, Object> result = new HashMap<>();
-
-        result.put(AssignedModelKey.NAME, "/index.html");
+    private ResponseSendDataModel index(HttpRequest httpRequest){
+        ResponseSendDataModel result = new ResponseSendDataModel("/index.html");
 
         return result;
     }
 
     @Override
-    public Function<Map<String, String>, Map<String, Object>> decideMethod(String method, String url) {
+    public Function<HttpRequest, ResponseSendDataModel> decideMethod(String method, String url) {
         url = method + " " + url;
 
         return methodMapper.get(url);

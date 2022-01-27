@@ -1,10 +1,10 @@
 package mapper;
 
-import Controller.Controller;
-import Controller.RootController;
-import Controller.StaticController;
-import Controller.ErrorController;
-import Controller.UserController;
+import controller.Controller;
+import controller.RootController;
+import controller.StaticController;
+import controller.ErrorController;
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.HttpRequest;
@@ -39,12 +39,9 @@ public class UrlMapper {
         controllerMap.put(ROOT, rootController);
     }
 
-    public Map<String, Object> mappingResult(HttpRequest httpRequest){
-        String method = httpRequest.getMethod();
-        String url = httpRequest.getUrl();
-        Map<String, String> model = httpRequest.makeModel();
+    public ResponseSendDataModel mappingResult(HttpRequest httpRequest){
 
-        return controllerMap.get(createMappingUrl(url)).run(method, url, model);
+        return controllerMap.get(createMappingUrl(httpRequest.getUrl())).run(httpRequest);
     }
 
     private String createMappingUrl(String url){

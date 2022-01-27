@@ -1,6 +1,7 @@
 package webserver;
 
 import mapper.AssignedModelKey;
+import util.UrlQueryUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +17,16 @@ public class HttpRequest {
 
     public HttpRequest(String[] firstLineSplit, Map<String, String> header, Map<String, String> body){
         this.method = firstLineSplit[0];
-        this.url = firstLineSplit[1];
+        String priUrl = firstLineSplit[1];
         this.protocol = firstLineSplit[2];
+        this.url = priUrl.split("\\?")[0];
 
         this.header = header;
-        this.body = body;
+
+        if(priUrl.split("\\?").length == 2 && "GET".equals(method))
+            this.body = UrlQueryUtils.parseUrlQuery(priUrl);
+        else
+            this.body = body;
     }
 
     public String getMethod() {
@@ -31,11 +37,7 @@ public class HttpRequest {
         return url;
     }
 
-    public Map<String, String> makeModel(){
-        Map<String, String> model = new HashMap<>(body);
-
-        model.put(AssignedModelKey.REQUEST_URL, url);
-
-        return model;
+    public Map<String, String> getBody() {
+        return body;
     }
 }

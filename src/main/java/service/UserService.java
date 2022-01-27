@@ -15,10 +15,10 @@ public class UserService {
         userRepository = new UserAccountNoDbUseRepository();
     }
 
-    public String join(UserAccountDTO userAccountDTO){
-        userRepository.save(userAccountDTO);
-
+    public String join(UserAccountDTO userAccountDTO) throws IllegalStateException{
         validateDuplicateUserId(userAccountDTO);
+
+        userRepository.save(userAccountDTO);
 
         return userAccountDTO.getUserId();
     }

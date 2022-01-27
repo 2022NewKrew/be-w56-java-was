@@ -1,10 +1,11 @@
 package webserver;
 
-import Controller.Controller;
 import mapper.AssignedModelKey;
+import mapper.ResponseSendDataModel;
 import mapper.UrlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.UrlQueryUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -14,12 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RequestHandler {
@@ -48,12 +47,12 @@ public class RequestHandler {
 
             HttpRequest httpRequest = new HttpRequest(firstLineSplit, header, body);
 
-            Map<String, Object> result = urlMapper.mappingResult(httpRequest);
-            String filename = (String)result.get(AssignedModelKey.NAME);
+            ResponseSendDataModel result = urlMapper.mappingResult(httpRequest);
+            String filename = result.getName();
 
             String cookieSet = "";
-            if(result.containsKey(AssignedModelKey.LOGIN)){
-                if((Boolean)result.get(AssignedModelKey.LOGIN))
+            if(result.getLogin() != null){
+                if(result.getLogin())
                     cookieSet = "Set-Cookie: logined=true; Path=/";
                 else
                     cookieSet = "Set-Cookie: logined=false; Path=/";
@@ -66,11 +65,11 @@ public class RequestHandler {
                 return;
             }
 
-            byte[] Responsebody = Files.readAllBytes(new File("./webapp" + filename).toPath());
+            byte[] responseBody = Files.readAllBytes(new File("./webapp" + filename).toPath());
 
 
-            response200Header(dos, Responsebody.length, cookieSet);
-            responseBody(dos, Responsebody);
+            response200Header(dos, responseBody.length, cookieSet);
+            responseBody(dos, responseBody);
 
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -124,14 +123,10 @@ public class RequestHandler {
     }
 
     private Map<String, String> makeBodyMap(BufferedReader br, int len) throws IOException{
-        Map<String, String> body = new HashMap<>();
         char[] a = new char[len];
 
         br.read(a, 0, a.length);
-        for(String query: new String(a).split("&")){
-            body.put(query.split("=")[0], query.split("=")[1]);
-        }
 
-        return body;
+        return UrlQueryUtils.parseUrlQuery(new String(a));
     }
 }
