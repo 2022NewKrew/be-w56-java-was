@@ -2,6 +2,7 @@ package webserver;
 
 import controller.Controller;
 import http.request.HttpRequest;
+import http.request.HttpRequestFactory;
 import http.response.HttpResponse;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -31,7 +32,7 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            HttpRequest request = new HttpRequest(inputStreamToStrings(in));
+            HttpRequest request = HttpRequestFactory.getHttpRequest(in);
             Controller controller = ControllerType.getControllerType(request.getUrl());
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse = controller.run(request, dos);
