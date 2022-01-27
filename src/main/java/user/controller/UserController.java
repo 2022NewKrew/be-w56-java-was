@@ -9,7 +9,7 @@ import java.util.Map;
 public class UserController {
 
     //회원가입
-    public static String execute(Request request) {
+    public static String createUser(Request request) {
         Map<String, String> elements = request.getElements();
 
         User user = new User(elements.get("userId"),
