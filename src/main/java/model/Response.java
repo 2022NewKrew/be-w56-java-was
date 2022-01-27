@@ -6,7 +6,11 @@ import util.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.http.HttpHeaders;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
@@ -16,14 +20,14 @@ public class Response {
     private final String version;
     private final HttpStatus status;
     private final Map<String, String> headers;
-    private final String[] contentType;
+    private final String contentType;
     private final int lengthOfBodyContent;
 
-    public Response(DataOutputStream dos, byte[] body, String version, HttpStatus status,
-                    Map<String, String> headers, String[] contentType) {
+    public Response(DataOutputStream dos, byte[] body, HttpStatus status,
+                    Map<String, String> headers, String contentType) {
         this.dos = dos;
         this.body = body;
-        this.version = version;
+        this.version = "HTTP/1.1";
         this.status = status;
         this.headers = headers;
         this.contentType = contentType;
@@ -35,7 +39,7 @@ public class Response {
             dos.writeBytes(String.format("%s %s \r\n", version, status));
             writeBytesHeaders();
             dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", contentType));
-            dos.writeBytes(String.format("Content-Length: %s \r\n", lengthOfBodyContent));
+            dos.writeBytes(String.format("Content-Length: %d \r\n", lengthOfBodyContent));
             dos.writeBytes("\r\n");
             dos.write(body, 0, body.length);
             dos.flush();
