@@ -14,6 +14,10 @@
 - Request header 를 이용해서 request 정보를 관리
 - Controller 를 통해 앞으로 추가될 요청에 대해 좀 더 자세하게 관리
 
+## 3단계
+- 404 page를 던질때 try catch 한번더 사용되는 문제
+- buffered reader 에서 readline 으로 body가 읽히지 않는 문제
+
 ## 해야할것
 - html의 중복되는 부분처리
   - 우선순위 낮음 
