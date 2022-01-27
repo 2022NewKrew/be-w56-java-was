@@ -51,9 +51,14 @@ public class UserLoginController implements Controller {
 
     private HttpResponse loginSuccess(DataOutputStream dos) {
         Map<String, String> result = new HashMap<>();
+        Map<String, String> cookie = new HashMap<>();
+
+        cookie.put("logined", "true; Path=/");
+
         result.put("url", "/index.html");
         result.put("status", "302");
-        return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
+
+        return HttpResponseFactory.getHttpResponse(result, cookie, new HashMap<>(), dos);
     }
 
     private HttpResponse loginFail(DataOutputStream dos) {
