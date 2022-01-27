@@ -14,10 +14,10 @@ class PackageAnalyzerTest {
     @Test
     void getClasses() throws IOException, ClassNotFoundException {
         String packageName = "test.dummy";
+        PackageAnalyzer analyzer = new PackageAnalyzer();
 
-        PackageAnalyzer analyzer = new PackageAnalyzer(packageName);
+        Class<?>[] classes = analyzer.getClasses(packageName);
 
-        Class<?>[] classes = analyzer.getClasses();
         assertEquals(
                 Set.of("test.dummy.Dummy1", "test.dummy.Dummy2", "test.dummy.Dummy3"),
                 Arrays.stream(classes).map(Class::getName).collect(Collectors.toSet())

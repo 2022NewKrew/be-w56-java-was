@@ -12,9 +12,9 @@ public class DependencyInjector {
             NoSuchMethodException,
             InvocationTargetException,
             InstantiationException {
-        PackageAnalyzer analyzer = new PackageAnalyzer(packageName);
+        PackageAnalyzer analyzer = new PackageAnalyzer();
         BeanParser parser = new BeanParser();
-        Class<?>[] classes = analyzer.getClasses();
+        Class<?>[] classes = analyzer.getClasses(packageName);
         BeanContainer container = parser.parse(classes);
         BeanInjector injector = new BeanInjector(container);
         injector.inject(target);

@@ -4,19 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
 // https://stackoverflow.com/a/520344
 public class PackageAnalyzer {
 
-    private final String packageName;
-
-    public PackageAnalyzer(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public Class<?>[] getClasses() throws IOException, ClassNotFoundException {
+    public Class<?>[] getClasses(String packageName) throws IOException, ClassNotFoundException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
@@ -27,30 +22,36 @@ public class PackageAnalyzer {
         }
         ArrayList<Class<?>> classes = new ArrayList<>();
         for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
+            List<Class<?>> found = findClassesInDirectory(directory, packageName);
+            classes.addAll(found);
         }
         return classes.toArray(new Class<?>[] {});
     }
 
-    private List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<>();
+    private List<Class<?>> findClassesInDirectory(File directory, String packageName) throws ClassNotFoundException {
         if (!directory.exists()) {
-            return classes;
+            return Collections.emptyList();
         }
+        List<Class<?>> classes = new ArrayList<>();
         File[] files = directory.listFiles();
         for (File file : files != null ? files : new File[0]) {
-            String filename = file.getName();
-            if (file.isDirectory()) {
-                classes.addAll(findClasses(file, packageName + "." + filename));
-                continue;
-            }
-            if (filename.endsWith(".class")) {
-                String qualifier = packageName.replaceAll("^\\.", "") +
-                        "." +
-                        filename.replaceAll(".class$", "");
-                classes.add(Class.forName(qualifier));
-            }
+            List<Class<?>> found = findClasses(file, packageName);
+            classes.addAll(found);
         }
         return classes;
+    }
+
+    private List<Class<?>> findClasses(File file, String packageName) throws ClassNotFoundException {
+        String filename = file.getName();
+        if (file.isDirectory()) {
+            return findClassesInDirectory(file, packageName + "." + filename);
+        }
+        if (filename.endsWith(".class")) {
+            String qualifier = packageName.replaceAll("^\\.", "") +
+                    "." +
+                    filename.replaceAll(".class$", "");
+            return List.of(Class.forName(qualifier));
+        }
+        return Collections.emptyList();
     }
 }
