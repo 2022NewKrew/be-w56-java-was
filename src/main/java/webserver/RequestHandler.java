@@ -13,7 +13,6 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final RequestMapper requestMapper = new RequestMapper();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -27,7 +26,7 @@ public class RequestHandler extends Thread {
             Request request = new Request(in);
             Response response = new Response(out);
 
-            Controller controller = requestMapper.mapping(request.getUrl());
+            Controller controller = RequestMapper.mapping(request.getUrl());
             controller.makeResponse(request, response);
 
         } catch (IOException e) {
