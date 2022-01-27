@@ -5,6 +5,9 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.custom.ComponentManager;
+import webserver.custom.DispatcherServlet;
+import webserver.custom.HandlerMapping;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
@@ -18,7 +21,8 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        // ?„œë²„ì†Œì¼“ì„ ?ƒ?„±?•œ?‹¤. ?›¹?„œë²„ëŠ” ê¸°ë³¸? ?œ¼ë¡? 8080ë²? ?¬?Š¸ë¥? ?‚¬?š©?•œ?‹¤.
+        // Custom DispatcherServlet set-up
+        Dispatcher customDispatcherServlet = new DispatcherServlet(HandlerMapping.of(ComponentManager.of()));
 
         // ±âÁ¸ dispatcher
         Dispatcher defaultDispatcherServlet = new DefaultDispatcher();
