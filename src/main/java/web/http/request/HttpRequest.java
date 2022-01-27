@@ -1,6 +1,7 @@
 package web.http.request;
 
 import util.IOUtils;
+import web.http.response.HttpResponseStatusLine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
