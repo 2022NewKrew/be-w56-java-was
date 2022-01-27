@@ -30,8 +30,9 @@ public class UserService {
         return entityToDto(userRepository.findById(dto.getUserId()));
     }
 
-    public void modify(UserDto dto) {
-
+    public void update(UserDto dto) {
+        User entity = dtoToEntity(dto);
+        userRepository.update(entity);
     }
 
     private User dtoToEntity(UserDto dto) {
