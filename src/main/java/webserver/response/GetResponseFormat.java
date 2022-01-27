@@ -12,11 +12,16 @@ public class GetResponseFormat implements ResponseFormat {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private DataOutputStream dos;
+    private String cookie;
     private ResponseFile responseFile;
 
     public GetResponseFormat(OutputStream os, String filePath) {
         this.dos = new DataOutputStream(os);
         this.responseFile = new ResponseFile(filePath);
+    }
+
+    public void setCookie (String key, String value) {
+        this.cookie = key+"="+value+"; Path=/";
     }
 
     @Override

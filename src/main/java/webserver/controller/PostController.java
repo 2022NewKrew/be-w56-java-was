@@ -10,13 +10,13 @@ import webserver.response.PostResponseFormat;
 import webserver.response.ResponseCode;
 import webserver.response.ResponseFormat;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 public class PostController implements MethodController {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private static final String SIGN_UP = "/user/create";
+    private static final String SIGN_IN = "/user/login";
 
     RequestParser rp;
     OutputStream os;
@@ -26,12 +26,15 @@ public class PostController implements MethodController {
         this.os = os;
     }
 
-    public void service() throws IOException {
+    public void service() {
         log.info(":: Post Service");
 
         switch (rp.getPath()) {
             case SIGN_UP:
                 methodSignUp();
+                break;
+            case SIGN_IN:
+                methodSignIn();
                 break;
             default:
                 break;
@@ -39,6 +42,8 @@ public class PostController implements MethodController {
     }
 
     private void methodSignUp() {
+        log.info("[run] methodSignUp");
+
         String userId = rp.getBody("userId");
         String password = rp.getBody("password");
         String name = rp.getBody("name");
@@ -51,12 +56,31 @@ public class PostController implements MethodController {
             log.info(user.toString());
             DataBase.addUser(user);
 
-            rf.sendResponse(ResponseCode.STATUS_302);
+            rf.sendResponse(ResponseCode.STATUS_303);
             return;
         } catch (Exception e) {
             log.error(e.getMessage());
         }
 
         rf.sendResponse(ResponseCode.STATUS_405);
+    }
+
+    private void methodSignIn() {
+        log.info("[run] methodSignIn");
+
+        String userId = rp.getBody("userId");
+        String password = rp.getBody("password");
+
+        User userData = DataBase.findUserById(userId);
+        if(userData != null && userData.getPassword().equals(password)) {
+            log.info("[login] success");
+
+            ResponseFormat rf = new PostResponseFormat(os, "/");
+            rf.setCookie("logined", "true");
+            rf.sendResponse(ResponseCode.STATUS_303);
+            return;
+        }
+        ResponseFormat rf = new PostResponseFormat(os, "/");
+        rf.sendResponse(ResponseCode.STATUS_403);
     }
 }

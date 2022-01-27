@@ -15,10 +15,15 @@ public class PostResponseFormat implements ResponseFormat {
 
     private DataOutputStream dos;
     private String redirectPath;
+    private String cookie;
 
     public PostResponseFormat(OutputStream os, String redirectPath) {
         this.dos = new DataOutputStream(os);
         this.redirectPath = redirectPath;
+    }
+
+    public void setCookie (String key, String value) {
+        this.cookie = key+"="+value+"; Path=/";
     }
 
     @Override
@@ -26,6 +31,9 @@ public class PostResponseFormat implements ResponseFormat {
         switch (status) {
             case STATUS_302:
                 response302Header();
+                break;
+            case STATUS_303:
+                response303Header();
                 break;
             case STATUS_403:
             case STATUS_404:
@@ -38,11 +46,29 @@ public class PostResponseFormat implements ResponseFormat {
 
     private void response302Header() {
         try {
-            dos.writeBytes("HTTP/1.1 303 See Other\r\n");
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
             dos.writeBytes("Location: "+redirectPath+"\r\n");
+            responseCookieHeader();
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    private void response303Header() {
+        try {
+            dos.writeBytes("HTTP/1.1 303 See Other\r\n");
+            dos.writeBytes("Location: "+redirectPath+"\r\n");
+            responseCookieHeader();
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void responseCookieHeader() throws IOException {
+        if(cookie != null && !"".equals(cookie.trim())) {
+            dos.writeBytes("Set-Cookie: " + cookie + "\r\n");
         }
     }
 
@@ -50,6 +76,7 @@ public class PostResponseFormat implements ResponseFormat {
         try {
             dos.writeBytes("HTTP/1.1 303 See Other\r\n");
             dos.writeBytes("Location: "+ERROR_PATH+"\r\n");
+            responseCookieHeader();
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
