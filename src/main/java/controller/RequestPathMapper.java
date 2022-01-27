@@ -31,6 +31,9 @@ public class RequestPathMapper {
             case "/user":
                 userCreatePath(requestHeader, requestBody, dos);
                 break;
+            case "/user/login":
+                userLoginPath(requestHeader, requestBody, dos);
+                break;
             default:
                 defaultPath(requestLine, requestHeader, dos);
                 break;
@@ -48,12 +51,13 @@ public class RequestPathMapper {
         }
     }
 
-    protected static void response302Header(String contentType, String redirectUrl, DataOutputStream dos) {
+    protected static void response302Header(String contentType, boolean isLogined, DataOutputStream dos) {
         try {
             dos.writeBytes("HTTP/1.1 " + ResponseStatus.FOUND.getValue() + " " + ResponseStatus.FOUND.name() + " \r\n");
-            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("Location: " + REDIRECT_PATH + "\r\n");
             dos.writeBytes("Content-Type: " + contentType + "; charset = utf - 8\r\n ");
             dos.writeBytes("Content-Length: " + 0 + "\r\n");
+            dos.writeBytes("Set-Cookie: logined=" + isLogined + "; Path=/");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
