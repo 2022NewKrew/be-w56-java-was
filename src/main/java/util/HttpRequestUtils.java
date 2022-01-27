@@ -37,6 +37,21 @@ public class HttpRequestUtils {
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
+    public static Map<String, String> parseUrl(String requestUrl) {
+        String[] splitUrl = requestUrl.split("\\?");
+        Map<String, String> map = new HashMap<>() {{
+            put("url", splitUrl[0]);
+        }};
+        if (splitUrl.length == 2) {
+            map.put("query", splitUrl[1]);
+        }
+        return map;
+    }
+
+    public static Pair parseHeader(String header) {
+        return getKeyValue(header, ": ");
+    }
+
     static Pair getKeyValue(String keyValue, String regex) {
         if (Strings.isNullOrEmpty(keyValue)) {
             return null;
@@ -48,10 +63,6 @@ public class HttpRequestUtils {
         }
 
         return new Pair(tokens[0], tokens[1]);
-    }
-
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
     }
 
     public static class Pair {

@@ -1,8 +1,13 @@
-package util;
+package http;
 
-import http.HttpRequest;
+import enums.HttpMethod;
+import util.HttpRequestUtils;
+import util.IOUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 public class HttpRequestParser {
@@ -13,7 +18,7 @@ public class HttpRequestParser {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         parseStartLine(br);
         parseHeader(br);
-        if (httpRequest.getMethod().equals("POST")) {
+        if (httpRequest.getMethod().equals(HttpMethod.POST)) {
             parseBody(br);
         }
     }
@@ -21,7 +26,11 @@ public class HttpRequestParser {
     private void parseStartLine(BufferedReader br) throws IOException {
         String startLine = br.readLine();
         Map<String, String> startLineMap = HttpRequestUtils.parseStartLine(startLine);
-        httpRequest.setStartLine(startLineMap.get("method"), startLineMap.get("url"), startLineMap.get("protocol"));
+        Map<String, String> urlMap = HttpRequestUtils.parseUrl(startLineMap.get("url"));
+        if (urlMap.containsKey("query")) {
+            httpRequest.setQueryString(urlMap.get("query"));
+        }
+        httpRequest.setStartLine(startLineMap.get("method"), urlMap.get("url"), startLineMap.get("protocol"));
     }
 
     private void parseHeader(BufferedReader br) throws IOException {
