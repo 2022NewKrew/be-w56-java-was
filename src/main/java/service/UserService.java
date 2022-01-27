@@ -26,4 +26,15 @@ public class UserService {
         log.info("[USER_SERVICE] : " + user);
         return user;
     }
+
+    public User searchUserById(Queries queries){
+        return DataBase.findUserById(queries.get("userId"));
+    }
+
+    public boolean login(Queries queries){
+        User user = DataBase.findUserById(queries.get("userId"));
+        boolean result = user != null && user.getPassword().equals(queries.get("password"));
+        log.info("LOGIN : " + result);
+        return result;
+    }
 }

@@ -14,6 +14,7 @@ public class ViewResolver {
     private ViewResolver(){
         viewMap.put("/", "/index.html");
         viewMap.put("/users/form", "/user/form.html");
+        viewMap.put("/users/login", "/user/login.html");
     }
 
     public static ViewResolver getInstance(){
