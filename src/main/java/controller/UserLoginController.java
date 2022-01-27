@@ -27,7 +27,7 @@ public class UserLoginController implements Controller{
         String userId = bodyData.get("userId");
         String password = bodyData.get("password");
         User user = DataBase.findUserById(userId);
-        if(user.getPassword().equals(password)){
+        if(user != null && user.getPassword().equals(password)){
             return loginSuccess(dos);
         }
         return loginFail(dos);
@@ -42,7 +42,7 @@ public class UserLoginController implements Controller{
 
     private HttpResponse loginFail(DataOutputStream dos) throws IOException {
         Map<String, String> result = new HashMap<>();
-        result.put("url", "/login_failed.html");
+        result.put("url", "/user/login_failed.html");
         result.put("status", "401");
         return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
     }
