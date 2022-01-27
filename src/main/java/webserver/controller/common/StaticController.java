@@ -31,7 +31,7 @@ public class StaticController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> handle(HttpRequest httpRequest){
+    public HttpResponse<String> doHandle(HttpRequest httpRequest){
         String fileName = isRootUrl(httpRequest.getUrl())
                 ? "/index.html"
                 : httpRequest.getUrl();

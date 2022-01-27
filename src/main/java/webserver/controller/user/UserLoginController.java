@@ -11,7 +11,6 @@ import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class UserLoginController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> handle(HttpRequest httpRequest){
+    public HttpResponse<String> doHandle(HttpRequest httpRequest){
         if(!supports(httpRequest)){
             throw new IllegalStateException("해당 요청을 지원하지 않습니다.");
         }

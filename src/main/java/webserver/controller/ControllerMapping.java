@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class ControllerMapping {
     private final List<Controller<?>> controllers = ControllerFactory.getNormalControllers();
-    private final Controller<?> errorController = ControllerFactory.getErrorController();
+    private final Controller<?> errorController = ControllerFactory.getNotFoundController();
 
     public Controller<?> getController(HttpRequest httpRequest){
         Optional<Controller<?>> controllerOptional

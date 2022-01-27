@@ -17,4 +17,12 @@ public class HttpResponse<T> {
     private T data;
 
     private HttpResponseDataType dataType;
+
+    public static HttpResponse<String> of(Exception e){
+        return HttpResponse.<String>builder()
+                .status(HttpResponseStatus.INTERNAL_ERROR)
+                .data(e.getMessage())
+                .dataType(HttpResponseDataType.STRING)
+                .build();
+    }
 }

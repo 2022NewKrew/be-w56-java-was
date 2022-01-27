@@ -29,7 +29,7 @@ public class UserJoinController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> handle(HttpRequest httpRequest){
+    public HttpResponse<String> doHandle(HttpRequest httpRequest){
         if(!supports(httpRequest)){
             throw new IllegalStateException("해당 요청을 지원하지 않습니다.");
         }

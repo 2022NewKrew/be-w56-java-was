@@ -13,7 +13,7 @@ public class NotFoundController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> handle(HttpRequest httpRequest){
+    public HttpResponse<String> doHandle(HttpRequest httpRequest){
         return HttpResponse.<String>builder()
                 .status(HttpResponseStatus.NOT_FOUND)
                 .data("Not Found")

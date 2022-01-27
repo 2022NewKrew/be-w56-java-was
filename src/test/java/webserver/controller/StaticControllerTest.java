@@ -76,7 +76,7 @@ class StaticControllerTest {
                 .build();
 
         //when
-        HttpResponse<String> httpResponse = (HttpResponse<String>) controller.handle(httpRequest);
+        HttpResponse<String> httpResponse = (HttpResponse<String>) controller.doHandle(httpRequest);
 
         //then
         assertThat(httpResponse.getStatus()).isEqualTo(HttpResponseStatus.SUCCESS);

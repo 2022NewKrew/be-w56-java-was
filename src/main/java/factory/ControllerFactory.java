@@ -9,11 +9,8 @@ import webserver.controller.user.UserLoginController;
 import java.util.List;
 
 public class ControllerFactory {
-    private static final StaticController staticController
-            = new StaticController();
-
-    private static final NotFoundController NOT_FOUND_CONTROLLER
-            = new NotFoundController();
+    private static final StaticController staticController = new StaticController();
+    private static final NotFoundController notFoundController = new NotFoundController();
 
     private static final UserJoinController userJoinController
             = new UserJoinController(RepositoryFactory.getUserRepository());
@@ -21,8 +18,8 @@ public class ControllerFactory {
     private static final UserLoginController userLoginController
             = new UserLoginController(RepositoryFactory.getUserRepository());
 
-    public static Controller<?> getErrorController(){
-        return NOT_FOUND_CONTROLLER;
+    public static Controller<?> getNotFoundController(){
+        return notFoundController;
     }
 
     public static List<Controller<?>> getNormalControllers(){
