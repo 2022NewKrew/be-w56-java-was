@@ -1,5 +1,6 @@
 package webserver;
 
+import model.Pair;
 import model.request.Headers;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -39,9 +40,16 @@ public class ResponseWriter {
         writeErrorResponse(out);
     }
 
-    public void writeRedirectResponse(final OutputStream out, final String redirectLocation)
+    /**
+     * @param headers Location 키 값을 가진 Pair가 반드시 포함되어 있어야 한다
+     */
+    public void writeRedirectResponse(final OutputStream out, final Headers headers)
     {
-        write301Response(out, redirectLocation);
+        if (headers.getPair(Headers.HEADER_LOCATION).isNone()) {
+            writeErrorResponse(out);
+            return;
+        }
+        write301Response(out, headers);
     }
 
     public void writeErrorResponse(final OutputStream out) {
@@ -56,10 +64,10 @@ public class ResponseWriter {
         responseBody(dos, body);
     }
 
-    private void write301Response(final OutputStream out, final String redirectLocation) {
+    private void write301Response(final OutputStream out, final Headers headers) {
         final DataOutputStream dos = new DataOutputStream(out);
 
-        response301Header(dos, redirectLocation);
+        response301Header(dos, headers);
     }
 
     private String createHeaderString(final String key, final String value) {
@@ -69,8 +77,8 @@ public class ResponseWriter {
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, final String mime) {
         try {
             dos.writeBytes(RESPONSE_TOP_HEADER_OK);
-            dos.writeBytes(createHeaderString("Content-Type", mime + ";charset=utf-8"));
-            dos.writeBytes(createHeaderString("Content-Length", String.valueOf(lengthOfBodyContent)));
+            dos.writeBytes(createHeaderString(Headers.HEADER_CONTENT_TYPE, mime + ";charset=utf-8"));
+            dos.writeBytes(createHeaderString(Headers.HEADER_CONTENT_LENGTH, String.valueOf(lengthOfBodyContent)));
             dos.writeBytes(RESPONSE_BODY_SEPARATOR);
             dos.flush();
         } catch (IOException e) {
@@ -78,10 +86,12 @@ public class ResponseWriter {
         }
     }
 
-    private void response301Header(DataOutputStream dos, final String location) {
+    private void response301Header(DataOutputStream dos, final Headers headers) {
         try {
             dos.writeBytes(RESPONSE_TOP_HEADER_MOVED_PERMANENTLY);
-            dos.writeBytes(createHeaderString("Location", location));
+            for (Pair pair : headers.getList()) {
+                dos.writeBytes(createHeaderString(pair.getKey(), pair.getValue()));
+            }
             dos.writeBytes(RESPONSE_BODY_SEPARATOR);
             dos.flush();
         } catch (IOException e) {
