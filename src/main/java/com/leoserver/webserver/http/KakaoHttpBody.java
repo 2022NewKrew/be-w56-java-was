@@ -1,24 +1,34 @@
 package com.leoserver.webserver.http;
 
 import com.google.gson.Gson;
-import java.util.Optional;
+import com.google.gson.JsonObject;
 
 public class KakaoHttpBody {
 
-  Object holder;
+  JsonObject holder;
 
   public KakaoHttpBody() {
-    this.holder = new Object();
+    this.holder = new JsonObject();
   }
 
 
   public KakaoHttpBody(Object object) {
-    this.holder = Optional.ofNullable(object).orElseGet(Object::new);
+
+    if(object == null) {
+      object = new Object();
+    }
+
+    this.holder = (JsonObject) new Gson().toJsonTree(object);
   }
 
 
   public String toJson() {
     return new Gson().toJson(holder);
+  }
+
+
+  public String getFieldAsString(String key) {
+    return holder.get(key).getAsString();
   }
 
 

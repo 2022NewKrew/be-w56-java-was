@@ -1,13 +1,15 @@
 package com.leoserver.webserver.handler;
 
 import com.leoserver.webserver.ApplicationContext;
+import com.leoserver.webserver.annotation.RequestBody;
 import com.leoserver.webserver.annotation.RequestParam;
+import com.leoserver.webserver.http.KakaoHttpBody;
 import com.leoserver.webserver.http.KakaoHttpHeader;
 import com.leoserver.webserver.http.KakaoHttpRequest;
 import com.leoserver.webserver.http.KakaoHttpResponse;
 import com.leoserver.webserver.http.QueryParam;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import org.slf4j.Logger;
@@ -36,9 +38,10 @@ public class ServletHandler {
 
 
   public byte[] handle(KakaoHttpRequest request)
-      throws InvocationTargetException, IllegalAccessException, IOException {
+      throws Exception {
 
     KakaoHttpHeader header = request.getHeader();
+    KakaoHttpBody body = request.getBody();
 
     Pair<Method, Object> pairs = urlHandler.find(header.getMethod(), header.getUri().toString())
         .orElseThrow(IllegalArgumentException::new);
@@ -53,7 +56,8 @@ public class ServletHandler {
     Object[] invokeParams = new Object[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
 
-      handleRequestParam(invokeParams, parameters, i, header.getQueryParam());
+      handleRequestParam(invokeParams, parameters[i], i, header.getQueryParam());
+      handleRequestBody(invokeParams, parameters[i], i, body);
 
     }
 
@@ -62,12 +66,14 @@ public class ServletHandler {
   }
 
 
-  private void handleRequestParam(Object[] invokeParams, Parameter[] parameters, int index, QueryParam queryParam) {
+  private void handleRequestParam(
+      Object[] invokeParams, Parameter parameter,
+      int index, QueryParam queryParam
+  ) {
 
-    Parameter parameter = parameters[index];
     RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
 
-    if(requestParam == null) {
+    if (requestParam == null) {
       return;
     }
 
@@ -75,7 +81,36 @@ public class ServletHandler {
 
     invokeParams[index] = queryParam.get(paramKey)
         .orElseThrow(IllegalArgumentException::new);    // queryParam 의 요청값이 없음.
+  }
 
+
+  private void handleRequestBody(
+      Object[] invokeParams, Parameter parameter,
+      int index, KakaoHttpBody body
+  ) throws Exception {
+
+    RequestBody requestBody = parameter.getAnnotation(RequestBody.class);
+
+    if (requestBody == null) {
+      return;
+    }
+
+
+    logger.debug("Parameter Type : {}", parameter.getClass());
+    Class<?> cls = parameter.getType();
+    Constructor<?> constructor = cls.getConstructor();
+    Object object = constructor.newInstance();
+    Field[] fields = object.getClass().getDeclaredFields();
+    for (Field field : fields) {
+
+      String injectParam = body.getFieldAsString(field.getName());
+      field.setAccessible(true);
+      field.set(object, injectParam);
+
+      logger.debug("parameter body objects : {}", injectParam);
+    }
+
+    invokeParams[index] = object;
   }
 
 
