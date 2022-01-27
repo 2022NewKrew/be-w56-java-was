@@ -10,6 +10,6 @@ public class GetStaticFileHandler implements Handler {
 
     @Override
     public Response handle(Request request) throws Exception {
-        return ResponseFactory.staticFileResponse(STATIC_FILE_ROOT_PATH + request.getUri());
+        return ResponseFactory.staticFile(STATIC_FILE_ROOT_PATH + request.getUri());
     }
 }

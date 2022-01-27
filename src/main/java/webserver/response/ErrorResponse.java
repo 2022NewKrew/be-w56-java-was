@@ -2,7 +2,7 @@ package webserver.response;
 
 import java.nio.charset.StandardCharsets;
 
-class ErrorResponse extends Response {
+public class ErrorResponse extends Response {
 
     ErrorResponse(StatusCode statusCode, String msg) {
         super(statusCode);

@@ -7,7 +7,7 @@ import org.apache.tika.Tika;
 
 public final class ResponseFactory {
 
-    public static StaticFileResponse staticFileResponse(String path) throws Exception {
+    public static StaticFileResponse staticFile(String path) throws Exception {
         File file = new File(path);
         String mimeType = new Tika().detect(file);
         if (mimeType == null) {
@@ -16,11 +16,11 @@ public final class ResponseFactory {
         return new StaticFileResponse(mimeType, file);
     }
 
-    public static RedirectResponse redirectResponse(String uri) {
+    public static RedirectResponse redirect(String uri) {
         return new RedirectResponse(uri);
     }
 
-    public static ErrorResponse errorResponse(Exception e) {
+    public static ErrorResponse error(Exception e) {
         if (e instanceof CustomException) {
             return new ErrorResponse(((CustomException) e).getStatusCode(), e.getMessage());
         }

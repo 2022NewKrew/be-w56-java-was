@@ -50,7 +50,7 @@ public class RequestHandler extends Thread {
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage());
             e.printStackTrace();
-            response = ResponseFactory.errorResponse(e);
+            response = ResponseFactory.error(e);
         } finally {
             ResponseWriter.write(out, response);
         }

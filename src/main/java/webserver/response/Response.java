@@ -29,4 +29,9 @@ public class Response {
         headers.put("Content-Type", contentType);
         body = content;
     }
+
+    public Response setCookie(String... args) {
+        addHeader("Set-Cookie", String.join("; ", args));
+        return this;
+    }
 }

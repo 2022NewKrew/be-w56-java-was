@@ -1,6 +1,6 @@
 package webserver.response;
 
-class RedirectResponse extends Response {
+public class RedirectResponse extends Response {
 
     private static final String HOST = "http://localhost:8080";
 

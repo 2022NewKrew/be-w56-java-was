@@ -25,7 +25,7 @@ public final class HandlerFactory {
         if (existStaticFile(request.getUri())) {
             return new GetStaticFileHandler();
         }
-        throw new InvalidRequestException("static file에 대한 get 요청만 처리할 수 있음");
+        throw new InvalidRequestException(request.getUri() + ": 잘못된 경로임");
     }
 
     private static boolean existStaticFile(String uri) {
