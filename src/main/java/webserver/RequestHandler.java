@@ -5,9 +5,14 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Map;
 
+import http.HttpBody;
 import http.HttpHeader;
+import http.HttpStatusCode;
 import http.request.HttpRequest;
 import http.request.HttpRequestStartLine;
+import http.response.HttpResponse;
+import http.util.HttpRequestUtils;
+import http.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,9 +35,20 @@ public class RequestHandler extends Thread {
             printRequest(request);
 
             DataOutputStream dos = new DataOutputStream(out);
+
+            HttpResponse response = new HttpResponse();
             byte[] body = Files.readAllBytes(new File("./webapp" + request.getStartLine().getTargetUri()).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            response.setBody(body);
+
+            response.setHttpVersion("HTTP/1.1");
+            response.setStatusCode(HttpStatusCode.OK);
+
+            HttpHeader responseHeader = new HttpHeader();
+            responseHeader.addHeader("Content-Type: text/html;charset=utf-8");
+            responseHeader.addHeader("Content-Length: " + body.length);
+            response.setHeader(responseHeader);
+
+            IOUtils.writeData(dos, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -54,26 +70,6 @@ public class RequestHandler extends Thread {
         Map<String, String> headers = header.getHeaders();
         for (Map.Entry<String, String> entrySet : headers.entrySet()) {
             log.debug("(HEADER) {} : {}", entrySet.getKey(), entrySet.getValue());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
         }
     }
 }
