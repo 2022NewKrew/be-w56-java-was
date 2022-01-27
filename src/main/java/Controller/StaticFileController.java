@@ -1,7 +1,5 @@
 package Controller;
 
-import static webserver.http.HttpMeta.ROOT_PATH_OF_WEB_RESOURCE_FILES;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +10,8 @@ import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 
 public class StaticFileController implements Controller {
+
+    private static final String ROOT_PATH_OF_WEB_RESOURCE_FILES = "./webapp";
 
     @Override
     public void process(HttpRequest request, HttpResponse response) throws IOException {

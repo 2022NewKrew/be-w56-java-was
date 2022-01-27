@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http.request.handler;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -13,10 +13,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.response.handler.ExceptionHandler;
+import webserver.http.request.exceptions.PageNotFoundException;
+import webserver.http.response.handler.ResponseHandler;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
-import webserver.http.request.NullRequestException;
-import webserver.http.request.RequestBuilderException;
+import webserver.http.request.exceptions.NullRequestException;
+import webserver.http.request.exceptions.RequestBuilderException;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseHeaders;
 

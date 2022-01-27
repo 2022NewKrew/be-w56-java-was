@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http.request.exceptions;
 
 public class PageNotFoundException extends Exception {
 

@@ -1,4 +1,4 @@
-package webserver.http.request;
+package webserver.http.request.exceptions;
 
 public class RequestBuilderException extends Exception {
 

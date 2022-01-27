@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http.response.handler;
 
 import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
 import static java.net.HttpURLConnection.HTTP_OK;

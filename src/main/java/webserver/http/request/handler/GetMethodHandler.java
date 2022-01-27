@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http.request.handler;
 
 import Controller.Controller;
 import Controller.StaticFileController;
@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import webserver.http.request.exceptions.PageNotFoundException;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
 import webserver.http.response.HttpResponse;

@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http.response.handler;
 
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
@@ -11,7 +11,8 @@ import java.io.FileNotFoundException;
 import java.nio.file.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.request.NullRequestException;
+import webserver.http.request.exceptions.NullRequestException;
+import webserver.http.request.exceptions.PageNotFoundException;
 import webserver.http.response.HttpResponse;
 
 public class ExceptionHandler {

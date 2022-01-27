@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import util.HttpRequestUtils;
+import webserver.http.request.exceptions.NullRequestException;
+import webserver.http.request.exceptions.RequestBuilderException;
 
 public class HttpRequest {
 

@@ -20,9 +20,6 @@ public class HttpMeta {
     public static final String SEPARATOR_OF_STATUS_LINE = " ";
     public static final String SEPARATOR_OF_HEADER_LINE = ": ";
     public static final String SEPARATOR_OF_BETWEEN_HEADERS = "\r\n";
-
-    // For Request Handler
-    public static final String ROOT_PATH_OF_WEB_RESOURCE_FILES = "./webapp";
     public static final String VIEW_BASIC_PAGE = "/index.html";
 
     // For Exception Handler
