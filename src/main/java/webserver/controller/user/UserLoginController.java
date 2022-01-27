@@ -50,7 +50,8 @@ public class UserLoginController implements Controller<String> {
 
         return HttpResponse.<String>builder()
                 .status(HttpResponseStatus.REDIRECT)
-                .headers(Map.of("Set-Cookie", "logined=true"))
+                .headers(Map.of("Set-Cookie", "logined=true",
+                        "Location", "/"))
                 .build();
     }
 
