@@ -1,4 +1,4 @@
-package http;
+package app.http;
 
 import static util.Constant.BLANK;
 import static util.Constant.NEW_LINE;

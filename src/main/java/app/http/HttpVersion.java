@@ -1,4 +1,4 @@
-package http;
+package app.http;
 
 public enum HttpVersion {
     HTTP_1_1 ("HTTP/1.1"),

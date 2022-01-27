@@ -1,4 +1,4 @@
-package http;
+package app.http;
 
 import util.HttpRequestUtils.Pair;
 
@@ -23,6 +23,10 @@ public class HttpHeader {
 
     public String get(String key) {
         return headers.getOrDefault(key, "");
+    }
+
+    public String get(String key, String defaultValue) {
+        return headers.getOrDefault(key, defaultValue);
     }
 
     public String headers() {

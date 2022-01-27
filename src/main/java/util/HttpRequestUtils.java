@@ -1,5 +1,11 @@
 package util;
 
+import static util.Constant.CONTENT_LENGTH;
+import static util.Constant.EMPTY;
+import static util.Constant.QUESTION_MARK;
+import static util.Constant.REDIRECT;
+import static util.Constant.ZERO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +18,30 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import http.HttpRequest;
+
+import app.http.HttpHeader;
+import app.http.HttpRequest;
+import app.http.HttpRequestBody;
 
 public class HttpRequestUtils {
+    public static String parseRedirect(String url) {
+        if(url.contains(REDIRECT)) {
+            url = url.replace(REDIRECT, EMPTY);
+        }
+        return url;
+    }
+
+    public static Map<String, String> parseParams(String[] targetTokens) {
+        if(targetTokens.length > 1) {
+            return parseQueryString(targetTokens[1]);
+        }
+        return null;
+    }
+
+    public static String[] parseTarget(String target) {
+        String[] targetTokens = target.split(QUESTION_MARK);
+        return targetTokens;
+    }
 
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
@@ -59,10 +86,13 @@ public class HttpRequestUtils {
         while ((line = br.readLine()) != null && !line.isEmpty()) {
             headers.add(parseHeader(line));
         }
-
+        HttpHeader header = HttpHeader.of(headers);
+        int length = Integer.parseInt(header.get(CONTENT_LENGTH, ZERO));
+        HttpRequestBody body = HttpRequestBody.of(parseQueryString(IOUtils.readData(br, length)));
         return HttpRequest.builder()
                 .requestLine(requestLine)
-                .pairs(headers)
+                .header(header)
+                .body(body)
                 .build();
     }
 

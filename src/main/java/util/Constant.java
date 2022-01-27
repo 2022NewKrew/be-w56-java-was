@@ -1,8 +1,12 @@
 package util;
 
 public class Constant {
+    public static final String EMPTY = "";
     public static final String BLANK = " ";
     public static final String COMMA = ",";
+    public static final String REDIRECT = "redirect:";
+    public static final String QUESTION_MARK = "\\?";
+    public static final String ZERO = "0";
     public static final String ACCEPT = "Accept";
     public static final String NEW_LINE = "\r\n";
     public static final String UTF_8 = ";charset=utf-8";

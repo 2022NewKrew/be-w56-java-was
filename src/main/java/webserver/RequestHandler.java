@@ -1,15 +1,17 @@
 package webserver;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
-import http.HttpRequest;
-import http.HttpResponse;
 
-import static util.Constant.*;
+import app.http.HttpRequest;
+import app.http.HttpResponse;
+import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,8 +29,10 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
             HttpRequest httpRequest = HttpRequestUtils.parseInput(in);
-            HttpResponse httpResponse = httpRequest.makeResponse();
-            sendResponse(dos, httpResponse);
+            HttpResponse httpResponse = DispatcherServlet.getInstance().doService(httpRequest);
+            if(httpResponse != null) {
+                sendResponse(dos, httpResponse);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -37,9 +41,7 @@ public class RequestHandler extends Thread {
     private void sendResponse(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusLine());
-            log.info("sendResponse statusLine: {}", httpResponse.getStatusLine());
             dos.writeBytes(httpResponse.responseHeader());
-            log.info("sendResponse responseHeader: {}", httpResponse.responseHeader());
             dos.write(httpResponse.getBody(), 0, httpResponse.getBodyLength());
             dos.flush();
         } catch (IOException e) {

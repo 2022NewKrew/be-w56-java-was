@@ -1,12 +1,12 @@
-package http;
-
-import lombok.Builder;
-import lombok.Getter;
-
-import java.util.List;
+package app.http;
 
 import static util.Constant.BLANK;
 import static util.HttpRequestUtils.Pair;
+
+import java.util.List;
+
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class HttpResponse {
