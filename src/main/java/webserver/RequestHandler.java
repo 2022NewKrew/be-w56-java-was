@@ -9,6 +9,7 @@ import network.HttpRequest;
 import network.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpBuilder;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,7 +28,8 @@ public class RequestHandler extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequest httpRequest = new HttpRequest(bufferedReader);
+            HttpBuilder httpBuilder = new HttpBuilder(bufferedReader, dos);
+            HttpRequest httpRequest = httpBuilder.request();
             new HttpResponse(dos, httpRequest);
 
         } catch (IOException e) {
