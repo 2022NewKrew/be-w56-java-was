@@ -12,6 +12,7 @@ import webserver.dto.response.HttpResponse;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -41,11 +42,13 @@ public class RequestHandler extends Thread {
     private HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         HttpRequestStartLine startLine = httpRequest.getStartLine();
         String contentType = httpRequest.getHeader().get("Accept").split(",")[0];
+        Map<String, String> responseHeader = new HashMap<>();
+        responseHeader.put("Content-Type", contentType);
 
         ControllerRequest controllerRequest = ControllerRequest.builder()
                 .httpMethod(startLine.getMethod())
                 .url(startLine.getUrl())
-                .header(Map.of("Content-Type", contentType))
+                .header(responseHeader)
                 .body(httpRequest.getBody())
                 .build();
 
