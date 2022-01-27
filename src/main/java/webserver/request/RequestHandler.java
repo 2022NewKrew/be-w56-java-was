@@ -38,7 +38,6 @@ public class RequestHandler extends Thread {
             addRequestHeader(br, headerMap);
             Map<String, String> queryMap = getQueryStringMap(headerMap);
             Map<String, String> bodyMap = getRequestBody(br, headerMap);
-            System.out.println(bodyMap);
 
             RequestControllerMatcher requestControllerMatcher = new RequestControllerMatcher(
                     HttpMethod.match(headerMap.get(RequestLine.METHOD.name())),
