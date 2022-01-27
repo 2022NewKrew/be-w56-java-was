@@ -14,13 +14,8 @@ public class HttpRequest {
     private final Map<String, String> queryParams;
     private final Map<String, String> headers;
     private final String body;
-    private Exception exception;
 
     public String getQueryParam(String queryParamName){
         return queryParams.get(queryParamName);
-    }
-
-    public void setException(Exception exception) {
-        this.exception = exception;
     }
 }

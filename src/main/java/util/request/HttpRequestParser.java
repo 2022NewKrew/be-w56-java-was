@@ -1,27 +1,39 @@
 package util.request;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-class HttpRequestUtils {
-    /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
-    public static Map<String, String> parseQueryString(String queryString) {
+class HttpRequestParser {
+    public static MethodType parsingMethod(String requestLine){
+        return MethodType.of(requestLine.split(" ")[0]);
+    }
+
+    public static String parsingUrl(String requestLine){
+        return requestLine.split(" ")[1].split("\\?")[0];
+    }
+
+    public static Map<String, String> parsingQueryParams(String requestLine){
+        String[] urlSplit = requestLine.split(" ")[1].split("\\?");
+
+        if(urlSplit.length == 1){
+            return Collections.emptyMap();
+        }
+        return parseQueryString(urlSplit[1]);
+    }
+
+    static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
-     */
+    public static HttpVersion parseHttpVersion(String requestLine){
+        return HttpVersion.of(requestLine.split(" ")[2]);
+    }
+
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
     }

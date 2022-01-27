@@ -6,38 +6,38 @@ import java.util.Map;
 
 
 import org.junit.jupiter.api.Test;
-import util.request.HttpRequestUtils.Pair;
+import util.request.HttpRequestParser.Pair;
 
-public class HttpHttpRequestUtilsTest {
+public class HttpHttpRequestParserTest {
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
+        Map<String, String> parameters = HttpRequestParser.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
         assertThat(parameters.get("password")).isNull();
 
         queryString = "userId=javajigi&password=password2";
-        parameters = HttpRequestUtils.parseQueryString(queryString);
+        parameters = HttpRequestParser.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
         assertThat(parameters.get("password")).isEqualTo("password2");
     }
 
     @Test
     public void parseQueryString_null() {
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(null);
+        Map<String, String> parameters = HttpRequestParser.parseQueryString(null);
         assertThat(parameters.isEmpty()).isTrue();
 
-        parameters = HttpRequestUtils.parseQueryString("");
+        parameters = HttpRequestParser.parseQueryString("");
         assertThat(parameters.isEmpty()).isTrue();
 
-        parameters = HttpRequestUtils.parseQueryString(" ");
+        parameters = HttpRequestParser.parseQueryString(" ");
         assertThat(parameters.isEmpty()).isTrue();
     }
 
     @Test
     public void parseQueryString_invalid() {
         String queryString = "userId=javajigi&password";
-        Map<String, String> parameters = HttpRequestUtils.parseQueryString(queryString);
+        Map<String, String> parameters = HttpRequestParser.parseQueryString(queryString);
         assertThat(parameters.get("userId")).isEqualTo("javajigi");
         assertThat(parameters.get("password")).isNull();
     }
@@ -45,7 +45,7 @@ public class HttpHttpRequestUtilsTest {
     @Test
     public void parseCookies() {
         String cookies = "logined=true; JSessionId=1234";
-        Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
+        Map<String, String> parameters = HttpRequestParser.parseCookies(cookies);
         assertThat(parameters.get("logined")).isEqualTo("true");
         assertThat(parameters.get("JSessionId")).isEqualTo("1234");
         assertThat(parameters.get("session")).isNull();
@@ -53,20 +53,20 @@ public class HttpHttpRequestUtilsTest {
 
     @Test
     public void getKeyValue() throws Exception {
-        Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
+        Pair pair = HttpRequestParser.getKeyValue("userId=javajigi", "=");
         assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
     }
 
     @Test
     public void getKeyValue_invalid() throws Exception {
-        Pair pair = HttpRequestUtils.getKeyValue("userId", "=");
+        Pair pair = HttpRequestParser.getKeyValue("userId", "=");
         assertThat(pair).isNull();
     }
 
     @Test
     public void parseHeader() throws Exception {
         String header = "Content-Length: 59";
-        Pair pair = HttpRequestUtils.parseHeader(header);
+        Pair pair = HttpRequestParser.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
     }
 }
