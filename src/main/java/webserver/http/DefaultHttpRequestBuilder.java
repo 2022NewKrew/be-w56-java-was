@@ -14,6 +14,10 @@ public class DefaultHttpRequestBuilder {
     private HttpRequestParams params;
 
     public DefaultHttpRequestBuilder init(String requestLine) {
+        if (requestLine == null) {
+            throw new NullPointerException("requestLine이 존재하지 않습니다.");
+        }
+
         String[] requestLineTokens = requestLine.split(" ");
         this.method = HttpMethod.valueOf(requestLineTokens[0]);
         this.version = new HttpVersion(requestLineTokens[2]);
@@ -22,6 +26,7 @@ public class DefaultHttpRequestBuilder {
         this.uri = uriParamsTokens[0];
         if (uriParamsTokens.length > 1) {
             params = new HttpRequestParams(uriParamsTokens[1]);
+            params.getParameters().get("userId");
         }
         return this;
     }

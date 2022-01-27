@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 import webserver.http.DefaultHttpRequestBuilder;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.servlet.HttpRequestResponsible;
-import webserver.servlet.HttpRequestServlet;
+import webserver.servlet.HttpHandleable;
+import webserver.servlet.HttpHandler;
 import webserver.util.HttpResponseUtil;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final HttpRequestResponsible controller = HttpRequestServlet.getInstance();
+    private final HttpHandleable httpRequestServlet = HttpHandler.getInstance();
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -38,7 +38,7 @@ public class RequestHandler extends Thread {
                 .build();
             HttpResponse response = new HttpResponse();
 
-            HttpResponse handledResponse = controller.handle(request, response);
+            HttpResponse handledResponse = httpRequestServlet.handle(request, response);
             respond(out, handledResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -48,9 +48,11 @@ public class RequestHandler extends Thread {
     private void respond(OutputStream out, HttpResponse response) {
         try {
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes(HttpResponseUtil.writeResponseLine(response));
-            dos.writeBytes(HttpResponseUtil.writeHeader(response));
-            dos.writeUTF(HttpResponseUtil.writeBody(response));
+            dos.writeBytes(HttpResponseUtil.responseLineString(response));
+            dos.writeBytes(HttpResponseUtil.headerString(response));
+            if (response.getBody() != null && response.getBody().length > 0) {
+                dos.writeBytes(HttpResponseUtil.bodyString(response));
+            }
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());

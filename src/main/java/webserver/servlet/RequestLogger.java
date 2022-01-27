@@ -9,7 +9,6 @@ public class RequestLogger {
     private final Logger logger = LoggerFactory.getLogger(RequestLogger.class);
 
     void request(HttpRequest request) {
-        logger.info("[Request] {} {} {}", request.getVersion(), request.getUri(),
-            request.getMethod());
+        logger.info("{} {}", request.getMethod(), request.getUri());
     }
 }

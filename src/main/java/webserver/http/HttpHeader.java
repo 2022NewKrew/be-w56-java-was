@@ -15,6 +15,10 @@ public class HttpHeader {
         return set(key, value.toString());
     }
 
+    public HttpHeader set(String key, int value) {
+        return set(key, String.valueOf(value));
+    }
+
     public HttpHeader set(String key, String value) {
         map.put(key, value);
         return this;

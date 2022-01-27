@@ -6,7 +6,7 @@ import webserver.http.HttpResponse;
 
 public class HttpResponseUtil {
 
-    public static String writeResponseLine(HttpResponse response) {
+    public static String responseLineString(HttpResponse response) {
         StringJoiner joiner = new StringJoiner(" ", "", "\r\n");
         joiner.add(response.getVersion().toString());
         joiner.add(response.getStatus().getStatusNumber());
@@ -14,7 +14,7 @@ public class HttpResponseUtil {
         return joiner.toString();
     }
 
-    public static String writeHeader(HttpResponse response) {
+    public static String headerString(HttpResponse response) {
         Map<String, String> headers = response.headers().getMap();
         if (headers.isEmpty()) {
             return "";
@@ -24,11 +24,10 @@ public class HttpResponseUtil {
         return joiner.toString();
     }
 
-    public static String writeBody(HttpResponse response) {
-        if (response.getBody().length == 0) {
+    public static String bodyString(HttpResponse response) {
+        if (response.getBody() == null || response.getBody().length == 0) {
             return "";
         }
-        return new String(response.getBody());
+        return "\r\n" + new String(response.getBody());
     }
-
 }

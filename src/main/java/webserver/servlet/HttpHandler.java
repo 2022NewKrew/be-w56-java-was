@@ -8,22 +8,22 @@ import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
 import webserver.servlet.method.GetHandler;
 
-public class HttpRequestServlet implements HttpRequestResponsible {
+public class HttpHandler implements HttpHandleable {
 
     private final RequestLogger logger = new RequestLogger();
     private final GetHandler getHandler;
     private final CreateUserUseCase createUserUseCase;
     private final SignUpController signUpController;
 
-    private HttpRequestServlet() {
+    private HttpHandler() {
         this.createUserUseCase = new SignUpService();
         this.signUpController = new SignUpController(createUserUseCase);
 
         this.getHandler = new GetHandler(signUpController);
     }
 
-    public static HttpRequestServlet getInstance() {
-        return RootControllerHolder.INSTANCE;
+    public static HttpHandler getInstance() {
+        return HttpHandlerHolder.INSTANCE;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class HttpRequestServlet implements HttpRequestResponsible {
             logger.request(request);
             switch (request.getMethod()) {
                 case GET:
-                    return getHandler.handle(request, response);
+                    response = getHandler.handle(request, response);
                 case POST:
                     break;
             }
@@ -42,9 +42,9 @@ public class HttpRequestServlet implements HttpRequestResponsible {
         return response;
     }
 
-    private static class RootControllerHolder {
+    private static class HttpHandlerHolder {
 
-        private static final HttpRequestServlet INSTANCE = new HttpRequestServlet();
+        private static final HttpHandler INSTANCE = new HttpHandler();
     }
 
 }

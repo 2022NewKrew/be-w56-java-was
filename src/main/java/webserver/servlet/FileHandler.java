@@ -9,7 +9,7 @@ import webserver.http.HttpResponseStatus;
 import webserver.http.MimeType;
 import webserver.util.FileUtils;
 
-public class FileServlet implements FileResponsible {
+public class FileHandler implements FileHandleable {
 
     @Override
     public HttpResponse write(HttpResponse response, File file) throws IOException {
