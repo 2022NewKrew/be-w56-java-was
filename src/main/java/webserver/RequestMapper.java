@@ -1,8 +1,8 @@
 package webserver;
 
-import Controllers.Controller;
-import Controllers.FormController;
-import Controllers.UserController;
+import controllers.Controller;
+import controllers.FormController;
+import controllers.UserController;
 import model.Request;
 
 public class RequestMapper {
