@@ -13,3 +13,6 @@ Web FrameWork인 SparkJava에서는 Static 으로 연결함
 - redirect는 HTTP 응답 헤더의 status code 값이 302를 사용한다.
 
 
+
+
+

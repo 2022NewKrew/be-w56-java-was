@@ -17,8 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import static http.util.HttpRequestUtils.parseQueryString;
-
 public class HttpRequestParser {
 
     public static HttpRequest parse(InputStream in) throws IOException {
@@ -30,21 +28,8 @@ public class HttpRequestParser {
         int contentLength = Integer.valueOf(httpHeaders.getHeader(HttpHeaders.CONTENT_LENGTH).orElse("0"));
         HttpBody httpBody = parseHttpBody(br, contentLength, StandardCharsets.UTF_8);
 
-        Map<String, Object> parameterMap = new HashMap<>();
-        Map<String, String> queryMap = parseQueryString(startLine.getUrl().getQueryString());
-        for(Map.Entry<String, String> query : queryMap.entrySet()) {
-            parameterMap.put(query.getKey(), query.getValue());
-        }
-
-        if(httpHeaders.getHeader(HttpHeaders.CONTENT_TYPE).orElseGet(()->"").equals("application/x-www-form-urlencoded")
-                && startLine.getHttpMethod().equals(HttpMethod.POST)) {
-            Map<String, String> queryMap2 = parseQueryString(httpBody.toString(StandardCharsets.UTF_8));
-            for(Map.Entry<String, String> query : queryMap2.entrySet()) {
-                parameterMap.put(query.getKey(), query.getValue());
-            }
-        }
-
-        return HttpRequest.of(startLine, httpHeaders, httpBody, RequestParams.of(parameterMap));
+        RequestParams parameters = HttpRequestParamsParser.parse(startLine, httpHeaders, httpBody);
+        return HttpRequest.of(startLine, httpHeaders, httpBody, parameters);
     }
 
     private static StartLine parseStartLine(BufferedReader br) throws IOException {
