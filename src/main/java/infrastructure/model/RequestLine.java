@@ -12,6 +12,10 @@ public class RequestLine {
         this.path = path;
     }
 
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
+    }
+
     public Path getPath() {
         return path;
     }

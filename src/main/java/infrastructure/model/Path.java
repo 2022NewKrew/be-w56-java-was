@@ -1,7 +1,7 @@
 package infrastructure.model;
 
 import com.google.common.collect.Maps;
-import infrastructure.validation.PathValidation;
+import infrastructure.validation.PathValidator;
 
 import java.util.Map;
 import java.util.Objects;
@@ -90,7 +90,7 @@ public class Path {
         }
 
         public Path build() {
-            PathValidation.assertContentType(contentType);
+            PathValidator.assertContentType(contentType);
             if (variables == null) {
                 return new Path(contentType, value);
             }

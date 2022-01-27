@@ -13,6 +13,8 @@ public enum ContentType {
     private final String extension;
     private final String mimeType;
     private final boolean isDiscrete;
+    private static final String CHARSET = "charset=utf-8";
+    private static final String DELIMITER = "; ";
 
     ContentType(String mimeType, boolean isDiscrete) {
         this.extension = "";
@@ -20,9 +22,9 @@ public enum ContentType {
         this.isDiscrete = isDiscrete;
     }
 
-    ContentType(String extension, String responseType, boolean isDiscrete) {
+    ContentType(String extension, String mimeType, boolean isDiscrete) {
         this.extension = extension;
-        this.mimeType = responseType;
+        this.mimeType = mimeType;
         this.isDiscrete = isDiscrete;
     }
 
@@ -39,6 +41,13 @@ public enum ContentType {
 
     public String getMimeType() {
         return mimeType;
+    }
+
+    public String convertToResponse() { return
+            new StringBuilder(mimeType)
+                    .append(DELIMITER)
+                    .append(CHARSET)
+                    .toString();
     }
 
     public boolean isDiscrete() {

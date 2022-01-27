@@ -1,47 +1,38 @@
 package adaptor.in.web;
 
+import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
-import infrastructure.model.ContentType;
-import infrastructure.model.HttpRequest;
-import infrastructure.model.Path;
+import infrastructure.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-
-import static infrastructure.util.ResponseHandler.response200Body;
-import static infrastructure.util.ResponseHandler.response200Header;
 
 public class HomeController {
 
-    private static final HomeController INSTANCE = new HomeController();
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
-    private HomeController() {
+    public HomeController() {
     }
 
-    public static HomeController getInstance() {
-        return INSTANCE;
-    }
-
-    public void handle(DataOutputStream dos, HttpRequest httpRequest) {
+    public HttpResponse handle(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {
         Path path = httpRequest.getRequestPath();
-        if (path.matchHandler("")) {
-            home(dos);
+
+        try {
+            if (path.matchHandler("")) {
+                return home();
+            }
+        } catch (IOException e) {
+            throw new FileNotFoundException();
         }
+        throw new UriNotFoundException();
     }
 
-    public void home(DataOutputStream dos) {
-        log.debug("Home Page Request!");
-        try {
-            byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
-            response200Header(dos, ContentType.HTML.getMimeType(), body.length);
-            response200Body(dos, body);
-        } catch (IOException e) {
-            throw new UriNotFoundException();
-        }
+    public HttpResponse home() throws IOException {
+        return new HttpResponse(
+                ResponseLine.valueOf(HttpStatus.OK),
+                HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
+                HttpByteArrayBody.setFile("/index.html")
+        );
     }
 }
