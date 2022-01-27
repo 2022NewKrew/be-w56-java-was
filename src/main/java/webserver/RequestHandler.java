@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 
 import static util.HttpRequestUtils.*;
+import static util.IOUtils.readData;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -40,14 +41,16 @@ public class RequestHandler extends Thread {
                     break;
                 }
                 line = br.readLine();
-//                log.debug(line);
                 Pair headerPair = parseHeader(line);
                 if (headerPair == null) {
                     continue;
                 }
                 requestMap.put(headerPair.getKey(), headerPair.getValue());
             }
-            log.debug(requestMap.toString());
+            String body = readData(br, Integer.parseInt(requestMap.getOrDefault("Content-Length", "0")));
+            requestMap.put("Body", body);
+            log.debug("Request header: " + requestMap.toString());
+            log.debug("Request body: " + body);
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             log.debug("Response!");
             DataOutputStream dos = new DataOutputStream(out);
