@@ -37,6 +37,10 @@ public class HttpRequest {
         setProtocol(protocol);
     }
 
+    public void setBody(Map<String, String> body) {
+        this.body = body;
+    }
+
     private void setMethod(String method) {
         this.method = Method.valueOf(method);
     }
