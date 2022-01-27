@@ -39,6 +39,9 @@ public class HttpResponse {
     }
 
     public byte[] getBody() {
+        if (body == null) {
+            body = new byte[0];
+        }
         return body;
     }
 
