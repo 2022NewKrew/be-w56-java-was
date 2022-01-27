@@ -36,9 +36,8 @@ public class UserLoginController implements Controller<String> {
     }
 
     private HttpResponse<String> handleLogin(HttpRequest httpRequest){
-        String[] body = httpRequest.getBody().split("&");
-        String id = body[0].split("=")[1];
-        String password = body[1].split("=")[1];
+        String id = httpRequest.getBodyParams().get("userId");
+        String password = httpRequest.getBodyParams().get("password");
 
         User user =userRepository.getUser(id).orElseThrow();
         if(!user.matchedBy(password)){

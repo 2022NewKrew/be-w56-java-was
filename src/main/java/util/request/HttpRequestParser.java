@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import static java.util.stream.Collectors.toMap;
+
 class HttpRequestParser {
     public static MethodType parsingMethod(String requestLine){
         return MethodType.of(requestLine.split(" ")[0]);
@@ -46,6 +48,18 @@ class HttpRequestParser {
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
+    public static Map<String, String> parsingBodyParams(String body){
+        if(Strings.isNullOrEmpty(body)){
+            return Collections.emptyMap();
+        }
+
+        return Arrays.stream(body.split("&"))
+                .map(parameter -> {
+                    String[] split = parameter.split("=");
+                    return Map.entry(split[0], split[1]);})
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

@@ -3,6 +3,7 @@ package webserver.controller.user;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.converter.ConverterService;
 import util.request.HttpRequest;
 import util.request.MethodType;
 import util.response.HttpResponse;
@@ -11,10 +12,7 @@ import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
 
-import java.util.Arrays;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
 
 @RequiredArgsConstructor
 public class UserJoinController implements Controller<String> {
@@ -49,16 +47,6 @@ public class UserJoinController implements Controller<String> {
     }
 
     private User createUser(HttpRequest httpRequest){
-        Map<String, String > bodyParams
-                = Arrays.stream(httpRequest.getBody().split("&"))
-                .map(parameter -> {
-                    String[] split = parameter.split("=");
-                    return Map.entry(split[0], split[1]);})
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        return new User(bodyParams.get("userId")
-                , bodyParams.get("password")
-                , bodyParams.get("name")
-                , bodyParams.get("email"));
+        return ConverterService.convert(httpRequest.getBodyParams(), User.class);
     }
 }

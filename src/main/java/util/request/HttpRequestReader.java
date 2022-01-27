@@ -1,16 +1,14 @@
 package util.request;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import static util.request.HttpRequestParser.*;
 
 public class HttpRequestReader implements AutoCloseable{
-    private static final Logger log = LoggerFactory.getLogger(HttpRequestReader.class);
-
     private BufferedReader br;
 
     public HttpRequestReader(InputStream in) {
@@ -33,7 +31,7 @@ public class HttpRequestReader implements AutoCloseable{
                 .queryParams(parsingQueryParams(requestLine))
                 .httpVersion(parseHttpVersion(requestLine))
                 .headers(headers)
-                .body(body)
+                .bodyParams(parsingBodyParams(body))
                 .build();
     }
 
