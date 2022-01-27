@@ -12,7 +12,7 @@ public class UserRepositoryMemoryImpl implements UserRepository {
 
     private static UserRepository instance;
 
-    private UserRepositoryMemoryImpl() {}
+    public UserRepositoryMemoryImpl() {}
 
     public static UserRepository getInstance() {
         instance = new UserRepositoryMemoryImpl();

@@ -1,6 +1,6 @@
 package framework.util.exception;
 
-public class StaticFileNotFoundException extends InternalServerException {
+public class StaticFileNotFoundException extends InternalServerErrorException {
     public StaticFileNotFoundException(String msg) {
         super(msg);
     }

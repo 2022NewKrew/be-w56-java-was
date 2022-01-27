@@ -1,6 +1,6 @@
 package framework.util.exception;
 
-public class MethodNotFoundException extends InternalServerException {
+public class MethodNotFoundException extends InternalServerErrorException {
     public MethodNotFoundException(String msg) {
         super(msg);
     }

@@ -3,6 +3,7 @@ package com.kakao.example.controller;
 import com.kakao.example.application.service.UserService;
 import com.kakao.example.application.service.UserServiceImpl;
 import com.kakao.example.model.domain.User;
+import com.kakao.example.util.exception.UserNotFoundException;
 import framework.controller.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +18,12 @@ public class UserController implements Controller {
 
     private final UserService userService = UserServiceImpl.getInstance();
 
+    public UserController() {}
+
     public static Controller getInstance() {
         instance = new UserController();
         return instance;
     }
-
-    private UserController() {};
 
     @RequestMapping(value = "/create", requestMethod = "GET")
     public String registerByGet(HttpRequestHandler request) {
@@ -60,7 +61,7 @@ public class UserController implements Controller {
 
         try {
             userService.findUserByLoginInfo(userId, password);
-        } catch (Exception e) {
+        } catch (UserNotFoundException e) {
             response.setCookie("logined", "false", "/");
             return "redirect:/user/login_failed";
         }

@@ -4,6 +4,7 @@ import com.kakao.example.application.dto.UserDto;
 import com.kakao.example.model.domain.User;
 import com.kakao.example.model.repository.UserRepository;
 import com.kakao.example.model.repository.UserRepositoryMemoryImpl;
+import com.kakao.example.util.exception.UserNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
@@ -16,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository = UserRepositoryMemoryImpl.getInstance();
     private final ModelMapper modelMapper = new ModelMapper();
 
-    private UserServiceImpl() {
+    public UserServiceImpl() {
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
                 .setFieldMatchingEnabled(true)
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserById(userId).stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserByLoginInfo(userId, password).stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override

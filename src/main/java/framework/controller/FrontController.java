@@ -1,6 +1,6 @@
 package framework.controller;
 
-import framework.util.exception.InternalServerException;
+import framework.util.exception.InternalServerErrorException;
 import framework.view.ModelView;
 import framework.view.ViewResolver;
 import framework.webserver.HttpRequestHandler;
@@ -54,12 +54,12 @@ public class FrontController {
 
             // Controller에게 응답
             response.flush(modelView);
-        } catch (InternalServerException e) {
+        } catch (InternalServerErrorException e) {
             LOGGER.error(e.getMessage());
 
             ModelView modelView = ModelView.builder()
                     .isStatic(true)
-                    .statusCode(HttpStatus.SC_NOT_FOUND)
+                    .statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                     .uri(DEFAULT_ERROR_PAGE)
                     .build();
 

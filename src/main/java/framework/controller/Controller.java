@@ -38,7 +38,7 @@ public interface Controller {
             throw new ClassNotFoundException();
         }
 
-        Method method = findMethod(request.getUri(), request.getRequestMethod());
+        Method method = findMethod(request.getUri(), request.getRequestMethod(), currentClass.getPackageName());
 
         return invokeMethod(currentInstance, method, request, response);
     }
@@ -47,11 +47,11 @@ public interface Controller {
      * default 메소드, 받은 URI와 요청 방식에 맞는 메소드를 현재 Controller에서 찾아주는 메소드
      * @param uri 받은 요청 정보의 URI
      * @param requestMethod 요청 방식
-     * @param currentClass 현재 Controller 클래스
+     * @param currentPackage 현재 객체가 속한 패키지명
      * @return 찾은 메소드
      */
-    default Method findMethod(String uri, String requestMethod) {
-        Reflections reflections = new Reflections(CONTROLLER_PACKAGE, Scanners.MethodsAnnotated);
+    default Method findMethod(String uri, String requestMethod, String currentPackage) {
+        Reflections reflections = new Reflections(currentPackage, Scanners.MethodsAnnotated);
         Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
 
         return methods.stream()
