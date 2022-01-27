@@ -1,14 +1,19 @@
 package webserver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 import webserver.enums.HttpStatus;
 import webserver.enums.MIME;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 public class FrontController {
     private static final Logger log = LoggerFactory.getLogger(FrontController.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static HttpResponse handle(HttpRequest httpRequest) {
         MIME mime = MIME.parse(httpRequest.getUri());
@@ -20,11 +25,21 @@ public class FrontController {
             return response;
         }
 
+        // find target method
         HandlerMapping.Pair classAndMethod = HandlerMapping.findMethod(httpRequest);
         try {
             Constructor<?> constructor = classAndMethod.getClazz().getConstructor();
             Object node = constructor.newInstance();
-            HttpResponse response = (HttpResponse) classAndMethod.getMethod().invoke(node);
+
+            Map<String, String> params = HttpRequestUtils.parseQueryString(httpRequest.getBody());
+
+            Method targetMethod = classAndMethod.getMethod();
+            HttpResponse response;
+            if (targetMethod.getParameterCount() != 0)
+                response = (HttpResponse) targetMethod
+                        .invoke(node, mapper.convertValue(params, targetMethod.getParameterTypes()[0]));
+            else
+                response = (HttpResponse) targetMethod.invoke(node);
             response.setMime(mime);
             return response;
         } catch (Exception e) {

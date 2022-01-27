@@ -42,7 +42,7 @@ public class HttpRequest {
         }
 
         String[] tokens = HttpRequestUtils.parseRequestLine(requestLine);
-        log.info(HttpMethod.valueOf(tokens[0]).name());
+
         String contentLengthString = httpHeaderMap.get("Content-Length");
         int contentLength = contentLengthString == null? 0: Integer.parseInt(contentLengthString);
 

@@ -1,5 +1,8 @@
 package Controller;
 
+import db.DataBase;
+import dto.UserCreateDto;
+import model.User;
 import webserver.HttpResponse;
 import webserver.annotations.GetMapping;
 import webserver.annotations.PostMapping;
@@ -17,8 +20,9 @@ public class MemberController {
     }
 
     @PostMapping("/user/create")
-    public HttpResponse create() {
-        System.out.println("yoyo");
+    public HttpResponse create(UserCreateDto userCreateDto) {
+        User user = User.of(userCreateDto);
+        DataBase.addUser(user);
         return HttpResponse.httpStatus(HttpStatus.FOUND).redirect("/index.html");
     }
 }
