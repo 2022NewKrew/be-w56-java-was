@@ -28,14 +28,13 @@ public class RequestHandler extends Thread {
         ServletContainer servletContainer = null;
         try {
             servletContainer = new ServletContainer();
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            // http request 인지 검증하는 부분이 필요?
+            // Todo http request 인지 검증하는 부분이 필요?
             HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
             HttpResponse httpResponse = new HttpResponse();
             DataOutputStream dos = new DataOutputStream(out);
@@ -44,7 +43,7 @@ public class RequestHandler extends Thread {
             log.debug(httpResponse.headerText());
             HttpResponseUtils.response(httpResponse, dos);
 
-        } catch (IOException | InvocationTargetException | IllegalAccessException e) {
+        } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
             log.error(e.getMessage());
         }
     }

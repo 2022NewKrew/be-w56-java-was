@@ -1,16 +1,17 @@
-package controller;
+package app.controller;
 
-import db.DataBase;
-import model.User;
+import app.db.DataBase;
+import app.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.annotation.Controller;
-import util.annotation.GetMapping;
-import util.annotation.PostMapping;
+import util.annotation.components.Controller;
+import util.annotation.mapping.GetMapping;
+import util.annotation.mapping.PostMapping;
 import util.http.HttpResponse;
 
 import java.util.Map;
 
+//Todo DI 구조를 만들어 볼 수도 있다.
 @Controller
 public class UserController {
 
@@ -35,13 +36,22 @@ public class UserController {
     }
 
     @PostMapping(url="/user/create")
-    public String signInByPost(Map<String, String> body){
+    public String signInByPost(Map<String, String> body) {
+        if (body.get("userId").equals("error"))
+            throw new IllegalArgumentException("NO");
+
         User user = new User(
                 body.get("userId"),
                 body.get("password"),
                 body.get("name"),
                 body.get("email")
         );
+        DataBase.addUser(user);
+        return "redirect:/index.html";
+    }
+
+    @PostMapping(url = "/user/create/v2")
+    public String signInByPostV2(User user) {
         DataBase.addUser(user);
         return "redirect:/index.html";
     }
