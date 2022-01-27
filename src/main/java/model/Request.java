@@ -11,16 +11,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Request extends HttpRequest {
     private static final Logger log = LoggerFactory.getLogger(Request.class);
 
     private String method;
     private String requestURI;
-    private Map<String, String> headers;
+    private Map<String, List<String>> headers;
     private Map<String, String> params;
     private String body;
 
@@ -29,7 +27,6 @@ public class Request extends HttpRequest {
         String requestLine = br.readLine();
 
         if (requestLine != null) {
-            log.info("request line : {}", requestLine);
             setRequestLine(requestLine);
             setHeaderAndBody(br);
         }
@@ -38,15 +35,11 @@ public class Request extends HttpRequest {
     private void setRequestLine(String requestLine) {
         String method = requestLine.split(" ")[0];
         String requestURI = requestLine.split(" ")[1];
-        log.info("header : {}", method);
-        log.info("header : {}", requestURI);
 
         if (requestURI.contains("?")) {
             String[] tokens = requestURI.split("\\?");
             requestURI = tokens[0];
             String queryString = tokens[1];
-            log.info("header : {}", requestURI);
-            log.info("header : {}", queryString);
             Map<String, String> reqParam = HttpRequestUtils.parseQueryString(queryString);
             if (!reqParam.isEmpty())
                 this.params = reqParam;
@@ -59,29 +52,27 @@ public class Request extends HttpRequest {
 
     private void setHeaderAndBody(BufferedReader br) throws IOException {
         String nextLine = "";
-        Map<String, String> headers = new HashMap<>();
-        while (!(nextLine = br.readLine()).equals("") && !(nextLine.equals("\n"))) {
-            log.info("header : {}", nextLine);
+        Map<String, List<String>> headers = new HashMap<>();
+        while (!(nextLine = br.readLine()).equals("")) {
             String[] header = nextLine.split(": ");
-            headers.put(header[0], header[1]);
+            headers.put(header[0], Arrays.asList(header[1].split(",")));
         }
         this.headers = headers;
-        log.info("headers : {}", headers);
-        if (nextLine.equals("\n")) {
-            this.body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+        if (method.equals("POST")) {
+            this.body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length").get(0)));
         }
     }
 
     public String getContentType() {
-        return headers.get("Accept").split(",")[0];
+        return headers.get("Accept").get(0);
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public Map<String, String> getParams() {
         return params;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
     }
 
     @Override
@@ -91,7 +82,7 @@ public class Request extends HttpRequest {
 
     @Override
     public String method() {
-        return null;
+        return method;
     }
 
     @Override
@@ -117,6 +108,6 @@ public class Request extends HttpRequest {
 
     @Override
     public HttpHeaders headers() {
-        return null;
+        return HttpHeaders.of(headers, (s1, s2) -> true);
     }
 }
