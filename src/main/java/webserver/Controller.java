@@ -7,6 +7,7 @@ import util.HttpRequestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Controller {
@@ -28,18 +29,32 @@ public class Controller {
         return body;
     }
 
-    public String postRequest(Map<String, String> requestInfo) {
+    public Map<String, String> postRequest(Map<String, String> requestInfo) {
         String target = requestInfo.get("target");
+        if (target.equals("/user/login")) {
+            return login(requestInfo.get("body"));
+        }
         if (target.equals("/user/create")) {
             createUser(requestInfo.get("body"));
-            return "/index.html";
+            return Map.of("location", "/index.html");
         }
-        return "/";
+        return Map.of("location", "/");
     }
 
     private void createUser(String signUpInfo) {
         Map<String, String> userInfo = HttpRequestUtils.parseQueryString(signUpInfo);
         User newUser = new User(userInfo.get("userId"), userInfo.get("password"), userInfo.get("name"), userInfo.get("email"));
         userService.addUser(newUser);
+    }
+
+    private Map<String, String> login(String signUpInfo) {
+        Map<String, String> userLoginInfo = HttpRequestUtils.parseQueryString(signUpInfo);
+        Map<String, String> postHeaderInfo = new HashMap<>();
+        boolean loginSuccess = userService.userLogin(userLoginInfo.get("userId"), userLoginInfo.get("password"));
+        String redirectPath = loginSuccess ? "/index.html" : "/user/login_failed.html";
+        postHeaderInfo.put("location", redirectPath);
+        postHeaderInfo.put("cookie", "logined=" + loginSuccess + "; Path=/");
+
+        return postHeaderInfo;
     }
 }
