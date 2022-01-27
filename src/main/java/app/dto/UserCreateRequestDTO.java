@@ -1,9 +1,9 @@
-package dto;
+package app.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
-import model.User;
+import app.model.User;
 
 @Builder
 @Getter

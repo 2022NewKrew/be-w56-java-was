@@ -7,15 +7,13 @@ import java.net.Socket;
 
 import lombok.extern.slf4j.Slf4j;
 
-import http.HttpRequest;
-import http.HttpResponse;
-import router.MainRouter;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.router.MainRouter;
 
 
 @Slf4j
 public class RequestHandler extends Thread {
-    private static final String ROOT = "./webapp";
-
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
