@@ -39,7 +39,7 @@ public class QueryParam {
 
 
   private void setParams(String uri) {
-    if(!uri.contains("?")) {
+    if (!uri.contains("?")) {
       return;
     }
 

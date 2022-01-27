@@ -5,11 +5,18 @@ import com.leoserver.model.User;
 import com.leoserver.service.UserService;
 import com.leoserver.webserver.annotation.Autowired;
 import com.leoserver.webserver.annotation.Controller;
+import com.leoserver.webserver.annotation.RequestBody;
 import com.leoserver.webserver.annotation.RequestMapping;
 import com.leoserver.webserver.annotation.RequestParam;
+import com.leoserver.webserver.http.Cookie;
+import com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName;
 import com.leoserver.webserver.http.HttpStatus;
+import com.leoserver.webserver.http.KakaoHttpHeader;
 import com.leoserver.webserver.http.KakaoHttpResponse;
+import com.leoserver.webserver.http.Location;
+import com.leoserver.webserver.http.MIME;
 import com.leoserver.webserver.http.Method;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,20 +44,67 @@ public class UserController {
 
     User user = new User(userId, password, name, email);
 
-    userService.test();
+    userService.createUser(user);
 
-    return new KakaoHttpResponse<DefaultDTO>(
+    return new KakaoHttpResponse<>(
         HttpStatus.OK,
         new DefaultDTO("회원이 생성되었습니다.", HttpStatus.OK.name())
     );
   }
 
+
   @RequestMapping(method = Method.POST, path = "/user/create")
-  public KakaoHttpResponse createUserWithRedirect() {
+  public KakaoHttpResponse<DefaultDTO> createUserWithRedirect(@RequestBody User user) {
 
-    //TODO
+    logger.debug("userId : {}", user.getUserId());
+    logger.debug("password : {}", user.getPassword());
+    logger.debug("name : {}", user.getName());
+    logger.debug("email : {}", user.getEmail());
 
-    return null;
+    userService.createUser(user);
+
+    KakaoHttpHeader header = KakaoHttpHeader.createResponse();
+    header.set(HeaderOptionName.LOCATION, new Location("/index.html"));
+    header.set(HeaderOptionName.CONTENT_TYPE, MIME.APPLICATION_JSON);
+
+    return new KakaoHttpResponse<>(
+        HttpStatus.FOUND,
+        new DefaultDTO("회원이 생성되었습니다.", HttpStatus.FOUND.name()),
+        header
+    );
+  }
+
+
+  @RequestMapping(method = Method.POST, path = "/user/login")
+  public KakaoHttpResponse<DefaultDTO> login(@RequestBody User user) {
+
+    logger.debug("userId : {}", user.getUserId());
+    logger.debug("password : {}", user.getPassword());
+    logger.debug("name : {}", user.getName());
+    logger.debug("email : {}", user.getEmail());
+
+    Optional<User> result = userService.login(user.getUserId(), user.getPassword());
+
+    if (result.isEmpty()) {
+      KakaoHttpHeader header = KakaoHttpHeader.createResponse();
+      header.set(HeaderOptionName.LOCATION, new Location("/user/login_failed.html"));
+      return new KakaoHttpResponse<>(
+          HttpStatus.FOUND,
+          new DefaultDTO("로그인 정보가 일치하지 않습니다.", HttpStatus.FOUND.name()),
+          header
+      );
+    }
+
+    KakaoHttpHeader header = KakaoHttpHeader.createResponse();
+    header.set(HeaderOptionName.LOCATION, new Location("/index.html"));
+    Cookie cookie = new Cookie("logined", true, "/");
+    header.setCookie(cookie);
+
+    return new KakaoHttpResponse<>(
+        HttpStatus.FOUND,
+        new DefaultDTO("로그인 성공", HttpStatus.FOUND.name()),
+        header
+    );
   }
 
 

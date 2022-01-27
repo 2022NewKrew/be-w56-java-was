@@ -17,6 +17,7 @@ public enum Version {
     this.str = str;
   }
 
+
   public static Version of(String requestLineVersion) {
 
     Optional.ofNullable(requestLineVersion).orElseThrow(IllegalArgumentException::new);
@@ -26,6 +27,7 @@ public enum Version {
         .findFirst()
         .orElseThrow(IllegalArgumentException::new);
   }
+
 
   public String getStr() {
     return str;

@@ -10,10 +10,12 @@ public enum HttpStatus {
   // 일단은 필요할 때마다 추가
 
   OK(200, "OK"),
+  FOUND(302, "Found"),
   NOT_FOUND(404, "Not Found");
 
   private int code;
   private String message;
+
   HttpStatus(int code, String message) {
     this.code = code;
     this.message = message;

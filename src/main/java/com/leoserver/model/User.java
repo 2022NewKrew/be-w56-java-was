@@ -1,10 +1,16 @@
 package com.leoserver.model;
 
 public class User {
+
   private String userId;
   private String password;
   private String name;
   private String email;
+
+  public User() {
+
+  }
+
 
   public User(String userId, String password, String name, String email) {
     this.userId = userId;
@@ -13,24 +19,30 @@ public class User {
     this.email = email;
   }
 
+
   public String getUserId() {
     return userId;
   }
+
 
   public String getPassword() {
     return password;
   }
 
+
   public String getName() {
     return name;
   }
+
 
   public String getEmail() {
     return email;
   }
 
+
   @Override
   public String toString() {
-    return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+    return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email="
+        + email + "]";
   }
 }

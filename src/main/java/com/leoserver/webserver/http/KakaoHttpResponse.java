@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class KakaoHttpResponse<T> {
 
-  private KakaoHttpBody<T> body;
+  private KakaoHttpHeader header;
+  private KakaoHttpBody body;
   private HttpStatus status;
-  private MIME mimeType;
 
   public KakaoHttpResponse(HttpStatus status, T body) {
     this(status, body, MIME.APPLICATION_JSON);
@@ -15,9 +15,17 @@ public class KakaoHttpResponse<T> {
 
 
   public KakaoHttpResponse(HttpStatus status, T body, MIME mimeType) {
-    this.body = new KakaoHttpBody<>(body);
+    this.body = KakaoHttpBody.create(body);
     this.status = status;
-    this.mimeType = mimeType;
+    this.header = KakaoHttpHeader.createResponse(mimeType);
   }
+
+
+  public KakaoHttpResponse(HttpStatus status, T body, KakaoHttpHeader header) {
+    this.body = KakaoHttpBody.create(body);
+    this.status = status;
+    this.header = header;
+  }
+
 
 }

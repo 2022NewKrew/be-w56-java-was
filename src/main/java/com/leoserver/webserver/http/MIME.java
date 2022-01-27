@@ -1,8 +1,10 @@
 package com.leoserver.webserver.http;
 
+import static com.leoserver.webserver.http.HttpHeaderOption.HeaderOptionName.CONTENT_TYPE;
+
 import java.util.Arrays;
 
-public enum MIME {
+public enum MIME implements HttpHeaderOption {
 
   // TODO
   // 모두 구현은 시간날 때..
@@ -18,32 +20,54 @@ public enum MIME {
   IMAGE_X_ICON("image/x-icon", "ico"),
   IMAGE_JPEG("image/jpeg", "jpeg", "jpg"),
   APPLICATION_OCTET_STREAM("application/octet-stream"),
+  APPLICATION_X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded"),
   APPLICATION_JSON("application/json", "json");
 
 
-  private String name;
+  private String value;
   private String[] extensions;
 
-  MIME(String name, String ... extensions) {
-    this.name = name;
+  MIME(String value, String... extensions) {
+    this.value = value;
     this.extensions = extensions;
+  }
+
+
+  public static MIME from(String contentType) {
+    return Arrays.stream(values())
+        .filter(type -> type.value.equals(contentType))
+        .findAny()
+        .orElseThrow(IllegalArgumentException::new);    // 지원 타입 아님
   }
 
 
   public static MIME getNameByExtension(String extension) {
     return Arrays.stream(values())
         .filter(mime -> {
-          for(String ext : mime.extensions) {
-            if(ext.equals(extension))
+          for (String ext : mime.extensions) {
+            if (ext.equals(extension)) {
               return true;
+            }
           }
           return false;
         }).findAny()
         .orElse(APPLICATION_OCTET_STREAM);
   }
 
-  public String getContentType() {
-    return name;
+
+  public String toHttp() {
+    return value;
+  }
+
+
+  @Override
+  public String getKey() {
+    return CONTENT_TYPE.getHttpName();
+  }
+
+  @Override
+  public String getValue() {
+    return value;
   }
 
 }
