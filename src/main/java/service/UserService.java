@@ -1,8 +1,7 @@
 package service;
 
 import db.DataBase;
-import java.util.Map;
-import model.User;
+import dto.UserCreateDto;
 
 public class UserService {
 
@@ -18,8 +17,7 @@ public class UserService {
         return instance;
     }
 
-    public void register(Map<String, String> params) {
-        User user = User.from(params);
-        DataBase.addUser(user);
+    public void register(UserCreateDto userCreateDto) {
+        DataBase.addUser(userCreateDto.toEntity());
     }
 }

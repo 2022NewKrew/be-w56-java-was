@@ -2,6 +2,7 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
+import exception.InvalidParameterKeyException;
 import http.request.Queries;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,8 @@ public class HttpRequestUtilsTest {
         String targetToken = "/users/create?userId=javajigi";
         Queries queries = HttpRequestUtils.parseQueries(targetToken);
         assertThat(queries.getValue("userId")).isEqualTo("javajigi");
-        assertThat(queries.getValue("password")).isNull();
+        assertThatThrownBy(() -> queries.getValue("password"))
+                .isInstanceOf(InvalidParameterKeyException.class);
     }
 
     @Test

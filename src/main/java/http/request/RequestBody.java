@@ -1,6 +1,6 @@
 package http.request;
 
-import java.util.Collections;
+import exception.InvalidParameterKeyException;
 import java.util.Map;
 
 public class RequestBody {
@@ -11,7 +11,10 @@ public class RequestBody {
         this.params = params;
     }
 
-    public Map<String, String> getParams() {
-        return Collections.unmodifiableMap(params);
+    public String getValue(String key) {
+        if (!params.containsKey(key)) {
+            throw new InvalidParameterKeyException();
+        }
+        return params.get(key);
     }
 }

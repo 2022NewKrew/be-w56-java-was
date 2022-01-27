@@ -1,5 +1,6 @@
 package controller;
 
+import dto.UserCreateDto;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.HttpStatus;
@@ -31,7 +32,8 @@ public class UserCreateController extends AbstractController {
 
     @Override
     protected HttpResponse doPost(HttpRequest request) {
-        userService.register(request.getBody().getParams());
+        UserCreateDto userCreateDto = UserCreateDto.from(request.getBody());
+        userService.register(userCreateDto);
         return HttpResponse.redirect("/index.html");
     }
 
