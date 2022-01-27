@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
 
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
-        responseHeader.setCookie("logined=fail; Path=/");
+        responseHeader.setCookie("logined=false; Path=/");
         responseHeader.setLocation("/user/login_failed.html");
 
         return new HttpResponse(HttpStatus.FOUND, responseHeader, body);
