@@ -26,4 +26,12 @@ public class RequestHeader {
             this.components.put(splitLine.get(0), splitLine.get(1));
         }
     }
+
+    public boolean has(String key) {
+        return components.containsKey(key);
+    }
+
+    public String get(String key) {
+        return components.get(key);
+    }
 }
