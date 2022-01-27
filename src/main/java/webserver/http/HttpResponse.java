@@ -5,7 +5,7 @@ import webserver.WebServerConfig;
 public class HttpResponse {
 
     private final HttpVersion version;
-    private HttpHeaders trailingHeaders;
+    private final HttpHeader trailingHeaders;
     private HttpResponseStatus status;
     private byte[] body;
 
@@ -15,13 +15,14 @@ public class HttpResponse {
 
     public HttpResponse(HttpVersion version) {
         this.version = version;
+        trailingHeaders = new HttpHeader();
     }
 
     public HttpVersion getVersion() {
         return version;
     }
 
-    public HttpHeaders headers() {
+    public HttpHeader headers() {
         return trailingHeaders;
     }
 
@@ -42,4 +43,6 @@ public class HttpResponse {
         this.body = contents;
         return this;
     }
+
+
 }

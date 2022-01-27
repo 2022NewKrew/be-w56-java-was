@@ -7,12 +7,12 @@ public class HttpRequest {
     private final HttpVersion version;
     private final HttpMethod method;
     private final String uri;
-    private final HttpHeaders trailingHeaders;
+    private final HttpHeader trailingHeaders;
     private final HttpRequestParams params;
 
 
     public HttpRequest(HttpVersion version, HttpMethod method, String uri, HttpRequestParams params,
-        HttpHeaders headers) {
+        HttpHeader headers) {
         this.version = version;
         this.method = method;
         this.uri = uri.equals(WebServerConfig.ROOT_PATH) ? WebServerConfig.ENTRY_FILE : uri;
@@ -32,7 +32,7 @@ public class HttpRequest {
         return uri;
     }
 
-    public HttpHeaders getTrailingHeaders() {
+    public HttpHeader getTrailingHeaders() {
         return trailingHeaders;
     }
 

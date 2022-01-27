@@ -34,7 +34,7 @@ public class RequestHandler extends Thread {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new DefaultHttpRequestBuilder()
                 .init(reader.readLine())
-                .headers(reader)
+                .readHeaders(reader)
                 .build();
             HttpResponse response = new HttpResponse();
 
@@ -48,7 +48,9 @@ public class RequestHandler extends Thread {
     private void respond(OutputStream out, HttpResponse response) {
         try {
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes(HttpResponseUtil.write(response));
+            dos.writeBytes(HttpResponseUtil.writeResponseLine(response));
+            dos.writeBytes(HttpResponseUtil.writeHeader(response));
+            dos.writeUTF(HttpResponseUtil.writeBody(response));
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());

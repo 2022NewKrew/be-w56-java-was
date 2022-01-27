@@ -11,6 +11,5 @@ public class RequestLogger {
     void request(HttpRequest request) {
         logger.info("[Request] {} {} {}", request.getVersion(), request.getUri(),
             request.getMethod());
-        logger.info("{}", request.getTrailingHeaders().toHeaderString());
     }
 }

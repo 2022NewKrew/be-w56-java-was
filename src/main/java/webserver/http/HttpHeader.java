@@ -1,19 +1,26 @@
 package webserver.http;
 
-public enum HttpHeader {
-    DATE("Date"),
-    CONTENT_LENGTH("Content-Length"),
-    CONTENT_TYPE("Content-Type"),
-    ;
+import java.util.HashMap;
+import java.util.Map;
 
-    private final String value;
+public class HttpHeader {
 
-    HttpHeader(String value) {
-        this.value = value;
+    private final Map<String, String> map;
+
+    public HttpHeader() {
+        this.map = new HashMap<>();
     }
 
-    @Override
-    public String toString() {
-        return value;
+    public HttpHeader set(String key, MimeSubtype value) {
+        return set(key, value.toString());
+    }
+
+    public HttpHeader set(String key, String value) {
+        map.put(key, value);
+        return this;
+    }
+
+    public Map<String, String> getMap() {
+        return map;
     }
 }

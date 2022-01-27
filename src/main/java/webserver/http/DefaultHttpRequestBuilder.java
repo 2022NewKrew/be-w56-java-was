@@ -10,7 +10,7 @@ public class DefaultHttpRequestBuilder {
     private HttpVersion version;
     private HttpMethod method;
     private String uri;
-    private HttpHeaders trailingHeaders;
+    private HttpHeader trailingHeaders;
     private HttpRequestParams params;
 
     public DefaultHttpRequestBuilder init(String requestLine) {
@@ -26,12 +26,12 @@ public class DefaultHttpRequestBuilder {
         return this;
     }
 
-    public DefaultHttpRequestBuilder headers(BufferedReader reader) throws IOException {
-        trailingHeaders = new HttpHeaders();
+    public DefaultHttpRequestBuilder readHeaders(BufferedReader reader) throws IOException {
+        trailingHeaders = new HttpHeader();
         String line;
         while (!(line = reader.readLine()).equals("")) {
             Pair headerPair = HttpRequestUtils.parseHeader(line);
-            trailingHeaders.set(HttpHeader.valueOf(headerPair.getKey()), headerPair.getValue());
+            trailingHeaders.set(headerPair.getKey(), headerPair.getValue());
         }
         return this;
     }

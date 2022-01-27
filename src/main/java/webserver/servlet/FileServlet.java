@@ -1,9 +1,9 @@
 package webserver.servlet;
 
+import com.google.common.net.HttpHeaders;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import webserver.http.HttpHeader;
 import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
 import webserver.http.MimeType;
@@ -17,8 +17,8 @@ public class FileServlet implements FileResponsible {
         byte[] contents = Files.readAllBytes(file.toPath());
         response.setStatus(HttpResponseStatus.OK).setBody(contents);
         response.headers()
-            .set(HttpHeader.CONTENT_TYPE, MimeType.getMimeSubtype(fileExtension))
-            .set(HttpHeader.CONTENT_LENGTH, String.valueOf(contents.length));
+            .set(HttpHeaders.CONTENT_TYPE, MimeType.getMimeSubtype(fileExtension))
+            .set(HttpHeaders.CONTENT_LENGTH, String.valueOf(contents.length));
         return response;
     }
 }
