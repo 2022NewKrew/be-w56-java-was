@@ -13,6 +13,10 @@ public class User {
         this.email = email;
     }
 
+    public boolean isSameUser(String password) {
+        return password.equals(this.password);
+    }
+
     public String getUserId() {
         return userId;
     }
