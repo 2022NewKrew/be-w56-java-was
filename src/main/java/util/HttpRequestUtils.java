@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import static util.ConstantValues.LINE_REGEX;
+
 public class HttpRequestUtils {
     /**
      * @param queryString은
@@ -53,9 +55,8 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static String parseRequestUrl(String requestLine){
-        String[] tokens = requestLine.split(" ");
-        return tokens[1];
+    public static String[] parseRequestLine(String requestLine){
+        return requestLine.split(LINE_REGEX);
     }
 
     public static class Pair {
