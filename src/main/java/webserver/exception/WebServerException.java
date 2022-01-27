@@ -5,33 +5,28 @@ import webserver.http.HttpStatus;
 public class WebServerException extends RuntimeException {
 
     private final HttpStatus httpStatus;
-    private final String errorMessage;
 
     public WebServerException() {
+        super(HttpStatus.INTERNAL_SERVER_ERROR.toString());
         this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        this.errorMessage = httpStatus.toString();
     }
 
     public WebServerException(String errorMessage) {
+        super(errorMessage);
         this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        this.errorMessage = errorMessage;
     }
 
     public WebServerException(HttpStatus httpStatus) {
+        super(httpStatus.toString());
         this.httpStatus = httpStatus;
-        this.errorMessage = httpStatus.toString();
     }
 
     public WebServerException(HttpStatus httpStatus, String errorMessage) {
+        super(errorMessage);
         this.httpStatus = httpStatus;
-        this.errorMessage = errorMessage;
     }
 
     public HttpStatus getHttpStatus() {
         return httpStatus;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
     }
 }

@@ -27,7 +27,7 @@ public class ResponseProvider {
     }
 
     public static MyHttpResponse responseClientException(DataOutputStream dos, WebServerException e) {
-        byte[] body = e.getErrorMessage().getBytes();
+        byte[] body = e.getMessage().getBytes();
 
         return MyHttpResponse.builder(dos)
                 .status(e.getHttpStatus())
@@ -43,7 +43,7 @@ public class ResponseProvider {
         if (e instanceof WebServerException) {
             WebServerException exception = (WebServerException) e;
 
-            byte[] body = ("서버 내부 에러 발생 : " + exception.getErrorMessage()).getBytes();
+            byte[] body = ("서버 내부 에러 발생 : " + exception.getMessage()).getBytes();
 
             return MyHttpResponse.builder(dos)
                     .status(exception.getHttpStatus())
