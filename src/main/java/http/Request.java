@@ -1,6 +1,5 @@
 package http;
 
-<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -75,46 +74,21 @@ public class Request {
     }
 
 
-=======
-public class Request {
-
-    private String httpMethod;
-    private String path;
-    private String queryString;
-    private String httpVersion;
-
-    public Request(String httpMethod, String path, String queryString, String httpVersion) {
-        this.httpMethod = httpMethod;
-        this.path = path;
-        this.queryString = queryString;
-        this.httpVersion = httpVersion;
-    }
-
->>>>>>> 8f589f5 (웹 서버 구현 2단계 (#120))
     public String getHttpMethod() {
         return httpMethod;
     }
 
-<<<<<<< HEAD
     public String getUrl() {
         return url;
     }
 
     public Map<String, String> getQueryString() {
-=======
-    public String getPath() {
-        return path;
-    }
-
-    public String getQueryString() {
->>>>>>> 8f589f5 (웹 서버 구현 2단계 (#120))
         return queryString;
     }
 
     public String getHttpVersion() {
         return httpVersion;
     }
-<<<<<<< HEAD
 
     public Map<String, String> getHeaders() {
         return headers;
@@ -123,6 +97,4 @@ public class Request {
     public Map<String, String> getBody() {
         return body;
     }
-=======
->>>>>>> 8f589f5 (웹 서버 구현 2단계 (#120))
 }
