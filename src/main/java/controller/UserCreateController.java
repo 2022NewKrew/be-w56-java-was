@@ -6,7 +6,6 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.HttpResponseFactory;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import model.User;
@@ -23,7 +22,7 @@ public class UserCreateController implements Controller {
     }
 
     @Override
-    public HttpResponse run(HttpRequest request, DataOutputStream dos) throws IOException {
+    public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         Map<String, String> bodyData = request.getBodyData();
 
         checkBodyData(bodyData);

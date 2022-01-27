@@ -6,7 +6,6 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.HttpResponseFactory;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import model.User;
@@ -23,7 +22,7 @@ public class UserLoginController implements Controller {
     }
 
     @Override
-    public HttpResponse run(HttpRequest request, DataOutputStream dos) throws IOException {
+    public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         Map<String, String> bodyData = request.getBodyData();
 
         checkBodyData(bodyData);
@@ -50,14 +49,14 @@ public class UserLoginController implements Controller {
         }
     }
 
-    private HttpResponse loginSuccess(DataOutputStream dos) throws IOException {
+    private HttpResponse loginSuccess(DataOutputStream dos) {
         Map<String, String> result = new HashMap<>();
         result.put("url", "/index.html");
         result.put("status", "302");
         return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
     }
 
-    private HttpResponse loginFail(DataOutputStream dos) throws IOException {
+    private HttpResponse loginFail(DataOutputStream dos) {
         Map<String, String> result = new HashMap<>();
         result.put("url", "/user/login_failed.html");
         result.put("status", "401");
