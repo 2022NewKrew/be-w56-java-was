@@ -1,11 +1,13 @@
 package application.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
 
 @AllArgsConstructor
+@Builder
 @Getter
 public class UserCreateRequest {
     private String userId;
@@ -13,12 +15,12 @@ public class UserCreateRequest {
     private String name;
     private String email;
 
-    public static UserCreateRequest mapToUserCreateRequest(Map<String, String> httpRequestBody) {
-        String userId = httpRequestBody.get("userId");
-        String password = httpRequestBody.get("password");
-        String name = httpRequestBody.get("name");
-        String email = httpRequestBody.get("email");
-
-        return new UserCreateRequest(userId, password, name, email);
+    public static UserCreateRequest mapToUserCreateRequest(Map<String, String> body) {
+        return UserCreateRequest.builder()
+                .userId(body.get("userId"))
+                .password(body.get("password"))
+                .name(body.get("name"))
+                .email(body.get("email"))
+                .build();
     }
 }

@@ -12,6 +12,8 @@ import webserver.dto.response.HttpStatus;
 
 import java.util.Map;
 
+import static application.common.ExceptionMessage.INVALID_URI_REQUEST_EXCEPTION;
+
 @Slf4j
 public class UserController extends AbstractController {
 
@@ -30,15 +32,16 @@ public class UserController extends AbstractController {
         return null;
     }
 
-    private ControllerResponse doPost(ControllerRequest request) {
+    private ControllerResponse doPost(ControllerRequest request) throws IllegalArgumentException {
         return switch (request.getUrl()) {
             case "/users" -> createUser(request);
             case "/users/login" -> loginUser(request);
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException(INVALID_URI_REQUEST_EXCEPTION.getMessage());
         };
     }
 
     public ControllerResponse createUser(ControllerRequest request) {
+        log.debug("[" + UserController.log.getName() + "] createUser()");
         HttpStatus httpStatus;
         String redirectTo;
 
@@ -60,19 +63,23 @@ public class UserController extends AbstractController {
     }
 
     public ControllerResponse loginUser(ControllerRequest request) {
+        log.debug("[" + UserController.log.getName() + "] loginUser()");
+        HttpStatus httpStatus;
         String redirectTo;
         Map<String, String> header = request.getHeader();
         try {
             UserService.login(UserLoginRequest.mapToUserLoginRequest(request.getBody()));
             redirectTo = ControllerType.STATIC.getUrl() + "/index.html";
             header.put("Set-Cookie", "logined=true; Path=/");
+            httpStatus = HttpStatus.FOUND;
         } catch (IllegalArgumentException e) {
             redirectTo = ControllerType.STATIC.getUrl() + "/user/login_failed.html";
             header.put("Set-Cookie", "logined=false");
+            httpStatus = HttpStatus.BAD_REQUEST;
         }
 
         return ControllerResponse.builder()
-                .httpStatus(HttpStatus.FOUND)
+                .httpStatus(httpStatus)
                 .header(header)
                 .redirectTo(redirectTo)
                 .build();
