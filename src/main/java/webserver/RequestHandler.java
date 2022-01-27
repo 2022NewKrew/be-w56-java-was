@@ -37,7 +37,7 @@ public class RequestHandler extends Thread {
                 responseHeader(dos, "OK", body.length, requestInfo);
             }
             if (requestInfo.get("method").equals("POST")) {
-                requestInfo.put("location", controller.postRequest(requestInfo));
+                requestInfo.putAll(controller.postRequest(requestInfo));
                 responseHeader(dos, "FOUND", body.length, requestInfo);
             }
             responseBody(dos, body);
@@ -51,11 +51,11 @@ public class RequestHandler extends Thread {
         String contentTypeMessage = "Content-Type: " + additionalInfo.get("Accept").split(",")[0] + ";charset=utf-8\r\n";
         try {
             dos.writeBytes("HTTP/1.1 " + HttpStatusCode.valueOf(statusCode).getStatusCode() + " " + statusCode + "\r\n");
-            System.out.println("HTTP/1.1 " + statusCode + " " + HttpStatusCode.valueOf(statusCode).getStatusCode());
             dos.writeBytes(contentTypeMessage);
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             if (statusCode.equals("FOUND")) {
                 dos.writeBytes("Location: " + additionalInfo.get("location") + "\r\n");
+                dos.writeBytes("Set-Cookie: " + additionalInfo.get("cookie") + "\r\n");
             }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
