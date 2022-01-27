@@ -21,10 +21,10 @@ public class HandlerMapper {
         Object object = process(request, response);
 
         if (object instanceof String) {
-            String url = (String) object;
+            String uri = (String) object;
             return ModelView.builder()
-                    .isStatic(url.startsWith(REDIRECT_MARK))
-                    .url(url)
+                    .isStatic(uri.startsWith(REDIRECT_MARK))
+                    .uri(uri)
                     .build();
         }
 
@@ -32,9 +32,9 @@ public class HandlerMapper {
     }
 
     private static Object process(HttpRequestHandler request, HttpResponseHandler response) throws Exception {
-        String url = request.getUrl();
+        String uri = request.getUri();
 
-        Controller controller = findController(url);
+        Controller controller = findController(uri);
         Object object = controller.process(request, response);
 
         if (!(object instanceof String || object instanceof ModelView)) {
@@ -44,14 +44,14 @@ public class HandlerMapper {
         return object;
     }
 
-    private static Controller findController(String url) throws Exception {
+    private static Controller findController(String uri) throws Exception {
         // RequestPath 어노테이션이 있는 클래스 확인
         Reflections reflections = new Reflections(CONTROLLER_PACKAGE);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RequestMapping.class);
 
-        // 받은 URL의 첫 부분에 해당하는 컨트롤러 클래스 확인
+        // 받은 URI의 첫 부분에 해당하는 컨트롤러 클래스 확인
         Class<?> subControllerClass = annotated.stream()
-                .filter(c -> url.startsWith(c.getAnnotation(RequestMapping.class).value()))
+                .filter(c -> uri.startsWith(c.getAnnotation(RequestMapping.class).value()))
                 .findFirst()
                 .orElseThrow();
 

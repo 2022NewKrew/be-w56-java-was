@@ -35,7 +35,7 @@ public class HttpResponseHandler {
         dos.writeBytes(httpVersion + " " + modelView.getStatusCode() + " "
                 + modelView.getStatusCodeString() + "\r\n");
         if (modelView.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
-            dos.writeBytes("Location: " + modelView.getUrl() + "\r\n");
+            dos.writeBytes("Location: " + modelView.getUri() + "\r\n");
         }
         dos.writeBytes("Content-Length: " + modelView.getContentLength() + "\r\n");
         dos.writeBytes("Connection: " + connection + "\r\n");
@@ -52,6 +52,10 @@ public class HttpResponseHandler {
 
     public void setCookie(String key, String value) {
         cookies.setCookie(key, value);
+    }
+
+    public void setCookie(String key, String value, String path) {
+        cookies.setCookie(key, value, path);
     }
 
     public String getCookie(String key) {

@@ -24,7 +24,7 @@ public class ModelView {
     private static final Tika TIKA = new Tika();
 
     private final Map<String, Object> attributes = new HashMap<>();
-    private String url;
+    private String uri;
     private boolean isStatic;
     private int statusCode;
     private ContentType contentType;
@@ -44,16 +44,16 @@ public class ModelView {
     }
 
     public void readStaticFile() throws Exception {
-        String path = url;
+        String filePath = uri;
         statusCode = HttpStatus.SC_OK;
 
-        if (url.startsWith(REDIRECT_MARK)) {
-            path = url.split(REDIRECT_MARK)[1] + DEFAULT_REDIRECT_EXTENSION;
+        if (uri.startsWith(REDIRECT_MARK)) {
+            filePath = uri.split(REDIRECT_MARK)[1] + DEFAULT_REDIRECT_EXTENSION;
             statusCode = HttpStatus.SC_MOVED_TEMPORARILY;
-            url = path;
+            uri = filePath;
         }
 
-        File file = new File(CONTEXT_PATH + path);
+        File file = new File(CONTEXT_PATH + filePath);
         contentType = ContentType.builder()
                 .mime(TIKA.detect(file))
                 .build();

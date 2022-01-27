@@ -15,6 +15,10 @@ public class Cookies {
         cookies.put(key, value);
     }
 
+    public void setCookie(String key, String value, String path) {
+        cookies.put(key, value + "; Path=" + path);
+    }
+
     public void parseCookies(String cookiesStr) {
         Arrays.stream(cookiesStr.split(";")).forEach(cookie -> {
             String[] splited = cookie.trim().split("=");

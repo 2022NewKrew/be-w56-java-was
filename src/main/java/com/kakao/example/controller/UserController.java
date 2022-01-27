@@ -61,10 +61,11 @@ public class UserController implements Controller {
         try {
             userService.findUserByLoginInfo(userId, password);
         } catch (Exception e) {
+            response.setCookie("logined", "false", "/");
             return "redirect:/user/login_failed";
         }
 
-        response.setCookie("logined", "true; Path=/");
+        response.setCookie("logined", "true", "/");
         return "redirect:/index";
     }
 }

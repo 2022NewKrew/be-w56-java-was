@@ -17,7 +17,7 @@ public class HttpRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private String requestMethod;
-    private String url;
+    private String uri;
     private String httpVersion;
     private final RequestHeaders requestHeaders = new RequestHeaders();
     private final RequestAttributes requestAttributes = new RequestAttributes();
@@ -37,36 +37,36 @@ public class HttpRequestHandler {
         String[] splited = requestLine.split(" ");
 
         requestMethod = splited[0];
-        parseUrl(splited[1]);
+        parseUri(splited[1]);
         httpVersion = splited[2];
 
-        LOGGER.debug("Method: {}, URL: {}", requestMethod, url);
+        LOGGER.debug("Method: {}, URI: {}", requestMethod, uri);
     }
 
     private void clearInfos() {
         requestMethod = null;
-        url = null;
+        uri = null;
         httpVersion = DEFAULT_HTTP_VERSION;
         requestHeaders.clear();
         requestAttributes.clear();
     }
 
-    private void parseUrl(String originUrl) {
-        url = URLDecoder.decode(originUrl, StandardCharsets.UTF_8);
+    private void parseUri(String originUri) {
+        uri = URLDecoder.decode(originUri, StandardCharsets.UTF_8);
 
         // Welcome Page 설정
-        if ("/".equals(url) || "/index".equals(url)) {
-            url = "/index.html";
+        if ("/".equals(uri) || "/index".equals(uri)) {
+            uri = "/index.html";
         }
 
-        if (url.charAt(0) != '/') {
+        if (uri.charAt(0) != '/') {
             StringBuilder sb = new StringBuilder("/");
-            url = sb.append(url).toString();
+            uri = sb.append(uri).toString();
         }
 
-        if (url.contains("?")) {
-            String[] splited = url.split("\\?");
-            url = splited[0];
+        if (uri.contains("?")) {
+            String[] splited = uri.split("\\?");
+            uri = splited[0];
             requestAttributes.parseAttributes(splited[1]);
         }
     }

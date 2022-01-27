@@ -25,13 +25,13 @@ public class FrontController {
 
     public void process(HttpRequestHandler request, HttpResponseHandler response) {
         try {
-            String url = request.getUrl();
+            String uri = request.getUri();
             ModelView modelView = ModelView.builder()
                     .isStatic(true)
-                    .url(url)
+                    .uri(uri)
                     .build();
 
-            if (!isStatic(url)) {
+            if (!isStatic(uri)) {
                 modelView = HandlerMapper.handle(request, response);
             }
 

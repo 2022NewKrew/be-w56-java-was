@@ -13,7 +13,7 @@ public interface Controller {
         Class<?> currentClass = getClass();
 
         Controller currentInstance = (Controller) currentClass.getMethod("getInstance").invoke(null);
-        Method method = findMethod(request.getUrl(), request.getRequestMethod(), currentClass);
+        Method method = findMethod(request.getUri(), request.getRequestMethod(), currentClass);
 
         try {
             return method.invoke(currentInstance, request, response);
@@ -26,12 +26,12 @@ public interface Controller {
         }
     }
 
-    default Method findMethod(String url, String requestMethod, Class<?> currentClass) {
+    default Method findMethod(String uri, String requestMethod, Class<?> currentClass) {
         return Arrays.stream(currentClass.getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(RequestMapping.class))
                 .filter(m -> {
                     RequestMapping requestPath = m.getAnnotation(RequestMapping.class);
-                    return url.endsWith(requestPath.value()) &&
+                    return uri.endsWith(requestPath.value()) &&
                             requestPath.requestMethod().toUpperCase(Locale.ROOT).equals(requestMethod);
                 })
                 .findFirst()
