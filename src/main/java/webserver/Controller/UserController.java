@@ -13,8 +13,9 @@ import java.util.Map;
 
 
 public class UserController {
-    private static final HttpResponseUtils httpResponseUtils = new HttpResponseUtils();
-    byte[] outputBody = new byte[0];
+    private byte[] outputBody = new byte[0];
+    private final String INDEX_PATH = "/index.html";
+    private final String ROOT_DIRECTORY = "./webapp";
 
     public void signUp(DataOutputStream dos, RequestHeader header) throws IOException {
         Map<String, String> body = header.getBody();
@@ -24,28 +25,31 @@ public class UserController {
         String email = body.get("email");
         User user = new User(userId, password, name, email);
         DataBase.addUser(user);
-        String path = "./webapp/index.html";
-        File file = new File(path);
+        File file = new File(ROOT_DIRECTORY+INDEX_PATH);
         outputBody = Files.readAllBytes(file.toPath());
-        httpResponseUtils.response300Header(dos, outputBody.length);
-        HttpResponseUtils.responseBody(dos, outputBody);
+        HttpResponseUtils.writeStatusCode(dos, 302);
+        HttpResponseUtils.writeLocation(dos, INDEX_PATH);
+        HttpResponseUtils.writeBody(dos, outputBody);
     }
 
     public void login(DataOutputStream dos, RequestHeader header) throws IOException {
         Map<String, String> body = header.getBody();
         User user = DataBase.findUserById(body.get("userId"));
         if (user != null && user.getPassword().equals(body.get("password"))) {
-            String path = "./webapp/index.html";
-            File file = new File(path);
+            File file = new File(ROOT_DIRECTORY+INDEX_PATH);
             outputBody = Files.readAllBytes(file.toPath());
-            httpResponseUtils.responseLoginHeader(dos, outputBody.length);
-            HttpResponseUtils.responseBody(dos, outputBody);
+            HttpResponseUtils.writeStatusCode(dos, 302);
+            HttpResponseUtils.writeLocation(dos, INDEX_PATH);
+            HttpResponseUtils.writeCookie(dos, "logined", "true", "/");
+            HttpResponseUtils.writeBody(dos, outputBody);
             return;
         }
-        String path = "./webapp/user/login_failed.html";
+        String path = ROOT_DIRECTORY+"/user/login_failed.html";
         File file = new File(path);
         outputBody = Files.readAllBytes(file.toPath());
-        httpResponseUtils.responseLoginFailedHeader(dos, outputBody.length);
-        HttpResponseUtils.responseBody(dos, outputBody);
+        HttpResponseUtils.writeStatusCode(dos, 302);
+        HttpResponseUtils.writeLocation(dos, "/user/login_failed.html");
+        HttpResponseUtils.writeCookie(dos, "logined", "false", "/");
+        HttpResponseUtils.writeBody(dos, outputBody);
     }
 }
