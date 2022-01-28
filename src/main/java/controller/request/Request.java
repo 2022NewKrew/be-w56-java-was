@@ -43,5 +43,7 @@ public class Request {
         return requestLine.getQueryStringParams(key);
     }
 
+    public String getHeader(String key) { return requestHeader.getParameter(key); }
+
     public String getBody(String key) { return requestBody.getParameter(key); }
 }
