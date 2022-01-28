@@ -20,6 +20,7 @@ public enum ContentType {
     ContentType(String extension) {
         this.extension = extension;
     }
+
     public String getExtension() {
         return extension;
     }

@@ -19,6 +19,10 @@ public class HttpRequestLine {
         return url;
     }
 
+    public String getHttpVersion() {
+        return httpVersion;
+    }
+
     @Override
     public String toString() {
         return "HttpRequestLine{" +

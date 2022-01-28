@@ -21,4 +21,4 @@
 
 ## step2 feedback
 - 자바의 동적인 부분은 reflection 으로 처리
-  - 
+- response 에서 status 를 처리해주거나 controller, handle 에서 처리해주기
