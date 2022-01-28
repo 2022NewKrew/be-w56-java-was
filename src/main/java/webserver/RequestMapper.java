@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.Controller.HttpController;
 import webserver.http.Controller.StaticController;
+import webserver.http.Controller.dynamic.UserController;
 import webserver.http.request.HttpRequest;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class RequestMapper {
 
     private RequestMapper() {
         controllers.add(new StaticController());
+        controllers.add(new UserController());
     }
 
     public Optional<HttpController> getController(HttpRequest request) {

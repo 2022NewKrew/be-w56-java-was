@@ -85,7 +85,7 @@ public class HttpResponse {
             dos.writeBytes(Constants.HTTP_VERSION_CURRENT + Constants.SPACE + httpStatus.valueOf() + "\r\n");
             dos.writeBytes(Constants.HTTP_CONTENT_TYPE + Constants.SEMICOLON + Constants.SPACE + contentType + "; charset=utf-8\r\n");
             dos.writeBytes(Constants.HTTP_CONTENT_LENGTH + Constants.SEMICOLON + Constants.SPACE + contentLength + "\r\n");
-            dos.writeBytes(Constants.HTTP_LOCATION + redirect + "\r\n");
+            dos.writeBytes(Constants.HTTP_LOCATION + Constants.SEMICOLON + redirect + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
