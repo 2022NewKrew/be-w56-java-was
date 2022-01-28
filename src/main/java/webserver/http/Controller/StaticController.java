@@ -27,7 +27,6 @@ public class StaticController implements HttpController {
     @Override
     public HttpResponse handleRequest(HttpRequest request, OutputStream out) throws IOException {
         Path target = urlToFile(request.getUrl());
-        System.out.println("handleRequest target : " + target);
         String[] tokens = target.toString().split(Constants.DOT);
         ContentType contentType = ContentType.getContentType(tokens[tokens.length - 1].toUpperCase());
         File file = target.toFile();
