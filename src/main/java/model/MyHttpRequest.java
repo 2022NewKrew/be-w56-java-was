@@ -30,6 +30,7 @@ public class MyHttpRequest {
         setRequest(request);
 
         br.lines().takeWhile(line -> !line.equals(""))
+                .peek(h -> logger.debug("        : {}", h))
                 .forEach(this::setHeader);
 
         if(method.equals("POST")) {

@@ -30,6 +30,9 @@ public class HttpResponseUtils {
             if (myHttpResponse.getStatusLine().split(" ")[1].equals("302")) {
                 dos.writeBytes("Location: " + uri + "\r\n");
             }
+            if (myHttpResponse.getCookie() != null) {
+                dos.writeBytes("Set-Cookie: " + myHttpResponse.getCookie() + "\r\n");
+            }
             dos.writeBytes("Content-Type: " + MIME.parse(uri).getContentType() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + myHttpResponse.getBody().length + "\r\n");
             dos.writeBytes("\r\n");

@@ -1,6 +1,7 @@
 package Controller;
 
 import db.DataBase;
+import model.LoginInfo;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,15 @@ public class UserController {
                 userInfo.get("email"));
         DataBase.addUser(newUser);
 
-        logger.debug("[GET] 회원가입 : {}", newUser);
+        logger.debug("[POST] 회원가입 : {}", newUser);
+    }
+
+    public boolean login(Map<String, String> userInfo) {
+        LoginInfo loginInfo = new LoginInfo(userInfo.get("userId"), userInfo.get("password"));
+        User user = DataBase.findUserById(loginInfo.getUserId());
+        if (user == null) {
+            return false;
+        }
+        return loginInfo.getPassword().equals(user.getPassword());
     }
 }
