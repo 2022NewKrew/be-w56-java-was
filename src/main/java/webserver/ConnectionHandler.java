@@ -8,20 +8,26 @@ import java.util.List;
 import http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import servlet.ServletContainer;
 import util.HttpRequestParser;
 import util.IOUtils;
 
-public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class ConnectionHandler extends Thread {
+    private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
 
     private final Socket connection;
+    private final ServletContainer servletContainer;
 
-    public RequestHandler(Socket connectionSocket) {
+    public ConnectionHandler(Socket connectionSocket, ServletContainer servletContainer) {
         this.connection = connectionSocket;
+        this.servletContainer = servletContainer;
     }
 
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        log.debug("New Client Connect! Connected IP : {}, Port : {}"
+                , connection.getInetAddress()
+                , connection.getPort());
+
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
             RequestMessage request = receiveRequestMessage(in);
@@ -33,18 +39,21 @@ public class RequestHandler extends Thread {
     }
 
     private ResponseMessage createResponseMessage(RequestMessage request) {
-        try {
-            File file = request.findStaticFile();
-            Body body = Body.create(file);
-            StatusLine statusLine = new StatusLine(HttpVersion.V_1_1, HttpStatus.OK);
+        byte[] file = StaticResourceContainer.process(request);
+        if(file.length != 0) {
+            Body body = new Body(file);
+            StatusLine statusLine = createStatusLine(body);
             Headers responseHeaders = body.createResponseHeader();
             return new ResponseMessage(statusLine, responseHeaders, body);
-        } catch (IOException exception) {
-            StatusLine statusLine = new StatusLine(HttpVersion.V_1_1, HttpStatus.NOT_FOUND);
-            Body body = new Body(new byte[]{});
-            Headers responseHeaders = body.createResponseHeader();
-            return new ResponseMessage(statusLine, responseHeaders, null);
         }
+        return servletContainer.process(request);
+    }
+
+    private StatusLine createStatusLine(Body body) {
+        if (body.isEmpty()) {
+            return new StatusLine(HttpVersion.V_1_1, HttpStatus.NOT_FOUND);
+        }
+        return new StatusLine(HttpVersion.V_1_1, HttpStatus.OK);
     }
 
     private RequestMessage receiveRequestMessage(InputStream in) throws IOException {

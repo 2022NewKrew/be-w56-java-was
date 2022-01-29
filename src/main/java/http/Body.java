@@ -1,20 +1,17 @@
 package http;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Body {
     private final byte[] bytes;
 
-    public Body(byte[] bytes) {
-        this.bytes = bytes;
+    public Body() {
+        bytes = new byte[]{};
     }
 
-    public static Body create(File file) throws IOException {
-        return new Body(Files.readAllBytes(file.toPath()));
+    public Body(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     public Headers createResponseHeader() {
@@ -26,5 +23,9 @@ public class Body {
 
     public byte[] getBytes() {
         return bytes;
+    }
+
+    public boolean isEmpty() {
+        return bytes.length == 0;
     }
 }

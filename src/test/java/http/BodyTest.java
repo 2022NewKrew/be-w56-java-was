@@ -12,11 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BodyTest {
 
     @Test
-    void create() throws IOException {
-        Body.create(new File("./webapp/index.html"));
-    }
-
-    @Test
     void createResponseHeader() {
         Body body = new Body(new byte[]{1, 1, 1, 1});
 

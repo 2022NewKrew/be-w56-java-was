@@ -1,8 +1,5 @@
 package http;
 
-import java.io.File;
-import java.io.IOException;
-
 public class RequestMessage {
     private final RequestLine requestLine;
     private final Headers headers;
@@ -13,13 +10,18 @@ public class RequestMessage {
         this.headers = headers;
     }
 
-    public void validateNull(RequestLine requestLine, Headers headers) {
+    private void validateNull(RequestLine requestLine, Headers headers) {
         if(requestLine == null || headers == null) {
             throw new IllegalArgumentException();
         }
     }
 
-    public File findStaticFile() {
-        return requestLine.findStaticFile();
+//    public byte[] readStaticFile() throws IOException {
+//        File file =  requestLine.findStaticFile();
+//        return Files.readAllBytes(file.toPath());
+//    }
+
+    public RequestLine getStatusLine() {
+        return requestLine;
     }
 }
