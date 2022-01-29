@@ -1,19 +1,38 @@
 package http;
 
-import com.google.common.base.Strings;
+import util.HttpRequestParser;
 
 import java.util.Objects;
 
 public class RequestTarget {
-    private final String path;
+    public static final String DELIMITER = "\\?";
+    public static final int PARAMETER_COUNT = 2;
+    
+    private final Path path;
+    private final Parameters parameters;
 
-    public RequestTarget(String path) {
-        validateNull(path);
-        this.path = path;
+    public RequestTarget(Path path) {
+        this (path, new Parameters());
     }
 
-    private void validateNull(String path) {
-        if (Strings.isNullOrEmpty(path)) {
+    public RequestTarget(Path path, Parameters parameters) {
+        validateNull(path);
+        this.path = path;
+        this.parameters = parameters;
+    }
+
+    public static RequestTarget create(String requestTarget) {
+        String[] token = HttpRequestParser.parse(requestTarget, DELIMITER);
+        Path path = new Path(token[0]);
+        Parameters  parameters = new Parameters();
+        if(token.length == PARAMETER_COUNT) {
+            parameters = Parameters.create(token[1]);
+        }
+        return new RequestTarget(path, parameters);
+    }
+
+    private void validateNull(Path path) {
+        if (path == null) {
             throw new IllegalArgumentException();
         }
     }
@@ -35,11 +54,11 @@ public class RequestTarget {
         return Objects.hash(path);
     }
 
-    public String findPath() {
-        String path = this.path;
-        if (this.path.equals("/")) {
-            path += "index.html";
-        }
-        return "./webapp" + path;
+    public Path getPath() {
+        return path;
+    }
+
+    public Parameters getParameters() {
+        return parameters;
     }
 }

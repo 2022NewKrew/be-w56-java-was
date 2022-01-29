@@ -29,7 +29,13 @@ public class HttpRequestParser {
         return Header.create(tokens);
     }
 
-    private static String[] parse(String string, String delimiter, int count) {
+    public static String[] parse(String string, String delimiter) {
+        validateNull(string);
+        String[] tokens = string.split(delimiter);
+        return tokens;
+    }
+
+    public static String[] parse(String string, String delimiter, int count) {
         validateNull(string);
         String[] tokens = string.split(delimiter);
         if (tokens.length != count) {
@@ -42,5 +48,17 @@ public class HttpRequestParser {
         if (Strings.isNullOrEmpty(string)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public static Pair getKeyValue(String keyValue, String regex) {
+        if (Strings.isNullOrEmpty(keyValue)) {
+            return null;
+        }
+
+        String[] tokens = keyValue.split(regex);
+        if (tokens.length != 2) {
+            return null;
+        }
+        return new Pair(tokens[0], tokens[1]);
     }
 }

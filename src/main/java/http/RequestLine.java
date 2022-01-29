@@ -26,7 +26,7 @@ public class RequestLine {
 
     public static RequestLine create(String[] tokens) {
         HttpMethod method = HttpMethod.matchValue(tokens[0]);
-        RequestTarget requestTarget = new RequestTarget(tokens[1]);
+        RequestTarget requestTarget = RequestTarget.create(tokens[1]);
         HttpVersion version = HttpVersion.matchValue(tokens[2]);
         return new RequestLine(method, requestTarget, version);
     }
@@ -48,7 +48,11 @@ public class RequestLine {
         return Objects.hash(method, requestTarget, version);
     }
 
-    public File findStaticFile() {
-        return new File(requestTarget.findPath());
+    public RequestTarget getRequestTarget() {
+        return requestTarget;
+    }
+
+    public HttpMethod getMethod() {
+        return method;
     }
 }

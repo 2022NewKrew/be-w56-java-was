@@ -9,7 +9,7 @@ public class RequestTargetTest {
 
     @Test
     void createRequestTargetFailedWhenEmpty() {
-        assertThatThrownBy(() -> new RequestTarget(""))
+        assertThatThrownBy(() -> new RequestTarget(new Path("")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -21,18 +21,6 @@ public class RequestTargetTest {
 
     @Test
     void createRequestTargetSuccess() {
-        new RequestTarget("abcd");
-    }
-
-    @Test
-    void findPath_WhenDirectory() {
-        assertThat(new RequestTarget("/").findPath())
-                .isEqualTo("./webapp/index.html");
-    }
-
-    @Test
-    void findPathSuccess() {
-        assertThat(new RequestTarget("/abc").findPath())
-                .isEqualTo("./webapp/abc");
+        new RequestTarget(new Path("abcd"));
     }
 }
