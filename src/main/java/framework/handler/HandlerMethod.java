@@ -19,7 +19,7 @@ public class HandlerMethod {
     }
 
     public boolean matchRequest(HttpRequest req) {
-        return handleMethod.equals(req.getMethod()) && path.equals(req.getPath());
+        return httpMethod.equals(req.getMethod()) && path.equals(req.getPath());
     }
 
     public Object getBean() {

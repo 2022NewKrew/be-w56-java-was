@@ -1,16 +1,21 @@
 package util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
 
+    private static Logger log = LoggerFactory.getLogger(HttpResponse.class);
+
     private HttpRequest httpRequest;
-    private String statusCode;
+    private int statusCode;
     private String mimeType;
     private Map<String, String> headers = new HashMap<>();
-    private byte[] body;
+    private byte[] body = new byte[0];
 
     public HttpResponse(HttpRequest httpRequest) {
         this.httpRequest = httpRequest;
@@ -24,11 +29,11 @@ public class HttpResponse {
         this.httpRequest = httpRequest;
     }
 
-    public String getStatusCode() {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(String statusCode) {
+    public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
@@ -63,10 +68,11 @@ public class HttpResponse {
     private byte[] responseHeader() {
         StringBuilder sb = new StringBuilder();
         sb.append("HTTP/1.1 " + statusCode +" OK \r\n");
-//        sb.append("Content-Type: " + mimeType + "\r\n");
         sb.append("Content-Length: " + body.length + "\r\n");
-        headers.entrySet().stream().map(e -> sb.append(e.getKey() + ": " + e.getValue()));
+        headers.entrySet().stream().forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\r\n"));
         sb.append("\r\n");
+        log.info("Request Path: {}, Method: {}", httpRequest.getPath(), httpRequest.getMethod());
+        log.info(sb.toString());
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 

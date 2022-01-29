@@ -23,4 +23,19 @@ public class MIME {
         return mimeMappings.keySet().stream()
                 .anyMatch(key -> path.endsWith(key));
     }
+
+    public static String getMediaType(String file) {
+        if (file == null) {
+            return null;
+        }
+        int period = file.lastIndexOf('.');
+        if (period < 0) {
+            return null;
+        }
+        String extension = file.substring(period + 1);
+        if (extension.length() < 1) {
+            return null;
+        }
+        return findMimeMapping(extension);
+    }
 }

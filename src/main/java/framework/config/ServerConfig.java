@@ -25,7 +25,7 @@ public class ServerConfig {
 
 
     static {
-        controllers.add(new UserController());
+        controllers.add(Beans.userController);
         initializeHandlerMethod();
     }
 
@@ -33,10 +33,6 @@ public class ServerConfig {
         handlers.add(new RequestMappingHandler(handlerMethods));
         handlers.add(new ResourceRequestHandler());
         initializeHandlerMapping();
-    }
-
-    static {
-
     }
 
     private static void initializeHandlerMethod() {

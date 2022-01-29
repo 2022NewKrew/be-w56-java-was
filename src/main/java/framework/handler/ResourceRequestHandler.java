@@ -20,6 +20,7 @@ public class ResourceRequestHandler extends Handler {
 
     @Override
     public String handle(HttpRequest req, HttpResponse res) {
+        res.setStatusCode(200);
         return req.getPath();
     }
 

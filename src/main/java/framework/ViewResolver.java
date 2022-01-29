@@ -11,9 +11,12 @@ import java.nio.file.Files;
 public class ViewResolver {
 
     public void render(String viewName, HttpRequest req, HttpResponse res) throws IOException {
+        if (res.getStatusCode() == 302) {
+            res.addHeader("Location", viewName);
+            return ;
+        }
         byte[] body = Files.readAllBytes(new File("./webapp" + viewName).toPath());
-        res.addHeader("Content-Type", MIME.findMimeMapping(viewName));
-        res.setStatusCode("200");
+        res.addHeader("Content-Type", MIME.getMediaType(viewName));
         res.setBody(body);
     }
 }

@@ -1,10 +1,6 @@
 package util;
 
-import util.HttpRequestUtils;
-import util.IOUtils;
-
 import java.io.*;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -15,7 +11,7 @@ public class HttpRequest {
     private String httpVersion;
     private int contentLength = 0;
 
-    private Map<String, String> pathParameter = new HashMap<>();
+    private Map<String, String> queryStrings = new HashMap<>();
     private String body;
     private Map<String, String> headers = new HashMap<>();
 
@@ -34,8 +30,18 @@ public class HttpRequest {
     private void parseFirstLine(BufferedReader br) throws IOException {
         List<String> firstLines = Arrays.asList(br.readLine().split(" "));
         this.method = firstLines.get(0);
-        this.path = firstLines.get(1);
+        parsePathAndParameter(firstLines.get(1));
         this.httpVersion = firstLines.get(2);
+
+    }
+
+    private void parsePathAndParameter(String path) {
+        List<String> pathAndParam = Arrays.asList(path.split("\\?"));
+        this.path = pathAndParam.get(0);
+        if (pathAndParam.size() < 2) {
+            return ;
+        }
+        this.queryStrings = HttpRequestUtils.parseQueryString(pathAndParam.get(1));
     }
 
     private void parseHeader(BufferedReader br) throws IOException {
@@ -69,8 +75,8 @@ public class HttpRequest {
         return contentLength;
     }
 
-    public Map<String, String> getPathParameter() {
-        return pathParameter;
+    public Map<String, String> getQueryStrings() {
+        return queryStrings;
     }
 
     public String getBody() {

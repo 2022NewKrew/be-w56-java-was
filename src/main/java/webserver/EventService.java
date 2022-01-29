@@ -31,7 +31,9 @@ public class EventService {
             requestDispatcher.doDispatch(req, res);
         } finally {
             ByteBuffer writeBuffer = ByteBuffer.wrap(res.toByte());
-            clientChannel.write(writeBuffer);
+            while (writeBuffer.hasRemaining()) {
+                clientChannel.write(writeBuffer);
+            }
             clientChannel.close();
         }
 

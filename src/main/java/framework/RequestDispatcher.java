@@ -26,6 +26,14 @@ public class RequestDispatcher {
     public void doDispatch(HttpRequest req, HttpResponse res) throws IOException {
 
         Handler mappedHandler = handlerMapping.getHandler(req);
+
+        if (mappedHandler == null) {
+            log.error("지원하는 Handler 가 없습니다. : " + req.getPath());
+            res.setStatusCode(404);
+            return ;
+        }
+
+
         String viewName = mappedHandler.handle(req, res);
         viewResolver.render(viewName, req, res);
 
