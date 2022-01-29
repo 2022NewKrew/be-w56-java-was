@@ -1,4 +1,4 @@
-package was.domain.event;
+package was.domain.eventLoop;
 
 import di.annotation.Bean;
 import was.domain.http.HttpRequest;
@@ -21,7 +21,7 @@ public class EventService {
         this.httpMapper = httpMapper;
     }
 
-    public void doService(byte[] requestBytes, Consumer<byte[]> returnResponse) {
+    public byte[] doService(byte[] requestBytes) {
         final HttpRequest req = httpMapper.toHttpRequest(requestBytes);
         final HttpResponse res = httpMapper.toHttpResponse(req);
 
@@ -33,8 +33,8 @@ public class EventService {
             res.setStatus(HttpStatus.FORBIDDEN);
             res.initHeaders();
             res.setBody(new byte[]{});
-        } finally {
-            returnResponse.accept(res.toHttp());
         }
+
+        return res.toHttp();
     }
 }
