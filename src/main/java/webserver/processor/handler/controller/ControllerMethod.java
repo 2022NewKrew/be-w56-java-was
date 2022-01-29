@@ -2,7 +2,6 @@ package webserver.processor.handler.controller;
 
 import http.HttpMethod;
 import http.HttpRequest;
-import webserver.exception.InternalServerErrorException;
 import webserver.http.RequestEntity;
 import webserver.http.ResponseEntity;
 
@@ -13,15 +12,15 @@ import java.lang.reflect.Type;
 
 class ControllerMethod {
 
-    private Controller controller;
-    private Method method;
-    private Request request;
-    private Type methodArgumentGenericInnerType;
+    private final Controller controller;
+    private final Method method;
+    private final Request request;
+    private final Type methodArgumentGenericInnerType;
 
     ControllerMethod(Controller controller, Method method, Request request) {
         this.controller = controller;
         this.method = method;
-        method.setAccessible(true);
+        this.method.setAccessible(true);
         ParameterizedType type = (ParameterizedType) method.getParameters()[0].getParameterizedType();
         this.methodArgumentGenericInnerType = type.getActualTypeArguments()[0];
         this.request = request;
@@ -34,20 +33,19 @@ class ControllerMethod {
     public boolean supports(HttpRequest httpRequest) {
         HttpMethod method = request.method();
         String path = request.value();
-        return path.equals(httpRequest.getPath()) && method.equals(httpRequest.getMethod());
+        return path.equals(httpRequest.getPath()) && httpRequest.equalsMethod(method);
     }
 
     public Method getMethod() {
         return method;
     }
 
-    public ResponseEntity<?> handle(RequestEntity<?> requestEntity) {
+    public ResponseEntity<?> handle(RequestEntity<?> requestEntity) throws Throwable {
         ResponseEntity<?> response = null;
         try {
             response = (ResponseEntity<?>) method.invoke(controller, requestEntity);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            throw new InternalServerErrorException(cause.getClass().getName(), cause);
+            throw e.getCause();
         }
         return response;
     }

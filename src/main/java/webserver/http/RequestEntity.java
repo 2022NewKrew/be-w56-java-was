@@ -1,10 +1,11 @@
 package webserver.http;
 
 import http.HttpHeaders;
+import webserver.http.request.RequestBody;
 
 import java.util.List;
 
-public class RequestEntity<T> {
+public class RequestEntity<T extends RequestBody<?>> {
     private HttpHeaders headers;
     private RequestParams requestParams;
     private List<Cookie> cookies;

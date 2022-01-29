@@ -6,8 +6,8 @@ import java.net.Socket;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.exception.BadHttpFormatException;
-import http.parser.HttpRequestParser;
-import http.render.HttpResponseRenderer;
+import http.HttpRequestParser;
+import http.HttpResponseRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.processor.HttpProcessor;
@@ -23,7 +23,7 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        log.debug("Connection Open IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
         HttpProcessor processor = HttpFactory.httpProcessor();
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = parseHttpRequest(in);

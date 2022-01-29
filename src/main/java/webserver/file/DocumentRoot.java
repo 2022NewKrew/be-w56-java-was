@@ -30,7 +30,7 @@ public class DocumentRoot {
         return body;
     }
 
-    private String resolvePath(String path) {
+    public String resolvePath(String path) {
         if(path.equals("/")) {
             path = DEFAULT_PATH;
         }

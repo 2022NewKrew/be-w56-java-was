@@ -2,20 +2,21 @@ package webserver.http;
 
 import http.HttpHeaders;
 import http.StatusCode;
+import webserver.http.response.ResponseBody;
 
 import java.util.List;
 
-public class ResponseEntity<T> {
+public class ResponseEntity<T extends ResponseBody<?>> {
     private HttpHeaders httpHeaders;
     private List<Cookie> cookies;
     private StatusCode statusCode;
-    private String view;
+    private T responseBody;
 
-    public ResponseEntity(HttpHeaders headers, List<Cookie> cookies, StatusCode statusCode, String view) {
+    public ResponseEntity(HttpHeaders headers, List<Cookie> cookies, StatusCode statusCode, T responseBody) {
         this.httpHeaders = headers;
         this.cookies = cookies;
         this.statusCode = statusCode;
-        this.view = view;
+        this.responseBody = responseBody;
     }
 
     public List<Cookie> getCookies() {
@@ -30,7 +31,19 @@ public class ResponseEntity<T> {
         return statusCode;
     }
 
-    public String getView() {
-        return view;
+    public T getResponseBody() {
+        return responseBody;
+    }
+
+    public void addCookie(Cookie cookie) {
+        cookies.add(cookie);
+    }
+
+    public void setStatusCode(StatusCode statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public void addHeaders(String headerName, String headerValue) {
+        this.httpHeaders.addHeader(headerName, headerValue);
     }
 }

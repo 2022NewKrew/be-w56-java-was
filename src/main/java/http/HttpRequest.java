@@ -1,6 +1,9 @@
 package http;
 
+import util.StringUtils;
+
 import java.net.URI;
+import java.util.List;
 
 public class HttpRequest {
     private HttpMethod httpMethod;
@@ -21,6 +24,14 @@ public class HttpRequest {
 
     public HttpMethod getMethod() {
         return httpMethod;
+    }
+
+    public List<String> getAccepts() {
+        return StringUtils.parseString(headers.getHeaderByName("Accept"), ",");
+    }
+
+    public boolean equalsMethod(HttpMethod httpMethod) {
+        return this.httpMethod.equals(httpMethod);
     }
 
     public String getPath() {

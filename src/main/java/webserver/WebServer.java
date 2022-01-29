@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.exception.ExceptionResolver;
 import webserver.processor.handler.controller.Controller;
 
 public class WebServer {
@@ -15,10 +16,10 @@ public class WebServer {
     private final ExecutorService executorService;
     private final int listenPort;
 
-    WebServer(List<Controller> controllers, int threadPoolSize, int port) {
+    WebServer(List<Controller> controllers, List<ExceptionResolver> exceptionResolvers, int threadPoolSize, int port) {
         this.executorService = Executors.newFixedThreadPool(threadPoolSize);
         this.listenPort = port;
-        HttpFactory.initialize(controllers);
+        HttpFactory.initialize(controllers, exceptionResolvers);
     }
 
     public void start() throws Exception {

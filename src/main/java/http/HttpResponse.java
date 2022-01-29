@@ -19,6 +19,10 @@ public class HttpResponse {
         headers.addHeader(headerName, headerValue);
     }
 
+    public boolean hasBody() {
+        return body != null;
+    }
+
     public byte[] getResponseBody() {
         return body;
     }
