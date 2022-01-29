@@ -10,6 +10,7 @@ import java.util.Map;
 public class NioWebServerConfigRegistry {
     private final Map<MethodAndPath, Controller> controllers = new HashMap<>();
     private int port = 8080;
+    private int workerEventLoopSize = 1;
 
     public void setPort(int port) {
         this.port = port;
@@ -18,6 +19,14 @@ public class NioWebServerConfigRegistry {
     public void addController(HttpMethod method, String path, Controller controller) {
         final MethodAndPath methodAndPath = new MethodAndPath(method.name(), path);
         controllers.put(methodAndPath, controller);
+    }
+
+    public void setWorkerEventLoopSize(int workerEventLoopSize) {
+        this.workerEventLoopSize = workerEventLoopSize;
+    }
+
+    public int getWorkerEventLoopSize() {
+        return workerEventLoopSize;
     }
 
     public Map<MethodAndPath, Controller> getControllers() {

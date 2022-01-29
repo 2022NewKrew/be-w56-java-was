@@ -21,4 +21,9 @@ public class WebConfig implements NioWebServerConfig {
         registry.addController(GET, UrlPath.LOGIN_FORM, userController.loginForm);
         registry.addController(POST, UrlPath.LOGIN, userController.login);
     }
+
+    @Override
+    public void workerEventLoopSize(NioWebServerConfigRegistry registry) {
+        registry.setWorkerEventLoopSize(16);
+    }
 }

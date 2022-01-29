@@ -26,14 +26,8 @@ public class FrontRequestHandler implements RequestHandler {
 
     @Override
     public void handle(HttpRequest req, HttpResponse res) throws IOException {
-        long start = System.currentTimeMillis();
-        logger.info("method:{}, path:{}, 요청 시작", req.getMethod(), req.getPath());
-
         for (RequestHandler requestHandler : requestHandlerList) {
             requestHandler.handle(req, res);
         }
-
-        long end = System.currentTimeMillis();
-        logger.info("method:{}, path:{}, 요청 완료. 소요 시간 {}s", req.getMethod(), req.getPath(), (end - start) / 1000.0);
     }
 }
