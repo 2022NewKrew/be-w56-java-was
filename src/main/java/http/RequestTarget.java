@@ -7,12 +7,12 @@ import java.util.Objects;
 public class RequestTarget {
     public static final String DELIMITER = "\\?";
     public static final int PARAMETER_COUNT = 2;
-    
+
     private final Path path;
     private final Parameters parameters;
 
     public RequestTarget(Path path) {
-        this (path, new Parameters());
+        this(path, new Parameters());
     }
 
     public RequestTarget(Path path, Parameters parameters) {
@@ -24,8 +24,8 @@ public class RequestTarget {
     public static RequestTarget create(String requestTarget) {
         String[] token = HttpRequestParser.parse(requestTarget, DELIMITER);
         Path path = new Path(token[0]);
-        Parameters  parameters = new Parameters();
-        if(token.length == PARAMETER_COUNT) {
+        Parameters parameters = new Parameters();
+        if (token.length == PARAMETER_COUNT) {
             parameters = Parameters.create(token[1]);
         }
         return new RequestTarget(path, parameters);
@@ -58,7 +58,7 @@ public class RequestTarget {
         return path;
     }
 
-    public Parameters getParameters() {
+    public Parameters getQueryParameters() {
         return parameters;
     }
 }

@@ -1,9 +1,7 @@
 import annotation.GetMapping;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import servlet.ServletContainer;
 import web.controller.UserController;
 
 import java.lang.reflect.*;

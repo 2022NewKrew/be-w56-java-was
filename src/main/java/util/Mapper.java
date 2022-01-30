@@ -1,5 +1,27 @@
 package util;
 
+import http.HttpMethod;
+import http.RequestMessage;
+import servlet.ServletRequest;
+
 public class Mapper {
-    // TODO HttpRequest와 HttpResponse -> Servlet에서 사용할 수 있도록 풀어서 매핑
+
+    private Mapper() {
+    }
+
+    public static ServletRequest toServletRequest(RequestMessage request) {
+        if (request.getRequestLine().getMethod() == HttpMethod.POST) {
+            return new ServletRequest(
+                    request.getRequestLine().getMethod(),
+                    request.getRequestLine().getRequestTarget().getPath().getValue(),
+                    request.getRequestBody().getQueryParameters().getParameters()
+            );
+        }
+
+        return new ServletRequest(
+                request.getRequestLine().getMethod(),
+                request.getRequestLine().getRequestTarget().getPath().getValue(),
+                request.getRequestLine().getRequestTarget().getQueryParameters().getParameters()
+        );
+    }
 }

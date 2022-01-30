@@ -21,7 +21,7 @@ public enum HttpMethod {
                 .filter(httpMethod -> httpMethod.value.equals(value))
                 .findAny();
 
-        if(findMethod.isEmpty()) {
+        if (findMethod.isEmpty()) {
             return HttpMethod.NONE;
         }
         return findMethod.get();

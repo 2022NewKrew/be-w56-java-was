@@ -1,6 +1,5 @@
 package http;
 
-import java.io.File;
 import java.util.Objects;
 
 public class RequestLine {
@@ -19,7 +18,7 @@ public class RequestLine {
     }
 
     private void validateNull(HttpMethod method, RequestTarget requestTarget, HttpVersion version) {
-        if(method == null || requestTarget == null || version == null) {
+        if (method == null || requestTarget == null || version == null) {
             throw new IllegalArgumentException();
         }
     }
@@ -33,7 +32,7 @@ public class RequestLine {
 
     @Override
     public boolean equals(Object object) {
-        if (this == object){
+        if (this == object) {
             return true;
         }
         if (object == null || getClass() != object.getClass()) {

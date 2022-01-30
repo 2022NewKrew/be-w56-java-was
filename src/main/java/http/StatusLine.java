@@ -6,14 +6,18 @@ public class StatusLine {
     private final HttpVersion version;
     private final HttpStatus status;
 
-    public StatusLine(HttpVersion version, HttpStatus status) {
+    private StatusLine(HttpVersion version, HttpStatus status) {
         validateNull(version, status);
         this.version = version;
         this.status = status;
     }
 
+    public static StatusLine create(HttpStatus status) {
+        return new StatusLine(HttpVersion.V_1_1, status);
+    }
+
     private void validateNull(HttpVersion version, HttpStatus status) {
-        if(version == null || status == null) {
+        if (version == null || status == null) {
             throw new IllegalArgumentException();
         }
     }

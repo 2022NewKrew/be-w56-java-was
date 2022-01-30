@@ -19,7 +19,7 @@ public enum HttpVersion {
                 .filter(version -> version.value.equals(value))
                 .findAny();
 
-        if(findMethod.isEmpty()) {
+        if (findMethod.isEmpty()) {
             return HttpVersion.NONE;
         }
         return findMethod.get();

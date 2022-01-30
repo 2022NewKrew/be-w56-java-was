@@ -9,8 +9,8 @@ import http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.ServletContainer;
-import util.HttpRequestParser;
-import util.IOUtils;
+import servlet.ServletRequest;
+import util.*;
 
 public class ConnectionHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
@@ -40,20 +40,11 @@ public class ConnectionHandler extends Thread {
 
     private ResponseMessage createResponseMessage(RequestMessage request) {
         byte[] file = StaticResourceContainer.process(request);
-        if(file.length != 0) {
-            Body body = new Body(file);
-            StatusLine statusLine = createStatusLine(body);
-            Headers responseHeaders = body.createResponseHeader();
-            return new ResponseMessage(statusLine, responseHeaders, body);
+        if (file.length != 0) {
+            return ResponseMessage.create(HttpStatus.OK, file);
         }
-        return servletContainer.process(request);
-    }
-
-    private StatusLine createStatusLine(Body body) {
-        if (body.isEmpty()) {
-            return new StatusLine(HttpVersion.V_1_1, HttpStatus.NOT_FOUND);
-        }
-        return new StatusLine(HttpVersion.V_1_1, HttpStatus.OK);
+        ServletRequest servletRequest = Mapper.toServletRequest(request);
+        return servletContainer.process(servletRequest);
     }
 
     private RequestMessage receiveRequestMessage(InputStream in) throws IOException {
@@ -63,7 +54,14 @@ public class ConnectionHandler extends Thread {
 
         RequestLine startLine = HttpRequestParser.parseStartLine(line);
         Headers requestHeader = HttpRequestParser.parseHeaders(header);
-        return new RequestMessage(startLine, requestHeader);
+
+        String data = null;
+        FieldName contentLength = new FieldName("Content-Length");
+        if (requestHeader.getHeaders().containsKey(contentLength)) {
+            data = IOUtils.readData(buffer, Integer.parseInt(requestHeader.getHeaders().get(contentLength).getValue()));
+        }
+        RequestBody requestBody = RequestBody.create(data);
+        return new RequestMessage(startLine, requestHeader, requestBody);
     }
 
     private void sendResponseMessage(OutputStream out, ResponseMessage response) {

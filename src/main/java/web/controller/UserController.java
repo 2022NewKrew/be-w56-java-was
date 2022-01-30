@@ -16,14 +16,14 @@ public class UserController {
         return "/index.html";
     }
 
-    @GetMapping("/user/create")
+    @PostMapping("/user/create")
     public String createUsers(User user) {
         log.info("/users/create : {}", user.toString());
-        return "/index.html";
+        return "redirect:/";
     }
 
     @PostMapping("/user/join")
     public String join() {
-        return "/create/index.html";
+        return "redirect:/";
     }
 }
