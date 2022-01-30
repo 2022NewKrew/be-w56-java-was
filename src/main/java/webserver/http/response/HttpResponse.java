@@ -3,7 +3,6 @@ package webserver.http.response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constants;
-import util.ContentType;
 import webserver.http.request.HttpRequest;
 
 import java.io.DataOutputStream;

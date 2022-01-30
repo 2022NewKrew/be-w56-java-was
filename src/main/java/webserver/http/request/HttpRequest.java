@@ -3,7 +3,6 @@ package webserver.http.request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constants;
-import util.HttpRequestUtils;
 import util.IOUtils;
 
 import java.io.BufferedReader;
@@ -25,7 +24,6 @@ public class HttpRequest {
     private final String url;
     private final String version;
     private final HttpRequestHeader httpRequestHeader;
-//    private final HttpRequestBody httpRequestBody;
     private final String httpRequestBody;
 
 
@@ -34,13 +32,10 @@ public class HttpRequest {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         HttpRequestLine httpRequestLine = parseRequestLine(br);
         HttpRequestHeader httpRequestHeader = parseRequestHeader(br);
-//        HttpRequestBody httpRequestBody = parseRequestBody(br);
-//        String httpRequestBody = parseRequestBody(br);
         this.method = Method.valueOf(httpRequestLine.getMethod());
         this.url = httpRequestLine.getUrl();
         this.version = httpRequestLine.getHttpVersion();
         this.httpRequestHeader = httpRequestHeader;
-//        this.httpRequestBody = httpRequestBody;
         this.httpRequestBody = parseRequestBody(br);
 
 
@@ -59,25 +54,12 @@ public class HttpRequest {
         List<Pair> pairs = new ArrayList<Pair>();
 
         while (!(line = br.readLine()).equals(Constants.EMPTY)) {
-
-//        while (!(line = br.readLine()).equals(Constants.LINE_CHANGE)) {
-//            line = br.readLine();
             System.out.println("HttpRequestHeader " + line);
             Pair pair = parseHeader(line);
             pairs.add(pair);
         }
-//        System.out.println("HttpRequestHeaders " + line);
-//        log.debug("HttpRequestHeaders : {} ", pairs);
         return new HttpRequestHeader(pairs);
     }
-
-//    private HttpRequestBody parseRequestBody(BufferedReader br) throws IOException {
-//        System.out.println("parseRequestBody 시작!!");
-//        String line = br.readLine();
-//        Map<String, String> queries = parseQueryString(line);
-//        System.out.println("parseRequestBody " + line);
-//        return new HttpRequestBody(Optional.ofNullable(queries));
-//    }
 
     private String parseRequestBody(BufferedReader br) throws IOException {
         Optional<Pair> contentLengthHeader = this.httpRequestHeader.getHeaders().stream()

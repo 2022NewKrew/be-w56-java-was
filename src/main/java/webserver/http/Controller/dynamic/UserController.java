@@ -24,7 +24,6 @@ public class UserController implements HttpController {
 
     @Override
     public boolean isValidRequest(HttpRequest request) {
-        System.out.println(request.getUrl());
         return request.getUrl().contains("user/create");
     }
 
