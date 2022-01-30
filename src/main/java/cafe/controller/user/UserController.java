@@ -5,17 +5,15 @@ import cafe.db.DataBase;
 import cafe.model.User;
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
-import framework.http.response.HttpStatus;
 import framework.http.enums.MediaType;
 import framework.http.request.HttpRequest;
 import framework.http.response.HttpResponse;
 import framework.http.response.HttpResponseHeader;
+import framework.http.response.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 @Controller
 public class UserController {
@@ -33,14 +31,11 @@ public class UserController {
                 httpRequest.getRequestBody("name"), httpRequest.getRequestBody("email"));
         DataBase.addUser(user);
 
-        File file = new File("./webapp/index.html");
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setLocation("/index.html");
 
-        return new HttpResponse(HttpStatus.FOUND, responseHeader, body);
+        return new HttpResponse(HttpStatus.FOUND, responseHeader, "/index.html");
     }
 
     @RequestMapping(value = "/user/login", method = "POST")
@@ -51,71 +46,53 @@ public class UserController {
             throw new IncorrectLoginUserException();
         }
 
-        File file = new File("./webapp/index.html");
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setCookie("logined=true; Path=/");
         responseHeader.setLocation("/index.html");
 
-        return new HttpResponse(HttpStatus.FOUND, responseHeader, body);
+        return new HttpResponse(HttpStatus.FOUND, responseHeader, "/index.html");
     }
 
     @RequestMapping(value = "/user/login.html", method = "GET")
     public HttpResponse userLoginHtml() throws IOException {
-        File file = new File("./webapp" + httpRequest.getPath());
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse(HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
     }
 
     @RequestMapping(value = "/user/login_failed.html", method = "GET")
     public HttpResponse userLoginFailedHtml() throws IOException {
-        File file = new File("./webapp" + httpRequest.getPath());
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse(HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
 
     }
 
 
     @RequestMapping(value = "/user/form.html", method = "GET")
     public HttpResponse userSignupHtml() throws IOException {
-        File file = new File("./webapp" + httpRequest.getPath());
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse(HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
     }
 
     @RequestMapping(value = "/user/profile.html", method = "GET")
     public HttpResponse userProfileHtml() throws IOException {
-        File file = new File("./webapp" + httpRequest.getPath());
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse(HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
     }
 
     @RequestMapping(value = "/user/list.html", method = "GET")
     public HttpResponse userProfileListHtml() throws IOException {
-        File file = new File("./webapp" + httpRequest.getPath());
-        byte[] body = Files.readAllBytes(file.toPath());
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        return new HttpResponse(HttpStatus.OK, responseHeader, body);
+        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
     }
 }
