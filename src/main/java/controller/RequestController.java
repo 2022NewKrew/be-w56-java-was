@@ -12,8 +12,8 @@ public class RequestController {
     }
 
     public static ResponseHeader controlRequest(RequestHeader requestHeader) {
-        String uri = requestHeader.getHeaders("uri");
-        String method = requestHeader.getHeaders("method");
+        String uri = requestHeader.getHeader("uri");
+        String method = requestHeader.getHeader("method");
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 

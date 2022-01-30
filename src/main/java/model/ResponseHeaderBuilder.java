@@ -48,8 +48,8 @@ public class ResponseHeaderBuilder {
     }
 
     public ResponseHeader postUserLogin() {
-        String id = requestHeader.getParameters("userId");
-        String password = requestHeader.getParameters("password");
+        String id = requestHeader.getParameter("userId");
+        String password = requestHeader.getParameter("password");
         if (DataBase.isExistUserId(id) &&
                 DataBase.findUserById(id)
                         .getPassword()
@@ -89,21 +89,21 @@ public class ResponseHeaderBuilder {
 
     private User makeUser(RequestHeader requestHeader) {
         return User.builder()
-                .userId(requestHeader.getParameters("userId"))
-                .password(requestHeader.getParameters("password"))
-                .name(requestHeader.getParameters("name"))
-                .email((requestHeader.getParameters("email")))
+                .userId(requestHeader.getParameter("userId"))
+                .password(requestHeader.getParameter("password"))
+                .name(requestHeader.getParameter("name"))
+                .email((requestHeader.getParameter("email")))
                 .build();
     }
 
     private byte[] readBody(String uri) {
-        byte[] body = null; // 초기화 고민 ..
         try {
-            body = Files.readAllBytes(new File(RETURN_BASE + uri).toPath());
+            return Files.readAllBytes(new File(RETURN_BASE + uri).toPath());
         } catch (IOException e) {
             log.info(e.getMessage());
             e.printStackTrace();
         }
-        return body;
+        // TODO Error 세분화
+        throw new IllegalStateException("READ BODY ERROR");
     }
 }

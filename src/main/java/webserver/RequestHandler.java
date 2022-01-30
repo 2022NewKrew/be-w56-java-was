@@ -43,9 +43,9 @@ public class RequestHandler extends Thread {
                     .takeWhile(header -> header.contains(": "))
                     .forEach(header -> HttpRequestUtils.setHeader(requestHeader, header));
 
-            if (requestHeader.getHeaders("method").equals("POST")) {
+            if (requestHeader.getHeader("method").equals("POST")) {
                 String parameters = IOUtils.readData(bufferedReader,
-                        Integer.parseInt(requestHeader.getHeaders("Content-Length")));
+                        Integer.parseInt(requestHeader.getHeader("Content-Length")));
                 HttpRequestUtils.setRequestParameter(requestHeader, parameters);
             }
         } catch (IOException e) {

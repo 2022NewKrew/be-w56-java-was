@@ -20,7 +20,7 @@ public class RequestHeader {
         return headers.get("Accept").split(",")[0];
     }
 
-    public String getHeaders(String key) {
+    public String getHeader(String key) {
         return headers.get(key);
     }
 
@@ -28,7 +28,7 @@ public class RequestHeader {
         headers.put(key, value);
     }
 
-    public String getParameters(String key) {
+    public String getParameter(String key) {
         return parameters.get(key);
     }
 
@@ -36,7 +36,7 @@ public class RequestHeader {
         parameters.put(key, value);
     }
 
-    public void setCookies(Map<String, String> cookies) {
+    public void setCookie(Map<String, String> cookies) {
         this.cookies = cookies;
     }
 
