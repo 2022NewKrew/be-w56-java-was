@@ -14,7 +14,10 @@ public class IOUtils {
      */
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
-        br.read(body, 0, contentLength);
+        int read = br.read(body, 0, contentLength);
+        if (read == 0) {
+            throw new IOException("HttpRequestBody is NULL");
+        }
         return String.copyValueOf(body);
     }
 }

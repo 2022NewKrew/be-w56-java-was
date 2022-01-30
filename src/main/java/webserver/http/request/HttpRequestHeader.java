@@ -1,15 +1,17 @@
 package webserver.http.request;
 
-import java.util.Map;
+import java.util.List;
+
+import static util.HttpRequestUtils.Pair;
 
 public class HttpRequestHeader {
-    private final Map<String, String> query;
+    private final List<Pair> headers;
 
-    public HttpRequestHeader(Map<String, String> query) {
-        this.query = query;
+    public HttpRequestHeader(List<Pair> headers) {
+        this.headers = headers;
     }
 
-    public Map<String, String> getQuery() {
-        return query;
+    public List<Pair> getHeaders() {
+        return headers;
     }
 }

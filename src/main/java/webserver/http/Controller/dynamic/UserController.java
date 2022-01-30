@@ -42,6 +42,17 @@ public class UserController implements HttpController {
                     .build();
         }
 
+        if (request.getMethod() == Method.POST) {
+            System.out.println(request.getHttpRequestBody());
+            Map<String, String> queries = HttpRequestUtils.parseQueryString(request.getHttpRequestBody());
+            userService.join(new UserSignUpDto(queries.get("userId"), queries.get("password"), queries.get("name"), queries.get("email")));
+            log.debug("UserController handleRequest User joined by POST");
+            log.debug("UserController handleRequest POST queries : {} ", queries);
+            return new HttpResponse.Builder(out)
+                    .setHttpStatus(HttpStatus._302)
+                    .setRedirect("/index.html")
+                    .build();
+        }
         return null;
     }
 }
