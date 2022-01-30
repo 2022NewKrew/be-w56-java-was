@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import controller.RequestController;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             RequestHeader requestHeader = mapRequestHeader(bufferedReader);
             writeResponse(new DataOutputStream(out), RequestController.controlRequest(requestHeader));
         } catch (IOException e) {
