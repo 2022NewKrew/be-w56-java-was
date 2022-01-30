@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
 import util.Constant;
 import webserver.HttpMethod;
 
@@ -34,9 +35,10 @@ public class HttpRequestFactory {
             throws IOException {
         StringBuilder result = new StringBuilder();
 
-        String line;
-        while (!(line = bufferedReader.readLine()).equals("")) {
+        String line = bufferedReader.readLine();
+        while(!Objects.requireNonNull(line).isEmpty()){
             result.append(line).append(Constant.lineBreak);
+            line = bufferedReader.readLine();
         }
 
         return List.of(result.toString().split(Constant.lineBreak, 2));
