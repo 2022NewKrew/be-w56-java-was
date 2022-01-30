@@ -10,8 +10,7 @@ import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
     /**
-     * @param queryString
-     *  queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식
+     * @param queryString queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -19,8 +18,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param cookies
-     *  쿠키 값은 name1=value1; name2=value2 형식
+     * @param cookies 쿠키 값은 name1=value1; name2=value2 형식
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {

@@ -1,13 +1,15 @@
 package servlet;
 
-import http.RequestMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import web.controller.UserController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class Servlet{
+public class Servlet {
+    private static final Logger logger = LoggerFactory.getLogger(Servlet.class);
     private final Object controller;
     private final CustomMethod customMethod;
 
@@ -17,16 +19,17 @@ public class Servlet{
     }
 
     public static Servlet create(Method method) {
-        return new Servlet(new UserController() , CustomMethod.create(method));
+        logger.debug("Create ServletContainer method : {}", method);
+        return new Servlet(new UserController(), CustomMethod.create(method));
     }
 
-    public String service(RequestMessage request) throws InvocationTargetException, IllegalAccessException {
-        // TODO GET 수정
-        Map<String, String> userDto = request.getStatusLine().getRequestTarget().getParameters().getParameters();
-        return (String) customMethod.invoke(controller, userDto);
+    public String service(ServletRequest request) throws InvocationTargetException, IllegalAccessException {
+        logger.debug("Start Servlet Service : {}", request.createMappingKey());
+        Map<String, String> inputs = request.getParameters();
+        return (String) customMethod.invoke(controller, inputs);
     }
 
     public void destroy() {
-        // 컨테이너에서 전부 종료
+        logger.debug("Destroy Servlet");
     }
 }

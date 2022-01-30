@@ -76,38 +76,48 @@ CRLF
 ## 구현 요구사항
 ### 1단계 : 정적 html 파일 응답
 - [x] request 메시지를 받아서 파싱한다.
-  - [x] 첫 번째 줄은 request-line 이다.
-  - [x] 2째줄 ~ CRLF 전까지는 header-field 이다.
-  - [x] 일반적으로 body는 없다.
-- [ ] response 메시지를 만들어 보낸다.
-  - [x] request-line의 path에 맞는 파일을 찾는다.
-  - [x] 파일이 있다면 response-line의 status-code를 200으로 reason-phase를 OK로 설정한다.
-    - [x] html 파일을 byte로 변환해서 body에 담는다.
-  - [x] 파일이 없다면 response-line의 status-code를 404로 reason-phase를 NotFound로 설정한다.
-    - [ ] error page를 던진다...?
-  - [ ] response header의 accept를 참고해서 header의 content-type을 세팅한다.
-  - [x] header에 content-length를 추가한다.
+    - [x] 첫 번째 줄은 request-line 이다.
+    - [x] 2째줄 ~ CRLF 전까지는 header-field 이다.
+    - [x] 일반적으로 body는 없다.
+- [x] response 메시지를 만들어 보낸다.
+    - [x] request-line의 path에 맞는 파일을 찾는다.
+    - [x] 파일이 있다면 response-line의 status-code를 200으로 reason-phase를 OK로 설정한다.
+        - [x] html 파일을 byte로 변환해서 body에 담는다.
+    - [x] 파일이 없다면 response-line의 status-code를 404로 reason-phase를 NotFound로 설정한다.
+    - [ ] response header의 accept를 참고해서 header의 content-type을 세팅한다.
+    - [x] header에 content-length를 추가한다.
 
 ### 2단계 : GET으로 회원가입 기능 구현
 - [x] request 메시지를 받아 파싱한다
-  - [x] request-target은 path와 query로 나뉜다.
+    - [x] request-target은 path와 query로 나뉜다.
 - [ ] 정적 리소스 형식이면
-  - [x] 정적 리소스가 있다면 반환한다.
-  - [x] 정적 리소스가 없으면 404로 반환 한다.
+    - [x] 정적 리소스가 있다면 반환한다.
+    - [x] 정적 리소스가 없으면 404로 반환 한다.
 - [ ] 정적 리소스 형식이 아니면 서블릿 컨테이너로 넘겨서 서블릿을 통해 작업을 수행한다.
-  - [x] 서블릿 컨테이너가 request를 보고 실행할 서블릿(컨테이너)을 찾는다.
-  - [x] 서블릿에서 해당하는 동작을 실행하는 서비스를 수행한다.
-  - [x] 실행할 서블릿이 없으면 404 반환한다.
+    - [x] 서블릿 컨테이너가 request를 보고 실행할 서블릿(컨테이너)을 찾는다.
+    - [x] 서블릿에서 해당하는 동작을 실행하는 서비스를 수행한다.
+    - [x] 실행할 서블릿이 없으면 404 반환한다.
 - [x] 요청 받은 결과를 response body에 담아 반환한다.
 
+### 3단계 : POST로 회원 가입 구현
+
+- [x] request 메시지를 받아 파싱한다.
+    - [x] post로 데이터를 전달할 경우 전달하는 데이터는 HTTP Body에 담긴다.
+    - [x] get으로 받을 때와 동일한 형식이다.
+    - [x] 읽을 때는 Content-Length 만큼 읽어야 한다.
+- [ ] "redirect:/"를 통해 index.html로 리다이렉트 한다.
+
 ## 도메인 요구사항
+
 ### message
+
 - [ ] request, response 으로 나뉜다.
 - [ ] start-line, header-field, empty-line, message-body로 구성되어있다.
 - [ ] start-line, header-field는 필수 이다.
 - [ ] message-body는 null 일 수 있다.
 
 ### start line
+
 - [x] request인 경우 request-line
   - [x] method, request-target, http-version으로 이루어져 있다.
   - [x] 모두 null일 수 없다.

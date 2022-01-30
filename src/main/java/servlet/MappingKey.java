@@ -1,6 +1,7 @@
 package servlet;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -15,7 +16,11 @@ public class MappingKey {
     public static MappingKey create(Method method) {
         String key = "";
         if (method.isAnnotationPresent(GetMapping.class)) {
-            key = "GET"+ method.getAnnotation(GetMapping.class).value();
+            key = "GET" + method.getAnnotation(GetMapping.class).value();
+        }
+
+        if (method.isAnnotationPresent(PostMapping.class)) {
+            key = "POST" + method.getAnnotation(PostMapping.class).value();
         }
         return new MappingKey(key);
     }

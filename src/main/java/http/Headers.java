@@ -29,7 +29,7 @@ public class Headers {
 
         Headers headers = (Headers) object;
         boolean isEqualKeySet = Objects.equals(this.headers.keySet(), headers.headers.keySet());
-        if(!isEqualKeySet) {
+        if (!isEqualKeySet) {
             return false;
         }
 

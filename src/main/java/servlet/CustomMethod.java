@@ -17,12 +17,12 @@ public class CustomMethod {
         return new CustomMethod(method, MethodParameters.create(method));
     }
 
-    public Object invoke(Object controller, Map<String, String> userDto) {
+    public Object invoke(Object controller, Map<String, String> inputs) {
         // TODO 예외처리
         try {
-            if(parameters.isEmpty())
+            if (parameters.isEmpty())
                 return method.invoke(controller);
-            return method.invoke(controller, parameters.makeParameters(userDto));
+            return method.invoke(controller, parameters.makeParameters(inputs));
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return "";

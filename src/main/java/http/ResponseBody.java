@@ -3,14 +3,14 @@ package http;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Body {
+public class ResponseBody {
     private final byte[] bytes;
 
-    public Body() {
+    public ResponseBody() {
         bytes = new byte[]{};
     }
 
-    public Body(byte[] bytes) {
+    public ResponseBody(byte[] bytes) {
         this.bytes = bytes;
     }
 
@@ -18,6 +18,13 @@ public class Body {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "text/html;charset=utf-8");
         map.put("Content-Length", Integer.toString(bytes.length));
+        return Headers.create(map);
+    }
+
+    public Headers createResponseHeader(String url) {
+        Map<String, String> map = new HashMap<>();
+        map.put("Content-Length", Integer.toString(bytes.length));
+        map.put("Location", url);
         return Headers.create(map);
     }
 

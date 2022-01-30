@@ -1,5 +1,6 @@
 package http;
 
+import com.google.common.base.Strings;
 import util.HttpRequestParser;
 import util.Pair;
 
@@ -23,8 +24,12 @@ public class Parameters {
     }
 
     public static Parameters create(String parameters) {
-         String[] tokens = parameters.split(DELIMITER);
-         Map<String, String> result =  Arrays.stream(tokens)
+        if (Strings.isNullOrEmpty(parameters)) {
+            return new Parameters();
+        }
+
+        String[] tokens = parameters.split(DELIMITER);
+        Map<String, String> result = Arrays.stream(tokens)
                 .map(token -> HttpRequestParser.getKeyValue(token, "="))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
