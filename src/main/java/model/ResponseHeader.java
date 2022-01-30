@@ -26,7 +26,7 @@ public class ResponseHeader {
             dos.write(body, 0, body.length);
             dos.flush();
         } catch (IOException e) {
-            log.error(e.getMessage());
+            throw new IllegalStateException("IO EXCEPTION");
         }
     }
 }
