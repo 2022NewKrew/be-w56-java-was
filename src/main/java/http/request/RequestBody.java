@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class RequestBody {
 
-    Logger logger = LoggerFactory.getLogger(RequestBody.class);
-
     private final Map<String, String> bodyData;
 
     public RequestBody(String rawBody) {
@@ -21,7 +19,6 @@ public class RequestBody {
             return;
         }
         setBodyData(rawBody);
-        logger.info(bodyData.toString());
     }
 
     private void setBodyData(String rawBody) {
