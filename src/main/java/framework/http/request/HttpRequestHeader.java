@@ -124,8 +124,4 @@ public class HttpRequestHeader extends HttpHeader {
     public String getContentDisPosition() {
         return headers.get(CONTENT_DISPOSITION);
     }
-
-    public String getLocation() {
-        return headers.get(LOCATION);
-    }
 }
