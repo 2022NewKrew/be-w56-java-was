@@ -3,7 +3,6 @@ package http.request;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import util.Constant;
 
 public class RequestHeader {
 
@@ -13,18 +12,19 @@ public class RequestHeader {
         this.components = components;
     }
 
-    public RequestHeader(String headerString) {
-        this(new HashMap<>());
-
-        setComponents(List.of(headerString.split(Constant.lineBreak)));
+    public static RequestHeader stringToRequestHeader(String headers) {
+        List<String> headerLines = List.of(headers.split("\r\n"));
+        return new RequestHeader(getComponents(headerLines));
     }
 
-    private void setComponents(List<String> headerLines) {
+    private static Map<String, String> getComponents(List<String> headerLines) {
+        Map<String, String> result = new HashMap<>();
         List<String> splitLine;
         for (String headerLine : headerLines) {
             splitLine = List.of(headerLine.split(": "));
-            this.components.put(splitLine.get(0), splitLine.get(1));
+            result.put(splitLine.get(0), splitLine.get(1));
         }
+        return result;
     }
 
     public boolean has(String key) {
