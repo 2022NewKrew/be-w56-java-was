@@ -27,10 +27,4 @@ public class GlobalExceptionHandler {
 
         return new HttpResponse(HttpStatus.FOUND, responseHeader, "/user/login_failed.html");
     }
-
-    @ExceptionHandler(values = IOException.class)
-    public HttpResponse handleIOException(IOException ioException) {
-        log.error(ioException.getMessage());
-        return new HttpResponse(HttpStatus.NOT_FOUND, new HttpResponseHeader());
-    }
 }
