@@ -36,11 +36,7 @@ public class RequestLine {
     }
 
     private boolean hasQueryString(String[] pathAndQuerySplit) {
-        if (pathAndQuerySplit.length != 2) {
-            return false;
-        }
-
-        return true;
+        return pathAndQuerySplit.length == 2;
     }
 
     private String[] parseRequestLineString(String requestLineString) {
