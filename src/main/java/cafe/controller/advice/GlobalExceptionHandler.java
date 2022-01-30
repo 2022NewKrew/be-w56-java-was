@@ -3,7 +3,7 @@ package cafe.controller.advice;
 import cafe.controller.exception.IncorrectLoginUserException;
 import framework.annotation.ControllerAdvice;
 import framework.annotation.ExceptionHandler;
-import framework.http.enums.HttpStatus;
+import framework.http.response.HttpStatus;
 import framework.http.enums.MediaType;
 import framework.http.response.HttpResponse;
 import framework.http.response.HttpResponseHeader;

@@ -8,7 +8,7 @@ import framework.annotation.RequestMapping;
 import framework.controller.FaviconController;
 import framework.controller.css.CssController;
 import framework.controller.view.ViewController;
-import framework.http.enums.HttpStatus;
+import framework.http.response.HttpStatus;
 import framework.http.request.HttpRequest;
 import framework.http.response.HttpResponse;
 import framework.http.response.HttpResponseHeader;

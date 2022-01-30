@@ -1,7 +1,5 @@
 package framework.http.response;
 
-import framework.http.enums.HttpStatus;
-
 public class HttpResponse {
     public static final String DEFAULT_PROTOCOL = "HTTP/1.1";
 

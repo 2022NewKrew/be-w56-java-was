@@ -2,7 +2,7 @@ package framework.controller.css;
 
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
-import framework.http.enums.HttpStatus;
+import framework.http.response.HttpStatus;
 import framework.http.enums.MediaType;
 import framework.http.request.HttpRequest;
 import framework.http.response.HttpResponse;

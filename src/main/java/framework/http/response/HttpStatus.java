@@ -1,4 +1,4 @@
-package framework.http.enums;
+package framework.http.response;
 
 public enum HttpStatus {
     OK(200, "OK"),
