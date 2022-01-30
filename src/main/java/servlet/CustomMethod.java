@@ -1,8 +1,12 @@
 package servlet;
 
+import http.Cookie;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class CustomMethod {
     Method method;
@@ -17,12 +21,18 @@ public class CustomMethod {
         return new CustomMethod(method, MethodParameters.create(method));
     }
 
-    public Object invoke(Object controller, Map<String, String> inputs) {
+    public Object invoke(Object controller, Map<String, String> inputs, Cookie cookie) {
         // TODO 예외처리
         try {
-            if (parameters.isEmpty())
+            if (parameters.isEmpty()) {
                 return method.invoke(controller);
-            return method.invoke(controller, parameters.makeParameters(inputs));
+            }
+            if (Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Cookie.class).count() == 1) {
+                List<Object> inputParameters = parameters.makeParameters(inputs);
+                inputParameters.add(cookie);
+                return method.invoke(controller, inputParameters.toArray());
+            }
+            return method.invoke(controller, parameters.makeParameters(inputs).toArray());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return "";

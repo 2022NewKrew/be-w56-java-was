@@ -2,7 +2,6 @@ package servlet;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,7 +19,7 @@ public class Fields {
         return new Fields(fieldMap);
     }
 
-    public Constructor createConstructor(Class<?> parameter) {
+    public Constructor<?> createConstructor(Class<?> parameter) {
         // TODO 예외처리
         try {
             return parameter.getDeclaredConstructor(fields.values().toArray(Class<?>[]::new));

@@ -1,12 +1,13 @@
 package servlet;
 
+import http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.controller.UserController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Map;
 
 public class Servlet {
     private static final Logger logger = LoggerFactory.getLogger(Servlet.class);
@@ -23,10 +24,10 @@ public class Servlet {
         return new Servlet(new UserController(), CustomMethod.create(method));
     }
 
-    public String service(ServletRequest request) throws InvocationTargetException, IllegalAccessException {
+    public String service(ServletRequest request, Cookie cookie) throws InvocationTargetException, IllegalAccessException {
         logger.debug("Start Servlet Service : {}", request.createMappingKey());
         Map<String, String> inputs = request.getParameters();
-        return (String) customMethod.invoke(controller, inputs);
+        return (String) customMethod.invoke(controller, inputs, cookie);
     }
 
     public void destroy() {

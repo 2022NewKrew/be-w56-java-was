@@ -21,10 +21,11 @@ public class ResponseBody {
         return Headers.create(map);
     }
 
-    public Headers createResponseHeader(String url) {
+    public Headers createResponseHeader(String url, Cookie cookie) {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Length", Integer.toString(bytes.length));
         map.put("Location", url);
+        map.put("Set-Cookie", cookie.createCookieHeader());
         return Headers.create(map);
     }
 

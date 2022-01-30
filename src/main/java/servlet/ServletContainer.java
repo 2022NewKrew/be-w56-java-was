@@ -1,6 +1,8 @@
 package servlet;
 
-import http.*;
+import http.Cookie;
+import http.HttpStatus;
+import http.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.controller.UserController;
@@ -9,7 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ServletContainer {
@@ -38,10 +43,11 @@ public class ServletContainer {
         MappingKey key = request.createMappingKey();
         Servlet servlet = container.get(key);
         try {
-            String path = servlet.service(request);
+            Cookie cookie = new Cookie();
+            String path = servlet.service(request, cookie);
             if (path.contains("redirect")) {
-                logger.debug("substring : {}", path.substring(path.indexOf(":") + 1));
-                return ResponseMessage.create(HttpStatus.FOUND, "http://localhost:8080" + path.substring(path.indexOf(":") + 1));
+                String url = "http://localhost:8080" + path.substring(path.indexOf(":") + 1);
+                return ResponseMessage.create(HttpStatus.FOUND, url, cookie);
             }
             byte[] bytes = Files.readAllBytes(new File("./webapp" + path).toPath());
             return ResponseMessage.create(HttpStatus.OK, bytes);

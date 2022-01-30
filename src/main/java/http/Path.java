@@ -10,4 +10,8 @@ public class Path {
     public String getValue() {
         return value;
     }
+
+    public String createHeader() {
+        return "Path=" + value;
+    }
 }
