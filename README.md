@@ -102,10 +102,19 @@ CRLF
 ### 3단계 : POST로 회원 가입 구현
 
 - [x] request 메시지를 받아 파싱한다.
-    - [x] post로 데이터를 전달할 경우 전달하는 데이터는 HTTP Body에 담긴다.
-    - [x] get으로 받을 때와 동일한 형식이다.
-    - [x] 읽을 때는 Content-Length 만큼 읽어야 한다.
-- [ ] "redirect:/"를 통해 index.html로 리다이렉트 한다.
+  - [x] post로 데이터를 전달할 경우 전달하는 데이터는 HTTP Body에 담긴다.
+  - [x] get으로 받을 때와 동일한 형식이다.
+  - [x] 읽을 때는 Content-Length 만큼 읽어야 한다.
+- [x] "redirect:/"를 통해 index.html로 리다이렉트 한다.
+  - [x] Header의 Location에 redirect할 url 추가
+
+### 4단계 : Cookie를 이용한 로그인 구현
+
+- [ ] 회원가입한 데이터 유지하기
+- [ ] 아이디와 비밀번호가 같은지 확인한다.
+- [ ] 로그인이 성공할 경우 Set-Cookie 값을 logined=true로 설정한다.
+- [ ] 로그인이 실패할 경우 Set-Cookie 값을 logined=false로 설정한다.
+- [ ] Set-Cookie 설정시 모든 요청에 대해 Cookie 처리가 가능하도록 Path 설정 값을 /(Path=/)로 설정한다.
 
 ## 도메인 요구사항
 
