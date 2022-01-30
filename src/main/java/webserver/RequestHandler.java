@@ -43,8 +43,10 @@ public class RequestHandler extends Thread {
                 HttpResponse httpResponse = controller.run(request, dos);
                 httpResponse.sendResponse();
             } catch (BadRequestException exception) {
+                log.error(exception.getMessage());
                 getBadRequestResponse(dos).sendResponse();
             } catch (NotFoundException exception) {
+                log.error(exception.getMessage());
                 getNotFound(dos).sendResponse();
             }
         } catch (IOException e) {
