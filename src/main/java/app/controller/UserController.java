@@ -12,7 +12,8 @@ import util.http.HttpRequestUtils;
 import util.http.HttpResponse;
 import util.ui.Model;
 
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //Todo DI 구조를 만들어 볼 수도 있다.
@@ -99,7 +100,7 @@ public class UserController {
         if(cookie.get("logined") == null)
             return "redirect:/user/login";
 
-        Collection<User> users = DataBase.findAll();
+        List<User> users = Arrays.asList(DataBase.findAll().toArray(new User[0]));
         model.addAttribute("users", users);
 
         return "/user/list.html";

@@ -3,7 +3,6 @@ package util.util;
 import app.db.DataBase;
 import app.model.User;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import util.TemplateEngine;
@@ -39,8 +38,13 @@ public class TemplateEngineTest {
         Model model = new ModelImpl();
         User user = DataBase.findUserById("yunyul");
         model.addAttribute("user", user);
-        String template = "{{userId}}\n";
-        assertThat(TemplateEngine.divideByList(template, model).toString()).isEqualTo("yunyul\n");
+        String template =
+                "{{user.userId}}\n" +
+                        "{{user.name}}\n";
+        String res = TemplateEngine.divideByList(template, model).toString();
+        System.out.println("=====res====");
+        System.out.println(res);
+        assertThat(res).contains("yunyul", "윤렬");
 
     }
 
@@ -48,7 +52,7 @@ public class TemplateEngineTest {
     void renderList() throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Model model = new ModelImpl();
         model.addAttribute("users", Arrays.asList(DataBase.findAll().toArray()));
-        String template = "{{#users}}" +
+        String template = "{{#users}}\n" +
                 "{{userId}}\n" +
                 "{{/users}}";
         String res = TemplateEngine.divideByList(template, model).toString();

@@ -1,6 +1,5 @@
 package webserver;
 
-import org.h2.engine.Mode;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
@@ -110,15 +109,17 @@ public class ServletContainer {
         return parameter.getType().getConstructor(types.toArray(new Class[0])).newInstance(paramList.toArray());
     }
 
-    private void controllerResponse(String controllerResult, Model model, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    private void controllerResponse(String controllerResult, Model model, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         String[] controllerResults = controllerResult.split(":");
         if (controllerResults[0].equals("redirect")) {
             HttpResponseUtils.redirectResponse(httpResponse, controllerResults[1].trim(), httpRequest.getHeader("Host"));
             return;
         }
         //Todo 동적 html 생성.
-        if(model != null)
-            HttpResponseUtils.staticResponse(httpResponse, controllerResults[0]);
+        if (model != null) {
+            HttpResponseUtils.dynamicResponse(httpResponse, controllerResults[0], model);
+            return;
+        }
         HttpResponseUtils.staticResponse(httpResponse, controllerResults[0]);
     }
 

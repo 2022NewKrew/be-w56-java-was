@@ -1,11 +1,9 @@
 package util.controller;
 
-import app.controller.UserController;
 import app.db.DataBase;
 import app.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import util.http.HttpMethod;
 import util.http.HttpRequest;
 import util.http.HttpRequestUtils;
 import util.http.HttpResponse;
@@ -105,12 +103,20 @@ public class UserControllerTest {
     @Test
     void userListLogin() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         DataBase.addUser(new User("yunyul", "test", "윤렬", "yunyul3@gmail.com"));
+        DataBase.addUser(new User("yunyul1", "test", "윤렬1", "yunyul3@gmail.com"));
+        DataBase.addUser(new User("yunyul2", "test", "윤렬2", "yunyul3@gmail.com"));
+
         String request = "GET /user/list HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
                 "Cookie: logined=true\n";
+
         HttpRequest httpRequest = makeRequest(request);
         HttpResponse httpResponse = new HttpResponse();
         servletContainer.service(httpRequest, httpResponse);
+        System.out.println("start ===============");
+        System.out.println(new String(httpResponse.getBody()));
+        System.out.println("end   ===============");
+        assertThat(new String(httpResponse.getBody())).contains("yunyul", "yunyul1", "yunyul2");
     }
 
     private HttpRequest makeRequest(String request) throws IOException {

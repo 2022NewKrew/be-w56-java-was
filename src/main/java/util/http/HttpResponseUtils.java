@@ -1,8 +1,12 @@
 package util.http;
 
+import util.TemplateEngine;
+import util.ui.Model;
+
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -15,6 +19,16 @@ public class HttpResponseUtils {
             dos.write(body, 0, body.length);
         }
         dos.flush();
+    }
+
+    public static void dynamicResponse(HttpResponse httpResponse, String location, Model model) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        httpResponse.setStatus(HttpStatus.OK);
+        byte[] body = TemplateEngine.render(location, model);
+        String[] array = location.split("\\.");
+        String format = array[array.length - 1];
+        httpResponse.setHeader("Content-Type", String.format("text/%s;charset=utf-8", format));
+        httpResponse.setHeader("Content-Length", String.valueOf(body.length));
+        httpResponse.setBody(body);
     }
 
     public static void staticResponse(HttpResponse httpResponse, String location) throws IOException {
