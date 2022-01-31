@@ -1,27 +1,19 @@
 package controller;
 
+import annotation.Controller;
+import annotation.RequestMapping;
 import model.Request;
 import model.Response;
 import service.UserService;
 
+@Controller("/user")
 public class UserController {
-    private UserController() {
-        throw new IllegalStateException("Utility class");
+    public UserController() {
     }
 
-    public static Response routing(Request request) {
-        String urlPath = request.getUrlPath();
-        if (urlPath.equals("/user/create")) {
-            return createRouting(request);
-        }
-        if (urlPath.equals("/user/login")) {
-            return loginRouting(request);
-        }
-        return defaultRouting(request);
-    }
-
-    private static Response loginRouting(Request request) {
-        if (isRightLogin(request)) {
+    @RequestMapping(value = "/user/login", requestMethod = "POST")
+    public static Response loginRouting(Request request) {
+        if (UserService.isRightLogin(request)) {
             Response response = Response.of(request, "/index.html");
             response.setCookie("logined=true");
             return response;
@@ -31,20 +23,14 @@ public class UserController {
         return response;
     }
 
-    private static Response createRouting(Request request) {
-        save(request);
+    @RequestMapping(value = "/user/create", requestMethod = "POST")
+    public static Response createRouting(Request request) {
+        UserService.save(request);
         return Response.of(request, "/user/list.html");
     }
 
-    private static boolean isRightLogin(Request request) {
-        return UserService.isRightLogin(request);
-    }
-
-    public static void save(Request request) {
-        UserService.save(request);
-    }
-
-    private static Response defaultRouting(Request request) {
+    @RequestMapping(value = "/user", requestMethod = "GET")
+    public static Response defaultRouting(Request request) {
         return Response.of(request,
                 request.getUrlPath());
     }

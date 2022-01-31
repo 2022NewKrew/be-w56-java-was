@@ -8,7 +8,6 @@ import router.Router;
 import util.RequestUtills;
 import util.ResponseUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -32,7 +31,7 @@ public class RequestHandler extends Thread {
             Response response = Router.routing(request);
             ResponseUtils.response(out, response);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 

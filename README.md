@@ -42,3 +42,4 @@
 
 # step5
 - [ ] 객체지향적으로 리팩토링
+- [ ] router에서 controller와 method를 서칭하는 로직을 reflection을 사용하여 리팩토링
