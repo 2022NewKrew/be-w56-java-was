@@ -31,22 +31,26 @@ public class TemplateEngine {
         sb.replace(0,1, String.valueOf(Character.toUpperCase(sb.charAt(0))));
         sb.insert(0, "get");
         String target = sb.toString();
+        System.out.println("target: " + target);
         return object.getClass().getMethod(target).invoke(object);
 
     }
 
 
-    private static StringBuilder divideByList(String template, Object object) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static StringBuilder divideByList(String template, Object object) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        System.out.println("template :"  + template);
+
         Pattern pattern = Pattern.compile(startRegex);
         Matcher matcher = pattern.matcher(template);
         StringBuilder sb = new StringBuilder();
         // Check all occurrences
         if(matcher.find() != false){
             Pattern pattern1 = Pattern.compile(endRegex);
-            Matcher matcher1 = pattern.matcher(template);
+            Matcher matcher1 = pattern1.matcher(template);
+            if(matcher1.find() == false)
+                System.out.println("mang");
             String tmp = matcher.group();
             String target = tmp.substring(3, tmp.length()-2);
-
             //first part
             sb.append(renderObjectValues(template.substring(0, matcher.start()), object));
             String middleTemplate = template.substring(matcher.end(), matcher1.start());
@@ -57,7 +61,7 @@ public class TemplateEngine {
                 sb.append(divideByList(middleTemplate, list.get(i)));
 
             //last part
-            return sb.append(divideByList(template.substring(matcher.end()), object));
+            return sb.append(divideByList(template.substring(matcher1.end()), object));
         }
         return sb.append(renderObjectValues(template, object));
     }
@@ -71,8 +75,9 @@ public class TemplateEngine {
         int prevEnd = 0;
         while (matcher.find()) {
             String tmp = matcher.group();
-            String target = tmp.substring(3, tmp.length()-2);
+            String target = tmp.substring(2, tmp.length()-2);
             sb.append(template, prevEnd, matcher.start());
+            System.out.println("object : " +object + ", target : " + target);
             sb.append(getValue(object, target).toString());
             prevEnd = matcher.end();
         }

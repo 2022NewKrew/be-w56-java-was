@@ -21,5 +21,10 @@ public class ModelImpl implements Model{
         data.put(key, value);
     }
 
-
+    @Override
+    public String toString() {
+        return "ModelImpl{" +
+                "data=" + data +
+                '}';
+    }
 }
