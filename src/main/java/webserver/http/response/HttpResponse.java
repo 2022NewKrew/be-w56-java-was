@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class HttpResponse {
 
@@ -19,6 +20,7 @@ public class HttpResponse {
     private final String contentType;
     private final int contentLength;
     private final String redirect;
+    private final String cookie;
     private final DataOutputStream dos;
 
     private HttpResponse(Builder builder) {
@@ -27,6 +29,7 @@ public class HttpResponse {
         this.contentType = builder.contentType;
         this.contentLength = builder.contentLength;
         this.redirect = builder.redirect;
+        this.cookie = builder.cookie;
         this.dos = new DataOutputStream(builder.out);
     }
 
@@ -36,6 +39,7 @@ public class HttpResponse {
         private String contentType = "*/*";
         private int contentLength = 0;
         private String redirect = "";
+        private String cookie = "";
         private final OutputStream out;
 
         public Builder(OutputStream out) {
@@ -67,6 +71,11 @@ public class HttpResponse {
             return this;
         }
 
+        public Builder setCookie(String cookie) {
+            this.cookie = cookie;
+            return this;
+        }
+
         public HttpResponse build() {
             return new HttpResponse(this);
         }
@@ -74,8 +83,15 @@ public class HttpResponse {
 
     public void write() {
         log.debug("HttpResponse write start!");
-        responseHeader();
-        responseBody();
+        if (Objects.equals(this.cookie, "")) {
+            responseHeader();
+            responseBody();
+        } else {
+            responseHeaderWithCookie();
+            responseBody();
+
+        }
+
     }
 
     private void responseHeader() {
@@ -85,6 +101,20 @@ public class HttpResponse {
             dos.writeBytes(Constants.HTTP_CONTENT_TYPE + Constants.SEMICOLON + Constants.SPACE + contentType + "; charset=utf-8\r\n");
             dos.writeBytes(Constants.HTTP_CONTENT_LENGTH + Constants.SEMICOLON + Constants.SPACE + contentLength + "\r\n");
             dos.writeBytes(Constants.HTTP_LOCATION + Constants.SEMICOLON + redirect + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void responseHeaderWithCookie() {
+        try {
+            log.debug("responseHeaderWithCookie write start!");
+            dos.writeBytes(Constants.HTTP_VERSION_CURRENT + Constants.SPACE + httpStatus.valueOf() + "\r\n");
+            dos.writeBytes(Constants.HTTP_CONTENT_TYPE + Constants.SEMICOLON + Constants.SPACE + contentType + "; charset=utf-8\r\n");
+            dos.writeBytes(Constants.HTTP_CONTENT_LENGTH + Constants.SEMICOLON + Constants.SPACE + contentLength + "\r\n");
+            dos.writeBytes(Constants.HTTP_LOCATION + Constants.SEMICOLON + redirect + "\r\n");
+            dos.writeBytes(Constants.HTTP_COOKIE + Constants.SEMICOLON + Constants.SPACE + Constants.HTTP_COOKIE_LOGINED_KEY + Constants.EQUAL + cookie + ";" + Constants.SPACE + Constants.HTTP_COOKIE_REQUEST_PATH_KEY + Constants.EQUAL + Constants.HTTP_COOKIE_REQUEST_PATH_VALUE + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

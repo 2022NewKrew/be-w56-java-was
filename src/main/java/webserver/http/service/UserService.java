@@ -1,6 +1,7 @@
 package webserver.http.service;
 
 import db.DataBase;
+import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import entity.User;
 
@@ -16,4 +17,9 @@ public class UserService {
 
         DataBase.addUser(user);
     }
+
+    public User findUser(UserLoginDto userLoginDto) {
+        return DataBase.findUserById(userLoginDto.getUserId());
+    }
+
 }

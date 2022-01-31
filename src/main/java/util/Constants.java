@@ -10,6 +10,10 @@ public class Constants {
     public static final String HTTP_CONTENT_TYPE = "Content-Type";
     public static final String HTTP_CONTENT_LENGTH = "Content-Length";
     public static final String HTTP_LOCATION = "Location";
+    public static final String HTTP_COOKIE = "Set-Cookie";
+    public static final String HTTP_COOKIE_LOGINED_KEY = "logined";
+    public static final String HTTP_COOKIE_REQUEST_PATH_KEY = "Path";
+    public static final String HTTP_COOKIE_REQUEST_PATH_VALUE = "/";
 
 
 

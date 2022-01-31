@@ -29,29 +29,38 @@ public class UserController implements HttpController {
 
     @Override
     public HttpResponse handleRequest(HttpRequest request, OutputStream out) throws IOException {
-        if (request.getMethod() == Method.GET) {
-            String queries = request.getUrl().split(Constants.QUESTION)[1];
-            Map<String, String> queriesMap = HttpRequestUtils.parseQueryString(queries);
-            userService.join(new UserSignUpDto(queriesMap.get("userId"), queriesMap.get("password"), queriesMap.get("name"), queriesMap.get("email")));
-            log.debug("UserController handleRequest User joined by GET");
-            log.debug("UserController handleRequest GET queries : {} ", queries);
-            return new HttpResponse.Builder(out)
-                    .setHttpStatus(HttpStatus._302)
-                    .setRedirect("/index.html")
-                    .build();
+        switch (request.getMethod()) {
+            case GET:
+                String queries = request.getUrl().split(Constants.QUESTION)[1];
+                Map<String, String> queriesMap = HttpRequestUtils.parseQueryString(queries);
+                userService.join(new UserSignUpDto(queriesMap.get("userId"), queriesMap.get("password"), queriesMap.get("name"), queriesMap.get("email")));
+                log.debug("UserController handleRequest User joined by GET");
+                log.debug("UserController handleRequest GET queries : {} ", queries);
+                return new HttpResponse.Builder(out)
+                        .setHttpStatus(HttpStatus._302)
+                        .setRedirect("/index.html")
+                        .build();
+            case POST:
+                Map<String, String> queriesPost = HttpRequestUtils.parseQueryString(request.getHttpRequestBody());
+                userService.join(new UserSignUpDto(queriesPost.get("userId"), queriesPost.get("password"), queriesPost.get("name"), queriesPost.get("email")));
+                log.debug("UserController handleRequest User joined by POST");
+                log.debug("UserController handleRequest POST queries : {} ", queriesPost);
+                return new HttpResponse.Builder(out)
+                        .setHttpStatus(HttpStatus._302)
+                        .setRedirect("/index.html")
+                        .build();
+            default:
+                return new HttpResponse.Builder(out)
+                        .setHttpStatus(HttpStatus._404)
+                        .setRedirect("/index.html")
+                        .build();
         }
 
-        if (request.getMethod() == Method.POST) {
-            System.out.println(request.getHttpRequestBody());
-            Map<String, String> queries = HttpRequestUtils.parseQueryString(request.getHttpRequestBody());
-            userService.join(new UserSignUpDto(queries.get("userId"), queries.get("password"), queries.get("name"), queries.get("email")));
-            log.debug("UserController handleRequest User joined by POST");
-            log.debug("UserController handleRequest POST queries : {} ", queries);
-            return new HttpResponse.Builder(out)
-                    .setHttpStatus(HttpStatus._302)
-                    .setRedirect("/index.html")
-                    .build();
-        }
-        return null;
+//        if (request.getMethod() == Method.GET) {
+//        }
+//
+//        if (request.getMethod() == Method.POST) {
+//        }
+//        return null;
     }
 }

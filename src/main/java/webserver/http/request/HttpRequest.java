@@ -37,8 +37,6 @@ public class HttpRequest {
         this.version = httpRequestLine.getHttpVersion();
         this.httpRequestHeader = httpRequestHeader;
         this.httpRequestBody = parseRequestBody(br);
-
-
     }
 
     private HttpRequestLine parseRequestLine(BufferedReader br) throws IOException {
