@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TemplateEngine {
-
+    // Todo 정규표현식 공부 좀 더 해야할 듯
     private static final String startRegex = "\\{\\{\\#[a-zA-Z]+\\}\\}";
     private static final String endRegex = "\\{\\{\\/[a-zA-Z]+\\}\\}";
     private static final String valueRegex = "\\{\\{[a-zA-Z]*.*[a-zA-Z]+\\}\\}";
@@ -58,6 +58,7 @@ public class TemplateEngine {
         if(matcher.find() != false){
             Pattern pattern1 = Pattern.compile(endRegex);
             Matcher matcher1 = pattern1.matcher(template);
+            // Todo find() 먼저 해주어야 한다.
             if(matcher1.find() == false)
                 throw new RuntimeException("템플릿이 잘못되었습니다!");
             String tmp = matcher.group();
