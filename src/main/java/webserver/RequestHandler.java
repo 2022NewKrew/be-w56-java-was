@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 import controller.RequestController;
+import exception.ExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.ResponseHeader;
@@ -24,38 +25,34 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
+
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             RequestHeader requestHeader = mapRequestHeader(bufferedReader);
             writeResponse(new DataOutputStream(out), RequestController.controlRequest(requestHeader));
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
+            //ExceptionHandler.handleException(e);
         }
     }
 
-    private RequestHeader mapRequestHeader(BufferedReader bufferedReader) {
+    private RequestHeader mapRequestHeader(BufferedReader bufferedReader) throws IOException {
         RequestHeader requestHeader = new RequestHeader();
-        try {
-            HttpRequestUtils.setRequest(requestHeader, bufferedReader.readLine());
+        HttpRequestUtils.setRequest(requestHeader, bufferedReader.readLine());
 
-            bufferedReader.lines()
-                    .takeWhile(header -> header.contains(": "))
-                    .forEach(header -> HttpRequestUtils.setHeader(requestHeader, header));
+        bufferedReader.lines()
+                .takeWhile(header -> header.contains(": "))
+                .forEach(header -> HttpRequestUtils.setHeader(requestHeader, header));
 
-            if (requestHeader.getHeader("method").equals("POST")) {
-                String parameters = IOUtils.readData(bufferedReader,
-                        Integer.parseInt(requestHeader.getHeader("Content-Length")));
-                HttpRequestUtils.setRequestParameter(requestHeader, parameters);
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+        if (requestHeader.getHeader("method").equals("POST")) {
+            String parameters = IOUtils.readData(bufferedReader,
+                    Integer.parseInt(requestHeader.getHeader("Content-Length")));
+            HttpRequestUtils.setRequestParameter(requestHeader, parameters);
         }
         return requestHeader;
     }
 
-    private void writeResponse(DataOutputStream dos, ResponseHeader responseHeader) {
+    private void writeResponse(DataOutputStream dos, ResponseHeader responseHeader) throws IOException {
         responseHeader.getHtmlResponseHeader()
                 .response(dos, responseHeader);
         responseHeader.responseBody(dos);

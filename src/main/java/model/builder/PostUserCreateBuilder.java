@@ -5,9 +5,11 @@ import model.ResponseHeader;
 import util.HtmlResponseHeader;
 import util.Links;
 
+import java.io.IOException;
+
 public class PostUserCreateBuilder extends ResponseBuilder {
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) {
+    public ResponseHeader build(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.MAIN)
                 .body(readBody(Links.MAIN))

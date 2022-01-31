@@ -16,27 +16,22 @@ public class RequestController {
 
     }
 
-    public static ResponseHeader controlRequest(RequestHeader requestHeader) {
+    public static ResponseHeader controlRequest(RequestHeader requestHeader) throws Exception {
         String uri = requestHeader.getHeader("uri");
         String method = requestHeader.getHeader("method");
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 
-        try {
-            ResponseBuilder responseBuilder = new NormalRequestBuilder();
+        ResponseBuilder responseBuilder = new NormalRequestBuilder();
 
-            if (uri.equals("/user/create") && method.equals("POST")) {
-                SignUpService.signup(requestHeader);
-                responseBuilder = new PostUserCreateBuilder();
-            }
-
-            if (uri.equals("/user/login") && method.equals("POST")) {
-                responseBuilder = new PostUserLoginBuilder();
-            }
-            return responseBuilder.build(requestHeader);
-        } catch (Exception e) {
-            return new ExceptionHandler(requestHeader)
-                    .handleException(e);
+        if (uri.equals("/user/create") && method.equals("POST")) {
+            SignUpService.signup(requestHeader);
+            responseBuilder = new PostUserCreateBuilder();
         }
+
+        if (uri.equals("/user/login") && method.equals("POST")) {
+            responseBuilder = new PostUserLoginBuilder();
+        }
+        return responseBuilder.build(requestHeader);
     }
 }

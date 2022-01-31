@@ -21,12 +21,8 @@ public class ResponseHeader {
         return body.length;
     }
 
-    public void responseBody(DataOutputStream dos) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            throw new IllegalStateException("IO EXCEPTION");
-        }
+    public void responseBody(DataOutputStream dos) throws IOException {
+        dos.write(body, 0, body.length);
+        dos.flush();
     }
 }

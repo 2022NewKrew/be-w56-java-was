@@ -6,9 +6,11 @@ import model.ResponseHeader;
 import util.HtmlResponseHeader;
 import util.Links;
 
+import java.io.IOException;
+
 public class PostUserLoginBuilder extends ResponseBuilder {
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) {
+    public ResponseHeader build(RequestHeader requestHeader) throws IOException {
         String id = requestHeader.getParameter("userId");
         String password = requestHeader.getParameter("password");
         if (DataBase.isExistUserId(id) &&
@@ -20,7 +22,7 @@ public class PostUserLoginBuilder extends ResponseBuilder {
         return buildFailLogin(requestHeader);
     }
 
-    private ResponseHeader buildSuccessLogin(RequestHeader requestHeader) {
+    private ResponseHeader buildSuccessLogin(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.MAIN)
                 .body(readBody(Links.MAIN))
@@ -29,7 +31,7 @@ public class PostUserLoginBuilder extends ResponseBuilder {
                 .build();
     }
 
-    private ResponseHeader buildFailLogin(RequestHeader requestHeader) {
+    private ResponseHeader buildFailLogin(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.LOGIN_FAILED)
                 .body(readBody(Links.LOGIN_FAILED))

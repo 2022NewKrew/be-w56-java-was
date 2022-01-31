@@ -5,9 +5,11 @@ import model.ResponseHeader;
 import util.HtmlResponseHeader;
 import util.Links;
 
+import java.io.IOException;
+
 public class NormalRequestBuilder extends ResponseBuilder {
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) {
+    public ResponseHeader build(RequestHeader requestHeader) throws IOException {
         String uri = requestHeader.getHeader("uri");
         if (uri.equals("/")) {
             uri = Links.MAIN;
