@@ -123,7 +123,7 @@ public class HttpRequestUtils {
         String httpVersion = words[2];
 
         List<Pair> pairs = new ArrayList<>();
-        while (!line.equals("")) {
+        while (line != null && !line.equals("") ) {
             line = br.readLine();
             pairs.add(parseHeader(line));
             log.debug("header : {}", line);

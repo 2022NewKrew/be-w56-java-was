@@ -1,4 +1,4 @@
-package util;
+package util.util;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -62,5 +62,6 @@ public class HttpRequestTest {
                 .containsEntry("email", "javajigi@slipp.net");
 
     }
+
 
 }

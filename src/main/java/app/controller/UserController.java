@@ -7,8 +7,12 @@ import org.slf4j.LoggerFactory;
 import util.annotation.components.Controller;
 import util.annotation.mapping.GetMapping;
 import util.annotation.mapping.PostMapping;
+import util.http.HttpRequest;
+import util.http.HttpRequestUtils;
 import util.http.HttpResponse;
+import util.ui.Model;
 
+import java.util.Collection;
 import java.util.Map;
 
 //Todo DI 구조를 만들어 볼 수도 있다.
@@ -52,8 +56,16 @@ public class UserController {
 
     @PostMapping(url = "/user/create/v2")
     public String signInByPostV2(User user) {
+        if (user.getUserId().equals("error"))
+            throw new IllegalArgumentException("NO");
+
         DataBase.addUser(user);
         return "redirect:/index.html";
+    }
+
+    @GetMapping(url = "/user/login")
+    public String loginPage(){
+        return "/user/login.html";
     }
 
     @PostMapping(url = "/user/login")
@@ -78,6 +90,19 @@ public class UserController {
         httpResponse.setCookie("Path", "/");
         httpResponse.setCookie("max-age", 0);
         return "redirect:/index.html";
+    }
+
+    @GetMapping(url = "/user/list")
+    public String userList(HttpRequest httpRequest, Model model){
+        Map<String, String> cookie = HttpRequestUtils.parseCookies(httpRequest.getHeader("Cookie"));
+        log.debug("userList.cookie : {} ", cookie);
+        if(cookie.get("logined") == null)
+            return "redirect:/user/login";
+
+        Collection<User> users = DataBase.findAll();
+        model.addAttribute("users", users);
+
+        return "/user/list.html";
     }
 
 }

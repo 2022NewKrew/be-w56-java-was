@@ -1,5 +1,6 @@
 package webserver;
 
+import org.h2.engine.Mode;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
@@ -10,6 +11,8 @@ import util.http.HttpMethod;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
 import util.http.HttpResponseUtils;
+import util.ui.Model;
+import util.ui.ModelImpl;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -89,6 +92,8 @@ public class ServletContainer {
             return httpRequest;
         if (parameter.getType() == HttpResponse.class)
             return httpResponse;
+        if (parameter.getType() == Model.class)
+            return new ModelImpl();
         return objectArgument(parameter, data);
     }
 
@@ -105,12 +110,15 @@ public class ServletContainer {
         return parameter.getType().getConstructor(types.toArray(new Class[0])).newInstance(paramList.toArray());
     }
 
-    private void controllerResponse(String controllerResult, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    private void controllerResponse(String controllerResult, Model model, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String[] controllerResults = controllerResult.split(":");
         if (controllerResults[0].equals("redirect")) {
             HttpResponseUtils.redirectResponse(httpResponse, controllerResults[1].trim(), httpRequest.getHeader("Host"));
             return;
         }
+        //Todo 동적 html 생성.
+        if(model != null)
+            HttpResponseUtils.staticResponse(httpResponse, controllerResults[0]);
         HttpResponseUtils.staticResponse(httpResponse, controllerResults[0]);
     }
 
@@ -131,7 +139,11 @@ public class ServletContainer {
             List<Object> arguments = methodArguments(method, data, request, response);
             //Todo contorllerResult를 Serialize해서 json으로 던져줄 수도 있다.
             String controllerResult = (String) method.invoke(controller, arguments.toArray());
-            controllerResponse(controllerResult, request, response);
+            Optional<Object> opt = arguments.stream().filter(o->Arrays.asList(o.getClass().getInterfaces()).contains(Model.class)).findAny();
+            if(opt.isEmpty())
+                controllerResponse(controllerResult, null, request, response);
+            else
+                controllerResponse(controllerResult, (Model) opt.get(), request, response);
         } catch (Exception e) {
             log.error(String.valueOf(e));
             HttpResponseUtils.serverErrorResponse(response);
