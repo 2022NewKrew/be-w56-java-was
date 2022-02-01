@@ -6,6 +6,7 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.HttpResponseFactory;
 import java.io.DataOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import model.User;
@@ -50,21 +51,17 @@ public class UserLoginController implements Controller {
     }
 
     private HttpResponse loginSuccess(DataOutputStream dos) {
-        Map<String, String> result = new HashMap<>();
-        Map<String, String> cookie = new HashMap<>();
-
-        cookie.put("logined", "true; Path=/");
-
-        result.put("url", "/index.html");
-        result.put("status", "302");
-
-        return HttpResponseFactory.getHttpResponse(result, cookie, new HashMap<>(), dos);
+        return HttpResponseFactory.getHttpResponse(
+                Map.of("url", "/index.html", "status", "302"),
+                Map.of("logined", "true; Path=/"),
+                Collections.unmodifiableMap(new HashMap<>()),
+                dos);
     }
 
     private HttpResponse loginFail(DataOutputStream dos) {
-        Map<String, String> result = new HashMap<>();
-        result.put("url", "/user/login_failed.html");
-        result.put("status", "401");
-        return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
+        return HttpResponseFactory.getHttpResponse(
+                Map.of("url", "/user/login_failed.html", "status", "401"),
+                Collections.unmodifiableMap(new HashMap<>()),
+                dos);
     }
 }

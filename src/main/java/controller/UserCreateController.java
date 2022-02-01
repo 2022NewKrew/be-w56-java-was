@@ -6,6 +6,7 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.HttpResponseFactory;
 import java.io.DataOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import model.User;
@@ -31,11 +32,10 @@ public class UserCreateController implements Controller {
                 new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
                         bodyData.get("email")));
 
-        Map<String, String> result = new HashMap<>();
-        result.put("url", "/index.html");
-        result.put("status", "302");
-
-        return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
+        return HttpResponseFactory.getHttpResponse(
+                Map.of("url", "/index.html", "status", "302"),
+                Collections.unmodifiableMap(new HashMap<>()),
+                dos);
     }
 
     private void checkBodyData(Map<String, String> bodyData) {
