@@ -1,28 +1,33 @@
 package com.kakao.example.controller;
 
 import com.kakao.example.application.service.UserService;
-import com.kakao.example.application.service.UserServiceImpl;
 import com.kakao.example.model.domain.User;
-import framework.controller.Controller;
+import com.kakao.example.util.exception.UserNotFoundException;
+import framework.util.annotation.Autowired;
+import framework.util.annotation.Component;
+import framework.util.annotation.Primary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import framework.util.annotation.RequestMapping;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
 
+import static framework.util.annotation.Component.ComponentType.CONTROLLER;
+
+@Component(type = CONTROLLER)
 @RequestMapping("/user")
-public class UserController implements Controller {
+public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    private static Controller instance;
 
-    private final UserService userService = UserServiceImpl.getInstance();
+    private UserService userService;
 
-    public static Controller getInstance() {
-        instance = new UserController();
-        return instance;
+    public UserController() {}
+
+    @Autowired
+    @Primary
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
-
-    private UserController() {};
 
     @RequestMapping(value = "/create", requestMethod = "GET")
     public String registerByGet(HttpRequestHandler request) {
@@ -60,7 +65,7 @@ public class UserController implements Controller {
 
         try {
             userService.findUserByLoginInfo(userId, password);
-        } catch (Exception e) {
+        } catch (UserNotFoundException e) {
             response.setCookie("logined", "false", "/");
             return "redirect:/user/login_failed";
         }

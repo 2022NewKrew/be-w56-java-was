@@ -1,6 +1,6 @@
 package framework.controller;
 
-import framework.util.exception.InternalServerException;
+import framework.util.exception.InternalServerErrorException;
 import framework.view.ModelView;
 import framework.view.ViewResolver;
 import framework.webserver.HttpRequestHandler;
@@ -20,11 +20,10 @@ import static framework.util.Constants.DEFAULT_ERROR_PAGE;
  */
 public class FrontController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrontController.class);
-    private static FrontController instance;
+    private static final FrontController INSTANCE = new FrontController();
 
     public static FrontController getInstance() {
-        instance = new FrontController();
-        return instance;
+        return INSTANCE;
     }
 
     private FrontController() {
@@ -51,15 +50,15 @@ public class FrontController {
 
             // View Resolver에게 전달하여 View를 만듦
             ViewResolver.resolve(modelView);
-
-            // Controller에게 응답
+          
+            // Client에게 응답
             response.flush(modelView);
-        } catch (InternalServerException e) {
+        } catch (InternalServerErrorException e) {
             LOGGER.error(e.getMessage());
 
             ModelView modelView = ModelView.builder()
                     .isStatic(true)
-                    .statusCode(HttpStatus.SC_NOT_FOUND)
+                    .statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                     .uri(DEFAULT_ERROR_PAGE)
                     .build();
 

@@ -3,29 +3,25 @@ package com.kakao.example.application.service;
 import com.kakao.example.application.dto.UserDto;
 import com.kakao.example.model.domain.User;
 import com.kakao.example.model.repository.UserRepository;
-import com.kakao.example.model.repository.UserRepositoryMemoryImpl;
+import com.kakao.example.util.exception.UserNotFoundException;
+import framework.util.annotation.Autowired;
+import framework.util.annotation.Component;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static framework.util.annotation.Component.ComponentType.SERVICE;
+
+@Component(type = SERVICE)
 public class UserServiceImpl implements UserService {
-    private static UserService instance;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    private final UserRepository userRepository = UserRepositoryMemoryImpl.getInstance();
-    private final ModelMapper modelMapper = new ModelMapper();
-
-    private UserServiceImpl() {
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-    }
-
-    public static UserService getInstance() {
-        instance = new UserServiceImpl();
-        return instance;
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -38,7 +34,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserById(userId).stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override
@@ -46,7 +42,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserByLoginInfo(userId, password).stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package framework.util.exception;
 
-public class ClassNotFoundException extends InternalServerException {
+public class ClassNotFoundException extends InternalServerErrorException {
     public ClassNotFoundException(String msg) {
         super(msg);
     }

@@ -15,7 +15,7 @@ public class Constants {
     /** 기본 에러 페이지 */
     public static final String DEFAULT_ERROR_PAGE = "/error/error.html";
 
-    /** 컨트롤러 경로 */
+    /** Controller 경로 */
     public static final String CONTROLLER_PACKAGE = "com.kakao.example.controller";
 
     /** Redirect 표시 */

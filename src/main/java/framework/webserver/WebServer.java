@@ -1,16 +1,21 @@
 package framework.webserver;
 
+import framework.container.Container;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WebServer {
-    private static final Logger log = LoggerFactory.getLogger(WebServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String[] args) throws Exception {
+    public static void run(Class<?> baseClass, String[] args) {
+        Container.scanAndFill(baseClass);
+
         int port = 0;
 
         if (args == null || args.length == 0) {
@@ -20,7 +25,7 @@ public class WebServer {
         }
 
         try (ServerSocket listenSocket = new ServerSocket(port)) {
-            log.info("Web Application Server started {} port.", port);
+            LOGGER.info("Web Application Server started {} port.", port);
 
             Socket connection;
 
@@ -28,6 +33,8 @@ public class WebServer {
                 ConnectionThread connectionHandler = new ConnectionThread(connection);
                 connectionHandler.start();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

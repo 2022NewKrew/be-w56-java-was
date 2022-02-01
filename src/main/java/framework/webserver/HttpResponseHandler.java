@@ -1,7 +1,7 @@
 package framework.webserver;
 
 import framework.util.Cookies;
-import framework.util.exception.InternalServerException;
+import framework.util.exception.InternalServerErrorException;
 import framework.view.ModelView;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,7 +54,7 @@ public class HttpResponseHandler {
             dos.write(modelView.getContent(), 0, modelView.getContentLength());
             dos.flush();
         } catch (IOException e) {
-            throw new InternalServerException();
+            throw new InternalServerErrorException();
         }
     }
 
