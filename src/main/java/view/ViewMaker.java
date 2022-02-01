@@ -23,10 +23,6 @@ public class ViewMaker {
         return getFile("./webapp/badRequest.html");
     }
 
-    public static byte[] getBadRequestView() throws IOException {
-        return Files.toByteArray(new File("./webapp/badRequest.html"));
-    }
-
     private static byte[] applyModel(byte[] body, Map<String, String> model) {
         //미구현
         String stringBody = new String(body);

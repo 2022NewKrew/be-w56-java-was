@@ -30,8 +30,4 @@ public class HttpRequest {
     public Map<String, String> getBodyData() {
         return body.getBodyData();
     }
-
-    public Map<String, String> getBodyData() {
-        return body.getBodyData();
-    }
 }
