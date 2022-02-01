@@ -22,7 +22,6 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-
     @GetMapping(url = "/")
     public String index() {
         return "/index.html";

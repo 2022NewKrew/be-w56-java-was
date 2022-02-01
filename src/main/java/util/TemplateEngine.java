@@ -1,5 +1,7 @@
 package util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.ui.Model;
 
 import java.io.IOException;
@@ -12,10 +14,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TemplateEngine {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateEngine.class);
     // Todo 정규표현식 공부 좀 더 해야할 듯
     private static final String startRegex = "\\{\\{\\#[a-zA-Z]+\\}\\}";
     private static final String endRegex = "\\{\\{\\/[a-zA-Z]+\\}\\}";
-    private static final String valueRegex = "\\{\\{[a-zA-Z]*.*[a-zA-Z]+\\}\\}";
+    private static final String valueRegex = "\\{\\{[a-zA-Z]*\\.*[a-zA-Z]+\\}\\}";
 
     public static byte[] render(String template, Model model) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         String templateString = Files.readString(Path.of("./webapp" + template));
@@ -46,6 +49,7 @@ public class TemplateEngine {
         sb.replace(0, 1, String.valueOf(Character.toUpperCase(sb.charAt(0))));
         sb.insert(0, "get");
         String target = sb.toString();
+        LOGGER.debug("target : {} ", target);
         return object.getClass().getMethod(target).invoke(object);
     }
 

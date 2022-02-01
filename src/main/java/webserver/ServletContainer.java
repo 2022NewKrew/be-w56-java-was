@@ -42,7 +42,9 @@ public class ServletContainer {
     }
 
     private void componentMapping(Class controllerClass, Method[] methods) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        log.debug("controller detected {}", controllerClass);
         for (Method method : methods) {
+            log.debug("method detected : {}, {}", controllerClass.getName(), method.getName());
             methodControllerMapping(method, controllerClass);
             urlMethodMapping(method);
         }
@@ -101,11 +103,15 @@ public class ServletContainer {
         List<Class> types = new ArrayList<>();
         List<Object> paramList = new ArrayList<>();
         for (Field field : fields) {
-            types.add(field.getType());
             String name = field.getName();
             String value = data.get(name);
-            paramList.add(field.getType().cast(value));
+            if(value != null) {
+                log.debug("valid param : {}", name);
+                types.add(field.getType());
+                paramList.add(field.getType().cast(value));
+            }
         }
+        log.debug("paramList.size() : {}", paramList.size());
         return parameter.getType().getConstructor(types.toArray(new Class[0])).newInstance(paramList.toArray());
     }
 
@@ -147,6 +153,7 @@ public class ServletContainer {
                 controllerResponse(controllerResult, (Model) opt.get(), request, response);
         } catch (Exception e) {
             log.error(String.valueOf(e));
+            e.printStackTrace();
             HttpResponseUtils.serverErrorResponse(response);
         }
     }
