@@ -24,22 +24,25 @@ public class Router {
 
         Reflections reflections = new Reflections("controller");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Controller.class);
+        Class<?> subControllerClass = getMatchingControllerClass(annotated,urlPath);
+        Method[] methods = subControllerClass.getDeclaredMethods();
+        Method method = getMatchingMethod(methods, urlPath, requestMethod);
+        return (Response) method.invoke(subControllerClass.getConstructor().newInstance(),request);
+    }
 
-        // urlPath와 매칭되는 controller 서칭
-        Class<?> subControllerClass = annotated.stream()
+    private static Class<?> getMatchingControllerClass(Set<Class<?>> annotated, String urlPath) throws ClassNotFoundException {
+        return annotated.stream()
                 .filter(c -> urlPath.startsWith(c.getAnnotation(Controller.class).value()))
                 .findFirst()
                 .orElseThrow(ClassNotFoundException::new);
+    }
 
-        Method[] methods = subControllerClass.getDeclaredMethods();
-
-        //찾은 컨트롤러에서 method 서칭
-        Method method = Arrays.stream(methods)
+    private static Method getMatchingMethod(Method[] methods, String urlPath, String requestMethod) throws IllegalAccessException {
+        return Arrays.stream(methods)
                 .filter(c -> urlPath.equals(c.getAnnotation(RequestMapping.class).value()))
                 .filter(c -> requestMethod.equals(c.getAnnotation(RequestMapping.class).requestMethod()))
                 .findFirst()
                 .orElseThrow(IllegalAccessException::new);
-        return (Response) method.invoke(subControllerClass.getConstructor().newInstance(),request);
     }
 
     private static boolean isStatic(String urlPath) {
