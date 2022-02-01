@@ -62,7 +62,7 @@ public class HandlerMapper {
         // Controller를 찾아서 process 메소드 호출
         Object controller = findController(uri);
         Method method = findMethod(controller, requestMethod, uri);
-        Object object = invokeMethod(controller, method, request, response);;
+        Object object = invokeMethod(controller, method, request, response);
 
         // String형이나 ModelView형이 아니라면 예외 발생
         if (!(object instanceof String || object instanceof ModelView)) {

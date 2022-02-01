@@ -50,7 +50,7 @@ public class FrontController {
 
             // View Resolver에게 전달하여 View를 만듦
             ViewResolver.resolve(modelView);
-
+          
             // Client에게 응답
             response.flush(modelView);
         } catch (InternalServerErrorException e) {
