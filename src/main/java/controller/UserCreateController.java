@@ -4,7 +4,6 @@ import db.DataBase;
 import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
-import http.response.HttpResponseFactory;
 import java.io.DataOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,8 +31,8 @@ public class UserCreateController implements Controller {
                 new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
                         bodyData.get("email")));
 
-        return HttpResponseFactory.getHttpResponse(
-                Map.of("url", "/index.html", "status", "302"),
+        return HttpResponse.found(
+                "/index.html",
                 Collections.unmodifiableMap(new HashMap<>()),
                 dos);
     }

@@ -4,7 +4,6 @@ import db.DataBase;
 import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
-import http.response.HttpResponseFactory;
 import java.io.DataOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,10 +32,10 @@ public class UserLoginController implements Controller {
         User user = DataBase.findUserById(userId);
 
         if (user != null && user.getPassword().equals(password)) {
-            return loginSuccess(dos);
+            return loginSuccess(request, dos);
         }
 
-        return loginFail(dos);
+        return loginFail(request, dos);
     }
 
     private void checkBodyData(Map<String, String> bodyData) {
@@ -50,17 +49,16 @@ public class UserLoginController implements Controller {
         }
     }
 
-    private HttpResponse loginSuccess(DataOutputStream dos) {
-        return HttpResponseFactory.getHttpResponse(
-                Map.of("url", "/index.html", "status", "302"),
+    private HttpResponse loginSuccess(HttpRequest request, DataOutputStream dos) {
+        return HttpResponse.found(
+                "/index.html",
                 Map.of("logined", "true; Path=/"),
-                Collections.unmodifiableMap(new HashMap<>()),
                 dos);
     }
 
-    private HttpResponse loginFail(DataOutputStream dos) {
-        return HttpResponseFactory.getHttpResponse(
-                Map.of("url", "/user/login_failed.html", "status", "401"),
+    private HttpResponse loginFail(HttpRequest request, DataOutputStream dos) {
+        return HttpResponse.unauthorized(
+                request.getUrl(),
                 Collections.unmodifiableMap(new HashMap<>()),
                 dos);
     }
