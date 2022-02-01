@@ -82,7 +82,7 @@ public class HandlerMapper {
         Reflections reflections = new Reflections(CONTROLLER_PACKAGE);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RequestMapping.class);
 
-        // 받은 URI의 첫 부분에 해당하는 컨트롤러 클래스 확인
+        // 받은 URI의 첫 부분에 해당하는 Controller 클래스 확인
         Class<?> subControllerClass = annotated.stream()
                 .filter(c -> uri.startsWith(c.getAnnotation(RequestMapping.class).value()))
                 .findFirst()
