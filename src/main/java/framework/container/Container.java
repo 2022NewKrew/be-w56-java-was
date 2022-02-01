@@ -251,3 +251,4 @@ public class Container {
     public static Object getInstanceFromContainer(Class<?> clazz) {
         return getInstanceFromContainer(clazz.getName());
     }
+}
