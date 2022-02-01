@@ -5,6 +5,7 @@ import framework.util.annotation.Bean;
 import framework.util.annotation.Component;
 import framework.util.annotation.Primary;
 import framework.util.exception.CannotFillContainerException;
+import framework.util.exception.ClassNotFoundException;
 import framework.util.exception.ComponentNotFoundException;
 import framework.util.exception.ConstructorNotFoundException;
 import framework.util.exception.MethodNotFoundException;
@@ -18,23 +19,21 @@ import java.util.*;
 
 public class Container {
     private static final Logger LOGGER = LoggerFactory.getLogger(Container.class);
+    private static final Map<String, Executable> EXECUTABLES = new HashMap<>();
     private static final Map<String, Object> CONTAINER = new HashMap<>();
 
-    private final Class<?> baseClass;
-    private Set<Class<?>> componentClasses;
-    private Set<Method> beanMethods;
-    private final Map<String, Executable> executables = new HashMap<>();
+    private static Set<Class<?>> componentClasses;
+    private static Set<Method> beanMethods;
 
-    public Container(Class<?> baseClass) {
-        this.baseClass = baseClass;
-        scanComponentsAndBeans();
+    public static void scanAndFill(Class<?> baseClass) {
+        scanComponentsAndBeans(baseClass);
         fillContainer();
     }
 
-    public void scanComponentsAndBeans() {
+    private static void scanComponentsAndBeans(Class<?> baseClass) {
         Reflections reflections = new Reflections(baseClass.getPackageName(), Scanners.TypesAnnotated, Scanners.MethodsAnnotated);
-        this.componentClasses = reflections.getTypesAnnotatedWith(Component.class);
-        this.beanMethods = reflections.getMethodsAnnotatedWith(Bean.class);
+        componentClasses = reflections.getTypesAnnotatedWith(Component.class);
+        beanMethods = reflections.getMethodsAnnotatedWith(Bean.class);
 
         // @Component가 붙은 클래스에 대해 모두 확인
         scanComponents();
@@ -43,8 +42,8 @@ public class Container {
         scanBeans();
     }
 
-    private void scanComponents() {
-        for (Class<?> component : this.componentClasses) {
+    private static void scanComponents() {
+        for (Class<?> component : componentClasses) {
             // 정의한 생성자가 없는 경우
             if (component.getDeclaredConstructors().length == 0) {
                 putConstructor(component, component.getConstructors()[0]);
@@ -66,25 +65,25 @@ public class Container {
         }
     }
 
-    private void putConstructor(Class<?> component, Constructor<?> constructor) {
+    private static void putConstructor(Class<?> component, Constructor<?> constructor) {
         // 현재 Component에 대한 정보로 넣음
-        executables.put(component.getName(), constructor);
+        EXECUTABLES.put(component.getName(), constructor);
 
         // 구현한 인터페이스에 관련해서도 넣음 (1 depth 까지만)
         Arrays.stream(component.getInterfaces()).forEach(i -> {
-            executables.put(i.getName(), constructor);
+            EXECUTABLES.put(i.getName(), constructor);
         });
     }
 
-    private void scanBeans() {
+    private static void scanBeans() {
         for (Method bean : beanMethods) {
-            executables.put(bean.getReturnType().getName(), bean);
+            EXECUTABLES.put(bean.getReturnType().getName(), bean);
         }
     }
 
-    private void fillContainer() {
+    private static void fillContainer() {
         // 실행시켜야할 Executable들을 모두 실행시킬 때까지 반복
-        while (executables.size() != CONTAINER.size()) {
+        while (EXECUTABLES.size() != CONTAINER.size()) {
             int currContainerSize = CONTAINER.size();
 
             putAllInstancesInContainer();
@@ -95,8 +94,8 @@ public class Container {
         }
     }
 
-    private void putAllInstancesInContainer() {
-        for (Map.Entry<String, Executable> entry : this.executables.entrySet()) {
+    private static void putAllInstancesInContainer() {
+        for (Map.Entry<String, Executable> entry : EXECUTABLES.entrySet()) {
             String key = entry.getKey();
 
             if (CONTAINER.containsKey(key)) {
@@ -121,7 +120,7 @@ public class Container {
         }
     }
 
-    private boolean fillArguments(Parameter[] parameters, Object[] arguments) {
+    private static boolean fillArguments(Parameter[] parameters, Object[] arguments) {
         for (int i = 0, size = parameters.length; i < size; i++) {
             String typeName = parameters[i].getType().getName();
 
@@ -135,7 +134,7 @@ public class Container {
         return true;
     }
 
-    private void putInstanceInContainer(String key, Executable executable, Object[] arguments) {
+    private static void putInstanceInContainer(String key, Executable executable, Object[] arguments) {
         if (executable instanceof Method) {
             String className = executable.getDeclaringClass().getName();
 
@@ -162,5 +161,17 @@ public class Container {
         }
 
         LOGGER.debug("Add instance in container: {}", key);
+    }
+
+    public static Object getInstanceFromContainer(String className) {
+        if (!CONTAINER.containsKey(className)) {
+            throw new ClassNotFoundException();
+        }
+
+        return CONTAINER.get(className);
+    }
+
+    public static Object getInstanceFromContainer(Class<?> clazz) {
+        return getInstanceFromContainer(clazz.getName());
     }
 }

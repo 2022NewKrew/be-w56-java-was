@@ -1,10 +1,8 @@
 package com.kakao.example.controller;
 
 import com.kakao.example.application.service.UserService;
-import com.kakao.example.application.service.UserServiceImpl;
 import com.kakao.example.model.domain.User;
 import com.kakao.example.util.exception.UserNotFoundException;
-import framework.controller.Controller;
 import framework.util.annotation.Autowired;
 import framework.util.annotation.Component;
 import framework.util.annotation.Primary;
@@ -18,7 +16,7 @@ import static framework.util.annotation.Component.ComponentType.CONTROLLER;
 
 @Component(type = CONTROLLER)
 @RequestMapping("/user")
-public class UserController implements Controller {
+public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     private UserService userService;
