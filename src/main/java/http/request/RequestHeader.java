@@ -1,5 +1,6 @@
 package http.request;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ public class RequestHeader {
     private final Map<String, String> components;
 
     public RequestHeader(Map<String, String> components) {
-        this.components = components;
+        this.components = Collections.unmodifiableMap(components);
     }
 
     public static RequestHeader stringToRequestHeader(String headers) {
@@ -25,7 +26,7 @@ public class RequestHeader {
             splitLine = List.of(headerLine.split(": "));
             result.put(splitLine.get(0), splitLine.get(1));
         }
-        return result;
+        return Collections.unmodifiableMap(result);
     }
 
     public boolean has(String key) {

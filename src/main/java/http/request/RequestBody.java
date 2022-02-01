@@ -3,6 +3,7 @@ package http.request;
 import exception.BadRequestException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +13,12 @@ public class RequestBody {
     private final Map<String, String> bodyData;
 
     public RequestBody(Map<String, String> bodyData) {
-        this.bodyData = bodyData;
+        this.bodyData = Collections.unmodifiableMap(bodyData);
     }
 
     public static RequestBody stringToRequestBody(String body) {
         if (body.isEmpty()) {
-            return new RequestBody(new HashMap<>());
+            return new RequestBody(Collections.unmodifiableMap(new HashMap<>()));
         }
         List<String> bodyLines = List.of(body.split("&"));
         return new RequestBody(getBodyData(bodyLines));
@@ -35,7 +36,7 @@ public class RequestBody {
                 value = URLDecoder.decode(components.get(1), StandardCharsets.UTF_8);
                 result.put(key, value);
             }
-            return result;
+            return Collections.unmodifiableMap(result);
         } catch (Exception exception) {
             throw new BadRequestException("body decoding에 실패하였습니다");
         }

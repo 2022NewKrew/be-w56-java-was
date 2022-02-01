@@ -1,5 +1,6 @@
 package http.request;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class RequestStartLine {
         this.method = method;
         this.url = url;
         this.protocol = protocol;
-        this.query = query;
+        this.query = Collections.unmodifiableMap(query);
     }
 
     public static RequestStartLine stringToRequestLine(String startLine) {
@@ -41,7 +42,7 @@ public class RequestStartLine {
             result.put(splitQuery.get(0), splitQuery.get(1));
         }
 
-        return result;
+        return Collections.unmodifiableMap(result);
     }
 
     public HttpMethod getMethod() {
