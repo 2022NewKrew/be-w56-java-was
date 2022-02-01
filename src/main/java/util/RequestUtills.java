@@ -59,8 +59,8 @@ public class RequestUtills {
         Map<String, String> header = readHeader(br);
         String queryString = readQueryString(requestLine, header);
         Map<String, String> queries = parseValues(queryString, AMPERSAND);
-
-        return Request.of(requestLine, header, queries);
+        Map<String, String> cookies = parseCookies(header.get("Cookie"));
+        return Request.of(requestLine, header, queries, cookies);
     }
 
     private static String readQueryString(String[] requestLine, Map<String, String> headers) {
@@ -70,6 +70,10 @@ public class RequestUtills {
             return uri.length > 1 ? uri[1] : "";
         }
         return headers.get("queryString");
+    }
+
+    public static Map<String, String> parseCookies(String cookies) {
+        return parseValues(cookies, "; ");
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
