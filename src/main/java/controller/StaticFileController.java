@@ -1,11 +1,9 @@
 package controller;
 
-import exception.NotFoundException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import java.util.Collections;
-import java.util.HashMap;
+import util.ControllerUtils;
 
 public class StaticFileController implements Controller {
 
@@ -22,8 +20,8 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.ok(
                 request.getUrl(),
-                Collections.unmodifiableMap(new HashMap<>()),
-                Collections.unmodifiableMap(new HashMap<>()),
+                ControllerUtils.getEmptyImmutableMap(),
+                ControllerUtils.getEmptyImmutableMap(),
                 dos);
     }
 }

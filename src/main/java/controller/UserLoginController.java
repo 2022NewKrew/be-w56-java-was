@@ -5,10 +5,9 @@ import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import model.User;
+import util.ControllerUtils;
 
 public class UserLoginController implements Controller {
 
@@ -59,7 +58,7 @@ public class UserLoginController implements Controller {
     private HttpResponse loginFail(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.unauthorized(
                 request.getUrl(),
-                Collections.unmodifiableMap(new HashMap<>()),
+                ControllerUtils.getEmptyImmutableMap(),
                 dos);
     }
 }
