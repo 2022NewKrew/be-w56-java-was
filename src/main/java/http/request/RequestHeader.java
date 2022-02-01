@@ -3,6 +3,7 @@ package http.request;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import util.Constant;
 
 public class RequestHeader {
 
@@ -13,7 +14,7 @@ public class RequestHeader {
     }
 
     public static RequestHeader stringToRequestHeader(String headers) {
-        List<String> headerLines = List.of(headers.split("\r\n"));
+        List<String> headerLines = List.of(headers.split(Constant.lineBreak));
         return new RequestHeader(getComponents(headerLines));
     }
 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
-import org.slf4j.LoggerFactory;
 import util.Constant;
 
 public class HttpRequestFactory {
@@ -54,11 +53,11 @@ public class HttpRequestFactory {
     }
 
     private static String getStartLineString(String input) {
-        return input.split("\r\n")[0];
+        return input.split(Constant.lineBreak)[0];
     }
 
     private static String getHeaderString(String input) {
-        return input.split("\r\n", 2)[1];
+        return input.split(Constant.lineBreak, 2)[1];
     }
 
     private static String getBodyString(BufferedReader bufferedReader, RequestHeader header) {
