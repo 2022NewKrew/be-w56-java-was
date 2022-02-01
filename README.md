@@ -87,3 +87,18 @@ Accept: */*
     <h4>< 4단계: Cookie를 이용한 로그인 구현  ></h4>
     <img src="img/step_2,3,4_3_login_cookie.gif" alt="4_1_register_get">
 </details>
+
+## 의존성 주입 구현
+### 상세 구현사항
+- `@Component`, `@Bean`, `@Autowired`, `@Primary` 어노테이션 정의
+- `Container` 클래스 정의 및 의존성 주입을 위한 기능 구현
+  - 먼저 생성자 또는 메소드를 저장 (`EXECUTABLES`)
+    - `@Component`가 붙은 클래스에서 생성자를 가져와 해당 클래스, 구현한 인터페이스를 key로 지정하여 저장
+      - 정의한 생성자가 없을 경우, 디폴트 생성자를 가져옴
+      - 정의한 생성자가 1개만 있는 경우, 해당 생성자를 가져옴
+      - 정의한 생성자가 여러 개인 경우, `@Primary`가 붙은 생성자를 가져옴
+    - `@Bean`이 붙은 메소드를 가져와 해당 메소드의 반환 타입을 key로 지정하여 저장
+  - 저장한 생성자들과 메소드들을 모두 반복 실행하여 반환된 객체들을 저장 (`CONTAINER`)
+    - 만약 매개변수를 받는 생성자 또는 메소드일 경우, `@Autowired`가 붙었는지 먼저 확인 후 해당 인자들을 `CONTAINER`에서 찾아줌
+    - `EXECUTABLES`와 `CONTAINER`의 크기가 같아질 때까지 반복
+- Handler Mapper에서 Controller를 지정해줄 때, `CONTAINER`에서 해당 Controller의 객체를 가져옴
