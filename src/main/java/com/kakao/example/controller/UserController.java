@@ -5,24 +5,30 @@ import com.kakao.example.application.service.UserServiceImpl;
 import com.kakao.example.model.domain.User;
 import com.kakao.example.util.exception.UserNotFoundException;
 import framework.controller.Controller;
+import framework.util.annotation.Autowired;
+import framework.util.annotation.Component;
+import framework.util.annotation.Primary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import framework.util.annotation.RequestMapping;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
 
+import static framework.util.annotation.Component.ComponentType.CONTROLLER;
+
+@Component(type = CONTROLLER)
 @RequestMapping("/user")
 public class UserController implements Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    private static Controller instance;
 
-    private final UserService userService = UserServiceImpl.getInstance();
+    private UserService userService;
 
     public UserController() {}
 
-    public static Controller getInstance() {
-        instance = new UserController();
-        return instance;
+    @Autowired
+    @Primary
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @RequestMapping(value = "/create", requestMethod = "GET")

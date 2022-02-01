@@ -1,33 +1,37 @@
 package framework.webserver;
 
+import framework.container.Container;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-
 public class WebServer {
-    private static final Logger log = LoggerFactory.getLogger(WebServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
+    private static Container container;
 
-    public static void main(String[] args) throws Exception {
-        int port = 0;
+    public static void run(Class<?> baseClass, String[] args) {
+        container = new Container(baseClass);
 
-        if (args == null || args.length == 0) {
-            port = DEFAULT_PORT;
-        } else {
-            port = Integer.parseInt(args[0]);
-        }
-
-        try (ServerSocket listenSocket = new ServerSocket(port)) {
-            log.info("Web Application Server started {} port.", port);
-
-            Socket connection;
-
-            while ((connection = listenSocket.accept()) != null) {
-                ConnectionThread connectionHandler = new ConnectionThread(connection);
-                connectionHandler.start();
-            }
-        }
+//        int port = 0;
+//
+//        if (args == null || args.length == 0) {
+//            port = DEFAULT_PORT;
+//        } else {
+//            port = Integer.parseInt(args[0]);
+//        }
+//
+//        try (ServerSocket listenSocket = new ServerSocket(port)) {
+//            LOGGER.info("Web Application Server started {} port.", port);
+//
+//            Socket connection;
+//
+//            while ((connection = listenSocket.accept()) != null) {
+//                ConnectionThread connectionHandler = new ConnectionThread(connection);
+//                connectionHandler.start();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }
