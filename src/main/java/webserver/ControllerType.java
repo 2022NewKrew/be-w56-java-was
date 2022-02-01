@@ -34,9 +34,6 @@ public enum ControllerType {
     }
 
     public static Controller getControllerType(HttpMethod httpMethod, String path) {
-        Logger log = LoggerFactory.getLogger(ControllerType.class);
-        log.info("method : {}, path : {}", httpMethod, path);
-        log.info("methodMap : {}", methodMap.toString());
         return methodMap
                 .get(httpMethod)
                 .getOrDefault(path, STATIC_FILE_CONTROLLER.getController());
