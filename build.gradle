@@ -29,6 +29,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     implementation 'org.reflections:reflections:0.10.2'
+    implementation 'mysql:mysql-connector-java:8.0.27'
 }
 
 test {

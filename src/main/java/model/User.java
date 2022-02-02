@@ -8,6 +8,7 @@ import java.util.Objects;
 @Data
 @Builder
 public class User {
+    private Long id;
     private String userId;
     private String password;
     private String name;
