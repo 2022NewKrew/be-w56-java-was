@@ -8,7 +8,6 @@ import util.HttpRequestUtils;
 import webserver.http.Controller.HttpController;
 import webserver.http.Controller.StaticController;
 import webserver.http.request.HttpRequest;
-import webserver.http.request.Method;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpStatus;
 import webserver.http.service.UserService;
@@ -55,12 +54,5 @@ public class UserController implements HttpController {
                         .setRedirect("/index.html")
                         .build();
         }
-
-//        if (request.getMethod() == Method.GET) {
-//        }
-//
-//        if (request.getMethod() == Method.POST) {
-//        }
-//        return null;
     }
 }

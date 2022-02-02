@@ -3,7 +3,7 @@ package webserver.http.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constants;
-import util.ContentType;
+import webserver.http.response.ContentType;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
 import webserver.http.response.HttpResponse;

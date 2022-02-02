@@ -83,13 +83,13 @@ public class HttpResponse {
 
     public void write() {
         log.debug("HttpResponse write start!");
+
         if (Objects.equals(this.cookie, "")) {
             responseHeader();
             responseBody();
         } else {
             responseHeaderWithCookie();
             responseBody();
-
         }
 
     }

@@ -63,9 +63,7 @@ public class HttpRequest {
         Optional<Pair> contentLengthHeader = this.httpRequestHeader.getHeaders().stream()
                 .filter(header -> header.getKey().equals("Content-Length"))
                 .findAny();
-       return contentLengthHeader.isEmpty()
-                ? null
-                : IOUtils.readData(br, Integer.parseInt(contentLengthHeader.get().getValue()));
+       return contentLengthHeader.isEmpty() ? null : IOUtils.readData(br, Integer.parseInt(contentLengthHeader.get().getValue()));
      }
 
     public Method getMethod() {
