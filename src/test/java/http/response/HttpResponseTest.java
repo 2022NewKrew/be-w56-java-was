@@ -6,10 +6,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("HttpResponse 테스트")
 class HttpResponseTest {
 
+    @DisplayName("200 OK HttpResponse")
     @Test
     void ok() throws IOException {
         //give
@@ -26,6 +29,7 @@ class HttpResponseTest {
                 "Set-Cookie");
     }
 
+    @DisplayName("302 Found HttpResponse")
     @Test
     void found() throws IOException {
         //give
@@ -40,6 +44,7 @@ class HttpResponseTest {
         assertThat(outputStream.toString()).contains("302", "Found", "Location", "Set-Cookie");
     }
 
+    @DisplayName("401 Unauthorized HttpResponse")
     @Test
     void unauthorized() throws IOException {
         //give
@@ -55,6 +60,7 @@ class HttpResponseTest {
                 "Content-Length");
     }
 
+    @DisplayName("404 Not Found HttpResponse")
     @Test
     void notFound() throws IOException {
         //give
@@ -68,6 +74,7 @@ class HttpResponseTest {
                 "Content-Length");
     }
 
+    @DisplayName("400 Bad Request HttpResponse")
     @Test
     void badRequest() throws IOException {
         //give

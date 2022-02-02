@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@DisplayName("ResponseHeader 테스트")
 class ResponseHeaderTest {
 
     @DisplayName("addContentType 메서드에 파라미터로 url 을 넘겼을 때 해당 올바른 ContentType 을 추가한다.")
