@@ -23,10 +23,6 @@ public enum StatusCode {
         }
     }
 
-    public static StatusCode getStatusString(String statusNumber) {
-        return statusCodeMap.getOrDefault(statusNumber, NOT_FOUND);
-    }
-
     private final String status;
 
     StatusCode(String status) {
