@@ -41,18 +41,15 @@ public class HttpRequest {
 
     private HttpRequestLine parseRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
-        System.out.println("parseRequestLine " + line);
         Map<String, String> request = parseRequest(line);
         return new HttpRequestLine(request.get(Constants.HTTP_METHOD), request.get(Constants.HTTP_URL), request.get(Constants.HTTP_VERSION));
     }
 
     private HttpRequestHeader parseRequestHeader(BufferedReader br) throws IOException {
         String line = br.readLine();
-        System.out.println("parseRequestHeader " + line);
         List<Pair> pairs = new ArrayList<Pair>();
 
         while (!(line = br.readLine()).equals(Constants.EMPTY)) {
-            System.out.println("HttpRequestHeader " + line);
             Pair pair = parseHeader(line);
             pairs.add(pair);
         }

@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 public class UserController implements HttpController {
-    private static final Logger log = LoggerFactory.getLogger(StaticController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService = new UserService();
 
