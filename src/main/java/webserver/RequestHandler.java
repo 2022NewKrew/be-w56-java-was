@@ -3,10 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 import network.HttpRequest;
-import network.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpBuilder;
@@ -30,7 +28,7 @@ public class RequestHandler extends Thread {
 
             HttpBuilder httpBuilder = new HttpBuilder(bufferedReader, dos);
             HttpRequest httpRequest = httpBuilder.request();
-            new HttpResponse(dos, httpRequest);
+            httpBuilder.response(httpRequest);
 
         } catch (IOException e) {
             log.error(e.getMessage());
