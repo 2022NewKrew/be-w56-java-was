@@ -9,22 +9,18 @@ import webserver.http.HttpStatus;
 
 
 public class FrontController {
-    private static FrontController frontController;
-    private final AnnotationProcessor annotationProcessor = new AnnotationProcessor();
+    private static final FrontController frontController = new FrontController();
 
     private FrontController() {
     }
 
     public static FrontController getInstance() {
-        if (frontController == null) {
-            frontController = new FrontController();
-        }
         return frontController;
     }
 
     public HttpResponse process(HttpRequest request) {
         try {
-            HttpResponse response = (HttpResponse) annotationProcessor.requestMappingProcessor(request);
+            HttpResponse response = (HttpResponse) AnnotationProcessor.getInstance().requestMappingProcessor(request);
 
             if (response == null) {
                 response = new HttpResponse(HttpStatus.OK, request.getUrl());

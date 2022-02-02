@@ -10,16 +10,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class ViewResolver {
-    private static ViewResolver instance;
+    private static final ViewResolver instance = new ViewResolver();
 
     private ViewResolver() {
     }
 
     public static ViewResolver getInstance() {
-        if (instance == null) {
-            instance = new ViewResolver();
-        }
-
         return instance;
     }
 
@@ -27,7 +23,7 @@ public class ViewResolver {
         String url = response.getUrl();
 
         if (url.equals("/")) {
-            url = "/index.html";
+            url = HttpConst.INDEX_PAGE;
         }
         try {
             byte[] file = Files.readAllBytes(new File(HttpConst.STATIC_ROOT + url).toPath());

@@ -10,16 +10,12 @@ import webserver.service.UserService;
 public class UserController {
     private static final UserService userService = new UserService();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static UserController instance = null;
+    private static final UserController instance = new UserController();
 
     private UserController() {
     }
 
     public static UserController getInstance() {
-        if (instance == null) {
-            instance = new UserController();
-        }
-
         return instance;
     }
 

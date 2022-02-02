@@ -38,7 +38,7 @@ public class HttpRequest {
     }
 
     private void requestParsingHeader(String reqHeader) {
-        headers = Arrays.stream(reqHeader.split("\r|\n"))
+        headers = Arrays.stream(reqHeader.split("\r\n"))
                 .map(HttpRequestUtils::parseHeader)
                 .collect(Collectors.toMap(
                         HttpRequestUtils.Pair::getKey,

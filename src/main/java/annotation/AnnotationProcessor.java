@@ -9,6 +9,14 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 public class AnnotationProcessor {
+    private static final AnnotationProcessor instance = new AnnotationProcessor();
+
+    private AnnotationProcessor(){}
+
+    public static AnnotationProcessor getInstance(){
+        return instance;
+    }
+
     public Object requestMappingProcessor(HttpRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Reflections reflections = new Reflections("webserver.controller",
                 new MethodAnnotationsScanner()
