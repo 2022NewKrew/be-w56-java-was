@@ -33,7 +33,7 @@ public class HttpRequestFactory {
         StringBuilder result = new StringBuilder();
 
         String line = bufferedReader.readLine();
-        while (!Objects.requireNonNull(line).isEmpty()) {
+        while (line != null && !line.isEmpty()) {
             result.append(line).append(Constant.lineBreak);
             line = bufferedReader.readLine();
         }
