@@ -1,10 +1,8 @@
 package webserver.http;
 
 import com.google.common.net.HttpHeaders;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import webserver.WebServerConfig;
 
 public class HttpResponse {
@@ -25,12 +23,9 @@ public class HttpResponse {
     }
 
     private void setDateHeader() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "EEE, dd MMM yyyy HH:mm:ss z",
-            Locale.US);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        trailingHeaders.set(HttpHeaders.DATE, dateFormat.format(calendar.getTime()));
+        final String DATE_HEADER_PATTERN = "EEE, dd MMM yyyy HH:mm:ss z";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_HEADER_PATTERN);
+        trailingHeaders.set(HttpHeaders.DATE, dateTimeFormatter.format(ZonedDateTime.now()));
     }
 
     public HttpVersion getVersion() {

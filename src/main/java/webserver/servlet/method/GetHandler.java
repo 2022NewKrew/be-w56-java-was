@@ -8,8 +8,9 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.servlet.FileHandleable;
 import webserver.servlet.FileHandler;
+import webserver.servlet.HttpHandleable;
 
-public class GetHandler implements MethodHandler {
+public class GetHandler implements HttpHandleable {
 
     private final FileHandleable fileHandleable = new FileHandler();
     private final SignUpController signUpController;

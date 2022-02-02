@@ -1,7 +1,5 @@
 package webserver.http;
 
-import webserver.WebServerConfig;
-
 public class HttpRequest {
 
     private final HttpVersion version;
@@ -15,7 +13,7 @@ public class HttpRequest {
         HttpHeader headers) {
         this.version = version;
         this.method = method;
-        this.uri = uri.equals(WebServerConfig.ROOT_PATH) ? WebServerConfig.ENTRY_FILE : uri;
+        this.uri = uri;
         this.params = params;
         this.trailingHeaders = headers;
     }

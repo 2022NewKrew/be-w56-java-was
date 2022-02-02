@@ -33,10 +33,7 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            HttpRequest request = new DefaultHttpRequestBuilder()
-                .init(reader.readLine())
-                .readHeaders(reader)
-                .build();
+            HttpRequest request = new DefaultHttpRequestBuilder(reader).build();
             HttpResponse response = new HttpResponse();
 
             HttpResponse handledResponse = httpRequestServlet.handle(request, response);

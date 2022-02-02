@@ -7,17 +7,19 @@ import webserver.util.HttpRequestUtils.Pair;
 
 public class DefaultHttpRequestBuilder {
 
+    private final BufferedReader reader;
     private HttpVersion version;
     private HttpMethod method;
     private String uri;
     private HttpHeader trailingHeaders;
     private HttpRequestParams params;
 
-    public DefaultHttpRequestBuilder init(String requestLine) {
-        if (requestLine == null) {
-            throw new NullPointerException("requestLine이 존재하지 않습니다.");
-        }
+    public DefaultHttpRequestBuilder(BufferedReader reader) {
+        this.reader = reader;
+    }
 
+    private void initRequestLine() throws IOException {
+        String requestLine = reader.readLine();
         String[] requestLineTokens = requestLine.split(" ");
         this.method = HttpMethod.valueOf(requestLineTokens[0]);
         this.version = new HttpVersion(requestLineTokens[2]);
@@ -28,20 +30,20 @@ public class DefaultHttpRequestBuilder {
             params = new HttpRequestParams(uriParamsTokens[1]);
             params.getParameters().get("userId");
         }
-        return this;
     }
 
-    public DefaultHttpRequestBuilder readHeaders(BufferedReader reader) throws IOException {
+    private void initHeaders() throws IOException {
         trailingHeaders = new HttpHeader();
         String line;
         while (!(line = reader.readLine()).equals("")) {
             Pair headerPair = HttpRequestUtils.parseHeader(line);
             trailingHeaders.set(headerPair.getKey(), headerPair.getValue());
         }
-        return this;
     }
 
-    public HttpRequest build() {
+    public HttpRequest build() throws IOException {
+        initRequestLine();
+        initHeaders();
         return new HttpRequest(version, method, uri, params, trailingHeaders);
     }
 }
