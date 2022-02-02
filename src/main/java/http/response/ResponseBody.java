@@ -9,7 +9,7 @@ public class ResponseBody {
     }
 
     public static ResponseBody getEmptyBody() {
-        return new ResponseBody(null);
+        return new ResponseBody(new byte[0]);
     }
 
     public byte[] getBody() {
