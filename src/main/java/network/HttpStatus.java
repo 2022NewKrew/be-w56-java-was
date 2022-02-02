@@ -2,32 +2,32 @@ package network;
 
 public enum HttpStatus {
     // 2xx
-    OK("200"),
-    CREATED("201"),
-    ACCEPTED("202"),
-    NO_CONTENT("204"),
+    OK("200 OK"),
+    CREATED("201 Created"),
+    ACCEPTED("202 Accepted"),
+    NO_CONTENT("204 No Content"),
 
     // 3xx
-    FOUND("302"),
+    FOUND("302 Found"),
 
     // 4xx
-    BAD_REQUEST("400"),
-    UNAUTHORIZED("401"),
-    FORBIDDEN("403"),
-    NOT_FOUND("404"),
-    METHOD_NOT_ALLOWED("405"),
-    CONFLICT("409"),
+    BAD_REQUEST("400 Bad Request"),
+    UNAUTHORIZED("401 Unauthorized"),
+    FORBIDDEN("403 Forbidden"),
+    NOT_FOUND("404 Not Found"),
+    METHOD_NOT_ALLOWED("405 Method Not Allowed"),
+    CONFLICT("409 Conflict"),
 
     // 5xx
-    INTERNAL_SERVER_ERROR("500");
+    INTERNAL_SERVER_ERROR("500 Internal Server Error");
 
-    private final String statusCode;
+    private final String statusLine;
 
-    HttpStatus(String statusCode) {
-        this.statusCode = statusCode;
+    HttpStatus(String statusLine) {
+        this.statusLine = statusLine;
     }
 
-    public String getStatusCode() {
-        return statusCode;
+    public String getStatusLine() {
+        return "HTTP/1.1 " + statusLine + " \r\n";
     }
 }
