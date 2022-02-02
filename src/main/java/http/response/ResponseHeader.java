@@ -9,13 +9,15 @@ import util.Constant;
 public class ResponseHeader {
 
     private final Map<String, String> components;
+    private final Map<String, String> cookies;
 
-    public ResponseHeader(Map<String, String> components) {
+    public ResponseHeader(Map<String, String> components, Map<String, String> cookies) {
         this.components = components;
+        this.cookies = cookies;
     }
 
     public ResponseHeader() {
-        this(new HashMap<>());
+        this(new HashMap<>(), new HashMap<>());
     }
 
     public void addContentType(String url) {
@@ -44,9 +46,7 @@ public class ResponseHeader {
         if (cookie.isEmpty()) {
             return;
         }
-        for (Entry<String, String> entry : cookie.entrySet()) {
-            addComponent("Set-Cookie", entry.getKey() + "=" + entry.getValue());
-        }
+        this.cookies.putAll(cookie);
     }
 
     private void addComponent(String key, String value) {
@@ -57,7 +57,13 @@ public class ResponseHeader {
         StringBuilder result = new StringBuilder();
 
         for (Entry<String, String> entry : components.entrySet()) {
-            result.append(entry.getKey() + ": " + entry.getValue() + Constant.lineBreak);
+            result.append(entry.getKey()).append(": ").append(entry.getValue())
+                    .append(Constant.lineBreak);
+        }
+
+        for (Entry<String, String> entry : cookies.entrySet()) {
+            result.append("Set-Cookie").append(": ").append(entry.getKey()).append("=")
+                    .append(entry.getValue()).append(Constant.lineBreak);
         }
 
         return result.toString();
