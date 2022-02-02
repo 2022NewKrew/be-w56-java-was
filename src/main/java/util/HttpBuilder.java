@@ -45,7 +45,7 @@ public class HttpBuilder {
     }
 
     public void response(HttpRequest httpRequest) throws IOException {
-        HttpResponse httpResponse = HandlerMapper.requestMapping(httpRequest);
+        HttpResponse httpResponse = RequestMapper.requestMapping(httpRequest);
         List<String> headers = httpResponse.getHeaders();
         headers.forEach(this::writeHeader);
 
