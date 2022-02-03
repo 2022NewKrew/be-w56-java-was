@@ -4,6 +4,7 @@ import dto.UserCreateDto;
 import service.UserService;
 import util.annotation.RequestMapping;
 import webserver.Request;
+import webserver.Response;
 
 public class UserController {
     private static final UserController instance = new UserController();
@@ -17,7 +18,7 @@ public class UserController {
 
 
     @RequestMapping(value="/users/create", method="GET")
-    public String createByGet(Request request) {
+    public String createByGet(Request request, Response response) {
         userService.create(UserCreateDto.builder()
                 .stringId(request.getParameter("stringId"))
                 .password(request.getParameter("password"))
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/users", method="POST")
-    public String createByPost(Request request) {
+    public String createByPost(Request request, Response response) {
         userService.create(UserCreateDto.builder()
                 .stringId(request.getParameter("stringId"))
                 .password(request.getParameter("password"))

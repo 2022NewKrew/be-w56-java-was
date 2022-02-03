@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
-
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class Request {
     private static final Logger log = LoggerFactory.getLogger(Request.class);
     private final String method;
     private final String uri;
-    private final Map<String,String> HeaderAttributes;
+    private final Map<String,String> headerAttributes;
     private final Map<String,String> parameters = new HashMap<>();
 
     public Request(InputStream in) throws IOException {
@@ -29,8 +28,8 @@ public class Request {
         this.method = requestLine.split(" ")[0];
         this.uri = findUri(requestLine);
         this.parameters.putAll(findQueryString(requestLine));
-        this.HeaderAttributes = findHeaderAttributes(br);
-        this.parameters.putAll(findBodyAttributes(method, br, Integer.parseInt(HeaderAttributes.getOrDefault("Content-Length", "-1"))));
+        this.headerAttributes = findHeaderAttributes(br);
+        this.parameters.putAll(findBodyAttributes(method, br, Integer.parseInt(headerAttributes.getOrDefault("Content-Length", "-1"))));
     }
 
     private Map<String,String> findHeaderAttributes(BufferedReader br) throws IOException {
@@ -51,7 +50,6 @@ public class Request {
     }
 
     private String findUri(String requestLine){
-        log.info(requestLine);
         if (requestLine.contains("?")){
             return requestLine.split(" ")[1].split("\\?")[0];
         }
