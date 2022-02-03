@@ -40,10 +40,5 @@ public class UserCreateController implements Controller {
         if (bodyData == null || bodyData.isEmpty()) {
             throw new BadRequestException("request body로 전달받은 데이터가 없습니다.");
         }
-        for (String value : bodyData.values()) {
-            if (value == null) {
-                throw new BadRequestException("request body에 null 값이 포함되어 있습니다.");
-            }
-        }
     }
 }
