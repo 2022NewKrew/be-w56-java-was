@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import network.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpBuilder;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);

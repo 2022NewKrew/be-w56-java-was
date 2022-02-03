@@ -1,4 +1,4 @@
-package util;
+package webserver;
 
 import controller.UserController;
 import network.HttpMethod;
@@ -6,6 +6,7 @@ import network.HttpRequest;
 import network.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpResponseUtils;
 
 import java.io.File;
 import java.io.IOException;
