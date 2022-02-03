@@ -1,8 +1,6 @@
 package cafe.controller.user;
 
 import cafe.controller.exception.IncorrectLoginUserException;
-import cafe.db.DataBase;
-import cafe.model.User;
 import cafe.service.UserService;
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
@@ -31,9 +29,8 @@ public class UserController {
 
     @RequestMapping(value = "/user", method = "POST")
     public HttpResponse createUser() throws IOException {
-        User user = new User(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"),
+        userService.createUser(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"),
                 httpRequest.getRequestBody("name"), httpRequest.getRequestBody("email"));
-        DataBase.addUser(user);
 
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
@@ -44,12 +41,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/login", method = "POST")
     public HttpResponse login() throws IncorrectLoginUserException, IOException {
-        User user = DataBase.findUserById(httpRequest.getRequestBody("userId"));
-
-        if (user == null || !user.isValidPassword(httpRequest.getRequestBody("password"))) {
-            throw new IncorrectLoginUserException();
-        }
-
+        userService.authenticateUser(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"));
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setCookie("logined=true; Path=/");

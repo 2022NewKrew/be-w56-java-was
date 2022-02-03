@@ -1,6 +1,8 @@
 package cafe.service;
 
+import cafe.controller.exception.IncorrectLoginUserException;
 import cafe.db.DataBase;
+import cafe.model.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,5 +35,16 @@ public class UserService {
         return htmlString.replace("{{userList}}", usersHtml.toString());
     }
 
+    public void createUser(String userId, String password, String name, String email) {
+        User user = new User(userId, password, name, email);
+        DataBase.addUser(user);
+    }
 
+    public void authenticateUser(String userId, String password) throws IncorrectLoginUserException {
+        User user = DataBase.findUserById(userId);
+
+        if (user == null || !user.isValidPassword(password)) {
+            throw new IncorrectLoginUserException();
+        }
+    }
 }
