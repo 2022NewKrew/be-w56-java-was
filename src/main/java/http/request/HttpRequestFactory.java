@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import util.Constant;
 
 public class HttpRequestFactory {
@@ -61,8 +60,8 @@ public class HttpRequestFactory {
     }
 
     private static String getBodyString(BufferedReader bufferedReader, RequestHeader header) {
-        if (header.has(CONTENT_LENGTH)) {
-            int bodyLength = Integer.parseInt(header.get(CONTENT_LENGTH));
+        if (header.hasComponent(CONTENT_LENGTH)) {
+            int bodyLength = Integer.parseInt(header.getComponent(CONTENT_LENGTH));
             return readRequestBody(bufferedReader, bodyLength);
         }
 

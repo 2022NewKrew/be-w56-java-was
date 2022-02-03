@@ -3,6 +3,7 @@ package controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
+import java.util.HashMap;
 import util.ControllerUtils;
 
 public class StaticFileController implements Controller {
@@ -20,7 +21,7 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.ok(
                 request.getUrl(),
-                ControllerUtils.getEmptyImmutableMap(),
+                new HashMap<>(),
                 ControllerUtils.getEmptyImmutableMap(),
                 dos);
     }

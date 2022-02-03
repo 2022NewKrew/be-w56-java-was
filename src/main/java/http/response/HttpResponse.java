@@ -21,7 +21,7 @@ public class HttpResponse {
         this.dos = dos;
     }
 
-    public static HttpResponse ok(String path, Map<String, String> model,
+    public static HttpResponse ok(String path, Map<String, Object> model,
             Map<String, String> cookie, DataOutputStream dos) {
         byte[] view = ViewMaker.getView(path, model);
 
@@ -49,7 +49,7 @@ public class HttpResponse {
         return new HttpResponse(statusLine, header, ResponseBody.getEmptyBody(), dos);
     }
 
-    public static HttpResponse unauthorized(String path, Map<String, String> model,
+    public static HttpResponse unauthorized(String path, Map<String, Object> model,
             DataOutputStream dos) {
         byte[] view = ViewMaker.getView(path, model);
 

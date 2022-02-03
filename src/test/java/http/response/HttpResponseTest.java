@@ -19,7 +19,7 @@ class HttpResponseTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
         String path = "/index.html";
-        Map<String, String> model = Map.of();
+        Map<String, Object> model = Map.of();
         Map<String, String> cookie = Map.of("cookie1", "firstCookie");
         //when
         HttpResponse result = HttpResponse.ok(path, model, cookie, dos);
@@ -51,7 +51,7 @@ class HttpResponseTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
         String path = "/index.html";
-        Map<String, String> model = Map.of();
+        Map<String, Object> model = Map.of();
         //when
         HttpResponse result = HttpResponse.unauthorized(path, model, dos);
         result.sendResponse();
