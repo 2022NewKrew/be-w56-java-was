@@ -6,8 +6,7 @@ import java.nio.file.Files;
 
 public class HttpResponse {
     private static final String WEBAPP_PATH = "./webapp";
-
-    public static final String DEFAULT_PROTOCOL = "HTTP/1.1";
+    private static final String DEFAULT_PROTOCOL = "HTTP/1.1";
 
     private StatusLine statusLine;
     private HttpResponseHeader header;
