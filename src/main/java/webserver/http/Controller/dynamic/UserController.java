@@ -1,22 +1,30 @@
 package webserver.http.Controller.dynamic;
 
 import dto.UserSignUpDto;
+import entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constants;
 import util.HttpRequestUtils;
 import webserver.http.Controller.HttpController;
-import webserver.http.Controller.StaticController;
 import webserver.http.request.HttpRequest;
+import webserver.http.response.ContentType;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpStatus;
 import webserver.http.service.UserService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+
+import static util.HttpRequestUtils.urlToFile;
 
 public class UserController implements HttpController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -63,8 +71,32 @@ public class UserController implements HttpController {
                     log.debug("UserController handleRequest list by GET");
                     String cookies = request.getHttpRequestHeader().getHeaders().get("Cookie");
                     Map<String, String> parsedCookies = HttpRequestUtils.parseCookies(cookies);
-                    if (Objects.equals(parsedCookies.get("logined"), "true")) {
-                        System.out.println("합격");
+                    if (Objects.equals(parsedCookies.get(Constants.HTTP_COOKIE_LOGINED_KEY), "true")) {
+                        Collection<User> users = userService.findUsers();
+                        StringBuilder sb = new StringBuilder();
+                        int index = 3;
+                        for (User user : users) {
+                            sb.append("<tr>");
+                            sb.append("<th scope=\"row\">" + index + "</th> <td>" + user.getUserId() + "</td> <td> " + user.getName() + "</td> <td> " + user.getEmail() + "</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n");
+                            sb.append("</tr>");
+                            index++;
+                        }
+
+                        Path target = urlToFile(request.getUrl());
+                        String[] tokens = target.toString().split(Constants.DOT);
+                        ContentType contentType = ContentType.getContentType(tokens[tokens.length - 1].toUpperCase());
+                        File file = target.toFile();
+                        String fileData = new String(Files.readAllBytes(file.toPath()));
+                        fileData = fileData.replace("%user_list%", URLDecoder.decode(sb.toString(), StandardCharsets.UTF_8));
+                        byte[] body = fileData.getBytes(StandardCharsets.UTF_8);
+                        log.debug("UserController handle request ContentType : {}, ContentLength : {}", contentType.getExtension(), body.length);
+                        return new HttpResponse.Builder(out)
+                                .setBody(body)
+                                .setHttpStatus(HttpStatus._200)
+                                .setContentType(contentType.getExtension())
+                                .setContentLength(body.length)
+                                .setRedirect("./webapp/index.html")
+                                .build();
 
                     } else {
                         return new HttpResponse.Builder(out)
@@ -72,10 +104,6 @@ public class UserController implements HttpController {
                                 .setRedirect("/user/login.html")
                                 .build();
                     }
-                    return new HttpResponse.Builder(out)
-                            .setHttpStatus(HttpStatus._302)
-                            .setRedirect("/index.html")
-                            .build();
             }
         }
         return new HttpResponse.Builder(out)

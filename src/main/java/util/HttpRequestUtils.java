@@ -1,5 +1,6 @@
 package util;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,9 +63,11 @@ public class HttpRequestUtils {
         return requestMap;
     }
 
-    public static String getContentTypeFromUrl(String url) {
-        String[] tokens = url.split(Constants.DOT);
-        return tokens[tokens.length - 1];
+    public static Path urlToFile(String url) {
+        if (url.equals("/")) {
+            return Path.of("./webapp/index.html");
+        }
+        return Path.of("./webapp", url);
     }
 
     public static Pair parseHeader(String header) {

@@ -3,16 +3,19 @@ package webserver.http.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Constants;
-import webserver.http.response.ContentType;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
+import webserver.http.response.ContentType;
 import webserver.http.response.HttpResponse;
+import webserver.http.response.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static util.HttpRequestUtils.urlToFile;
 
 public class StaticController implements HttpController {
     private static final Logger log = LoggerFactory.getLogger(StaticController.class);
@@ -38,16 +41,10 @@ public class StaticController implements HttpController {
         log.debug("staticController handle request ContentType : {}, ContentLength : {}", contentType.getExtension(), body.length);
         return new HttpResponse.Builder(out)
                 .setBody(body)
+                .setHttpStatus(HttpStatus._200)
                 .setContentType(contentType.getExtension())
                 .setContentLength(body.length)
                 .setRedirect("./webapp/index.html")
                 .build();
-    }
-
-    private Path urlToFile(String url) {
-        if (url.equals("/")) {
-            return Path.of("./webapp/index.html");
-        }
-        return Path.of("./webapp", url);
     }
 }
