@@ -30,4 +30,8 @@ public class HttpRequest {
     public Map<String, String> getBodyData() {
         return body.getBodyData();
     }
+
+    public String getCookie(String key) {
+        return header.getCookie(key);
+    }
 }

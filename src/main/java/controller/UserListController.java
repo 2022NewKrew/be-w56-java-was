@@ -28,12 +28,21 @@ public class UserListController implements Controller{
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         List<User> users = new ArrayList<>(DataBase.findAll());
         Map<String, Object> model = new HashMap<>();
-        request.getBodyData().get("Cookie");
-        model.put("users", users);
 
-        return HttpResponse.ok(
-                request.getUrl(),
-                model,
+        String logined = request.getCookie("logined");
+
+        if(Boolean.parseBoolean(logined)) {
+            model.put("users", users);
+            return HttpResponse.ok(
+                    request.getUrl(),
+                    model,
+                    ControllerUtils.getEmptyImmutableMap(),
+                    dos
+            );
+        }
+
+        return HttpResponse.found(
+                "/user/login.html",
                 ControllerUtils.getEmptyImmutableMap(),
                 dos
         );

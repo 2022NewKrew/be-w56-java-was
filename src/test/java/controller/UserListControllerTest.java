@@ -52,4 +52,32 @@ class UserListControllerTest {
         DataBase.deleteUser("userId2");
         DataBase.deleteUser("userId3");
     }
+
+    @DisplayName("Cookie logined=false 일때 로그인 페이지로 이동한다.")
+    @Test
+    void runWithLoginedFalse() throws IOException {
+        //give
+
+        String startLineString = "GET /user/list.html HTTP/1.1\r\n";
+        String headerString = "Cookie: logined=false\r\nheaderKey1: headerValue1\r\nheaderKey2: headerValue2\r\n";
+        String bodyString = "";
+
+        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
+        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
+        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        HttpRequest request = new HttpRequest(startLine, header, body);
+        OutputStream outputStream = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(outputStream);
+
+        Controller controller = UserListController.getInstance();
+        //when
+        HttpResponse response = controller.run(request, dos);
+        response.sendResponse();
+        //then
+        assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location", "/user/login.html");
+
+        DataBase.deleteUser("userId1");
+        DataBase.deleteUser("userId2");
+        DataBase.deleteUser("userId3");
+    }
 }
