@@ -79,9 +79,9 @@ public class UserController implements Controller {
         if (user == null || !user.getPassword().equals(queryString.get(UserDBConstants.COLUMN_PASSWORD)))
             return redirect("/user/login_failed.html");
 
-        HttpResponseHeader responseHeader = new HttpResponseHeader("index.html", HttpStatus.OK, 0);
-        responseHeader.putToHeaders("Set-Cookie", "logined=true; Path=/");
+        HttpResponse response = redirect("/index.html");
+        response.header().putToHeaders("Set-Cookie", "logined=true; Path=/");
 
-        return new HttpResponse(responseHeader, HttpResponseBody.empty());
+        return response;
     }
 }
