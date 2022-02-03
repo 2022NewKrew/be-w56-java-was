@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class Headers {
     private final Map<FieldName, FieldValue> headers;
 
-    public Headers(Map<FieldName, FieldValue> headers) {
+    private Headers(Map<FieldName, FieldValue> headers) {
         this.headers = headers;
     }
 

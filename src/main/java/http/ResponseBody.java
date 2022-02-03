@@ -7,11 +7,18 @@ public class ResponseBody {
     private final byte[] bytes;
 
     public ResponseBody() {
-        bytes = new byte[]{};
+        this(new byte[]{});
     }
 
     public ResponseBody(byte[] bytes) {
+        validateNull(bytes);
         this.bytes = bytes;
+    }
+
+    private void validateNull(byte[] bytes) {
+        if (bytes == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Headers createResponseHeader() {

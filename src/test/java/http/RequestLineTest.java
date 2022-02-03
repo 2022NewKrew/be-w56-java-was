@@ -1,5 +1,6 @@
 package http;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,18 +9,21 @@ public class RequestLineTest {
 
     @Test
     void createRequestStartLineFailed() {
-        assertThatThrownBy(() -> new RequestLine(null, null, null))
+        assertThatThrownBy(() -> RequestLine.create(""))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void createRequestStartLineSuccess() {
-        new RequestLine(HttpMethod.GET, new RequestTarget(new Path("/index.html")), HttpVersion.V_1_0);
+        String input = "GET / HTTP/1.1";
+        RequestLine.create(input);
     }
 
-//    @Test
-//    void findStaticFileSuccess() {
-//        RequestLine requestLine = new RequestLine(HttpMethod.GET, new RequestTarget(new Path("/index.html")), HttpVersion.V_1_0);
-//        requestLine.findStaticFile();
-//    }
+    @Disabled
+    @Test
+    void findStaticFileSuccess() {
+        String input = "GET /index.html HTTP/1.1";
+        RequestLine requestLine = RequestLine.create(input);
+        //requestLine.findStaticFile();
+    }
 }

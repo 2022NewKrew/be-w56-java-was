@@ -5,10 +5,6 @@ import java.util.Optional;
 public class RequestBody {
     private final Parameters parameters;
 
-    public RequestBody() {
-        parameters = new Parameters();
-    }
-
     private RequestBody(Parameters parameters) {
         this.parameters = parameters;
     }

@@ -12,7 +12,7 @@ public class RequestLine {
     private final RequestTarget requestTarget;
     private final HttpVersion version;
 
-    public RequestLine(HttpMethod method, RequestTarget requestTarget, HttpVersion version) {
+    private RequestLine(HttpMethod method, RequestTarget requestTarget, HttpVersion version) {
         validateNull(method, requestTarget, version);
         this.method = method;
         this.requestTarget = requestTarget;

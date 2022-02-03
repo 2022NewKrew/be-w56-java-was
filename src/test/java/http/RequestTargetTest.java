@@ -2,25 +2,31 @@ package http;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class RequestTargetTest {
 
     @Test
     void createRequestTargetFailedWhenEmpty() {
-        assertThatThrownBy(() -> new RequestTarget(new Path("")))
+        String input = "";
+
+        assertThatThrownBy(() -> RequestTarget.create(input))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void createRequestTargetFailedWhenNull() {
-        assertThatThrownBy(() -> new RequestTarget(null))
+        assertThatThrownBy(() -> RequestTarget.create(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void createRequestTargetSuccess() {
-        new RequestTarget(new Path("abcd"));
+    void createRequestTargetSuccessOnlyPath() {
+        RequestTarget.create("/input.html");
+    }
+
+    @Test
+    void createRequestTargetSuccessIncludeQuery() {
+        RequestTarget.create("/user/create?userId=asdf&userName=userName");
     }
 }

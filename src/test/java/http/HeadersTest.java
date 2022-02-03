@@ -9,20 +9,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HeadersTest {
 
-    private static Map<FieldName, FieldValue> map;
+    private static List<String> input;
 
     @BeforeAll
     @Test
     static void setUp() {
-        map = new HashMap<>();
-        map.put(new FieldName("Host"), new FieldValue("localhost:8080"));
-        map.put(new FieldName("Connection"), new FieldValue("keep-alive"));
-        map.put(new FieldName("Cache-Control"), new FieldValue("max-age=0"));
+        input = new ArrayList<>(Arrays.asList(
+                "Host: localhost:8080",
+                "Connection: keep-alive",
+                "Cache-Control: max-age=0"
+        ));
     }
 
     @Test
     void equalsRequestHeader() {
-        assertThat(new Headers(map)).isEqualTo(new Headers(map));
+        assertThat(Headers.create(input)).isEqualTo(Headers.create(input));
     }
 
     @Test
@@ -31,16 +32,16 @@ public class HeadersTest {
         compare.put("Host", "localhost:8080");
         compare.put("Connection", "keep-alive");
 
-        assertThat(new Headers(map)).isNotEqualTo(Headers.create(compare));
+        assertThat(Headers.create(input)).isNotEqualTo(Headers.create(compare));
     }
 
     @Test
     void notEqualsHeaders_WhenValueDifferent() {
-        Map<FieldName, FieldValue> compare = new HashMap<>();
-        compare.put(new FieldName("Host"), new FieldValue("www.daum.net"));
-        compare.put(new FieldName("Connection"), new FieldValue("keep-alive"));
-        compare.put(new FieldName("Cache-Control"), new FieldValue("max-age=0"));
+        Map<String, String> compare = new HashMap<>();
+        compare.put("Host", "www.daum.net");
+        compare.put("Connection", "keep-alive");
+        compare.put("Cache-Control", "max-age=0");
 
-        assertThat(new Headers(map)).isNotEqualTo(new Headers(compare));
+        assertThat(Headers.create(input)).isNotEqualTo(Headers.create(compare));
     }
 }

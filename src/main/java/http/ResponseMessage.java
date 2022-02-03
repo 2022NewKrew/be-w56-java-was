@@ -20,7 +20,7 @@ public class ResponseMessage {
     }
 
     public static ResponseMessage create(HttpStatus status, String url, Cookie cookie) {
-        ResponseBody responseBody = new ResponseBody(new byte[]{});
+        ResponseBody responseBody = new ResponseBody();
         StatusLine statusLine = StatusLine.create(status);
         Headers responseHeaders = responseBody.createResponseHeader(url, cookie);
         return new ResponseMessage(statusLine, responseHeaders, responseBody);

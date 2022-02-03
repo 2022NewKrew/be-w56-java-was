@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 
 public class Cookie {
     private final String FIELD_DELIMITER = "=";
-    private final String END_DELIMITER = "; ";
+    private final String END_DELIMITER = ";";
+    private final String EMPTY_STRING = " ";
     private final Map<String, String> cookies;
 
     public Cookie() {
@@ -18,9 +19,14 @@ public class Cookie {
     }
 
     public String createCookieHeader() {
-        return cookies.entrySet()
+        String header = cookies.entrySet()
                 .stream()
                 .map(cookie -> cookie.getKey() + FIELD_DELIMITER + cookie.getValue())
-                .collect(Collectors.joining(END_DELIMITER)) + END_DELIMITER;
+                .collect(Collectors.joining(END_DELIMITER + EMPTY_STRING));
+
+        if (header.length() == 0)
+            return header;
+
+        return header + END_DELIMITER;
     }
 }

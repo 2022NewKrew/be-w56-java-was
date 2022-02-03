@@ -12,10 +12,6 @@ public class RequestMessage {
         this.requestBody = requestBody;
     }
 
-    public RequestMessage(RequestLine requestLine, Headers headers) {
-        this(requestLine, headers, new RequestBody());
-    }
-
     private void validateNull(RequestLine requestLine, Headers headers) {
         if (requestLine == null || headers == null) {
             throw new IllegalArgumentException();

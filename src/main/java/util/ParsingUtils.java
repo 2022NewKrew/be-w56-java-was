@@ -34,7 +34,7 @@ public class ParsingUtils {
 
         String[] tokens = keyValue.split(regex);
         if (tokens.length != 2) {
-            return null;
+            throw new IllegalArgumentException();
         }
         return new Pair(tokens[0], tokens[1]);
     }
