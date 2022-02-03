@@ -70,7 +70,10 @@ public class UserHandler {
         File file = new File("./webapp/user/list.html");
         try {
             String content = Files.readString(file.toPath());
-            String filled = new TemplateEngine().render(content);
+            Map<String, Object> values = Map.of(
+                    "users", DataBase.findAll()
+            );
+            String filled = new TemplateEngine().render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);
         } catch (IOException e) {
             return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
