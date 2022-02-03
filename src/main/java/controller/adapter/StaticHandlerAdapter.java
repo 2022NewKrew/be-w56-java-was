@@ -25,14 +25,14 @@ public class StaticHandlerAdapter implements HandlerAdapter {
         try {
             String url = request.getUrl();
             byte[] body = Files.readAllBytes(new File(WEB_ROOT + url).toPath());
-            response.addHeader(HttpHeaders.CONTENT_TYPE, getContentType(url));
+            response.addHeader(HttpHeaders.CONTENT_TYPE, getContentType(url, request.getHeader(HttpHeaders.ACCEPT)));
             response.body(body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private static String getContentType(String url) {
+    private static String getContentType(String url, String defaultValue) {
         String extension = url.substring(url.lastIndexOf(".") + 1);
         switch (extension) {
             case "html":
@@ -41,10 +41,8 @@ public class StaticHandlerAdapter implements HandlerAdapter {
                 return "text/css";
             case "js":
                 return "application/javascript";
-            case "ico":
-                return "image/avif";
             default:
-                return "text/plain";
+                return defaultValue;
         }
     }
 }

@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UrlMappingHandlerAdapter implements HandlerAdapter {
     private static final Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
+    public static final Pattern REGEX_TEMPLATE_VARS = Pattern.compile("\\{\\{(\\w+)\\}\\}");
 
     @Override
     public boolean supports(HttpRequest request) {
@@ -81,17 +82,21 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
         Path path = Paths.get(GlobalConfig.WEB_ROOT + mv.getViewName() + GlobalConfig.SUFFIX);
         String html = Files.readString(path);
         if (mv.hasModel()) {
-            Pattern pattern = Pattern.compile("\\{\\{(\\w+)\\}\\}");
-            Matcher matcher = pattern.matcher(html);
-            StringBuilder sb = new StringBuilder();
-            while (matcher.find()) {
-                String key = matcher.group(1);
-                matcher.appendReplacement(sb, mv.getAttr(key));
-            }
-            matcher.appendTail(sb);
-            html = sb.toString();
+            html = applyModelInView(mv, html);
         }
         response.body(html.getBytes(StandardCharsets.UTF_8));
         response.addHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
+    }
+
+    private String applyModelInView(ModelAndView mv, String html) {
+        Matcher matcher = REGEX_TEMPLATE_VARS.matcher(html);
+        StringBuilder sb = new StringBuilder();
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            matcher.appendReplacement(sb, mv.getAttr(key));
+        }
+        matcher.appendTail(sb);
+        html = sb.toString();
+        return html;
     }
 }
