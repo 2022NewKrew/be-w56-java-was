@@ -1,5 +1,7 @@
 package webserver.model;
 
+import com.google.common.collect.Maps;
+import util.HttpRequestUtils;
 import util.IOUtils;
 import webserver.annotation.RequestMethod;
 
@@ -17,6 +19,7 @@ public class WebHttpRequest extends HttpRequest {
     private final RequestMethod method;
     private final String requestURI;
     private final String version;
+    private final Map<String, String> cookies;
     private final Map<String, List<String>> headers;
     private final String body;
 
@@ -29,16 +32,25 @@ public class WebHttpRequest extends HttpRequest {
         String lines = in.lines()
                 .takeWhile(line -> !line.equals(""))
                 .collect(Collectors.joining(System.lineSeparator()));
-        Arrays.stream(lines.split(System.lineSeparator())).forEach(line -> {
-            String[] headerValues = line.split(": ");
-            String key = headerValues[0];
-            List<String> values = Arrays.stream(headerValues[1].split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-            headers.put(key, values);
-        });
-        if (method == RequestMethod.POST && headers.containsKey("Content-Length")) {
-            this.body = IOUtils.readData(in, Integer.parseInt((String) headers.get("Content-Length").get(0)));
+        List<HttpRequestUtils.Pair> headers = Arrays.stream(lines.split(System.lineSeparator()))
+                .map(HttpRequestUtils::parseHeader)
+                .collect(Collectors.toList());
+        cookies = headers.stream()
+                .filter(header -> header.getKey().equals("Cookie"))
+                .findFirst()
+                .map(HttpRequestUtils.Pair::getValue)
+                .map(HttpRequestUtils::parseCookies)
+                .orElse(Maps.newHashMap());
+        headers.stream()
+                .filter(header -> !header.getKey().equals("Cookie"))
+                .forEach(header -> {
+                    List<String> values = Arrays.stream(header.getValue().split(","))
+                            .map(String::trim)
+                            .collect(Collectors.toList());
+                    this.headers.put(header.getKey(), values);
+                });
+        if (method == RequestMethod.POST && this.headers.containsKey("Content-Length")) {
+            this.body = IOUtils.readData(in, Integer.parseInt((String) this.headers.get("Content-Length").get(0)));
         } else {
             this.body = "";
         }
@@ -46,6 +58,10 @@ public class WebHttpRequest extends HttpRequest {
 
     public static WebHttpRequest of(BufferedReader in) throws IOException {
         return new WebHttpRequest(in);
+    }
+
+    public List<String> getCookie() {
+        return headers.get("Cookie");
     }
 
     public String getBody() {
