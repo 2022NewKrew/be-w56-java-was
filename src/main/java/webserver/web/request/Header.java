@@ -17,8 +17,15 @@ public class Header {
         request.forEach(req -> {
             req = req.replaceFirst(": ", "|");
             String[] split = req.split("\\|");
-            if(split.length != 1)
+            if (split.length != 1)
                 headers.put(split[0], split[1]);
         });
+    }
+
+    public String findHeaderData(String key) {
+        String data = headers.get(key);
+        if (data == null)
+            return "";
+        return data;
     }
 }
