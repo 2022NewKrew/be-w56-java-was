@@ -1,6 +1,5 @@
 package http.request;
 
-import exception.BadRequestException;
 import java.util.Map;
 import webserver.HttpMethod;
 
@@ -11,13 +10,9 @@ public class HttpRequest {
     private final RequestBody body;
 
     public HttpRequest(RequestStartLine startLine, RequestHeader header, RequestBody body) {
-        try {
-            this.startLine = startLine;
-            this.header = header;
-            this.body = body;
-        } catch (Exception exception) {
-            throw new BadRequestException(exception.getMessage());
-        }
+        this.startLine = startLine;
+        this.header = header;
+        this.body = body;
     }
 
     public String getUrl() {
@@ -34,5 +29,9 @@ public class HttpRequest {
 
     public Map<String, String> getBodyData() {
         return body.getBodyData();
+    }
+
+    public String getCookie(String key) {
+        return header.getCookie(key);
     }
 }

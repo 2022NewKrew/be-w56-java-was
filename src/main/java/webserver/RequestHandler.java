@@ -6,15 +6,11 @@ import exception.NotFoundException;
 import http.request.HttpRequest;
 import http.request.HttpRequestFactory;
 import http.response.HttpResponse;
-import http.response.HttpResponseFactory;
-import http.response.StatusCode;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +39,10 @@ public class RequestHandler extends Thread {
                 HttpResponse httpResponse = controller.run(request, dos);
                 httpResponse.sendResponse();
             } catch (BadRequestException exception) {
+                log.error(exception.getMessage());
                 getBadRequestResponse(dos).sendResponse();
             } catch (NotFoundException exception) {
+                log.error(exception.getMessage());
                 getNotFound(dos).sendResponse();
             }
         } catch (IOException e) {
@@ -53,16 +51,10 @@ public class RequestHandler extends Thread {
     }
 
     private HttpResponse getBadRequestResponse(DataOutputStream dos) {
-        Map<String, String> result = new HashMap<>();
-        result.put("url", "/badRequest.html");
-        result.put("status", "400");
-        return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
+        return HttpResponse.badRequest(dos);
     }
 
     private HttpResponse getNotFound(DataOutputStream dos) {
-        Map<String, String> result = new HashMap<>();
-        result.put("url", "/notFound.html");
-        result.put("status", "404");
-        return HttpResponseFactory.getHttpResponse(result, new HashMap<>(), dos);
+        return HttpResponse.notFound(dos);
     }
 }

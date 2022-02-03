@@ -8,6 +8,10 @@ public class ResponseBody {
         this.body = body;
     }
 
+    public static ResponseBody getEmptyBody() {
+        return new ResponseBody(new byte[0]);
+    }
+
     public byte[] getBody() {
         return body;
     }

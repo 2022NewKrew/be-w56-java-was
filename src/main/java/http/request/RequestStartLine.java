@@ -1,5 +1,6 @@
 package http.request;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,24 +16,33 @@ public class RequestStartLine {
         this.method = method;
         this.url = url;
         this.protocol = protocol;
-        this.query = query;
+        this.query = Collections.unmodifiableMap(query);
     }
 
-    public RequestStartLine(HttpMethod method, String url, String protocol, String queryString) {
-        this(method, url, protocol, new HashMap<>());
-        setQuery(queryString);
-    }
-    public RequestStartLine(HttpMethod method, String url, String protocol) {
-        this(method, url, protocol, new HashMap<>());
+    public static RequestStartLine stringToRequestLine(String startLine) {
+        List<String> components = List.of(startLine.split(" "));
+        HttpMethod method = HttpMethod.valueOf(components.get(0));
+        String protocol = components.get(2);
+        String url = components.get(1);
+        if(url.contains("?")){
+            List<String> urlComponents = List.of(url.split("\\?"));
+            url = urlComponents.get(0);
+            Map<String, String> queries = getQueries(urlComponents.get(1));
+            return new RequestStartLine(method, url, protocol, queries);
+        }
+        return new RequestStartLine(method, url, protocol, Map.of());
     }
 
-    private void setQuery(String queriesString) {
+    private static Map<String, String> getQueries(String queriesString) {
+        Map<String, String> result = new HashMap<>();
         List<String> queries = List.of(queriesString.split("&"));
         List<String> splitQuery;
         for (String query : queries) {
             splitQuery = List.of(query.split("="));
-            this.query.put(splitQuery.get(0), splitQuery.get(1));
+            result.put(splitQuery.get(0), splitQuery.get(1));
         }
+
+        return Collections.unmodifiableMap(result);
     }
 
     public HttpMethod getMethod() {

@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import util.Constant;
-import webserver.HttpMethod;
 
 public class HttpRequestFactory {
 
@@ -16,53 +14,57 @@ public class HttpRequestFactory {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        List<String> startLineAndHeader = readInputStreamStartLineAndHeader(bufferedReader);
-        String startLineString = startLineAndHeader.get(0);
-        String headerString = startLineAndHeader.get(1);
+        String input = readInputStreamToEmpty(bufferedReader);
+        String startLineString = getStartLineString(input);
+        String headerString = getHeaderString(input);
 
-        RequestStartLine startLine = getStartLine(startLineString);
-        RequestHeader header = new RequestHeader(headerString);
+        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
+        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
 
-        if (header.has(CONTENT_LENGTH)) {
-            return new HttpRequest(startLine, header,
-                    readRequestBody(bufferedReader, Integer.parseInt(header.get(CONTENT_LENGTH))));
-        }
-        return new HttpRequest(startLine, header, null);
+        String bodyString = getBodyString(bufferedReader, header);
+
+        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        return new HttpRequest(startLine, header, body);
     }
 
-    private static List<String> readInputStreamStartLineAndHeader(BufferedReader bufferedReader)
+    private static String readInputStreamToEmpty(BufferedReader bufferedReader)
             throws IOException {
         StringBuilder result = new StringBuilder();
 
-        String line;
-        while (!(line = bufferedReader.readLine()).equals("")) {
+        String line = bufferedReader.readLine();
+        while (line != null && !line.isEmpty()) {
             result.append(line).append(Constant.lineBreak);
+            line = bufferedReader.readLine();
         }
 
-        return List.of(result.toString().split(Constant.lineBreak, 2));
+        return result.toString();
     }
 
-    private static RequestStartLine getStartLine(String startLineString) {
-        List<String> components = List.of(startLineString.split(" "));
-        HttpMethod method = HttpMethod.valueOf(components.get(0));
-        String url = components.get(1);
-        String protocol = components.get(2);
+    private static String readRequestBody(BufferedReader bufferedReader, int bodySize) {
+        try {
+            char[] cbuf = new char[bodySize];
+            bufferedReader.read(cbuf);
 
-        List<String> queryComponents;
-        if (url.contains("?")) {
-            queryComponents = List.of(url.split("\\?"));
-            return new RequestStartLine(method, queryComponents.get(0), protocol,
-                    queryComponents.get(1));
+            return new String(cbuf);
+        } catch (IOException exception) {
+            throw new IllegalArgumentException(exception.getMessage());
+        }
+    }
+
+    private static String getStartLineString(String input) {
+        return input.split(Constant.lineBreak)[0];
+    }
+
+    private static String getHeaderString(String input) {
+        return input.split(Constant.lineBreak, 2)[1];
+    }
+
+    private static String getBodyString(BufferedReader bufferedReader, RequestHeader header) {
+        if (header.hasComponent(CONTENT_LENGTH)) {
+            int bodyLength = Integer.parseInt(header.getComponent(CONTENT_LENGTH));
+            return readRequestBody(bufferedReader, bodyLength);
         }
 
-        return new RequestStartLine(method, url, protocol);
-    }
-
-    private static RequestBody readRequestBody(BufferedReader bufferedReader, int bodySize)
-            throws IOException {
-        char[] cbuf = new char[bodySize];
-        bufferedReader.read(cbuf);
-
-        return new RequestBody(new String(cbuf));
+        return "";
     }
 }
