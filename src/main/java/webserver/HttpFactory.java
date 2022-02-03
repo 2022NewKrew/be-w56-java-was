@@ -1,18 +1,20 @@
 package webserver;
 
-import http.parser.HttpRequestParser;
-import http.render.HttpResponseRenderer;
+import http.HttpHandler;
+import http.HttpRequestParser;
+import http.HttpResponseRenderer;
 import webserver.file.DocumentRoot;
 import webserver.http.HttpEntityConverter;
-import webserver.http.request.ByteArrayRequestBodyResolver;
-import webserver.http.request.JsonRequestBodyResolver;
+import webserver.http.request.EmptyBodyResolver;
 import webserver.http.request.RequestBodyResolver;
 import webserver.http.request.StringRequestBodyResolver;
+import webserver.http.response.RedirectResolver;
+import webserver.http.response.ResponseBodyResolver;
+import webserver.http.response.ViewResolver;
 import webserver.processor.HttpProcessor;
-import webserver.processor.exception.ExceptionResolver;
-import webserver.processor.exception.ResourceNotFoundExceptionResolver;
-import webserver.processor.handler.Handler;
-import webserver.processor.handler.controller.HandlerControllerMappingAdapter;
+import webserver.http.exception.ExceptionResolver;
+import webserver.http.exception.ResourceNotFoundExceptionResolver;
+import webserver.processor.handler.controller.ControllerMappingAdapterHandler;
 import webserver.processor.handler.StaticFileHandler;
 import webserver.processor.handler.controller.Controller;
 
@@ -27,10 +29,10 @@ public class HttpFactory {
     private static HttpEntityConverter httpEntityConverter;
     private static DocumentRoot documentRoot;
 
-    public static void initialize(List<Controller> controllers) {
+    public static void initialize(List<Controller> controllers, List<ExceptionResolver> exceptionResolvers) {
         documentRoot = new DocumentRoot();
-        httpEntityConverter = new HttpEntityConverter(requestBodyResolvers());
-        httpProcessor = new HttpProcessor(handlers(controllers), exceptionResolvers());
+        httpEntityConverter = new HttpEntityConverter(requestBodyResolvers(), responseBodyResolvers());
+        httpProcessor = new HttpProcessor(handlers(controllers, exceptionResolvers));
         httpResponseRenderer = new HttpResponseRenderer();
         httpRequestParser = new HttpRequestParser();
     }
@@ -55,28 +57,34 @@ public class HttpFactory {
         return documentRoot;
     }
 
-    private static List<Handler> handlers(List<Controller> controllers) {
-        List<Handler> handlers = new ArrayList<>();
+    private static List<HttpHandler> handlers(List<Controller> controllers, List<ExceptionResolver> customExceptionResolvers) {
+        List<HttpHandler> handlers = new ArrayList<>();
         handlers.add(new StaticFileHandler());
-        handlers.add(handlerControllerMappingAdapter(controllers));
+        handlers.add(handlerControllerMappingAdapter(controllers, customExceptionResolvers));
         return handlers;
     }
 
-    private static HandlerControllerMappingAdapter handlerControllerMappingAdapter(List<Controller> controllers) {
-        return new HandlerControllerMappingAdapter(controllers);
+    private static ControllerMappingAdapterHandler handlerControllerMappingAdapter(List<Controller> controllers, List<ExceptionResolver> customExceptionResolvers) {
+        return new ControllerMappingAdapterHandler(controllers, exceptionResolvers(customExceptionResolvers));
     }
 
     private static List<RequestBodyResolver> requestBodyResolvers() {
         List<RequestBodyResolver> requestBodyResolvers = new ArrayList<>();
         requestBodyResolvers.add(new StringRequestBodyResolver());
-        requestBodyResolvers.add(new JsonRequestBodyResolver());
-        requestBodyResolvers.add(new ByteArrayRequestBodyResolver());
+        requestBodyResolvers.add(new EmptyBodyResolver());
         return requestBodyResolvers;
     }
 
-    private static List<ExceptionResolver> exceptionResolvers() {
-        List<ExceptionResolver> exceptionResolvers = new ArrayList<>();
-        exceptionResolvers.add(new ResourceNotFoundExceptionResolver(documentRoot()));
+    private static List<ResponseBodyResolver> responseBodyResolvers() {
+        List<ResponseBodyResolver> responseBodyResolvers = new ArrayList<>();
+        responseBodyResolvers.add(new ViewResolver(documentRoot()));
+        responseBodyResolvers.add(new RedirectResolver());
+        return responseBodyResolvers;
+    }
+
+    private static List<ExceptionResolver> exceptionResolvers(List<ExceptionResolver> customResolvers) {
+        List<ExceptionResolver> exceptionResolvers = new ArrayList<>(customResolvers);
+        exceptionResolvers.add(new ResourceNotFoundExceptionResolver());
         return exceptionResolvers;
     }
 }

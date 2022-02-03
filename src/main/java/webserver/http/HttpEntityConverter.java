@@ -3,7 +3,10 @@ package webserver.http;
 import http.*;
 import util.HttpRequestUtils;
 import util.StringUtils;
+import webserver.exception.InternalServerErrorException;
 import webserver.http.request.RequestBodyResolver;
+import webserver.http.request.RequestBody;
+import webserver.http.response.ResponseBodyResolver;
 
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -14,29 +17,28 @@ import java.util.stream.Collectors;
 
 public class HttpEntityConverter {
 
-    private List<RequestBodyResolver> requestBodyResolvers;
+    private final List<RequestBodyResolver> requestBodyResolvers;
+    private final List<ResponseBodyResolver> responseBodyResolvers;
 
-    public HttpEntityConverter(List<RequestBodyResolver> requestBodyResolvers) {
+    public HttpEntityConverter(List<RequestBodyResolver> requestBodyResolvers, List<ResponseBodyResolver> responseBodyResolvers) {
         this.requestBodyResolvers = requestBodyResolvers;
+        this.responseBodyResolvers = responseBodyResolvers;
     }
 
     public RequestEntity<?> convertRequest(HttpRequest httpRequest, Type type) {
+        RequestBody<?> body = createRequestBody(httpRequest, type);
         HttpHeaders headers = httpRequest.getHeaders();
         RequestParams params = createRequestParams(httpRequest);
         List<Cookie> cookies = createCookies(headers);
-        Object body = createBody(httpRequest, type);
         return new RequestEntity<>(headers, params, cookies, body);
     }
 
-    public <T> HttpResponse convertResponse(ResponseEntity<T> responseEntity) {
+    public HttpResponse convertResponse(ResponseEntity<?> responseEntity) {
+        byte[] body = createResponseBody(responseEntity);
         HttpHeaders headers = responseEntity.getHttpHeaders();
         StatusCode statusCode = responseEntity.getStatusCode();
         setResponseHeaderCookies(headers, responseEntity.getCookies(), "/");
-        String view = responseEntity.getView();
-        if(view.startsWith("redirect:")) {
-            headers.addHeader("Location", view.substring(9));
-        }
-        return new HttpResponse(headers, statusCode, new byte[1]);
+        return new HttpResponse(headers, statusCode, body);
     }
 
     private void setResponseHeaderCookies(HttpHeaders headers, List<Cookie> cookies, String path) {
@@ -58,17 +60,22 @@ public class HttpEntityConverter {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private Object createBody(HttpRequest httpRequest, Type type) {
-        Object body = null;
-        if(httpRequest.hasBody()) {
-            for(RequestBodyResolver requestBodyResolver : requestBodyResolvers) {
-                if(requestBodyResolver.supports(httpRequest.getContentType(), type)) {
-                    body = requestBodyResolver.resolveRequestBody(httpRequest.getBody(), type);
-                    break;
-                }
+    private RequestBody<?> createRequestBody(HttpRequest httpRequest, Type type) {
+        for(RequestBodyResolver requestBodyResolver : requestBodyResolvers) {
+            if (requestBodyResolver.supports(type)) {
+                return requestBodyResolver.resolveRequestBody(httpRequest, type);
             }
         }
-        return body;
+        throw new InternalServerErrorException("적합한 Request Body Renderer가 없습니다.");
+    }
+
+    private byte[] createResponseBody(ResponseEntity<?> responseEntity) {
+        for(ResponseBodyResolver resolver : responseBodyResolvers) {
+            if(resolver.supports(responseEntity)) {
+                return resolver.resolve(responseEntity);
+            }
+        }
+        throw new InternalServerErrorException("적절한 ResponseBodyRenderer가 없습니다.");
     }
 
     private Cookie createCookie(String cookie) {

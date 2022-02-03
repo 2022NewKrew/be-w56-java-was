@@ -1,4 +1,4 @@
-package http.parser;
+package http;
 
 import http.*;
 import http.exception.BadHttpFormatException;

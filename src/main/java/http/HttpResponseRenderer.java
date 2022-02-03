@@ -1,4 +1,4 @@
-package http.render;
+package http;
 
 import http.HttpResponse;
 import http.StatusCode;
@@ -13,12 +13,11 @@ public class HttpResponseRenderer {
     public ByteArrayOutputStream render(HttpResponse response) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(byteArrayOutputStream);
-        byte[] body = response.getResponseBody();
 
         printResponseLine(ps, response);
         printHeader(ps, response);
         ps.print(CRLF);
-        printBody(ps, body);
+        printBody(ps, response);
         ps.flush();
         return byteArrayOutputStream;
     }
@@ -32,7 +31,10 @@ public class HttpResponseRenderer {
         httpResponse.getHeaders().getAllHeaders().forEach((key, value) -> ps.print(key + ": " + value + CRLF));
     }
 
-    private void printBody(PrintStream ps, byte[] responseBody) {
-        ps.write(responseBody, 0, responseBody.length);
+    private void printBody(PrintStream ps, HttpResponse httpResponse) {
+        if(httpResponse.hasBody()) {
+            byte[] responseBody = httpResponse.getResponseBody();
+            ps.write(responseBody, 0, responseBody.length);
+        }
     }
 }

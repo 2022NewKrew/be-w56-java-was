@@ -1,5 +1,6 @@
 package webserver;
 
+import webserver.http.exception.ExceptionResolver;
 import webserver.processor.handler.controller.Controller;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 public class WebServerBuilder {
 
     private List<Controller> controllers = new ArrayList<>();
+    private List<ExceptionResolver> exceptionResolvers = new ArrayList<>();
     private int threadPoolSize = 10;
     private int port = 8080;
 
@@ -26,7 +28,12 @@ public class WebServerBuilder {
         return this;
     }
 
+    public WebServerBuilder addExceptionResolver(ExceptionResolver exceptionResolver) {
+        this.exceptionResolvers.add(exceptionResolver);
+        return this;
+    }
+
     public WebServer build() {
-        return new WebServer(controllers, threadPoolSize, port);
+        return new WebServer(controllers, exceptionResolvers, threadPoolSize, port);
     }
 }

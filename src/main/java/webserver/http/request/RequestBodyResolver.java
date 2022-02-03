@@ -1,10 +1,10 @@
 package webserver.http.request;
 
-import http.ContentType;
+import http.HttpRequest;
 
 import java.lang.reflect.Type;
 
 public interface RequestBodyResolver {
-    boolean supports(ContentType contentType, Type type);
-    Object resolveRequestBody(byte[] requestBody, Type type);
+    boolean supports(Type type);
+    RequestBody<?> resolveRequestBody(HttpRequest httpRequest, Type type);
 }
