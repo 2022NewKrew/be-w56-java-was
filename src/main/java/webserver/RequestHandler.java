@@ -1,6 +1,7 @@
 package webserver;
 
 import http.HttpRequest;
+import http.HttpRequestFactory;
 import http.HttpResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,8 +25,7 @@ public class RequestHandler extends Thread {
             connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = new HttpRequest();
-            httpRequest.parse(in);
+            HttpRequest httpRequest = HttpRequestFactory.newInstance(in);
 
             String view = MappingHandler.invoke(httpRequest);
             HttpResponse httpResponse = httpRequest.respond();
@@ -33,6 +33,7 @@ public class RequestHandler extends Thread {
 
             ViewHandler.handle(out, httpResponse);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
         }
     }
