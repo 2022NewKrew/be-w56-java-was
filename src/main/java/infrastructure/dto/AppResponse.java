@@ -11,6 +11,7 @@ public class AppResponse {
     private String path;
     private Status status;
     private Map<String, String> header = Maps.newHashMap();
+    private Map<String, String> model = Maps.newHashMap();
 
     public static AppResponse of(String path, Status status) {
         AppResponse httpResponse = new AppResponse();
@@ -31,6 +32,9 @@ public class AppResponse {
         header.put(key, value);
     }
 
+    public void addModelAttribute(String key, String value) {
+        model.put(key, value);
+    }
     public String getHeaderString(){
         StringBuilder sb = new StringBuilder();
         for (Entry<String, String> e : header.entrySet()) {
@@ -39,4 +43,7 @@ public class AppResponse {
         return sb.toString();
     }
 
+    public Map<String, String> getModel() {
+        return model;
+    }
 }

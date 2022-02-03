@@ -2,6 +2,9 @@ package http.request.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class IOUtils {
     /**
@@ -13,6 +16,7 @@ public class IOUtils {
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
-        return String.copyValueOf(body);
+        String str = String.copyValueOf(body);
+        return URLDecoder.decode(str, StandardCharsets.UTF_8);
     }
 }

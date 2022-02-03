@@ -1,8 +1,11 @@
 package application.repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 
@@ -22,8 +25,8 @@ public class DataBase {
         return users.get(userId);
     }
 
-    synchronized public Collection<User> findAll() {
-        return users.values();
+    synchronized public List<User> findAll() {
+        return new ArrayList<>(users.values());
     }
     private static class LazyHolder{
         private static final DataBase instance = new DataBase();

@@ -33,4 +33,7 @@ public class Controller {
         return userService.postLogin(httpRequest);
     }
 
+    @RequestMapping(method = HttpMethod.GET, path = "/user/list.html")
+    public AppResponse getUserList(HttpRequest httpRequest) {return userService.getUserList(httpRequest);}
+
 }

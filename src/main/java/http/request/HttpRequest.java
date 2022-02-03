@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.h2.util.StringUtils;
 
@@ -24,7 +25,7 @@ public class HttpRequest {
 
     public static HttpRequest from(InputStream in) throws IOException, URISyntaxException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
         // Parse Request Line
         RequestLine requestLine = RequestLine.from(br.readLine());
@@ -66,6 +67,10 @@ public class HttpRequest {
 
     public String getQueryStringParams(String key) {
         return requestLine.getQueryStringParams(key);
+    }
+
+    public List<String> getHeader(String key) {
+        return requestHeader.getAll(key);
     }
 
     public String getBodyParams(String key) {

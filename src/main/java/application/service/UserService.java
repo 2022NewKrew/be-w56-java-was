@@ -2,6 +2,8 @@ package application.service;
 
 import static application.service.UserServiceConstants.*;
 
+import java.util.List;
+
 import org.h2.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,9 @@ import infrastructure.dto.AppResponse;
 import http.common.Status;
 
 public class UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
+
+    private final DataBase userRepository = DataBase.getInstance();
 
     public AppResponse getCreate(HttpRequest httpRequest) {
         String userId = httpRequest.getQueryStringParams(ATTRIBUTE_USER_ID);
@@ -30,13 +34,7 @@ public class UserService {
                 || StringUtils.isNullOrEmpty(name) || StringUtils.isNullOrEmpty(email)) {
             return AppResponse.of(SIGNUP_FAIL_FILE, Status.OK);
         }
-
-        DataBase db = DataBase.getInstance();
-        db.addUser(new User(userId, password, name, email));
-        log.info("현재까지 가입된 회원 명단 : ");
-        for (User user : db.findAll()) {
-            log.info("User : " + user.getUserId() + " " + user.getName());
-        }
+        userRepository.addUser(new User(userId, password, name, email));
 
         return AppResponse.of(REDIRECT_PATH, Status.FOUND);
     }
@@ -54,8 +52,7 @@ public class UserService {
         String userId = httpRequest.getBodyParams(ATTRIBUTE_USER_ID);
         String password = httpRequest.getBodyParams(ATTRIBUTE_PASSWORD);
 
-        DataBase db = DataBase.getInstance();
-        User findUser = db.findUserById(userId);
+        User findUser = userRepository.findUserById(userId);
 
         if (findUser != null && findUser.getPassword().equals(password)) {
             AppResponse httpResponse = AppResponse.of(REDIRECT_PATH, Status.FOUND);
@@ -63,8 +60,35 @@ public class UserService {
             return httpResponse;
         }
 
-        AppResponse httpResponse = AppResponse.of(LOGIN_FAIL_FILE, Status.FOUND);
-        httpResponse.addHeaderAttribute("Set-Cookie", COOKIE_LOGIN + "=false; Path=/");
-        return httpResponse;
+        AppResponse appResponse = AppResponse.of(LOGIN_FAIL_FILE, Status.FOUND);
+        appResponse.addHeaderAttribute("Set-Cookie", COOKIE_LOGIN + "=false; Path=/");
+        return appResponse;
+    }
+
+    public AppResponse getUserList(HttpRequest httpRequest) {
+
+        List<String> cookie = httpRequest.getHeader("Cookie");
+        if (cookie == null || !cookie.contains(COOKIE_LOGIN + "=true")) {
+            return AppResponse.of(LOGIN_PAGE, Status.OK);
+        }
+
+        List<User> findUsers = userRepository.findAll();
+        String html = userListTemplate(findUsers);
+        AppResponse appResponse = AppResponse.of(USER_LIST, Status.OK);
+        appResponse.addModelAttribute("userList", html);
+
+        return appResponse;
+    }
+
+    private String userListTemplate(List<User> users) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = users.size() - 1; i >= 0; i--) {
+            sb.append(userListTemplateEntry(users.get(i), i + 1));
+        }
+        return sb.toString();
+    }
+
+    private String userListTemplateEntry(User user, int num) {
+        return String.format(USER_LIST_ENTRY, num, user.getUserId(), user.getName(), user.getEmail());
     }
 }

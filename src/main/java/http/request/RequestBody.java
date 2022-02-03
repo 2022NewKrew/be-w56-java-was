@@ -10,7 +10,6 @@ import http.request.parser.HttpRequestUtils;
 import http.request.parser.IOUtils;
 
 public class RequestBody {
-
     private Map<String, String> requestBody;
 
     private RequestBody() { }
@@ -22,7 +21,6 @@ public class RequestBody {
     }
     public static RequestBody of (BufferedReader br, int length) throws IOException {
         RequestBody requestBody = new RequestBody();
-        
         String bodyString = IOUtils.readData(br, length);
         requestBody.requestBody = HttpRequestUtils.parseQueryString(bodyString);
 
