@@ -8,13 +8,11 @@ import com.kakao.http.response.HttpResponse;
 import com.kakao.http.response.HttpStatus;
 import com.kakao.model.User;
 import com.kakao.service.UserService;
-import com.kakao.util.HttpRequestUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Map;
 
 import static com.kakao.webserver.WebServerConfig.DEFAULT_HTTP_VERSION;
 
@@ -29,11 +27,10 @@ public class UserController implements HttpController {
 
     @Override
     public void handleRequest(HttpRequest request, OutputStream os) throws Exception {
-        Map<String, String> queryMap = HttpRequestUtils.parseQueryString(request.getBody());
-        String userId = queryMap.get("userId");
-        String password = queryMap.get("password");
-        String name = queryMap.get("name");
-        String email = queryMap.get("email");
+        String userId = request.findBodyParam("userId");
+        String password = request.findBodyParam("password");
+        String name = request.findBodyParam("name");
+        String email = request.findBodyParam("email");
         User user = new User(userId, password, name, email);
         userService.addUser(user);
         response(os);
