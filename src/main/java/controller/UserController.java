@@ -15,6 +15,7 @@ public class UserController implements Controller {
     private final String CREATE_HTML = "/user/form.html";
 
     private final String LOGIN_SUCCESS_COOKIE = "logined=true; Path=/";
+    private final String LOGIN_FAIL_COOKIE = "logined=false; Path=/";
 
     private final String GET_METHOD = "GET";
     private final String POST_METHOD = "POST";
@@ -57,6 +58,7 @@ public class UserController implements Controller {
 
     private String login(Map<String, String> parameters, Response response) {
         if (!userService.login(parameters)) {
+            response.setCookie(LOGIN_FAIL_COOKIE);
             return LOGIN_HTML;
         }
 

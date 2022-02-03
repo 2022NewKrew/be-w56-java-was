@@ -1,7 +1,7 @@
 package http;
 
 public class Response {
-    private String cookie;
+    private String cookie = "";
 
     public Response() {}
 

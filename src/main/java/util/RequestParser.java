@@ -11,7 +11,7 @@ import http.Response;
 import webserver.ControllerMapper;
 
 public final class RequestParser {
-    private static final String PARAMETER_SEPARATOR = "\\?";
+    private static final String PARAMETER_SEPARATOR = ":";
     private static final String SPACE = " ";
     private static final String NEW_LINE = "\r\n";
     private static final String EMPTY = "";
