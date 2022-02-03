@@ -5,8 +5,6 @@ import exception.NotFoundException;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import view.template.FooterBlock;
-import view.template.HeaderBlock;
 import view.template.ViewTemplate;
 
 public class ViewMaker {
@@ -29,9 +27,9 @@ public class ViewMaker {
     private static byte[] applyModel(ViewTemplate template, Map<String, Object> model) {
         //미구현
         StringBuilder result = new StringBuilder();
-        result.append(HeaderBlock.block);
+        result.append(ViewTemplate.header);
         result.append(template.getTemplate(model));
-        result.append(FooterBlock.block);
+        result.append(ViewTemplate.footer);
         return result.toString().getBytes(StandardCharsets.UTF_8);
     }
 
