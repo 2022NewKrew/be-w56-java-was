@@ -3,6 +3,8 @@ package bin.jayden.service;
 import bin.jayden.db.DataBase;
 import bin.jayden.model.User;
 import bin.jayden.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +13,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     public String getUserListHtml() throws IOException {
         File file = new File(Constants.RESOURCE_PATH + "/user/list.html");
 
@@ -35,4 +39,13 @@ public class UserService {
         return htmlString;
     }
 
+    public String getUserAddResult(User user) {
+        if (DataBase.findUserById(user.getUserId()) == null) {
+            DataBase.addUser(user);
+            log.info("new User (userId : {}, name : {})", user.getUserId(), user.getName());
+            return "redirect:/index.html";
+        } else {
+            return "중복된 ID입니다.</br><button onclick=\"history.back()\">뒤로가기</button>\n";
+        }
+    }
 }

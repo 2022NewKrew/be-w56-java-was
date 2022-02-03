@@ -22,9 +22,7 @@ public class UserController {
     @PostMapping("/create")
     public String createUser(String userId, String password, String name, String email) {
         User user = new User(userId, password, name, email);
-        DataBase.addUser(user);
-        log.info("new User (userId : {}, name : {})", user.getUserId(), user.getName());
-        return "redirect:/index.html";
+        return userService.getUserAddResult(user);
     }
 
     @PostMapping("/login")
