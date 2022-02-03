@@ -43,7 +43,14 @@ public class ListTemplate implements ViewTemplate {
 
     @Override
     public String getTemplate(Map<String, Object> model) {
-        List<User> users = List.class.cast(model.get("users"));
+
+        List<User> users = List.of();
+        if(model.get("users") instanceof List && !((List<?>) model.get("users")).isEmpty()){
+            if(((List<?>) model.get("users")).get(0) instanceof User){
+                users = (List<User>)model.get("users");
+            }
+        }
+
 
         StringBuilder result = new StringBuilder();
 
