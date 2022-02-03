@@ -5,10 +5,7 @@ import controller.MainController;
 import lombok.extern.slf4j.Slf4j;
 import util.HttpRequestUtils;
 import webserver.annotation.RequestMethod;
-import webserver.model.HttpStatus;
-import webserver.model.RequestMapping;
-import webserver.model.WebHttpRequest;
-import webserver.model.WebHttpResponse;
+import webserver.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +72,8 @@ public class RequestHandler {
                 params.add(httpRequest);
             } else if (type == WebHttpResponse.class) {
                 params.add(httpResponse);
+            } else if (type == Model.class) {
+                params.add(new Model());
             } else {
                 params.add(mapper.convertValue(paramMap, type));
             }
