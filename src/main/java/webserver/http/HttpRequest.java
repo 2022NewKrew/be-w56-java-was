@@ -1,8 +1,15 @@
 package webserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
+    Logger log = LoggerFactory.getLogger(HttpRequest.class);
+
     private final String method;
     private final String path;
     private final Map<String, String> headers;
@@ -31,5 +38,16 @@ public class HttpRequest {
 
     public String getVersion() {
         return version;
+    }
+
+    public Map<String, String> getCookies() {
+        String[] cookies = headers.get("Cookie").split("; ");
+        Map<String, String> result = new HashMap<>();
+        Arrays.stream(cookies).forEach(cookie -> {
+            String key = cookie.split("=")[0];
+            String value = cookie.split("=")[1];
+            result.put(key, value);
+        });
+        return result;
     }
 }

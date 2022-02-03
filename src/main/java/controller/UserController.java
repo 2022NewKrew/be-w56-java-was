@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import webserver.ResponseGenerator;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.MIME;
 import webserver.http.PathInfo;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class UserController implements Controller{
@@ -42,6 +44,15 @@ public class UserController implements Controller{
             }
             log.debug("Login failed: Password mismatch");
             return ResponseGenerator.generateLoginFailedResponse();
+        } else if(path.equals(PathInfo.PATH_USER_LIST)) {
+            boolean logined = Boolean.parseBoolean(httpRequest.getCookies().get("logined"));
+            log.debug("logined: {}", logined);
+            if (logined) {
+                return ResponseGenerator.generateStaticResponse(path);
+            }
+            return ResponseGenerator.generateResponse302(PathInfo.PATH_LOGIN_PAGE);
+        } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+            return ResponseGenerator.generateStaticResponse(path);
         } else {
             log.debug("Page not found");
             return ResponseGenerator.generateResponse404();
