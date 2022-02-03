@@ -21,8 +21,8 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.ok(
                 request.getUrl(),
-                new HashMap<>(),
-                ControllerUtils.getEmptyImmutableMap(),
+                ControllerUtils.getEmptyModelMap(),
+                ControllerUtils.getEmptyCookieMap(),
                 dos);
     }
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import model.User;
 import util.ControllerUtils;
 
@@ -36,14 +35,14 @@ public class UserListController implements Controller{
             return HttpResponse.ok(
                     request.getUrl(),
                     model,
-                    ControllerUtils.getEmptyImmutableMap(),
+                    ControllerUtils.getEmptyCookieMap(),
                     dos
             );
         }
 
         return HttpResponse.found(
                 "/user/login.html",
-                ControllerUtils.getEmptyImmutableMap(),
+                ControllerUtils.getEmptyCookieMap(),
                 dos
         );
     }

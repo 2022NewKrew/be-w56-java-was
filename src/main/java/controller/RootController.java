@@ -20,7 +20,7 @@ public class RootController implements Controller{
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.found(
                 "/index.html",
-                ControllerUtils.getEmptyImmutableMap(),
+                ControllerUtils.getEmptyCookieMap(),
                 dos
         );
     }

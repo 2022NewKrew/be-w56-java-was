@@ -32,7 +32,7 @@ public class UserCreateController implements Controller {
 
         return HttpResponse.found(
                 "/index.html",
-                ControllerUtils.getEmptyImmutableMap(),
+                ControllerUtils.getEmptyCookieMap(),
                 dos);
     }
 

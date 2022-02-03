@@ -54,7 +54,7 @@ public class UserLoginController implements Controller {
     private HttpResponse loginFail(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.unauthorized(
                 "/user/login_failed.html",
-                new HashMap<>(),
+                ControllerUtils.getEmptyModelMap(),
                 dos);
     }
 }
