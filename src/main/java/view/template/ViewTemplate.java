@@ -47,7 +47,7 @@ public interface ViewTemplate {
                     + "                        <li><a href=\"https://facebook.com\" target=\"_blank\">Facebook</a></li>\n"
                     + "                    </ul>\n"
                     + "                </li>\n"
-                    + "                <li><a href=\"../user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>\n"
+                    + "                <li><a href=\"/user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>\n"
                     + "            </ul>\n"
                     + "        </div>\n"
                     + "    </div>\n"
