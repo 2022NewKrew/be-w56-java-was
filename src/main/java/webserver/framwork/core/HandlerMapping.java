@@ -2,59 +2,39 @@ package webserver.framwork.core;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import controller.UserController;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.Scanner;
+import org.reflections.scanners.Scanners;
 import webserver.framwork.http.request.HttpMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 public class HandlerMapping {
-    //나중에 자동으로 가져오도록 변경
-    private static final List<Class<?>> CONTROLLERS = Arrays.asList(
-            UserController.class
-    );
-    private static HandlerMapping instance;
+    private static final HandlerMapping instance = new HandlerMapping();
+    private static final String appPackage = "webserver.application";
 
     private final Table<HttpMethod, String, Method> handlerMethods = HashBasedTable.create();
-    private final Table<HttpMethod, String, Object> handlerInstances = HashBasedTable.create();
 
     private HandlerMapping() {
+        init();
     }
 
     public static HandlerMapping getInstance() {
-        if (instance == null) {
-            instance = new HandlerMapping();
-            instance.init();
-        }
         return instance;
     }
 
     public void init() {
-        //
-        // attach methods with "RequestMapping" annotation
-        //
-        try {
-            for (Class<?> controllerClass : CONTROLLERS) {
-                Method[] methods = controllerClass.getMethods();
-                for (Method method : methods) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    if (requestMapping != null) {
-                        handlerMethods.put(requestMapping.method(), requestMapping.value(), method);
-                        handlerInstances.put(requestMapping.method(), requestMapping.value(), controllerClass.getConstructor().newInstance());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Reflections reflections = new Reflections(appPackage, Scanners.MethodsAnnotated);
+        Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
+        for (Method method : methods) {
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            handlerMethods.put(mapping.method(), mapping.value(), method);
         }
     }
 
     public Method getHandlerMethod(HttpMethod method, String url) {
         return handlerMethods.get(method, url);
-    }
-
-    public Object getHandlerInstance(HttpMethod method, String url) {
-        return handlerInstances.get(method, url);
     }
 }

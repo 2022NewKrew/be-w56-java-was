@@ -2,16 +2,15 @@ package webserver.framwork;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
-import util.IOUtils;
 import webserver.framwork.core.FrontController;
-import webserver.framwork.core.StaticResourceManager;
 import webserver.framwork.http.Header;
+import webserver.framwork.http.HttpClientErrorException;
 import webserver.framwork.http.request.HttpMethod;
 import webserver.framwork.http.request.HttpRequest;
-import webserver.framwork.http.request.HttpRequestBuilder;
 import webserver.framwork.http.response.HttpResponse;
 import webserver.framwork.http.response.HttpStatus;
+import webserver.util.HttpRequestUtils;
+import webserver.util.IOUtils;
 
 import java.io.*;
 import java.net.Socket;
@@ -33,80 +32,85 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest request = parseRequest(in);
-            HttpResponse response = new HttpResponse();
+        HttpRequest request = new HttpRequest();
+        HttpResponse response = new HttpResponse();
 
-            if (request == null){
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+
+            try {
+                parseRequest(request, in);
+                frontController.process(request, response);
+            } catch (HttpClientErrorException e) {
                 response.setStatus(HttpStatus.BadRequest);
                 sendResponse(out, response);
-                return;
+            } finally {
+                sendResponse(out, response);
             }
-
-            if (request.getMethod() == HttpMethod.GET && StaticResourceManager.has(request.getUrl())) {
-                StaticResourceManager.forward(request, response);
-            } else {
-                frontController.process(request, response);
-            }
-
-            sendResponse(out, response);
 
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private HttpRequest parseRequest(InputStream in) throws IOException {
+    private void parseRequest(HttpRequest request, InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-        HttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder();
+        parseRequestLine(request, br);
+        parseRequestHeader(request, br);
+        parseRequestBody(request, br);
+    }
 
+    private void parseRequestLine(HttpRequest request, BufferedReader br) throws IOException {
         String line = br.readLine();
-        log.debug(line);
         if (line == null) {
-            return null;
+            throw new HttpClientErrorException(HttpStatus.BadRequest, "잘못된 요청 형식입니다.");
         }
+        log.info(line);
         String[] requestLine = line.split(" ");
 
-        HttpMethod method = HttpMethod.valueOf(requestLine[0]);
-        String url = requestLine[1];
+        int methodIdx = 0;
+        int urlIdx = 1;
 
-        Header header = new Header();
-        line = br.readLine();
-        while (!line.equals("")) {
-            HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
-            header.addValue(pair.getKey(), pair.getValue());
-            line = br.readLine();
-        }
-
+        String url = requestLine[urlIdx];
         int queryStringStartIdx = url.indexOf("\\?");
         Map<String, String> params = new HashMap<>();
         if (queryStringStartIdx != -1) {
             params = HttpRequestUtils.parseQueryString(url.substring(queryStringStartIdx));
             url = url.substring(0, queryStringStartIdx);
         }
+        request.setUrl(url);
+        request.setParams(params);
 
-        Map<String, String> body = new HashMap<>();
-        if (!method.equals(HttpMethod.GET)) {
-            log.debug("Content-length === {}", Integer.parseInt(header.getValue("Content-Length")));
-            body = HttpRequestUtils.parseQueryString(IOUtils.readData(br, Integer.parseInt(header.getValue("Content-Length"))));
+        request.setMethod(HttpMethod.valueOf(requestLine[methodIdx]));
+    }
+
+    private void parseRequestHeader(HttpRequest request, BufferedReader br) throws IOException {
+        Header header = new Header();
+        String line = br.readLine();
+        while (!line.equals("")) {
+            HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
+            header.addValue(pair.getKey(), pair.getValue());
+            line = br.readLine();
+        }
+        request.setHeader(header);
+    }
+
+    private void parseRequestBody(HttpRequest request, BufferedReader br) throws IOException {
+        if (request.getMethod().equals(HttpMethod.GET)) {
+            return;
         }
 
-        return httpRequestBuilder
-                .setUrl(url)
-                .setMethod(method)
-                .setHeader(header)
-                .setParams(params)
-                .setBody(body)
-                .build();
+        int contentLength = Integer.parseInt(request.getHeader().getValue("Content-Length"));
+        Map<String, String> body = HttpRequestUtils.parseQueryString(IOUtils.readData(br, contentLength));
+        request.setBody(body);
     }
 
     public void sendResponse(OutputStream out, HttpResponse response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
         dos.writeBytes("HTTP/1.1 " + response.getStatus().getStatusCode() + " " + response.getStatus().getMessage() + "\r\n");
-        for (String key : response.getHeader()) {
-            dos.writeBytes(key + ": " + response.getHeaderValue(key) + "\r\n");
+        for (Header.Pair pair : response.getHeader()) {
+            dos.writeBytes(pair.getKey() + ": " + pair.getValue() + "\r\n");
         }
         dos.writeBytes("Content-Length: " + response.getBody().length + "\r\n");
         dos.writeBytes("\r\n");

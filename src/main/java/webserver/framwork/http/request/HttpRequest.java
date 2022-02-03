@@ -5,39 +5,50 @@ import webserver.framwork.http.Header;
 import java.util.Map;
 
 public class HttpRequest {
-    private final HttpMethod method;
-    private final String url;
-    private final Header header;
-    private final Map<String, String> params;
-    private final Map<String, String> body;
-
-    public HttpRequest(String url, HttpMethod method, Header header, Map<String, String> params, Map<String, String> body) {
-        this.method = method;
-        this.url = url;
-        this.header = header;
-        this.params = params;
-        this.body = body;
-    }
+    private HttpMethod method;
+    private String url;
+    private Header header;
+    private Map<String, String> params;
+    private Map<String, String> body;
 
     public String getUrl() {
         return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public HttpMethod getMethod() {
         return this.method;
     }
 
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+    }
+
     public Header getHeader() {
         return this.header;
+    }
+
+    public void setHeader(Header header) {
+        this.header = header;
     }
 
     public Map<String, String> getParams() {
         return this.params;
     }
 
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
     public Map<String, String> getBody() {
         return this.body;
     }
 
+    public void setBody(Map<String, String> body) {
+        this.body = body;
+    }
 }
 
