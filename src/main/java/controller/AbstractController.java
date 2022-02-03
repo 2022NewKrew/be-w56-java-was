@@ -8,16 +8,18 @@ import java.io.IOException;
 public abstract class AbstractController implements Controller {
 
     @Override
-    public void service(HttpRequest request, HttpResponse response) throws IOException {
-        if (request.isEqualsHttpMethod(HttpMethod.GET)) {
-            doGet(request, response);
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+        if (httpRequest.isEqualsHttpMethod(HttpMethod.GET)) {
+            doGet(httpRequest, httpResponse);
         }
-        if (request.isEqualsHttpMethod(HttpMethod.POST)) {
-            doPost(request, response);
+        if (httpRequest.isEqualsHttpMethod(HttpMethod.POST)) {
+            doPost(httpRequest, httpResponse);
         }
     }
 
-    protected abstract void doGet(HttpRequest request, HttpResponse response) throws IOException;
+    protected abstract void doGet(HttpRequest httpRequest, HttpResponse httpResponse)
+        throws IOException;
 
-    protected abstract void doPost(HttpRequest request, HttpResponse response) throws IOException;
+    protected abstract void doPost(HttpRequest httpRequest, HttpResponse httpResponse)
+        throws IOException;
 }

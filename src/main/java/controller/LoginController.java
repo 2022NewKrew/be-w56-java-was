@@ -5,6 +5,7 @@ import httpmodel.HttpResponse;
 import httpmodel.HttpSession;
 import httpmodel.HttpSessions;
 import java.io.IOException;
+import java.util.Objects;
 import model.User;
 import service.UserService;
 import util.FileConverter;
@@ -12,6 +13,7 @@ import util.FileConverter;
 public class LoginController extends AbstractController {
 
     private static final String INDEX_HTML = "/index.html";
+    private static final String USER = "user";
 
     private final UserService userService;
 
@@ -21,7 +23,8 @@ public class LoginController extends AbstractController {
 
     @Override
     protected void doGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        if (userService.isLogin(httpRequest)) {
+        HttpSession httpSession = httpRequest.getHttpSession();
+        if (Objects.nonNull(httpSession.getAttribute(USER))) {
             httpResponse.set302Found(INDEX_HTML);
             return;
         }
@@ -45,7 +48,7 @@ public class LoginController extends AbstractController {
 
     private void addSession(HttpRequest request, User user) {
         HttpSession httpSession = request.getHttpSession();
-        httpSession.setAttribute(httpSession.getId(), user);
+        httpSession.setAttribute(USER, user);
         HttpSessions.add(httpSession.getId(), httpSession);
     }
 }

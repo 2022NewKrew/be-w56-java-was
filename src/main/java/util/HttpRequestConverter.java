@@ -77,12 +77,13 @@ public class HttpRequestConverter {
             if (read == -1) {
                 return requestBody;
             }
-            String line = new String(buffer);
-            String[] bodyDates = line.split("&");
-            for (String body : bodyDates) {
-                String[] keyValue = body.split("=");
-                requestBody.put(keyValue[0], keyValue[1]);
-            }
+            return HttpRequestUtils.parseQueryString(new String(buffer));
+//            String line = new String(buffer);
+//            String[] bodyDates = line.split("&");
+//            for (String body : bodyDates) {
+//                String[] keyValue = body.split("=");
+//                requestBody.put(keyValue[0], keyValue[1]);
+//            }
         }
         return requestBody;
     }

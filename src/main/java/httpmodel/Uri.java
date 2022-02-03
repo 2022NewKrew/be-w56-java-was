@@ -35,7 +35,8 @@ public class Uri {
             || resourceUri.endsWith(".css")
             || resourceUri.endsWith(".js")
             || resourceUri.endsWith(".ttf")
-            || resourceUri.endsWith(".ico");
+            || resourceUri.endsWith(".ico")
+            || resourceUri.endsWith(".woff");
     }
 
     public String getResourceUri() {

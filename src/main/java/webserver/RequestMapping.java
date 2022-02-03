@@ -4,10 +4,10 @@ import controller.Controller;
 import controller.FrontController;
 import controller.LoginController;
 import controller.RegisterController;
+import controller.UsersController;
 import httpmodel.HttpRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import service.UserService;
 
 public class RequestMapping {
@@ -20,6 +20,7 @@ public class RequestMapping {
         CONTROLLERS.put("/users/login", new LoginController(userService));
         CONTROLLERS.put(FRONT, new FrontController());
         CONTROLLERS.put("/users", new RegisterController(userService));
+        CONTROLLERS.put("/users/list", new UsersController(userService));
     }
 
     public Controller getController(HttpRequest httpRequest) {
