@@ -5,14 +5,15 @@ import dto.UserLoginRequest;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.ModelAndView;
+import spark.template.handlebars.HandlebarsTemplateEngine;
 import webserver.exception.*;
 import webserver.http.*;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
 
 import java.io.DataOutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public enum RequestMappingInfo {
 
@@ -63,6 +64,23 @@ public enum RequestMappingInfo {
                     .body(body)
                     .build();
         }
+    },
+    USER_LIST("/user/list", HttpMethod.GET) {
+        @Override
+        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+            Map<String, HttpCookie> cookies = request.cookies();
+            HttpCookie loginCookie = cookies.get("login");
+            if (loginCookie == null || loginCookie.getValue().equals("false")) {
+                throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
+            }
+            Collection<User> users = DataBase.findAll();
+
+            byte[] body = render(users, "/user/list.html").getBytes();
+            return MyHttpResponse.builder(dos)
+                    .status(HttpStatus.OK)
+                    .body(body)
+                    .build();
+        }
     };
 
     private static final Logger log = LoggerFactory.getLogger(RequestMappingInfo.class);
@@ -82,6 +100,10 @@ public enum RequestMappingInfo {
     RequestMappingInfo(String path, HttpMethod method) {
         this.path = path;
         this.method = method;
+    }
+
+    private static String render(Object model, String templatePath) {
+        return new HandlebarsTemplateEngine().render(new ModelAndView(model, templatePath));
     }
 
     public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, String method) {
