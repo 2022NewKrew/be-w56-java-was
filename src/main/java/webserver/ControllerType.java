@@ -20,7 +20,7 @@ public enum ControllerType {
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
 
     static {
-        methodMap = Collections.synchronizedMap(new EnumMap<>(HttpMethod.class));
+        methodMap = new EnumMap<>(HttpMethod.class);
 
         for (HttpMethod method : HttpMethod.values()) {
             methodMap.put(method, new HashMap<>());
