@@ -8,6 +8,7 @@ public class Main {
         ApplicationBuilder.builder()
                 .setSeverConfig(new WebConfig())
                 .addPackageNameForBeanScan("was")
+                .addPackageNameForBeanScan("application")
                 .build()
                 .run();
     }

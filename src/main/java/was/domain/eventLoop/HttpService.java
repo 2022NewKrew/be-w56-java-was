@@ -1,4 +1,4 @@
-package was.domain.http;
+package was.domain.eventLoop;
 
 import di.annotation.Bean;
 import was.domain.eventLoop.EventService;

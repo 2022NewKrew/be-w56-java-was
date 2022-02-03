@@ -6,7 +6,10 @@ public enum MediaTypes {
     IMAGE_X_ICON("ico", "image/x-icon"),
     TEXT_HTML("htm[l]?", "text/html;charset=UTF-8"),
     TEXT_PLAIN("(.*)", "text/plain;charset=UTF-8"),
-    APPLICATION_X_WWW_FORM_URLENCODED("(.*)", "application/x-www-form-urlencoded");
+    APPLICATION_X_WWW_FORM_URLENCODED("(.*)", "application/x-www-form-urlencoded"),
+    TEXT_CSS("css", "text/css"),
+    APPLICATION_JS("js", "application/js"),
+    APPLICATION_JSON("json", "application/json");
 
     private final String regex;
     private final String value;

@@ -4,6 +4,7 @@ package was.domain.requestHandler;
 import di.annotation.Bean;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
+import was.domain.requestHandler.requestHandlerChain.RequestHandlerChain;
 import was.meta.HttpHeaders;
 import was.meta.HttpStatus;
 import was.meta.MediaTypes;
@@ -16,15 +17,18 @@ import java.util.stream.Collectors;
 public class NegotiationHandler implements RequestHandler {
 
     @Override
-    public void handle(HttpRequest req, HttpResponse res) {
+    public void handle(HttpRequest req, HttpResponse res, RequestHandlerChain requestHandlerChain) {
         if (isRedirect(res)) {
             return;
         }
 
-        final MediaTypes mediaTypes = findMediaTypeByAcceptTokenAndFileExtension(req, res);
+        if (res.getContentType() == null) {
+            final MediaTypes mediaTypes = findMediaTypeByAcceptTokenAndFileExtension(req, res);
+            res.addHeader(HttpHeaders.CONTENT_TYPE, mediaTypes.getValue());
+        }
 
-        res.addHeader(HttpHeaders.CONTENT_TYPE, mediaTypes.getValue());
         res.addHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(res.getContentLength()));
+        requestHandlerChain.handle(req, res);
     }
 
     private MediaTypes findMediaTypeByAcceptTokenAndFileExtension(HttpRequest req, HttpResponse res) {

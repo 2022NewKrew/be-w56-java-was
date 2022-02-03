@@ -30,6 +30,7 @@ public class BeanContext {
             if (context.containsKey(annotatedClass)) {
                 continue;
             }
+
             visited.add(annotatedClass);
             make(annotatedClass, visited);
             visited.remove(annotatedClass);
@@ -37,6 +38,7 @@ public class BeanContext {
     }
 
     private Object make(Class<?> cur, Set<Class<?>> visited) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+
         final Constructor<?>[] declaredConstructors = cur.getDeclaredConstructors();
 
         if (declaredConstructors.length != 1) {
@@ -86,6 +88,10 @@ public class BeanContext {
         }
 
         return (clazz.cast(result));
+    }
+
+    public List<Object> getAllBeans() {
+        return Arrays.asList(context.values().toArray());
     }
 
     public boolean hasBean(Class<?> clazz) {

@@ -5,30 +5,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
+import was.domain.requestHandler.requestHandlerChain.RequestHandlerChain;
+import was.meta.HttpStatus;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 @Bean
-public class FrontRequestHandler implements RequestHandler {
+public class ExceptionHandler implements RequestHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(FrontRequestHandler.class);
-    private final List<RequestHandler> requestHandlerList = new LinkedList<>();
-
-    public FrontRequestHandler(ControllerMappingHandler controllerMappingHandler,
-                               StaticViewResolverHandler staticViewResolverHandler,
-                               NegotiationHandler negotiationHandler) {
-        requestHandlerList.add(controllerMappingHandler);
-        requestHandlerList.add(staticViewResolverHandler);
-        requestHandlerList.add(negotiationHandler);
-    }
+    private final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @Override
-    public void handle(HttpRequest req, HttpResponse res, RequestHandler requestHandler) throws IOException {
-        if (requestHandler.has)
-        for (RequestHandler requestHandler : requestHandlerList) {
-            requestHandler.handle(req, res);
+    public void handle(HttpRequest req, HttpResponse res, RequestHandlerChain requestHandlerChain) throws Exception {
+        try {
+            requestHandlerChain.handle(req, res);
+        } catch (RuntimeException e) {
+            res.setStatus(HttpStatus.FORBIDDEN);
+            res.initHeaders();
+            res.setBody(new byte[]{});
         }
     }
 }

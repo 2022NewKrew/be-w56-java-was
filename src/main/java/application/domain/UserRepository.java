@@ -1,9 +1,11 @@
 package application.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import di.annotation.Bean;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Bean
 public class UserRepository {
     private final Map<String, User> users = new HashMap<>();
 
@@ -13,5 +15,9 @@ public class UserRepository {
 
     public Optional<User> findById(String name) {
         return Optional.ofNullable(users.get(name));
+    }
+
+    public List<User> findAll() {
+        return new ArrayList<>(users.values());
     }
 }

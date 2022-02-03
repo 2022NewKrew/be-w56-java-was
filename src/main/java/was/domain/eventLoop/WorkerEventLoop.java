@@ -15,7 +15,7 @@ public class WorkerEventLoop implements EventLoop {
 
     private final Logger logger = LoggerFactory.getLogger(WorkerEventLoop.class);
 
-    private final ByteBuffer buffer = ByteBuffer.allocateDirect(2);
+    private final ByteBuffer buffer = ByteBuffer.allocateDirect(8192);
 
     private final EventService eventService;
     private final Selector selector;

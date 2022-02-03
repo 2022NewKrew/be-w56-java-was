@@ -33,6 +33,10 @@ public class HttpResponse {
         return new HttpResponse(httpRequest.getVersion(), null, null);
     }
 
+    public String getContentType() {
+        return headers.get(HttpHeaders.CONTENT_TYPE);
+    }
+
     public void addHeader(String key, String value) {
         headers.put(key, value);
     }
