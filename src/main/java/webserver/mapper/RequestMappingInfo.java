@@ -6,12 +6,9 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.*;
-import webserver.http.HttpMethod;
+import webserver.http.*;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
-import webserver.http.HttpStatus;
-import webserver.http.MyHttpRequest;
-import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
 import java.util.HashMap;
@@ -56,10 +53,13 @@ public enum RequestMappingInfo {
             log.info("user login: {}", user);
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
+            HttpCookie cookie = new HttpCookie("login", "true");
+            cookie.setPath("/");
+
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
-                    .cookie("login", "true;Path=/")
+                    .cookie(cookie)
                     .body(body)
                     .build();
         }
