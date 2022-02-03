@@ -19,7 +19,7 @@ public class Request {
     private static final Logger log = LoggerFactory.getLogger(Request.class);
     private final String method;
     private final String uri;
-    private final Map<String,String> headerAttributes;
+    private final Map<String,String> header;
     private final Map<String,String> parameters = new HashMap<>();
 
     public Request(InputStream in) throws IOException {
@@ -28,11 +28,11 @@ public class Request {
         this.method = requestLine.split(" ")[0];
         this.uri = findUri(requestLine);
         this.parameters.putAll(findQueryString(requestLine));
-        this.headerAttributes = findHeaderAttributes(br);
-        this.parameters.putAll(findBodyAttributes(method, br, Integer.parseInt(headerAttributes.getOrDefault("Content-Length", "-1"))));
+        this.header = findHeaderParameters(br);
+        this.parameters.putAll(findBodyParameters(method, br, Integer.parseInt(header.getOrDefault("Content-Length", "-1"))));
     }
 
-    private Map<String,String> findHeaderAttributes(BufferedReader br) throws IOException {
+    private Map<String,String> findHeaderParameters(BufferedReader br) throws IOException {
         List<HttpRequestUtils.Pair> HeaderAttributes = new ArrayList<>();
         String line;
         while(!(line=URLDecoder.decode(br.readLine(), "UTF-8")).equals("")){
@@ -56,7 +56,7 @@ public class Request {
         return requestLine.split(" ")[1];
     }
 
-    private Map<String,String> findBodyAttributes(String method, BufferedReader br, int contentLength) throws IOException {
+    private Map<String,String> findBodyParameters(String method, BufferedReader br, int contentLength) throws IOException {
         if(method.equals("GET") || contentLength == -1){
             return Maps.newHashMap();
         }
