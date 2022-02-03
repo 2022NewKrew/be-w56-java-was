@@ -9,15 +9,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
-public class MyHttpRequest {
+public class HttpRequest {
 
-    private static final BiPredicate<String, String> ALLOWED_ALL_HEADERS = (k, v) -> true;
     private static final String END_OF_REQUEST_LINE = "";
     private static final String REQUEST_LINE_DELIMITER = " ";
     private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
@@ -30,7 +27,7 @@ public class MyHttpRequest {
     private final Map<String, HttpCookie> cookies;
     private final String body;
 
-    private MyHttpRequest(BufferedReader br) throws IOException {
+    private HttpRequest(BufferedReader br) throws IOException {
         String[] requestHeaderParams = br.readLine().split(REQUEST_LINE_DELIMITER);
         validateRequestHeader(requestHeaderParams);
         this.method = HttpMethod.valueOf(requestHeaderParams[0]);
@@ -87,8 +84,8 @@ public class MyHttpRequest {
         return 0;
     }
 
-    public static MyHttpRequest from(BufferedReader br) throws IOException {
-        return new MyHttpRequest(br);
+    public static HttpRequest from(BufferedReader br) throws IOException {
+        return new HttpRequest(br);
     }
 
     public String method() {
@@ -109,8 +106,8 @@ public class MyHttpRequest {
         return Optional.empty();
     }
 
-    public HttpHeaders headers() {
-        return HttpHeaders.of(headers, ALLOWED_ALL_HEADERS);
+    public Map<String, List<String>> headers() {
+        return headers;
     }
 
     public Map<String, HttpCookie> cookies() {

@@ -19,10 +19,10 @@ public enum RequestMappingInfo {
 
     ROOT("/", HttpMethod.GET) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            return MyHttpResponse.builder(dos)
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.OK)
                     .body(body)
                     .build();
@@ -30,13 +30,13 @@ public enum RequestMappingInfo {
     },
     SIGN_UP("/user/create", HttpMethod.POST) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
             User user = userCreateRequest.toEntity();
             DataBase.addUser(user);
             log.info("New user created : {}", user);
 
-            return MyHttpResponse.builder(dos)
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
                     .build();
@@ -44,7 +44,7 @@ public enum RequestMappingInfo {
     },
     LOGIN("/user/login", HttpMethod.POST) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserLoginRequest userLoginRequest = UserLoginRequest.from(request.body());
 
             User user = DataBase.findUserById(userLoginRequest.getUserId());
@@ -57,7 +57,7 @@ public enum RequestMappingInfo {
             HttpCookie cookie = new HttpCookie("login", "true");
             cookie.setPath("/");
 
-            return MyHttpResponse.builder(dos)
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
                     .cookie(cookie)
@@ -67,7 +67,7 @@ public enum RequestMappingInfo {
     },
     USER_LIST("/user/list", HttpMethod.GET) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             Map<String, HttpCookie> cookies = request.cookies();
             HttpCookie loginCookie = cookies.get("login");
             if (loginCookie == null || loginCookie.getValue().equals("false")) {
@@ -76,7 +76,7 @@ public enum RequestMappingInfo {
             Collection<User> users = DataBase.findAll();
 
             byte[] body = renderDynamicTemplate(users, "/user/list.html").getBytes();
-            return MyHttpResponse.builder(dos)
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.OK)
                     .body(body)
                     .build();
@@ -115,5 +115,5 @@ public enum RequestMappingInfo {
         return requestMap.get(path);
     }
 
-    public abstract MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception;
+    public abstract HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception;
 }

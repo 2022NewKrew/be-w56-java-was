@@ -6,8 +6,8 @@ import webserver.exception.ResourceNotFoundException;
 import webserver.exception.WebServerException;
 import webserver.provider.ResponseProvider;
 import webserver.http.MIME;
-import webserver.http.MyHttpRequest;
-import webserver.http.MyHttpResponse;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.OutputStream;
@@ -17,7 +17,7 @@ import static webserver.mapper.RequestMappingInfo.isNotValidMethod;
 
 public class RequestMapper {
 
-    public static MyHttpResponse process(MyHttpRequest request, OutputStream out) {
+    public static HttpResponse process(HttpRequest request, OutputStream out) {
         DataOutputStream dos = new DataOutputStream(out);
         URI uri = request.uri();
         String query = uri.getQuery();
@@ -30,7 +30,7 @@ public class RequestMapper {
         return handleRequest(request, dos, path);
     }
 
-    private static MyHttpResponse handleRequest(MyHttpRequest request, DataOutputStream dos, String path) {
+    private static HttpResponse handleRequest(HttpRequest request, DataOutputStream dos, String path) {
         if (!RequestMappingInfo.hasPath(path)) {
             throw new ResourceNotFoundException("에러: 존재하지 않은 리소스입니다.");
         }
@@ -46,7 +46,7 @@ public class RequestMapper {
         }
     }
 
-    private static MyHttpResponse handleIfValidMethod(RequestMappingInfo requestMappingInfo, MyHttpRequest request, DataOutputStream dos) throws Exception {
+    private static HttpResponse handleIfValidMethod(RequestMappingInfo requestMappingInfo, HttpRequest request, DataOutputStream dos) throws Exception {
         if (isNotValidMethod(requestMappingInfo, request.method())) {
             throw new InvalidMethodException("에러: 부적절한 요청 메서드입니다.");
         }
