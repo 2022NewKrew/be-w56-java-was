@@ -1,5 +1,6 @@
 package http;
 
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import lombok.Builder;
 
@@ -13,8 +14,8 @@ public class HttpResponse {
     @Builder
     public HttpResponse(HttpStatus status, HttpHeader header, byte[] responseBody) {
         this.status = status;
-        this.header = header;
-        this.responseBody = responseBody;
+        this.header = header == null ? HttpHeader.of(new HashMap<>()) : header;
+        this.responseBody = responseBody == null ? new byte[0] : responseBody;
     }
 
     public String respondStatus() {
@@ -22,15 +23,11 @@ public class HttpResponse {
     }
 
     public String respondHeader() {
-        return header.toStringList().stream()
+        return header.toFormattedStrings().stream()
             .collect(Collectors.joining(System.lineSeparator()));
     }
 
     public byte[] getResponseBody() {
         return responseBody;
-    }
-
-    public boolean hasError() {
-        return status.isClientError() || status.isServerError();
     }
 }

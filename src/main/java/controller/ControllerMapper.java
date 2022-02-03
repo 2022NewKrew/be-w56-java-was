@@ -1,35 +1,54 @@
 package controller;
 
+import controller.exception.ControllerMismatchException;
 import http.HttpRequest;
 import http.HttpResponse;
+import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControllerMapper {
 
+    private static final Logger log = LoggerFactory.getLogger(ControllerMapper.class);
+
+    private static final String AUTH_REQUEST_PATH = "/user/login";
     private static final String USER_REQUEST_PATH = "/user";
     private static final String DEFAULT_REQUEST_PATH = "/";
 
     private final Map<String, Controller> controllerMap;
+    private final List<String> mappingPaths;
 
     public static ControllerMapper create() {
-        return new ControllerMapper(Map.of(DEFAULT_REQUEST_PATH, StaticFileReader.create(),
-            USER_REQUEST_PATH, UserController.create()));
+        Map<String, Controller> controllerMap = Map.of(DEFAULT_REQUEST_PATH,
+            StaticFileReader.create(),
+            USER_REQUEST_PATH, UserController.create(),
+            AUTH_REQUEST_PATH, AuthController.create());
+        List<String> mappingPaths = List.of(AUTH_REQUEST_PATH, USER_REQUEST_PATH,
+            DEFAULT_REQUEST_PATH);
+        return new ControllerMapper(controllerMap, mappingPaths);
     }
 
-    public ControllerMapper(Map<String, Controller> controllerMap) {
+    private ControllerMapper(Map<String, Controller> controllerMap,
+        List<String> mappingPaths) {
         this.controllerMap = controllerMap;
+        this.mappingPaths = mappingPaths;
     }
 
     public HttpResponse handleRequest(HttpRequest request) {
-        HttpResponse response = null;
-        if (request.getPath().startsWith(USER_REQUEST_PATH)) {
-            response = handleInternal(controllerMap.get(USER_REQUEST_PATH), request);
+        try {
+            return handleInternal(controllerMapping(request.getPath()), request);
+        } catch (ControllerMismatchException e) {
+            log.error("Controller Mismatched {} {}", e.getMessage(), e);
+            return handleInternal(controllerMapping(DEFAULT_REQUEST_PATH), request);
         }
+    }
 
-        if (response == null || response.hasError()) {
-            response = handleInternal(controllerMap.get(DEFAULT_REQUEST_PATH), request);
-        }
-        return response;
+    private Controller controllerMapping(String path) {
+        return controllerMap.get(mappingPaths.stream()
+            .filter(path::startsWith)
+            .findFirst()
+            .orElse(DEFAULT_REQUEST_PATH));
     }
 
     private HttpResponse handleInternal(Controller controller, HttpRequest request) {
