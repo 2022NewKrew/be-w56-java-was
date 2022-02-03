@@ -26,6 +26,8 @@ public class AnnotationProcessor {
 
     }
 
+    private AnnotationProcessor() {//인스턴스의 생성을 방지
+    }
 
     public static Map<String, Method> getGetRoutingMap() {
         Map<String, Method> routingMap = new HashMap<>();

@@ -21,12 +21,13 @@ public class Router {
     private static final Map<String, Method> postRoutingMap;
     private static final Map<String, Method> getRoutingMap;
 
-
     static {
         getRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getGetRoutingMap());
         postRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getPostRoutingMap());
     }
 
+    private Router() {//인스턴스의 생성을 방지
+    }
 
     public static MyHttpResponse routing(MyHttpRequest request) throws InvocationTargetException, IOException, IllegalAccessException {
 

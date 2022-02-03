@@ -12,6 +12,9 @@ import java.util.Map;
 public class DependencyInjector {
     private static final Map<Class<?>, Object> beans = new HashMap<>();
 
+    private DependencyInjector() {//인스턴스의 생성을 방지
+    }
+
     public static Object getControllerInstance(Class<?> controller) {
         try {
             Object instance = getInstance(controller);

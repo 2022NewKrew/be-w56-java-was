@@ -6,4 +6,7 @@ public class Constants {
     public static final String RESOURCE_PATH = "./webapp";
 
     public static final String COOKIE_SESSION_KEY = "SESSIONID";
+
+    private Constants() {//인스턴스의 생성을 방지
+    }
 }
