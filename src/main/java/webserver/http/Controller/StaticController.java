@@ -21,6 +21,9 @@ public class StaticController implements HttpController {
     public boolean isValidRequest(HttpRequest request) {
         Method method = request.getMethod();
         String url = request.getUrl();
+        if (url.contains("user/list")) {
+            return false;
+        }
         return (method == Method.GET && urlToFile(url).toFile().exists());
     }
 

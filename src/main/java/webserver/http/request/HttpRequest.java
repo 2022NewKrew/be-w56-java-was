@@ -9,10 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static util.HttpRequestUtils.*;
 
@@ -25,7 +23,6 @@ public class HttpRequest {
     private final String version;
     private final HttpRequestHeader httpRequestHeader;
     private final String httpRequestBody;
-
 
     public HttpRequest(InputStream in) throws IOException {
         log.debug("New HttpRequest: InputStream {}", in);
@@ -47,20 +44,18 @@ public class HttpRequest {
 
     private HttpRequestHeader parseRequestHeader(BufferedReader br) throws IOException {
         String line = br.readLine();
-        List<Pair> pairs = new ArrayList<Pair>();
+        HashMap<String, String> pairs = new HashMap<>();
 
         while (!(line = br.readLine()).equals(Constants.EMPTY)) {
             Pair pair = parseHeader(line);
-            pairs.add(pair);
+            pairs.put(pair.getKey(), pair.getValue());
         }
         return new HttpRequestHeader(pairs);
     }
 
     private String parseRequestBody(BufferedReader br) throws IOException {
-        Optional<Pair> contentLengthHeader = this.httpRequestHeader.getHeaders().stream()
-                .filter(header -> header.getKey().equals("Content-Length"))
-                .findAny();
-       return contentLengthHeader.isEmpty() ? null : IOUtils.readData(br, Integer.parseInt(contentLengthHeader.get().getValue()));
+        String contentLengthHeader = this.httpRequestHeader.getHeaders().get("Content-Length");
+        return contentLengthHeader == null ? null : IOUtils.readData(br, Integer.parseInt(contentLengthHeader));
      }
 
     public Method getMethod() {
@@ -74,4 +69,9 @@ public class HttpRequest {
     public String getHttpRequestBody() {
         return httpRequestBody;
     }
+
+    public HttpRequestHeader getHttpRequestHeader() {
+        return httpRequestHeader;
+    }
+
 }

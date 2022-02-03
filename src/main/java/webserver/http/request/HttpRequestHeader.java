@@ -1,17 +1,15 @@
 package webserver.http.request;
 
-import java.util.List;
-
-import static util.HttpRequestUtils.Pair;
+import java.util.HashMap;
 
 public class HttpRequestHeader {
-    private final List<Pair> headers;
+    private final HashMap<String, String> headers;
 
-    public HttpRequestHeader(List<Pair> headers) {
+    public HttpRequestHeader(HashMap<String, String> headers) {
         this.headers = headers;
     }
 
-    public List<Pair> getHeaders() {
+    public HashMap<String, String> getHeaders() {
         return headers;
     }
 }
