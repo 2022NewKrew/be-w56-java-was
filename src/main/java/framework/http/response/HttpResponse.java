@@ -64,4 +64,8 @@ public class HttpResponse {
     public byte[] getBody() {
         return body;
     }
+
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.statusLine.setHttpStatus(httpStatus);
+    }
 }

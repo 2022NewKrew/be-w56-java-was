@@ -39,4 +39,8 @@ public class HttpRequest {
     public String getRequestBody(String key) {
         return requestBody.getValue(key);
     }
+
+    public String getCookie() {
+        return header.getCookie();
+    }
 }

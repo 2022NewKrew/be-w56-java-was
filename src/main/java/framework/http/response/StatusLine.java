@@ -14,4 +14,8 @@ public class StatusLine {
     public String getStatusLineText() {
         return protocol + EMPTY_SPACE + httpStatus.getStatusCode() + EMPTY_SPACE + httpStatus.getStatusText();
     }
+
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
+    }
 }

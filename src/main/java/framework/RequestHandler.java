@@ -3,6 +3,7 @@ package framework;
 import framework.http.request.HttpRequest;
 import framework.http.response.HttpResponse;
 import framework.http.response.HttpResponseHeader;
+import framework.http.response.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,10 @@ public class RequestHandler extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             HttpRequest httpRequest = new HttpRequest(bufferedReader);
 
-            HttpResponse response = ControllerHandler.run(httpRequest);
+            HttpResponse response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, new HttpResponseHeader());
+            if (InterceptorHandler.preHandlerExecute(httpRequest, response)) {
+                response = ControllerHandler.run(httpRequest);
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
             responseHeader(dos, response);
