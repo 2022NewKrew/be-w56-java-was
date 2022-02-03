@@ -19,14 +19,4 @@ public class IOUtilsTest {
 
         logger.debug("parse body : {}", IOUtils.readData(br, data.length()));
     }
-
-    @Test
-    public void temp(){
-        //System.out.println(HandlerMapper.findAllClasses("webserver.controller"));
-        ReflectionUtils.findAllMethods("webserver.controller").forEach(item -> {
-            System.out.println(item);
-            System.out.println(item.getDeclaredAnnotation(RequestMapping.class));
-            if(item.getDeclaredAnnotation(RequestMapping.class)!=null) System.out.println(item.getDeclaredAnnotation(RequestMapping.class).value());
-        });
-    }
 }
