@@ -13,12 +13,14 @@ public class Request {
     private String[] requestLine;
     private Map<String, String> header;
     private Map<String, String> queryString;
+    private Map<String, String> cookies;
 
-    public static Request of(String[] requestLine, Map<String, String> header, Map<String, String> queryString) {
+    public static Request of(String[] requestLine, Map<String, String> header, Map<String, String> queryString, Map<String, String> cookies) {
         return Request.builder()
                 .requestLine(requestLine)
                 .header(header)
                 .queryString(queryString)
+                .cookies(cookies)
                 .build();
     }
 
@@ -32,5 +34,9 @@ public class Request {
 
     public String getHttpMethod() {
         return requestLine[0];
+    }
+
+    public Map<String, String> getCookies() {
+        return cookies;
     }
 }

@@ -6,7 +6,10 @@ import model.Request;
 import model.Response;
 import org.reflections.Reflections;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -49,7 +52,7 @@ public class Router {
         return urlPath.contains(".");
     }
 
-    private static Response defaultRouting(Request request) {
-        return Response.of(request, request.getUrlPath());
+    private static Response defaultRouting(Request request) throws IOException {
+        return Response.of(request, request.getUrlPath(), Files.readAllBytes(new File("./webapp" + request.getUrlPath()).toPath()));
     }
 }

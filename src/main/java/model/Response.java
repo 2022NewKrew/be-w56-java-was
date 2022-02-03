@@ -10,12 +10,15 @@ public class Response {
     private String respContextType;
     private String filePath;
     private String cookie;
-    public static Response of(Request request, String urlPath) {
+    private byte[] body;
+
+    public static Response of(Request request, String urlPath, byte[] body) {
         String filePath = fixFilePath(urlPath);
         return Response.builder()
                 .httpMethod(request.getHttpMethod())
                 .respContextType(request.getRespContextType())
                 .filePath(filePath)
+                .body(body)
                 .cookie("")
                 .build();
     }

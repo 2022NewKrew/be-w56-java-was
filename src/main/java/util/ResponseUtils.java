@@ -5,10 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
 public class ResponseUtils {
 
@@ -18,9 +16,9 @@ public class ResponseUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static void response(OutputStream out, Response response) throws IOException {
+    public static void response(OutputStream out, Response response) {
         DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File("./webapp" + response.getFilePath()).toPath());
+        byte[] body = response.getBody();
         if (response.getHttpMethod().equals("GET")) {
             response200Header(response.getRespContextType(), dos, body.length);
             responseBody(dos, body);
