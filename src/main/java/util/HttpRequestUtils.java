@@ -1,6 +1,8 @@
 package util;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,7 @@ public class HttpRequestUtils {
 
         String[] tokens = keyValue.split(regex);
         if (tokens.length != 2) {
-            return null;
+            return new Pair(tokens[0], tokens[1]+tokens[2]);
         }
 
         return new Pair(tokens[0], tokens[1]);
@@ -106,4 +108,5 @@ public class HttpRequestUtils {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
     }
+
 }
