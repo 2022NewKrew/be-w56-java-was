@@ -14,7 +14,7 @@ import java.util.Set;
 
 public interface Controller {
 
-    static final Logger log = LoggerFactory.getLogger(Controller.class);
+    Logger log = LoggerFactory.getLogger(Controller.class);
 
     void doResponse(String methodName, DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 

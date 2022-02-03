@@ -37,12 +37,10 @@ public class PostController implements Controller {
     }
 
     public Response userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
-        byte[] body = Files.readAllBytes(new File("./webapp" + "/index.html").toPath());
         var temp = new HashMap<String, String>();
-        temp.put("Content-Length", String.valueOf(body.length));
         temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
-        temp.put("Location", "/index.html");
-        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
+        temp.put("Location", "/");
+        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
 
         userService.signUp(requestBody.getBodies());
 
@@ -50,22 +48,19 @@ public class PostController implements Controller {
     }
 
     public Response userLogin(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
-        byte[] body;
         var temp = new HashMap<String, String>();
         if (userService.signIn(requestBody.getBodies())) {
-            body = Files.readAllBytes(new File("./webapp" + "/index.html").toPath());
-            temp.put("Location", "/index.html");
+            temp.put("Location", "/");
             temp.put("Set-Cookie", "logined=true; Path=/");
-        } else {
-            body = Files.readAllBytes(new File("./webapp" + "/user/login_failed.html").toPath());
-            temp.put("Set-Cookie", "logined=false; Path=/");
+            return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
         }
 
+        byte[] body = Files.readAllBytes(new File("./webapp" + "/user/login_failed.html").toPath());
+        temp.put("Set-Cookie", "logined=false; Path=/");
         temp.put("Content-Length", String.valueOf(body.length));
         temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
-        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
 
-        return response;
+        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
     }
 
 }
