@@ -22,10 +22,10 @@ public class ApplicationContext {
 
     public HttpControllable getHandler(String uri) {
         String startSlashRemoved = uri.startsWith("/") ? uri.substring(1) : uri;
-        String parentPath = startSlashRemoved.split("/")[0];
+        String parentPath = "/" + startSlashRemoved.split("/")[0];
 
         if (!map.containsKey(parentPath)) {
-            throw new NullPointerException("Handler not found. path :" + parentPath);
+            throw new NullPointerException("Handler not found. path: " + parentPath);
         }
         return map.get(parentPath);
     }

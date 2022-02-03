@@ -15,6 +15,7 @@ public class DefaultHttpRequestBuilder {
     private String uri;
     private HttpHeader trailingHeaders;
     private HttpRequestParams params;
+    private String body;
 
     public DefaultHttpRequestBuilder(BufferedReader reader) {
         this.reader = reader;
@@ -30,7 +31,6 @@ public class DefaultHttpRequestBuilder {
         this.uri = uriParamsTokens[0];
         if (uriParamsTokens.length > 1) {
             params = new HttpRequestParams(uriParamsTokens[1]);
-            params.getParameters().get("userId");
         }
     }
 
@@ -47,16 +47,15 @@ public class DefaultHttpRequestBuilder {
         if (method != HttpMethod.POST) {
             return;
         }
-        
+
         String contentLength = trailingHeaders.get(HttpHeaders.CONTENT_LENGTH);
-        String s = IOUtils.readData(reader, Integer.parseInt(contentLength));
-        System.out.println(s);
+        body = IOUtils.readData(reader, Integer.parseInt(contentLength));
     }
 
     public HttpRequest build() throws IOException {
         initRequestLine();
         initHeaders();
         initBody();
-        return new HttpRequest(version, method, uri, params, trailingHeaders);
+        return new HttpRequest(version, method, uri, params, trailingHeaders, body);
     }
 }

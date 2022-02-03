@@ -7,15 +7,17 @@ public class HttpRequest {
     private final String uri;
     private final HttpHeader trailingHeaders;
     private final HttpRequestParams params;
+    private final String body;
 
 
     public HttpRequest(HttpVersion version, HttpMethod method, String uri, HttpRequestParams params,
-        HttpHeader headers) {
+        HttpHeader headers, String body) {
         this.version = version;
         this.method = method;
         this.uri = uri;
         this.params = params;
         this.trailingHeaders = headers;
+        this.body = body;
     }
 
     public HttpVersion getVersion() {
@@ -36,5 +38,9 @@ public class HttpRequest {
 
     public HttpRequestParams getParams() {
         return params;
+    }
+
+    public String getBody() {
+        return body;
     }
 }

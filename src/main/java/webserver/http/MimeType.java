@@ -9,7 +9,9 @@ public enum MimeType {
     CSS("css", MimeSubtype.TEXT_CSS),
     JAVASCRIPT("js", MimeSubtype.TEXT_JS),
     JSON("json", MimeSubtype.APPLICATION_JSON),
-    ICON("ico", MimeSubtype.X_ICON);
+    ICON("ico", MimeSubtype.X_ICON),
+    WOFF("woff", MimeSubtype.FONT_WOFF),
+    TTF("ttf", MimeSubtype.FONT_TTF);
 
     private static final Map<String, MimeSubtype> mimeMap;
 

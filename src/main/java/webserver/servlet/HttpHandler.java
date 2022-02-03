@@ -4,18 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.http.HttpResponseStatus;
 import webserver.servlet.method.GetHandler;
+import webserver.servlet.method.PostHandler;
 
 public class HttpHandler implements HttpHandleable {
 
     private final ApplicationContext applicationContext;
     private final Logger logger = LoggerFactory.getLogger(HttpHandler.class);
-    private final GetHandler getHandler;
+    private final HttpHandleable getHandler;
+    private final HttpHandleable postHandler;
 
     private HttpHandler() {
         this.applicationContext = ApplicationContext.getInstance();
         this.getHandler = new GetHandler(applicationContext);
+        this.postHandler = new PostHandler(applicationContext);
     }
 
     public static HttpHandler getInstance() {
@@ -31,12 +33,12 @@ public class HttpHandler implements HttpHandleable {
                     getHandler.handle(request, response);
                     break;
                 case POST:
+                    postHandler.handle(request, response);
                     break;
             }
             response.send();
         } catch (Exception e) {
-            logger.info("{}", e.getMessage());
-            response.setStatus(HttpResponseStatus.INTERNAL_ERROR);
+            logger.error(e.getMessage());
         }
     }
 

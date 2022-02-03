@@ -12,6 +12,7 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
 import webserver.servlet.HttpControllable;
+import webserver.util.HttpRequestUtils;
 
 public class SignUpController implements HttpControllable {
 
@@ -25,12 +26,13 @@ public class SignUpController implements HttpControllable {
 
     public void call(HttpRequest request, HttpResponse response) {
         if (request.getUri().startsWith(path + "/create")) {
+            logger.info("call signUp()");
             signUp(request, response);
         }
     }
 
     private void signUp(HttpRequest request, HttpResponse response) {
-        Map<String, String> params = request.getParams().getParameters();
+        Map<String, String> params = HttpRequestUtils.parseQueryString(request.getBody());
         SignUpUserDto signUpUserDto = new SignUpUserDto(
             params.get("userId"),
             params.get("password"),
@@ -41,6 +43,7 @@ public class SignUpController implements HttpControllable {
         User user = this.createUserUseCase.signUp(signUpUserDto);
         logger.info("sign up :" + user.getUserId());
         response.setStatus(HttpResponseStatus.FOUND);
-        response.headers().set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT);
+        response.headers()
+            .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + WebServerConfig.ENTRY_FILE);
     }
 }
