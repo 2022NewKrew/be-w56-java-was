@@ -1,6 +1,6 @@
 package http;
 
-import com.google.common.base.Strings;
+import java.util.Optional;
 
 public class RequestBody {
     private final Parameters parameters;
@@ -13,7 +13,7 @@ public class RequestBody {
         this.parameters = parameters;
     }
 
-    public static RequestBody create(String string) {
+    public static RequestBody create(Optional<String> string) {
         return new RequestBody(Parameters.create(string));
     }
 

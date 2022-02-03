@@ -1,8 +1,10 @@
 package http;
 
+import util.ParsingUtils;
+
 public class Header {
-    public static final String DELIMITER = ": ";
-    public static final int PARAMETER_COUNT = 2;
+    private static final String DELIMITER = ": ";
+    private static final int PARAMETER_COUNT = 2;
 
     private final FieldName fieldName;
     private final FieldValue fieldValue;
@@ -16,7 +18,8 @@ public class Header {
         return new Header(new FieldName(fieldName), new FieldValue(fieldValue));
     }
 
-    public static Header create(String[] tokens) {
+    public static Header create(String header) {
+        String[] tokens = ParsingUtils.parse(header, DELIMITER, PARAMETER_COUNT);
         return new Header(new FieldName(tokens[0]), new FieldValue(tokens[1]));
     }
 
