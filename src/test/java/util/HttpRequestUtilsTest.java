@@ -51,23 +51,4 @@ public class HttpRequestUtilsTest {
         assertThat(parameters.get("JSessionId")).isEqualTo("1234");
         assertThat(parameters.get("session")).isNull();
     }
-
-    @Test
-    public void getKeyValue() throws Exception {
-        Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
-        assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
-    }
-
-    @Test
-    public void getKeyValue_invalid() throws Exception {
-        Pair pair = HttpRequestUtils.getKeyValue("userId", "=");
-        assertThat(pair).isNull();
-    }
-
-    @Test
-    public void parseHeader() throws Exception {
-        String header = "Content-Length: 59";
-        Pair pair = HttpRequestUtils.parseHeader(header);
-        assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
-    }
 }

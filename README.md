@@ -60,3 +60,12 @@
 - Reflection 을 사용해 Exception Handler를 구현
 - Http Header 가 Request, Response 에 따라 필드가 많이 상이함
 
+## Step5
+- 요구사항
+  - 접근하고 있는 사용자가 "로그인" 상태일 경우(Cookie 값이 logined=true) 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다.
+  - 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
+- Annotation을 사용해 Interceptor를 구현
+- 기존의 Interceptor
+  - HandlerIntercpetor 를 상속받아서 구현
+  - WebMvcConfigurer에서 addInterceptors 를 통해 interceptor를 등록하고 사용
+  - addInterceptor를 할 때, 우선순위, includePathPattern, excludePathPattern 등을 등록함.

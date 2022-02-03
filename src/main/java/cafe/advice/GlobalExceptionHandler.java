@@ -1,4 +1,4 @@
-package cafe.controller.advice;
+package cafe.advice;
 
 import cafe.controller.exception.IncorrectLoginUserException;
 import framework.annotation.ControllerAdvice;
