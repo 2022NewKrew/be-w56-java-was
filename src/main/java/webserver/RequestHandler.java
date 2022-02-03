@@ -1,11 +1,11 @@
 package webserver;
 
-import exception.ServerErrorException;
+import webapp.exception.ServerErrorException;
 import lombok.extern.slf4j.Slf4j;
-import util.HttpMethod;
-import util.HttpRequest;
-import util.HttpResponse;
-import util.HttpStatus;
+import webapp.util.HttpMethod;
+import webapp.util.HttpRequest;
+import webapp.util.HttpResponse;
+import webapp.util.HttpStatus;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import static util.HttpRequestUtils.parseRequest;
+import static webapp.util.HttpRequestUtils.parseRequest;
 
 @Slf4j
 public class RequestHandler extends Thread {
