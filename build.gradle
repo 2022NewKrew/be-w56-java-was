@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.sparkjava:spark-core:2.9.3'
+    implementation 'com.sparkjava:spark-template-handlebars:2.7.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
