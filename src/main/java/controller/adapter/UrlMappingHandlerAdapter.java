@@ -6,15 +6,20 @@ import controller.annotation.RequestMapping;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.response.ModelAndView;
 import http.status.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class UrlMappingHandlerAdapter implements HandlerAdapter {
@@ -36,12 +41,12 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
         Method handlerMethod = findHandlerMethod(request);
 
         try {
-            String viewName = invokeHandlerMethod(request, response, handlerMethod);
-            if (viewName.contains("redirect:")) {
-                redirect(request, response, viewName);
+            ModelAndView mv = invokeHandlerMethod(request, response, handlerMethod);
+            if (mv.isRedirect()) {
+                redirect(request, response, mv);
                 return;
             }
-            resolve(response, viewName);
+            resolve(response, mv);
         } catch (Exception exception) {
             log.error(exception.getMessage());
         }
@@ -57,25 +62,36 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
                 .orElseThrow();
     }
 
-    private String invokeHandlerMethod(HttpRequest request, HttpResponse response, Method handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private ModelAndView invokeHandlerMethod(HttpRequest request, HttpResponse response, Method handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         RequestUrlController requestUrlController = requestUrlControllerClass.getConstructor().newInstance();
         Object methodReturn = handlerMethod.invoke(requestUrlController, request, response);
-        if (!(methodReturn instanceof String)) {
+        if (!(methodReturn instanceof ModelAndView)) {
             throw new IllegalStateException("invalid return type");
         }
-        return (String) methodReturn;
+        return (ModelAndView) methodReturn;
     }
 
-    private void redirect(HttpRequest request, HttpResponse response, String viewName) {
-        String redirectUrl = viewName.replace("redirect:", "");
+    private void redirect(HttpRequest request, HttpResponse response, ModelAndView mv) {
+        String redirectUrl = mv.getRedirectUrl();
         response.status(HttpStatus.FOUND);
         response.addHeader(HttpHeaders.LOCATION, redirectUrl);
     }
 
-    private void resolve(HttpResponse response, String viewName) throws IOException {
-        String url = GlobalConfig.WEB_ROOT + viewName + GlobalConfig.SUFFIX;
-        byte[] body = Files.readAllBytes(Paths.get(url));
-        response.body(body);
+    private void resolve(HttpResponse response, ModelAndView mv) throws IOException {
+        Path path = Paths.get(GlobalConfig.WEB_ROOT + mv.getViewName() + GlobalConfig.SUFFIX);
+        String html = Files.readString(path);
+        if (mv.hasModel()) {
+            Pattern pattern = Pattern.compile("\\{\\{(\\w+)\\}\\}");
+            Matcher matcher = pattern.matcher(html);
+            StringBuilder sb = new StringBuilder();
+            while (matcher.find()) {
+                String key = matcher.group(1);
+                matcher.appendReplacement(sb, mv.getAttr(key));
+            }
+            matcher.appendTail(sb);
+            html = sb.toString();
+        }
+        response.body(html.getBytes(StandardCharsets.UTF_8));
         response.addHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
     }
 }

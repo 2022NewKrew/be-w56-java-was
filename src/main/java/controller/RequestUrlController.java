@@ -4,6 +4,8 @@ import controller.annotation.RequestMapping;
 import db.DataBase;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.response.Model;
+import http.response.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 
@@ -11,16 +13,16 @@ import model.User;
 public class RequestUrlController {
 
     @RequestMapping("/")
-    public String index(HttpRequest request, HttpResponse response) {
+    public ModelAndView index(HttpRequest request, HttpResponse response) {
         String logined = request.getCookie("logined");
         if (logined == null) {
-            return "/index";
+            return new ModelAndView("/index");
         }
-        return "redirect:/users";
+        return new ModelAndView("redirect:/users");
     }
 
     @RequestMapping(value = "/create", method = "POST")
-    public String createUser(HttpRequest request, HttpResponse response) {
+    public ModelAndView createUser(HttpRequest request, HttpResponse response) {
         String userId = request.getParam("userId");
         String password = request.getParam("password");
         String name = request.getParam("name");
@@ -29,29 +31,33 @@ public class RequestUrlController {
         DataBase.addUser(user);
 
         log.info("user created = {}", user);
-        return "redirect:/";
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(value = "/login", method = "POST")
-    public String login(HttpRequest request, HttpResponse response) {
+    public ModelAndView login(HttpRequest request, HttpResponse response) {
         String userId = request.getParam("userId");
         String password = request.getParam("password");
         User user = DataBase.findUserById(userId);
         if (user == null || !user.getPassword().equals(password)) {
             response.addCookie("logined", "false");
-            return "redirect:/login-failed";
+            return new ModelAndView("redirect:/login-failed");
         }
         response.addCookie("logined", "true");
-        return "redirect:/";
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping("/login-failed")
-    public String loginFailed(HttpRequest request, HttpResponse response) {
-        return "/user/login_failed";
+    public ModelAndView loginFailed(HttpRequest request, HttpResponse response) {
+        return new ModelAndView("/user/login_failed");
     }
 
     @RequestMapping("/users")
-    public String showUserList(HttpRequest request, HttpResponse response) {
-        return "/user/list";
+    public ModelAndView showUserList(HttpRequest request, HttpResponse response) {
+        Model model = new Model();
+        model.addAttribute("userId", "carrot");
+        model.addAttribute("name", "당근");
+        model.addAttribute("email", "kain6245@gmail.com");
+        return new ModelAndView("/user/list", model);
     }
 }
