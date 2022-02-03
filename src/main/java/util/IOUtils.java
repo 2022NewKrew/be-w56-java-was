@@ -2,6 +2,7 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class IOUtils {
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
-        return String.copyValueOf(body);
+        return URLDecoder.decode(String.copyValueOf(body), "UTF-8");
     }
 
     public static Map<String, String> readRequest(BufferedReader br) throws IOException {
