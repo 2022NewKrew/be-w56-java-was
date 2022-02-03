@@ -120,10 +120,10 @@ CRLF
 
 ### message
 
-- [ ] request, response 으로 나뉜다.
-- [ ] start-line, header-field, empty-line, message-body로 구성되어있다.
-- [ ] start-line, header-field는 필수 이다.
-- [ ] message-body는 null 일 수 있다.
+- [x] request, response 으로 나뉜다.
+- [x] start-line, header-field, empty-line, message-body로 구성되어있다.
+- [x] start-line, header-field는 필수 이다.
+- [x] message-body는 null 일 수 있다.
 
 ### start line
 
@@ -149,11 +149,6 @@ CRLF
 - [x] null 일 수 있다.
 
 ## 고민 / 수정 사항
-- 인터페이스를 만드는 것이 좋을까?
-- content-type을 고정했는데 css가 왜 안깨질까?
-- postman 으로 호출할 때는 안보인다.
-- requestbody는 header의 content length 만큼 읽어야한다! post 요청 진행할때 수정하기
-- Request, Response가 dto 역할이지 않을까? 도메인인가???
 - 왜 서블릿은 싱글톤이여야 할까?
 - 지금은 웹서버에서 스레드를 만드는데 보통 웹 컨테이너(서블릿 컨테이너)에서 만든다고 하는데 이게 이거가 맞을까...?
 
