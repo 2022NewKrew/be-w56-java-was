@@ -33,7 +33,7 @@ public class AuthController implements HttpController {
         User findUser = userService.findUser(new UserLoginDto(queries.get("userId"), queries.get("password")));
         switch (request.getMethod()) {
             case POST:
-                if (findUser != null && !Objects.equals(findUser.getPassword(), queries.get("password"))) {
+                if (findUser == null || !Objects.equals(findUser.getPassword(), queries.get("password"))) {
                     log.info("Login Failed due to password tried login user : {}", findUser);
                     return new HttpResponse.Builder(out)
                             .setHttpStatus(HttpStatus._302)
@@ -41,7 +41,7 @@ public class AuthController implements HttpController {
                             .setRedirect("/user/login_failed.html")
                             .build();
                 }
-                if (findUser != null && Objects.equals(findUser.getPassword(), queries.get("password"))) {
+                if (Objects.equals(findUser.getPassword(), queries.get("password"))) {
                     log.info("Login Success login user : {}", findUser);
                     return new HttpResponse.Builder(out)
                             .setHttpStatus(HttpStatus._302)
