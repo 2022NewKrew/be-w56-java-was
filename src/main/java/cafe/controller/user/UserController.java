@@ -35,7 +35,7 @@ public class UserController {
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setLocation("/index.html");
 
-        return new HttpResponse(HttpStatus.FOUND, responseHeader, "/index.html");
+        return new HttpResponse(HttpStatus.FOUND, responseHeader);
     }
 
     @RequestMapping(value = "/user/login", method = "POST")
@@ -51,7 +51,7 @@ public class UserController {
         responseHeader.setCookie("logined=true; Path=/");
         responseHeader.setLocation("/index.html");
 
-        return new HttpResponse(HttpStatus.FOUND, responseHeader, "/index.html");
+        return new HttpResponse(HttpStatus.FOUND, responseHeader);
     }
 
     @RequestMapping(value = "/user/login.html", method = "GET")
