@@ -1,4 +1,4 @@
-package webserver.web;
+package webserver.web.response;
 
 public enum HttpStatus {
     OK("200 OK"), NOT_FOUND("404 NOT FOUND"), REDIRECT("302 FOUND");

@@ -15,7 +15,6 @@ public class Method {
 
     public static Method getMethod(String startLine) {
         String[] split = startLine.split(" ");
-        log.debug("method : {}", split[0]);
         return new Method(split[0]);
     }
 

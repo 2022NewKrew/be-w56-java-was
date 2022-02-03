@@ -1,9 +1,14 @@
 plugins {
     id 'java'
 }
-
 group 'org.example'
 version '1.0-SNAPSHOT'
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-parameters"
+    }
+}
 
 repositories {
     mavenCentral()
@@ -29,7 +34,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.tika/tika-core
     implementation group: 'org.apache.tika', name: 'tika-core', version: '2.2.1'
-    // new Tika().detect(file);
+
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
 }
 
 test {

@@ -1,14 +1,11 @@
 package webserver.controller;
 
-import webserver.Response;
+import webserver.web.Parameters;
 import webserver.web.request.Request;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 
 public interface Controller {
 
-    boolean isSupply(Request request);
-
-    Response handle(Request request, OutputStream out) throws IOException;
+    Object handle(Request request, Parameters requiredData) throws InvocationTargetException, IllegalAccessException;
 }

@@ -1,7 +1,7 @@
 package model;
 
+import error.ErrorMessages;
 import lombok.Getter;
-import util.ErrorMessages;
 
 import java.util.Objects;
 

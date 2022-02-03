@@ -1,31 +1,23 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.controller.Controller;
-import webserver.web.HttpStatus;
 import webserver.web.request.Request;
+import webserver.web.response.Response;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final RequestMapper mapper;
+    private final DispatcherServlet dispatcherServlet;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        mapper = RequestMapper.getInstance();
-        log.debug("mapper 연결 : {}", mapper);
+        this.dispatcherServlet = DispatcherServlet.getInstance();
     }
 
     public void run() {
@@ -34,19 +26,10 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             Request request = Request.getRequest(in);
-            Response response = handle(mapper.mapping(request), request, out);
-            //log.debug("{} 결과 : {}", request.getUrl().getUrl(), response.getStatus().valueOf());
-
-            response.send();
+            Response response = dispatcherServlet.serve(request);
+            response.send(out);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("{} : error in Request Handler", e.getMessage());
         }
-    }
-
-    private Response handle(Optional<Controller> handler, Request request, OutputStream out) throws IOException{
-        if(handler.isEmpty()) {
-            return new Response.ResponseBuilder(out).setStatus(HttpStatus.NOT_FOUND).build();
-        }
-        return handler.get().handle(request, out);
     }
 }

@@ -1,31 +1,47 @@
 package webserver;
 
+import annotation.GetMapping;
+import annotation.PostMapping;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
 import webserver.controller.Controller;
-import webserver.controller.StaticController;
-import webserver.controller.UserController;
 import webserver.web.request.Request;
 
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class RequestMapper {
 
-    private final static List<Controller> controllers = new ArrayList<>();
-    private static RequestMapper requestMapper = new RequestMapper();
+    private static final RequestMapper requestMapper = new RequestMapper();
+    private final Map<String, Controller> handlers = new HashMap<>();
 
     private RequestMapper() {
-        controllers.add(new StaticController());
-        controllers.add(new UserController());
-
-        log.debug("{} created : {}", this.getClass(), this);
+        Reflections reflections = new Reflections("webserver", new MethodAnnotationsScanner());
+        reflections.getMethodsAnnotatedWith(GetMapping.class).forEach(method -> {
+            try {
+                handlers.put(method.getAnnotation(GetMapping.class).url(), (Controller) method.getDeclaringClass().getMethod("getInstance").invoke(null));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        });
+        reflections.getMethodsAnnotatedWith(PostMapping.class).forEach(method -> {
+            try {
+                handlers.put(method.getAnnotation(PostMapping.class).url(), (Controller) method.getDeclaringClass().getMethod("getInstance").invoke(null));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static RequestMapper getInstance() {
         return requestMapper;
     }
 
-    public Optional<Controller> mapping(Request request) {
-        return controllers.stream().filter(controller -> controller.isSupply(request)).findAny();
+    public Controller mapping(Request request) {
+        log.debug("request URL : {} {}", request.getMethod().toString(), request.getUrl().getUrl());
+        return handlers.get(request.getUrl().getUrl());
     }
 }
