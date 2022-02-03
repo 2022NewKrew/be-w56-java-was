@@ -19,9 +19,12 @@ public class ResourceRequestHandler extends Handler {
     public ResourceRequestHandler() {}
 
     @Override
-    public String handle(HttpRequest req, HttpResponse res) {
+    public String handle(HttpRequest req, HttpResponse res) throws IOException {
+        byte[] body = Files.readAllBytes(new File("./webapp" + req.getPath()).toPath());
+        res.addHeader("Content-Type", MIME.getMediaType(req.getPath()));
+        res.setBody(body);
         res.setStatusCode(200);
-        return req.getPath();
+        return null;
     }
 
     @Override

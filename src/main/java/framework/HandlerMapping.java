@@ -13,9 +13,7 @@ public class HandlerMapping {
     // 쓸 수 있는 handler 모음
     private List<Handler> handlerMap = new ArrayList<>();
 
-
-    public HandlerMapping() {
-    }
+    public HandlerMapping() {}
 
     public void addHandler(Handler handler) {
         handlerMap.add(handler);

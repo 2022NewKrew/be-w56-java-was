@@ -3,16 +3,6 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
@@ -25,6 +15,7 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        // 비동기 EventLoop 방식 서버 start
         EventLoop eventLoop = new EventLoop();
         eventLoop.startLoop(port);
 

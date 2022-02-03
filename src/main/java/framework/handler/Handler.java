@@ -3,8 +3,11 @@ package framework.handler;
 import util.HttpRequest;
 import util.HttpResponse;
 
-public abstract class Handler extends Thread{
+import java.io.IOException;
 
-    abstract public String handle(HttpRequest httpRequest, HttpResponse httpResponse);
+public abstract class Handler {
+
+    abstract public String handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException;
     abstract public boolean isSupport(HttpRequest httpRequest);
+
 }

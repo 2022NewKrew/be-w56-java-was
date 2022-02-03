@@ -11,7 +11,9 @@ import java.nio.channels.SocketChannel;
 
 public class EventService {
 
+    // data buffer size
     private int DATA_SIZE = 2000000;
+    // handler 를 매핑하고 HttpResponse 를 생성
     private final RequestDispatcher requestDispatcher = new RequestDispatcher(ServerConfig.handlerMapping, ServerConfig.viewResolver);
 
     public void doService(SocketChannel clientChannel) throws IOException {
@@ -25,15 +27,18 @@ public class EventService {
             byte[] bytes = new byte[buffer.limit()];
             buffer.get(bytes);
             String rawRequest = new String(bytes);
+            // buffer 에서 요청을 읽어들인 다음 HttpRequest 와 HttpResponse 를 생성
             req = new HttpRequest(rawRequest);
             res = new HttpResponse(req);
 
             requestDispatcher.doDispatch(req, res);
         } finally {
+            // HttpResponse 를 byte로 변환하고 write
             ByteBuffer writeBuffer = ByteBuffer.wrap(res.toByte());
             while (writeBuffer.hasRemaining()) {
                 clientChannel.write(writeBuffer);
             }
+            // SocketChannel 을 닫는다
             clientChannel.close();
         }
 

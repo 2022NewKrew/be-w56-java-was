@@ -71,8 +71,8 @@ public class HttpResponse {
         sb.append("Content-Length: " + body.length + "\r\n");
         headers.entrySet().stream().forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\r\n"));
         sb.append("\r\n");
-        log.info("Request Path: {}, Method: {}", httpRequest.getPath(), httpRequest.getMethod());
-        log.info(sb.toString());
+//        log.info("Request Path: {}, Method: {}", httpRequest.getPath(), httpRequest.getMethod());
+//        log.info(sb.toString());
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 

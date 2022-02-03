@@ -21,7 +21,7 @@ public class MIME {
 
     public static boolean isSupportExtension(String path) {
         return mimeMappings.keySet().stream()
-                .anyMatch(key -> path.endsWith(key));
+                .anyMatch(key -> path.endsWith("."+ key));
     }
 
     public static String getMediaType(String file) {
