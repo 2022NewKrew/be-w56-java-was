@@ -7,6 +7,8 @@ import java.util.Set;
 
 public class Headers {
 
+    public static final Headers EMPTY = new Headers(Collections.emptyMap());
+
     private final Map<String, String> map;
 
     public Headers(Map<String, String> map) {
