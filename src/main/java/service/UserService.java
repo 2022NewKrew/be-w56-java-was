@@ -1,10 +1,14 @@
 package service;
 
+import dto.AuthDto;
 import dto.UserDto;
+import exception.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import repository.UserRepository;
+
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,17 +26,33 @@ public class UserService {
     }
 
     public void register(UserDto dto) {
-        User entity = dtoToEntity(dto);
-        userRepository.save(entity);
+        if (dto.getUserId() == null || dto.getPassword() == null || dto.getName() == null || dto.getEmail() == null) {
+            throw new UserException();
+        }
+        userRepository.save(dtoToEntity(dto));
+    }
+
+    public AuthDto login(UserDto dto) {
+        User user = userRepository.findById(dtoToEntity(dto).getUserId())
+                .filter(entity -> entity.getPassword().equals(dto.getPassword()))
+                .orElseThrow(UserException::new);
+        return entityToAuthDto(user);
     }
 
     public UserDto getUserById(UserDto dto) {
-        return entityToDto(userRepository.findById(dto.getUserId()));
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(UserException::new);
+        return entityToDto(user);
     }
 
     public void update(UserDto dto) {
-        User entity = dtoToEntity(dto);
-        userRepository.update(entity);
+        User user = userRepository.findById(dtoToEntity(dto).getUserId())
+                .filter(entity -> entity.getPassword().equals(dto.getPassword()))
+                .orElseThrow(UserException::new);
+        user.changePassword(dto.getPassword());
+        user.changeName(dto.getName());
+        user.changeEmail(dto.getEmail());
+        userRepository.update(user);
     }
 
     private User dtoToEntity(UserDto dto) {
@@ -48,6 +68,15 @@ public class UserService {
         return UserDto.builder()
                 .userId(entity.getUserId())
                 .password(entity.getPassword())
+                .name(entity.getName())
+                .email(entity.getEmail())
+                .build();
+    }
+
+    private AuthDto entityToAuthDto(User entity) {
+        System.out.println(entity);
+        return AuthDto.builder()
+                .userId(entity.getUserId())
                 .name(entity.getName())
                 .email(entity.getEmail())
                 .build();

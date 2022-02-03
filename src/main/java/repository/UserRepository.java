@@ -2,6 +2,7 @@ package repository;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Maps;
 
@@ -32,8 +33,9 @@ public class UserRepository {
         users.put(user.getUserId(), user);
     }
 
-    public User findById(String userId) {
-        return users.get(userId);
+    public Optional<User> findById(String userId) {
+        User entity = users.get(userId);
+        return Optional.ofNullable(entity);
     }
 
     public Collection<User> findAll() {

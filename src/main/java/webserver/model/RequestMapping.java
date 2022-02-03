@@ -1,8 +1,6 @@
-package webserver;
+package webserver.model;
 
 import lombok.extern.slf4j.Slf4j;
-import util.HttpRequestUtils;
-import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
 import webserver.exception.ControllerMethodNotFoundException;
 import webserver.exception.InvalidRequestMethodException;
@@ -13,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class HandlerMapping {
-    
-    private HandlerMapping() {
+public class RequestMapping {
+
+    private RequestMapping() {
     }
 
     private static Map<String, Method> getRequestMap;
@@ -34,8 +32,8 @@ public class HandlerMapping {
         Method[] methods = clazz.getDeclaredMethods();
 
         for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (method.isAnnotationPresent(webserver.annotation.RequestMapping.class)) {
+                webserver.annotation.RequestMapping requestMapping = method.getAnnotation(webserver.annotation.RequestMapping.class);
                 RequestMethod requestMethod = requestMapping.method();
                 String[] paths = requestMapping.value();
                 for (String path : paths) {
