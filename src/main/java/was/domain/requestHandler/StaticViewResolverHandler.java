@@ -3,6 +3,8 @@ package was.domain.requestHandler;
 import di.annotation.Bean;
 import was.domain.http.HttpRequest;
 import was.domain.http.HttpResponse;
+import was.domain.requestHandler.requestHandlerChain.RequestHandlerChain;
+import was.meta.HttpStatus;
 import was.util.StaticResourceReader;
 
 import java.io.IOException;
@@ -17,12 +19,15 @@ public class StaticViewResolverHandler implements RequestHandler {
     }
 
     @Override
-    public void handle(HttpRequest req, HttpResponse res) throws IOException {
+    public void handle(HttpRequest req, HttpResponse res, RequestHandlerChain requestHandlerChain) throws IOException {
         if (res.hasNotViewPath()) {
+            requestHandlerChain.handle(req, res);
             return;
         }
 
-        final byte[] body = staticResourceReader.read(res.getViewPath());
-        res.setBody(body);
+        res.setStatus(HttpStatus.OK);
+        res.setBody(staticResourceReader.read(res.getViewPath()));
+
+        requestHandlerChain.handle(req, res);
     }
 }

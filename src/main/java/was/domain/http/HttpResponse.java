@@ -3,6 +3,7 @@ package was.domain.http;
 import was.meta.HttpHeaders;
 import was.meta.HttpStatus;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,10 @@ public class HttpResponse {
 
     public static HttpResponse of(HttpRequest httpRequest) {
         return new HttpResponse(httpRequest.getVersion(), null, null);
+    }
+
+    public String getContentType() {
+        return headers.get(HttpHeaders.CONTENT_TYPE);
     }
 
     public void addHeader(String key, String value) {
@@ -71,6 +76,7 @@ public class HttpResponse {
 
     public byte[] toHttp() {
         final StringBuilder sb = new StringBuilder();
+
         sb.append(version)
                 .append(' ')
                 .append(status.STATUS)
@@ -83,14 +89,14 @@ public class HttpResponse {
 
         final byte[] headerLine = sb.toString().getBytes(StandardCharsets.UTF_8);
 
-        if (body != null) {
-            final byte[] result = new byte[headerLine.length + body.length];
-            System.arraycopy(headerLine, 0, result, 0, headerLine.length);
-            System.arraycopy(body, 0, result, headerLine.length, body.length);
-
-            return result;
+        if (body == null) {
+            return headerLine;
         }
 
-        return headerLine;
+        final byte[] result = new byte[headerLine.length + body.length];
+        System.arraycopy(headerLine, 0, result, 0, headerLine.length);
+        System.arraycopy(body, 0, result, headerLine.length, body.length);
+
+        return result;
     }
 }

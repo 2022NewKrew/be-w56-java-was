@@ -13,7 +13,7 @@ public class User {
         return name;
     }
 
-    public String getPassword() {
-        return password;
+    public boolean validate(String password) {
+        return this.password.equals(password);
     }
 }

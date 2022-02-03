@@ -1,4 +1,4 @@
-package was.meta;
+package application.meta;
 
 public class UrlPath {
     public static final String HOME = "/";

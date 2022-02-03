@@ -3,7 +3,8 @@ package was.meta;
 public enum HttpStatus {
     OK(200, "OK"),
     FOUND(302, "Found"),
-    FORBIDDEN(403, "Forbidden");
+    FORBIDDEN(403, "Forbidden"),
+    INTERNAL_SEVER_ERROR(500, "Internal Server Error");
 
     public final int STATUS;
     public final String MESSAGE;
