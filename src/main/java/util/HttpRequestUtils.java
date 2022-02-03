@@ -2,7 +2,7 @@ package util;
 
 import http.MediaType;
 import http.request.HttpHeaders;
-import http.request.Path;
+import http.request.URI;
 import http.request.Queries;
 import http.request.RequestBody;
 import http.request.RequestLine;
@@ -32,18 +32,18 @@ public class HttpRequestUtils {
     public static RequestLine parseRequestLine(String requestLine) {
         String[] tokens = requestLine.split(REQUEST_LINE_DELIMITER);
         HttpMethod method = parseHttpMethod(tokens[0]);
-        Path path = parsePath(tokens[1]);
+        String path = parsePath(tokens[1]);
         Queries queries = parseQueries(tokens[1]);
 
-        return new RequestLine(method, path, queries);
+        return new RequestLine(method, new URI(path, queries));
     }
 
     public static HttpMethod parseHttpMethod(String methodToken) {
         return HttpMethod.valueOf(methodToken);
     }
 
-    public static Path parsePath(String targetToken) {
-        return new Path(targetToken.split(PATH_QUERY_STRING_DELIMITER)[0]);
+    public static String parsePath(String targetToken) {
+        return targetToken.split(PATH_QUERY_STRING_DELIMITER)[0];
     }
 
     /**

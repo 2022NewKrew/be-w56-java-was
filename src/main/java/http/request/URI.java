@@ -1,21 +1,23 @@
 package http.request;
 
-import exception.InValidPathException;
+import exception.InvalidPathException;
 
-public class Path {
+public class URI {
 
     private static final String EXTENSION_DELIMITER = ".";
 
     private final String path;
+    private final Queries queries;
 
-    public Path(String path) {
-        validate(path);
+    public URI(String path, Queries queries) {
+        validatePath(path);
         this.path = path;
+        this.queries = queries;
     }
 
-    private void validate(String path) {
+    private void validatePath(String path) {
         if (path == null) {
-            throw new InValidPathException("null");
+            throw new InvalidPathException("null");
         }
     }
 
@@ -27,5 +29,9 @@ public class Path {
 
     public String getPath() {
         return path;
+    }
+
+    public Queries getQueries() {
+        return queries;
     }
 }

@@ -1,11 +1,11 @@
 package http;
 
 import exception.ContentTypeNotFoundException;
-import http.request.Path;
+import http.request.URI;
 import java.util.Arrays;
 
 public enum MediaType {
-    ALL("*", "*"),
+    ALL("", "*/*"),
     AUDIO_AAC("aac", "audio/aac"),
     APPLICATION_X_ABIWORD("abw", "application/x-abiword"),
     APPLICATION_X_FREEARC("arc", "application/x-freearc"),
@@ -92,8 +92,8 @@ public enum MediaType {
                 .orElseThrow(ContentTypeNotFoundException::new);
     }
 
-    public static MediaType getMediaType(Path path) {
-        String extension = path.getFileExtension();
+    public static MediaType getMediaType(URI uri) {
+        String extension = uri.getFileExtension();
 
         return Arrays.stream(MediaType.values())
                 .filter(value -> extension.equals(value.extension))

@@ -30,9 +30,8 @@ public class StaticController extends AbstractController {
     @Override
     protected HttpResponse doGet(HttpRequest request) throws IOException {
         RequestLine requestLine = request.getRequestLine();
-        // TODO: requestLine.getPath().getPath() 리팩토링
-        Path path = new File(PATHNAME + requestLine.getPath().getPath()).toPath();
-        MediaType contentType = MediaType.getMediaType(requestLine.getPath());
+        Path path = new File(PATHNAME + requestLine.getUri().getPath()).toPath();
+        MediaType contentType = MediaType.getMediaType(requestLine.getUri());
         return HttpResponse.ok(contentType, Files.readAllBytes(path));
     }
 

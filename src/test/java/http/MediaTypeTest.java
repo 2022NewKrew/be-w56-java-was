@@ -2,25 +2,27 @@ package http;
 
 import static org.assertj.core.api.Assertions.*;
 
-import http.request.Path;
+import http.request.Queries;
+import http.request.URI;
+import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 
 class MediaTypeTest {
 
     @Test
     void getMediaType() {
-        Path path = new Path("/css/styles.css");
+        URI uri = new URI("/css/styles.css", new Queries(new HashMap<>()));
 
-        MediaType result = MediaType.getMediaType(path);
+        MediaType result = MediaType.getMediaType(uri);
 
-        assertThat(result.getType()).isEqualTo("text/html");
+        assertThat(result.getType()).isEqualTo("text/css");
     }
 
     @Test
     void getMediaType_default() {
-        Path path = new Path("/users/create");
+        URI uri = new URI("/users/create", new Queries(new HashMap<>()));
 
-        MediaType result = MediaType.getMediaType(path);
+        MediaType result = MediaType.getMediaType(uri);
 
         assertThat(result.getType()).isEqualTo("*/*");
     }
