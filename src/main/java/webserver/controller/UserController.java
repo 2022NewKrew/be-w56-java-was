@@ -17,18 +17,17 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 @Slf4j
-public class UserController implements Controller {
+@annotation.Controller
+public class UserController extends BaseController {
 
-    private final Map<String, Method> supplyUrl = new HashMap<>();
     private final UserService userService = UserService.getInstance();
+    private static final UserController userController = new UserController();
 
-    public UserController() {
-        try {
-            supplyUrl.put("GET /user/create", this.getClass().getMethod("getJoinUser", Request.class));
-            supplyUrl.put("POST /user/create", this.getClass().getMethod("postJoinUser", Request.class));
-        } catch (NoSuchMethodException e) {
-            log.error("{}", e.getMessage());
-        }
+    private UserController() {
+    }
+
+    public static UserController getInstance() {
+        return userController;
     }
 
     @Override
