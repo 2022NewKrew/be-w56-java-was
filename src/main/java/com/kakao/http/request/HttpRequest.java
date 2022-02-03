@@ -10,10 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 public class HttpRequest {
@@ -21,7 +18,8 @@ public class HttpRequest {
     private final Url url;
     private final String version;
     private final List<HttpHeader> headers;
-    private final String body;
+    private final String rawBody;
+    private final Map<String, String> bodyMap;
 
     public HttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -30,7 +28,23 @@ public class HttpRequest {
         this.url = new Url(requestLine.getUrl());
         this.version = requestLine.getVersion();
         this.headers = parseHeaderList(br);
-        this.body = parseRequestBody(br);
+        this.rawBody = parseRequestBody(br);
+        this.bodyMap = parseBodyMap(this.rawBody);
+    }
+
+    public String findUrlParam(String field) {
+        return this.url.getQueryMap().get(field);
+    }
+
+    public String findBodyParam(String key) {
+        return this.bodyMap.get(key);
+    }
+
+    private Map<String, String> parseBodyMap(String rawBody) {
+        if (rawBody == null || rawBody.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return HttpRequestUtils.parseQueryString(rawBody);
     }
 
     private String parseRequestBody(BufferedReader br) throws IOException {

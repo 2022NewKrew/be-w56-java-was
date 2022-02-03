@@ -1,11 +1,14 @@
 package com.kakao.webserver;
 
 import com.kakao.http.request.HttpRequest;
+import com.kakao.http.request.HttpRoute;
+import com.kakao.http.response.HttpResponse;
 import com.kakao.util.ReflectionUtils;
 import com.kakao.webserver.controller.HttpController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -19,7 +22,7 @@ public class RequestHandler implements Runnable {
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerList = ReflectionUtils.getInstancesImplementedInterface(HttpController.class);
+        this.controllerList = ReflectionUtils.getInstancesImplementedInterface(HttpController.class);
     }
 
     @Override
@@ -37,9 +40,13 @@ public class RequestHandler implements Runnable {
     }
 
     private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
+        HttpRoute httpRoute = new HttpRoute(httpRequest.getMethod(), httpRequest.getUrl().getPath());
         for (HttpController controller : controllerList) {
-            if (controller.isValidRequest(httpRequest.getMethod(), httpRequest.getUrl().getPath())) {
-                controller.handleRequest(httpRequest, out);
+            if (controller.isValidRoute(httpRoute)) {
+                HttpResponse httpResponse = controller.handleRequest(httpRequest);
+                DataOutputStream dos = new DataOutputStream(out);
+                dos.writeBytes(httpResponse.toString());
+                dos.write(httpResponse.getBody());
                 return;
             }
         }
