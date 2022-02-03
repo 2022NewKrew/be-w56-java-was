@@ -2,13 +2,14 @@ package application.repository;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.collect.Maps;
 
 import application.model.User;
 
 public class DataBase {
-    private static Map<String, User> users = Maps.newHashMap();
+    private static ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
     public static DataBase getInstance(){
         return LazyHolder.instance;
