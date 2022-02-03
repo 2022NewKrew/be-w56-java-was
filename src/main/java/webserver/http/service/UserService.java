@@ -5,6 +5,9 @@ import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import entity.User;
 
+import java.util.Collection;
+import java.util.List;
+
 public class UserService {
 
     public void join(UserSignUpDto userSignUpDto) {
@@ -22,4 +25,7 @@ public class UserService {
         return DataBase.findUserById(userLoginDto.getUserId());
     }
 
+    public Collection<User> findUsers() {
+        return DataBase.findAll();
+    }
 }
