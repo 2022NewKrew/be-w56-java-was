@@ -21,7 +21,7 @@ public class RequestHandler implements Runnable {
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerList = ReflectionUtils.getInstancesImplementedInterface(HttpController.class);
+        this.controllerList = ReflectionUtils.getInstancesImplementedInterface(HttpController.class);
     }
 
     @Override
