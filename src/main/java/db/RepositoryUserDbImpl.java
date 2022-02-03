@@ -8,7 +8,7 @@ import java.util.*;
 
 import static query.UserQuery.*;
 
-public class RepositoryDbImpl {
+public class RepositoryUserDbImpl {
         private static String url = "jdbc:mysql://muscle-db.ay1.krane.9rum.cc:3306/test";
         private static String userName = "root";
         private static String password = "1234";

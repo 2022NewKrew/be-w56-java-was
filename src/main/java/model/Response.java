@@ -13,17 +13,13 @@ public class Response {
     private byte[] body;
 
     public static Response of(Request request, String urlPath, byte[] body) {
-        String filePath = fixFilePath(urlPath);
         return Response.builder()
                 .httpMethod(request.getHttpMethod())
                 .respContextType(request.getRespContextType())
-                .filePath(filePath)
+                .filePath(urlPath)
                 .body(body)
                 .cookie("")
                 .build();
-    }
-    private static String fixFilePath(String urlPath) {
-        return urlPath.contains(".") ? urlPath : urlPath + ".html";
     }
 
     public void setCookie(String cookie) {

@@ -1,13 +1,12 @@
 package service;
 
-import db.RepositoryDbImpl;
-import db.RepositoryImpl;
+import db.RepositoryUserDbImpl;
 import model.Request;
 import model.User;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ public class UserService {
     }
     
     public static void save(Request request) throws SQLException {
-        RepositoryDbImpl.save(request);
+        RepositoryUserDbImpl.save(request);
     }
 
     public static boolean isRightLogin(Request request) throws SQLException {
@@ -26,7 +25,7 @@ public class UserService {
                 .userId(queryString.get("userId"))
                 .password(queryString.get("password"))
                 .build();
-        User findUser = RepositoryDbImpl.findUserById(queryString.get("userId"));
+        User findUser = RepositoryUserDbImpl.findUserById(queryString.get("userId"));
 
         return newUser.equals(findUser);
     }
@@ -35,27 +34,12 @@ public class UserService {
         return request.getCookies().get("logined").equals("true");
     }
 
-    public static byte[] userListToFile() throws IOException, SQLException {
-        List<User> userList = RepositoryDbImpl.findAll();
+    public static byte[] userListToByte() throws IOException, SQLException {
+        byte[] htmlBytes = Files.readAllBytes(new File("./webapp" + "/user/list.html").toPath());
+        String htmlString = new String(htmlBytes);
+
+        List<User> userList = RepositoryUserDbImpl.findAll();
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<head>");
-        sb.append("<style>\n" +
-                "  table {\n" +
-                "    width: 80%;\n" +
-                "    border: 1px solid #444444;\n" +
-                "    border-collapse: collapse;\n" +
-                "  }\n" +
-                "  th, td {\n" +
-                "    border: 1px solid #444444;\n" +
-                "    padding: 10px;\n" +
-                "  }\n" +
-                "</style>");
-        sb.append("</head>");
-        sb.append("<table>");
-        sb.append("<th> userId </th>");
-        sb.append("<th> name </th>");
-        sb.append("<th> email </th>");
 
         for (User user : userList) {
             sb.append("<tr>");
@@ -64,9 +48,8 @@ public class UserService {
             sb.append("<td> " + user.getEmail() + " </td>");
             sb.append("</tr>");
         }
-        sb.append("</table>");
-        sb.append("</body>");
-        sb.append("</html>");
-        return String.valueOf(sb).getBytes();
+
+        htmlString = htmlString.replace("{{userList}}", sb.toString());
+        return htmlString.getBytes();
     }
 }

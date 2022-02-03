@@ -31,7 +31,7 @@ public class UserController {
     @RequestMapping(value = "/user/create", requestMethod = "POST")
     public static Response createRouting(Request request) throws SQLException, IOException {
         UserService.save(request);
-        return Response.of(request, "/user/list.html",Files.readAllBytes(new File("./webapp" + "/user/list.html").toPath()));
+        return Response.of(request, "/user/list",Files.readAllBytes(new File("./webapp" + "/user/list.html").toPath()));
     }
 
     @RequestMapping(value = "/user", requestMethod = "GET")
@@ -43,7 +43,7 @@ public class UserController {
     @RequestMapping(value = "/user/list", requestMethod = "GET")
     public static Response listRouting(Request request) throws IOException, SQLException {
         if(UserService.isLoginState(request)) {
-            byte[] body = UserService.userListToFile();
+            byte[] body = UserService.userListToByte();
             return Response.of(request, "/user/list.html", body);
         }
         return Response.of(request, "/user/login.html", Files.readAllBytes(new File("./webapp" + "/user/login.html").toPath()));
