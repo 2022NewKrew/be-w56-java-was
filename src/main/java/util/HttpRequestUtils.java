@@ -23,8 +23,8 @@ public class HttpRequestUtils {
      *            값은 name1=value1; name2=value2 형식임
      * @return
      */
-    public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, ";");
+    public static String[] parseCookies(String cookies) {
+        return cookies.split("=");
     }
 
     private static Map<String, String> parseValues(String values, String separator) {

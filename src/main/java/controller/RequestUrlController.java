@@ -12,7 +12,11 @@ public class RequestUrlController {
 
     @RequestMapping("/")
     public String index(HttpRequest request, HttpResponse response) {
-        return "/index";
+        String logined = request.getCookie("logined");
+        if (logined == null) {
+            return "/index";
+        }
+        return "redirect:/users";
     }
 
     @RequestMapping(value = "/create", method = "POST")
@@ -44,5 +48,10 @@ public class RequestUrlController {
     @RequestMapping("/login-failed")
     public String loginFailed(HttpRequest request, HttpResponse response) {
         return "/user/login_failed";
+    }
+
+    @RequestMapping("/users")
+    public String showUserList(HttpRequest request, HttpResponse response) {
+        return "/user/list";
     }
 }

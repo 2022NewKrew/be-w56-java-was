@@ -48,14 +48,13 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
     }
 
     private Method findHandlerMethod(HttpRequest request) {
-        Method handlerMethod = Arrays.stream(requestUrlControllerClass.getDeclaredMethods())
+        return Arrays.stream(requestUrlControllerClass.getDeclaredMethods())
                 .filter(method -> {
                     RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                     return annotation.value().equals(request.getUrl()) && annotation.method().equals(request.getMethod());
                 })
                 .findAny()
                 .orElseThrow();
-        return handlerMethod;
     }
 
     private String invokeHandlerMethod(HttpRequest request, HttpResponse response, Method handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -70,7 +69,7 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
     private void redirect(HttpRequest request, HttpResponse response, String viewName) {
         String redirectUrl = viewName.replace("redirect:", "");
         response.status(HttpStatus.FOUND);
-        response.addHeader(HttpHeaders.LOCATION, request.getHeader(HttpHeaders.ORIGIN) + redirectUrl);
+        response.addHeader(HttpHeaders.LOCATION, redirectUrl);
     }
 
     private void ok(HttpResponse response, String viewName) throws IOException {
