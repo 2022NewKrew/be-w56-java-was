@@ -33,7 +33,7 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, Constants.EQUAL)).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
@@ -51,19 +51,24 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseRequest(String requestLine) {
-        String[] tokens = requestLine.split(" ");
+        String[] tokens = requestLine.split(Constants.SPACE);
 
         Map<String, String> requestMap = new HashMap<>();
 
-        requestMap.put("method", tokens[0]);
-        requestMap.put("url", tokens[1]);
-        requestMap.put("httpVersion", tokens[2]);
+        requestMap.put(Constants.HTTP_METHOD, tokens[0]);
+        requestMap.put(Constants.HTTP_URL, tokens[1]);
+        requestMap.put(Constants.HTTP_VERSION, tokens[2]);
 
         return requestMap;
     }
 
+    public static String getContentTypeFromUrl(String url) {
+        String[] tokens = url.split(Constants.DOT);
+        return tokens[tokens.length - 1];
+    }
+
     public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
+        return getKeyValue(header, Constants.SEMICOLON + Constants.SPACE);
     }
 
     public static class Pair {
@@ -118,5 +123,6 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
+
     }
 }

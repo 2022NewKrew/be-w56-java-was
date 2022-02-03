@@ -1,11 +1,7 @@
 package util;
 
-import request.HttpRequest;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class IOUtils {
     /**
@@ -18,21 +14,10 @@ public class IOUtils {
      */
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
-        br.read(body, 0, contentLength);
+        int read = br.read(body, 0, contentLength);
+        if (read == 0) {
+            throw new IOException("HttpRequestBody is NULL");
+        }
         return String.copyValueOf(body);
-    }
-
-    public static String parseExtension(HttpRequest httpRequest) {
-        Map<String, String> extensionMap = new HashMap<>();
-
-        extensionMap.put("html", "text/html");
-        extensionMap.put("css", "text/css");
-        extensionMap.put("js", "text/javascript");
-        extensionMap.put("ico", "image/x-icon");
-        extensionMap.put("png", "image/png");
-
-        String url = httpRequest.getUrl();
-        String[] tokens = url.split("\\.");
-        return extensionMap.get(tokens[tokens.length - 1]);
     }
 }

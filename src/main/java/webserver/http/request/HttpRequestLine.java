@@ -1,4 +1,4 @@
-package request;
+package webserver.http.request;
 
 public class HttpRequestLine {
     private final String method;
@@ -17,6 +17,10 @@ public class HttpRequestLine {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getHttpVersion() {
+        return httpVersion;
     }
 
     @Override

@@ -76,11 +76,11 @@ public class HttpRequestUtilsTest {
     public void parseRequest() {
         // Given
         String requestLine = "GET /index.html HTTP/1.1";
-        String[] tokens = requestLine.split(" ");
+        String[] tokens = requestLine.split(Constants.SPACE);
 
         // when & then
-        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("method"));
-        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("uri"));
-        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get("httpVersion"));
+        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_METHOD));
+        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_URL));
+        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_VERSION));
     }
 }
