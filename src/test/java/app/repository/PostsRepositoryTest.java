@@ -1,7 +1,7 @@
 package app.repository;
 
+import app.configure.DbConfigure;
 import app.model.Post;
-import configure.DbConfigure;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ class PostsRepositoryTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostsRepositoryTest.class);
 
-    private PostsRepository postsRepository;
+    private final PostsRepository postsRepository;
 
     public PostsRepositoryTest() throws SQLException {
         postsRepository = new PostsRepository(new DbConfigure().getConnection());

@@ -1,5 +1,7 @@
 package app.repository;
 
+import app.configure.DbConfigure;
+import app.core.annotation.Autowired;
 import app.model.Post;
 import app.model.Posts;
 
@@ -15,6 +17,10 @@ public class PostsRepository {
         this.connection = connection;
     }
 
+    @Autowired
+    public PostsRepository(DbConfigure dbConfigure) {
+        this.connection = dbConfigure.getConnection();
+    }
 
     public long insert(Post post) throws SQLException {
         String insertSql = "insert into POSTS (created_date, writer, content) values (?,?,?);";

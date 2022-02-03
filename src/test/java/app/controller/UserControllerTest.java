@@ -1,4 +1,4 @@
-package util.controller;
+package app.controller;
 
 import app.core.MyHttpServlet;
 import app.db.DataBase;

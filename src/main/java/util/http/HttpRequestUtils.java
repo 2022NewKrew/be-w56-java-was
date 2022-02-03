@@ -119,6 +119,7 @@ public class HttpRequestUtils {
 
     public static HttpRequest parseRequest(BufferedReader br) throws IOException {
         String line = br.readLine();
+        log.debug("header : {}", line);
         String[] words = line.split(" ");
 
         HttpMethod httpMethod = HttpMethod.valueOf(words[0]);
@@ -140,6 +141,7 @@ public class HttpRequestUtils {
         if (httpMethod == HttpMethod.POST) {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
             String queryString = IOUtils.readData(br, contentLength);
+            log.debug("body : {}", queryString);
             body = parseQueryString(queryString);
             return new HttpRequest(httpMethod, url, httpVersion, headers, body);
         }

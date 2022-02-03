@@ -26,13 +26,14 @@ public class MyHttpServlet implements HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MyHttpServlet.class);
     private final Map<Method, Object> methodClassMap;
     private final Map<HttpMethod, Map<String, Method>> httpMethodMapMap;
+    private final Map<String, Object> clazzNameMap;
 
     public MyHttpServlet() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         methodClassMap = new HashMap<>();
         httpMethodMapMap = new EnumMap<>(HttpMethod.class);
+        clazzNameMap = DependencyInjector.inject();
         Arrays.stream(HttpMethod.values()).forEach(v -> httpMethodMapMap.put(v, new HashMap<>()));
         // Todo 각 요청마다 새로 만들고있다. 고칠필요가 있음.
-        // Todo DI를 여기서 구현해 볼 수 있다.
         Set<Class<?>> s = findAllClassesUsingReflectionsLibrary("app");
         for (Class<?> controller : s.toArray(new Class[0])) {
             if (controller.getAnnotation(Controller.class) == null) continue;
@@ -40,7 +41,7 @@ public class MyHttpServlet implements HttpServlet {
         }
     }
 
-    private void componentMapping(Class<?> controllerClass, Method[] methods) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void componentMapping(Class<?> controllerClass, Method[] methods) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         log.debug("controller detected {}", controllerClass);
         for (Method method : methods) {
             log.debug("method detected : {}, {}", controllerClass.getName(), method.getName());
@@ -49,8 +50,9 @@ public class MyHttpServlet implements HttpServlet {
         }
     }
 
-    private void methodControllerMapping(Method method, Class<?> controllerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        methodClassMap.put(method, controllerClass.getConstructor().newInstance());
+    private void methodControllerMapping(Method method, Class<?> controllerClass) {
+        String controllerName = controllerClass.getName();
+        methodClassMap.put(method, clazzNameMap.get(controllerName));
     }
 
     private void urlMethodMapping(Method method) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -147,12 +149,12 @@ public class MyHttpServlet implements HttpServlet {
         //Todo contorllerResult를 Serialize해서 json으로 던져줄 수도 있다.
         String controllerResult = (String) method.invoke(controller, arguments.toArray());
         Optional<Object> opt = arguments.stream().filter(o -> Arrays.asList(o.getClass().getInterfaces()).contains(Model.class)).findAny();
-        if (opt.isEmpty())
+        if (opt.isEmpty()) {
             controllerResponse(controllerResult, null, request, response);
-        else
-            controllerResponse(controllerResult, (Model) opt.get(), request, response);
+            return;
+        }
+        controllerResponse(controllerResult, (Model) opt.get(), request, response);
     }
-
 
     @Override
     public void service(HttpRequest request, HttpResponse response) {
