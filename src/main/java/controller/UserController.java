@@ -1,7 +1,7 @@
 package controller;
 
-import db.DataBase;
 import model.User;
+import springmvc.db.DataBase;
 
 import java.util.Map;
 

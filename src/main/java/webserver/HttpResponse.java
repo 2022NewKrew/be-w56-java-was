@@ -8,12 +8,19 @@ public class HttpResponse {
     private String version;
     private HttpStatus httpStatus;
     private Map<String, String> headers;
+    private Map<String, String> cookies;
     private byte[] body;
 
     public HttpResponse() {
-        this.headers = new HashMap<>();
         this.version = "HTTP/1.1";
+        this.headers = new HashMap<>();
+        this.cookies = new HashMap<>();
     }
+
+    public void addCookie(String key, String value) {
+        cookies.put(key, value);
+    }
+
 
     public void setStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
@@ -38,6 +45,10 @@ public class HttpResponse {
         return headers;
     }
 
+    public Map<String, String> getCookies() {
+        return cookies;
+    }
+
     public byte[] getBody() {
         if (body == null) {
             body = new byte[0];
@@ -46,11 +57,20 @@ public class HttpResponse {
     }
 
     public String toHeader() {
-        String responseMessage = String.format("%s %d %s \r\n", version, httpStatus.getCode(), httpStatus.getMessage());
+        String line = String.format("%s %d %s \r\n", version, httpStatus.getCode(), httpStatus.getMessage());
+        String header = "";
+
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            responseMessage += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
+            header += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
         }
-        responseMessage += "\r\n";
-        return responseMessage;
+        String cookie = "";
+        if (!cookies.isEmpty()) {
+            cookie = "Set-Cookie: ";
+            for (Map.Entry<String, String> entry : cookies.entrySet()) {
+                cookie += String.format("%s=%s; ", entry.getKey(), entry.getValue());
+            }
+            cookie += "\r\n";
+        }
+        return line + header + cookie + "\r\n";
     }
 }
