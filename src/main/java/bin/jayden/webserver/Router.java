@@ -18,7 +18,6 @@ import java.util.Map;
 public class Router {
     private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
     private static final String REDIRECT = "redirect:";
-    private static final String RESOURCE_PATH = "./webapp";
     private static final Map<String, Method> postRoutingMap;
     private static final Map<String, Method> getRoutingMap;
 
@@ -52,7 +51,7 @@ public class Router {
 
         } else { //라우팅 맵에 URL에 해당하는 리소스를 찾아본다.
 
-            File file = new File(RESOURCE_PATH + request.getPath());
+            File file = new File(Constants.RESOURCE_PATH + request.getPath());
 
             if (file.isFile()) {
                 byte[] body = Files.readAllBytes(file.toPath());
