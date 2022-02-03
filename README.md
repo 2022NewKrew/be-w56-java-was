@@ -118,3 +118,27 @@ ___
 #### 참고자료
 
 - [Java MIME Type 추출](https://medium.com/@js230023/java-mimetype-얻기-39f9e3f3e766)
+
+___
+
+## 요구사항 1-4 : Cookie 를 이용한 로그인 구
+
+“로그인” 메뉴를 클릭하면 http://localhost:8080/user/login.html 으로 이동해 로그인할 수 있다. 로그인이 성공하면 index.html로 이동하고, 로그인이 실패하면 /user/login_failed.html로 이동해야 한다.
+
+아이디와 비밀번호가 같은지를 확인해 로그인이 성공하면 응답 header의 Set-Cookie 값을 logined=true, 로그인이 실패할 경우 Set-Cookie 값을 logined=false로 설정한다. Set-Cookie 설정시 모든 요청에 대해 Cookie 처리가 가능하도록 Path 설정 값을 /(Path=/)로 설정한다.
+
+HTTP Request Header 예시
+```
+GET /index.html HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Accept: */*
+Cookie: logined=true
+```
+
+HTTP Response Header 예시
+```
+HTTP/1.1 200 OK
+Content-Type: text/html
+Set-Cookie: logined=true; Path=/
+```
