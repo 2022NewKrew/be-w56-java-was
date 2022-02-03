@@ -32,6 +32,9 @@ public class RequestBody {
         try {
             for (String line : bodyLines) {
                 components = List.of(line.split("="));
+
+                checkComponents(components);
+
                 key = URLDecoder.decode(components.get(0), StandardCharsets.UTF_8);
                 value = URLDecoder.decode(components.get(1), StandardCharsets.UTF_8);
                 result.put(key, value);
@@ -39,6 +42,12 @@ public class RequestBody {
             return Collections.unmodifiableMap(result);
         } catch (Exception exception) {
             throw new BadRequestException("body decoding에 실패하였습니다");
+        }
+    }
+
+    private static void checkComponents(List<String> components) {
+        if (components.size() != 2 || components.contains("")) {
+            throw new BadRequestException("부적절한 body 데이터가 존재합니다.");
         }
     }
 
