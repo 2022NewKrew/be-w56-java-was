@@ -17,6 +17,7 @@ dependencies {
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 
     implementation 'org.apache.tika:tika-core:2.2.1'
+    implementation 'org.reflections:reflections:0.10.2'
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
