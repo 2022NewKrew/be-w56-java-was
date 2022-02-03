@@ -35,6 +35,9 @@ public class RequestHandler extends Thread {
     private static final Map<String, String> PATH_METHOD_MAP = new HashMap<>() {{
         put("/user/create", "userCreate");
         put("/user/login", "userLogin");
+        put("/user/list", "userList");
+        put("/", "index");
+        put("/user/logout", "userLogout");
     }};
 
     private Socket connection;
