@@ -2,7 +2,6 @@ package http;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,29 +26,6 @@ public class Headers {
         return new Headers(map);
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        Headers headers = (Headers) object;
-        boolean isEqualKeySet = Objects.equals(this.headers.keySet(), headers.headers.keySet());
-        boolean isEqualValues = this.headers.entrySet()
-                .stream()
-                .allMatch(header -> header.getValue().equals(headers.headers.get(header.getKey())));
-
-        return isEqualKeySet && isEqualValues;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(headers);
-    }
-
     public Map<FieldName, FieldValue> getHeaders() {
         return headers;
     }
@@ -60,5 +36,13 @@ public class Headers {
             return Optional.of(headers.get(name).getValue());
         }
         return Optional.empty();
+    }
+
+    public Cookie createCookie() {
+        Optional<String> cookie = sendContainKeyValue("Cookie");
+        if (cookie.isEmpty()) {
+            return Cookie.parse(null);
+        }
+        return Cookie.parse(cookie.get());
     }
 }

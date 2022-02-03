@@ -14,14 +14,16 @@ public class Mapper {
             return new ServletRequest(
                     request.getRequestLine().getMethod(),
                     request.getRequestLine().getRequestTarget().getPath().getValue(),
-                    request.getRequestBody().getQueryParameters().getParameters()
+                    request.getRequestBody().getQueryParameters().getParameters(),
+                    request.getHeader().createCookie()
             );
         }
 
         return new ServletRequest(
                 request.getRequestLine().getMethod(),
                 request.getRequestLine().getRequestTarget().getPath().getValue(),
-                request.getRequestLine().getRequestTarget().getQueryParameters().getParameters()
+                request.getRequestLine().getRequestTarget().getQueryParameters().getParameters(),
+                request.getHeader().createCookie()
         );
     }
 }

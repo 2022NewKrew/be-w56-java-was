@@ -43,7 +43,7 @@ public class ServletContainer {
         MappingKey key = request.createMappingKey();
         Servlet servlet = container.get(key);
         try {
-            Cookie cookie = new Cookie();
+            Cookie cookie = Cookie.parse(null);
             String path = servlet.service(request, cookie);
             if (path.contains("redirect")) {
                 String url = "http://localhost:8080" + path.substring(path.indexOf(":") + 1);

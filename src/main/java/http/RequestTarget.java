@@ -3,7 +3,6 @@ package http;
 import util.ParsingUtils;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class RequestTarget {
     public static final String DELIMITER = "\\?";
@@ -21,9 +20,9 @@ public class RequestTarget {
     public static RequestTarget create(String requestTarget) {
         String[] token = ParsingUtils.parse(requestTarget, DELIMITER);
         if (token.length == PARAMETER_COUNT) {
-            return new RequestTarget(new Path(token[0]), Parameters.create(Optional.of(token[1])));
+            return new RequestTarget(new Path(token[0]), Parameters.create(token[1]));
         }
-        return new RequestTarget(new Path(token[0]), Parameters.create(Optional.empty()));
+        return new RequestTarget(new Path(token[0]), Parameters.create(null));
     }
 
     private void validateNull(Path path) {

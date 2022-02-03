@@ -2,6 +2,11 @@ package util;
 
 import com.google.common.base.Strings;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class ParsingUtils {
 
     private ParsingUtils() {
@@ -21,6 +26,14 @@ public class ParsingUtils {
         return tokens;
     }
 
+    public static Map<String, String> parse(String string, String delimiter, String regex) {
+        String[] tokens = parse(string, delimiter);
+        return Arrays.stream(tokens)
+                .map(token -> ParsingUtils.getKeyValue(token, regex))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
     private static void validateNull(String string) {
         if (Strings.isNullOrEmpty(string)) {
             throw new IllegalArgumentException();
@@ -34,7 +47,7 @@ public class ParsingUtils {
 
         String[] tokens = keyValue.split(regex);
         if (tokens.length != 2) {
-            throw new IllegalArgumentException();
+            return null;
         }
         return new Pair(tokens[0], tokens[1]);
     }

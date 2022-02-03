@@ -1,15 +1,17 @@
 package servlet;
 
+import http.Cookie;
 import http.HttpMethod;
 
 import java.util.Map;
 
 public class ServletRequest {
-    HttpMethod method;
-    String path;
-    Map<String, String> parameters;
+    private HttpMethod method;
+    private String path;
+    private Map<String, String> parameters;
+    private Cookie cookie;
 
-    public ServletRequest(HttpMethod method, String path, Map<String, String> parameters) {
+    public ServletRequest(HttpMethod method, String path, Map<String, String> parameters, Cookie cookie) {
         this.method = method;
         this.path = path;
         this.parameters = parameters;

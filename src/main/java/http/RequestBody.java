@@ -10,7 +10,10 @@ public class RequestBody {
     }
 
     public static RequestBody create(Optional<String> string) {
-        return new RequestBody(Parameters.create(string));
+        if (string.isPresent()) {
+            return new RequestBody(Parameters.create(string.get()));
+        }
+        return new RequestBody(Parameters.create(null));
     }
 
     public Parameters getQueryParameters() {

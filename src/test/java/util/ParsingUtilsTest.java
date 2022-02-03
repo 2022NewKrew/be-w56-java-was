@@ -1,22 +1,14 @@
 package util;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ParsingUtilsTest {
-
-    @Disabled
-    @Test
-    public void parseCookies() {
-//        String cookies = "logined=true; JSessionId=1234";
-//        Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
-//        assertThat(parameters.get("logined")).isEqualTo("true");
-//        assertThat(parameters.get("JSessionId")).isEqualTo("1234");
-//        assertThat(parameters.get("session")).isNull();
-    }
 
     @Test
     public void parseNullOrEmpty_ThrowException() {
@@ -38,13 +30,24 @@ public class ParsingUtilsTest {
         assertThat(ParsingUtils.parse("abc=abc", "="))
                 .isEqualTo(new String[]{"abc", "abc"});
 
-        assertThat(ParsingUtils.parse("abc=abc; abcd=abcd; ", "; "))
-                .isEqualTo(new String[]{"abc=abc", "abcd=abcd"});
+        Map<String, String> map = new HashMap<>();
+        map.put("abc", "abc");
+        map.put("abcd", "abcd");
+        assertThat(ParsingUtils.parse("abc=abc; abcd=abcd", "; ", "="))
+                .isEqualTo(map);
+    }
+
+    @Test
+    public void parseSuccess_InvalidPair() {
+        Map<String, String> map = new HashMap<>();
+        map.put("abc", "abc");
+        assertThat(ParsingUtils.parse("abc=abc; abcd", "; ", "="))
+                .isEqualTo(map);
     }
 
     @Test
     public void parseWithInvalidCount_ThrowException() {
-        assertThatThrownBy(() -> ParsingUtils.parse("abc=", "="))
+        assertThatThrownBy(() -> ParsingUtils.parse("abc=", "=", 2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

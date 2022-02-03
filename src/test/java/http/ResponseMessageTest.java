@@ -21,6 +21,6 @@ public class ResponseMessageTest {
     @Test
     void createSuccess() {
         ResponseMessage.create(HttpStatus.OK, new byte[]{});
-        ResponseMessage.create(HttpStatus.FOUND, "/", new Cookie());
+        ResponseMessage.create(HttpStatus.FOUND, "/", Cookie.parse(null));
     }
 }

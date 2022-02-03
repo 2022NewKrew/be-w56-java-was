@@ -8,10 +8,18 @@ public class CookieTest {
 
     @Test
     void createCookieHeader() {
-        Cookie cookie = new Cookie();
+        Cookie cookie = Cookie.parse(null);
         cookie.setCookie("A", "B");
         cookie.setCookie("C", "D");
 
-        assertThat(cookie.createCookieHeader()).isEqualTo("A=B; C=D;");
+        assertThat(cookie.createCookieHeader()).isEqualTo("A=B; C=D");
+    }
+
+    @Test
+    public void parseCookies() {
+        String cookies = "logined=true; JSessionId=1234";
+        Cookie cookie = Cookie.parse(cookies);
+        assertThat(cookie.getCookie().get("logined")).isEqualTo("true");
+        assertThat(cookie.getCookie().get("JSessionId")).isEqualTo("1234");
     }
 }

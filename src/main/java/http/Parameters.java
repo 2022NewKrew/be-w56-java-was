@@ -1,12 +1,12 @@
 package http;
 
-import util.Pair;
+import com.google.common.base.Strings;
 import util.ParsingUtils;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Parameters {
     static final String PARAMETER_DELIMITER = "&";
@@ -14,24 +14,17 @@ public class Parameters {
 
     Map<String, String> parameters;
 
-    private Parameters() {
-        this.parameters = new HashMap<>();
-    }
-
     private Parameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
-    public static Parameters create(Optional<String> parameters) {
-        if (parameters.isEmpty()) {
-            return new Parameters();
+    public static Parameters create(String parameters) {
+        if (Strings.isNullOrEmpty(parameters)) {
+            return new Parameters(new HashMap<>());
         }
 
-        String[] tokens = URLDecoder.decode(parameters.get(), StandardCharsets.UTF_8).split(PARAMETER_DELIMITER);
-        Map<String, String> result = Arrays.stream(tokens)
-                .map(token -> ParsingUtils.getKeyValue(token, KEY_VALUE_DELIMITER))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        String decode = URLDecoder.decode(parameters, StandardCharsets.UTF_8);
+        Map<String, String> result = ParsingUtils.parse(decode, PARAMETER_DELIMITER, KEY_VALUE_DELIMITER);
         return new Parameters(result);
     }
 

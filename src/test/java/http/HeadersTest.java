@@ -22,26 +22,11 @@ public class HeadersTest {
     }
 
     @Test
-    void equalsRequestHeader() {
-        assertThat(Headers.create(input)).isEqualTo(Headers.create(input));
-    }
-
-    @Test
-    void notEqualsHeaders_WhenKeySetDifferent() {
+    void createRequestHeader() {
         Map<String, String> compare = new HashMap<>();
         compare.put("Host", "localhost:8080");
         compare.put("Connection", "keep-alive");
 
-        assertThat(Headers.create(input)).isNotEqualTo(Headers.create(compare));
-    }
-
-    @Test
-    void notEqualsHeaders_WhenValueDifferent() {
-        Map<String, String> compare = new HashMap<>();
-        compare.put("Host", "www.daum.net");
-        compare.put("Connection", "keep-alive");
-        compare.put("Cache-Control", "max-age=0");
-
-        assertThat(Headers.create(input)).isNotEqualTo(Headers.create(compare));
+        assertThat(Headers.create(input).getHeaders()).isEqualTo(Headers.create(input).getHeaders());
     }
 }

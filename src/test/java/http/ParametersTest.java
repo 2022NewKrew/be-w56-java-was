@@ -3,19 +3,17 @@ package http;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ParametersTest {
 
     @Test
     public void createNullOrEmptyParameter() {
-        assertThat(Parameters.create(Optional.empty()).getParameters())
+        assertThat(Parameters.create(null).getParameters())
                 .isEqualTo(new HashMap<>());
 
-        assertThat(Parameters.create(Optional.of("")).getParameters())
+        assertThat(Parameters.create("").getParameters())
                 .isEqualTo(new HashMap<>());
     }
 
@@ -25,13 +23,17 @@ public class ParametersTest {
         parameters.put("Id", "abcd");
         parameters.put("PW", "asdf1234");
 
-        assertThat(Parameters.create(Optional.of("Id=abcd&PW=asdf1234")).getParameters())
+        assertThat(Parameters.create("Id=abcd&PW=asdf1234").getParameters())
                 .isEqualTo(parameters);
     }
 
     @Test
     public void createFailed() {
-        assertThatThrownBy(() -> Parameters.create(Optional.of("Id=abcd&PW=asdf1234&1234")))
-                .isInstanceOf(IllegalArgumentException.class);
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("Id", "abcd");
+        parameters.put("PW", "asdf1234");
+
+        assertThat(Parameters.create("Id=abcd&PW=asdf1234&1234").getParameters())
+                .isEqualTo(parameters);
     }
 }

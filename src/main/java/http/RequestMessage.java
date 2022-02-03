@@ -25,4 +25,8 @@ public class RequestMessage {
     public RequestBody getRequestBody() {
         return requestBody;
     }
+
+    public Headers getHeader() {
+        return headers;
+    }
 }
