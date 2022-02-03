@@ -1,11 +1,13 @@
 package com.kakao.webserver;
 
 import com.kakao.http.request.HttpRequest;
+import com.kakao.http.response.HttpResponse;
 import com.kakao.util.ReflectionUtils;
 import com.kakao.webserver.controller.HttpController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -39,7 +41,10 @@ public class RequestHandler implements Runnable {
     private void handleRequest(HttpRequest httpRequest, OutputStream out) throws Exception {
         for (HttpController controller : controllerList) {
             if (controller.isValidRequest(httpRequest.getMethod(), httpRequest.getUrl().getPath())) {
-                controller.handleRequest(httpRequest, out);
+                HttpResponse httpResponse = controller.handleRequest(httpRequest);
+                DataOutputStream dos = new DataOutputStream(out);
+                dos.writeBytes(httpResponse.toString());
+                dos.write(httpResponse.getBody());
                 return;
             }
         }

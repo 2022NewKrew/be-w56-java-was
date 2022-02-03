@@ -2,12 +2,11 @@ package com.kakao.webserver.controller;
 
 import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
-
-import java.io.OutputStream;
+import com.kakao.http.response.HttpResponse;
 
 public interface HttpController {
     boolean isValidRequest(HttpMethod method, String path);
 
-    void handleRequest(HttpRequest request, OutputStream os)
+    HttpResponse handleRequest(HttpRequest request)
             throws Exception;
 }

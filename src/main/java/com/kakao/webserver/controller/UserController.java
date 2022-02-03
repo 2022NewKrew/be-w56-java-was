@@ -9,9 +9,6 @@ import com.kakao.http.response.HttpStatus;
 import com.kakao.model.User;
 import com.kakao.service.UserService;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import static com.kakao.webserver.WebServerConfig.DEFAULT_HTTP_VERSION;
@@ -26,21 +23,19 @@ public class UserController implements HttpController {
     }
 
     @Override
-    public void handleRequest(HttpRequest request, OutputStream os) throws Exception {
+    public HttpResponse handleRequest(HttpRequest request) {
+        User user = buildUser(request);
+        userService.addUser(user);
+
+        List<HttpHeader> headers = List.of(new LocationHeader("/"));
+        return new HttpResponse(DEFAULT_HTTP_VERSION, HttpStatus.FOUND, headers, null);
+    }
+
+    private User buildUser(HttpRequest request) {
         String userId = request.findBodyParam("userId");
         String password = request.findBodyParam("password");
         String name = request.findBodyParam("name");
         String email = request.findBodyParam("email");
-        User user = new User(userId, password, name, email);
-        userService.addUser(user);
-        response(os);
-    }
-
-    private void response(OutputStream os) throws IOException {
-        List<HttpHeader> headers = List.of(new LocationHeader("/"));
-        HttpResponse response = new HttpResponse(DEFAULT_HTTP_VERSION, HttpStatus.FOUND, headers);
-        DataOutputStream dos = new DataOutputStream(os);
-        dos.writeBytes(response.toString());
-        dos.flush();
+        return new User(userId, password, name, email);
     }
 }
