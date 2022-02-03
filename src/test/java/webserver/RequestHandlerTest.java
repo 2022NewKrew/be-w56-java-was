@@ -81,9 +81,30 @@ class RequestHandlerTest {
         assertThat(os.toString()).contains("401", "Unauthorized", "Content-Type", "Content-Length");
     }
 
-    @DisplayName("Bad Request 테스트")
+    @DisplayName("GET /user/list.html 테스트")
     @Test
     void run4() throws IOException {
+        //give
+        Socket socket = Mockito.mock(Socket.class);
+        String request = "GET /user/list.html HTTP/1.1\r\n"
+                + "Cookie: logined=true\r\nheaderKey1: headerValue1\r\nheaderKey2: headerValue2\r\n"
+                + "\r\n"
+                + "userId=userId&password=password";
+        OutputStream os = new ByteArrayOutputStream();
+        Mockito.when(socket.getInputStream())
+                .thenReturn(new ByteArrayInputStream(request.getBytes(StandardCharsets.UTF_8)));
+        Mockito.when(socket.getOutputStream())
+                .thenReturn(os);
+        RequestHandler handler = new RequestHandler(socket);
+        //when
+        handler.run();
+        //then
+        assertThat(os.toString()).contains("200", "OK", "Content-Type", "Content-Length");
+    }
+
+    @DisplayName("Bad Request 테스트")
+    @Test
+    void runBadRequest() throws IOException {
         //give
         Socket socket = Mockito.mock(Socket.class);
         String request = "POST /user/login HTTP/1.1\r\n"
@@ -104,7 +125,7 @@ class RequestHandlerTest {
 
     @DisplayName("Not Found 테스트")
     @Test
-    void run5() throws IOException {
+    void runNotFound() throws IOException {
         //give
         Socket socket = Mockito.mock(Socket.class);
         String request = "GET /neverExist.html HTTP/1.1\r\n"
