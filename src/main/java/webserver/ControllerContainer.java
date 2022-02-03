@@ -25,7 +25,7 @@ public class ControllerContainer {
      * default controller = MainController
      */
     public static HttpResponse map(HttpRequest request) throws IOException {
-        String url = request.line().url();
+        String url = request.line().path();
         String[] tokens = url.split("/");
         String urlKey = "";
 

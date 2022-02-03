@@ -28,8 +28,8 @@ public class UserController implements Controller {
     private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
 
     {
-        methodMap.put("POST /create", this::createUser);
-        methodMap.put("POST /login", this::login);
+        methodMap.put("POST /user/create", this::createUser);
+        methodMap.put("POST /user/login", this::login);
     }
 
     private UserController() {
@@ -44,18 +44,12 @@ public class UserController implements Controller {
     @Override
     public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
-        String[] urlTokens = requestLine.url().split("/");
-        String methodAndUrl = requestLine.method() + " /";
-        if (urlTokens.length > 0) {
-            String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];
-            methodAndUrl += urlWithoutQueryString;
-        }
 
-        if (methodMap.containsKey(methodAndUrl)) {
-            log.debug("{} called", methodAndUrl);
-            return methodMap.get(methodAndUrl).apply(request);
+        if (methodMap.containsKey(requestLine.methodAndPath())) {
+            log.debug("{} called", requestLine.methodAndPath());
+            return methodMap.get(requestLine.methodAndPath()).apply(request);
         } else {
-            log.debug("{} {}, redirect to error page", requestLine.method(), requestLine.url());
+            log.debug("{} {} redirect to error page", requestLine.method(), requestLine.path());
             return errorPage();
         }
     }

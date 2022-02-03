@@ -6,13 +6,13 @@ import java.util.Map;
 
 public class HttpRequestLine {
     private final String method;
-    private final String url;
+    private final String path;
     private final Map<String, String> queryString;
     private final String httpVersion;
 
-    public HttpRequestLine(String method, String url, Map<String, String> queryString, String httpVersion) {
+    public HttpRequestLine(String method, String path, Map<String, String> queryString, String httpVersion) {
         this.method = method;
-        this.url = url;
+        this.path = path;
         this.queryString = queryString;
         this.httpVersion = httpVersion;
     }
@@ -30,7 +30,9 @@ public class HttpRequestLine {
 
     public String method() { return method; }
 
-    public String url() { return url; }
+    public String path() { return path; }
+
+    public String methodAndPath() { return method + " " + path; }
 
     public Map<String, String> queryString() { return queryString; }
 }

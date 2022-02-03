@@ -32,19 +32,13 @@ public class MainController implements Controller {
     @Override
     public HttpResponse processDynamic(HttpRequest request) throws IOException {
         final HttpRequestLine requestLine = request.line();
-        String[] urlTokens = requestLine.url().split("/");
-        String methodAndUrl = requestLine.method() + " /";
-        if (urlTokens.length > 0) {
-            String urlWithoutQueryString = urlTokens[urlTokens.length - 1].split("\\?")[0];
-            methodAndUrl += urlWithoutQueryString;
-        }
 
-        log.debug("{} {}", requestLine.method(), requestLine.url());
-        if (methodMap.containsKey(methodAndUrl)) {
-            log.debug("{} called", methodAndUrl);
-            return methodMap.get(methodAndUrl).apply(request);
+        log.debug("{} {}", requestLine.method(), requestLine.path());
+        if (methodMap.containsKey(requestLine.methodAndPath())) {
+            log.debug("{} called", requestLine.methodAndPath());
+            return methodMap.get(requestLine.methodAndPath()).apply(request);
         } else {
-            log.debug("{} {}, redirect to error page", requestLine.method(), requestLine.url());
+            log.debug("{} {} redirect to error page", requestLine.method(), requestLine.path());
             return errorPage();
         }
     }
@@ -54,7 +48,7 @@ public class MainController implements Controller {
             log.debug("logined user"); // TODO
         }
 
-        log.debug("{}, redirect to index", request.line().url());
+        log.debug("{}, redirect to index", request.line().path());
         return redirect("index.html");
     }
 }
