@@ -1,15 +1,16 @@
 package com.kakao.http.header;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class SetCookieHeader extends AbstractHttpHeader {
     private static final String KEY = "Set-Cookie";
 
-    private final Map<String, String> cookieMap;
+    private final String name;
+    private final String value;
+    private final String path;
 
-    public SetCookieHeader(Map<String, String> cookieMap) {
-        this.cookieMap = cookieMap;
+    public SetCookieHeader(String name, String value, String path) {
+        this.name = name;
+        this.value = value;
+        this.path = path;
     }
 
     @Override
@@ -19,9 +20,6 @@ public class SetCookieHeader extends AbstractHttpHeader {
 
     @Override
     public String value() {
-        return cookieMap.entrySet()
-                .stream()
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining(";"));
+        return String.format("%s=%s; Path=%s", this.name, this.value, this.path);
     }
 }
