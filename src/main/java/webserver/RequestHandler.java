@@ -28,12 +28,13 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = createHttpRequest(br);
-            if (!(httpRequest.getPath().startsWith("/js") || httpRequest.getPath().startsWith("/fonts") || httpRequest.getPath().startsWith("/css"))) {
+            if (!httpRequest.getPath().startsWith("/css") && !httpRequest.getPath().startsWith("/js") && !httpRequest.getPath().startsWith("/css")) {
                 log.debug(httpRequest.toMessage());
             }
             HttpResponse httpResponse = createHttpResponse();
 
             FrontController.getResponse(httpRequest, httpResponse);
+            log.debug(httpResponse.toHeader());
             response(dos, httpResponse);
 
         } catch (IOException e) {

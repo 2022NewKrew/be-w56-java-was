@@ -11,6 +11,7 @@ public class HandlerMapping {
     static {
         controllers = new HashMap<>();
         controllers.put("/user/create", new UserController());
+        controllers.put("/user/login", new AuthController());
     }
 
     public static Controller getController(HttpRequest httpRequest) {

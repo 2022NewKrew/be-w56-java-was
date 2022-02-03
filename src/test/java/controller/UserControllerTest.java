@@ -25,7 +25,7 @@ class UserControllerTest {
         param.put("name", name);
         param.put("email", email);
 
-        userController.doGet(param);
+        userController.doGet(param, null);
 
         User user = DataBase.findUserById(userId);
         assertThat(user.getPassword()).isEqualTo(password);

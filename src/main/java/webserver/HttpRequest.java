@@ -73,12 +73,12 @@ public class HttpRequest {
     }
 
     public String toMessage() {
-        String reqeustMessage = String.format("%s %s %s\r\n", method, uri, version);
+        String requestMessage = String.format("%s %s %s\r\n", method, uri, version);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            reqeustMessage += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
+            requestMessage += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
         }
-        reqeustMessage += "\r\n";
-        reqeustMessage += body;
-        return reqeustMessage;
+        requestMessage += "\r\n";
+        requestMessage += body;
+        return requestMessage;
     }
 }

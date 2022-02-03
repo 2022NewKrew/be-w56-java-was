@@ -11,7 +11,7 @@ public class FrontController {
 
         Controller controller = HandlerMapping.getController(httpRequest);
 
-        String view = HandlerAdapter.getView(httpRequest, controller);
+        String view = HandlerAdapter.handle(httpRequest, httpResponse, controller);
 
         ViewResolver.resolve(view, httpResponse);
 
