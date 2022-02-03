@@ -4,22 +4,26 @@ import com.kakao.http.header.HttpHeader;
 import com.kakao.http.header.LocationHeader;
 import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
+import com.kakao.http.request.HttpRoute;
 import com.kakao.http.response.HttpResponse;
 import com.kakao.http.response.HttpStatus;
 import com.kakao.model.User;
 import com.kakao.service.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.kakao.webserver.WebServerConfig.DEFAULT_HTTP_VERSION;
 
 public class UserController implements HttpController {
     private final UserService userService = UserService.getInstance();
+    private final Set<HttpRoute> routeSet = Set.of(
+            new HttpRoute(HttpMethod.POST, "/user/create")
+    );
 
     @Override
-    public boolean isValidRequest(HttpMethod method, String path) {
-        return HttpMethod.POST.equals(method)
-                && path.matches("/user/create");
+    public boolean isValidRoute(HttpRoute route) {
+        return routeSet.contains(route);
     }
 
     @Override

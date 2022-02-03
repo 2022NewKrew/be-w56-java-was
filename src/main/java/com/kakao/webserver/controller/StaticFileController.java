@@ -5,6 +5,7 @@ import com.kakao.http.header.ContentTypeHeader;
 import com.kakao.http.header.HttpHeader;
 import com.kakao.http.request.HttpMethod;
 import com.kakao.http.request.HttpRequest;
+import com.kakao.http.request.HttpRoute;
 import com.kakao.http.response.HttpResponse;
 import com.kakao.http.response.HttpStatus;
 import org.slf4j.Logger;
@@ -22,9 +23,9 @@ public class StaticFileController implements HttpController {
     private static final Logger logger = LoggerFactory.getLogger(StaticFileController.class);
 
     @Override
-    public boolean isValidRequest(HttpMethod method, String path) {
-        return HttpMethod.GET.equals(method)
-                && buildProperPath(path).toFile().exists();
+    public boolean isValidRoute(HttpRoute route) {
+        return HttpMethod.GET.equals(route.getMethod())
+                && buildProperPath(route.getPath()).toFile().exists();
     }
 
     @Override
