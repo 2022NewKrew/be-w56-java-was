@@ -11,9 +11,9 @@ import webserver.WebServerConfig;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
-import webserver.servlet.Controllable;
+import webserver.servlet.HttpControllable;
 
-public class SignUpController implements Controllable {
+public class SignUpController implements HttpControllable {
 
     public static final String path = "/user";
     private final Logger logger = LoggerFactory.getLogger(SignUpController.class);

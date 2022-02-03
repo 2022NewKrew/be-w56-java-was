@@ -1,22 +1,23 @@
 package webserver.servlet.method;
 
-import app.user.adapter.in.SignUpController;
 import java.io.File;
 import java.io.IOException;
 import webserver.WebServerConfig;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.servlet.ApplicationContext;
 import webserver.servlet.FileHandleable;
 import webserver.servlet.FileHandler;
+import webserver.servlet.HttpControllable;
 import webserver.servlet.HttpHandleable;
 
 public class GetHandler implements HttpHandleable {
 
     private final FileHandleable fileHandleable = new FileHandler();
-    private final SignUpController signUpController;
+    private final ApplicationContext applicationContext;
 
-    public GetHandler(SignUpController signUpController) {
-        this.signUpController = signUpController;
+    public GetHandler(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -35,8 +36,7 @@ public class GetHandler implements HttpHandleable {
             return;
         }
 
-        if (request.getUri().startsWith(SignUpController.path)) {
-            signUpController.call(request, response);
-        }
+        HttpControllable controller = applicationContext.getHandler(request.getUri());
+        controller.call(request, response);
     }
 }
