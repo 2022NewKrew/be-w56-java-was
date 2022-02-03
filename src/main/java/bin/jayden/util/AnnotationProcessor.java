@@ -8,7 +8,6 @@ import bin.jayden.annotation.RequestMapping;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,13 +22,7 @@ public class AnnotationProcessor {
     static {
         Reflections reflections = new Reflections("bin.jayden", new SubTypesScanner(false));
         controllers = reflections.getSubTypesOf(Object.class).stream().filter(aClass -> aClass.getAnnotation(Controller.class) != null).collect(Collectors.toSet());
-        controllerInstanceMap = Collections.unmodifiableMap(controllers.stream().collect(Collectors.toMap(controller -> controller, controller -> {
-            try {
-                return controller.getConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new NullPointerException(e.getMessage());
-            }
-        })));
+        controllerInstanceMap = Collections.unmodifiableMap(controllers.stream().collect(Collectors.toMap(controller -> controller, DependencyInjector::getControllerInstance)));
 
     }
 

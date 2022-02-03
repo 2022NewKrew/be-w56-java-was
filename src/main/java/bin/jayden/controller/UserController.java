@@ -8,16 +8,17 @@ import bin.jayden.db.DataBase;
 import bin.jayden.http.MyHttpSession;
 import bin.jayden.model.User;
 import bin.jayden.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private final UserService userService = new UserService();
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/create")
     public String createUser(String userId, String password, String name, String email) {
