@@ -10,7 +10,7 @@ public class HttpResponseBody {
     public static final String STATIC_ROOT = "./webapp";
     private final byte[] body;
 
-    public HttpResponseBody(byte[] body) {
+    private HttpResponseBody(byte[] body) {
         this.body = body;
     }
 

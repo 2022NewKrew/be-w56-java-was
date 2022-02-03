@@ -16,10 +16,8 @@ import util.HttpRequestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -32,7 +30,7 @@ public class UserController implements Controller {
     private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
 
     {
-        methodMap.put("POST /user/create", this::createUser);
+        methodMap.put("POST /user/create", this::create);
         methodMap.put("POST /user/login", this::login);
         methodMap.put("GET /user/list", this::list);
     }
@@ -59,7 +57,12 @@ public class UserController implements Controller {
         }
     }
 
-    private HttpResponse createUser(HttpRequest request) {
+    /**
+     *  POST /user/create
+     *  request body 에서 정보를 읽어서 새로운 User 정보 생성 후
+     *  DataBase 에 저장
+     */
+    private HttpResponse create(HttpRequest request) {
         HttpRequestBody requestBody = request.body();
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
 
@@ -69,9 +72,10 @@ public class UserController implements Controller {
                 queryString.get(UserDBConstants.COLUMN_NAME),
                 queryString.get(UserDBConstants.COLUMN_EMAIL));
 
-        if (DataBase.findUserById(newUser.getUserId()) == null)
-            DataBase.addUser(newUser);
+        if (DataBase.findUserById(newUser.getUserId()) != null)
+            return redirect("/user/form_failed.html");
 
+        DataBase.addUser(newUser);
         return redirect("/index.html");
     }
 
@@ -91,7 +95,7 @@ public class UserController implements Controller {
     }
 
     private HttpResponse list(HttpRequest request) {
-        if (!request.header().getCookie("logined").equals("true")) {
+        if (!"true".equals(request.header().getCookie("logined"))) {
             return redirect("/user/login.html");
         }
 
@@ -112,7 +116,7 @@ public class UserController implements Controller {
 
             HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
             HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
-            
+
             return new HttpResponse(responseHeader, responseBody);
         } catch (IOException e) {
             log.error("GET /user/list error");
