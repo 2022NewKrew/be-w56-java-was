@@ -7,8 +7,12 @@ import http.Headers;
 import http.Request;
 import http.Response;
 import model.User;
+import template.TemplateEngine;
 import util.HttpRequestUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 
 @Bean
@@ -50,5 +54,29 @@ public class UserHandler {
                 "Set-Cookie", "loggedIn=true; path=/"
         );
         return Response.of(301, new Headers(headers), "Login success");
+    }
+
+    public Response list(Request request) {
+        String cookieHeader = request.getHeader("Cookie");
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieHeader);
+        boolean loggedIn = Boolean.parseBoolean(cookies.get("loggedIn"));
+        if (!loggedIn) {
+            Map<String, String> headers = Map.of(
+                    "Content-Type", ContentType.TEXT.getContentType(),
+                    "Location", "/user/login.html"
+            );
+            return Response.of(302, new Headers(headers), "Not logged in");
+        }
+        File file = new File("./webapp/user/list.html");
+        try {
+            String content = Files.readString(file.toPath());
+            Map<String, Object> values = Map.of(
+                    "users", DataBase.findAll()
+            );
+            String filled = new TemplateEngine().render(content, values);
+            return Response.ok(Headers.contentType(ContentType.HTML), filled);
+        } catch (IOException e) {
+            return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
+        }
     }
 }
