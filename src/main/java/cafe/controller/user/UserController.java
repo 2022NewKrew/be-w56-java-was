@@ -3,6 +3,7 @@ package cafe.controller.user;
 import cafe.controller.exception.IncorrectLoginUserException;
 import cafe.db.DataBase;
 import cafe.model.User;
+import cafe.service.UserService;
 import framework.annotation.Controller;
 import framework.annotation.RequestMapping;
 import framework.http.enums.MediaType;
@@ -14,15 +15,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final HttpRequest httpRequest;
+    private final UserService userService;
 
     public UserController(HttpRequest httpRequest) {
         this.httpRequest = httpRequest;
+        this.userService = new UserService();
     }
 
     @RequestMapping(value = "/user", method = "POST")
@@ -92,7 +96,8 @@ public class UserController {
     public HttpResponse userProfileListHtml() throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
+        String userListHtml = userService.getUserListHtml();
 
-        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
+        return new HttpResponse(HttpStatus.OK, responseHeader, userListHtml.getBytes(StandardCharsets.UTF_8));
     }
 }
