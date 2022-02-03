@@ -6,8 +6,8 @@ import util.annotation.RequestMapping;
 import webserver.Request;
 
 public class UserController {
-    UserService userService = new UserService();
-    private static UserController instance = new UserController();
+    private static final UserController instance = new UserController();
+    private static final UserService userService = UserService.getInstance();
 
     private UserController() {}
 
@@ -19,20 +19,21 @@ public class UserController {
     @RequestMapping(value="/users/create", method="GET")
     public String createByGet(Request request) {
         userService.create(UserCreateDto.builder()
-                .stringId(request.getParameters().get("stringId"))
-                .password(request.getParameters().get("password"))
-                .name(request.getParameters().get("name"))
-                .email(request.getParameters().get("email"))
+                .stringId(request.getParameter("stringId"))
+                .password(request.getParameter("password"))
+                .name(request.getParameter("name"))
+                .email(request.getParameter("email"))
                 .build());
         return "redirect:/index.html";
     }
 
-    public String controlByPost(Request request) {
+    @RequestMapping(value="/users", method="POST")
+    public String createByPost(Request request) {
         userService.create(UserCreateDto.builder()
-                .stringId(request.getBodyAttributes().get("stringId"))
-                .password(request.getBodyAttributes().get("password"))
-                .name(request.getBodyAttributes().get("name"))
-                .email(request.getBodyAttributes().get("email"))
+                .stringId(request.getParameter("stringId"))
+                .password(request.getParameter("password"))
+                .name(request.getParameter("name"))
+                .email(request.getParameter("email"))
                 .build());
         return "redirect:/index.html";
     }

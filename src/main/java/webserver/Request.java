@@ -10,6 +10,7 @@ import util.IOUtils;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,17 +21,16 @@ public class Request {
     private final String method;
     private final String uri;
     private final Map<String,String> HeaderAttributes;
-    private final Map<String,String> parameters;
-    private final Map<String,String> bodyAttributes;
+    private final Map<String,String> parameters = new HashMap<>();
 
     public Request(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String requestLine = URLDecoder.decode(br.readLine(), "UTF-8");
         this.method = requestLine.split(" ")[0];
         this.uri = findUri(requestLine);
-        this.parameters = findParameters(requestLine);
+        this.parameters.putAll(findQueryString(requestLine));
         this.HeaderAttributes = findHeaderAttributes(br);
-        this.bodyAttributes = findBodyAttributes(method, br, Integer.parseInt(HeaderAttributes.getOrDefault("Content-Length", "-1")));
+        this.parameters.putAll(findBodyAttributes(method, br, Integer.parseInt(HeaderAttributes.getOrDefault("Content-Length", "-1"))));
     }
 
     private Map<String,String> findHeaderAttributes(BufferedReader br) throws IOException {
@@ -43,7 +43,7 @@ public class Request {
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
-    private Map<String,String> findParameters(String requestLine){
+    private Map<String,String> findQueryString(String requestLine){
         if(requestLine.contains("?")){
             return HttpRequestUtils.parseQueryString(requestLine.split(" ")[1].split("\\?")[1]);
         }
@@ -63,5 +63,9 @@ public class Request {
             return Maps.newHashMap();
         }
         return HttpRequestUtils.parseQueryString(URLDecoder.decode(IOUtils.readData(br, contentLength), "UTF-8"));
+    }
+
+    public String getParameter(String key){
+        return parameters.getOrDefault(key, null);
     }
 }
