@@ -2,8 +2,8 @@ package http.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -38,44 +38,113 @@ class RequestHeaderTest {
         //then 2: String is not empty
         String testKey = testItem.split(": ")[0];
         String testValue = testItem.split(": ")[1];
-        assertThat(header.get(testKey)).isEqualTo(testValue);
+        assertThat(header.getComponent(testKey)).isEqualTo(testValue);
     }
 
-    @DisplayName("has 메서드는 RequestHeader 가 가지고 있는 key 를 입력했을 때 true 를 반환한다.")
+    @DisplayName("stringToRequestHeader 메서드는 올바른 headerString 을 입력받았을 때 RequestHeader 를 생성한다.")
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "",
+            "test1: this is test1\r\nCookie: a=b",
+            "test2: this is test2\r\ntest1: this is test1\r\nCookie: b=c; a=b",
+            "test3: this is test3\r\ntest2: this is test2\r\ntest1: this is test1\r\nCookie: c=d; b=c; a=b"
+    })
+    void stringToRequestHeaderWithCookie(String testHeaderString) {
+        //give
+        List<String> components = List.of(testHeaderString.split("\r\n"));
+        String testItem = components.get(0);
+        String testCookie = components.get(components.size() - 1);
+        //when
+        RequestHeader header = RequestHeader.stringToRequestHeader(testHeaderString);
+        //then 1: String is empty
+        if (testItem.isEmpty()) {
+            assertThatCode(() -> RequestHeader.stringToRequestHeader(
+                    testHeaderString)).doesNotThrowAnyException();
+            return;
+        }
+        //then 2: String is not empty
+        String testKey = testItem.split(": ")[0];
+        String testValue = testItem.split(": ")[1];
+        String testCookieKey = testCookie.split(": ")[1].trim().split(";")[0].split("=")[0];
+        String testCookieValue = testCookie.split(": ")[1].trim().split(";")[0].split("=")[1];
+        assertThat(header.getComponent(testKey)).isEqualTo(testValue);
+        assertThat(header.getCookie(testCookieKey)).isEqualTo(testCookieValue);
+    }
+
+    @DisplayName("hasComponent 메서드는 RequestHeader 가 가지고 있는 key 를 입력했을 때 true 를 반환한다.")
     @ParameterizedTest
     @ValueSource(strings = {"key1", "key2"})
-    void has(String testKey) {
+    void hasComponent(String testKey) {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(components);
+        RequestHeader header = new RequestHeader(components, new HashMap<>());
         //when
-        boolean result = header.has(testKey);
+        boolean result = header.hasComponent(testKey);
         //then
         assertThat(result).isTrue();
     }
 
-    @DisplayName("has 메서드는 RequestHeader 가 가지고 있지 않은 key 를 입력했을 때 false 를 반환한다.")
+    @DisplayName("hasComponent 메서드는 RequestHeader 가 가지고 있지 않은 key 를 입력했을 때 false 를 반환한다.")
     @ParameterizedTest
     @ValueSource(strings = {"", "hasNotKey1", "hasNotKey2"})
-    void hasNot(String testKey) {
+    void doesNotHaveComponent(String testKey) {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(components);
+        RequestHeader header = new RequestHeader(components, new HashMap<>());
         //when
-        boolean result = header.has(testKey);
+        boolean result = header.hasComponent(testKey);
         //then
         assertThat(result).isFalse();
     }
 
-    @DisplayName("get 메서드는 RequestHeader 가 가지고 있는 key 를 입력했을 때 value 를 반환한다.")
+    @DisplayName("getComponent 메서드는 RequestHeader 가 가지고 있는 key 를 입력했을 때 value 를 반환한다.")
     @ParameterizedTest
     @CsvSource({"key1,value1", "key2,value2"})
-    void get(String testKey, String testValue) {
+    void getComponent(String testKey, String testValue) {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(components);
+        RequestHeader header = new RequestHeader(components, new HashMap<>());
         //when
-        String value = header.get(testKey);
+        String value = header.getComponent(testKey);
+        //then
+        assertThat(value).isEqualTo(testValue);
+    }
+
+    @DisplayName("hasCookie 메서드는 RequestHeader 가 가지고 있는 key 를 입력했을 때 true 를 반환한다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"key1", "key2"})
+    void hasCookie(String testKey) {
+        //give
+        Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
+        RequestHeader header = new RequestHeader(new HashMap<>(), cookie);
+        //when
+        boolean result = header.hasCookie(testKey);
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("hasCookie 메서드는 RequestHeader 가 가지고 있지 않은 key 를 입력했을 때 false 를 반환한다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"", "hasNotKey1", "hasNotKey2"})
+    void doesNotHaveCookie(String testKey) {
+        //give
+        Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
+        RequestHeader header = new RequestHeader(new HashMap<>(), cookie);
+        //when
+        boolean result = header.hasCookie(testKey);
+        //then
+        assertThat(result).isFalse();
+    }
+
+    @DisplayName("getCookie 메서드는 RequestHeader 가 가지고 있는 key 를 입력했을 때 true 를 반환한다.")
+    @ParameterizedTest
+    @CsvSource({"key1,value1", "key2,value2"})
+    void getCookie(String testKey, String testValue) {
+        //give
+        Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
+        RequestHeader header = new RequestHeader(new HashMap<>(), cookie);
+        //when
+        String value = header.getCookie(testKey);
         //then
         assertThat(value).isEqualTo(testValue);
     }
