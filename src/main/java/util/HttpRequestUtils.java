@@ -1,6 +1,8 @@
 package util;
 
+import http.MediaType;
 import http.request.HttpHeaders;
+import http.request.Path;
 import http.request.Queries;
 import http.request.RequestBody;
 import http.request.RequestLine;
@@ -30,7 +32,7 @@ public class HttpRequestUtils {
     public static RequestLine parseRequestLine(String requestLine) {
         String[] tokens = requestLine.split(REQUEST_LINE_DELIMITER);
         HttpMethod method = parseHttpMethod(tokens[0]);
-        String path = parsePath(tokens[1]);
+        Path path = parsePath(tokens[1]);
         Queries queries = parseQueries(tokens[1]);
 
         return new RequestLine(method, path, queries);
@@ -40,8 +42,8 @@ public class HttpRequestUtils {
         return HttpMethod.valueOf(methodToken);
     }
 
-    public static String parsePath(String targetToken) {
-        return targetToken.split(PATH_QUERY_STRING_DELIMITER)[0];
+    public static Path parsePath(String targetToken) {
+        return new Path(targetToken.split(PATH_QUERY_STRING_DELIMITER)[0]);
     }
 
     /**
@@ -58,7 +60,7 @@ public class HttpRequestUtils {
         return new Queries(parseValues(tokens[1], PARAMETER_DELIMITER));
     }
 
-    public static RequestBody parseRequestBody(String body) {
+    public static RequestBody parseRequestBody(MediaType contentType, String body) {
         if (Strings.isNullOrEmpty(body)) {
             return new RequestBody(new HashMap<>());
         }

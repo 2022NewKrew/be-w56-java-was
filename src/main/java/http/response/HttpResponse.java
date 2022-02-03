@@ -1,6 +1,6 @@
 package http.response;
 
-import http.ContentType;
+import http.MediaType;
 import http.HttpStatus;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public static HttpResponse ok(ContentType contentType, byte[] body) {
+    public static HttpResponse ok(MediaType contentType, byte[] body) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", contentType.getType());
         return new HttpResponse(HttpStatus.OK, headers, body);

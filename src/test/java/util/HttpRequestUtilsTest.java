@@ -3,6 +3,7 @@ package util;
 import static org.assertj.core.api.Assertions.*;
 
 import exception.InvalidParameterKeyException;
+import http.request.Path;
 import http.request.Queries;
 import http.request.RequestLine;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class HttpRequestUtilsTest {
         RequestLine requestLine = HttpRequestUtils.parseRequestLine(requestLineString);
 
         assertThat(requestLine.getMethod()).isEqualTo(HttpMethod.GET);
-        assertThat(requestLine.getPath()).isEqualTo("/index.html");
+        assertThat(requestLine.getPath().getPath()).isEqualTo("/index.html");
         assertThat(requestLine.getQueries().getParams()).hasSize(0);
     }
 
@@ -45,9 +46,9 @@ public class HttpRequestUtilsTest {
     void parsePath() {
         String targetToken = "/users/create?userId=javajigi";
 
-        String path = HttpRequestUtils.parsePath(targetToken);
+        Path path = HttpRequestUtils.parsePath(targetToken);
 
-        assertThat(path).isEqualTo("/users/create");
+        assertThat(path.getPath()).isEqualTo("/users/create");
     }
 
     @Test

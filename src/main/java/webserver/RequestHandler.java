@@ -36,7 +36,7 @@ public class RequestHandler extends Thread {
             HttpRequest httpRequest = HttpRequest.from(br);
 
             HandlerMapping handlerMapping = HandlerMapping.getInstance();
-            Controller controller = handlerMapping.getController(httpRequest.getRequestLine().getPath());
+            Controller controller = handlerMapping.getController(httpRequest.getRequestLine().getPath().getPath());
 
             HttpResponse httpResponse = controller.service(httpRequest);
             IOUtils.write(new DataOutputStream(out), httpResponse);

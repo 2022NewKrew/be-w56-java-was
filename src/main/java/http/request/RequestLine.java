@@ -5,10 +5,10 @@ import http.HttpMethod;
 public class RequestLine {
 
     private final HttpMethod method;
-    private final String path;
+    private final Path path;
     private final Queries queries;
 
-    public RequestLine(HttpMethod method, String path, Queries queries) {
+    public RequestLine(HttpMethod method, Path path, Queries queries) {
         this.method = method;
         this.path = path;
         this.queries = queries;
@@ -18,7 +18,7 @@ public class RequestLine {
         return method;
     }
 
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 
