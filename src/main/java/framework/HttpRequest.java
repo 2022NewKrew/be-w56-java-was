@@ -16,5 +16,4 @@ public class HttpRequest {
     private String method;
     private Map<String, String> requestParam;
     private Map<String, String> requestBody;
-    private boolean isStaticResource = false;
 }

@@ -8,8 +8,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +17,6 @@ public class FrontController {
 
     private final HandlerMapping handlerMapping;
     private final ViewResolver viewResolver;
-    private final List<String> allowedExtension = Arrays.asList(".html", ".css", ".js", ".ico", ".woff", ".ttf");
 
     public FrontController(HandlerMapping handlerMapping, ViewResolver viewResolver) {
         this.handlerMapping = handlerMapping;
@@ -38,7 +35,7 @@ public class FrontController {
         }
     }
 
-    private String requestToController(InputStream in) throws InvocationTargetException, IllegalAccessException, IOException {
+    private String requestToController(InputStream in) throws InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
         HttpRequest request = parseRequest(in);
         return handlerMapping.requestToController(request);
     }
@@ -53,19 +50,10 @@ public class FrontController {
         HttpRequest reqeust = new HttpRequest();
         reqeust.setMethod(method);
         reqeust.setUrl(url);
-        setIsStaticResource(reqeust);
         reqeust.setRequestParam(getRequestParam(urlTokens));
         reqeust.setRequestBody(getRequestBody(br, method));
 
         return reqeust;
-    }
-
-    private void setIsStaticResource(HttpRequest request) {
-        // url에 allowedExtension이 포함된 경우 static resource를 요청하는 것으로 판단
-        allowedExtension.stream()
-                .filter(extension -> request.getUrl().contains(extension))
-                .findAny()
-                .ifPresent(extension -> request.setStaticResource(true));
     }
 
     private Map<String, String> getRequestParam(String[] urlTokens) {
