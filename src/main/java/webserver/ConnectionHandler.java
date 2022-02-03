@@ -1,16 +1,18 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import http.*;
+import http.HttpStatus;
+import http.RequestMessage;
+import http.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.ServletContainer;
 import servlet.ServletRequest;
-import util.*;
+import util.Mapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 public class ConnectionHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
@@ -30,9 +32,9 @@ public class ConnectionHandler extends Thread {
 
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
-            RequestMessage request = receiveRequestMessage(in);
+            RequestMessage request = InputHandler.receiveRequestMessage(in);
             ResponseMessage response = createResponseMessage(request);
-            sendResponseMessage(out, response);
+            OutputHandler.sendResponseMessage(out, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -45,27 +47,5 @@ public class ConnectionHandler extends Thread {
         }
         ServletRequest servletRequest = Mapper.toServletRequest(request);
         return servletContainer.process(servletRequest);
-    }
-
-    private RequestMessage receiveRequestMessage(InputStream in) throws IOException {
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        String line = IOUtils.readStartLine(buffer);
-        List<String> header = IOUtils.readHeader(buffer);
-
-        RequestLine startLine = HttpRequestParser.parseStartLine(line);
-        Headers requestHeader = HttpRequestParser.parseHeaders(header);
-
-        String data = null;
-        FieldName contentLength = new FieldName("Content-Length");
-        if (requestHeader.getHeaders().containsKey(contentLength)) {
-            data = IOUtils.readData(buffer, Integer.parseInt(requestHeader.getHeaders().get(contentLength).getValue()));
-        }
-        RequestBody requestBody = RequestBody.create(data);
-        return new RequestMessage(startLine, requestHeader, requestBody);
-    }
-
-    private void sendResponseMessage(OutputStream out, ResponseMessage response) {
-        DataOutputStream dos = new DataOutputStream(out);
-        IOUtils.writeResponse(dos, response);
     }
 }

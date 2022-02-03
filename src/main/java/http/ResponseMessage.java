@@ -19,10 +19,10 @@ public class ResponseMessage {
         return new ResponseMessage(statusLine, responseHeaders, responseBody);
     }
 
-    public static ResponseMessage create(HttpStatus status, String url) {
+    public static ResponseMessage create(HttpStatus status, String url, Cookie cookie) {
         ResponseBody responseBody = new ResponseBody(new byte[]{});
         StatusLine statusLine = StatusLine.create(status);
-        Headers responseHeaders = responseBody.createResponseHeader(url);
+        Headers responseHeaders = responseBody.createResponseHeader(url, cookie);
         return new ResponseMessage(statusLine, responseHeaders, responseBody);
     }
 

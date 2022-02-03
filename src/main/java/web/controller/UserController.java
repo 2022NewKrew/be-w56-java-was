@@ -3,13 +3,15 @@ package web.controller;
 import annotation.Controller;
 import annotation.GetMapping;
 import annotation.PostMapping;
+import db.DataBase;
+import http.Cookie;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import web.dto.LoginDto;
+
+import java.util.Optional;
 
 @Controller
 public class UserController {
-    Logger log = LoggerFactory.getLogger(getClass());
 
     @GetMapping("/")
     public String index() {
@@ -18,12 +20,26 @@ public class UserController {
 
     @PostMapping("/user/create")
     public String createUsers(User user) {
-        log.info("/users/create : {}", user.toString());
+        DataBase.addUser(user);
         return "redirect:/";
     }
 
-    @PostMapping("/user/join")
-    public String join() {
+    @PostMapping("/user/login")
+    public String login(LoginDto loginDto, Cookie cookie) {
+        Optional<User> user = DataBase.findUserById(loginDto.getUserId());
+        if (user.isPresent() && user.get().getPassword().equals(loginDto.getPassword())) {
+            cookie.setCookie("logined", true);
+            cookie.setCookie("Path", "/");
+            return "redirect:/";
+        }
+        cookie.setCookie("logined", false);
+        return "redirect:/user/login.html";
+    }
+
+    @GetMapping("/user/logout")
+    public String logout(Cookie cookie) {
+        cookie.setCookie("logined", false);
+        cookie.setCookie("Path", "/");
         return "redirect:/";
     }
 }

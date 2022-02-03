@@ -1,6 +1,6 @@
 package http;
 
-import util.HttpRequestParser;
+import util.ParsingUtils;
 
 import java.util.Objects;
 
@@ -22,7 +22,7 @@ public class RequestTarget {
     }
 
     public static RequestTarget create(String requestTarget) {
-        String[] token = HttpRequestParser.parse(requestTarget, DELIMITER);
+        String[] token = ParsingUtils.parse(requestTarget, DELIMITER);
         Path path = new Path(token[0]);
         Parameters parameters = new Parameters();
         if (token.length == PARAMETER_COUNT) {

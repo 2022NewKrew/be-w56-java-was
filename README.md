@@ -102,19 +102,28 @@ CRLF
 ### 3단계 : POST로 회원 가입 구현
 
 - [x] request 메시지를 받아 파싱한다.
-    - [x] post로 데이터를 전달할 경우 전달하는 데이터는 HTTP Body에 담긴다.
-    - [x] get으로 받을 때와 동일한 형식이다.
-    - [x] 읽을 때는 Content-Length 만큼 읽어야 한다.
-- [ ] "redirect:/"를 통해 index.html로 리다이렉트 한다.
+  - [x] post로 데이터를 전달할 경우 전달하는 데이터는 HTTP Body에 담긴다.
+  - [x] get으로 받을 때와 동일한 형식이다.
+  - [x] 읽을 때는 Content-Length 만큼 읽어야 한다.
+- [x] "redirect:/"를 통해 index.html로 리다이렉트 한다.
+  - [x] Header의 Location에 redirect할 url 추가
+
+### 4단계 : Cookie를 이용한 로그인 구현
+
+- [x] 회원가입한 데이터 유지하기
+- [x] 아이디와 비밀번호가 같은지 확인한다.
+- [x] 로그인이 성공할 경우 Set-Cookie 값을 logined=true로 설정한다.
+- [x] 로그인이 실패할 경우 Set-Cookie 값을 logined=false로 설정한다.
+- [x] Set-Cookie 설정시 모든 요청에 대해 Cookie 처리가 가능하도록 Path 설정 값을 /(Path=/)로 설정한다.
 
 ## 도메인 요구사항
 
 ### message
 
-- [ ] request, response 으로 나뉜다.
-- [ ] start-line, header-field, empty-line, message-body로 구성되어있다.
-- [ ] start-line, header-field는 필수 이다.
-- [ ] message-body는 null 일 수 있다.
+- [x] request, response 으로 나뉜다.
+- [x] start-line, header-field, empty-line, message-body로 구성되어있다.
+- [x] start-line, header-field는 필수 이다.
+- [x] message-body는 null 일 수 있다.
 
 ### start line
 
@@ -140,11 +149,6 @@ CRLF
 - [x] null 일 수 있다.
 
 ## 고민 / 수정 사항
-- 인터페이스를 만드는 것이 좋을까?
-- content-type을 고정했는데 css가 왜 안깨질까?
-- postman 으로 호출할 때는 안보인다.
-- requestbody는 header의 content length 만큼 읽어야한다! post 요청 진행할때 수정하기
-- Request, Response가 dto 역할이지 않을까? 도메인인가???
 - 왜 서블릿은 싱글톤이여야 할까?
 - 지금은 웹서버에서 스레드를 만드는데 보통 웹 컨테이너(서블릿 컨테이너)에서 만든다고 하는데 이게 이거가 맞을까...?
 

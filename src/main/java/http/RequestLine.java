@@ -1,5 +1,7 @@
 package http;
 
+import util.ParsingUtils;
+
 import java.util.Objects;
 
 public class RequestLine {
@@ -23,7 +25,8 @@ public class RequestLine {
         }
     }
 
-    public static RequestLine create(String[] tokens) {
+    public static RequestLine create(String line) {
+        String[] tokens = ParsingUtils.parse(line, RequestLine.DELIMITER, RequestLine.PARAMETER_COUNT);
         HttpMethod method = HttpMethod.matchValue(tokens[0]);
         RequestTarget requestTarget = RequestTarget.create(tokens[1]);
         HttpVersion version = HttpVersion.matchValue(tokens[2]);
