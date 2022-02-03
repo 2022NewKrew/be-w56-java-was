@@ -1,5 +1,10 @@
 package com.kakao.model;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public class User {
     private final String userId;
     private final String password;
@@ -13,24 +18,7 @@ public class User {
         this.email = email;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+    public boolean matchPassword(String password) {
+        return this.password.equals(password);
     }
 }
