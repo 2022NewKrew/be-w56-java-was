@@ -13,7 +13,7 @@ public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
     private static final int DEFAULT_THREAD_POOL_SIZE = 10;
-    public static final String DEFAULT_RESOURCES_DIR = "./webapp";
+    public static final String DEFAULT_RESOURCES_DIR = "src/main/resources/templates";
 
     public static void main(String args[]) throws Exception {
         int port = 0;
