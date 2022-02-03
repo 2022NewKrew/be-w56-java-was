@@ -10,14 +10,12 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
-public class MyHttpRequest extends HttpRequest {
+public class MyHttpRequest {
 
     private static final BiPredicate<String, String> ALLOWED_ALL_HEADERS = (k, v) -> true;
     private static final String END_OF_REQUEST_LINE = "";
@@ -93,35 +91,14 @@ public class MyHttpRequest extends HttpRequest {
         return new MyHttpRequest(br);
     }
 
-    @Override
-    public Optional<BodyPublisher> bodyPublisher() {
-        // 구현 X
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String method() {
         return method.name();
     }
 
-    @Override
-    public Optional<Duration> timeout() {
-        // 구현 X
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean expectContinue() {
-        // 구현 X
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public URI uri() {
         return URI.create(requestURI);
     }
 
-    @Override
     public Optional<HttpClient.Version> version() {
         if (version.equals("HTTP/1.1")) {
             return Optional.of(HttpClient.Version.HTTP_1_1);
@@ -132,7 +109,6 @@ public class MyHttpRequest extends HttpRequest {
         return Optional.empty();
     }
 
-    @Override
     public HttpHeaders headers() {
         return HttpHeaders.of(headers, ALLOWED_ALL_HEADERS);
     }
