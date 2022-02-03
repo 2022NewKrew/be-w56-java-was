@@ -8,15 +8,15 @@ import util.HttpResponse;
 
 import java.io.IOException;
 
-public class RequestDispatcher {
+public class FrontController {
 
-    public static Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
+    public static Logger log = LoggerFactory.getLogger(FrontController.class);
 
     private final HandlerMapping handlerMapping;
     private final ViewResolver viewResolver;
 
     // HandlerMapping 과 viewResolver를 주입
-    public RequestDispatcher(HandlerMapping handlerMapping, ViewResolver viewResolver) {
+    public FrontController(HandlerMapping handlerMapping, ViewResolver viewResolver) {
         this.handlerMapping = handlerMapping;
         this.viewResolver = viewResolver;
     }

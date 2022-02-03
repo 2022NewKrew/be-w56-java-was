@@ -1,6 +1,6 @@
 package webserver;
 
-import framework.RequestDispatcher;
+import framework.FrontController;
 import framework.config.ServerConfig;
 import util.HttpRequest;
 import util.HttpResponse;
@@ -13,8 +13,8 @@ public class EventService {
 
     // data buffer size
     private int DATA_SIZE = 2000000;
-    // handler 를 매핑하고 HttpResponse 를 생성
-    private final RequestDispatcher requestDispatcher = new RequestDispatcher(ServerConfig.handlerMapping, ServerConfig.viewResolver);
+    // handler 를 매핑하고 HttpResponse 를 생성하는 FrontController
+    private final FrontController frontController = new FrontController(ServerConfig.handlerMapping, ServerConfig.viewResolver);
 
     public void doService(SocketChannel clientChannel) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(DATA_SIZE);
@@ -31,7 +31,7 @@ public class EventService {
             req = new HttpRequest(rawRequest);
             res = new HttpResponse(req);
 
-            requestDispatcher.doDispatch(req, res);
+            frontController.doDispatch(req, res);
         } finally {
             // HttpResponse 를 byte로 변환하고 write
             ByteBuffer writeBuffer = ByteBuffer.wrap(res.toByte());
