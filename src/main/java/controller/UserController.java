@@ -1,6 +1,5 @@
 package controller;
 
-import mapper.AssignedModelKey;
 import mapper.MappingConst;
 import mapper.ResponseSendDataModel;
 import model.UserAccount;
@@ -8,7 +7,7 @@ import model.UserAccountDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import webserver.HttpRequest;
+import webserver.request.HttpRequest;
 
 import java.util.HashMap;
 import java.util.Map;

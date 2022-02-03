@@ -40,4 +40,8 @@ public class UserAccountNoDbUseRepository implements Repository<UserAccount, Use
     public void update(UserAccountDTO dto) {
 
     }
+
+    public void clearStore() {
+        USER_ID_USER_ACCOUNT_DB.clear();
+    }
 }

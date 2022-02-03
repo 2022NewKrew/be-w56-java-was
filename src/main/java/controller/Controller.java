@@ -1,12 +1,8 @@
 package controller;
 
 import mapper.ResponseSendDataModel;
-import mapper.UrlMapper;
-import util.UrlQueryUtils;
-import webserver.HttpRequest;
+import webserver.request.HttpRequest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 public interface Controller{

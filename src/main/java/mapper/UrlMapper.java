@@ -7,7 +7,7 @@ import controller.ErrorController;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.HttpRequest;
+import webserver.request.HttpRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -11,7 +11,10 @@ public class UrlQueryUtils {
 
         String data = URLDecoder.decode(url, StandardCharsets.UTF_8);
         for(String query: data.split("&")){
-            urlQuery.put(query.split("=")[0], query.split("=")[1]);
+            String[] querySplit = query.split("=");
+
+            if(querySplit.length == 2)
+                urlQuery.put(querySplit[0], querySplit[1]);
         }
 
         return urlQuery;

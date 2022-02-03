@@ -1,8 +1,7 @@
 package controller;
 
-import mapper.AssignedModelKey;
 import mapper.ResponseSendDataModel;
-import webserver.HttpRequest;
+import webserver.request.HttpRequest;
 
 import java.util.HashMap;
 import java.util.Map;

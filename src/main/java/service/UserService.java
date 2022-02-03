@@ -15,6 +15,10 @@ public class UserService {
         userRepository = new UserAccountNoDbUseRepository();
     }
 
+    public UserService(Repository<UserAccount, UserAccountDTO, String> userRepository){
+        this.userRepository = userRepository;
+    }
+
     public String join(UserAccountDTO userAccountDTO) throws IllegalStateException{
         validateDuplicateUserId(userAccountDTO);
 
