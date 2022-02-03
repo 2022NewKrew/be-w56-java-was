@@ -26,6 +26,7 @@ public class RequestMapper {
                 case "/user/signup" : return UserController.signupView(httpRequest);
                 case "/user/login" : return UserController.loginView(httpRequest);
                 case "/user/login_failed" : return UserController.loginFailedView(httpRequest);
+                case "/user/list" : return UserController.userListView(httpRequest);
             }
         }
 

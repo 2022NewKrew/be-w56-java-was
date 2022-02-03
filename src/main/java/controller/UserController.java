@@ -1,19 +1,23 @@
 package controller;
 
+import ch.qos.logback.core.util.FileUtil;
 import db.DataBase;
 import model.User;
 import network.HttpRequest;
 import network.HttpResponse;
+import org.h2.store.fs.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.DataBaseUtils;
 import util.HttpRequestUtils;
 import util.HttpResponseUtils;
 
-import java.io.File;
-import java.io.IOException;
+import javax.swing.text.html.HTML;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +75,6 @@ public class UserController {
         User loginUser = DataBase.findUserById(userId);
         boolean logined = true;
         String location = "/";
-
         if (loginUser == null || !loginUser.getPassword().equals(password)) {
             logined = false;
             location = "/user/login_failed";
@@ -80,5 +83,17 @@ public class UserController {
         List<String> headers = HttpResponseUtils.response302(httpRequest, location);
         headers.add(1, String.format("Set-Cookie: logined=%b; Path=/\r\n", logined));
         return new HttpResponse(headers);
+    }
+
+    public static HttpResponse userListView(HttpRequest httpRequest) throws IOException {
+        Path file = new File("./webapp/user/list.html").toPath();
+        StringBuilder html = new StringBuilder(Files.readString(file));
+        String users = DataBaseUtils.setUserTable();
+
+        String tag = "{{#users}}";
+        html.replace(html.indexOf(tag), html.indexOf(tag) + tag.length(), users);
+        byte[] body = html.toString().getBytes();
+        List<String> headers = HttpResponseUtils.response200(httpRequest, body);
+        return new HttpResponse(headers, body);
     }
 }
