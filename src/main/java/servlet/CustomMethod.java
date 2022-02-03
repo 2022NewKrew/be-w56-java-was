@@ -22,12 +22,13 @@ public class CustomMethod {
     }
 
     public Object invoke(Object controller, Map<String, String> inputs, Cookie cookie) {
+        boolean isExistCookie = Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Cookie.class).count() == 1;
         // TODO 예외처리
         try {
-            if (parameters.isEmpty()) {
+            if (parameters.isEmpty() && !isExistCookie) {
                 return method.invoke(controller);
             }
-            if (Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Cookie.class).count() == 1) {
+            if (isExistCookie) {
                 List<Object> inputParameters = parameters.makeParameters(inputs);
                 inputParameters.add(cookie);
                 return method.invoke(controller, inputParameters.toArray());

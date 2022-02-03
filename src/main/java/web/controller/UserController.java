@@ -29,9 +29,17 @@ public class UserController {
         Optional<User> user = DataBase.findUserById(loginDto.getUserId());
         if (user.isPresent() && user.get().getPassword().equals(loginDto.getPassword())) {
             cookie.setCookie("logined", true);
+            cookie.setCookie("Path", "/");
             return "redirect:/";
         }
         cookie.setCookie("logined", false);
         return "redirect:/user/login.html";
+    }
+
+    @GetMapping("/user/logout")
+    public String logout(Cookie cookie) {
+        cookie.setCookie("logined", false);
+        cookie.setCookie("Path", "/");
+        return "redirect:/";
     }
 }

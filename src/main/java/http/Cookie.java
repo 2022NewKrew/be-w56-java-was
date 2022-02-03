@@ -1,6 +1,6 @@
 package http;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -10,8 +10,7 @@ public class Cookie {
     private final Map<String, String> cookies;
 
     public Cookie() {
-        cookies = new HashMap<>();
-        cookies.put("Path", "/");
+        cookies = new LinkedHashMap<>();
     }
 
     public void setCookie(String key, Object value) {
