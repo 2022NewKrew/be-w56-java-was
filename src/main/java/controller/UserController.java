@@ -86,6 +86,11 @@ public class UserController {
     }
 
     public static HttpResponse userListView(HttpRequest httpRequest) throws IOException {
+        if (!httpRequest.checkLoginCookie()) {
+            List<String> headers = HttpResponseUtils.response302(httpRequest, "/user/login");
+            return new HttpResponse(headers);
+        }
+
         Path file = new File("./webapp/user/list.html").toPath();
         StringBuilder html = new StringBuilder(Files.readString(file));
         String users = DataBaseUtils.setUserTable();
@@ -95,5 +100,6 @@ public class UserController {
         byte[] body = html.toString().getBytes();
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
         return new HttpResponse(headers, body);
+
     }
 }

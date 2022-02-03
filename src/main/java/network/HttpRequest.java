@@ -52,4 +52,11 @@ public class HttpRequest {
         String accept = headers.get("Accept");
         return HttpRequestUtils.contentNegotation(accept);
     }
+
+    public Boolean checkLoginCookie() {
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(headers.get("Cookie"));
+        String logined = cookies.get("logined");
+        if (logined == null) return false;
+        return Boolean.parseBoolean(logined);
+    }
 }
