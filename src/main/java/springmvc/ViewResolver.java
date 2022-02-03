@@ -1,4 +1,4 @@
-package controller;
+package springmvc;
 
 import webserver.HttpResponse;
 import webserver.HttpStatus;

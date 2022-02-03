@@ -1,11 +1,11 @@
-package controller;
+package springmvc.controller;
 
-import db.DataBase;
+import springmvc.db.DataBase;
 import model.User;
 
 import java.util.Map;
 
-public class AuthController implements Controller{
+public class LoginController implements Controller {
 
     @Override
     public String doGet(Map<String, String> param, Map<String, String> sessionCookie) {
@@ -18,18 +18,25 @@ public class AuthController implements Controller{
     @Override
     public String doPost(Map<String, String> param, Map<String, String> body, Map<String, String> sessionCookie) {
         try {
-            User user = DataBase.findUserById(body.get("userId"));
-            if (user == null) {
-                throw new IllegalArgumentException("아이디 오류");
-            }
-            if (!user.matchPassword(body.get("password"))) {
-                throw new IllegalArgumentException("비밀번호 오류");
-            }
+            User user = findUser(body.get("userId"));
+            validatePassword(user, body.get("password"));
             sessionCookie.put("logined", "true");
             return "redirect:/index.html";
         } catch (Exception e) {
             sessionCookie.put("logined", "false");
             return "redirect:/user/login_failed.html";
+        }
+    }
+
+    private User findUser(String userId) {
+        return DataBase.findUserById(userId).orElseThrow(
+                () -> new IllegalArgumentException("아이디 오류")
+        );
+    }
+
+    private void validatePassword(User user, String password) {
+        if (!user.matchPassword(password)) {
+            throw new IllegalArgumentException("비밀번호 오류");
         }
     }
 }

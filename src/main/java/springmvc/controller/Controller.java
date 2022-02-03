@@ -1,4 +1,4 @@
-package controller;
+package springmvc.controller;
 
 import java.util.Map;
 

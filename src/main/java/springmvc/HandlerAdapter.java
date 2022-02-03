@@ -1,7 +1,6 @@
-package controller;
+package springmvc;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import springmvc.controller.Controller;
 import webserver.HttpMethod;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
@@ -11,9 +10,6 @@ import java.util.Map;
 public class HandlerAdapter {
 
     public static String handle(HttpRequest httpRequest, HttpResponse httpResponse, Controller controller) {
-        if (controller == null) {
-            return httpRequest.getPath();
-        }
 
         Map<String, String> sessionCookie = httpResponse.getCookies();
         if (httpRequest.getCookies().containsKey("logined")) {

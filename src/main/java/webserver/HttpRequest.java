@@ -13,8 +13,8 @@ public class HttpRequest {
     private final String uri;
     private final String path;
     private final String version;
-    private Map<String, String> headers;
-    private Map<String, String> queryString;
+    private final Map<String, String> headers;
+    private final Map<String, String> queryString;
     private Map<String, String> cookies;
     private String body;
 
@@ -22,14 +22,17 @@ public class HttpRequest {
         this.method = method;
         this.uri = uri;
         this.version = version;
-        this.path = uri.split("\\?")[0];
         this.body = body;
         this.headers = headers;
-        this.queryString = new HashMap<>();
         this.cookies = new HashMap<>();
 
-        if (uri.split("\\?").length >= 2) {
-            this.queryString = HttpRequestUtils.parseQueryString(uri.split("\\?")[1]);
+        if (uri.contains("?")) {
+            String[] split = uri.split("\\?");
+            this.path = split[0];
+            this.queryString = HttpRequestUtils.parseQueryString(split[1]);
+        } else {
+            this.path = uri;
+            this.queryString = new HashMap<>();
         }
         if (headers.containsKey("Cookie")){
             this.cookies = HttpRequestUtils.parseCookies(headers.get("Cookie"));

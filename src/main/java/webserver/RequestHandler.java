@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
-import controller.FrontController;
+import springmvc.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
@@ -28,13 +28,10 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = createHttpRequest(br);
-            if (!httpRequest.getPath().startsWith("/css") && !httpRequest.getPath().startsWith("/js") && !httpRequest.getPath().startsWith("/css")) {
-                log.debug(httpRequest.toMessage());
-            }
-            HttpResponse httpResponse = createHttpResponse();
+            log.debug(httpRequest.toMessage());
+            HttpResponse httpResponse = createEmptyHttpResponse();
 
-            FrontController.getResponse(httpRequest, httpResponse);
-            log.debug(httpResponse.toHeader());
+            FrontController.doService(httpRequest, httpResponse);
             response(dos, httpResponse);
 
         } catch (IOException e) {
@@ -42,7 +39,7 @@ public class RequestHandler extends Thread {
         }
     }
 
-    public static HttpRequest createHttpRequest(BufferedReader br) throws IOException {
+    private static HttpRequest createHttpRequest(BufferedReader br) throws IOException {
 
         String[] tokens = br.readLine().split(" ");
         Map<String, String> headers = IOUtils.readHeader(br);
@@ -51,7 +48,7 @@ public class RequestHandler extends Thread {
         return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, body);
     }
 
-    public static HttpResponse createHttpResponse(){
+    private static HttpResponse createEmptyHttpResponse(){
         return new HttpResponse();
     }
 
