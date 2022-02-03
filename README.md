@@ -25,6 +25,7 @@
 
 # 5단계
 - [x] Session 위치 변경
+- [x] Uri 테스트 추가
 - [x] NPE 에러처리하기
 - [x] 동적 html 구현
   - [x] user/list에 사용자 목록 출력
