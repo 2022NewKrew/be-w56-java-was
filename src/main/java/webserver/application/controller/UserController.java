@@ -1,7 +1,7 @@
-package controller;
+package webserver.application.controller;
 
-import model.User;
-import service.UserService;
+import webserver.application.model.User;
+import webserver.application.service.UserService;
 import webserver.framwork.core.Model;
 import webserver.framwork.core.RequestMapping;
 import webserver.framwork.http.request.HttpMethod;
@@ -12,20 +12,15 @@ import webserver.framwork.http.response.HttpStatus;
 import java.util.Map;
 
 public class UserController {
+    private static final UserController instance = new UserController();
+
     private final UserService userService = UserService.getInstance();
 
-//    private static UserController userController;
-//
-//    private UserController() {
-//    }
-//
-//    public static UserController getInstance() {
-//        if (userController == null) {
-//            userController = new UserController();
-//        }
-//        return userController;
-//    }
+    private UserController(){}
 
+    public static UserController getInstance() {
+        return instance;
+    }
 
     @RequestMapping(value = "/index.html", method = HttpMethod.GET)
     public String index(HttpRequest request, HttpResponse response, Model model) {
@@ -44,11 +39,7 @@ public class UserController {
 
         userService.joinNewUser(user);
 
-        return "redirect:/index";
-//        httpResponseBuilder
-//                .setStatus(HttpStatus.Redirect)
-//                .addHeaderValue("Location", "/index.html")
-//                .build();
+        return "redirect:/index.html";
     }
 
     @RequestMapping(value = "/user/login", method = HttpMethod.POST)
@@ -57,7 +48,7 @@ public class UserController {
 
         if (userService.login(body.get("userId"), body.get("password"))) {
             response.setCookie("logined", "true");
-            return "redirect:/index";
+            return "redirect:/index.html";
         }
         response.setStatus(HttpStatus.Unauthorized);
         response.setCookie("logined", "false");

@@ -3,24 +3,28 @@ package webserver.framwork.http.response;
 import webserver.framwork.http.Header;
 
 public class HttpResponse {
-    private HttpStatus status = HttpStatus.Ok;
     private final Header header = new Header();
+    private HttpStatus status = HttpStatus.Ok;
     private byte[] body = new byte[0];
 
     public HttpStatus getStatus() {
         return status;
     }
 
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
+
     public byte[] getBody() {
         return body;
     }
 
-    public Header getHeader() {
-        return this.header;
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 
-    public void setStatus(HttpStatus status) {
-        this.status = status;
+    public Header getHeader() {
+        return this.header;
     }
 
     public void setCookie(String key, String value) {
@@ -33,10 +37,6 @@ public class HttpResponse {
 
     public String getHeaderValue(String key) {
         return this.header.getValue(key);
-    }
-
-    public void setBody(byte[] body) {
-        this.body = body;
     }
 
 }
