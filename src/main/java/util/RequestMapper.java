@@ -24,12 +24,15 @@ public class RequestMapper {
             switch (path) {
                 case "/" : return UserController.indexView(httpRequest);
                 case "/user/signup" : return UserController.signupView(httpRequest);
+                case "/user/login" : return UserController.loginView(httpRequest);
+                case "/user/login_failed" : return UserController.loginFailedView(httpRequest);
             }
         }
 
         if (httpMethod.equals(HttpMethod.POST)) {
             switch (path) {
                 case "/user/create" : return UserController.signup(httpRequest);
+                case "/user/login" : return UserController.login(httpRequest);
             }
         }
 

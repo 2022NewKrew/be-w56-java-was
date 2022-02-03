@@ -36,6 +36,10 @@ public class HttpRequest {
         return path;
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
     public Map<String, String> getQueryString() {
         return queryString;
     }
