@@ -22,23 +22,19 @@ public class UserController extends BaseController {
         return userController;
     }
 
-    @Override
-    public boolean isSupply(Request request) {
-        String target = request.getMethod().toString() + " " + request.getUrl().toString();
-        return supplyUrl.keySet().stream().anyMatch(key -> key.equals(target));
+    @GetMapping(url = "/user/create")
+    public String getJoinUser(String userId, String name, String password, String email) {
+        User user = setUserInformation(userId, name, password, email);
+        userService.joinUser(user);
+        return "redirect:/index.html";
     }
 
-    @Override
-    public Response handle(Request request, OutputStream out) throws IOException {
-        Response response;
-        try {
-            String target = request.getMethod().toString() + " " + request.getUrl().toString();
-            Optional<String> result = supplyUrl.keySet().stream()
-                    .filter(key -> key.equals(target))
-                    .findAny();
-            log.info("matching = {}", result);
-            supplyUrl.get(result.get()).invoke(this, request);
-            log.info("{}", supplyUrl.get(result.get()).getName());
+    @PostMapping(url = "/user/create")
+    public String postJoinUser(String userId, String name, String password, String email) {
+        User user = setUserInformation(userId, name, password, email);
+        userService.joinUser(user);
+        return "redirect:/index.html";
+    }
 
     @PostMapping(url = "/user/login")
     public String loginUser(String userId, String password, Request request, Response.ResponseBuilder builder) {
