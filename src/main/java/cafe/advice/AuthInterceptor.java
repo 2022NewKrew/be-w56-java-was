@@ -1,4 +1,4 @@
-package cafe.controller.advice;
+package cafe.advice;
 
 import framework.annotation.Interceptor;
 import framework.annotation.PreHandle;
