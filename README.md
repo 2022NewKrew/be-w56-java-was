@@ -62,3 +62,13 @@
    3. Set-Cookie 는 반드시 쿠키를 선언한 후, 쿠키에 대한 설정 값들을 추가해주어야 한다. (순서가 중요함)
       - `Set-Cookie: login=true;Path=/` (O)
       - `Set-Cookie: Path=/;login=true` (X)
+
+# 구현 5단계
+- [x] 요구사항 5: 동적인 html 구현
+   - 접근하고 있는 사용자가 “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다.
+   - 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
+
+- __새롭게 알게 된 내용 & 구현 중 학습하게 된 내용__
+  1. HTTP 에서 request cookie와 response cookie는 성격이 다르다.
+     - Request Cookie: 브라우저의 쿠키 값(Cookie: foo=bar)
+     - Response Cookie: 쿠키를 생성할 때의 추가 조건들이 붙음(Set-Cookie: foo=bar;Path="/";Expires=???;Secure;)

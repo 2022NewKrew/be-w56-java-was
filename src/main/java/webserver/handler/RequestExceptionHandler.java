@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import webserver.provider.ResponseProvider;
 import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
-import webserver.http.MyHttpResponse;
+import webserver.http.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class RequestExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RequestExceptionHandler.class);
 
-    public static MyHttpResponse handle(Socket connection, Exception e) {
+    public static HttpResponse handle(Socket connection, Exception e) {
         DataOutputStream dos;
         try {
             dos = new DataOutputStream(connection.getOutputStream());
@@ -30,7 +30,7 @@ public class RequestExceptionHandler {
         return ResponseProvider.responseServerException(dos, e);
     }
 
-    private static MyHttpResponse handleWebServerException(DataOutputStream dos, Exception exception) {
+    private static HttpResponse handleWebServerException(DataOutputStream dos, Exception exception) {
         WebServerException e = (WebServerException) exception;
 
         if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {

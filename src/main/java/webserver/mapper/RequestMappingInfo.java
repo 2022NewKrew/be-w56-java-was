@@ -6,25 +6,23 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.*;
-import webserver.http.HttpMethod;
+import webserver.http.*;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
-import webserver.http.HttpStatus;
-import webserver.http.MyHttpRequest;
-import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static util.TemplateEngineUtils.renderDynamicTemplate;
 
 public enum RequestMappingInfo {
 
     ROOT("/", HttpMethod.GET) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            return MyHttpResponse.builder(dos)
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.OK)
                     .body(body)
                     .build();
@@ -32,13 +30,13 @@ public enum RequestMappingInfo {
     },
     SIGN_UP("/user/create", HttpMethod.POST) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
             User user = userCreateRequest.toEntity();
             DataBase.addUser(user);
             log.info("New user created : {}", user);
 
-            return MyHttpResponse.builder(dos)
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
                     .build();
@@ -46,7 +44,7 @@ public enum RequestMappingInfo {
     },
     LOGIN("/user/login", HttpMethod.POST) {
         @Override
-        public MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserLoginRequest userLoginRequest = UserLoginRequest.from(request.body());
 
             User user = DataBase.findUserById(userLoginRequest.getUserId());
@@ -56,10 +54,30 @@ public enum RequestMappingInfo {
             log.info("user login: {}", user);
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            return MyHttpResponse.builder(dos)
+            HttpCookie cookie = new HttpCookie("login", "true");
+            cookie.setPath("/");
+
+            return HttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
-                    .cookie("login", "true;Path=/")
+                    .cookie(cookie)
+                    .body(body)
+                    .build();
+        }
+    },
+    USER_LIST("/user/list", HttpMethod.GET) {
+        @Override
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
+            Map<String, HttpCookie> cookies = request.cookies();
+            HttpCookie loginCookie = cookies.get("login");
+            if (loginCookie == null || loginCookie.getValue().equals("false")) {
+                throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
+            }
+            Collection<User> users = DataBase.findAll();
+
+            byte[] body = renderDynamicTemplate(users, "/user/list.html").getBytes();
+            return HttpResponse.builder(dos)
+                    .status(HttpStatus.OK)
                     .body(body)
                     .build();
         }
@@ -97,5 +115,5 @@ public enum RequestMappingInfo {
         return requestMap.get(path);
     }
 
-    public abstract MyHttpResponse handle(MyHttpRequest request, DataOutputStream dos) throws Exception;
+    public abstract HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception;
 }

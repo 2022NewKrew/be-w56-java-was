@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class MyHttpResponse {
-    private static final Logger log = LoggerFactory.getLogger(MyHttpResponse.class);
+public class HttpResponse {
+    private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
     private static final String DEFAULT_VERSION = "HTTP/1.1";
     private static final HttpStatus DEFAULT_STATUS = HttpStatus.OK;
     private static final String[] DEFAULT_CONTENT_TYPE = new String[]{"text/html", "charset=utf-8"};
@@ -19,12 +21,12 @@ public class MyHttpResponse {
     private final String version;
     private final HttpStatus status;
     private final Map<String, String> headers;
-    private final Map<String, String> cookies;
+    private final List<HttpCookie> cookies;
     private final String[] contentType;
     private final int contentLength;
     private final byte[] body;
 
-    private MyHttpResponse(Builder builder) {
+    private HttpResponse(Builder builder) {
         this.dos = builder.dos;
         this.version = builder.version;
         this.status = builder.status;
@@ -68,8 +70,8 @@ public class MyHttpResponse {
     }
 
     private void writeBytesCookies() throws IOException {
-        for (String key : cookies.keySet()) {
-            dos.writeBytes(String.format("Set-Cookie: %s=%s%s", key, cookies.get(key), CRLF));
+        for (HttpCookie cookie : cookies) {
+            dos.writeBytes(String.format("Set-Cookie: %s%s", cookie, CRLF));
         }
     }
 
@@ -88,7 +90,7 @@ public class MyHttpResponse {
 
         private final DataOutputStream dos;
         private final Map<String, String> headers = new HashMap<>();
-        private final Map<String, String> cookies = new HashMap<>();
+        private final List<HttpCookie> cookies = new ArrayList<>();
         private String version = DEFAULT_VERSION;
         private HttpStatus status = DEFAULT_STATUS;
         private String[] contentType = DEFAULT_CONTENT_TYPE;
@@ -113,8 +115,8 @@ public class MyHttpResponse {
             return this;
         }
 
-        public Builder cookie(String key, String value) {
-            cookies.put(key, value);
+        public Builder cookie(HttpCookie cookie) {
+            cookies.add(cookie);
             return this;
         }
 
@@ -128,8 +130,8 @@ public class MyHttpResponse {
             return this;
         }
 
-        public MyHttpResponse build() {
-            return new MyHttpResponse(this);
+        public HttpResponse build() {
+            return new HttpResponse(this);
         }
     }
 }

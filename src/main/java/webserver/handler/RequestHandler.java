@@ -6,8 +6,8 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.mapper.RequestMapper;
-import webserver.http.MyHttpRequest;
-import webserver.http.MyHttpResponse;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -22,13 +22,13 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        MyHttpResponse response = null;
+        HttpResponse response = null;
 
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             OutputStream out = connection.getOutputStream();
 
-            MyHttpRequest request = MyHttpRequest.from(in);
+            HttpRequest request = HttpRequest.from(in);
             response = RequestMapper.process(request, out);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -39,7 +39,7 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void sendResponse(MyHttpResponse response) {
+    private void sendResponse(HttpResponse response) {
         if (response != null) {
             response.writeBytes();
             response.flush();

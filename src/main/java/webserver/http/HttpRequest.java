@@ -1,5 +1,6 @@
 package webserver.http;
 
+import util.HttpRequestUtils;
 import util.IOUtils;
 import webserver.exception.BadRequestException;
 
@@ -8,17 +9,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
-public class MyHttpRequest extends HttpRequest {
+public class HttpRequest {
 
-    private static final BiPredicate<String, String> ALLOWED_ALL_HEADERS = (k, v) -> true;
     private static final String END_OF_REQUEST_LINE = "";
     private static final String REQUEST_LINE_DELIMITER = " ";
     private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
@@ -28,16 +24,17 @@ public class MyHttpRequest extends HttpRequest {
     private final String requestURI;
     private final String version;
     private final Map<String, List<String>> headers;
+    private final Map<String, HttpCookie> cookies;
     private final String body;
 
-    private MyHttpRequest(BufferedReader br) throws IOException {
+    private HttpRequest(BufferedReader br) throws IOException {
         String[] requestHeaderParams = br.readLine().split(REQUEST_LINE_DELIMITER);
         validateRequestHeader(requestHeaderParams);
         this.method = HttpMethod.valueOf(requestHeaderParams[0]);
         this.requestURI = requestHeaderParams[1];
         this.version = requestHeaderParams[2];
-        this.headers = new HashMap<>();
-        initHeaders(br);
+        this.headers = readRequestHeaderFromBuffer(br);
+        this.cookies = getCookieFromHeaders();
         this.body = readRequestBodyFromBuffer(br, contentLength());
     }
 
@@ -52,7 +49,8 @@ public class MyHttpRequest extends HttpRequest {
         }
     }
 
-    private void initHeaders(BufferedReader br) throws IOException {
+    private Map<String, List<String>> readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
+        Map<String, List<String>> headers = new HashMap<>();
         String inputLine;
         while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
             String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
@@ -63,6 +61,19 @@ public class MyHttpRequest extends HttpRequest {
 
             headers.put(inputs[0], values);
         }
+        return headers;
+    }
+
+    private Map<String, HttpCookie> getCookieFromHeaders() {
+        if (headers.containsKey("Cookie")) {
+            Map<String, HttpCookie> cookies = new HashMap<>();
+            List<String> cookie = headers.get("Cookie");
+            String cookieString = cookie.get(0);
+            Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(cookieString);
+            cookiesMap.forEach((k, v) -> cookies.put(k, new HttpCookie(k, v)));
+            return cookies;
+        }
+        return Collections.emptyMap();
     }
 
     private int contentLength() {
@@ -73,39 +84,18 @@ public class MyHttpRequest extends HttpRequest {
         return 0;
     }
 
-    public static MyHttpRequest from(BufferedReader br) throws IOException {
-        return new MyHttpRequest(br);
+    public static HttpRequest from(BufferedReader br) throws IOException {
+        return new HttpRequest(br);
     }
 
-    @Override
-    public Optional<BodyPublisher> bodyPublisher() {
-        // 구현 X
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String method() {
         return method.name();
     }
 
-    @Override
-    public Optional<Duration> timeout() {
-        // 구현 X
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean expectContinue() {
-        // 구현 X
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public URI uri() {
         return URI.create(requestURI);
     }
 
-    @Override
     public Optional<HttpClient.Version> version() {
         if (version.equals("HTTP/1.1")) {
             return Optional.of(HttpClient.Version.HTTP_1_1);
@@ -116,9 +106,12 @@ public class MyHttpRequest extends HttpRequest {
         return Optional.empty();
     }
 
-    @Override
-    public HttpHeaders headers() {
-        return HttpHeaders.of(headers, ALLOWED_ALL_HEADERS);
+    public Map<String, List<String>> headers() {
+        return headers;
+    }
+
+    public Map<String, HttpCookie> cookies() {
+        return cookies;
     }
 
     public String body() {
