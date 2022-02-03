@@ -8,19 +8,19 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class BossEventLoop implements Runnable {
+public class BossEventLoop implements EventLoop {
 
     private final Logger logger = LoggerFactory.getLogger(BossEventLoop.class);
 
     private final int port;
-    private final Queue<WorkerEventLoop> workerEventLoops = new LinkedList<>();
+    private final Consumer<SelectionKey> registerAtWorkerEventLoop;
 
-    public BossEventLoop(int port, List<WorkerEventLoop> workerEventLoops) {
+    public BossEventLoop(int port, Consumer<SelectionKey> registerAtWorkerEventLoop) {
         this.port = port;
-        this.workerEventLoops.addAll(workerEventLoops);
+        this.registerAtWorkerEventLoop = registerAtWorkerEventLoop;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BossEventLoop implements Runnable {
 
             serverChannel.configureBlocking(false);
             serverChannel.bind(new InetSocketAddress(port));
-            serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+            serverChannel.register(selector, SelectionKey.OP_ACCEPT, registerAtWorkerEventLoop);
 
             while (true) {
                 final int readyChannels = selector.select();
@@ -48,7 +48,7 @@ public class BossEventLoop implements Runnable {
                     }
 
                     if (key.isAcceptable()) {
-                        register(key);
+                        registerAtWorkerEventLoop.accept(key);
                     }
 
                     keys.remove();
@@ -57,22 +57,5 @@ public class BossEventLoop implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private SocketChannel accept(ServerSocketChannel serverSocketChannel) {
-        try {
-            return serverSocketChannel.accept();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    private void register(SelectionKey key) {
-        final ServerSocketChannel severChannel = ((ServerSocketChannel) key.channel());
-        SocketChannel client = accept(severChannel);
-        final WorkerEventLoop workerEventLoop = workerEventLoops.remove();
-        workerEventLoop.register(client);
-        workerEventLoops.add(workerEventLoop);
     }
 }

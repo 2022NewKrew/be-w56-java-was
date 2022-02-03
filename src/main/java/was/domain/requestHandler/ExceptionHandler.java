@@ -25,7 +25,8 @@ public class FrontRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void handle(HttpRequest req, HttpResponse res) throws IOException {
+    public void handle(HttpRequest req, HttpResponse res, RequestHandler requestHandler) throws IOException {
+        if (requestHandler.has)
         for (RequestHandler requestHandler : requestHandlerList) {
             requestHandler.handle(req, res);
         }

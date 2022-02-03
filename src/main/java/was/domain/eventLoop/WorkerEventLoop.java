@@ -10,19 +10,18 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.function.Function;
 
-public class WorkerEventLoop implements Runnable {
+public class WorkerEventLoop implements EventLoop {
 
     private final Logger logger = LoggerFactory.getLogger(WorkerEventLoop.class);
 
     private final ByteBuffer buffer = ByteBuffer.allocateDirect(2);
 
-    private final Function<byte[], byte[]> doService;
+    private final EventService eventService;
     private final Selector selector;
 
-    public WorkerEventLoop(Function<byte[], byte[]> doService) {
-        this.doService = doService;
+    public WorkerEventLoop(EventService eventService) {
+        this.eventService = eventService;
         try {
             selector = Selector.open();
         } catch (IOException e) {
@@ -50,7 +49,7 @@ public class WorkerEventLoop implements Runnable {
                     }
 
                     if (key.isReadable()) {
-                        doService(key);
+                        process(key);
                     }
 
                     keys.remove();
@@ -61,7 +60,7 @@ public class WorkerEventLoop implements Runnable {
         }
     }
 
-    private void doService(SelectionKey key) {
+    private void process(SelectionKey key) {
         final SocketChannel client = (SocketChannel) key.channel();
         final byte[] requestBytes = readBuffer(client);
 
@@ -75,7 +74,7 @@ public class WorkerEventLoop implements Runnable {
             return;
         }
 
-        final byte[] responseBytes = doService.apply(requestBytes);
+        final byte[] responseBytes = eventService.doService(requestBytes);
         returnResponse(client, responseBytes);
     }
 

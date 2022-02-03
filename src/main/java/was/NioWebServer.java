@@ -3,61 +3,51 @@ package was;
 import di.BeanContext;
 import was.config.NioWebServerConfig;
 import was.config.NioWebServerConfigRegistry;
-import was.domain.eventLoop.BossEventLoop;
+import was.domain.eventLoop.EventLoopGroup;
 import was.domain.eventLoop.EventService;
-import was.domain.eventLoop.WorkerEventLoop;
-import was.domain.router.Router;
-
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import was.domain.http.HttpService;
+import was.domain.router.ControllerMapper;
 
 public class NioWebServer {
 
-    private final ExecutorService threadPool;
-    private final BossEventLoop bossEventLoop;
-    private final List<WorkerEventLoop> workerEventLoops;
+    private final EventLoopGroup eventLoopGroup;
 
     protected NioWebServer(NioWebServerConfig webConfig) {
-        final NioWebServerConfigRegistry nioWebServerConfigRegistry = initNioWebServerConfig(webConfig);
+        final NioWebServerConfigRegistry registry = initNioWebServerConfig(webConfig);
 
-        final BeanContext beanContext = BeanContext.getInstance();
-
-        initRouter(nioWebServerConfigRegistry, beanContext);
-
-        final int port = nioWebServerConfigRegistry.getPort();
-        final int workEventLoopSize = nioWebServerConfigRegistry.getWorkerEventLoopSize();
-
-        final EventService eventService = beanContext.get(EventService.class);
-
-        workerEventLoops = IntStream.range(0, workEventLoopSize)
-                .mapToObj(i -> new WorkerEventLoop(eventService::doService))
-                .collect(Collectors.toList());
-
-        bossEventLoop = new BossEventLoop(port, workerEventLoops);
-
-        threadPool = Executors.newFixedThreadPool(workEventLoopSize + 1);
-    }
-
-    private void initRouter(NioWebServerConfigRegistry nioWebServerConfigRegistry, BeanContext beanContext) {
-        final Router router = beanContext.get(Router.class);
-        router.registerControllers(nioWebServerConfigRegistry.getControllers());
-    }
-
-    private NioWebServerConfigRegistry initNioWebServerConfig(NioWebServerConfig webConfig) {
-        final NioWebServerConfigRegistry nioWebServerConfigRegistry = new NioWebServerConfigRegistry();
-
-        webConfig.registerController(nioWebServerConfigRegistry);
-        webConfig.port(nioWebServerConfigRegistry);
-        webConfig.workerEventLoopSize(nioWebServerConfigRegistry);
-
-        return nioWebServerConfigRegistry;
+        initRouter(registry);
+        eventLoopGroup = generateEventLoopGroup(registry);
     }
 
     public void run() {
-        threadPool.execute(bossEventLoop);
-        workerEventLoops.forEach(threadPool::execute);
+        eventLoopGroup.run();
+    }
+
+    private NioWebServerConfigRegistry initNioWebServerConfig(NioWebServerConfig webConfig) {
+        final NioWebServerConfigRegistry registry = new NioWebServerConfigRegistry();
+
+        webConfig.registerController(registry);
+        webConfig.port(registry);
+        webConfig.workerEventLoopSize(registry);
+
+        return registry;
+    }
+
+    private EventLoopGroup generateEventLoopGroup(NioWebServerConfigRegistry registry) {
+        final BeanContext beanContext = BeanContext.getInstance();
+
+        final int port = registry.getPort();
+        final int workEventLoopSize = registry.getWorkerEventLoopSize();
+
+        final EventService httpService = beanContext.get(HttpService.class);
+
+        return new EventLoopGroup(port, workEventLoopSize, httpService);
+    }
+
+    private void initRouter(NioWebServerConfigRegistry registry) {
+        final BeanContext beanContext = BeanContext.getInstance();
+
+        final ControllerMapper controllerMapper = beanContext.get(ControllerMapper.class);
+        controllerMapper.registerControllers(registry.getControllers());
     }
 }
