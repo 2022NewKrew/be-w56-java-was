@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Map;
 
-public class RequestHandler extends Thread {
+public class RequestHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private static final byte[] SERVER_ERROR_MESSAGE = "서버에서 에러가 발생했습니다.".getBytes();

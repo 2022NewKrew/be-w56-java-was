@@ -6,10 +6,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
+    private static final ExecutorService threadPool = Executors.newCachedThreadPool();
+
+    private WebServer() {//인스턴스의 생성을 방지
+    }
 
     public static void run(String[] args) throws Exception {
         openServer(args);
@@ -32,7 +38,7 @@ public class WebServer {
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 RequestHandler requestHandler = new RequestHandler(connection);
-                requestHandler.start();
+                threadPool.submit(requestHandler);
             }
         }
     }

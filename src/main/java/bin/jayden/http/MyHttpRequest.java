@@ -80,7 +80,7 @@ public class MyHttpRequest {
                     cookies = HttpRequestUtils.parseCookies(header.getValue());
                 headers.addHeader(header);
             }
-            Map<String, String> params = null;
+            Map<String, String> params = new HashMap<>();
             if (method.equals(Constants.HTTP_METHOD_GET)) {
                 if (urlTokens.length > 1) {
                     params = HttpRequestUtils.parseQueryString(urlTokens[1]);

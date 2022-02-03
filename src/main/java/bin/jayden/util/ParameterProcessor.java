@@ -8,6 +8,9 @@ import java.security.InvalidParameterException;
 import java.util.Map;
 
 public class ParameterProcessor {
+    private ParameterProcessor() {//인스턴스의 생성을 방지
+    }
+
     public static Object[] getParameterObjects(Parameter[] methodParameters, MyHttpRequest request, MyHttpSession session) {
         Map<String, String> requestParameters = request.getParams();
         Object[] parameters = new Object[methodParameters.length];
