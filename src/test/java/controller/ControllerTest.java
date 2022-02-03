@@ -39,22 +39,4 @@ class ControllerTest {
                     }
                 });
     }
-
-    @Test
-    public void templateEngineTest() {
-        Map<String, String> map = new HashMap<>();
-        map.put("name", "carrot");
-        map.put("age", "27");
-        String html = "do something {{name}} 123 {{age}} 567";
-        Pattern pattern = Pattern.compile("\\{\\{(\\w+)\\}\\}");
-        Matcher matcher = pattern.matcher(html);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            String key = matcher.group(1);
-            matcher.appendReplacement(sb, map.get(key));
-        }
-        matcher.appendTail(sb);
-
-        System.out.println("sb.toString() = " + sb.toString());
-    }
 }
