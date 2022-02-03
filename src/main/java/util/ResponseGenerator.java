@@ -8,8 +8,8 @@ import java.nio.file.Files;
 import http.Response;
 
 public final class ResponseGenerator {
-    private static final String HTTP_REQUEST_200 = "HTTP/1.1 200 OK ";
-    private static final String HTTP_REQUEST_302 = "HTTP/1.1 302 OK ";
+    private static final String HTTP_RESPONSE_200 = "HTTP/1.1 200 OK ";
+    private static final String HTTP_RESPONSE_302 = "HTTP/1.1 302 OK ";
     private static final String CONTENT_LENGTH = "Content-Length: ";
     private static final String CONTENT_TYPE = "Content-Type: ";
     private static final String SET_COOKIE = "Set-Cookie: ";
@@ -52,12 +52,12 @@ public final class ResponseGenerator {
         StringBuilder stringBuilder = new StringBuilder();
         String contentType = getContentType(url);
 
-        String requstType = HTTP_REQUEST_200;
+        String responseType = HTTP_RESPONSE_200;
         if (contentType.equals(CONTENT_TYPE_REDIRECT)) {
-            requstType = HTTP_REQUEST_302;
+            responseType = HTTP_RESPONSE_302;
         }
 
-        stringBuilder.append(requstType).append(NEW_LINE)
+        stringBuilder.append(responseType).append(NEW_LINE)
                      .append(CONTENT_TYPE).append(contentType).append(NEW_LINE);
         if (cookie.length() > 1) {
             stringBuilder.append(SET_COOKIE).append(cookie).append(NEW_LINE);

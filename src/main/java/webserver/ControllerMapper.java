@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.Controller;
-import controller.UserController;
 import controller.DefaultController;
+import controller.UserController;
 
 public final class ControllerMapper {
     private static final String USER_CONTROLLER = "/users(.*)";
@@ -24,7 +24,7 @@ public final class ControllerMapper {
     public static Controller getController(String url) {
         return controllerMap.get(
                 controllerMap
-                        .keySet().stream().filter(key -> url.matches(key))
+                        .keySet().stream().filter(url::matches)
                         .findFirst().orElse(DEFAULT_CONTROLLER)
         );
     }
