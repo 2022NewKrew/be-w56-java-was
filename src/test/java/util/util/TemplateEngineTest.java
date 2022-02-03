@@ -1,11 +1,11 @@
 package util.util;
 
+import app.core.TemplateEngine;
 import app.db.DataBase;
 import app.model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import util.TemplateEngine;
 import util.ui.Model;
 import util.ui.ModelImpl;
 

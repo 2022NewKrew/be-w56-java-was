@@ -1,12 +1,12 @@
 package app.controller;
 
+import app.core.annotation.components.Controller;
+import app.core.annotation.mapping.GetMapping;
+import app.core.annotation.mapping.PostMapping;
 import app.db.DataBase;
 import app.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.annotation.components.Controller;
-import util.annotation.mapping.GetMapping;
-import util.annotation.mapping.PostMapping;
 import util.http.HttpRequest;
 import util.http.HttpRequestUtils;
 import util.http.HttpResponse;

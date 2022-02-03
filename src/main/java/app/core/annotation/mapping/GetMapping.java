@@ -1,4 +1,4 @@
-package util.annotation.mapping;
+package app.core.annotation.mapping;
 
 import util.http.HttpMethod;
 
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping(method = HttpMethod.POST)
-public @interface PostMapping {
+@RequestMapping(method = HttpMethod.GET)
+public @interface GetMapping {
     String url();
 }

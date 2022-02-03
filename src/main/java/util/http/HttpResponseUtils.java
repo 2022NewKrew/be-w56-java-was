@@ -1,6 +1,6 @@
 package util.http;
 
-import util.TemplateEngine;
+import app.core.TemplateEngine;
 import util.ui.Model;
 
 import java.io.DataOutputStream;

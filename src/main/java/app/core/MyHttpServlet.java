@@ -1,17 +1,18 @@
-package webserver;
+package app.core;
 
+import app.core.annotation.components.Controller;
+import app.core.annotation.mapping.RequestMapping;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.annotation.components.Controller;
-import util.annotation.mapping.RequestMapping;
 import util.http.HttpMethod;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
 import util.http.HttpResponseUtils;
 import util.ui.Model;
 import util.ui.ModelImpl;
+import webserver.HttpServlet;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -21,13 +22,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-public class ServletContainer {
-    private static final Logger log = LoggerFactory.getLogger(ServletContainer.class);
+public class MyHttpServlet implements HttpServlet {
+    private static final Logger log = LoggerFactory.getLogger(MyHttpServlet.class);
     private final Map<Method, Object> methodClassMap;
     private final Map<HttpMethod, Map<String, Method>> httpMethodMapMap;
 
-    // Todo 서블릿 컨테이너에 URL Mapping이 있어야하나? 이건 서블릿의 역할이 아닌가? -> 서블릿과 컨테이너를 나눠 볼 필요가 있다.
-    public ServletContainer() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+    public MyHttpServlet() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         methodClassMap = new HashMap<>();
         httpMethodMapMap = new EnumMap<>(HttpMethod.class);
         Arrays.stream(HttpMethod.values()).forEach(v -> httpMethodMapMap.put(v, new HashMap<>()));
@@ -154,6 +154,7 @@ public class ServletContainer {
     }
 
 
+    @Override
     public void service(HttpRequest request, HttpResponse response) {
         try {
             doResponse(request, response);

@@ -1,4 +1,4 @@
-package util;
+package app.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class TemplateEngine {
     private TemplateEngine() {
     }
 
-    public static byte[] render(String template, Model model) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static byte[] render(String template, Model model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         String templateString = Files.readString(Path.of("./webapp" + template));
         return divideByList(templateString, model).toString().getBytes(StandardCharsets.UTF_8);
     }
@@ -58,7 +58,7 @@ public class TemplateEngine {
     }
 
 
-    public static StringBuilder divideByList(String template, Object object) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static StringBuilder divideByList(String template, Object object) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Pattern pattern = Pattern.compile(START_REGEX);
         Matcher matcher = pattern.matcher(template);
         StringBuilder sb = new StringBuilder();

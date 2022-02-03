@@ -1,5 +1,6 @@
 package util.controller;
 
+import app.core.MyHttpServlet;
 import app.db.DataBase;
 import app.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import util.http.HttpRequest;
 import util.http.HttpRequestUtils;
 import util.http.HttpResponse;
-import webserver.ServletContainer;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -17,11 +17,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class UserControllerTest {
 
-    private ServletContainer servletContainer;
+    private MyHttpServlet myHttpServlet;
 
     @BeforeEach
     void setUp() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        servletContainer = new ServletContainer();
+        myHttpServlet = new MyHttpServlet();
     }
 
     @Test
@@ -34,7 +34,7 @@ class UserControllerTest {
 
         HttpRequest httpRequest = new HttpRequest(url);
         HttpResponse httpResponse = new HttpResponse();
-        servletContainer.service(httpRequest, httpResponse);
+        myHttpServlet.service(httpRequest, httpResponse);
         assertThat(httpResponse.headerText()).isEqualTo(resultHeader);
     }
 
@@ -57,7 +57,7 @@ class UserControllerTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
         HttpResponse httpResponse = new HttpResponse();
-        servletContainer.service(httpRequest, httpResponse);
+        myHttpServlet.service(httpRequest, httpResponse);
         assertThat(httpResponse.headerText()).isEqualTo(result);
 
     }
@@ -81,7 +81,7 @@ class UserControllerTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
         HttpResponse httpResponse = new HttpResponse();
-        servletContainer.service(httpRequest, httpResponse);
+        myHttpServlet.service(httpRequest, httpResponse);
         assertThat(httpResponse.headerText()).isEqualTo(result);
         assertThat(DataBase.findUserById(httpRequest.body().get("userId")).getUserId()).isEqualTo("javajigi");
     }
@@ -95,7 +95,7 @@ class UserControllerTest {
                 "\r\n";
         HttpRequest httpRequest = makeRequest(request);
         HttpResponse httpResponse = new HttpResponse();
-        servletContainer.service(httpRequest, httpResponse);
+        myHttpServlet.service(httpRequest, httpResponse);
         // then
         assertThat(httpResponse.headerText()).isEqualTo(result);
     }
@@ -112,7 +112,7 @@ class UserControllerTest {
 
         HttpRequest httpRequest = makeRequest(request);
         HttpResponse httpResponse = new HttpResponse();
-        servletContainer.service(httpRequest, httpResponse);
+        myHttpServlet.service(httpRequest, httpResponse);
         System.out.println("start ===============");
         System.out.println(new String(httpResponse.getBody()));
         System.out.println("end   ===============");
