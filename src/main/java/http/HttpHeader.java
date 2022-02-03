@@ -11,9 +11,11 @@ public enum HttpHeader {
     ACCEPT("Accept"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_TYPE("Content-Type"),
-    HOST("HOST"),
-    CONNECTION("Connection");
-
+    HOST("Host"),
+    CONNECTION("Connection"),
+    COOKIE("Cookie"),
+    SET_COOKIE("Set-Cookie"),
+    LOCATION("Location");
     private static final Map<String, HttpHeader> mappings = Collections.unmodifiableMap(
         Stream.of(values()).collect(
             Collectors.toMap(HttpHeader::getValue, Function.identity())));

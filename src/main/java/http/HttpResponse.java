@@ -49,12 +49,13 @@ public class HttpResponse {
         if (view.startsWith(REDIRECT_PREFIX)) {
             view = view.substring(REDIRECT_PREFIX.length());
             status = HttpStatus.FOUND;
+            headers.put(HttpHeader.LOCATION, "http://" + headers.get(HttpHeader.HOST) + view);
         }
         this.view = view;
     }
 
     private String statusLine() {
-        return version.toString() + status.toString() + LINE_BREAK;
+        return version.toString() + " " + status.toString() + LINE_BREAK;
     }
 
     private String header() {

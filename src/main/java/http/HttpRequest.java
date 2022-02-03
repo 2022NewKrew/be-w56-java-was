@@ -20,7 +20,7 @@ public class HttpRequest {
 
     public HttpRequest() {
         version = HttpVersion.HTTP_1_1;
-        headers = Maps.newTreeMap();
+        headers = Maps.newHashMap();
         fields = Maps.newHashMap();
     }
 
@@ -56,19 +56,14 @@ public class HttpRequest {
     }
 
     public HttpResponse respond() {
-        return new HttpResponse(version, HttpStatus.OK, Maps.newTreeMap(), null, null);
+        return new HttpResponse(version, HttpStatus.OK, headers, null, null);
     }
 
     public boolean hasAllFields(List<String> fields) {
         if (this.fields.isEmpty()) {
             return false;
         }
-        for (String field : fields) {
-            if (!this.fields.containsKey(field)) {
-                return false;
-            }
-        }
-        return true;
+        return fields.stream().allMatch(field -> this.fields.containsKey(field));
     }
 
     public Url getUrl() {
@@ -77,5 +72,9 @@ public class HttpRequest {
 
     public Map<String, String> getFields() {
         return fields;
+    }
+
+    public Map<HttpHeader, String> getHeaders() {
+        return headers;
     }
 }
