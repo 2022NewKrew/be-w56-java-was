@@ -34,7 +34,7 @@ public class HttpRequest {
         RequestHeader requestHeader = RequestHeader.from(br);
 
         // Parse request Body
-        String contentLength = requestHeader.get("Content-Length");
+        String contentLength = requestHeader.getFirst("Content-Length");
         if (StringUtils.isNullOrEmpty(contentLength) || !StringUtils.isNumber(contentLength)) {
             return new HttpRequest(requestLine, requestHeader, RequestBody.of());
         }
