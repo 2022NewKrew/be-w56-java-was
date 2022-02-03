@@ -13,7 +13,10 @@ import java.util.*;
 
 public class DependencyInjector {
 
-    static public Map<String, Object> inject() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private DependencyInjector() {
+    }
+
+    public static Map<String, Object> inject() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Map<String, Object> map = new HashMap<>();
         Set<Class<?>> s = findAllClassesUsingReflectionsLibrary("app");
         for (Class<?> clazz : s.toArray(new Class[0])) {

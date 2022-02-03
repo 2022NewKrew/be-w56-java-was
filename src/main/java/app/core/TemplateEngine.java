@@ -1,8 +1,8 @@
 package app.core;
 
+import app.util.exception.TemplateSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.exception.TemplateSyntaxException;
 import util.ui.Model;
 
 import java.io.IOException;

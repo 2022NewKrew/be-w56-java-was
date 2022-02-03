@@ -1,4 +1,4 @@
-package util.exception;
+package app.util.exception;
 
 public class TemplateSyntaxException extends RuntimeException {
     public TemplateSyntaxException() {

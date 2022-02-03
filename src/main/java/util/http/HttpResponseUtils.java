@@ -24,7 +24,7 @@ public class HttpResponseUtils {
         dos.flush();
     }
 
-    public static void dynamicResponse(HttpResponse httpResponse, String location, Model model) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static void dynamicResponse(HttpResponse httpResponse, String location, Model model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         httpResponse.setStatus(HttpStatus.OK);
         byte[] body = TemplateEngine.render(location, model);
         String[] array = location.split("\\.");
