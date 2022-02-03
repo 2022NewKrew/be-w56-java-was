@@ -3,6 +3,7 @@ package webserver;
 import controller.Controller;
 import controller.StaticFileController;
 import controller.UserCreateController;
+import controller.UserListController;
 import controller.UserLoginController;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -15,7 +16,8 @@ public enum ControllerType {
 
     STATIC_FILE_CONTROLLER(HttpMethod.GET, "", StaticFileController.getInstance()),
     USER_CREATE_CONTROLLER(HttpMethod.POST, "/user/create", UserCreateController.getInstance()),
-    USER_LOGIN_CONTROLLER(HttpMethod.POST, "/user/login", UserLoginController.getInstance());
+    USER_LOGIN_CONTROLLER(HttpMethod.POST, "/user/login", UserLoginController.getInstance()),
+    USER_LIST_CONTROLLER(HttpMethod.GET, "/user/list.html", UserListController.getInstance());
 
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
 
