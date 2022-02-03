@@ -97,8 +97,9 @@ public class DispatcherServlet extends Thread {
             if (mimeType == null) {
                 if (extension.equals(".woff")) {
                     mimeType = "application/font-woff";
+                } else {
+                    mimeType = "text/html";
                 }
-                mimeType = "text/html";
             }
             httpResponse.setHeaders("Content-Type", mimeType + ";charset=utf-8");
             httpResponse.setHeaders("Content-Length", Integer.toString(body.length));
