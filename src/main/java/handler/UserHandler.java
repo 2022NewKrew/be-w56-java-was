@@ -9,7 +9,14 @@ import http.Response;
 import model.User;
 import util.HttpRequestUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Bean
 public class UserHandler {
@@ -63,6 +70,27 @@ public class UserHandler {
             );
             return Response.of(302, new Headers(headers), "Not logged in");
         }
-        return Response.ok(Headers.EMPTY, "");
+        File file = new File("./webapp/user/list.html");
+        try {
+            String content = Files.readString(file.toPath());
+            String regex = "\\{\\{#users}}(.+)\\{\\{/users}}";
+            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(content);
+            //noinspection ResultOfMethodCallIgnored
+            matcher.find();
+            String found = matcher.group(1);
+            AtomicInteger i = new AtomicInteger(0);
+            String section = DataBase.findAll()
+                    .stream()
+                    .map(user -> found.replaceAll("\\{\\{id}}", String.valueOf(i.incrementAndGet()))
+                            .replaceAll("\\{\\{name}}", user.getName())
+                            .replaceAll("\\{\\{userId}}", user.getUserId())
+                            .replaceAll("\\{\\{email}}", user.getEmail()))
+                    .collect(Collectors.joining("\n"));
+            String filled = matcher.replaceAll(section);
+            return Response.ok(Headers.contentType(ContentType.HTML), filled);
+        } catch (IOException e) {
+            return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
+        }
     }
 }
