@@ -2,23 +2,26 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.controller.Controller;
+import util.ReflectionUtils;
+import util.annotation.RequestMapping;
 import webserver.controller.StaticFileController;
-import webserver.controller.user.UserGetCreateController;
-import webserver.controller.user.UserPostCreateController;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class HandlerMapper {
     private static final Logger log = LoggerFactory.getLogger(HandlerMapper.class);
-    private static final Map<String, Controller> controllers = new HashMap<>(){{
-        put("GET/users/create", new UserGetCreateController());
-        put("POST/users", new UserPostCreateController());
-    }};
-    private static final Controller staticFileController = new StaticFileController();
+    private static final StaticFileController staticFileController = StaticFileController.getInstance();
 
-    public String map(Request request) throws IOException {
-        return controllers.getOrDefault(request.getMethod()+request.getUri(), staticFileController).control(request);
+    public String map(Request request, Response response) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        for(Class cls : ReflectionUtils.findAllClasses("webserver.controller")){
+            for(Method method : cls.getDeclaredMethods()){
+                RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
+                if(annotation!=null && request.getUri().equals(annotation.value()) && request.getMethod().equals(annotation.method())){
+                    return (String)method.invoke(cls.getMethod("getInstance").invoke(null), request, response);
+                }
+            }
+        }
+        return staticFileController.control(request, response);
     }
 }

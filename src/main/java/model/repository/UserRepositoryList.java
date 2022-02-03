@@ -2,7 +2,6 @@ package model.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import model.User;
 
 public class UserRepositoryList implements UserRepository{
@@ -22,6 +21,13 @@ public class UserRepositoryList implements UserRepository{
     @Override
     public User findById(int id){
         return users.stream().filter(user -> user.getId()==id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public User findByStringId(String stringId){
+        return users.stream().filter(user -> user.getStringId().equals(stringId))
                 .findFirst()
                 .orElse(null);
     }
