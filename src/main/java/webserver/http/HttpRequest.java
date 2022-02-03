@@ -30,10 +30,10 @@ public class HttpRequest {
     private void requestParsingQueryParam(String url) {
         String[] parseUrl = url.split("[?]");
 
-        this.url = parseUrl[0];
+        this.url = parseUrl[HttpConst.URI_PATH];
         queryParameter = new HashMap<>();
-        if (parseUrl.length > 1) {
-            queryParameter = HttpRequestUtils.parseQueryString(parseUrl[1]);
+        if (parseUrl.length > HttpConst.URI_QUERY_PARAM) {
+            queryParameter = HttpRequestUtils.parseQueryString(parseUrl[HttpConst.URI_QUERY_PARAM]);
         }
     }
 

@@ -47,7 +47,7 @@ public class HttpResponse {
     }
 
     public void send(DataOutputStream dos) throws IOException {
-        if (cookie.size() > 0) {
+        if (!cookie.isEmpty()) {
             responseSetCookie();
         }
         responseSetHeader(dos, body.length);
@@ -72,7 +72,8 @@ public class HttpResponse {
                     .append(";");
         }
 
-        sb.deleteCharAt(sb.length() - 1);
+        int lastIndex = sb.length()-1;
+        sb.deleteCharAt(lastIndex);
 
         headers.put("Set-Cookie", sb.toString());
     }
