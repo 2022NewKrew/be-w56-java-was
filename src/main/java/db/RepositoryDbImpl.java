@@ -1,25 +1,27 @@
 package db;
 
+import model.Request;
 import model.User;
 
 import java.sql.*;
 import java.util.*;
 
+import static query.UserQuery.*;
+
 public class RepositoryDbImpl {
-    public static void main(String[] args) throws SQLException {
-        List<User> userList = new ArrayList<>();
+        private static String url = "jdbc:mysql://muscle-db.ay1.krane.9rum.cc:3306/test";
+        private static String userName = "root";
+        private static String password = "1234";
 
-        String url = "jdbc:mysql://muscle-db.ay1.krane.9rum.cc:3306/test";
-        String userName = "root";
-        String password = "1234";
+        public static User findUserById(String userId) throws SQLException {
+            Connection connection = DriverManager.getConnection(url, userName, password);
 
-        Connection connection = DriverManager.getConnection(url, userName, password);
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from USER");
+            PreparedStatement pstmt = connection.prepareStatement(FIND_BY_ID_QUERY);
+            pstmt.setString(1,userId);
+            ResultSet resultSet = pstmt.executeQuery();
+            resultSet.next();
 
-        while(resultSet.next()) {
-            // user 객체에 값 저장
-            User newUser = User.builder()
+            User findUser = User.builder()
                     .id(resultSet.getLong(1))
                     .userId(resultSet.getString(2))
                     .password(resultSet.getString(3))
@@ -27,16 +29,49 @@ public class RepositoryDbImpl {
                     .email(resultSet.getString(5))
                     .build();
 
-            // 리스트에 추가
-            userList.add(newUser);
+            resultSet.close();
+            pstmt.close();
+            connection.close();
+            return findUser;
         }
-        System.out.println(userList);
-//        resultSet.next();
-//        String name = resultSet.getString("name");
-//        System.out.println(name);
 
-        resultSet.close();
-        statement.close();
-        connection.close();
-    }
+        public static void save(Request request) throws SQLException {
+            Map<String, String> queryString = request.getQueryString();
+            Connection connection = DriverManager.getConnection(url, userName, password);
+
+            PreparedStatement pstmt = connection.prepareStatement(INSERT_QUERY);
+            pstmt.setString(1, queryString.get("userId"));
+            pstmt.setString(2, queryString.get("password"));
+            pstmt.setString(3, queryString.get("name"));
+            pstmt.setString(4, queryString.get("email"));
+            int result = pstmt.executeUpdate();
+
+            pstmt.close();
+            connection.close();
+        }
+
+        public static List<User> findAll() throws SQLException {
+            List<User> userList = new ArrayList<>();
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY);
+
+            while(resultSet.next()) {
+                User newUser = User.builder()
+                        .id(resultSet.getLong(1))
+                        .userId(resultSet.getString(2))
+                        .password(resultSet.getString(3))
+                        .name(resultSet.getString(4))
+                        .email(resultSet.getString(5))
+                        .build();
+
+                userList.add(newUser);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+
+            return userList;
+        }
+
 }
