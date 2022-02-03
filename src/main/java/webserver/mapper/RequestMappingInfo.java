@@ -5,8 +5,6 @@ import dto.UserLoginRequest;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.ModelAndView;
-import spark.template.handlebars.HandlebarsTemplateEngine;
 import webserver.exception.*;
 import webserver.http.*;
 import webserver.provider.StaticResourceProvider;
@@ -14,6 +12,8 @@ import dto.UserCreateRequest;
 
 import java.io.DataOutputStream;
 import java.util.*;
+
+import static util.TemplateEngineUtils.renderDynamicTemplate;
 
 public enum RequestMappingInfo {
 
@@ -75,7 +75,7 @@ public enum RequestMappingInfo {
             }
             Collection<User> users = DataBase.findAll();
 
-            byte[] body = render(users, "/user/list.html").getBytes();
+            byte[] body = renderDynamicTemplate(users, "/user/list.html").getBytes();
             return MyHttpResponse.builder(dos)
                     .status(HttpStatus.OK)
                     .body(body)
@@ -100,10 +100,6 @@ public enum RequestMappingInfo {
     RequestMappingInfo(String path, HttpMethod method) {
         this.path = path;
         this.method = method;
-    }
-
-    private static String render(Object model, String templatePath) {
-        return new HandlebarsTemplateEngine().render(new ModelAndView(model, templatePath));
     }
 
     public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, String method) {

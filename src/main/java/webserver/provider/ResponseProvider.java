@@ -1,7 +1,5 @@
 package webserver.provider;
 
-import spark.ModelAndView;
-import spark.template.handlebars.HandlebarsTemplateEngine;
 import webserver.exception.UserUnauthorizedException;
 import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
@@ -10,6 +8,8 @@ import webserver.http.MyHttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import static util.TemplateEngineUtils.renderDynamicTemplate;
 
 public class ResponseProvider {
 
@@ -61,8 +61,7 @@ public class ResponseProvider {
     }
 
     private static MyHttpResponse response401Unauthorized(DataOutputStream dos, Exception e) {
-        String render = new HandlebarsTemplateEngine().render(new ModelAndView(e.getMessage(), "/user/login_failed.html"));
-        byte[] body = render.getBytes();
+        byte[] body = renderDynamicTemplate(e.getMessage(), "/user/login_failed.html").getBytes();
         return MyHttpResponse.builder(dos)
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(body)
