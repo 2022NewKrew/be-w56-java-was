@@ -1,9 +1,11 @@
 package webserver.http;
 
+import com.google.common.net.HttpHeaders;
 import java.io.BufferedReader;
 import java.io.IOException;
 import webserver.util.HttpRequestUtils;
 import webserver.util.HttpRequestUtils.Pair;
+import webserver.util.IOUtils;
 
 public class DefaultHttpRequestBuilder {
 
@@ -41,9 +43,20 @@ public class DefaultHttpRequestBuilder {
         }
     }
 
+    private void initBody() throws IOException {
+        if (method != HttpMethod.POST) {
+            return;
+        }
+        
+        String contentLength = trailingHeaders.get(HttpHeaders.CONTENT_LENGTH);
+        String s = IOUtils.readData(reader, Integer.parseInt(contentLength));
+        System.out.println(s);
+    }
+
     public HttpRequest build() throws IOException {
         initRequestLine();
         initHeaders();
+        initBody();
         return new HttpRequest(version, method, uri, params, trailingHeaders);
     }
 }

@@ -1,25 +1,42 @@
 package webserver.http;
 
 import com.google.common.net.HttpHeaders;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import webserver.WebServerConfig;
+import webserver.util.HttpResponseUtil;
 
 public class HttpResponse {
 
+    private final OutputStream out;
     private final HttpVersion version;
     private final HttpHeader trailingHeaders;
     private HttpResponseStatus status;
     private byte[] body;
 
-    public HttpResponse() {
-        this(WebServerConfig.RESPONSE_HTTP_VERSION);
+    public HttpResponse(OutputStream out) {
+        this(out, WebServerConfig.RESPONSE_HTTP_VERSION);
     }
 
-    public HttpResponse(HttpVersion version) {
+    public HttpResponse(OutputStream out, HttpVersion version) {
+        this.out = out;
         this.version = version;
         trailingHeaders = new HttpHeader();
         setDateHeader();
+    }
+
+    public void send() throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        dos.writeBytes(HttpResponseUtil.responseLineString(this));
+        dos.writeBytes(HttpResponseUtil.headerString(this));
+        if (body != null && body.length > 0) {
+            dos.write(HttpResponseUtil.bodyString(this).getBytes(StandardCharsets.UTF_8));
+        }
+        dos.flush();
     }
 
     private void setDateHeader() {

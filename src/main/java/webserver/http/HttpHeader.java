@@ -24,6 +24,10 @@ public class HttpHeader {
         return this;
     }
 
+    public String get(String key) {
+        return map.get(key);
+    }
+
     public Map<String, String> getMap() {
         return map;
     }

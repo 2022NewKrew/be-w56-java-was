@@ -12,13 +12,12 @@ import webserver.util.FileUtils;
 public class FileHandler implements FileHandleable {
 
     @Override
-    public HttpResponse write(HttpResponse response, File file) throws IOException {
+    public void write(HttpResponse response, File file) throws IOException {
         String fileExtension = FileUtils.parseExtension(file);
         byte[] contents = Files.readAllBytes(file.toPath());
         response.setStatus(HttpResponseStatus.OK).setBody(contents);
         response.headers()
             .set(HttpHeaders.CONTENT_TYPE, MimeType.getMimeSubtype(fileExtension))
             .set(HttpHeaders.CONTENT_LENGTH, String.valueOf(contents.length));
-        return response;
     }
 }

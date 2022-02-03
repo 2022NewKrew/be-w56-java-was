@@ -11,8 +11,9 @@ import webserver.WebServerConfig;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
+import webserver.servlet.Controllable;
 
-public class SignUpController {
+public class SignUpController implements Controllable {
 
     public static final String path = "/user";
     private final Logger logger = LoggerFactory.getLogger(SignUpController.class);
@@ -22,14 +23,13 @@ public class SignUpController {
         this.createUserUseCase = createUserUseCase;
     }
 
-    public HttpResponse call(HttpRequest request, HttpResponse response) {
+    public void call(HttpRequest request, HttpResponse response) {
         if (request.getUri().startsWith(path + "/create")) {
-            return signUp(request, response);
+            signUp(request, response);
         }
-        return response;
     }
 
-    private HttpResponse signUp(HttpRequest request, HttpResponse response) {
+    private void signUp(HttpRequest request, HttpResponse response) {
         Map<String, String> params = request.getParams().getParameters();
         SignUpUserDto signUpUserDto = new SignUpUserDto(
             params.get("userId"),
@@ -42,6 +42,5 @@ public class SignUpController {
         logger.info("sign up :" + user.getUserId());
         response.setStatus(HttpResponseStatus.FOUND);
         response.headers().set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT);
-        return response;
     }
 }

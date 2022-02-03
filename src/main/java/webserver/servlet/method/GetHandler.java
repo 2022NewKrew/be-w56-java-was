@@ -20,15 +20,23 @@ public class GetHandler implements HttpHandleable {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request, HttpResponse response) throws IOException {
-        File file = new File(WebServerConfig.BASE_PATH + request.getUri());
+    public void handle(HttpRequest request, HttpResponse response) throws IOException {
+        String uriPath = WebServerConfig.BASE_PATH + request.getUri();
+        File file = new File(uriPath);
+        File entryFile = new File(uriPath + WebServerConfig.ENTRY_FILE);
+
         if (file.exists()) {
-            return fileHandleable.write(response, file);
+            fileHandleable.write(response, file);
+            return;
+        }
+
+        if (entryFile.exists()) {
+            fileHandleable.write(response, entryFile);
+            return;
         }
 
         if (request.getUri().startsWith(SignUpController.path)) {
-            return signUpController.call(request, response);
+            signUpController.call(request, response);
         }
-        return response;
     }
 }

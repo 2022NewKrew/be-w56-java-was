@@ -6,6 +6,6 @@ import webserver.http.HttpResponse;
 
 public interface HttpHandleable {
 
-    HttpResponse handle(HttpRequest request, HttpResponse response) throws IOException;
+    void handle(HttpRequest request, HttpResponse response) throws IOException;
 
 }
