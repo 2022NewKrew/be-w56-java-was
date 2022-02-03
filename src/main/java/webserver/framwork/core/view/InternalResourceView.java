@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class InternalResourceView implements View {
-    private static final String htmlContentType = "text/html";
+    private static final String HTML_CONTENT_TYPE = "text/html";
     private final String location;
     private final Model model;
 
@@ -22,7 +22,7 @@ public class InternalResourceView implements View {
 
     @Override
     public String getContentType() {
-        return htmlContentType;
+        return HTML_CONTENT_TYPE;
     }
 
     @Override

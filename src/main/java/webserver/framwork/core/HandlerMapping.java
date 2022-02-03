@@ -31,7 +31,6 @@ public class HandlerMapping {
         for (Method method : methods) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             handlerMethods.put(mapping.method(), mapping.value(), method);
-            System.out.println(mapping.method() + ", " + mapping.value());
         }
     }
 
