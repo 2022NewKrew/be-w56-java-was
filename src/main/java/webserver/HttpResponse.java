@@ -21,6 +21,7 @@ public class HttpResponse {
         cookies.put(key, value);
     }
 
+
     public void setStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
@@ -58,6 +59,7 @@ public class HttpResponse {
     public String toHeader() {
         String line = String.format("%s %d %s \r\n", version, httpStatus.getCode(), httpStatus.getMessage());
         String header = "";
+
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             header += String.format("%s: %s\r\n", entry.getKey(), entry.getValue());
         }

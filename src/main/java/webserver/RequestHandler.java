@@ -32,6 +32,7 @@ public class RequestHandler extends Thread {
             HttpResponse httpResponse = createEmptyHttpResponse();
 
             FrontController.doService(httpRequest, httpResponse);
+
             response(dos, httpResponse);
 
         } catch (IOException e) {
