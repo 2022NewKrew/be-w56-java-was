@@ -43,7 +43,7 @@ public class HttpRequestUtils {
         String[] tokens = cookies.split(";");
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "="))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue, (p1, p2) -> p2));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
