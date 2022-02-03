@@ -2,6 +2,7 @@ package controller;
 
 import enums.HttpStatus;
 import org.slf4j.Logger;
+import service.HtmlService;
 import service.RequestService;
 import util.HttpRequestUtils;
 import service.ResponseService;
@@ -19,6 +20,7 @@ public class HttpController {
     private BufferedReader br;
     private RequestService requestService = new RequestService();
     private ResponseService responseService;
+    private HtmlService htmlService;
 
     public HttpController(Map<String, String> requestMap, Map<String, String> headerMap,
                           Logger log, BufferedReader br, OutputStream out) {
@@ -27,6 +29,7 @@ public class HttpController {
         this.log = log;
         this.br = br;
         responseService = new ResponseService(out);
+        htmlService = new HtmlService();
     }
 
     public void run() throws IOException {
@@ -48,6 +51,24 @@ public class HttpController {
             url = "/index.html";
         }
 
+        if(url.equals("/user/list.html") && httpMethod.equals("GET")) {
+            url = "/index.html";
+            httpStatus = HttpStatus.FOUND;
+            userList(url, httpStatus, cookie);
+            return;
+        }
+
+        responseService.response(url, httpStatus, cookie);
+    }
+
+    private void userList(String url, HttpStatus httpStatus, String cookie) throws IOException {
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(headerMap.get("Cookie"));
+        boolean logined = Boolean.parseBoolean(cookies.get("logined"));
+        if(logined) {
+            htmlService.makeUserList();
+            url = "/users/list.html";
+            httpStatus = HttpStatus.OK;
+        }
         responseService.response(url, httpStatus, cookie);
     }
 
