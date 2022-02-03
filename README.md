@@ -14,6 +14,12 @@
 - [ ] 전역 기본 에러 핸들러 추가
 - [ ] 2,3단계 기능 구현
 
+# 2022.02.03(목)
+## Code
+
+## TIL
+
+
 # 2022.01.27
 ## Code
 None yet
@@ -55,7 +61,16 @@ DispatcherServlet
 
 **핸들러 등록 과정**
 
-블라블라블라
+역순으로
+1. DispatcherServlet에서 getHandler는  
+   인스턴스 변수인 handlerMappings에서 각 HandlerMapping에 대해서  
+   getHandler를 호출하여 매칭하는 핸들러가 있는지 확인하고,  
+   첫 매칭된 핸들러를 반환함.
+![HandlerMapping Diagram](HandlerMapping.png)
+MatchableHandlerMapping은 비교적 최근에 도입되고 구현이 PathPatternMatchableHandlerMapping밖에 없다.
+PathPatternMatchableHandlerMapping은 무슨 Introspector에서 생성된다... 잘 모르겠다...
+으.. 어렵다..
+
 
 
 # 2022.01.26
