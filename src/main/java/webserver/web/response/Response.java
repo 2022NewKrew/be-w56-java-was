@@ -1,8 +1,6 @@
-package webserver;
+package webserver.web.response;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import webserver.web.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +16,7 @@ public class Response {
     private final int contentLength;
     private final String contentType;
     private final String redirectLocation;
-    private final DataOutputStream dos;
+    private final String cookie;
 
     private Response(ResponseBuilder builder) {
         this.result = builder.result;
@@ -26,22 +24,25 @@ public class Response {
         this.contentLength = builder.contentLength;
         this.contentType = builder.contentType;
         this.redirectLocation = builder.redirectLocation;
-        this.dos = new DataOutputStream(builder.out);
+        this.cookie = builder.cookie;
     }
 
-    private void writeResponseHeader() {
+    private void writeResponseHeader(DataOutputStream dos) {
         try {
             dos.writeBytes("HTTP/1.1 " + status.valueOf() + "\r\n");
             dos.writeBytes("Content-Type: " + contentType + "\r\n");
             dos.writeBytes("Content-Length: " + contentLength + "\r\n");
-            dos.writeBytes("Location: " + redirectLocation + "\r\n");
+            if (!redirectLocation.equals(""))
+                dos.writeBytes("Location: " + redirectLocation + "\r\n");
+            if (!cookie.equals(""))
+                dos.writeBytes("Set-Cookie: " + cookie + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void responseBody() {
+    private void responseBody(DataOutputStream dos) {
         try {
             dos.write(result, 0, result.length);
             dos.flush();
@@ -50,9 +51,10 @@ public class Response {
         }
     }
 
-    public void send() {
-        writeResponseHeader();
-        responseBody();
+    public void send(OutputStream out) {
+        DataOutputStream dos = new DataOutputStream(out);
+        writeResponseHeader(dos);
+        responseBody(dos);
     }
 
     public static class ResponseBuilder {
@@ -60,11 +62,10 @@ public class Response {
         private HttpStatus status = HttpStatus.OK;
         private int contentLength = 0;
         private String contentType = "*/*";
-        private final OutputStream out;
         private String redirectLocation = "";
+        private String cookie = "";
 
-        public ResponseBuilder(OutputStream out) {
-            this.out = out;
+        public ResponseBuilder() {
         }
 
         public ResponseBuilder setResult(byte[] result) {
@@ -94,6 +95,11 @@ public class Response {
 
         public Response build() {
             return new Response(this);
+        }
+
+        public ResponseBuilder setCookie(String cookie) {
+            this.cookie = cookie;
+            return this;
         }
     }
 }
