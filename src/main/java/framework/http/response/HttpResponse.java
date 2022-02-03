@@ -1,9 +1,12 @@
 package framework.http.response;
 
-import framework.http.enums.HttpStatus;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class HttpResponse {
-    public static final String DEFAULT_PROTOCOL = "HTTP/1.1";
+    private static final String WEBAPP_PATH = "./webapp";
+    private static final String DEFAULT_PROTOCOL = "HTTP/1.1";
 
     private StatusLine statusLine;
     private HttpResponseHeader header;
@@ -13,6 +16,12 @@ public class HttpResponse {
         this.statusLine = new StatusLine(DEFAULT_PROTOCOL, httpStatus);
         this.header = header;
         this.body = new byte[1];
+    }
+
+    public HttpResponse(HttpStatus httpStatus, HttpResponseHeader header, String filePath) throws IOException {
+        this.statusLine = new StatusLine(DEFAULT_PROTOCOL, httpStatus);
+        this.header = header;
+        this.body = readFileByBytes(filePath);
     }
 
     public HttpResponse(HttpStatus httpStatus, HttpResponseHeader header, byte[] body) {
@@ -31,6 +40,13 @@ public class HttpResponse {
         this.statusLine = new StatusLine(protocol, httpStatus);
         this.header = header;
         this.body = body;
+    }
+
+    private byte[] readFileByBytes(String path) throws IOException {
+        File file = new File(WEBAPP_PATH + path);
+        byte[] bytes = Files.readAllBytes(file.toPath());
+
+        return bytes;
     }
 
     public HttpResponseHeader getHeader() {

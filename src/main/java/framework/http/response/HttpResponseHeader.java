@@ -19,6 +19,7 @@ public class HttpResponseHeader extends HttpHeader {
     public static final String KEEP_ALIVE = "Keep-Alive";
     public static final String SET_COOKIE = "Set-Cookie";
     public static final String SERVER = "Server";
+    public static final String LOCATION = "Location";
 
     private Map<String, String> headers;
 

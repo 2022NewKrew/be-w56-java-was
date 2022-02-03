@@ -12,7 +12,6 @@ public abstract class HttpHeader {
     public static final String CONTENT_SECURITY_POLICY = "Content-Security-Policy";
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String DATE = "DATE";
-    public static final String LOCATION = "Location";
 
     public abstract String getValue(String key);
 }
