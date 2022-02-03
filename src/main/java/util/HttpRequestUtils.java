@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import http.request.HttpRequest;
 import http.request.HttpRequestLine;
 
 public class HttpRequestUtils {

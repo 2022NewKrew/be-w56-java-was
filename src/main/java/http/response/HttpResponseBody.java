@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class HttpResponseBody {
-    private static final String STATIC_ROOT = "./webapp";
+    public static final String STATIC_ROOT = "./webapp";
     private final byte[] body;
 
     public HttpResponseBody(byte[] body) {
@@ -23,6 +23,10 @@ public class HttpResponseBody {
     public static HttpResponseBody createFromUrl(final String url) throws IOException {
         File file = new File(STATIC_ROOT + url);
         return new HttpResponseBody(Files.readAllBytes(file.toPath()));
+    }
+
+    public static HttpResponseBody createFromStringBuilder(final StringBuilder sb) {
+        return new HttpResponseBody(sb.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     public void writeToDataOutputStream(final DataOutputStream dos) throws IOException {
