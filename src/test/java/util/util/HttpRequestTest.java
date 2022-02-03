@@ -13,13 +13,13 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HttpRequestTest {
+class HttpRequestTest {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestTest.class);
 
 
     @Test
-    void initHttpRequest(){
+    void initHttpRequest() {
         String path = "GET /index.html HTTP/1.1";
         HttpRequest httpRequest = new HttpRequest(path);
         assertThat(httpRequest.method()).isSameAs(HttpMethod.GET);

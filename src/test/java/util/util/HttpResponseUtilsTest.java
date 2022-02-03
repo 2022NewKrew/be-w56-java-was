@@ -2,9 +2,9 @@ package util.util;
 
 import org.junit.jupiter.api.Test;
 
-public class HttpResponseUtilsTest {
+class HttpResponseUtilsTest {
     @Test
-    void response200Test(){
+    void response200Test() {
 
     }
 

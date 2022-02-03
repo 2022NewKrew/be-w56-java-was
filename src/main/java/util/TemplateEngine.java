@@ -2,6 +2,7 @@ package util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.exception.TemplateSyntaxException;
 import util.ui.Model;
 
 import java.io.IOException;
@@ -15,17 +16,20 @@ import java.util.regex.Pattern;
 
 public class TemplateEngine {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateEngine.class);
-    // Todo 정규표현식 공부 좀 더 해야할 듯
-    private static final String startRegex = "\\{\\{\\#[a-zA-Z]+\\}\\}";
-    private static final String endRegex = "\\{\\{\\/[a-zA-Z]+\\}\\}";
-    private static final String valueRegex = "\\{\\{[a-zA-Z]*\\.*[a-zA-Z]+\\}\\}";
+
+    private static final String START_REGEX = "\\{\\{\\#[a-zA-Z]+\\}\\}";
+    private static final String END_REGEX = "\\{\\{\\/[a-zA-Z]+\\}\\}";
+    private static final String VALUE_REGEX = "\\{\\{[a-zA-Z]*\\.*[a-zA-Z]+\\}\\}";
+
+    private TemplateEngine() {
+    }
 
     public static byte[] render(String template, Model model) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         String templateString = Files.readString(Path.of("./webapp" + template));
         return divideByList(templateString, model).toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    private static Object getValue(Object object, String key) throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private static Object getValue(Object object, String key) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (key.contains("."))
             return getObjectAttribute(object, key);
         if (Model.class.isAssignableFrom(object.getClass()))
@@ -55,26 +59,24 @@ public class TemplateEngine {
 
 
     public static StringBuilder divideByList(String template, Object object) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        Pattern pattern = Pattern.compile(startRegex);
+        Pattern pattern = Pattern.compile(START_REGEX);
         Matcher matcher = pattern.matcher(template);
         StringBuilder sb = new StringBuilder();
-        // Check all occurrences
-        if(matcher.find() != false){
-            Pattern pattern1 = Pattern.compile(endRegex);
+        // Check all list occurrences
+        if (matcher.find()) {
+            Pattern pattern1 = Pattern.compile(END_REGEX);
             Matcher matcher1 = pattern1.matcher(template);
-            // Todo find() 먼저 해주어야 한다.
-            if(matcher1.find() == false)
-                throw new RuntimeException("템플릿이 잘못되었습니다!");
+            if (!matcher1.find())
+                throw new TemplateSyntaxException("템플릿이 잘못되었습니다!");
             String tmp = matcher.group();
-            String target = tmp.substring(3, tmp.length()-2);
+            String target = tmp.substring(3, tmp.length() - 2);
             //first part
             sb.append(renderObjectValues(template.substring(0, matcher.start()), object));
             String middleTemplate = template.substring(matcher.end(), matcher1.start());
 
             //middle part
-            List list = (List) getValue(object,target);
-            for(int i=0; i<list.size(); i++)
-                sb.append(divideByList(middleTemplate, list.get(i)));
+            List<?> list = (List<?>) getValue(object, target);
+            for (Object o : list) sb.append(divideByList(middleTemplate, o));
 
             //last part
             return sb.append(divideByList(template.substring(matcher1.end()), object));
@@ -83,14 +85,12 @@ public class TemplateEngine {
     }
 
 
-
-    private static StringBuilder renderObjectValues(String template, Object object) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    private static StringBuilder renderObjectValues(String template, Object object) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         StringBuilder sb = new StringBuilder();
-        Pattern pattern = Pattern.compile(valueRegex);
+        Pattern pattern = Pattern.compile(VALUE_REGEX);
         Matcher matcher = pattern.matcher(template);
         int prevEnd = 0;
-        boolean res = false;
-        while ((res = matcher.find()) == true) {
+        while (matcher.find()) {
             String tmp = matcher.group();
             String target = tmp.substring(2, tmp.length() - 2);
             sb.append(template, prevEnd, matcher.start());

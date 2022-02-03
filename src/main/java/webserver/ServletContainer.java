@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ServletContainer {
     private static final Logger log = LoggerFactory.getLogger(ServletContainer.class);
@@ -34,14 +33,14 @@ public class ServletContainer {
         Arrays.stream(HttpMethod.values()).forEach(v -> httpMethodMapMap.put(v, new HashMap<>()));
         // Todo 각 요청마다 새로 만들고있다. 고칠필요가 있음.
         // Todo DI를 여기서 구현해 볼 수 있다.
-        Set<Class> s = findAllClassesUsingReflectionsLibrary("app");
-        for (Class controller : s.toArray(new Class[0])) {
+        Set<Class<?>> s = findAllClassesUsingReflectionsLibrary("app");
+        for (Class<?> controller : s.toArray(new Class[0])) {
             if (controller.getAnnotation(Controller.class) == null) continue;
             componentMapping(controller, controller.getMethods());
         }
     }
 
-    private void componentMapping(Class controllerClass, Method[] methods) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void componentMapping(Class<?> controllerClass, Method[] methods) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         log.debug("controller detected {}", controllerClass);
         for (Method method : methods) {
             log.debug("method detected : {}, {}", controllerClass.getName(), method.getName());
@@ -50,7 +49,7 @@ public class ServletContainer {
         }
     }
 
-    private void methodControllerMapping(Method method, Class controllerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void methodControllerMapping(Method method, Class<?> controllerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         methodClassMap.put(method, controllerClass.getConstructor().newInstance());
     }
 
@@ -74,10 +73,10 @@ public class ServletContainer {
             return httpRequest.params();
         if (httpRequest.method() == HttpMethod.POST)
             return httpRequest.body();
-        return null;
+        return Collections.emptyMap();
     }
 
-    private List<Object> methodArguments(Method method, Map data, HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private List<Object> methodArguments(Method method, Map<String, String> data, HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         List<Object> arguments = new ArrayList<>();
         Parameter[] parameters = method.getParameters();
         for (Parameter parameter : parameters) {
@@ -100,7 +99,7 @@ public class ServletContainer {
 
     private Object objectArgument(Parameter parameter, Map<String, String> data) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Field[] fields = parameter.getType().getDeclaredFields();
-        List<Class> types = new ArrayList<>();
+        List<Class<?>> types = new ArrayList<>();
         List<Object> paramList = new ArrayList<>();
         for (Field field : fields) {
             String name = field.getName();
@@ -121,7 +120,6 @@ public class ServletContainer {
             HttpResponseUtils.redirectResponse(httpResponse, controllerResults[1].trim(), httpRequest.getHeader("Host"));
             return;
         }
-        //Todo 동적 html 생성.
         if (model != null) {
             HttpResponseUtils.dynamicResponse(httpResponse, controllerResults[0], model);
             return;
@@ -129,28 +127,36 @@ public class ServletContainer {
         HttpResponseUtils.staticResponse(httpResponse, controllerResults[0]);
     }
 
-
-    public void service(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException, InstantiationException {
+    private void responseStatic(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
-            Method method = methodFromUrl(request);
-            if (method == null) {
-                try {
-                    HttpResponseUtils.staticResponse(response, request.url());
-                } catch (IOException exception) {
-                    HttpResponseUtils.notFoundResponse(response);
-                }
-                return;
-            }
-            Map data = dataFromRequest(request);
-            Object controller = this.methodClassMap.get(method);
-            List<Object> arguments = methodArguments(method, data, request, response);
-            //Todo contorllerResult를 Serialize해서 json으로 던져줄 수도 있다.
-            String controllerResult = (String) method.invoke(controller, arguments.toArray());
-            Optional<Object> opt = arguments.stream().filter(o->Arrays.asList(o.getClass().getInterfaces()).contains(Model.class)).findAny();
-            if(opt.isEmpty())
-                controllerResponse(controllerResult, null, request, response);
-            else
-                controllerResponse(controllerResult, (Model) opt.get(), request, response);
+            HttpResponseUtils.staticResponse(httpResponse, httpRequest.url());
+        } catch (IOException exception) {
+            HttpResponseUtils.notFoundResponse(httpResponse);
+        }
+    }
+
+    private void doResponse(HttpRequest request, HttpResponse response) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        Method method = methodFromUrl(request);
+        if (method == null) {
+            responseStatic(request, response);
+            return;
+        }
+        Map<String, String> data = dataFromRequest(request);
+        Object controller = this.methodClassMap.get(method);
+        List<Object> arguments = methodArguments(method, data, request, response);
+        //Todo contorllerResult를 Serialize해서 json으로 던져줄 수도 있다.
+        String controllerResult = (String) method.invoke(controller, arguments.toArray());
+        Optional<Object> opt = arguments.stream().filter(o -> Arrays.asList(o.getClass().getInterfaces()).contains(Model.class)).findAny();
+        if (opt.isEmpty())
+            controllerResponse(controllerResult, null, request, response);
+        else
+            controllerResponse(controllerResult, (Model) opt.get(), request, response);
+    }
+
+
+    public void service(HttpRequest request, HttpResponse response) {
+        try {
+            doResponse(request, response);
         } catch (Exception e) {
             log.error(String.valueOf(e));
             e.printStackTrace();
@@ -158,11 +164,9 @@ public class ServletContainer {
         }
     }
 
-    public Set<Class> findAllClassesUsingReflectionsLibrary(String packageName) {
+    public Set<Class<?>> findAllClassesUsingReflectionsLibrary(String packageName) {
         Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
-        return reflections.getSubTypesOf(Object.class)
-                .stream()
-                .collect(Collectors.toSet());
+        return new HashSet<>(reflections.getSubTypesOf(Object.class));
     }
 
 }

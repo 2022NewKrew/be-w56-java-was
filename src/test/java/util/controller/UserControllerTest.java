@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class UserControllerTest {
+class UserControllerTest {
 
     private ServletContainer servletContainer;
 

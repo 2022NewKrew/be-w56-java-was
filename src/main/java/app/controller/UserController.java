@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-//Todo DI 구조를 만들어 볼 수도 있다.
 @Controller
 public class UserController {
 
@@ -78,7 +77,6 @@ public class UserController {
         httpResponse.setCookie("logined", true);
         httpResponse.setCookie("Path", "/");
         httpResponse.setCookie("max-age", 100);
-        // ToDo
         // cookie max-age를 설정해주니까 지워졌다? Why?
         // cookie를 객체화할 필요성이 생겼다.
         return "redirect:/index.html";

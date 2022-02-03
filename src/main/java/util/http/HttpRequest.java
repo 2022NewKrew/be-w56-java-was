@@ -45,7 +45,7 @@ public class HttpRequest {
     }
 
     public String url() {
-        return url.url();
+        return url.getUrl();
     }
 
     public String getHttpVersion() {
@@ -53,7 +53,7 @@ public class HttpRequest {
     }
 
     public Map<String, String> params() {
-        return url.params();
+        return url.getParams();
     }
 
     public Map<String, String> body(){

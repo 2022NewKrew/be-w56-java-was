@@ -9,10 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class PostsRepositoryTest {
+class PostsRepositoryTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostsRepositoryTest.class);
 

@@ -30,6 +30,7 @@ public class RequestHandler extends Thread {
             servletContainer = new ServletContainer();
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
+            return;
         }
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -43,7 +44,7 @@ public class RequestHandler extends Thread {
             log.debug(httpResponse.headerText());
             HttpResponseUtils.response(httpResponse, dos);
 
-        } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
+        } catch (IOException e) {
             log.error(e.getMessage());
         }
     }

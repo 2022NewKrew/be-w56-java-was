@@ -12,6 +12,9 @@ import java.nio.file.Files;
 
 public class HttpResponseUtils {
 
+    private HttpResponseUtils() {
+    }
+
     public static void response(HttpResponse httpResponse, DataOutputStream dos) throws IOException {
         dos.writeBytes(httpResponse.headerText());
         if (httpResponse.getBody() != null) {
@@ -58,7 +61,7 @@ public class HttpResponseUtils {
 
     }
 
-    public static void redirectResponse(HttpResponse httpResponse, String location, String host) throws IOException {
+    public static void redirectResponse(HttpResponse httpResponse, String location, String host) {
         httpResponse.setStatus(HttpStatus.FOUND);
         httpResponse.setHeader("Location", String.format("http://%s%s", host, location));
     }

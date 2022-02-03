@@ -16,10 +16,10 @@ import java.util.Arrays;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TemplateEngineTest {
+class TemplateEngineTest {
 
     @BeforeAll
-    void setUp(){
+    void setUp() {
         DataBase.addUser(new User("yunyul", "test", "윤렬", "yunyul3@gmail.com"));
         DataBase.addUser(new User("tester", "test", "테스터", "test@test.com"));
     }
@@ -29,10 +29,9 @@ public class TemplateEngineTest {
         Model model = new ModelImpl();
         model.addAttribute("hello", "world");
         String template = "{{hello}}\n";
-        assertThat(TemplateEngine.divideByList(template, model).toString()).isEqualTo("world\n");
+        assertThat(TemplateEngine.divideByList(template, model)).hasToString("world\n");
     }
 
-    // Todo 객체 하나만 넣어서 {{user.userId}} 이런 식으로 랜더링 하는 것은 아직 안됨... 되게 해야하나?
     @Test
     void renderObject() throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Model model = new ModelImpl();
