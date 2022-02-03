@@ -5,13 +5,14 @@ import java.net.Socket;
 
 import controller.MainController;
 import lombok.extern.slf4j.Slf4j;
+import webserver.model.RequestMapping;
 
 @Slf4j
 public class WebServer {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String[] args) throws Exception {
-        HandlerMapping.initRequestMapping(MainController.class);
+        RequestMapping.initRequestMapping(MainController.class);
         int port = 0;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;

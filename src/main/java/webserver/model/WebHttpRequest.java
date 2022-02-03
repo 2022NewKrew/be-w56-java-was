@@ -96,7 +96,7 @@ public class WebHttpRequest extends HttpRequest {
 
     @Override
     public String toString() {
-        return "KinaHttpRequest{" +
+        return "WebHttpRequest{" +
                 "method='" + method + '\'' +
                 ", requestURI='" + requestURI + '\'' +
                 ", version='" + version + '\'' +
