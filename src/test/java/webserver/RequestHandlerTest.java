@@ -102,6 +102,26 @@ class RequestHandlerTest {
         assertThat(os.toString()).contains("200", "OK", "Content-Type", "Content-Length");
     }
 
+    @DisplayName("GET / 테스트")
+    @Test
+    void run5() throws IOException {
+        //give
+        Socket socket = Mockito.mock(Socket.class);
+        String request = "GET / HTTP/1.1\r\n"
+                + "headerKey1: headerValue1\r\nheaderKey2: headerValue2\r\n"
+                + "\r\n";
+        OutputStream os = new ByteArrayOutputStream();
+        Mockito.when(socket.getInputStream())
+                .thenReturn(new ByteArrayInputStream(request.getBytes(StandardCharsets.UTF_8)));
+        Mockito.when(socket.getOutputStream())
+                .thenReturn(os);
+        RequestHandler handler = new RequestHandler(socket);
+        //when
+        handler.run();
+        //then
+        assertThat(os.toString()).contains("302", "Found", "Location", "/index.html");
+    }
+
     @DisplayName("Bad Request 테스트")
     @Test
     void runBadRequest() throws IOException {

@@ -1,23 +1,22 @@
 package webserver;
 
 import controller.Controller;
+import controller.RootController;
 import controller.StaticFileController;
 import controller.UserCreateController;
 import controller.UserListController;
 import controller.UserLoginController;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public enum ControllerType {
 
     STATIC_FILE_CONTROLLER(HttpMethod.GET, "", StaticFileController.getInstance()),
     USER_CREATE_CONTROLLER(HttpMethod.POST, "/user/create", UserCreateController.getInstance()),
     USER_LOGIN_CONTROLLER(HttpMethod.POST, "/user/login", UserLoginController.getInstance()),
-    USER_LIST_CONTROLLER(HttpMethod.GET, "/user/list.html", UserListController.getInstance());
+    USER_LIST_CONTROLLER(HttpMethod.GET, "/user/list.html", UserListController.getInstance()),
+    ROOT_CONTROLLER(HttpMethod.GET, "/", RootController.getInstance());
 
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
 
