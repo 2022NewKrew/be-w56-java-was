@@ -24,9 +24,26 @@ public class HttpBuilder {
     }
 
     public HttpRequest request() throws IOException {
-        String requestLine = bufferedReader.readLine();
-        Map<String, String> requestTokens = HttpRequestUtils.parseRequestLine(requestLine);
+        Map<String, String> requestTokens = readRequestTokens();
+        Map<String, String> requestHeaders = readRequestHeaders();
+        String requestBody = readRequestBody(requestTokens, requestHeaders);
+        return new HttpRequest(requestTokens, requestHeaders, requestBody);
+    }
 
+    public void response(HttpRequest httpRequest) throws IOException {
+        HttpResponse httpResponse = RequestMapper.requestMapping(httpRequest);
+        List<String> headers = httpResponse.getHeaders();
+        headers.forEach(this::writeResponseHeader);
+        byte[] body = httpResponse.getBody();
+        writeResponseBody(body);
+    }
+
+    private Map<String, String> readRequestTokens() throws IOException {
+        String requestLine = bufferedReader.readLine();
+        return HttpRequestUtils.parseRequestLine(requestLine);
+    }
+
+    private Map<String, String> readRequestHeaders() throws IOException {
         Map<String, String> requestHeaders = new HashMap<>();
         String header = bufferedReader.readLine();
         while (!"".equals(header)) {
@@ -34,31 +51,28 @@ public class HttpBuilder {
             requestHeaders.put(pair.getKey(), pair.getValue());
             header = bufferedReader.readLine();
         }
+        return requestHeaders;
+    }
 
+    private String readRequestBody(Map<String, String> requestTokens, Map<String, String> requestHeaders) throws IOException {
         String requestBody = null;
         if (!requestTokens.get("method").equals("GET")) {
             int contentLength = Integer.parseInt(requestHeaders.get("Content-Length"));
             requestBody = IOUtils.readData(bufferedReader, contentLength);
         }
-
-        return new HttpRequest(requestTokens, requestHeaders, requestBody);
+        return requestBody;
     }
 
-    public void response(HttpRequest httpRequest) throws IOException {
-        HttpResponse httpResponse = RequestMapper.requestMapping(httpRequest);
-        List<String> headers = httpResponse.getHeaders();
-        headers.forEach(this::writeHeader);
-
-        byte[] body = httpResponse.getBody();
-        dataOutputStream.write(body, 0, body.length);
-        dataOutputStream.flush();
-    }
-
-    private void writeHeader(String header) {
+    private void writeResponseHeader(String header) {
         try {
             dataOutputStream.writeBytes(header);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private void writeResponseBody(byte[] body) throws IOException {
+        dataOutputStream.write(body, 0, body.length);
+        dataOutputStream.flush();
     }
 }
