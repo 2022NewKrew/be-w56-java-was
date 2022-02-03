@@ -44,7 +44,8 @@
 - [ ] 객체지향적으로 리팩토링
 - [x] router에서 controller와 method를 서칭하는 로직을 reflection을 사용하여 리팩토링
 - [x] db 연결(mysql)
-- [x] 5단계 기능구현(로그인 상태일 경우 사용자 목록을 보여주고 로그인 하지 않은 상태면 로그인 페이지로 이동)
+- [x] 5단계 기능구현(GET /user/list 구현)
+- [x] 7단계 기능구현(GET /article/list 구현)
 
 ### 회고
 - db 연결 순서
