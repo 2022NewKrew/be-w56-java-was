@@ -52,19 +52,18 @@ public class HttpController {
         }
 
         if(url.equals("/user/list.html") && httpMethod.equals("GET")) {
-            userList();
+            url = "/index.html";
+            httpStatus = HttpStatus.FOUND;
+            userList(url, httpStatus, cookie);
             return;
         }
 
         responseService.response(url, httpStatus, cookie);
     }
 
-    private void userList() throws IOException {
+    private void userList(String url, HttpStatus httpStatus, String cookie) throws IOException {
         Map<String, String> cookies = HttpRequestUtils.parseCookies(headerMap.get("Cookie"));
-        boolean logined = Boolean.getBoolean(cookies.get("logined"));
-        String url = "/index.html";
-        HttpStatus httpStatus = HttpStatus.FOUND;
-        String cookie = null;
+        boolean logined = Boolean.parseBoolean(cookies.get("logined"));
         if(logined) {
             htmlService.makeUserList();
             url = "/users/list.html";

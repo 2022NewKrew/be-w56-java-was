@@ -37,7 +37,7 @@ public class ResponseService {
     private void response302(String cookie, String url) throws IOException {
         dos.writeBytes("Location: " + url + "\r\n");
         if(cookie != null)
-            dos.writeBytes("Set-Cookie: " + cookie + "; Path=/");
+            dos.writeBytes("Set-Cookie: " + cookie + "; Path=/;");
         dos.writeBytes("\r\n");
     }
 
