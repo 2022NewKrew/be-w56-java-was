@@ -1,8 +1,8 @@
-package exception;
+package webapp.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import util.HttpStatus;
+import webapp.util.HttpStatus;
 
 @RequiredArgsConstructor
 @Getter

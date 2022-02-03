@@ -1,4 +1,4 @@
-package exception;
+package webapp.exception;
 
 public class ServerErrorException extends CustomException{
     public ServerErrorException() {

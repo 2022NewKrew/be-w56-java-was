@@ -1,6 +1,6 @@
-package exception;
+package webapp.exception;
 
-import util.HttpStatus;
+import webapp.util.HttpStatus;
 
 public class CustomException extends RuntimeException {
 

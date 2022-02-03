@@ -1,4 +1,4 @@
-package util;
+package webapp.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-
-import static util.HttpMethod.getHttpMethod;
 
 @Slf4j
 public class HttpRequestUtils {
@@ -28,7 +26,7 @@ public class HttpRequestUtils {
         log.info(requestLine);
 
         String[] splitRequestLine = requestLine.split(" ");
-        httpRequestBuilder.httpMethod(getHttpMethod(splitRequestLine[0]));
+        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(splitRequestLine[0]));
         httpRequestBuilder.uri(splitRequestLine[1]);
         httpRequestBuilder.queryStrings(parseQueryString(splitRequestLine[1].substring(splitRequestLine[1].lastIndexOf("?") + 1)));
         httpRequestBuilder.httpVersion(splitRequestLine[2]);

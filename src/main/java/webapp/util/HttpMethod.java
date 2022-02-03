@@ -1,6 +1,6 @@
-package util;
+package webapp.util;
 
-import exception.UnsupportedHttpMethodException;
+import webapp.exception.UnsupportedHttpMethodException;
 import lombok.ToString;
 
 import java.util.Arrays;

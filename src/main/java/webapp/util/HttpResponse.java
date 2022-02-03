@@ -1,4 +1,4 @@
-package util;
+package webapp.util;
 
 import org.apache.tika.Tika;
 

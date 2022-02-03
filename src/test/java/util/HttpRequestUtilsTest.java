@@ -6,7 +6,8 @@ import java.util.Map;
 
 
 import org.junit.jupiter.api.Test;
-import util.HttpRequestUtils.Pair;
+import webapp.util.HttpRequestUtils;
+import webapp.util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
     @Test
