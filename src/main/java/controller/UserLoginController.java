@@ -52,7 +52,7 @@ public class UserLoginController implements Controller {
 
     private HttpResponse loginFail(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.unauthorized(
-                request.getUrl(),
+                "/user/login_failed.html",
                 ControllerUtils.getEmptyImmutableMap(),
                 dos);
     }
