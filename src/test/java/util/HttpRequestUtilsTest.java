@@ -3,6 +3,7 @@ package util;
 import static org.assertj.core.api.Assertions.*;
 
 import exception.InvalidParameterKeyException;
+import exception.InvalidRequestLineException;
 import http.request.Queries;
 import http.request.RequestLine;
 import java.util.Map;
@@ -21,6 +22,20 @@ public class HttpRequestUtilsTest {
         assertThat(requestLine.getMethod()).isEqualTo(HttpMethod.GET);
         assertThat(requestLine.getUri().getPath()).isEqualTo("/index.html");
         assertThat(requestLine.getUri().getQueries().getParams()).hasSize(0);
+    }
+
+    @Test
+    public void parseRequestLine_null() {
+        assertThatThrownBy(() -> HttpRequestUtils.parseRequestLine(null))
+                .isInstanceOf(InvalidRequestLineException.class);
+    }
+
+    @Test
+    public void parseRequestLine_invalid() {
+        String requestLineString = "GET HTTP/1.1";
+
+        assertThatThrownBy(() -> HttpRequestUtils.parseRequestLine(requestLineString))
+                .isInstanceOf(InvalidRequestLineException.class);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package util;
 
+import exception.InvalidRequestLineException;
 import http.MediaType;
 import http.request.HttpHeaders;
 import http.request.URI;
@@ -30,7 +31,16 @@ public class HttpRequestUtils {
     }
 
     public static RequestLine parseRequestLine(String requestLine) {
+        if (Strings.isNullOrEmpty(requestLine)) {
+            throw new InvalidRequestLineException("null");
+        }
+
         String[] tokens = requestLine.split(REQUEST_LINE_DELIMITER);
+
+        if (tokens.length != 3) {
+            throw new InvalidRequestLineException(requestLine);
+        }
+
         HttpMethod method = parseHttpMethod(tokens[0]);
         String path = parsePath(tokens[1]);
         Queries queries = parseQueries(tokens[1]);

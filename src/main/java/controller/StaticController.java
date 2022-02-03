@@ -32,6 +32,11 @@ public class StaticController extends AbstractController {
         RequestLine requestLine = request.getRequestLine();
         Path path = new File(PATHNAME + requestLine.getUri().getPath()).toPath();
         MediaType contentType = MediaType.getMediaType(requestLine.getUri());
+
+        if (Files.notExists(path)) {
+            return HttpResponse.error(HttpStatus.PAGE_NOT_FOUND);
+        }
+
         return HttpResponse.ok(contentType, Files.readAllBytes(path));
     }
 
