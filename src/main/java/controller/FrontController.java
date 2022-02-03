@@ -10,10 +10,10 @@ public class FrontController extends AbstractController {
     private static final String INDEX = "/";
 
     @Override
-    protected void doGet(HttpRequest request, HttpResponse response) throws IOException {
+    protected void doGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         try {
-            byte[] responseBody = getResponseBody(request);
-            response.set200OK(request, responseBody);
+            byte[] responseBody = getResponseBody(httpRequest);
+            httpResponse.set200OK(httpRequest, responseBody);
         } catch (NullPointerException exception) {
             throw new IllegalArgumentException("[ERROR] 해당파일은 존재하지 않습니다.");
         }
@@ -28,7 +28,7 @@ public class FrontController extends AbstractController {
     }
 
     @Override
-    protected void doPost(HttpRequest request, HttpResponse response) throws IOException {
+    protected void doPost(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         throw new IllegalArgumentException("[ERROR] 파일은 post 요청할 수 없습니다.");
     }
 }

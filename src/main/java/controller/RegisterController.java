@@ -5,6 +5,9 @@ import httpmodel.HttpResponse;
 import httpmodel.HttpSession;
 import httpmodel.HttpSessions;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import model.User;
 import service.UserService;
 import util.FileConverter;
@@ -12,6 +15,7 @@ import util.FileConverter;
 public class RegisterController extends AbstractController {
 
     private static final String INDEX_HTML = "/index.html";
+    private static final String USER = "user";
 
     private final UserService userService;
 
@@ -21,7 +25,8 @@ public class RegisterController extends AbstractController {
 
     @Override
     protected void doGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        if (userService.isLogin(httpRequest)) {
+        HttpSession httpSession = httpRequest.getHttpSession();
+        if (Objects.nonNull(httpSession.getAttribute(USER))) {
             httpResponse.set302Found(INDEX_HTML);
             return;
         }
@@ -34,7 +39,8 @@ public class RegisterController extends AbstractController {
         String account = httpRequest.getRequestBody("userId");
         String password = httpRequest.getRequestBody("password");
         String name = httpRequest.getRequestBody("name");
-        String email = httpRequest.getRequestBody("email");
+        String email = URLDecoder.decode(httpRequest.getRequestBody("email"),
+            StandardCharsets.UTF_8);
         User user = new User(account, password, name, email);
         userService.save(user);
 
@@ -45,7 +51,7 @@ public class RegisterController extends AbstractController {
 
     private void addSession(HttpRequest httpRequest, User user) {
         HttpSession httpSession = httpRequest.getHttpSession();
-        httpSession.setAttribute(httpSession.getId(), user);
+        httpSession.setAttribute(USER, user);
         HttpSessions.add(httpSession.getId(), httpSession);
     }
 }

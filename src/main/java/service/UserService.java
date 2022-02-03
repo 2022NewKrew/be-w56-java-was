@@ -1,10 +1,7 @@
 package service;
 
 import db.DataBase;
-import httpmodel.HttpRequest;
-import httpmodel.HttpSession;
-import httpmodel.HttpSessions;
-import java.util.Objects;
+import java.util.List;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +22,8 @@ public class UserService {
         throw new IllegalArgumentException("[ERROR] 로그인 실패");
     }
 
-    public boolean isLogin(HttpRequest httpRequest) {
-        HttpSession session = httpRequest.getHttpSession();
-        return Objects.nonNull(HttpSessions.getSession(session.getId()));
+    public List<User> findAll() {
+        return DataBase.findAll();
     }
 
     public void save(User user) {
