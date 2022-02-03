@@ -43,15 +43,6 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseCookies() {
-        String cookies = "logined=true; JSessionId=1234";
-        Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
-        assertThat(parameters.get("logined")).isEqualTo("true");
-        assertThat(parameters.get("JSessionId")).isEqualTo("1234");
-        assertThat(parameters.get("session")).isNull();
-    }
-
-    @Test
     public void getKeyValue() throws Exception {
         Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
         assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));

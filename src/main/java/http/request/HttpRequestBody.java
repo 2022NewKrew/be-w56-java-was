@@ -5,7 +5,6 @@ import util.HttpRequestUtils;
 import java.util.Map;
 
 public class HttpRequestBody {
-    // 구현 예정
     private final Map<String, String> body;
 
     public HttpRequestBody(String requestBodyString) {

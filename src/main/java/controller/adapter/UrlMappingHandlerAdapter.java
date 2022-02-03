@@ -41,7 +41,7 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
                 redirect(request, response, viewName);
                 return;
             }
-            ok(response, viewName);
+            resolve(response, viewName);
         } catch (Exception exception) {
             log.error(exception.getMessage());
         }
@@ -72,7 +72,7 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
         response.addHeader(HttpHeaders.LOCATION, redirectUrl);
     }
 
-    private void ok(HttpResponse response, String viewName) throws IOException {
+    private void resolve(HttpResponse response, String viewName) throws IOException {
         String url = GlobalConfig.WEB_ROOT + viewName + GlobalConfig.SUFFIX;
         byte[] body = Files.readAllBytes(Paths.get(url));
         response.body(body);

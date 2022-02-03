@@ -15,6 +15,7 @@ import http.request.HttpRequestLine;
 import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.IOUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -74,12 +75,9 @@ public class RequestHandler extends Thread {
         if (!br.ready() && !headers.containsKey(HttpHeaders.CONTENT_LENGTH)) {
             return null;
         }
-
         String len = headers.getFirst(HttpHeaders.CONTENT_LENGTH);
-        char[] chars = new char[Integer.parseInt(len)];
-        br.read(chars);
-
-        return new HttpRequestBody(new String(chars));
+        String body = IOUtils.readData(br, Integer.parseInt(len));
+        return new HttpRequestBody(body);
     }
 
     private void handleResponse(HttpRequest request, DataOutputStream dos) throws IOException {
