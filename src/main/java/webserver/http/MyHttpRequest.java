@@ -1,5 +1,6 @@
 package webserver.http;
 
+import util.HttpRequestUtils;
 import util.IOUtils;
 import webserver.exception.BadRequestException;
 
@@ -28,6 +29,7 @@ public class MyHttpRequest extends HttpRequest {
     private final String requestURI;
     private final String version;
     private final Map<String, List<String>> headers;
+    private final Map<String, HttpCookie> cookies;
     private final String body;
 
     private MyHttpRequest(BufferedReader br) throws IOException {
@@ -36,8 +38,8 @@ public class MyHttpRequest extends HttpRequest {
         this.method = HttpMethod.valueOf(requestHeaderParams[0]);
         this.requestURI = requestHeaderParams[1];
         this.version = requestHeaderParams[2];
-        this.headers = new HashMap<>();
-        initHeaders(br);
+        this.headers = readRequestHeaderFromBuffer(br);
+        this.cookies = getCookieFromHeaders();
         this.body = readRequestBodyFromBuffer(br, contentLength());
     }
 
@@ -52,7 +54,8 @@ public class MyHttpRequest extends HttpRequest {
         }
     }
 
-    private void initHeaders(BufferedReader br) throws IOException {
+    private Map<String, List<String>> readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
+        Map<String, List<String>> headers = new HashMap<>();
         String inputLine;
         while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
             String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
@@ -63,6 +66,19 @@ public class MyHttpRequest extends HttpRequest {
 
             headers.put(inputs[0], values);
         }
+        return headers;
+    }
+
+    private Map<String, HttpCookie> getCookieFromHeaders() {
+        if (headers.containsKey("Cookie")) {
+            Map<String, HttpCookie> cookies = new HashMap<>();
+            List<String> cookie = headers.get("Cookie");
+            String cookieString = cookie.get(0);
+            Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(cookieString);
+            cookiesMap.forEach((k, v) -> cookies.put(k, new HttpCookie(k, v)));
+            return cookies;
+        }
+        return Collections.emptyMap();
     }
 
     private int contentLength() {
@@ -119,6 +135,10 @@ public class MyHttpRequest extends HttpRequest {
     @Override
     public HttpHeaders headers() {
         return HttpHeaders.of(headers, ALLOWED_ALL_HEADERS);
+    }
+
+    public Map<String, HttpCookie> cookies() {
+        return cookies;
     }
 
     public String body() {
