@@ -5,7 +5,9 @@ public enum HttpStatus {
     METHOD_NOT_ALLOWED(405, "Method Not Allowed", "This HTTP method is not supported by this URL."),
     FOUND(302, "Found", ""),
     PAGE_NOT_FOUND(404, "Not Found", "Server can't find the requested resource."),
-    INTERNAL_SERVER_ERROR(500, "Internal Server Error", "Internal Server Error.")
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error", "Internal Server Error."),
+    BAD_REQUEST(400, "Bad Request", "Bad Request."),
+    UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type", "Unsupported Media Type."),
     ;
 
     private final int code;

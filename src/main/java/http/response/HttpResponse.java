@@ -47,13 +47,13 @@ public class HttpResponse {
 
     private static HttpResponse ok(ModelAndView mv) throws IOException {
         Path path = new File(PATHNAME + mv.getViewName()).toPath();
-        byte[] body = Files.readAllBytes(path);
-        MediaType contentType = MediaType.getMediaType(mv.getViewName());
-
         if (Files.notExists(path)) {
             ModelAndView errorView = ModelAndView.error(HttpStatus.PAGE_NOT_FOUND);
             return HttpResponse.error(errorView);
         }
+
+        byte[] body = Files.readAllBytes(path);
+        MediaType contentType = MediaType.getMediaType(mv.getViewName());
 
         Map<String, String> headers = new HashMap<>();
         headers.put(CONTENT_TYPE, contentType.getType());
@@ -63,11 +63,16 @@ public class HttpResponse {
     }
 
     private static HttpResponse error(ModelAndView mv) {
-        Map<String, String> headers = new HashMap<>();
-        byte[] body = mv.getStatus().getErrorMessage().getBytes(StandardCharsets.UTF_8);
-        headers.put(CONTENT_LENGTH, String.valueOf(body.length));
+        return HttpResponse.error(mv.getStatus(), mv.getStatus().getErrorMessage());
+    }
 
-        return new HttpResponse(mv.getStatus(), new HttpHeaders(headers), body);
+    public static HttpResponse error(HttpStatus status, String message) {
+        Map<String, String> headers = new HashMap<>();
+        byte[] body = message.getBytes(StandardCharsets.UTF_8);
+        headers.put(CONTENT_LENGTH, String.valueOf(body.length));
+        headers.put(CONTENT_TYPE, "text/plain; charset=utf-8");
+
+        return new HttpResponse(status, new HttpHeaders(headers), body);
     }
 
     private static HttpResponse redirect(ModelAndView mv) {

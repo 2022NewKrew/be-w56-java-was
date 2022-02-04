@@ -1,6 +1,5 @@
 package http.request;
 
-import exception.InvalidParameterKeyException;
 import java.util.Map;
 
 public class Queries {
@@ -16,9 +15,6 @@ public class Queries {
     }
 
     public String getValue(String key) {
-        if (!params.containsKey(key)) {
-            throw new InvalidParameterKeyException();
-        }
         return params.get(key);
     }
 }
