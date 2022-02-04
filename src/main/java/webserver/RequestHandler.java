@@ -97,10 +97,7 @@ public class RequestHandler extends Thread {
         try {
             dos.writeBytes("HTTP/1.1 302 FOUND \r\n");
             dos.writeBytes("Location: " + headerInfo.get("redirectUrl") + "\r\n");
-            if (headerInfo.get("Set-Cookie") != null) {
-                System.out.println(headerInfo.get("Set-Cookie"));
-                dos.writeBytes("Set-Cookie: " + headerInfo.get("Set-Cookie") + "\r\n");
-            }
+            dos.writeBytes("Set-Cookie: " + headerInfo.get("Set-Cookie") + "\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }

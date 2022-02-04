@@ -49,13 +49,15 @@ public class RequestController {
     private static Map<String, String> loginPostRequest(Map<String, String> requestBody) {
         User userInfo = database.findUserById(requestBody.get("userId"));
         Map<String, String> result = new HashMap<>();
-        if (userInfo.getPassword().equals(requestBody.get("password"))) {
+        if (userInfo != null && userInfo.getPassword().equals(requestBody.get("password"))) {
             result.put("redirectUrl", "http://localhost:8080/index.html");
             result.put("Set-Cookie", "logined=true; Path=/");
             log.debug("login success");
         }
         else {
             result.put("redirectUrl", "http://localhost:8080/user/login_failed.html");
+            result.put("Set-Cookie", "logined=false; Path=/");
+            log.debug("login failed");
         }
         return result;
     }
