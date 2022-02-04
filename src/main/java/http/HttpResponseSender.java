@@ -19,13 +19,17 @@ public class HttpResponseSender {
         dos = new DataOutputStream(out);
     }
 
-    public void sendResponse(HttpMethod httpMethod, String url) {
-        if (httpMethod.equals(HttpMethod.POST)) {
-            response302Header(url);
-            return;
-        }
+    public void sendResponse200() {
         response200Header();
         responseBody();
+    }
+
+    public void sendResponse302(String redirectUrl) {
+        response302Header(redirectUrl);
+    }
+
+    public void sendResponseLogin(boolean validLogin) {
+        responseLoginHeader(validLogin);
     }
 
     public void response200Header() {
@@ -33,6 +37,23 @@ public class HttpResponseSender {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + httpResponse.getResponseContentType() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + httpResponse.getBody().length + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    public void responseLoginHeader(boolean validLogin) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            if (validLogin) {
+                dos.writeBytes("Location: /index.html \r\n");
+                dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
+            }
+            else {
+                dos.writeBytes("Location: /user/login_failed.html \r\n");
+                dos.writeBytes("Set-Cookie: logined=false; Path=/ \r\n");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

@@ -65,4 +65,14 @@ public class HttpRequest {
         this.body = body;
     }
 
+    @Override
+    public String toString() {
+        return "HttpRequest{" +
+                "method=" + method +
+                ", url='" + url + '\'' +
+                ", queryString='" + queryString + '\'' +
+                ", protocol=" + protocol +
+                ", body=" + body +
+                '}';
+    }
 }

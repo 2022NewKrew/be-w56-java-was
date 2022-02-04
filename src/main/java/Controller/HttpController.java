@@ -20,13 +20,19 @@ public class HttpController {
     }
 
     public void run() {
+        // PostMapping("/user/create") 와 동일
         if (httpRequest.getMethod().equals(HttpMethod.POST) && httpRequest.getUrl().equals("/user/create")) {
             httpService.signup(httpRequest.getBody());
-            httpResponseSender.sendResponse(httpRequest.getMethod(), "/index.html");
+            httpResponseSender.sendResponse302("/index.html");
         }
-
+        // PostMapping("/user/login") 와 동일
+        else if (httpRequest.getMethod().equals(HttpMethod.POST) && httpRequest.getUrl().equals("/user/login")) {
+            boolean validLogin = httpService.validLogin(httpRequest.getBody().get("userId"), httpRequest.getBody().get("password"));
+            httpResponseSender.sendResponseLogin(validLogin);
+        }
+        // GetMapping
         else if (httpRequest.getMethod().equals(HttpMethod.GET)) {
-            httpResponseSender.sendResponse(httpRequest.getMethod(), "");
+            httpResponseSender.sendResponse200();
         }
     }
 

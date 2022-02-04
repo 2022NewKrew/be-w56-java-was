@@ -32,10 +32,7 @@ public class RequestHandler extends Thread {
             httpRequestParser.parse(in);
             HttpRequest httpRequest = httpRequestParser.getHttpRequest();
             // 작업 중 확인을 위한 logging (필요 시 활성화)
-//            log.debug(httpRequest.getMethod().getName());
-//            log.debug(httpRequest.getUrl());
-//            log.debug(httpRequest.getProtocol().getName());
-//            log.debug(httpRequest.getBody().toString());
+            log.debug(httpRequest.toString());
 
             // Response 처리
             HttpResponse httpResponse = new HttpResponse(httpRequest);
