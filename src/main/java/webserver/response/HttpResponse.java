@@ -22,8 +22,8 @@ public class HttpResponse {
 
         String cookie = model.makeCookieString();
 
-        HttpResponseBody httpResponseBody = HttpResponseBody.makeHttpResponseBody(filename);
-        HttpResponseHeader httpResponseHeader = HttpResponseHeader.makeHttpResponseHeader(filename, cookie, httpResponseBody.getBody().length);
+        HttpResponseBody httpResponseBody = HttpResponseBody.makeHttpResponseBody(model);
+        HttpResponseHeader httpResponseHeader = HttpResponseHeader.makeHttpResponseHeader(model, httpResponseBody.getBody().length);
 
         return new HttpResponse(httpResponseHeader, httpResponseBody);
     }

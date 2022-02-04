@@ -1,6 +1,8 @@
 package webserver.response;
 
 import mapper.MappingConst;
+import mapper.ResponseSendDataModel;
+import util.HtmlTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +17,9 @@ public class HttpResponseBody {
         this.body = body;
     }
 
-    public static HttpResponseBody makeHttpResponseBody(String fileName) throws IOException {
+    public static HttpResponseBody makeHttpResponseBody(ResponseSendDataModel model) throws IOException {
+        String fileName = model.getName();
+
         if(fileName.matches("^" + MappingConst.FONT + ".*") || fileName.matches("^" + MappingConst.ICON + ".*")){
             byte[] bytes = Files.readAllBytes(new File("./webapp" + fileName).toPath());
 
@@ -27,6 +31,15 @@ public class HttpResponseBody {
         StringBuilder body = new StringBuilder();
 
         for(String line: fileData){
+            line = line.trim();
+
+            if(line.matches("^\\{\\{>.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+                body.append(HtmlTemplate.includeHtml(subLine));
+
+                continue;
+            }
+
             body.append(line);
         }
 

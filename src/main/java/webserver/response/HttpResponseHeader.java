@@ -1,5 +1,7 @@
 package webserver.response;
 
+import mapper.ResponseSendDataModel;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,11 @@ public class HttpResponseHeader {
         this.header = header;
     }
 
-    public static HttpResponseHeader makeHttpResponseHeader(String fileName, String cookie, int bodySize){
+    public static HttpResponseHeader makeHttpResponseHeader(ResponseSendDataModel model, int bodySize){
+        String fileName = model.getName();
+
+        String cookie = model.makeCookieString();
+
         if(fileName.matches("redirect:.*"))
             return new HttpResponseHeader(response302Header(fileName.substring(9), cookie));
 
