@@ -39,12 +39,16 @@ public class View {
         if (appResponse.getStatus() == Status.FOUND) {
             writeOneHeaderLine(sb, "Location", appResponse.getPath());
         }
-
-        // Content-Type 필요
-        // dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+        writeContentType(sb, appResponse.getPath());
         sb.append("\r\n");
 
         return sb.toString().getBytes();
+    }
+
+    private static void writeContentType(StringBuilder sb, String path) {
+        String[] token = path.split("\\.");
+        String extension = token[token.length - 1];
+        writeOneHeaderLine(sb, "Content-Type", ContentType.findMime(extension));
     }
 
     private static void writeOneHeaderLine(StringBuilder sb, String type, String value) {
@@ -56,7 +60,7 @@ public class View {
 
     private static byte[] readTemplate(String absolutePath, Map<String, String> model) {
         try {
-            if (model.isEmpty()){
+            if (model.isEmpty()) {
                 return Files.readAllBytes(Path.of(absolutePath));
             }
             String template = Files.readString(Path.of(absolutePath));
