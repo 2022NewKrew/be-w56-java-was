@@ -3,10 +3,13 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,19 +28,43 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String line = br.readLine();
-            log.debug("\n===================New request================");
-            String location = HttpRequestUtils.parseLocation(line);
 
+            log.debug("Request line: " + line);
+            String methodType = HttpRequestUtils.parseMethodType(line);
+            String uri = HttpRequestUtils.parseLocation(line);
+            Map<String, String> headers = new HashMap<>();
+            String responseType = "";
+            br.readLine();
             while(!"".equals(line)) {
-                log.debug("header: " + line);
+                String[] parsedHeader = line.split(":");
+                if (parsedHeader.length == 2) {
+                    log.debug("header: " + line);
+                    headers.put(parsedHeader[0].trim(), parsedHeader[1].trim());
+                }
                 line = br.readLine();
+            }
+
+            Map<String, String> requestBody = new HashMap<>();
+            if (methodType.equals("POST")) {
+                String postBody = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+                log.debug("Request Body: " + postBody);
+                String[] pairsOfRequestBody = postBody.split("&");
+                for (String pair : pairsOfRequestBody) {
+                    String[] parsedPair = pair.split("=");
+                    requestBody.put(parsedPair[0], parsedPair[1]);
+                }
             }
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = Files.readAllBytes(new File("./webapp" + location).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            if (new File("./webapp" + uri).exists()) {
+                byte[] body = Files.readAllBytes(new File("./webapp" + uri).toPath());
+                response200Header(dos, body.length, responseType);
+                responseBody(dos, body);
+            }
+            else {
+                RequestController.uriMatcher(methodType, uri, requestBody);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
