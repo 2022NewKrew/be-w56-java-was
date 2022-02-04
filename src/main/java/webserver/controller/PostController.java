@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 import webserver.manage.RequestParser;
-import webserver.response.PostResponseFormat;
+import webserver.response.format.RedirectResponseFormat;
 import webserver.response.ResponseCode;
-import webserver.response.ResponseFormat;
+import webserver.response.format.ResponseFormat;
 
 import java.io.OutputStream;
 
@@ -49,7 +49,7 @@ public class PostController implements MethodController {
         String name = rp.getBody("name");
         String email = rp.getBody("email");
 
-        ResponseFormat rf = new PostResponseFormat(os, "/");
+        ResponseFormat rf = new RedirectResponseFormat(os, "/");
 
         try {
             User user = new User(userId, password, name, email);
@@ -62,7 +62,7 @@ public class PostController implements MethodController {
             log.error(e.getMessage());
         }
 
-        rf.sendResponse(ResponseCode.STATUS_405);
+        rf.sendResponse(ResponseCode.STATUS_404);
     }
 
     private void methodSignIn() {
@@ -75,12 +75,12 @@ public class PostController implements MethodController {
         if(userData != null && userData.getPassword().equals(password)) {
             log.info("[login] success");
 
-            ResponseFormat rf = new PostResponseFormat(os, "/");
+            ResponseFormat rf = new RedirectResponseFormat(os, "/");
             rf.setCookie("logined", "true");
             rf.sendResponse(ResponseCode.STATUS_303);
             return;
         }
-        ResponseFormat rf = new PostResponseFormat(os, "/");
-        rf.sendResponse(ResponseCode.STATUS_403);
+        ResponseFormat rf = new RedirectResponseFormat(os, "/");
+        rf.sendResponse(ResponseCode.STATUS_404);
     }
 }

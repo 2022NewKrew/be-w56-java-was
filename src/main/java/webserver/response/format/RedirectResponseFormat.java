@@ -1,15 +1,15 @@
-package webserver.response;
+package webserver.response.format;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+import webserver.response.ResponseCode;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class PostResponseFormat implements ResponseFormat {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class RedirectResponseFormat implements ResponseFormat {
+    private static final Logger log = LoggerFactory.getLogger(RedirectResponseFormat.class);
 
     private static final String ERROR_PATH = "/error/error.html";
 
@@ -17,7 +17,7 @@ public class PostResponseFormat implements ResponseFormat {
     private String redirectPath;
     private String cookie;
 
-    public PostResponseFormat(OutputStream os, String redirectPath) {
+    public RedirectResponseFormat(OutputStream os, String redirectPath) {
         this.dos = new DataOutputStream(os);
         this.redirectPath = redirectPath;
     }
@@ -30,34 +30,20 @@ public class PostResponseFormat implements ResponseFormat {
     public void sendResponse (ResponseCode status) {
         switch (status) {
             case STATUS_302:
-                response302Header();
-                break;
             case STATUS_303:
-                response303Header();
+                responseHeader(status);
                 break;
             case STATUS_403:
             case STATUS_404:
-            case STATUS_405:
-                responseError();
+                responseErrorHeader();
                 break;
         }
         responseBody();
     }
 
-    private void response302Header() {
+    private void responseHeader(ResponseCode status) {
         try {
-            dos.writeBytes("HTTP/1.1 302 Found\r\n");
-            dos.writeBytes("Location: "+redirectPath+"\r\n");
-            responseCookieHeader();
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response303Header() {
-        try {
-            dos.writeBytes("HTTP/1.1 303 See Other\r\n");
+            dos.writeBytes("HTTP/1.1 "+status.getStatusCode()+" "+status.getStatusName()+"\r\n");
             dos.writeBytes("Location: "+redirectPath+"\r\n");
             responseCookieHeader();
             dos.writeBytes("\r\n");
@@ -72,7 +58,7 @@ public class PostResponseFormat implements ResponseFormat {
         }
     }
 
-    private void responseError() {
+    private void responseErrorHeader() {
         try {
             dos.writeBytes("HTTP/1.1 303 See Other\r\n");
             dos.writeBytes("Location: "+ERROR_PATH+"\r\n");

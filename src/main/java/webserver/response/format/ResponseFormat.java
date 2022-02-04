@@ -1,4 +1,6 @@
-package webserver.response;
+package webserver.response.format;
+
+import webserver.response.ResponseCode;
 
 public interface ResponseFormat {
     void sendResponse (ResponseCode status);

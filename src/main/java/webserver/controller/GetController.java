@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 import webserver.manage.RequestParser;
-import webserver.response.GetResponseFormat;
-import webserver.response.ResponseFormat;
+import webserver.response.format.ForwardResponseFormat;
+import webserver.response.format.ResponseFormat;
 import webserver.response.ResponseCode;
 
 import java.io.*;
@@ -32,7 +32,7 @@ public class GetController implements MethodController {
     }
 
     private void methodDefault () {
-        ResponseFormat rf = new GetResponseFormat(os, rp.getPath());
+        ResponseFormat rf = new ForwardResponseFormat(os, rp.getPath());
         rf.sendResponse(ResponseCode.STATUS_200);
     }
 }
