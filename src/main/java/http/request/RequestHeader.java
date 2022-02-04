@@ -13,7 +13,7 @@ public class RequestHeader {
 
     public RequestHeader(Map<String, String> components, Map<String, String> cookies) {
         this.components = Collections.unmodifiableMap(components);
-        this.cookies = cookies;
+        this.cookies = Collections.unmodifiableMap(cookies);
     }
 
     public static RequestHeader stringToRequestHeader(String headers) {
@@ -37,7 +37,7 @@ public class RequestHeader {
             splitLine = List.of(headerLine.split(": "));
             result.put(splitLine.get(0), splitLine.get(1));
         }
-        return Collections.unmodifiableMap(result);
+        return result;
     }
 
     private static String findCookieLine(List<String> headerLines) {
