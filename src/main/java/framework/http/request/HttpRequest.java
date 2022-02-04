@@ -2,6 +2,7 @@ package framework.http.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Map;
 
 public class HttpRequest {
     private RequestLine requestLine;
@@ -38,6 +39,10 @@ public class HttpRequest {
 
     public String getRequestBody(String key) {
         return requestBody.getValue(key);
+    }
+
+    public Map<String, String> getRequestBodyMap() {
+        return requestBody.getRequestBodyMap();
     }
 
     public String getCookie() {

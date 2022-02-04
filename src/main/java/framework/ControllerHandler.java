@@ -1,10 +1,8 @@
 package framework;
 
 
-import framework.annotation.Controller;
-import framework.annotation.ControllerAdvice;
-import framework.annotation.ExceptionHandler;
-import framework.annotation.RequestMapping;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import framework.annotation.*;
 import framework.controller.FaviconController;
 import framework.controller.css.CssController;
 import framework.controller.view.ViewController;
@@ -16,9 +14,12 @@ import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class ControllerHandler {
@@ -41,9 +42,10 @@ public class ControllerHandler {
                     if (!isValidMethod(annotation, path, method)) {
                         continue;
                     }
-                    Object routerObject = controller.getConstructor(HttpRequest.class).newInstance(httpRequest);
+                    Object[] parameterObject = getParameterObject(httpRequest, classMethod);
+                    Object routerObject = controller.getConstructor().newInstance();
                     try {
-                        return (HttpResponse) classMethod.invoke(routerObject);
+                        return (HttpResponse) classMethod.invoke(routerObject, parameterObject);
                     } catch (InvocationTargetException e) {
                         return handlingException(e.getCause());
                     }
@@ -54,6 +56,26 @@ public class ControllerHandler {
         return new HttpResponse(HttpStatus.NOT_FOUND, new HttpResponseHeader());
     }
 
+    private static Object[] getParameterObject(HttpRequest httpRequest, Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Object> params = new ArrayList<>();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (parameterTypes[i] == HttpRequest.class) {
+                params.add(httpRequest);
+            } else if (QueryString.class.isInstance(parameterAnnotations[i][0])) {
+                QueryString queryStringAnnotation = (QueryString) parameterAnnotations[i][0];
+                params.add(httpRequest.getQueryString(queryStringAnnotation.name()));
+            } else if (RequestBody.class.isInstance(parameterAnnotations[i][0])) {
+                params.add(objectMapper.convertValue(httpRequest.getRequestBodyMap(), parameterTypes[i]));
+            }
+        }
+
+        return params.toArray();
+    }
 
     private static boolean isValidMethod(RequestMapping requestMapping, String path, String method) {
         if (!requestMapping.method().equals(method)) {
@@ -123,8 +145,8 @@ public class ControllerHandler {
 
         for (Method classMethod : klass.getDeclaredMethods()) {
             if (classMethod.isAnnotationPresent(RequestMapping.class)) {
-                Object routerObject = klass.getConstructor(HttpRequest.class).newInstance(httpRequest);
-                return (HttpResponse) classMethod.invoke(routerObject);
+                Object routerObject = klass.getConstructor().newInstance();
+                return (HttpResponse) classMethod.invoke(routerObject, httpRequest);
             }
         }
 

@@ -7,23 +7,13 @@ import framework.http.request.HttpRequest;
 import framework.http.response.HttpResponse;
 import framework.http.response.HttpResponseHeader;
 import framework.http.response.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @Controller
 public class IndexController {
-    private static final Logger log = LoggerFactory.getLogger(IndexController.class);
-
-    private final HttpRequest httpRequest;
-
-    public IndexController(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
-
     @RequestMapping(value = "/index.html", method = "GET")
-    public HttpResponse getIndexHtml() throws IOException {
+    public HttpResponse getIndexHtml(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
