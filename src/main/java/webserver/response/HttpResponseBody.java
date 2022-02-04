@@ -1,5 +1,6 @@
 package webserver.response;
 
+import mapper.HtmlUseConst;
 import mapper.MappingConst;
 import mapper.ResponseSendDataModel;
 import util.HtmlTemplate;
@@ -9,12 +10,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 
 public class HttpResponseBody {
     private final byte[] body;
 
     private HttpResponseBody(byte[] body) {
         this.body = body;
+    }
+
+    public HttpResponseBody(){
+        this.body = "".getBytes();
     }
 
     public static HttpResponseBody makeHttpResponseBody(ResponseSendDataModel model) throws IOException {
@@ -30,12 +36,38 @@ public class HttpResponseBody {
 
         StringBuilder body = new StringBuilder();
 
+        StringBuilder tempSaveBody = null;
         for(String line: fileData){
             line = line.trim();
 
             if(line.matches("^\\{\\{>.*\\}\\}$")){
                 String subLine = line.substring(3, line.length()-2).trim();
                 body.append(HtmlTemplate.includeHtml(subLine));
+
+                continue;
+            }
+
+            if(line.matches("^\\{\\{#.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+
+                if(!Objects.isNull(model.get(subLine))) {
+                    tempSaveBody = new StringBuilder(body);
+
+                    body = new StringBuilder();
+                }
+
+                continue;
+            }
+
+            if(!Objects.isNull(tempSaveBody) && line.matches("^\\{\\{/.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+
+                if(!Objects.isNull(model.get(subLine))) {
+                    tempSaveBody.append(HtmlTemplate.iterHtmlTag(body, model.get(subLine)));
+                }
+
+                body = new StringBuilder(tempSaveBody);
+                tempSaveBody = null;
 
                 continue;
             }

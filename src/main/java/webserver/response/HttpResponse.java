@@ -18,11 +18,9 @@ public class HttpResponse {
     }
 
     public static HttpResponse makeHttpResponse(ResponseSendDataModel model) throws IOException{
-        String filename = model.getName();
-
-        String cookie = model.makeCookieString();
-
-        HttpResponseBody httpResponseBody = HttpResponseBody.makeHttpResponseBody(model);
+        HttpResponseBody httpResponseBody = new HttpResponseBody();
+        if(!model.getName().matches("redirect:/.*"))
+            httpResponseBody = HttpResponseBody.makeHttpResponseBody(model);
         HttpResponseHeader httpResponseHeader = HttpResponseHeader.makeHttpResponseHeader(model, httpResponseBody.getBody().length);
 
         return new HttpResponse(httpResponseHeader, httpResponseBody);

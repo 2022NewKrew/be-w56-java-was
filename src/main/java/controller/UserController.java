@@ -1,5 +1,6 @@
 package controller;
 
+import mapper.HtmlUseConst;
 import mapper.MappingConst;
 import mapper.ResponseSendDataModel;
 import model.UserAccount;
@@ -10,6 +11,7 @@ import service.UserService;
 import webserver.request.HttpRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -28,6 +30,7 @@ public class UserController implements Controller{
         methodMapper.put("GET /login", this::getLogin);
         methodMapper.put("POST /login", this::postLogin);
         methodMapper.put("GET /login_failed", this::getLoginFailed);
+        methodMapper.put("GET /list", this::getList);
     }
 
     private ResponseSendDataModel getForm(HttpRequest httpRequest){
@@ -99,6 +102,16 @@ public class UserController implements Controller{
 
     private ResponseSendDataModel getLoginFailed(HttpRequest httpRequest){
         ResponseSendDataModel result = new ResponseSendDataModel("/user/login_failed.html");
+
+        return result;
+    }
+
+    private ResponseSendDataModel getList(HttpRequest httpRequest){
+        ResponseSendDataModel result = new ResponseSendDataModel("/user/list.html");
+
+        List<UserAccount> userAccountList = userService.findAll();
+
+        result.add(HtmlUseConst.USER_LIST, userAccountList);
 
         return result;
     }
