@@ -16,6 +16,9 @@ public class GetController implements MethodController {
     RequestParser rp;
     OutputStream os;
 
+    private final String USER_LIST = "/user/list";
+    private final String LOGIN_PAGE = "/user/login.html";
+
     public GetController(RequestParser rp, OutputStream os) {
         this.rp = rp;
         this.os = os;

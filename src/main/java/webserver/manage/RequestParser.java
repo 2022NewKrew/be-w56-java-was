@@ -14,13 +14,13 @@ public class RequestParser {
     private static final String PATH_TOKEN = "\\?";
     private static final String QUERY_TOKEN = "&";
     private static final String KEY_VALUE_TOKEN = "=";
-    private static final String ACCEPT_TOKEN = ",";
+    private static final String COOKIE_TOKEN = ";";
 
     private static final String KEY_METHOD = "Method";
     private static final String KEY_PATH = "Url-Path";
     private static final String KEY_QUERIES = "Queries";
-    private static final String KEY_ACCEPT = "Accept";
     private static final String KEY_CONTENT_LENGTH = "Content-Length";
+    private static final String KEY_COOKIE = "Cookie";
 
     private static final String ROOT_URL_PATH = "/";
     private static final String DEFAULT_URL_PATH = "/index.html";
@@ -30,11 +30,13 @@ public class RequestParser {
     private Map<String, String> optionMap;
     private Map<String, String> queryMap;
     private Map<String, String> bodyMap;
+    private Map<String, String> cookieMap;
 
     public RequestParser(InputStream is) {
         this.optionMap = new HashMap<>();
         generateRequestMap(is);
         parseRequestQuery();
+        parseRequestCookie();
     }
 
     private void generateRequestMap (InputStream is) {
@@ -99,7 +101,7 @@ public class RequestParser {
     private void parseRequestKeyValue (Map<String,String> map, String query) {
         String[] keyAndValue = query.split(KEY_VALUE_TOKEN);
         if(keyAndValue.length == 2) {
-            map.put(keyAndValue[0], keyAndValue[1]);
+            map.put(keyAndValue[0].trim(), keyAndValue[1].trim());
         }
     }
 
@@ -110,6 +112,19 @@ public class RequestParser {
             for(String query : bodyList) {
                 parseRequestKeyValue(this.bodyMap, query);
             }
+        }
+    }
+
+    private void parseRequestCookie() {
+        this.cookieMap = new HashMap<>();
+        String cookieOption = optionMap.get(KEY_COOKIE);
+        if( cookieOption == null || "".equals(cookieOption) ) {
+            return;
+        }
+
+        String[] cookies = cookieOption.split(COOKIE_TOKEN);
+        for(String cookie: cookies) {
+            parseRequestKeyValue(cookieMap, cookie);
         }
     }
 
@@ -130,7 +145,8 @@ public class RequestParser {
         return ROOT_URL_PATH.equals(path) ? DEFAULT_URL_PATH : path;
     }
 
-    public String getContentType () {
-        return optionMap.get(KEY_ACCEPT).split(ACCEPT_TOKEN)[0];
+    public String getCookie(String key) {
+        return cookieMap.get(key);
     }
+
 }
