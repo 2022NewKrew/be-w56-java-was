@@ -1,10 +1,7 @@
 package framework.util;
 
-import framework.RequestMapping;
+import framework.params.RequestMapping;
 import mvc.controller.Controller;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

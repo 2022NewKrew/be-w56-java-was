@@ -1,8 +1,8 @@
 package mvc.controller;
 
-import framework.util.RequestMapping;
-import framework.HttpRequest;
-import framework.variable.RequestMethod;
+import framework.params.RequestMapping;
+import framework.params.HttpRequest;
+import framework.constant.RequestMethod;
 
 public class ResourceController implements Controller {
 

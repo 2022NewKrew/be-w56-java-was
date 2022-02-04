@@ -1,9 +1,14 @@
 package framework;
 
-import framework.util.RequestMapping;
+import framework.params.HttpRequest;
+import framework.params.Params;
+import framework.params.RequestMapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -17,14 +22,25 @@ public class HandlerMapping {
         this.methodObjectMap = methodObjectMap;
     }
 
-    public String requestToController(HttpRequest request) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        return invokeMatchedMethod(request);
+    public String requestToController(HttpRequest request, Params params) throws InvocationTargetException, IllegalAccessException {
+        return invokeMatchedMethod(request, params);
     }
 
-    public String invokeMatchedMethod(HttpRequest request) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public String invokeMatchedMethod(HttpRequest request, Params params) throws IllegalAccessException, InvocationTargetException {
         Method matchedMethod = getMatchedMethod(request);
         Object controllerInstance = methodObjectMap.get(matchedMethod);
-        return (String) matchedMethod.invoke(controllerInstance, request);
+        Object[] args = setMethodArgs(matchedMethod, request, params);
+        return (String) matchedMethod.invoke(controllerInstance, args);
+    }
+
+    private Object[] setMethodArgs(Method matchedMethod, HttpRequest request, Params params) {
+        var paramTypes = matchedMethod.getParameterTypes();
+        List<Object> paramList = new ArrayList<>();
+        paramList.add(request);
+        Arrays.stream(paramTypes)
+                .filter(paramClass -> paramClass != HttpRequest.class)
+                .forEach(paramClass -> paramList.add(params.paramMapper.get(paramClass)));
+        return paramList.toArray();
     }
 
     private Method getMatchedMethod(HttpRequest request) throws IllegalAccessException {

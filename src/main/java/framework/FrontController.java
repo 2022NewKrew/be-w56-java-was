@@ -1,6 +1,9 @@
 package framework;
 
 import com.google.common.collect.Maps;
+import framework.params.HttpRequest;
+import framework.params.HttpResponse;
+import framework.params.Params;
 import framework.util.HttpRequestUtils;
 import framework.util.IOUtils;
 
@@ -24,20 +27,21 @@ public class FrontController {
     }
 
     public DataOutputStream request(InputStream in, OutputStream out) throws IOException {
+        Params params = new Params();
         try {
-            String viewName = requestToController(in);
-            HttpResponse response = viewResolver.getResponse(viewName);
+            String viewName = requestToController(in, params);
+            HttpResponse response = viewResolver.getResponse(viewName, params);
             return response.getResponse(out);
         } catch (Exception e) {
             e.printStackTrace();
-            HttpResponse response = viewResolver.getResponse("error");
+            HttpResponse response = viewResolver.getResponse("error", params);
             return response.getResponse(out);
         }
     }
 
-    private String requestToController(InputStream in) throws InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
+    private String requestToController(InputStream in, Params params) throws InvocationTargetException, IllegalAccessException, IOException {
         HttpRequest request = parseRequest(in);
-        return handlerMapping.requestToController(request);
+        return handlerMapping.requestToController(request, params);
     }
 
     private HttpRequest parseRequest(InputStream in) throws IOException {
@@ -61,8 +65,7 @@ public class FrontController {
             return Maps.newHashMap();
         }
 
-        String queryString = "";
-        queryString = URLDecoder.decode(urlTokens[1], StandardCharsets.UTF_8);
+        String queryString = URLDecoder.decode(urlTokens[1], StandardCharsets.UTF_8);
         return parseQueryString(queryString);
     }
 
