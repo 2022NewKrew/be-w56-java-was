@@ -45,7 +45,14 @@ public interface Controller {
     }
 
     default HttpResponse errorPage() {
-        HttpResponseHeader responseHeader = new HttpResponseHeader("/index.html", HttpStatus.BAD_REQUEST, 0);
+        HttpResponseBody responseBody;
+        try {
+            responseBody = HttpResponseBody.createFromUrl("/error.html");
+        } catch (IOException e) {
+            responseBody = HttpResponseBody.empty();
+        }
+
+        HttpResponseHeader responseHeader = new HttpResponseHeader("/error.html", HttpStatus.NOT_FOUND, responseBody.length());
 
         return new HttpResponse(responseHeader, HttpResponseBody.empty());
     }

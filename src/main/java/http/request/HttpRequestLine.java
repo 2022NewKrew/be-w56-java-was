@@ -20,12 +20,15 @@ public class HttpRequestLine {
     public static HttpRequestLine parseRequestLine(final String request) {
         String[] tokens = request.split(" ");
         Map<String, String> queryString = null;
+        String path = tokens[1];
+        int q = path.lastIndexOf("?");
 
-        if (tokens[1].contains("?")) { // queryString 존재
-            queryString = HttpRequestUtils.parseQueryString(tokens[1].split("\\?")[1]);
+        if (q != -1) { // queryString 존재
+            path = path.substring(0, q);
+            queryString = HttpRequestUtils.parseQueryString(tokens[1].substring(q+1));
         }
 
-        return new HttpRequestLine(tokens[0], tokens[1], queryString, tokens[2]);
+        return new HttpRequestLine(tokens[0], path, queryString, tokens[2]);
     }
 
     public String method() { return method; }
