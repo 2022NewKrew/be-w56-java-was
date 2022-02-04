@@ -64,6 +64,7 @@ public class RequestHandler extends Thread {
             }
             else {
                 RequestController.uriMatcher(methodType, uri, requestBody);
+                response302Header(dos, "http://localhost:8080/index.html");
             }
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -81,6 +82,26 @@ public class RequestHandler extends Thread {
         }
     }
 
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String responseType) {
+        try {
+            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("Content-Type:" + responseType + "\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302Header (DataOutputStream dos, String location) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 OK \r\n");
+            dos.writeBytes("Location: " + location + "\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+    
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
