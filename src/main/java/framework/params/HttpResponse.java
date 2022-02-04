@@ -1,6 +1,6 @@
-package framework;
+package framework.params;
 
-import framework.variable.HttpStatusCode;
+import framework.constant.HttpStatusCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +14,13 @@ public class HttpResponse {
     private HttpStatusCode httpStatusCode;
     private String mimeType;
     private byte[] body;
+    private Cookie cookie;
     private String redirectUrl;
 
-    public HttpResponse(HttpStatusCode httpStatusCode) {
+    public HttpResponse(HttpStatusCode httpStatusCode, Session session) {
         this.httpStatusCode = httpStatusCode;
         this.mimeType = "text/html";
+        this.cookie = new Cookie(session.getSession());
         this.body = new byte[0];
     }
 
@@ -36,6 +38,9 @@ public class HttpResponse {
         }
         dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + body.length + "\r\n");
+        if (!cookie.isEmpty()) {
+            dos.writeBytes(String.format("Set-Cookie: %s; Path=/", cookie.toString()));
+        }
         dos.writeBytes("\r\n");
     }
 

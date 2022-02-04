@@ -1,4 +1,4 @@
-package framework.variable;
+package framework.constant;
 
 public enum PathVariable {
     BASEURL("http://localhost:8080"),

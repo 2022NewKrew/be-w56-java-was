@@ -1,4 +1,4 @@
-package framework;
+package framework.params;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

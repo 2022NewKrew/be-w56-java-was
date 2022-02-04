@@ -1,11 +1,11 @@
-package framework.variable;
+package framework.constant;
 
 public enum HttpStatusCode {
     OK(200, "OK"),
     REDIRECT(302, "Found");
 
-    private int statusCode;
-    private String msg;
+    private final int statusCode;
+    private final String msg;
 
     HttpStatusCode(int statusCode, String msg) {
         this.statusCode = statusCode;
