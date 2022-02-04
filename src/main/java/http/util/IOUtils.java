@@ -1,6 +1,9 @@
 package http.util;
 
+import http.response.HttpResponse;
+
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class IOUtils {
@@ -16,5 +19,19 @@ public class IOUtils {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
+    }
+
+    public static void writeData(DataOutputStream dos, HttpResponse response) throws  IOException{
+        dos.writeBytes(response.getHttpVersion()+ " " + response.getStatusCode() +"\r\n");
+        response.getHeader().getHeaders().forEach((key, value) -> {
+            try {
+                dos.writeBytes(key + ": " + value + "\r\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        dos.writeBytes("\r\n");
+        dos.write(response.getBody(), 0, response.getBody().length);
+        dos.flush();
     }
 }
