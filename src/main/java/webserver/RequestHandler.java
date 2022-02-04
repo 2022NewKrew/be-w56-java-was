@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Map;
 
 import controller.HttpController;
@@ -37,6 +38,8 @@ public class RequestHandler extends Thread {
             httpController.run();
 
         } catch (IOException e) {
+            log.error(e.getMessage());
+        } catch (SQLException e) {
             log.error(e.getMessage());
         }
     }

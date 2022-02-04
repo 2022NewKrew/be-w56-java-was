@@ -49,6 +49,14 @@ public class ResponseService {
         responseBody(dos, body);
     }
 
+    public void response200WithBody(File file, byte[] body, HttpStatus httpStatus) throws IOException {
+        String status = httpStatus.getStatus();
+        dos.writeBytes("HTTP/1.1 " + status + " \r\n");
+        String contentType = new Tika().detect(file);
+        response200Header(body.length, contentType);
+        responseBody(dos, body);
+    }
+
     private void response200Header(int lengthOfBodyContent, String contentType) throws IOException {
         dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
