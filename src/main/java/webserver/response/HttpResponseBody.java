@@ -18,7 +18,7 @@ public class HttpResponseBody {
     public static HttpResponseBody makeHttpResponseBody(String fileName) throws IOException {
         if(fileName.matches("^" + MappingConst.FONT + ".*") || fileName.matches("^" + MappingConst.ICON + ".*")){
             byte[] bytes = Files.readAllBytes(new File("./webapp" + fileName).toPath());
-            System.out.println(fileName + bytes.length);
+
             return new HttpResponseBody(bytes);
         }
 
