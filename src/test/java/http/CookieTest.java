@@ -22,4 +22,16 @@ public class CookieTest {
         assertThat(cookie.getCookie().get("logined")).isEqualTo("true");
         assertThat(cookie.getCookie().get("JSessionId")).isEqualTo("1234");
     }
+
+    @Test
+    public void setCookie() {
+        String cookies = "logined=true";
+        Cookie cookie = Cookie.parse(cookies);
+
+        cookie.setCookie("logined", "false");
+        assertThat(cookie.getCookie().get("logined")).isEqualTo("false");
+
+        cookie.setCookie("JSessionId", "1234");
+        assertThat(cookie.getCookie().get("JSessionId")).isEqualTo("1234");
+    }
 }

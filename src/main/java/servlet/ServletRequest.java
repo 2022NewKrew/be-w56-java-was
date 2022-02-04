@@ -24,4 +24,8 @@ public class ServletRequest {
     public Map<String, String> getParameters() {
         return parameters;
     }
+
+    public Cookie getCookie() {
+        return cookie;
+    }
 }
