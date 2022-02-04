@@ -1,5 +1,6 @@
 package com.kakao.http.request;
 
+import com.kakao.http.common.HttpCookie;
 import com.kakao.http.header.BasicHeader;
 import com.kakao.http.header.HttpHeader;
 import com.kakao.util.HttpRequestUtils;
@@ -17,7 +18,8 @@ public class HttpRequest {
     private final HttpMethod method;
     private final Url url;
     private final String version;
-    private final List<HttpHeader> headers;
+    private final HttpHeaderStorage headerStorage;
+    private final HttpCookieStorage cookieStorage;
     private final String rawBody;
     private final Map<String, String> bodyMap;
 
@@ -27,7 +29,10 @@ public class HttpRequest {
         this.method = HttpMethod.valueOf(requestLine.getMethod());
         this.url = new Url(requestLine.getUrl());
         this.version = requestLine.getVersion();
-        this.headers = parseHeaderList(br);
+        this.headerStorage = new HttpHeaderStorage(parseHeaderList(br));
+        this.cookieStorage = this.headerStorage.findByName("Cookie")
+                .map(HttpCookieStorage::new)
+                .orElseGet(HttpCookieStorage::new);
         this.rawBody = parseRequestBody(br);
         this.bodyMap = parseBodyMap(this.rawBody);
     }
@@ -40,6 +45,10 @@ public class HttpRequest {
         return this.bodyMap.get(key);
     }
 
+    public Optional<HttpCookie> findCookieByName(String name) {
+        return this.cookieStorage.findByName(name);
+    }
+
     private Map<String, String> parseBodyMap(String rawBody) {
         if (rawBody == null || rawBody.isEmpty()) {
             return Collections.emptyMap();
@@ -48,9 +57,7 @@ public class HttpRequest {
     }
 
     private String parseRequestBody(BufferedReader br) throws IOException {
-        Optional<HttpHeader> contentLengthHeader = this.headers.stream()
-                .filter(header -> header.key().equalsIgnoreCase("Content-Length"))
-                .findFirst();
+        Optional<HttpHeader> contentLengthHeader = this.getHeaderStorage().findByName("Content-Length");
         return contentLengthHeader.isEmpty()
                 ? null
                 : IOUtils.readData(br, Integer.parseInt(contentLengthHeader.get().value()));
