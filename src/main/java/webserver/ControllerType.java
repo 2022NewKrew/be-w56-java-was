@@ -24,7 +24,7 @@ public enum ControllerType {
         methodMap = new EnumMap<>(HttpMethod.class);
 
         for (HttpMethod method : HttpMethod.values()) {
-            methodMap.put(method, MapUtil.get(String.class, Controller.class));
+            methodMap.put(method, MapUtil.newEmptyMap(String.class, Controller.class));
         }
 
         for (ControllerType controllerType : ControllerType.values()) {

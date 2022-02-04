@@ -22,7 +22,7 @@ public class RequestStartLine {
         this.query = Collections.unmodifiableMap(query);
     }
 
-    public static RequestStartLine stringToRequestLine(String startLine) {
+    public static RequestStartLine from(String startLine) {
         List<String> components = List.of(startLine.split(" "));
         HttpMethod method = HttpMethod.valueOf(components.get(0));
         String protocol = components.get(2);
@@ -34,7 +34,7 @@ public class RequestStartLine {
             return new RequestStartLine(method, url, protocol, queries);
         }
         return new RequestStartLine(method, url, protocol,
-                MapUtil.get(String.class, String.class));
+                MapUtil.newEmptyMap(String.class, String.class));
     }
 
     private static Map<String, String> getQueries(String queriesString) {

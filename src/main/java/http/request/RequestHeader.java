@@ -16,7 +16,7 @@ public class RequestHeader {
         this.cookies = Collections.unmodifiableMap(cookies);
     }
 
-    public static RequestHeader stringToRequestHeader(String headers) {
+    public static RequestHeader from(String headers) {
         if (headers.isEmpty()) {
             return new RequestHeader(Collections.emptyMap(), Collections.emptyMap());
         }

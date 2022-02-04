@@ -16,7 +16,7 @@ public class RequestBody {
         this.bodyData = Collections.unmodifiableMap(bodyData);
     }
 
-    public static RequestBody stringToRequestBody(String body) {
+    public static RequestBody from(String body) {
         if (body.isEmpty()) {
             return new RequestBody(Collections.emptyMap());
         }

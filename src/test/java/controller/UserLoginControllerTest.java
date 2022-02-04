@@ -31,9 +31,9 @@ class UserLoginControllerTest {
 
         DataBase.addUser(new User("userId", "password", "name", "email"));
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
+        RequestBody body = RequestBody.from(bodyString);
         HttpRequest request = new HttpRequest(startLine, header, body);
         OutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
@@ -58,9 +58,9 @@ class UserLoginControllerTest {
 
         DataBase.addUser(new User("otherUser", "otherPassword", "name", "email"));
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
+        RequestBody body = RequestBody.from(bodyString);
         HttpRequest request = new HttpRequest(startLine, header, body);
         OutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
@@ -87,9 +87,9 @@ class UserLoginControllerTest {
 
         DataBase.addUser(new User("userId", "otherPassword", "name", "email"));
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
+        RequestBody body = RequestBody.from(bodyString);
         HttpRequest request = new HttpRequest(startLine, header, body);
         OutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
@@ -114,9 +114,9 @@ class UserLoginControllerTest {
         String headerString = "Content-Length: 31\r\nheaderKey1: headerValue1\r\nheaderKey2: headerValue2\r\n";
         String bodyString = "";
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
+        RequestBody body = RequestBody.from(bodyString);
         HttpRequest request = new HttpRequest(startLine, header, body);
         OutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);

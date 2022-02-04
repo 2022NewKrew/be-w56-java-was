@@ -25,7 +25,8 @@ public class ResponseHeader {
     }
 
     public ResponseHeader() {
-        this(MapUtil.get(String.class, String.class), MapUtil.get(String.class, String.class));
+        this(MapUtil.newEmptyMap(String.class, String.class),
+                MapUtil.newEmptyMap(String.class, String.class));
     }
 
     public void addContentType(String url) {

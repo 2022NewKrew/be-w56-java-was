@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class MapUtil {
 
-    public static <K, V> Map<K, V> get(Class<K> k, Class<V> v) {
+    public static <K, V> Map<K, V> newEmptyMap(Class<K> k, Class<V> v) {
         return new HashMap<>();
     }
 

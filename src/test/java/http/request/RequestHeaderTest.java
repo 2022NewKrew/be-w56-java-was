@@ -27,10 +27,10 @@ class RequestHeaderTest {
         List<String> components = List.of(testHeaderString.split("\r\n"));
         String testItem = components.get(0);
         //when
-        RequestHeader header = RequestHeader.stringToRequestHeader(testHeaderString);
+        RequestHeader header = RequestHeader.from(testHeaderString);
         //then 1: String is empty
         if (testItem.isEmpty()) {
-            assertThatCode(() -> RequestHeader.stringToRequestHeader(
+            assertThatCode(() -> RequestHeader.from(
                     testHeaderString)).doesNotThrowAnyException();
             return;
         }
@@ -54,10 +54,10 @@ class RequestHeaderTest {
         String testItem = components.get(0);
         String testCookie = components.get(components.size() - 1);
         //when
-        RequestHeader header = RequestHeader.stringToRequestHeader(testHeaderString);
+        RequestHeader header = RequestHeader.from(testHeaderString);
         //then 1: String is empty
         if (testItem.isEmpty()) {
-            assertThatCode(() -> RequestHeader.stringToRequestHeader(
+            assertThatCode(() -> RequestHeader.from(
                     testHeaderString)).doesNotThrowAnyException();
             return;
         }
@@ -77,7 +77,7 @@ class RequestHeaderTest {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
         RequestHeader header = new RequestHeader(components,
-                MapUtil.get(String.class, String.class));
+                MapUtil.newEmptyMap(String.class, String.class));
         //when
         boolean result = header.hasComponent(testKey);
         //then
@@ -91,7 +91,7 @@ class RequestHeaderTest {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
         RequestHeader header = new RequestHeader(components,
-                MapUtil.get(String.class, String.class));
+                MapUtil.newEmptyMap(String.class, String.class));
         //when
         boolean result = header.hasComponent(testKey);
         //then
@@ -105,7 +105,7 @@ class RequestHeaderTest {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
         RequestHeader header = new RequestHeader(components,
-                MapUtil.get(String.class, String.class));
+                MapUtil.newEmptyMap(String.class, String.class));
         //when
         String value = header.getComponent(testKey);
         //then
@@ -118,7 +118,8 @@ class RequestHeaderTest {
     void hasCookie(String testKey) {
         //give
         Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(MapUtil.get(String.class, String.class), cookie);
+        RequestHeader header = new RequestHeader(MapUtil.newEmptyMap(String.class, String.class),
+                cookie);
         //when
         boolean result = header.hasCookie(testKey);
         //then
@@ -131,7 +132,8 @@ class RequestHeaderTest {
     void doesNotHaveCookie(String testKey) {
         //give
         Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(MapUtil.get(String.class, String.class), cookie);
+        RequestHeader header = new RequestHeader(MapUtil.newEmptyMap(String.class, String.class),
+                cookie);
         //when
         boolean result = header.hasCookie(testKey);
         //then
@@ -144,7 +146,8 @@ class RequestHeaderTest {
     void getCookie(String testKey, String testValue) {
         //give
         Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(MapUtil.get(String.class, String.class), cookie);
+        RequestHeader header = new RequestHeader(MapUtil.newEmptyMap(String.class, String.class),
+                cookie);
         //when
         String value = header.getCookie(testKey);
         //then
