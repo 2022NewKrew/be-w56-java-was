@@ -3,15 +3,23 @@ package http.response;
 import http.HttpBody;
 import http.HttpHeader;
 import http.HttpStatusCode;
+import http.util.IOUtils;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
+
 public class HttpResponse {
+    private final OutputStream out;
     private String httpVersion;
     private HttpStatusCode statusCode;
     private HttpHeader header;
     private byte[] body;
+
+    public HttpResponse(OutputStream out) {
+        this.out = out;
+    }
 
     public void setHttpVersion(String httpVersion) {
         this.httpVersion = httpVersion;
@@ -43,5 +51,9 @@ public class HttpResponse {
 
     public byte[] getBody() {
         return body;
+    }
+
+    public void send() throws IOException {
+        IOUtils.writeData(new DataOutputStream(out), this);
     }
 }
