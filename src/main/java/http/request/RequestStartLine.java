@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import util.MapUtil;
 import webserver.HttpMethod;
 
 public class RequestStartLine {
@@ -26,18 +25,29 @@ public class RequestStartLine {
         List<String> components = List.of(startLine.split(" "));
         HttpMethod method = HttpMethod.valueOf(components.get(0));
         String protocol = components.get(2);
-        String url = components.get(1);
-        if (url.contains("?")) {
-            List<String> urlComponents = List.of(url.split("\\?"));
-            url = urlComponents.get(0);
-            Map<String, String> queries = getQueries(urlComponents.get(1));
-            return new RequestStartLine(method, url, protocol, queries);
+        String url = getUrl(components.get(1));
+        String queryString = getQueryString(components.get(1));
+        return new RequestStartLine(method, url, protocol, getQueries(queryString));
+    }
+
+    private static String getUrl(String urlWithQuery) {
+        if (urlWithQuery.contains("?")) {
+            return urlWithQuery.split("\\?")[0];
         }
-        return new RequestStartLine(method, url, protocol,
-                MapUtil.newEmptyMap(String.class, String.class));
+        return urlWithQuery;
+    }
+
+    private static String getQueryString(String urlWithQuery) {
+        if (urlWithQuery.contains("?")) {
+            return urlWithQuery.split("\\?")[1];
+        }
+        return "";
     }
 
     private static Map<String, String> getQueries(String queriesString) {
+        if (queriesString.isEmpty()) {
+            return Collections.emptyMap();
+        }
         Map<String, String> result = new HashMap<>();
         List<String> queries = List.of(queriesString.split("&"));
         List<String> splitQuery;
