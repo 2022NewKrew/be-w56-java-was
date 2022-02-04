@@ -1,6 +1,9 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -8,19 +11,19 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
-    /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
+    /*
+     @param queryString은
+               URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
+    /*
+     @param 쿠키
+                값은 name1=value1; name2=value2 형식임
+     @return
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
@@ -49,8 +52,36 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
+    /*
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }*/
+
+    public static Map<String, String> parseRequestLine(String requestLine){
+        Map<String, String> result = new HashMap<>();
+        String[] tokens = requestLine.split(" ");
+        result.put("method", tokens[0]);
+        result.put("HTTP", tokens[2]);
+        if (tokens[1].equals("/")){
+            result.put("url" , "/index.html");
+            return result;
+        }
+        result.put("url", tokens[1]);
+        return result;
+    }
+
+    public static Map<String, String> parseHeader(BufferedReader br) throws IOException {
+        Map<String, String> result = new HashMap<>();
+        String line = br.readLine();
+        while(!line.equals("")){
+            String[] tokens = line.split(": ");
+            if(tokens[0] == null){
+                return result;
+            }
+            result.put(tokens[0], tokens[1]);
+            line = br.readLine();
+        }
+        return result;
     }
 
     public static class Pair {
