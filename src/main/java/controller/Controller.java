@@ -7,21 +7,25 @@ import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+/**
+ *  process 가 호출되면 request 객체를 통해
+ *  정적 파일에 대한 요청인지 확인
+ *  정적 파일 요청이 아니면 processDynamic 로 처리 위임
+ */
 public interface Controller {
-    HttpResponse processDynamic(HttpRequest request) throws IOException;
+    HttpResponse processDynamic(HttpRequest request);
 
     default HttpResponse process(HttpRequest request) throws IOException {
-        if (isStaticFileSRequest(request))
-            return readStaticFile(request.line().url());
+        if (isStaticFileRequest(request))
+            return readStaticFile(request.line().path());
 
         return processDynamic(request);
     }
 
-    default boolean isStaticFileSRequest(HttpRequest request) {
-        String url = request.line().url();
+    default boolean isStaticFileRequest(HttpRequest request) {
+        String url = request.line().path();
         Path path = Path.of("./webapp", url);
         return path.toFile().isFile();
     }
@@ -36,9 +40,20 @@ public interface Controller {
     default HttpResponse redirect(String redirectUrl) {
         HttpResponseHeader responseHeader = new HttpResponseHeader(redirectUrl, HttpStatus.FOUND, 0);
         responseHeader.putToHeaders("Location", redirectUrl);
-        byte[] emptyBody = "".getBytes(StandardCharsets.UTF_8);
-        HttpResponseBody responseBody = new HttpResponseBody(emptyBody);
 
-        return new HttpResponse(responseHeader, responseBody);
+        return new HttpResponse(responseHeader, HttpResponseBody.empty());
+    }
+
+    default HttpResponse errorPage() {
+        HttpResponseBody responseBody;
+        try {
+            responseBody = HttpResponseBody.createFromUrl("/error.html");
+        } catch (IOException e) {
+            responseBody = HttpResponseBody.empty();
+        }
+
+        HttpResponseHeader responseHeader = new HttpResponseHeader("/error.html", HttpStatus.NOT_FOUND, responseBody.length());
+
+        return new HttpResponse(responseHeader, HttpResponseBody.empty());
     }
 }

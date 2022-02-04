@@ -15,7 +15,7 @@ class ControllerTest {
         HttpRequest request = new HttpRequest(requestLine, null, null);
         Controller controller = UserController.getInstance();
 
-        Assertions.assertTrue(controller.isStaticFileSRequest(request));
+        Assertions.assertTrue(controller.isStaticFileRequest(request));
     }
 
     @DisplayName("정적 파일에 대한 요청이 아닐 때 확인")
@@ -26,7 +26,7 @@ class ControllerTest {
         HttpRequest request = new HttpRequest(requestLine, null, null);
         Controller controller = UserController.getInstance();
 
-        Assertions.assertFalse(controller.isStaticFileSRequest(request));
+        Assertions.assertFalse(controller.isStaticFileRequest(request));
     }
 
 }

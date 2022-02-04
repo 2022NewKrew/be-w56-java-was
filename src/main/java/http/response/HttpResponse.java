@@ -20,4 +20,6 @@ public class HttpResponse {
             throw new IOException("Failed to write HttpResponse to dos");
         }
     }
+
+    public HttpResponseHeader header() { return header; }
 }
