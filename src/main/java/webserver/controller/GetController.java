@@ -22,6 +22,7 @@ public class GetController implements MethodController {
     private final String LOGIN_KEY = "logined";
 
     private final String MEMO_LIST = "/index";
+
     private final String USER_LIST = "/user/list";
     private final String LOGIN_PAGE = "/user/login.html";
 
@@ -37,6 +38,7 @@ public class GetController implements MethodController {
         log.info(":: GET Service");
 
         switch (rp.getPath()) {
+
             case MEMO_LIST:
             case HTML_MEMO_LIST:
                 methodMemoList();
