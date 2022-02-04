@@ -5,6 +5,7 @@ import collections.RequestHeaders;
 import collections.RequestStartLine;
 import dto.Response;
 import collections.ResponseHeaders;
+import dto.ResponseBodyDto;
 import model.User;
 import org.apache.tika.Tika;
 import service.UserService;
@@ -13,8 +14,6 @@ import util.HttpRequestUtils;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +42,6 @@ public class GetController implements Controller {
 
     public Response userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         var temp = new HashMap<String, String>();
-        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
         temp.put("Location", "/");
         Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
 
@@ -53,17 +51,12 @@ public class GetController implements Controller {
     }
 
     public Response staticResource(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        File file = new File("./webapp" + requestStartLine.getPath());
-        Path filePath = file.toPath();
+        ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView(requestStartLine.getPath());
+        byte[] body = responseBodyDto.getBody();
 
-        byte[] body = Files.readAllBytes(filePath);
         var temp = new HashMap<String, String>();
         temp.put("Content-Length", String.valueOf(body.length));
-        String contentType = Files.probeContentType(filePath);
-        if (contentType == null || contentType.equals("")) {
-            contentType = tika.detect(file);
-        }
-        temp.put("Content-Type", contentType);
+        temp.put("Content-Type", responseBodyDto.getContentType());
 
         return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
     }
@@ -76,63 +69,39 @@ public class GetController implements Controller {
         if (logined.equals("true")) {
             // 사용자 목록 로직
             Collection<User> users = userService.list();
-            File file = new File("./webapp" + "/user/list.html");
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line = br.readLine();
-            StringBuilder sb = new StringBuilder();
-
-            makeListView(users, br, line, sb);
-            byte[] body = sb.toString().getBytes();
+            byte[] body = HTML_VIEW.userListView(users);
 
             var temp = new HashMap<String, String>();
             temp.put("Content-Length", String.valueOf(body.length));
-            temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
+            temp.put("Content-Type", "text/html; charset=utf-8");
             return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
         }
 
         // 로그인 화면으로 redirect
-        byte[] body = Files.readAllBytes(new File("./webapp" + "/user/login.html").toPath());
+        ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView("/user/login.html");
+        byte[] body = responseBodyDto.getBody();
 
         var temp = new HashMap<String, String>();
         temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
         temp.put("Location", "/user/login.html");
         return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
     }
 
     public Response index(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        byte[] body = Files.readAllBytes(new File("./webapp" + "/index.html").toPath());
+        ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView("/index.html");
+        byte[] body = responseBodyDto.getBody();
 
         var temp = new HashMap<String, String>();
         temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
+        temp.put("Content-Type", responseBodyDto.getContentType());
         return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
     }
 
     public Response userLogout(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         var temp = new HashMap<String, String>();
         temp.put("Set-Cookie", "logined=false; Path=/");
-        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
         temp.put("Location", "/");
         return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
-    }
-
-    private void makeListView(Collection<User> users, BufferedReader br, String line, StringBuilder sb) throws IOException {
-        while (line != null) {
-            sb.append(line).append("\r\n");
-            if (line.contains("<tbody>")) {
-                int cnt = 1;
-                for (User user : users) {
-                    sb.append("<tr>\r\n");
-                    sb.append("<th scope=\"row\">").append(cnt).append("</th>\r\n");
-                    sb.append("<td>").append(user.getUserId()).append("</td>\r\n");
-                    sb.append("<td>").append(user.getName()).append("</td>\r\n");
-                    sb.append("<td>").append(user.getEmail()).append("</td>\r\n");
-                    cnt++;
-                }
-            }
-            line = br.readLine();
-        }
     }
 
 }
