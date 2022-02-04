@@ -24,20 +24,23 @@ public class UserController implements Controller {
     }
 
     @Override
-    public void handleGet(HttpRequest request, HttpResponse response) throws IOException {
+    public String handleGet(HttpRequest request, HttpResponse response) throws IOException {
         if (request.getStartLine().getTargetUri().equals("/user/create")) {
-            getCreateUser(request, response);
+            return getCreateUser(request, response);
         }
+
+        return null;
     }
 
     @Override
-    public void handlePost(HttpRequest request, HttpResponse response) throws IOException {
+    public String handlePost(HttpRequest request, HttpResponse response) throws IOException {
         if (request.getStartLine().getTargetUri().equals("/user/create")) {
-            postCreateUser(request, response);
+            return postCreateUser(request, response);
         }
+        return null;
     }
 
-    private void getCreateUser(HttpRequest request, HttpResponse response) throws IOException {
+    private String getCreateUser(HttpRequest request, HttpResponse response) throws IOException {
         Map<String, String> queryParams = request.getStartLine().getQueryParams();
 
         User user = new User(
@@ -47,19 +50,10 @@ public class UserController implements Controller {
                 queryParams.get("email")
         );
 
-        byte[] body = {};
-        response.setBody(body);
-
-        response.setHttpVersion("HTTP/1.1");
-        response.setStatusCode(HttpStatusCode.OK);
-
-        HttpHeader responseHeader = new HttpHeader();
-        responseHeader.addHeader("Content-Length: " + body.length);
-        response.setHeader(responseHeader);
-        response.send();
+        return "redirect:/";
     }
 
-    private void postCreateUser(HttpRequest request, HttpResponse response) throws IOException {
+    private String postCreateUser(HttpRequest request, HttpResponse response) throws IOException {
         String bodyString = request.getHttpBody().getBody();
         Map<String, String> bodyParams = HttpRequestUtils.parseQueryString(bodyString);
 
@@ -70,17 +64,6 @@ public class UserController implements Controller {
                 bodyParams.get("email")
         );
 
-
-        byte[] body = {};
-        response.setBody(body);
-
-        response.setHttpVersion("HTTP/1.1");
-        response.setStatusCode(HttpStatusCode.REDIRECT);
-
-        HttpHeader responseHeader = new HttpHeader();
-        responseHeader.addHeader("Content-Length: " + body.length);
-        responseHeader.addHeader("Location: /");
-        response.setHeader(responseHeader);
-        response.send();
+        return "redirect:/";
     }
 }
