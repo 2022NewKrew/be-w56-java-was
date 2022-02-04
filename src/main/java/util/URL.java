@@ -17,11 +17,11 @@ public class URL {
         params = tempParams;
     }
 
-    public String url(){
+    public String getUrl() {
         return this.url;
     }
 
-    public Map<String, String> params(){
+    public Map<String, String> getParams() {
         return this.params;
     }
 

@@ -18,6 +18,9 @@ public class HttpRequestUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
+    private HttpRequestUtils() {
+    }
+
 
     /**
      * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -116,6 +119,7 @@ public class HttpRequestUtils {
 
     public static HttpRequest parseRequest(BufferedReader br) throws IOException {
         String line = br.readLine();
+        log.debug("header : {}", line);
         String[] words = line.split(" ");
 
         HttpMethod httpMethod = HttpMethod.valueOf(words[0]);
@@ -123,7 +127,7 @@ public class HttpRequestUtils {
         String httpVersion = words[2];
 
         List<Pair> pairs = new ArrayList<>();
-        while (!line.equals("")) {
+        while (line != null && !line.equals("") ) {
             line = br.readLine();
             pairs.add(parseHeader(line));
             log.debug("header : {}", line);
@@ -137,6 +141,7 @@ public class HttpRequestUtils {
         if (httpMethod == HttpMethod.POST) {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
             String queryString = IOUtils.readData(br, contentLength);
+            log.debug("body : {}", queryString);
             body = parseQueryString(queryString);
             return new HttpRequest(httpMethod, url, httpVersion, headers, body);
         }

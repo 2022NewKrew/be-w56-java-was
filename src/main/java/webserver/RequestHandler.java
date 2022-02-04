@@ -1,5 +1,6 @@
 package webserver;
 
+import app.core.MyHttpServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.http.HttpRequest;
@@ -25,11 +26,12 @@ public class RequestHandler extends Thread {
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-        ServletContainer servletContainer = null;
+        HttpServlet httpServlet = null;
         try {
-            servletContainer = new ServletContainer();
+            httpServlet = new MyHttpServlet();
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
+            return;
         }
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -38,12 +40,12 @@ public class RequestHandler extends Thread {
             HttpRequest httpRequest = HttpRequestUtils.parseRequest(br);
             HttpResponse httpResponse = new HttpResponse();
             DataOutputStream dos = new DataOutputStream(out);
-            servletContainer.service(httpRequest, httpResponse);
+            httpServlet.service(httpRequest, httpResponse);
             log.debug("response header");
             log.debug(httpResponse.headerText());
             HttpResponseUtils.response(httpResponse, dos);
 
-        } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
+        } catch (IOException e) {
             log.error(e.getMessage());
         }
     }

@@ -2,12 +2,17 @@ plugins {
     id 'java'
 }
 
+compileJava{
+    options.release = 11
+}
+
 group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
+
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
@@ -22,8 +27,50 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.9.0'
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '2.0.0-alpha6'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha6'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.0-alpha6'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
     implementation 'org.reflections:reflections:0.9.12'
+    implementation 'mysql:mysql-connector-java:8.0.28'
 }
+
+
+
+tasks.register('java-was', Jar) {
+    archiveClassifier = 'app'
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+
+
+    manifest {
+        attributes(
+                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' '),
+                'Main-Class': 'webserver.WebServer'
+        )
+    }
+
+    processResources {
+        from ('webapp/') {
+            into 'webapp'
+        }
+    }
+
+
+    duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+}
+
+
 
 test {
     useJUnitPlatform()

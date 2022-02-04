@@ -1,0 +1,64 @@
+package util.util;
+
+import app.core.TemplateEngine;
+import app.db.DataBase;
+import app.model.User;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import util.ui.Model;
+import util.ui.ModelImpl;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TemplateEngineTest {
+
+    @BeforeAll
+    void setUp() {
+        DataBase.addUser(new User("yunyul", "test", "윤렬", "yunyul3@gmail.com"));
+        DataBase.addUser(new User("tester", "test", "테스터", "test@test.com"));
+    }
+
+    @Test
+    void renderModel() throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Model model = new ModelImpl();
+        model.addAttribute("hello", "world");
+        String template = "{{hello}}\n";
+        assertThat(TemplateEngine.divideByList(template, model)).hasToString("world\n");
+    }
+
+    @Test
+    void renderObject() throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Model model = new ModelImpl();
+        User user = DataBase.findUserById("yunyul");
+        model.addAttribute("user", user);
+        String template =
+                "{{user.userId}}\n" +
+                        "{{user.name}}\n";
+        String res = TemplateEngine.divideByList(template, model).toString();
+        System.out.println("=====res====");
+        System.out.println(res);
+        assertThat(res).contains("yunyul", "윤렬");
+
+    }
+
+    @Test
+    void renderList() throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Model model = new ModelImpl();
+        model.addAttribute("users", Arrays.asList(DataBase.findAll().toArray()));
+        String template = "{{#users}}\n" +
+                "{{userId}}\n" +
+                "{{/users}}";
+        String res = TemplateEngine.divideByList(template, model).toString();
+        assertThat(res).contains("yunyul", "tester");
+        System.out.println(res);
+    }
+
+
+
+}

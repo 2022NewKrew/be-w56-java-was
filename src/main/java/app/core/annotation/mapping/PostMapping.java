@@ -1,4 +1,4 @@
-package util.annotation.mapping;
+package app.core.annotation.mapping;
 
 import util.http.HttpMethod;
 

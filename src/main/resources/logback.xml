@@ -11,3 +11,7 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
+
+<!--필터 : https://logback.qos.ch/manual/filters.html-->
+<!--파일 설정 : https://logback.qos.ch/manual/configuration.html-->
+<!--Todo ELK로 분석기능을 만들어 볼 수 있다.-->
