@@ -8,7 +8,7 @@ import framework.util.annotation.Autowired;
 import framework.util.annotation.Component;
 import org.modelmapper.ModelMapper;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static framework.util.annotation.Component.ComponentType.SERVICE;
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<UserDto> findAll() {
+    public List<UserDto> findAll() {
         return userRepository.findAll().stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .collect(Collectors.toList());

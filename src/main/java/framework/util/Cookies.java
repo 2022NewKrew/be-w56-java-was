@@ -1,8 +1,6 @@
 package framework.util;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Cookie들을 담을 일급 컬렉션 클래스
@@ -41,8 +39,8 @@ public class Cookies {
         return cookies.isEmpty();
     }
 
-    public void clear() {
-        cookies.clear();
+    public boolean contains(String key) {
+        return cookies.containsKey(key);
     }
 
     @Override

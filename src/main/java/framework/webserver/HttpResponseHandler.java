@@ -48,6 +48,7 @@ public class HttpResponseHandler {
 
             if (!cookies.isEmpty()) {
                 dos.writeBytes("Set-Cookie: " + cookies);
+                dos.writeBytes("\r\n");
             }
 
             dos.writeBytes("\r\n");

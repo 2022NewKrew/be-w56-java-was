@@ -1,8 +1,10 @@
 package framework.webserver;
 
-import lombok.Getter;
+import framework.util.Cookies;
+import framework.util.HttpSession;
 import framework.util.RequestAttributes;
 import framework.util.RequestHeaders;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 import static framework.util.Constants.DEFAULT_HTTP_VERSION;
+import static framework.util.Constants.SESSION_ID_KEY;
 
 /**
  * Client의 요청 정보를 담은 클래스
@@ -74,6 +77,34 @@ public class HttpRequestHandler {
 
         LOGGER.debug("Attributes: {}", attributeStr);
         requestAttributes.parseAttributes(attributeStr);
+    }
+
+    public Object getRequestHeader(String key) {
+        return requestHeaders.getRequestHeader(key);
+    }
+
+    public Cookies getCookies() {
+        if (!requestHeaders.contains("Cookie")) {
+            return new Cookies();
+        }
+
+        return (Cookies) requestHeaders.getRequestHeader("Cookie");
+    }
+
+    public HttpSession getSession() {
+        Cookies cookies = getCookies();
+
+        if (!cookies.contains(SESSION_ID_KEY)) {
+            cookies.setCookie(SESSION_ID_KEY, HttpSessionHandler.makeSession());
+        }
+
+        String sessionId = cookies.getCookie(SESSION_ID_KEY);
+
+        if (!HttpSessionHandler.contains(sessionId)) {
+            HttpSessionHandler.makeSessionWithId(sessionId);
+        }
+
+        return HttpSessionHandler.getSession(sessionId);
     }
 
     public String getAttribute(String key) {

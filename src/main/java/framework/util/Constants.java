@@ -21,12 +21,12 @@ public class Constants {
     /** Redirect 표시 */
     public static final String REDIRECT_MARK = "redirect:";
 
-    /** Redirect할 때의 기본 파일 확장자 */
-    public static final String DEFAULT_REDIRECT_EXTENSION = ".html";
-
     /** 기본 HTTP 버전 정보 */
     public static final String DEFAULT_HTTP_VERSION = "HTTP/1.1";
 
     /** 기본 Connection 정보 */
     public static final String DEFAULT_CONNECTION = "close";
+
+    /** Cookie에 저장될 Session ID의 key 값 */
+    public static final String SESSION_ID_KEY = "SESSIONID";
 }
