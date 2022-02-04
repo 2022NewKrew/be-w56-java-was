@@ -69,3 +69,16 @@
   - HandlerIntercpetor 를 상속받아서 구현
   - WebMvcConfigurer에서 addInterceptors 를 통해 interceptor를 등록하고 사용
   - addInterceptor를 할 때, 우선순위, includePathPattern, excludePathPattern 등을 등록함.
+
+## Step6
+- 요구사항
+  - 지금까지 구현한 소스코드는 stylesheet 파일을 지원하지 못하고 있다. Stylesheet 파일을 지원하도록 구현하도록 한다.
+  - Http Request Header 예
+  ```
+  GET ./css/style.css HTTP/1.1
+  Host: localhost:8080
+  Accept: text/css,*/*;q=0.1
+  Connection: keep-alive
+  ```
+- css, js, favicon에 맞도록 framework에 Controller를 두어서 처리하도록 만듦
+
