@@ -16,14 +16,8 @@ import java.io.IOException;
 public class IndexController {
     private static final Logger log = LoggerFactory.getLogger(IndexController.class);
 
-    private final HttpRequest httpRequest;
-
-    public IndexController(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
-
     @RequestMapping(value = "/index.html", method = "GET")
-    public HttpResponse getIndexHtml() throws IOException {
+    public HttpResponse getIndexHtml(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 

@@ -16,14 +16,8 @@ import java.io.IOException;
 public class FaviconController {
     private static final Logger log = LoggerFactory.getLogger(FaviconController.class);
 
-    private final HttpRequest httpRequest;
-
-    public FaviconController(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
-
     @RequestMapping(value = "/favicon", method = "GET")
-    public HttpResponse getFavicon() throws IOException {
+    public HttpResponse getFavicon(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.IMAGE_AVIF);
 

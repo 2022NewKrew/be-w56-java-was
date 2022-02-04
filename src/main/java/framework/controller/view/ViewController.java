@@ -16,14 +16,8 @@ import java.io.IOException;
 public class ViewController {
     private static final Logger log = LoggerFactory.getLogger(ViewController.class);
 
-    private final HttpRequest httpRequest;
-
-    public ViewController(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
-
     @RequestMapping(value = "/view", method = "GET")
-    public HttpResponse getView() throws IOException {
+    public HttpResponse getView(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 

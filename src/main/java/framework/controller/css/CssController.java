@@ -16,14 +16,8 @@ import java.io.IOException;
 public class CssController {
     private static final Logger log = LoggerFactory.getLogger(CssController.class);
 
-    private final HttpRequest httpRequest;
-
-    public CssController(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
-
     @RequestMapping(value = "/css", method = "GET")
-    public HttpResponse getCss() throws IOException {
+    public HttpResponse getCss(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_CSS);
 

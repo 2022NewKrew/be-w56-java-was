@@ -1,8 +1,11 @@
 package cafe.controller.user;
 
 import cafe.controller.exception.IncorrectLoginUserException;
+import cafe.dto.LoginDto;
+import cafe.dto.UserCreateDto;
 import cafe.service.UserService;
 import framework.annotation.Controller;
+import framework.annotation.RequestBody;
 import framework.annotation.RequestMapping;
 import framework.http.enums.MediaType;
 import framework.http.request.HttpRequest;
@@ -19,18 +22,15 @@ import java.nio.charset.StandardCharsets;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final HttpRequest httpRequest;
     private final UserService userService;
 
-    public UserController(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
+    public UserController() {
         this.userService = new UserService();
     }
 
     @RequestMapping(value = "/user", method = "POST")
-    public HttpResponse createUser() throws IOException {
-        userService.createUser(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"),
-                httpRequest.getRequestBody("name"), httpRequest.getRequestBody("email"));
+    public HttpResponse createUser(@RequestBody UserCreateDto userCreateDto) throws IOException {
+        userService.createUser(userCreateDto.getUserId(), userCreateDto.getPassword(), userCreateDto.getName(), userCreateDto.getEmail());
 
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/login", method = "POST")
-    public HttpResponse login() throws IncorrectLoginUserException, IOException {
-        userService.authenticateUser(httpRequest.getRequestBody("userId"), httpRequest.getRequestBody("password"));
+    public HttpResponse login(@RequestBody LoginDto loginDto) throws IncorrectLoginUserException, IOException {
+        userService.authenticateUser(loginDto.getUserId(), loginDto.getPassword());
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
         responseHeader.setCookie("logined=true; Path=/");
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/login.html", method = "GET")
-    public HttpResponse userLoginHtml() throws IOException {
+    public HttpResponse userLoginHtml(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/login_failed.html", method = "GET")
-    public HttpResponse userLoginFailedHtml() throws IOException {
+    public HttpResponse userLoginFailedHtml(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
@@ -69,7 +69,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/user/form.html", method = "GET")
-    public HttpResponse userSignupHtml() throws IOException {
+    public HttpResponse userSignupHtml(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/profile.html", method = "GET")
-    public HttpResponse userProfileHtml() throws IOException {
+    public HttpResponse userProfileHtml(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 

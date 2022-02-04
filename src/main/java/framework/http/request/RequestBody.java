@@ -35,4 +35,8 @@ public class RequestBody {
     public String getValue(String key) {
         return requestBodyMap.get(key);
     }
+
+    public Map<String, String> getRequestBodyMap() {
+        return requestBodyMap;
+    }
 }
