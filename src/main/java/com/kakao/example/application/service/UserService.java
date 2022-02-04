@@ -3,7 +3,6 @@ package com.kakao.example.application.service;
 import com.kakao.example.application.dto.UserDto;
 import com.kakao.example.model.domain.User;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface UserService {

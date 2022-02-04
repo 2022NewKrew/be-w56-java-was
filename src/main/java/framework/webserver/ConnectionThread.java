@@ -5,7 +5,9 @@ import framework.util.Cookies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 import static framework.util.Constants.SESSION_ID_KEY;

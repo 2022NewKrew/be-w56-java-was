@@ -2,7 +2,6 @@ package com.kakao.example.model.repository;
 
 import com.kakao.example.model.domain.User;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

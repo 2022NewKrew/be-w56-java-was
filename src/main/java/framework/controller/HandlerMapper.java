@@ -1,7 +1,6 @@
 package framework.controller;
 
 import framework.container.Container;
-import framework.util.Cookies;
 import framework.util.HttpSession;
 import framework.util.annotation.RequestMapping;
 import framework.util.exception.ClassNotFoundException;
@@ -10,7 +9,6 @@ import framework.util.exception.WrongReturnTypeException;
 import framework.view.ModelView;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
-import framework.webserver.HttpSessionHandler;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
@@ -23,7 +21,8 @@ import java.lang.reflect.Parameter;
 import java.util.Locale;
 import java.util.Set;
 
-import static framework.util.Constants.*;
+import static framework.util.Constants.CONTROLLER_PACKAGE;
+import static framework.util.Constants.REDIRECT_MARK;
 
 /**
  * Handler Mapper,

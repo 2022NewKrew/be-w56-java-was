@@ -3,17 +3,15 @@ package com.kakao.example.controller;
 import com.kakao.example.application.service.UserService;
 import com.kakao.example.model.domain.User;
 import com.kakao.example.util.exception.UserNotFoundException;
-import framework.util.Cookies;
 import framework.util.HttpSession;
 import framework.util.annotation.Autowired;
 import framework.util.annotation.Component;
-import framework.util.annotation.Primary;
-import framework.view.ModelView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import framework.util.annotation.RequestMapping;
+import framework.view.ModelView;
 import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static framework.util.annotation.Component.ComponentType.CONTROLLER;
 

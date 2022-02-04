@@ -20,6 +20,4 @@ public class MvcConfig {
 
         return modelMapper;
     }
-
-
 }

@@ -15,10 +15,13 @@ import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Map;
 
-import static framework.util.Constants.*;
+import static framework.util.Constants.CONTEXT_PATH;
+import static framework.util.Constants.REDIRECT_MARK;
 
 /**
  * ModelView, Client에게 응답할 때 필요한 정보들을 담음
