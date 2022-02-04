@@ -3,14 +3,16 @@ package controller;
 import dao.UserDao;
 import enums.HttpStatus;
 import org.slf4j.Logger;
-import service.HtmlService;
 import service.RequestService;
 import util.HttpRequestUtils;
 import service.ResponseService;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 public class HttpController {
@@ -21,7 +23,6 @@ public class HttpController {
     private BufferedReader br;
     private RequestService requestService;
     private ResponseService responseService;
-    private HtmlService htmlService;
     private UserDao userDao;
 
     public HttpController(Map<String, String> requestMap, Map<String, String> headerMap,
@@ -32,7 +33,6 @@ public class HttpController {
         this.br = br;
         responseService = new ResponseService(out);
         userDao = new UserDao();
-        htmlService = new HtmlService(userDao);
         requestService = new RequestService(userDao);
     }
 
@@ -69,9 +69,15 @@ public class HttpController {
         Map<String, String> cookies = HttpRequestUtils.parseCookies(headerMap.get("Cookie"));
         boolean logined = Boolean.parseBoolean(cookies.get("logined"));
         if(logined) {
-            htmlService.makeUserList();
-            url = "/users/list.html";
             httpStatus = HttpStatus.OK;
+            Path path = new File("./webapp/user/list.html").toPath();
+            StringBuilder html = new StringBuilder(Files.readString(path));
+            String users = requestService.getUserList();
+            String tag = "{{#users}}";
+            html.replace(html.indexOf(tag), html.indexOf(tag) + tag.length(), users);
+            byte[] body = html.toString().getBytes();
+            responseService.response200WithBody(path.toFile(), body, httpStatus);
+            return;
         }
         responseService.response(url, httpStatus, cookie);
     }

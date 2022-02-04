@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import util.LoginUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RequestService {
@@ -28,7 +30,6 @@ public class RequestService {
             throw new IOException("Parameter Not Exist");
         User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
         log.debug("User : {}", user);
-        //DataBase.addUser(user);
         userDao.addUser(user);
     }
 
@@ -38,10 +39,20 @@ public class RequestService {
         if(Strings.isNullOrEmpty(userId) || Strings.isNullOrEmpty(password))
             throw new IOException("Parameter Not Exist");
         log.debug("userId : {}, password : {}", userId, password);
-        //User user = DataBase.findUserById(userId);
         User user = userDao.findUserById(userId);
         String cookie = LoginUtils.checkLogin(log, user, password);
         return cookie;
+    }
+
+    public String getUserList() {
+        StringBuilder sb = new StringBuilder();
+        List<User> userList = new ArrayList<>(userDao.findAll());
+        int index = 1;
+        for(User user : userList) {
+            sb.append(String.format("<tr>\n<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n</tr>\n", index, user.getUserId(), user.getName(), user.getEmail()));
+            index++;
+        }
+        return sb.toString();
     }
 
 }
