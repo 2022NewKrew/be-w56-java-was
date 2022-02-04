@@ -1,10 +1,10 @@
 package http.response;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import util.Constant;
+import util.MapUtil;
 
 public class ResponseHeader {
 
@@ -17,7 +17,7 @@ public class ResponseHeader {
     }
 
     public ResponseHeader() {
-        this(new HashMap<>(), new HashMap<>());
+        this(MapUtil.get(String.class, String.class), MapUtil.get(String.class, String.class));
     }
 
     public void addContentType(String url) {

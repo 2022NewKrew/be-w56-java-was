@@ -3,13 +3,13 @@ package http.request;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import util.MapUtil;
 
 @DisplayName("RequestHeader 테스트")
 class RequestHeaderTest {
@@ -76,7 +76,8 @@ class RequestHeaderTest {
     void hasComponent(String testKey) {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(components, new HashMap<>());
+        RequestHeader header = new RequestHeader(components,
+                MapUtil.get(String.class, String.class));
         //when
         boolean result = header.hasComponent(testKey);
         //then
@@ -89,7 +90,8 @@ class RequestHeaderTest {
     void doesNotHaveComponent(String testKey) {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(components, new HashMap<>());
+        RequestHeader header = new RequestHeader(components,
+                MapUtil.get(String.class, String.class));
         //when
         boolean result = header.hasComponent(testKey);
         //then
@@ -102,7 +104,8 @@ class RequestHeaderTest {
     void getComponent(String testKey, String testValue) {
         //give
         Map<String, String> components = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(components, new HashMap<>());
+        RequestHeader header = new RequestHeader(components,
+                MapUtil.get(String.class, String.class));
         //when
         String value = header.getComponent(testKey);
         //then
@@ -115,7 +118,7 @@ class RequestHeaderTest {
     void hasCookie(String testKey) {
         //give
         Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(new HashMap<>(), cookie);
+        RequestHeader header = new RequestHeader(MapUtil.get(String.class, String.class), cookie);
         //when
         boolean result = header.hasCookie(testKey);
         //then
@@ -128,7 +131,7 @@ class RequestHeaderTest {
     void doesNotHaveCookie(String testKey) {
         //give
         Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(new HashMap<>(), cookie);
+        RequestHeader header = new RequestHeader(MapUtil.get(String.class, String.class), cookie);
         //when
         boolean result = header.hasCookie(testKey);
         //then
@@ -141,7 +144,7 @@ class RequestHeaderTest {
     void getCookie(String testKey, String testValue) {
         //give
         Map<String, String> cookie = Map.of("key1", "value1", "key2", "value2");
-        RequestHeader header = new RequestHeader(new HashMap<>(), cookie);
+        RequestHeader header = new RequestHeader(MapUtil.get(String.class, String.class), cookie);
         //when
         String value = header.getCookie(testKey);
         //then

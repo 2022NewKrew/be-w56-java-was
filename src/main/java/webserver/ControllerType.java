@@ -7,8 +7,8 @@ import controller.UserCreateController;
 import controller.UserListController;
 import controller.UserLoginController;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
+import util.MapUtil;
 
 public enum ControllerType {
 
@@ -24,7 +24,7 @@ public enum ControllerType {
         methodMap = new EnumMap<>(HttpMethod.class);
 
         for (HttpMethod method : HttpMethod.values()) {
-            methodMap.put(method, new HashMap<>());
+            methodMap.put(method, MapUtil.get(String.class, Controller.class));
         }
 
         for (ControllerType controllerType : ControllerType.values()) {

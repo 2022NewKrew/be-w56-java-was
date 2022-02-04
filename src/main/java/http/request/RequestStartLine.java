@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import util.MapUtil;
 import webserver.HttpMethod;
 
 public class RequestStartLine {
@@ -32,7 +33,8 @@ public class RequestStartLine {
             Map<String, String> queries = getQueries(urlComponents.get(1));
             return new RequestStartLine(method, url, protocol, queries);
         }
-        return new RequestStartLine(method, url, protocol, Map.of());
+        return new RequestStartLine(method, url, protocol,
+                MapUtil.get(String.class, String.class));
     }
 
     private static Map<String, String> getQueries(String queriesString) {

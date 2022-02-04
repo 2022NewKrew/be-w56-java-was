@@ -7,7 +7,7 @@ import http.response.HttpResponse;
 import java.io.DataOutputStream;
 import java.util.Map;
 import model.User;
-import util.ControllerUtils;
+import util.MapUtil;
 
 public class UserLoginController implements Controller {
 
@@ -53,7 +53,7 @@ public class UserLoginController implements Controller {
     private HttpResponse loginFail(DataOutputStream dos) {
         return HttpResponse.unauthorized(
                 "/user/login_failed.html",
-                ControllerUtils.getEmptyModelMap(),
+                MapUtil.getEmptyModelMap(),
                 dos);
     }
 }

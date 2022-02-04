@@ -3,7 +3,7 @@ package controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import util.ControllerUtils;
+import util.MapUtil;
 
 public class RootController implements Controller {
 
@@ -20,7 +20,7 @@ public class RootController implements Controller {
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.found(
                 "/index.html",
-                ControllerUtils.getEmptyCookieMap(),
+                MapUtil.getEmptyCookieMap(),
                 dos
         );
     }

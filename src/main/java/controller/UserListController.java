@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.User;
-import util.ControllerUtils;
+import util.MapUtil;
 
 public class UserListController implements Controller {
 
@@ -35,14 +35,14 @@ public class UserListController implements Controller {
             return HttpResponse.ok(
                     request.getUrl(),
                     model,
-                    ControllerUtils.getEmptyCookieMap(),
+                    MapUtil.getEmptyCookieMap(),
                     dos
             );
         }
 
         return HttpResponse.found(
                 "/user/login.html",
-                ControllerUtils.getEmptyCookieMap(),
+                MapUtil.getEmptyCookieMap(),
                 dos
         );
     }

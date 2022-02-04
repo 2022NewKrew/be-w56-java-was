@@ -18,8 +18,7 @@ public class RequestHeader {
 
     public static RequestHeader stringToRequestHeader(String headers) {
         if (headers.isEmpty()) {
-            return new RequestHeader(Collections.unmodifiableMap(new HashMap<>()),
-                    Collections.unmodifiableMap(new HashMap<>()));
+            return new RequestHeader(Collections.emptyMap(), Collections.emptyMap());
         }
         List<String> headerLines = List.of(headers.split(Constant.lineBreak));
         Map<String, String> components = getComponents(headerLines);

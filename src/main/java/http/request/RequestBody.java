@@ -18,7 +18,7 @@ public class RequestBody {
 
     public static RequestBody stringToRequestBody(String body) {
         if (body.isEmpty()) {
-            return new RequestBody(Collections.unmodifiableMap(new HashMap<>()));
+            return new RequestBody(Collections.emptyMap());
         }
         List<String> bodyLines = List.of(body.split("&"));
         return new RequestBody(getBodyData(bodyLines));

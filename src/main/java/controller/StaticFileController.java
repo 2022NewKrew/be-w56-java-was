@@ -3,7 +3,7 @@ package controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import util.ControllerUtils;
+import util.MapUtil;
 
 public class StaticFileController implements Controller {
 
@@ -20,8 +20,8 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         return HttpResponse.ok(
                 request.getUrl(),
-                ControllerUtils.getEmptyModelMap(),
-                ControllerUtils.getEmptyCookieMap(),
+                MapUtil.getEmptyModelMap(),
+                MapUtil.getEmptyCookieMap(),
                 dos);
     }
 }
