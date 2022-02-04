@@ -18,6 +18,10 @@ public class RequestHeaders {
         requestHeaders.put(key, value);
     }
 
+    public boolean contains(String key) {
+        return requestHeaders.containsKey(key);
+    }
+
     public void parseRequestHeaders(BufferedReader br) throws Exception {
         String line;
 

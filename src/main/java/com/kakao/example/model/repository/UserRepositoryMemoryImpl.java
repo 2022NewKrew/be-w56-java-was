@@ -3,9 +3,7 @@ package com.kakao.example.model.repository;
 import com.kakao.example.model.domain.User;
 import framework.util.annotation.Component;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static framework.util.annotation.Component.ComponentType.REPOSITORY;
@@ -36,7 +34,7 @@ public class UserRepositoryMemoryImpl implements UserRepository {
     }
 
     @Override
-    public Collection<User> findAll() {
-        return USERS.values();
+    public List<User> findAll() {
+        return new ArrayList<>(USERS.values());
     }
 }

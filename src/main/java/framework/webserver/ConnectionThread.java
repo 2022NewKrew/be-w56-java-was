@@ -1,11 +1,14 @@
 package framework.webserver;
 
 import framework.controller.FrontController;
+import framework.util.Cookies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+
+import static framework.util.Constants.SESSION_ID_KEY;
 
 public class ConnectionThread extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionThread.class);
@@ -29,9 +32,17 @@ public class ConnectionThread extends Thread {
             // 응답 정보를 담을 객체
             HttpResponseHandler response = new HttpResponseHandler(dos);
 
+            // Session ID 설정
+            Cookies cookies = request.getCookies();
+
+            if (!cookies.contains(SESSION_ID_KEY)) {
+                response.setCookie(SESSION_ID_KEY, HttpSessionHandler.makeSession());
+            }
+
             // Front Controller가 처리
             frontController.process(request, response);
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(e.getMessage());
         }
     }

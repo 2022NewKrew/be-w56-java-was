@@ -4,6 +4,7 @@ import com.kakao.example.application.dto.UserDto;
 import com.kakao.example.model.domain.User;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface UserService {
     void addUser(User user);
@@ -12,5 +13,5 @@ public interface UserService {
 
     UserDto findUserByLoginInfo(String userId, String password);
 
-    Collection<UserDto> findAll();
+    List<UserDto> findAll();
 }
