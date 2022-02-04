@@ -58,11 +58,11 @@ public class HttpRequest  {
         return startLine;
     }
 
-    public HttpHeader getHeader() {
+    public HttpHeader getHttpHeader() {
         return header;
     }
 
-    public HttpBody getBody() {
+    public HttpBody getHttpBody() {
         return body;
     }
 }

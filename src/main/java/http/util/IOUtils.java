@@ -22,7 +22,7 @@ public class IOUtils {
     }
 
     public static void writeData(DataOutputStream dos, HttpResponse response) throws  IOException{
-        dos.writeBytes(response.getHttpVersion()+ " " + response.getStatusCode() +"\r\n");
+        dos.writeBytes(response.getHttpVersion()+ " " + response.getStatusCode().getCode() +"\r\n");
         response.getHeader().getHeaders().forEach((key, value) -> {
             try {
                 dos.writeBytes(key + ": " + value + "\r\n");
