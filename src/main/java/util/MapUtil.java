@@ -4,13 +4,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ControllerUtils {
+public class MapUtil {
+
+    public static <K, V> Map<K, V> get(Class<K> k, Class<V> v) {
+        return new HashMap<>();
+    }
 
     public static Map<String, String> getEmptyCookieMap() {
-        return Collections.unmodifiableMap(new HashMap<>());
+        return Collections.emptyMap();
     }
 
     public static Map<String, Object> getEmptyModelMap() {
-        return Collections.unmodifiableMap(new HashMap<>());
+        return Collections.emptyMap();
     }
 }
