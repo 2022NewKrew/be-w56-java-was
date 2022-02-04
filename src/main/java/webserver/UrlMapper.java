@@ -44,12 +44,4 @@ public class UrlMapper {
             "urlMap=" + urlMap +
             '}';
     }
-
-    //    public void replace(String url, String method, Function<HttpRequest, HttpResponse> func) {
-//        urlMap.replace(new String[] {url, method.toUpperCase()}, func);
-//    }
-
-//    public void remove(String url, String method) {
-//        urlMap.remove(new String[] {url, method.toUpperCase()});
-//    }
 }

@@ -54,6 +54,6 @@ public class RequestStartLine {
     }
 
     public boolean hasValue() {
-        return !(method.equals("") || url.equals("") || protocol.equals(""));
+        return !(method.isEmpty() || url.isEmpty() || protocol.isEmpty());
     }
 }

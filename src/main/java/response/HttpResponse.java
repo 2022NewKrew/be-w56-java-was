@@ -48,6 +48,7 @@ public class HttpResponse {
         private byte[] body = new byte[0];
 
         public HttpResponseBuilder(HttpStatusCode statusCode) {
+            header.put("Content-Type", "text/html;charset=utf-8");
             this.statusCode = statusCode;
         }
 

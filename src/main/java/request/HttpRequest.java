@@ -20,9 +20,8 @@ public class HttpRequest {
     public static HttpRequest of(BufferedReader br) {
         RequestStartLine requestStartLine = RequestStartLine.of(br);
         RequestHeader requestHeader = RequestHeader.of(br);
-        RequestBody requestBody = requestHeader.hasBody()
-                ? RequestBody.of(br)
-                : new RequestBody();
+        Integer contentLength = requestHeader.getContentLength();
+        RequestBody requestBody = RequestBody.of(br, contentLength);
 
         return new HttpRequest(br, requestStartLine, requestHeader, requestBody);
     }

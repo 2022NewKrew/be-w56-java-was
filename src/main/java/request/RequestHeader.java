@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 public class RequestHeader {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestHeader.class);
+    private static final String NEW_LINE = System.lineSeparator();
+    private static final String HEADER_SEPARATOR = ":";
 
     private final Map<String, String> headerMap;
 
@@ -24,7 +26,7 @@ public class RequestHeader {
         try {
             String line;
             while (!(line = br.readLine()).equals("")) {
-                String[] lineItems = line.split(":");
+                String[] lineItems = line.split(HEADER_SEPARATOR);
                 String headerKey = lineItems[0].trim();
                 String headerValue = lineItems[1].trim();
 
@@ -36,8 +38,22 @@ public class RequestHeader {
         return new RequestHeader(headerMap);
     }
 
-    public boolean hasBody() {
-        return headerMap.containsKey("Content-Length")
-            && Integer.parseInt(headerMap.get("Content-Length")) > 0;
+    public Integer getContentLength() {
+        String contentLength = headerMap.get(ReqHeaders.CONTENT_LENGTH.getKey());
+        return contentLength == null ? 0 : Integer.parseInt(contentLength);
+    }
+
+    @Override
+    public String toString() {
+        boolean isFirstLine = true;
+        StringBuilder builder = new StringBuilder(NEW_LINE + "Request Header - ");
+        for (Map.Entry<String, String> entry: headerMap.entrySet()) {
+            builder.append(isFirstLine ? "" : "               - ")
+                    .append(entry.getKey()).append(" : ")
+                    .append(entry.getValue()).append(NEW_LINE);
+            isFirstLine = false;
+        }
+        builder.append(NEW_LINE);
+        return builder.toString();
     }
 }
