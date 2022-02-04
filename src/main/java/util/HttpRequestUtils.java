@@ -1,5 +1,7 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +52,10 @@ public class HttpRequestUtils {
         return new Pair(tokens[0], tokens[1]);
     }
 
+    /*
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
-    }
+    }*/
 
     public static Map<String, String> parseRequestLine(String requestLine){
         Map<String, String> result = new HashMap<>();
@@ -64,6 +67,20 @@ public class HttpRequestUtils {
             return result;
         }
         result.put("url", tokens[1]);
+        return result;
+    }
+
+    public static Map<String, String> parseHeader(BufferedReader br) throws IOException {
+        Map<String, String> result = new HashMap<>();
+        String line = br.readLine();
+        while(!line.equals("")){
+            String[] tokens = line.split(": ");
+            if(tokens[0] == null){
+                return result;
+            }
+            result.put(tokens[0], tokens[1]);
+            line = br.readLine();
+        }
         return result;
     }
 
