@@ -1,6 +1,5 @@
 package webserver;
 
-import webserver.model.WebHttpRequest;
 import webserver.model.WebHttpResponse;
 
 import java.io.DataOutputStream;
@@ -17,12 +16,9 @@ public class ViewResolver {
         return INSTANCE;
     }
 
-    public void resolve(WebHttpRequest httpRequest, WebHttpResponse httpResponse, DataOutputStream dos) {
+    public void resolve(WebHttpResponse httpResponse, DataOutputStream dos) {
         try {
             switch (httpResponse.getHttpStatus()) {
-                case OK:
-                    renderer.responseResource(dos, httpResponse);
-                    break;
                 case FOUND:
                     renderer.redirect(dos, httpResponse);
                     break;

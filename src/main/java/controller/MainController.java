@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import service.UserService;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestMethod;
-import webserver.model.Cookie;
+import webserver.model.Model;
 import webserver.model.WebHttpRequest;
 import webserver.model.WebHttpResponse;
 
@@ -60,10 +60,12 @@ public class MainController {
     }
 
     @RequestMapping(value = "/user/list", method = RequestMethod.GET)
-    public String userList(WebHttpRequest httpRequest, WebHttpResponse httpResponse, UserDto dto) {
-        System.out.println(httpRequest);
-
-        System.out.println(httpRequest.getCookie());
+    public String userList(WebHttpRequest httpRequest, WebHttpResponse httpResponse, Model model) {
+        log.info("MainController - userList()");
+        if (httpRequest.getCookie("logined") == null || !httpRequest.getCookie("logined").equals("true")) {
+            return "redirect:/index.html";
+        }
+        model.addAttribute("users", userService.getAllUser());
         return "/user/list.html";
     }
 }

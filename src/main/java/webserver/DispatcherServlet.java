@@ -28,7 +28,7 @@ public class DispatcherServlet extends Thread {
             WebHttpResponse httpResponse = WebHttpResponse.of(httpRequest);
             log.info(httpRequest.toString());
             requestHandler.handle(httpRequest, httpResponse);
-            resolver.resolve(httpRequest, httpResponse, dos);
+            resolver.resolve(httpResponse, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

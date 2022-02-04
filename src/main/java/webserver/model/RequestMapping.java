@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import webserver.annotation.RequestMethod;
 import webserver.exception.ControllerMethodNotFoundException;
 import webserver.exception.InvalidRequestMethodException;
-import webserver.model.WebHttpRequest;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

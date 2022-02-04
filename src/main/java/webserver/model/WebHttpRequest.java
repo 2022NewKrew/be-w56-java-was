@@ -60,8 +60,8 @@ public class WebHttpRequest extends HttpRequest {
         return new WebHttpRequest(in);
     }
 
-    public List<String> getCookie() {
-        return headers.get("Cookie");
+    public String getCookie(String key) {
+        return cookies.get(key);
     }
 
     public String getBody() {

@@ -1,7 +1,7 @@
 package model;
 
-import lombok.*;
 
+import lombok.*;
 
 @Getter
 @Builder

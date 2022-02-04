@@ -1,7 +1,6 @@
 package webserver;
 
 import lombok.extern.slf4j.Slf4j;
-import webserver.model.HttpStatus;
 import webserver.model.WebHttpResponse;
 
 import java.io.DataOutputStream;
@@ -39,6 +38,7 @@ public class ViewRenderer {
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
+            StringBuilder sb = new StringBuilder();
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
