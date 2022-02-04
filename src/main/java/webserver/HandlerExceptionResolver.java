@@ -23,8 +23,10 @@ public class HandlerExceptionResolver {
     }
 
     public HttpResponse resolveException(CustomException e) {
+        HttpResponse httpResponse = new HttpResponse();
         try {
-            return HttpResponse.error(e.getStatus(), e.getMessage());
+            httpResponse.error(e.getStatus(), e.getMessage());
+            return httpResponse;
         } catch (Exception handlerEx) {
             log.error("Failure while trying to resolve exception [" + e.getClass().getName() + "]", handlerEx);
         }

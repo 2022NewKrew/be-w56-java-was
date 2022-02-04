@@ -37,9 +37,10 @@ public class RequestHandler extends Thread {
                 BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
                 HttpRequest httpRequest = HttpRequest.from(br);
-                ModelAndView mv = handlerMapping.invokeHandlerMethod(httpRequest);
+                HttpResponse httpResponse = new HttpResponse();
+                ModelAndView mv = handlerMapping.invokeHandlerMethod(httpRequest, httpResponse);
 
-                HttpResponse httpResponse = HttpResponse.from(mv);
+                httpResponse.from(mv);
                 IOUtils.write(new DataOutputStream(out), httpResponse);
 
             } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {

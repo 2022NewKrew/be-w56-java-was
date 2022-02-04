@@ -3,6 +3,7 @@ package webserver;
 import http.HttpMethod;
 import http.HttpStatus;
 import http.request.HttpRequest;
+import http.response.HttpResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public class HandlerMapping {
         return instance;
     }
 
-    public ModelAndView invokeHandlerMethod(HttpRequest httpRequest)
+    public ModelAndView invokeHandlerMethod(HttpRequest httpRequest, HttpResponse httpResponse)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         Method method = getHandlerInternal(httpRequest);
 
@@ -44,7 +45,7 @@ public class HandlerMapping {
         }
 
         Object methodInstance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        String viewName = (String) method.invoke(methodInstance, httpRequest);
+        String viewName = (String) method.invoke(methodInstance, httpRequest, httpResponse);
 
         return ModelAndView.from(viewName);
     }

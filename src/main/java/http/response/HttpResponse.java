@@ -21,35 +21,40 @@ public class HttpResponse {
     private static final String LOCATION = "Location";
     private static final String PATHNAME = "./webapp";
 
-    private final HttpStatus httpStatus;
-    private final HttpHeaders headers;
-    private final byte[] body;
+    private HttpStatus httpStatus;
+    private HttpHeaders headers;
+    private byte[] body;
 
-    private HttpResponse(HttpStatus httpStatus, HttpHeaders header) {
-        this(httpStatus, header, new byte[0]);
+    public HttpResponse() {
     }
 
-    private HttpResponse(HttpStatus httpStatus, HttpHeaders headers, byte[] body) {
+    private void set(HttpStatus httpStatus, HttpHeaders header) {
+        set(httpStatus, header, new byte[0]);
+    }
+
+    private void set(HttpStatus httpStatus, HttpHeaders headers, byte[] body) {
         this.httpStatus = httpStatus;
         this.headers = headers;
         this.body = body;
     }
 
-    public static HttpResponse from(ModelAndView mv) throws IOException {
+    public void from(ModelAndView mv) throws IOException {
         if (mv.getStatus() == HttpStatus.OK) {
-            return ok(mv);
+            ok(mv);
+            return;
         }
         if (mv.getStatus() == HttpStatus.FOUND) {
-            return redirect(mv);
+            redirect(mv);
+            return;
         }
-        return error(mv);
+        error(mv);
     }
 
-    private static HttpResponse ok(ModelAndView mv) throws IOException {
+    private void ok(ModelAndView mv) throws IOException {
         Path path = new File(PATHNAME + mv.getViewName()).toPath();
         if (Files.notExists(path)) {
             ModelAndView errorView = ModelAndView.error(HttpStatus.PAGE_NOT_FOUND);
-            return HttpResponse.error(errorView);
+            error(errorView);
         }
 
         byte[] body = Files.readAllBytes(path);
@@ -59,27 +64,27 @@ public class HttpResponse {
         headers.put(CONTENT_TYPE, contentType.getType());
         headers.put(CONTENT_LENGTH, String.valueOf(body.length));
 
-        return new HttpResponse(mv.getStatus(), new HttpHeaders(headers), body);
+        set(mv.getStatus(), new HttpHeaders(headers), body);
     }
 
-    private static HttpResponse error(ModelAndView mv) {
-        return HttpResponse.error(mv.getStatus(), mv.getStatus().getErrorMessage());
+    private void error(ModelAndView mv) {
+        error(mv.getStatus(), mv.getStatus().getErrorMessage());
     }
 
-    public static HttpResponse error(HttpStatus status, String message) {
+    public void error(HttpStatus status, String message) {
         Map<String, String> headers = new HashMap<>();
         byte[] body = message.getBytes(StandardCharsets.UTF_8);
         headers.put(CONTENT_LENGTH, String.valueOf(body.length));
         headers.put(CONTENT_TYPE, "text/plain; charset=utf-8");
 
-        return new HttpResponse(status, new HttpHeaders(headers), body);
+        set(status, new HttpHeaders(headers), body);
     }
 
-    private static HttpResponse redirect(ModelAndView mv) {
+    private void redirect(ModelAndView mv) {
         Map<String, String> headers = new HashMap<>();
         headers.put(LOCATION, mv.getViewName());
 
-        return new HttpResponse(mv.getStatus(), new HttpHeaders(headers));
+        set(mv.getStatus(), new HttpHeaders(headers));
     }
 
     public String getHeader() {
