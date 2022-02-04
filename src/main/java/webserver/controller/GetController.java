@@ -16,6 +16,7 @@ public class GetController implements MethodController {
     RequestParser rp;
     OutputStream os;
 
+    private final String LOGIN_KEY = "logined";
     private final String USER_LIST = "/user/list";
     private final String LOGIN_PAGE = "/user/login.html";
 
@@ -28,10 +29,24 @@ public class GetController implements MethodController {
         log.info(":: GET Service");
 
         switch (rp.getPath()) {
+            case USER_LIST:
+                methodUserList();
+                break;
             default:
                 methodDefault();
                 break;
         }
+    }
+
+    private void methodUserList() {
+        String logined = rp.getCookie(LOGIN_KEY);
+        if( logined == null || logined.equalsIgnoreCase("false") ) {
+            ResponseFormat rf = new ForwardResponseFormat(os, LOGIN_PAGE);
+            rf.sendResponse(ResponseCode.STATUS_200);
+            return;
+        }
+        ResponseFormat rf = new ForwardResponseFormat(os, USER_LIST+".html");
+        rf.sendResponse(ResponseCode.STATUS_200);
     }
 
     private void methodDefault () {

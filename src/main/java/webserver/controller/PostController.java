@@ -17,6 +17,7 @@ public class PostController implements MethodController {
 
     private static final String SIGN_UP = "/user/create";
     private static final String SIGN_IN = "/user/login";
+    private static final String LOGOUT = "/user/logout";
 
     RequestParser rp;
     OutputStream os;
@@ -36,6 +37,8 @@ public class PostController implements MethodController {
             case SIGN_IN:
                 methodSignIn();
                 break;
+            case LOGOUT:
+                methodLogout();
             default:
                 break;
         }
@@ -81,6 +84,14 @@ public class PostController implements MethodController {
             return;
         }
         ResponseFormat rf = new RedirectResponseFormat(os, "/");
+        rf.setCookie("logined", "false");
         rf.sendResponse(ResponseCode.STATUS_404);
+    }
+
+    private void methodLogout() {
+        log.info("[run] methodLogout");
+        ResponseFormat rf = new RedirectResponseFormat(os, "/");
+        rf.setCookie("logined", "false");
+        rf.sendResponse(ResponseCode.STATUS_303);
     }
 }
