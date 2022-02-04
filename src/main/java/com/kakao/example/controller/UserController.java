@@ -9,7 +9,6 @@ import framework.util.annotation.Component;
 import framework.util.annotation.RequestMapping;
 import framework.view.ModelView;
 import framework.webserver.HttpRequestHandler;
-import framework.webserver.HttpResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
