@@ -25,7 +25,7 @@ class RequestBodyTest {
         //give
         List<String> splitItem = List.of(testBodyString.split("&"));
         //when
-        RequestBody body = RequestBody.stringToRequestBody(testBodyString);
+        RequestBody body = RequestBody.from(testBodyString);
         //then 1 : 빈 String인 경우
         if (testBodyString.isEmpty()) {
             assertThat(body.getBodyData().size()).isEqualTo(0);
@@ -46,7 +46,7 @@ class RequestBodyTest {
         String bodyString = "test=test&is=is&empty=&ok=ok";
         //when
         //then
-        assertThatThrownBy(() -> RequestBody.stringToRequestBody(bodyString)).isInstanceOf(
+        assertThatThrownBy(() -> RequestBody.from(bodyString)).isInstanceOf(
                 BadRequestException.class);
     }
 
@@ -57,7 +57,7 @@ class RequestBodyTest {
         String bodyString = "test=test&is=is&=empty&ok=ok";
         //when
         //then
-        assertThatThrownBy(() -> RequestBody.stringToRequestBody(bodyString)).isInstanceOf(
+        assertThatThrownBy(() -> RequestBody.from(bodyString)).isInstanceOf(
                 BadRequestException.class);
     }
 }

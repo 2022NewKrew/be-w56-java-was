@@ -1,7 +1,6 @@
 package controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import db.DataBase;
 import http.request.HttpRequest;
@@ -28,14 +27,13 @@ class UserListControllerTest {
         DataBase.addUser(new User("userId2", "password", "name2", "email2"));
         DataBase.addUser(new User("userId3", "password", "name3", "email3"));
 
-
         String startLineString = "GET /user/list.html HTTP/1.1\r\n";
         String headerString = "Cookie: logined=true\r\nheaderKey1: headerValue1\r\nheaderKey2: headerValue2\r\n";
         String bodyString = "";
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
+        RequestBody body = RequestBody.from(bodyString);
         HttpRequest request = new HttpRequest(startLine, header, body);
         OutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
@@ -62,9 +60,9 @@ class UserListControllerTest {
         String headerString = "Cookie: logined=false\r\nheaderKey1: headerValue1\r\nheaderKey2: headerValue2\r\n";
         String bodyString = "";
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
+        RequestBody body = RequestBody.from(bodyString);
         HttpRequest request = new HttpRequest(startLine, header, body);
         OutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(outputStream);
@@ -74,7 +72,8 @@ class UserListControllerTest {
         HttpResponse response = controller.run(request, dos);
         response.sendResponse();
         //then
-        assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location", "/user/login.html");
+        assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location",
+                "/user/login.html");
 
         DataBase.deleteUser("userId1");
         DataBase.deleteUser("userId2");

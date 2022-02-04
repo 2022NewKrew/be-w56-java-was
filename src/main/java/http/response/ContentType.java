@@ -12,9 +12,10 @@ public enum ContentType {
     WOFF("woff", "application/font-woff"),
     DEFAULT("", "application/octet-stream");
 
-    private final static Map<String, String> typeMap = new HashMap<>();
+    private final static Map<String, String> typeMap;
 
     static {
+        typeMap = new HashMap<>();
         for (ContentType contentType : ContentType.values()) {
             typeMap.put(contentType.getExtension(), contentType.getType());
         }

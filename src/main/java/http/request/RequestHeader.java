@@ -13,13 +13,12 @@ public class RequestHeader {
 
     public RequestHeader(Map<String, String> components, Map<String, String> cookies) {
         this.components = Collections.unmodifiableMap(components);
-        this.cookies = cookies;
+        this.cookies = Collections.unmodifiableMap(cookies);
     }
 
-    public static RequestHeader stringToRequestHeader(String headers) {
+    public static RequestHeader from(String headers) {
         if (headers.isEmpty()) {
-            return new RequestHeader(Collections.unmodifiableMap(new HashMap<>()),
-                    Collections.unmodifiableMap(new HashMap<>()));
+            return new RequestHeader(Collections.emptyMap(), Collections.emptyMap());
         }
         List<String> headerLines = List.of(headers.split(Constant.lineBreak));
         Map<String, String> components = getComponents(headerLines);
@@ -37,7 +36,7 @@ public class RequestHeader {
             splitLine = List.of(headerLine.split(": "));
             result.put(splitLine.get(0), splitLine.get(1));
         }
-        return Collections.unmodifiableMap(result);
+        return result;
     }
 
     private static String findCookieLine(List<String> headerLines) {
@@ -52,7 +51,7 @@ public class RequestHeader {
     private static Map<String, String> getCookies(String cookieLine) {
         Map<String, String> result = new HashMap<>();
 
-        if(cookieLine.isEmpty()) {
+        if (cookieLine.isEmpty()) {
             return result;
         }
 

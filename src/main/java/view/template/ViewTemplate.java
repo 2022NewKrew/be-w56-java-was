@@ -3,6 +3,7 @@ package view.template;
 import java.util.Map;
 
 public interface ViewTemplate {
+
     String getTemplate(Map<String, Object> model);
 
     String header =
@@ -89,5 +90,4 @@ public interface ViewTemplate {
                     + "<script src=\"../js/scripts.js\"></script>\n"
                     + "\t</body>\n"
                     + "</html>";
-
 }

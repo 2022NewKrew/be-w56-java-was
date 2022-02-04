@@ -7,7 +7,7 @@ import http.response.HttpResponse;
 import java.io.DataOutputStream;
 import java.util.Map;
 import model.User;
-import util.ControllerUtils;
+import util.MapUtil;
 
 public class UserCreateController implements Controller {
 
@@ -32,7 +32,7 @@ public class UserCreateController implements Controller {
 
         return HttpResponse.found(
                 "/index.html",
-                ControllerUtils.getEmptyCookieMap(),
+                MapUtil.getEmptyCookieMap(),
                 dos);
     }
 

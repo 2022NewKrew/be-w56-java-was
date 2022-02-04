@@ -16,9 +16,9 @@ public class RequestBody {
         this.bodyData = Collections.unmodifiableMap(bodyData);
     }
 
-    public static RequestBody stringToRequestBody(String body) {
+    public static RequestBody from(String body) {
         if (body.isEmpty()) {
-            return new RequestBody(Collections.unmodifiableMap(new HashMap<>()));
+            return new RequestBody(Collections.emptyMap());
         }
         List<String> bodyLines = List.of(body.split("&"));
         return new RequestBody(getBodyData(bodyLines));
@@ -27,16 +27,14 @@ public class RequestBody {
     private static Map<String, String> getBodyData(List<String> bodyLines) {
         Map<String, String> result = new HashMap<>();
         List<String> components;
-        String key;
-        String value;
         try {
             for (String line : bodyLines) {
                 components = List.of(line.split("="));
 
                 checkComponents(components);
 
-                key = URLDecoder.decode(components.get(0), StandardCharsets.UTF_8);
-                value = URLDecoder.decode(components.get(1), StandardCharsets.UTF_8);
+                String key = URLDecoder.decode(components.get(0), StandardCharsets.UTF_8);
+                String value = URLDecoder.decode(components.get(1), StandardCharsets.UTF_8);
                 result.put(key, value);
             }
             return Collections.unmodifiableMap(result);

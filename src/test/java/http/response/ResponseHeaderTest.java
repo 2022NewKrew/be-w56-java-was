@@ -47,7 +47,8 @@ class ResponseHeaderTest {
         //when
         header.addContentLength(testLength);
         //then
-        assertThat(header.getComponentString()).contains("Content-Length", String.valueOf(testLength));
+        assertThat(header.getComponentString()).contains("Content-Length",
+                String.valueOf(testLength));
     }
 
     @DisplayName("addLocation 파라미터로 location 을 넘겼을 때 올바른 location 을 추가한다.")

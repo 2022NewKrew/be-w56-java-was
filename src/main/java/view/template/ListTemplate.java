@@ -1,17 +1,15 @@
 package view.template;
 
+import dto.UserDto;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import model.User;
 
 public class ListTemplate implements ViewTemplate {
 
     private static ListTemplate instance;
 
     public static synchronized ListTemplate getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ListTemplate();
         }
         return instance;
@@ -44,13 +42,12 @@ public class ListTemplate implements ViewTemplate {
     @Override
     public String getTemplate(Map<String, Object> model) {
 
-        List<User> users = List.of();
-        if(model.get("users") instanceof List && !((List<?>) model.get("users")).isEmpty()){
-            if(((List<?>) model.get("users")).get(0) instanceof User){
-                users = (List<User>)model.get("users");
+        List<UserDto> users = List.of();
+        if (model.get("users") instanceof List && !((List<?>) model.get("users")).isEmpty()) {
+            if (((List<?>) model.get("users")).get(0) instanceof UserDto) {
+                users = (List<UserDto>) model.get("users");
             }
         }
-
 
         StringBuilder result = new StringBuilder();
 

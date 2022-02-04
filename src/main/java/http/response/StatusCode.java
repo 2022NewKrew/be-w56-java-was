@@ -11,9 +11,10 @@ public enum StatusCode {
     UNAUTHORIZED("401 Unauthorized"),
     NOT_FOUND("404 Not Found");
 
-    public static final Map<String, StatusCode> statusCodeMap = new HashMap<>();
+    public static final Map<String, StatusCode> statusCodeMap;
 
     static {
+        statusCodeMap = new HashMap<>();
         for (StatusCode statusCode : StatusCode.values()) {
             String key = List
                     .of(statusCode.getStatus()

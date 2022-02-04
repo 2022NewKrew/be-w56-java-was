@@ -18,12 +18,12 @@ public class HttpRequestFactory {
         String startLineString = getStartLineString(input);
         String headerString = getHeaderString(input);
 
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(startLineString);
-        RequestHeader header = RequestHeader.stringToRequestHeader(headerString);
+        RequestStartLine startLine = RequestStartLine.from(startLineString);
+        RequestHeader header = RequestHeader.from(headerString);
 
         String bodyString = getBodyString(bufferedReader, header);
 
-        RequestBody body = RequestBody.stringToRequestBody(bodyString);
+        RequestBody body = RequestBody.from(bodyString);
         return new HttpRequest(startLine, header, body);
     }
 

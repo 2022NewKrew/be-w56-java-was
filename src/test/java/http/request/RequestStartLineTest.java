@@ -1,13 +1,10 @@
 package http.request;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -25,7 +22,7 @@ class RequestStartLineTest {
         //give
         List<String> components = List.of(testStartLines.split(" "));
         //when
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(testStartLines);
+        RequestStartLine startLine = RequestStartLine.from(testStartLines);
         //then
         assertThat(components.get(0)).isEqualTo(startLine.getMethod().toString());
         assertThat(components.get(1)).isEqualTo(startLine.getUrl());
@@ -48,7 +45,7 @@ class RequestStartLineTest {
         String testKey = testQuery.get(0);
         String testValue = testQuery.get(1);
         //when
-        RequestStartLine startLine = RequestStartLine.stringToRequestLine(testStartLines);
+        RequestStartLine startLine = RequestStartLine.from(testStartLines);
         Map<String, String> queries = startLine.getQuery();
         //then
         assertThat(startLine.getMethod().toString()).isEqualTo(testMethod);
