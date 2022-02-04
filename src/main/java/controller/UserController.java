@@ -45,7 +45,7 @@ public class UserController implements Controller {
     }
 
     @Override
-    public HttpResponse processDynamic(HttpRequest request) throws IOException {
+    public HttpResponse processDynamic(HttpRequest request) {
         final HttpRequestLine requestLine = request.line();
 
         if (methodMap.containsKey(requestLine.methodAndPath())) {
@@ -79,6 +79,11 @@ public class UserController implements Controller {
         return redirect("/index.html");
     }
 
+    /**
+     *  POST /user/login
+     *  id가 존재하지 않거나 password 가 일치하지 않으면 login_failed.html 로 redirect
+     *  로그인 성공 시, cookie 설정 후 응답 반환
+     */
     private HttpResponse login(HttpRequest request) {
         HttpRequestBody requestBody = request.body();
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
@@ -94,6 +99,10 @@ public class UserController implements Controller {
         return response;
     }
 
+    /**
+     *  GET /user/list
+     *  사용자 리스트 페이지 접근 시, 동적으로 페이지를 만들어서 응답 반환
+     */
     private HttpResponse list(HttpRequest request) {
         if (!"true".equals(request.header().getCookie("logined"))) {
             return redirect("/user/login.html");
@@ -105,12 +114,13 @@ public class UserController implements Controller {
             byte[] bytes = Files.readAllBytes(file.toPath());
             StringBuilder sb = new StringBuilder(new String(bytes));
             StringBuilder newsb = new StringBuilder();
-            int i = 0;
+            int row = 0;
 
             for (User user : DataBase.findAll()) {
                 newsb.append("<tr>");
-                newsb.append(String.format("<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>", ++i, user.getUserId(), user.getName(), user.getEmail()));
-                newsb.append("</tr>");
+                newsb.append(String.format("<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td>",
+                        ++row, user.getUserId(), user.getName(), user.getEmail()));
+                newsb.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
             }
             sb.insert(sb.lastIndexOf("<tbody>"), newsb);
 

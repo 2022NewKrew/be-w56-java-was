@@ -27,6 +27,4 @@ public class HttpResponseHeader {
             throw new IOException("Failed to write response header to dos");
         }
     }
-
-    public String getHeaders() { return headers + "\r\n"; }
 }

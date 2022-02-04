@@ -15,7 +15,7 @@ import java.nio.file.Path;
  *  정적 파일 요청이 아니면 processDynamic 로 처리 위임
  */
 public interface Controller {
-    HttpResponse processDynamic(HttpRequest request) throws IOException;
+    HttpResponse processDynamic(HttpRequest request);
 
     default HttpResponse process(HttpRequest request) throws IOException {
         if (isStaticFileRequest(request))

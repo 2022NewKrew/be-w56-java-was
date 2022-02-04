@@ -30,7 +30,7 @@ public class MainController implements Controller {
     }
 
     @Override
-    public HttpResponse processDynamic(HttpRequest request) throws IOException {
+    public HttpResponse processDynamic(HttpRequest request) {
         final HttpRequestLine requestLine = request.line();
 
         log.debug("{} {}", requestLine.method(), requestLine.path());
