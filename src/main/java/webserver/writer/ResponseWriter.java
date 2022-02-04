@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ResponseWriter {
 
@@ -19,8 +21,9 @@ public class ResponseWriter {
         try {
             dos.writeBytes(response.getProtocolVersion() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n");
             HttpHeaders headers = response.getHeaders();
-            for(Map.Entry<String, String> header : headers.getHeaders().entrySet()) {
-                dos.writeBytes(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
+            for(Map.Entry<String, List<String>> header : headers.getHeaders().entrySet()) {
+                String valueString = header.getValue().stream().collect(Collectors.joining(","));
+                dos.writeBytes(String.format("%s: %s\r\n", header.getKey(), valueString));
             }
             dos.writeBytes("\r\n");
 

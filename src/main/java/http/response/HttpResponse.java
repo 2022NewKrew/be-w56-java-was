@@ -3,6 +3,7 @@ package http.response;
 import http.HttpBody;
 import http.HttpHeaders;
 import http.HttpStatus;
+import http.MultiValueMap;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class HttpResponse {
         this.body = builder.body;
     }
 
-    public static HttpResponse of(String protocolVersion, HttpStatus httpStatus, Map<String, String> headerMap, byte[] body) {
+    public static HttpResponse of(String protocolVersion, HttpStatus httpStatus, MultiValueMap<String, String> headerMap, byte[] body) {
         return new HttpResponse(StatusLine.of(protocolVersion, httpStatus), HttpHeaders.of(headerMap), HttpBody.of(body));
     }
 

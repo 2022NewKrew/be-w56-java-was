@@ -1,6 +1,5 @@
 package webserver.routes;
 
-import application.CookieKeys;
 import application.controller.UserController;
 import application.dto.SignUpRequest;
 import http.*;
@@ -44,8 +43,8 @@ public class Router {
         Cookies cookies = new Cookies();
         HttpResponse response = processReturnType(request, UserController.login(userId, password, cookies));
 
-        Map<String, String> headers = response.getHeaders().getHeaders();
-        headers.put(HttpHeaders.SET_COOKIE, cookies.toHeaderString());
+        MultiValueMap<String, String> headers = response.getHeaders().getHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, cookies.toHeaderString());
 
         return HttpResponse.Builder.newInstance()
                 .statusLine(response.getStatusLine())
@@ -58,8 +57,9 @@ public class Router {
         if(ret instanceof String) {
             String viewName = (String) ret;
             if(viewName.startsWith("redirect:")) {
-                Map<String, String> headers = new HashMap<>();
-                headers.put(HttpHeaders.LOCATION, viewName.substring("redirect:".length()));
+                MultiValueMap<String, String> headers = new MultiValueMap<>();
+                headers.add(HttpHeaders.LOCATION, viewName.substring("redirect:".length()));
+
                 return HttpResponse.Builder.newInstance()
                         .statusLine(StatusLine.of(request.getHttpVersion(), HttpStatus.SEE_OTHER))
                         .headers(HttpHeaders.of(headers))
@@ -94,7 +94,7 @@ public class Router {
         } catch (Exception exception) {
             log.info("{} : {}", Router.class.getName(), exception.getMessage());
             return builder
-                    .headers(HttpHeaders.of(new HashMap<>()))
+                    .headers(HttpHeaders.of(new MultiValueMap<>()))
                     .statusLine(StatusLine.of(httpRequest.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR))
                     .body(HttpBody.of(new byte[0]))
                     .build();

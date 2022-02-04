@@ -3,6 +3,7 @@ package webserver.handler;
 import http.HttpBody;
 import http.HttpHeaders;
 import http.HttpStatus;
+import http.MultiValueMap;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.StatusLine;
@@ -15,6 +16,7 @@ import webserver.resource.StaticFile;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StaticFileHandler {
@@ -27,32 +29,27 @@ public class StaticFileHandler {
 
         HttpResponse.Builder builder = HttpResponse.Builder.newInstance();
 
+        HttpStatus httpStatus = HttpStatus.OK;
+        MultiValueMap<String, String> headers = new MultiValueMap<>();
+        byte[] httpBody = new byte[0];
+
         try{
             StaticFile staticFile = StaticFile.create(PAGE_ROOT, httpRequest.getUrl());
-            Map<String, String> headers = new HashMap<>();
-            headers.put(HttpHeaders.CONTENT_TYPE, HttpResponseUtils.getContentsType(staticFile.getExtension()) + ";charset=utf-8");
-            headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(staticFile.getContentsLength()));
-
-            builder = builder.statusLine(StatusLine.of(httpRequest.getHttpVersion(), HttpStatus.OK))
-                    .headers(HttpHeaders.of(headers))
-                    .body(HttpBody.of(staticFile.getContents()));
-
+            headers.add(HttpHeaders.CONTENT_TYPE, HttpResponseUtils.getContentsType(staticFile.getExtension()) + ";charset=utf-8");
+            headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(staticFile.getContentsLength()));
+            httpBody = staticFile.getContents();
         } catch (NoSuchFileException e) {
             log.info("{} : {}", HttpProcessor.class.getName(), e.getMessage());
-            return builder
-                    .headers(HttpHeaders.of(new HashMap<>()))
-                    .statusLine(StatusLine.of(httpRequest.getHttpVersion(), HttpStatus.NOT_FOUND))
-                    .body(HttpBody.of(new byte[0]))
-                    .build();
+            httpStatus = HttpStatus.NOT_FOUND;
         } catch (IOException e) {
             log.info("{} : {}", HttpProcessor.class.getName(), e.getMessage());
-            return builder
-                    .headers(HttpHeaders.of(new HashMap<>()))
-                    .statusLine(StatusLine.of(httpRequest.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR))
-                    .body(HttpBody.of(new byte[0]))
-                    .build();
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return builder.build();
+        return builder
+                .statusLine(StatusLine.of(httpRequest.getHttpVersion(), httpStatus))
+                .headers(HttpHeaders.of(headers))
+                .body(HttpBody.of(httpBody))
+                .build();
     }
 }
