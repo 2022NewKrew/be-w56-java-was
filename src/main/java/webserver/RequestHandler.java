@@ -1,6 +1,5 @@
 package webserver;
 
-import controller.Controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.BufferedReader;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 import java.nio.charset.StandardCharsets;
@@ -36,11 +36,11 @@ public class RequestHandler extends Thread {
             HttpRequest httpRequest = HttpRequest.from(br);
 
             HandlerMapping handlerMapping = HandlerMapping.getInstance();
-            Controller controller = handlerMapping.getController(httpRequest.getRequestLine().getUri().getPath());
+            ModelAndView mv = handlerMapping.invokeHandlerMethod(httpRequest);
 
-            HttpResponse httpResponse = controller.service(httpRequest);
+            HttpResponse httpResponse = HttpResponse.from(mv);
             IOUtils.write(new DataOutputStream(out), httpResponse);
-        } catch (IOException e) {
+        } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
             log.error(e.getMessage());
         }
     }

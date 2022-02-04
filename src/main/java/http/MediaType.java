@@ -1,7 +1,6 @@
 package http;
 
 import exception.ContentTypeNotFoundException;
-import http.request.URI;
 import java.util.Arrays;
 
 public enum MediaType {
@@ -71,7 +70,10 @@ public enum MediaType {
     APPLICATION_VND_MS_EXCEL("xls", "application/vnd.ms-excel"),
     APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     APPLICATION_XML("xml", "application/xml"),
+    APPLICATION_X_WWW_FORM_URLENCODED("", "application/x-www-form-urlencoded"),
     ;
+
+    private static final String EXTENSION_DELIMITER = ".";
 
     private final String extension;
     private final String type;
@@ -92,12 +94,18 @@ public enum MediaType {
                 .orElseThrow(ContentTypeNotFoundException::new);
     }
 
-    public static MediaType getMediaType(URI uri) {
-        String extension = uri.getFileExtension();
+    public static MediaType getMediaType(String path) {
+        String extension = getFileExtension(path);
 
         return Arrays.stream(MediaType.values())
                 .filter(value -> extension.equals(value.extension))
                 .findAny()
                 .orElse(ALL);
+    }
+
+    private static String getFileExtension(String path) {
+        int extensionIdx = path.lastIndexOf(EXTENSION_DELIMITER);
+
+        return path.substring(extensionIdx + 1);
     }
 }
