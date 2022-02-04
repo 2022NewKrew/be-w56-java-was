@@ -41,10 +41,12 @@ public class HandlerMapper {
     public static void handle(HttpRequestHandler request, HttpResponseHandler response, ModelView modelView) {
         Object object = process(request, response, modelView);
 
+        // Controller로부터 받은 데이터가 없을 경우 (void)
         if (object == null) {
             return;
         }
 
+        // Controller로부터 받은 데이터가 String일 경우
         if (object instanceof String) {
             String uri = (String) object;
 
@@ -55,7 +57,9 @@ public class HandlerMapper {
             return;
         }
 
+        // Controller로부터 받은 데이터가 ModelView일 경우
         if (object instanceof ModelView) {
+            // 해당 내용을 복사
             modelView.copy((ModelView) object);
             return;
         }

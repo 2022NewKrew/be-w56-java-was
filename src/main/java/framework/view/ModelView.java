@@ -38,7 +38,9 @@ public class ModelView {
      */
     private static final Tika TIKA = new Tika();
 
+    /** ModelView 내에서 사용할 Attribute들을 저장할 객체 */
     private final ModelViewAttributes modelViewAttributes = new ModelViewAttributes();
+
     private String uri;
     private boolean isStatic;
     private int statusCode;
@@ -62,12 +64,19 @@ public class ModelView {
         return EnglishReasonPhraseCatalog.INSTANCE.getReason(statusCode, null);
     }
 
+    /**
+     * Session 내용들을 현재 ModelView Attribute에 추가해주는 메소드
+     * @param session HTTP Session
+     */
     public void addSessionAttributes(HttpSession session) {
         for (Map.Entry<String, Object> entry : session.entrySet()) {
             modelViewAttributes.setAttribute(entry.getKey(), entry.getValue());
         }
     }
 
+    /**
+     * Static file을 읽어 ModelView의 내용을 채워주는 메소드
+     */
     public void readStaticFile() {
         statusCode = HttpStatus.SC_OK;
 
@@ -81,6 +90,7 @@ public class ModelView {
             return;
         }
 
+        // HTML 확장자를 붙였을 때 존재할 경우, 동적으로 HTML을 만들어서 저장
         if (Invalidator.isStaticFile(CONTEXT_PATH + "/" + uri + ".html")) {
             contentType = ContentType.builder()
                     .mime("text/html").build();
@@ -90,10 +100,14 @@ public class ModelView {
             return;
         }
 
-        // 그 외 파일일 경우
+        // 그 외 파일일 경우 해당 파일 내용을 가져와서 저장
         readOtherFile(CONTEXT_PATH + uri);
     }
 
+    /**
+     * HTML 외의 파일을 불러와서 해당 내용을 byte 배열에 저장해주는 메소드
+     * @param absolutePath 파일의 절대 경로
+     */
     private void readOtherFile(String absolutePath) {
         try {
             File file = new File(absolutePath);
@@ -115,7 +129,11 @@ public class ModelView {
         }
     }
 
+    /**
+     * Redirect를 하도록 설정해주는 메소드
+     */
     public void redirect() {
+        // 상태 코드를 302로 설정하여 클라이언트가 다시 요청하도록 함
         statusCode = HttpStatus.SC_MOVED_TEMPORARILY;
 
         uri = uri.split(REDIRECT_MARK)[1];
@@ -126,10 +144,17 @@ public class ModelView {
         }
     }
 
+    /**
+     * 현재 Attributes 정보들을 JSON 형태의 String으로 파싱해주는 메소드 (구현 예정)
+     */
     public void readAttributes() {
         String attributesStr = modelViewAttributes.parseAttributesToJson();
     }
 
+    /**
+     * 받은 ModelView의 내용을 현재 ModelView에 모두 복사해주는 메소드
+     * @param forCopy 복사할 ModelView 객체
+     */
     public void copy(ModelView forCopy) {
         this.modelViewAttributes.copy(forCopy.getAttributes());
         this.uri = forCopy.getUri();

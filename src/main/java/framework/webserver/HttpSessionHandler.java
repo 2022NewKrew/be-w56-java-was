@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/** Session 정보들을 관리해주는 클래스 */
 public class HttpSessionHandler {
     private static final Map<String, HttpSession> SESSIONS = new ConcurrentHashMap<>();
 
@@ -18,6 +19,7 @@ public class HttpSessionHandler {
     }
 
     public static String makeSession() {
+        // UUID를 통해 Session ID 생성
         String sessionId = UUID.randomUUID().toString();
         SESSIONS.put(sessionId, new HttpSession());
         return sessionId;
