@@ -28,7 +28,7 @@ public class HttpResponse {
         ResponseStatusLine statusLine = new ResponseStatusLine(Constant.protocol,
                 StatusCode.OK.getStatus());
         ResponseBody body = new ResponseBody(view);
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
 
         header.addContentType(path);
         header.addContentLength(body.getBodyLength());
@@ -41,7 +41,7 @@ public class HttpResponse {
             DataOutputStream dos) {
         ResponseStatusLine statusLine = new ResponseStatusLine(Constant.protocol,
                 StatusCode.FOUND.getStatus());
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
 
         header.addLocation(path);
         header.addCookie(cookie);
@@ -56,7 +56,7 @@ public class HttpResponse {
         ResponseStatusLine statusLine = new ResponseStatusLine(Constant.protocol,
                 StatusCode.UNAUTHORIZED.getStatus());
         ResponseBody body = new ResponseBody(view);
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
 
         header.addContentType(path);
         header.addContentLength(body.getBodyLength());
@@ -70,7 +70,7 @@ public class HttpResponse {
         ResponseStatusLine statusLine = new ResponseStatusLine(Constant.protocol,
                 StatusCode.NOT_FOUND.getStatus());
         ResponseBody body = new ResponseBody(view);
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
 
         header.addContentType(ContentType.HTML);
         header.addContentLength(body.getBodyLength());
@@ -84,7 +84,7 @@ public class HttpResponse {
         ResponseStatusLine statusLine = new ResponseStatusLine(Constant.protocol,
                 StatusCode.BAD_REQUEST.getStatus());
         ResponseBody body = new ResponseBody(view);
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
 
         header.addContentType(ContentType.HTML);
         header.addContentLength(body.getBodyLength());
