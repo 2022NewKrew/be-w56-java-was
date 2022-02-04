@@ -2,7 +2,7 @@ package http.response;
 
 import http.MediaType;
 import http.HttpStatus;
-import http.request.HttpHeaders;
+import http.HttpHeaders;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -2,7 +2,7 @@ package util;
 
 import exception.InvalidRequestLineException;
 import http.MediaType;
-import http.request.HttpHeaders;
+import http.HttpHeaders;
 import http.request.URI;
 import http.request.Queries;
 import http.request.RequestBody;

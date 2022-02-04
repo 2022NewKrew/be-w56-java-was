@@ -1,5 +1,6 @@
 package http.request;
 
+import http.HttpHeaders;
 import http.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,6 +1,5 @@
-package http.request;
+package http;
 
-import http.MediaType;
 import java.util.Map;
 
 public class HttpHeaders {
