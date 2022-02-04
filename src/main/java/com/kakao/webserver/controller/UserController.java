@@ -1,5 +1,6 @@
 package com.kakao.webserver.controller;
 
+import com.kakao.http.common.HttpCookie;
 import com.kakao.http.header.HttpHeader;
 import com.kakao.http.header.LocationHeader;
 import com.kakao.http.header.SetCookieHeader;
@@ -52,7 +53,7 @@ public class UserController implements HttpController {
     private HttpResponse loginSucceeded() {
         List<HttpHeader> headers = List.of(
                 new LocationHeader("/"),
-                new SetCookieHeader("logined", "true", "/")
+                new SetCookieHeader(new HttpCookie("logined", "true").path("/"))
         );
         return new HttpResponse(DEFAULT_HTTP_VERSION, HttpStatus.FOUND, headers, null);
     }
@@ -60,7 +61,7 @@ public class UserController implements HttpController {
     private HttpResponse loginFailed() {
         List<HttpHeader> headers = List.of(
                 new LocationHeader(LOGIN_FAILED_URL),
-                new SetCookieHeader("logined", "false", "/")
+                new SetCookieHeader(new HttpCookie("logined", "false").path("/"))
         );
         return new HttpResponse(DEFAULT_HTTP_VERSION, HttpStatus.FOUND, headers, null);
     }
