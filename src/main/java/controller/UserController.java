@@ -10,6 +10,9 @@ import webserver.http.HttpResponse;
 import webserver.http.MIME;
 import webserver.http.PathInfo;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -22,7 +25,11 @@ public class UserController implements Controller{
         if (path.equals(PathInfo.PATH_USER_CREATE_REQUEST)) {
             Map<String, String> params = httpRequest.getParameters();
             try {
-                User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
+                User user = new User(
+                        params.get("userId"),
+                        params.get("password"),
+                        params.get("name"),
+                        URLDecoder.decode(params.get("email"), StandardCharsets.UTF_8));
                 log.debug("User: {}", user);
                 DataBase.addUser(user);
                 return ResponseGenerator.generateResponse302(PathInfo.PATH_USER_LIST_FILE);
@@ -48,7 +55,11 @@ public class UserController implements Controller{
             boolean logined = Boolean.parseBoolean(httpRequest.getCookies().get("logined"));
             log.debug("logined: {}", logined);
             if (logined) {
-                return ResponseGenerator.generateUserListResponse(DataBase.findAll());
+                try {
+                    return ResponseGenerator.generateUserListResponse(DataBase.findAll());
+                } catch (IOException e) {
+                    return ResponseGenerator.generateResponse500();
+                }
             }
             return ResponseGenerator.generateResponse302(PathInfo.PATH_LOGIN_PAGE);
         } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
