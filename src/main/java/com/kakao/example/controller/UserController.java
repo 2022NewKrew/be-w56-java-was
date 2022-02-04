@@ -26,6 +26,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
 
+        // 미리 관리자 계정을 추가
         userService.addUser(User.builder()
                 .userId("admin")
                 .password("admin")
@@ -34,6 +35,7 @@ public class UserController {
                 .build());
     }
 
+    // GET 방식으로 회원가입, 2단계 미션 수행을 위해 존재
     @RequestMapping(value = "/create", requestMethod = "GET")
     public String userRegisterByGet(HttpRequestHandler request) {
         LOGGER.debug("Register User by GET method");
@@ -48,6 +50,7 @@ public class UserController {
         return "redirect:/";
     }
 
+    // 회원가입
     @RequestMapping(value = "/create", requestMethod = "POST")
     public String userRegisterByPost(HttpRequestHandler request) {
         LOGGER.debug("Register User by POST method");
@@ -62,8 +65,9 @@ public class UserController {
         return "redirect:/";
     }
 
+    // 로그인
     @RequestMapping(value = "/login", requestMethod = "POST")
-    public String userLogin(HttpRequestHandler request, HttpResponseHandler response) {
+    public String userLogin(HttpRequestHandler request) {
         LOGGER.debug("Login User");
         String userId = request.getAttribute("userId");
         String password = request.getAttribute("password");
@@ -76,20 +80,24 @@ public class UserController {
             return "redirect:/user/login_failed";
         }
 
+        // 로그인한 아이디를 Session에 저장
         session.setAttribute("USER_ID", userId);
         return "redirect:/";
     }
 
+    // 로그아웃
     @RequestMapping(value = "/logout", requestMethod = "GET")
     public String userLogout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
     }
 
+    // 회원 목록
     @RequestMapping(value = "/list", requestMethod = "GET")
     public String userList(HttpSession session, ModelView modelView) {
         LOGGER.debug("Get User List");
 
+        // 이미 로그인한 상태가 아니라면 로그인 화면으로 이동
         if (!session.contains("USER_ID")) {
             return "user/login";
         }
