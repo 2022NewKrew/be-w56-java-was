@@ -25,23 +25,21 @@ public class UserListController implements Controller {
 
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
-        List<User> users = new ArrayList<>(DataBase.findAll());
-        Map<String, Object> model = new HashMap<>();
-
         String logined = request.getCookie("logined");
-
-        if (Boolean.parseBoolean(logined)) {
-            model.put("users", users);
-            return HttpResponse.ok(
-                    request.getUrl(),
-                    model,
+        if (!Boolean.parseBoolean(logined)) {
+            return HttpResponse.found(
+                    "/user/login.html",
                     MapUtil.getEmptyCookieMap(),
                     dos
             );
         }
 
-        return HttpResponse.found(
-                "/user/login.html",
+        List<User> users = new ArrayList<>(DataBase.findAll());
+        Map<String, Object> model = Map.of("users", users);
+
+        return HttpResponse.ok(
+                request.getUrl(),
+                model,
                 MapUtil.getEmptyCookieMap(),
                 dos
         );
