@@ -31,10 +31,10 @@ public class UserLoginController implements Controller {
         User user = DataBase.findUserById(userId);
 
         if (user != null && user.getPassword().equals(password)) {
-            return loginSuccess(request, dos);
+            return loginSuccess(dos);
         }
 
-        return loginFail(request, dos);
+        return loginFail(dos);
     }
 
     private void checkBodyData(Map<String, String> bodyData) {
@@ -43,14 +43,14 @@ public class UserLoginController implements Controller {
         }
     }
 
-    private HttpResponse loginSuccess(HttpRequest request, DataOutputStream dos) {
+    private HttpResponse loginSuccess(DataOutputStream dos) {
         return HttpResponse.found(
                 "/index.html",
                 Map.of("logined", "true; Path=/"),
                 dos);
     }
 
-    private HttpResponse loginFail(HttpRequest request, DataOutputStream dos) {
+    private HttpResponse loginFail(DataOutputStream dos) {
         return HttpResponse.unauthorized(
                 "/user/login_failed.html",
                 ControllerUtils.getEmptyModelMap(),
