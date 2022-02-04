@@ -1,6 +1,7 @@
 package util;
 
 import model.UserAccount;
+import model.UserAccountHtmlMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,14 +49,9 @@ public class HtmlTemplate {
                         String param = querySplit[0];
                         String content = querySplit[1];
 
-                        try {
-                            Field declaredField = userAccount.getClass().getDeclaredField(param);
-                            declaredField.setAccessible(true);
-                            changeString.append(declaredField.get(userAccount));
-                            declaredField.setAccessible(false);
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            continue;
-                        }
+                        UserAccountHtmlMapper userAccountHtmlMapper = new UserAccountHtmlMapper(userAccount);
+
+                        changeString.append(userAccountHtmlMapper.getMap().get(param).get());
 
                         changeString.append(content);
                     }
