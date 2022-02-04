@@ -24,7 +24,7 @@
 - [6단계](https://lucas.codesquad.kr/2022-kakao/course/%EC%9B%B9%EB%B0%B1%EC%97%94%EB%93%9C/Java-Web-Server-2/%EC%9E%90%EB%B0%94-%EC%9B%B9-%EC%84%9C%EB%B2%84-%EA%B5%AC%ED%98%84-6%EB%8B%A8%EA%B3%84)
 ### 요구사항
 - 5단계: 동적 HTML 처리
-    - 접근하고 있는 사용자가 “로그인” 상태일 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다.
+    - 접근하고 있는 사용자가 “로그인” 상태일 경우 `http://localhost:8080/user/list` 에서 사용자 목록을 출력한다.
     - 만약 로그인하지 않은 상태라면 로그인 페이지로 이동한다.
 - 6단계: Stylesheet 파일 지원 (이미 이전 단계에서 구현)
     - 지금까지 구현한 소스 코드는 Stylesheet 파일을 지원하지 못하고 있다. Stylesheet 파일을 지원하도록 구현하도록 한다.
