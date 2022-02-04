@@ -1,7 +1,9 @@
 package http;
 
 public enum  HttpStatusCode {
-    OK("200 OK");
+    OK("200 OK"),
+    REDIRECT("302 Found"),
+    NOTFOUND("404 Not Found");
 
     private final String code;
 

@@ -1,17 +1,13 @@
 package webserver;
 
-import http.HttpHeader;
-import http.HttpStatusCode;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.response.ResponseBuilder;
 import webserver.controller.Controller;
 import webserver.controller.ControllerMap;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Router {
@@ -42,11 +38,12 @@ public class Router {
 
         if(Objects.isNull(controller)){
             File file = new File("./webapp" + request.getStartLine().getTargetUri());
-            handleFile(file, response);
+            handleFile(file ,request, response);
             return;
         }
 
-        controller.handleGet(request, response);
+        String path = controller.handleGet(request, response);
+        ResponseBuilder.build(path,request,response);
     }
 
     private void handlePost(HttpRequest request, HttpResponse response) throws IOException {
@@ -56,25 +53,16 @@ public class Router {
             throw new IllegalArgumentException("wrong path: " + request.getStartLine().getTargetUri());
         }
 
-        controller.handlePost(request, response);
+        String path = controller.handlePost(request, response);
+        ResponseBuilder.build(path,request,response);
     }
 
-    private void handleFile(File file, HttpResponse response) throws IOException {
+    private void handleFile(File file, HttpRequest request, HttpResponse response) throws IOException {
         if(!file.exists()){
-            throw new IllegalArgumentException("file not exists: " + file.getPath());
+            ResponseBuilder.build(null, request, response);
+            return;
         }
-
-        byte[] body = Files.readAllBytes(file.toPath());
-        response.setBody(body);
-
-        response.setHttpVersion("HTTP/1.1");
-        response.setStatusCode(HttpStatusCode.OK);
-
-        HttpHeader responseHeader = new HttpHeader();
-        //TODO: MIME TYPE 설정
-        responseHeader.addHeader("Content-Type: text/html;charset=utf-8");
-        responseHeader.addHeader("Content-Length: " + body.length);
-        response.setHeader(responseHeader);
-        response.send();
+        String path = file.getPath().replace("./webapp", "");
+        ResponseBuilder.build(path, request, response);
     }
 }

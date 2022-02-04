@@ -33,9 +33,8 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest request = HttpRequest.create(in);
             HttpResponse response = new HttpResponse(out);
-
             router.route(request, response);
-
+            response.send();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

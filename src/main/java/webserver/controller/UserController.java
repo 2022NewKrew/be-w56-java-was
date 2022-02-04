@@ -4,6 +4,8 @@ import http.HttpHeader;
 import http.HttpStatusCode;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.util.HttpRequestUtils;
+import http.util.IOUtils;
 import model.User;
 
 import java.io.File;
@@ -22,35 +24,46 @@ public class UserController implements Controller {
     }
 
     @Override
-    public void handleGet(HttpRequest request, HttpResponse response) throws IOException {
-        if(request.getStartLine().getTargetUri().equals("/user/create")){
-            getUserForm(request, response);
+    public String handleGet(HttpRequest request, HttpResponse response) throws IOException {
+        if (request.getStartLine().getTargetUri().equals("/user/create")) {
+            return getCreateUser(request, response);
         }
+
+        return null;
     }
 
     @Override
-    public void handlePost(HttpRequest request, HttpResponse response) throws IOException {
-
+    public String handlePost(HttpRequest request, HttpResponse response) throws IOException {
+        if (request.getStartLine().getTargetUri().equals("/user/create")) {
+            return postCreateUser(request, response);
+        }
+        return null;
     }
 
-    private void getUserForm(HttpRequest request, HttpResponse response) throws IOException {
+    private String getCreateUser(HttpRequest request, HttpResponse response) throws IOException {
         Map<String, String> queryParams = request.getStartLine().getQueryParams();
+
         User user = new User(
                 queryParams.get("userId"),
                 queryParams.get("password"),
                 queryParams.get("name"),
                 queryParams.get("email")
-                );
+        );
 
-        byte[] body = {};
-        response.setBody(body);
+        return "redirect:/";
+    }
 
-        response.setHttpVersion("HTTP/1.1");
-        response.setStatusCode(HttpStatusCode.OK);
+    private String postCreateUser(HttpRequest request, HttpResponse response) throws IOException {
+        String bodyString = request.getHttpBody().getBody();
+        Map<String, String> bodyParams = HttpRequestUtils.parseQueryString(bodyString);
 
-        HttpHeader responseHeader = new HttpHeader();
-        responseHeader.addHeader("Content-Length: " + body.length);
-        response.setHeader(responseHeader);
-        response.send();
+        User user = new User(
+                bodyParams.get("userId"),
+                bodyParams.get("password"),
+                bodyParams.get("name"),
+                bodyParams.get("email")
+        );
+
+        return "redirect:/";
     }
 }

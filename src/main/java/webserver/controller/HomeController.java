@@ -20,22 +20,16 @@ public class HomeController implements Controller{
     }
 
     @Override
-    public void handleGet(HttpRequest request, HttpResponse response) throws IOException {
-        byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
-        response.setBody(body);
+    public String handleGet(HttpRequest request, HttpResponse response) throws IOException {
+        if(request.getStartLine().getTargetUri().equals("/")) {
+            return "/index.html";
+        }
 
-        response.setHttpVersion("HTTP/1.1");
-        response.setStatusCode(HttpStatusCode.OK);
-
-        HttpHeader responseHeader = new HttpHeader();
-        responseHeader.addHeader("Content-Type: text/html;charset=utf-8");
-        responseHeader.addHeader("Content-Length: " + body.length);
-        response.setHeader(responseHeader);
-        response.send();
+        return null;
     }
 
     @Override
-    public void handlePost(HttpRequest request, HttpResponse response) throws IOException {
-
+    public String handlePost(HttpRequest request, HttpResponse response) throws IOException {
+        return null;
     }
 }
