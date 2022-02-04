@@ -2,6 +2,8 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,8 +27,9 @@ public class ParseRequest {
         // request body
         int bodyLength = Integer.parseInt(requestInfo.getOrDefault("Content-Length", "0"));
         char[] body = new char[bodyLength];
-        reader.read(body, 0, bodyLength);
-        requestInfo.put("body", new String(body));
+        reader.read(body);
+        String decodedString = URLDecoder.decode(new String(body), StandardCharsets.UTF_8);
+        requestInfo.put("body", decodedString);
         return requestInfo;
     }
 
