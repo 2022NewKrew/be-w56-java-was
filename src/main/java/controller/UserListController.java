@@ -1,14 +1,14 @@
 package controller;
 
 import db.DataBase;
+import dto.UserDto;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import model.User;
+import java.util.stream.Collectors;
+import mapper.UserMapper;
 import util.MapUtil;
 
 public class UserListController implements Controller {
@@ -34,8 +34,12 @@ public class UserListController implements Controller {
             );
         }
 
-        List<User> users = new ArrayList<>(DataBase.findAll());
-        Map<String, Object> model = Map.of("users", users);
+        List<UserDto> userDtos = DataBase.findAll()
+                .stream()
+                .map(UserMapper.instance::userToDto)
+                .collect(Collectors.toList());
+
+        Map<String, Object> model = Map.of("users", userDtos);
 
         return HttpResponse.ok(
                 request.getUrl(),

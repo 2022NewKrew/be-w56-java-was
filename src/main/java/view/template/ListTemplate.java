@@ -1,8 +1,8 @@
 package view.template;
 
+import dto.UserDto;
 import java.util.List;
 import java.util.Map;
-import model.User;
 
 public class ListTemplate implements ViewTemplate {
 
@@ -42,10 +42,10 @@ public class ListTemplate implements ViewTemplate {
     @Override
     public String getTemplate(Map<String, Object> model) {
 
-        List<User> users = List.of();
+        List<UserDto> users = List.of();
         if (model.get("users") instanceof List && !((List<?>) model.get("users")).isEmpty()) {
-            if (((List<?>) model.get("users")).get(0) instanceof User) {
-                users = (List<User>) model.get("users");
+            if (((List<?>) model.get("users")).get(0) instanceof UserDto) {
+                users = (List<UserDto>) model.get("users");
             }
         }
 
