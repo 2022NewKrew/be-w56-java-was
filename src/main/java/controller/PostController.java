@@ -8,11 +8,9 @@ import dto.Response;
 import service.UserService;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
 import java.util.HashMap;
 
 public class PostController implements Controller {
@@ -38,7 +36,6 @@ public class PostController implements Controller {
 
     public Response userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
         var temp = new HashMap<String, String>();
-        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
         temp.put("Location", "/");
         Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
 
@@ -55,12 +52,9 @@ public class PostController implements Controller {
             return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
         }
 
-        byte[] body = Files.readAllBytes(new File("./webapp" + "/user/login_failed.html").toPath());
         temp.put("Set-Cookie", "logined=false; Path=/");
-        temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", requestHeaders.getHeader("text/html; charset=utf-8"));
-
-        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
+        temp.put("Location", "/user/login_failed.html");
+        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
     }
 
 }

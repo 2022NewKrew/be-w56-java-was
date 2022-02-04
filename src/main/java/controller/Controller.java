@@ -6,6 +6,7 @@ import collections.RequestStartLine;
 import collections.ResponseHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.HtmlView;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Set;
 public interface Controller {
 
     Logger log = LoggerFactory.getLogger(Controller.class);
+    HtmlView HTML_VIEW = new HtmlView();
 
     void doResponse(String methodName, DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
