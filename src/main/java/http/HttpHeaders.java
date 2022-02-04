@@ -33,4 +33,8 @@ public class HttpHeaders {
 
         return sb.toString();
     }
+
+    public void put(String key, String value) {
+        headers.put(key, value);
+    }
 }

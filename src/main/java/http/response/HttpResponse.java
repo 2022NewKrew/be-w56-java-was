@@ -19,22 +19,22 @@ public class HttpResponse {
     private static final String CONTENT_LENGTH = "Content-Length";
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String LOCATION = "Location";
+    private static final String SET_COOKIE = "Set-Cookie";
     private static final String PATHNAME = "./webapp";
 
+    private final HttpHeaders headers = new HttpHeaders(new HashMap<>());
     private HttpStatus httpStatus;
-    private HttpHeaders headers;
     private byte[] body;
 
     public HttpResponse() {
     }
 
-    private void set(HttpStatus httpStatus, HttpHeaders header) {
-        set(httpStatus, header, new byte[0]);
+    private void set(HttpStatus httpStatus) {
+        set(httpStatus, new byte[0]);
     }
 
-    private void set(HttpStatus httpStatus, HttpHeaders headers, byte[] body) {
+    private void set(HttpStatus httpStatus, byte[] body) {
         this.httpStatus = httpStatus;
-        this.headers = headers;
         this.body = body;
     }
 
@@ -60,11 +60,10 @@ public class HttpResponse {
         byte[] body = Files.readAllBytes(path);
         MediaType contentType = MediaType.getMediaType(mv.getViewName());
 
-        Map<String, String> headers = new HashMap<>();
         headers.put(CONTENT_TYPE, contentType.getType());
         headers.put(CONTENT_LENGTH, String.valueOf(body.length));
 
-        set(mv.getStatus(), new HttpHeaders(headers), body);
+        set(mv.getStatus(), body);
     }
 
     private void error(ModelAndView mv) {
@@ -72,19 +71,20 @@ public class HttpResponse {
     }
 
     public void error(HttpStatus status, String message) {
-        Map<String, String> headers = new HashMap<>();
         byte[] body = message.getBytes(StandardCharsets.UTF_8);
         headers.put(CONTENT_LENGTH, String.valueOf(body.length));
         headers.put(CONTENT_TYPE, "text/plain; charset=utf-8");
 
-        set(status, new HttpHeaders(headers), body);
+        set(status, body);
     }
 
     private void redirect(ModelAndView mv) {
-        Map<String, String> headers = new HashMap<>();
         headers.put(LOCATION, mv.getViewName());
+        set(mv.getStatus());
+    }
 
-        set(mv.getStatus(), new HttpHeaders(headers));
+    public void setCookie(String cookie) {
+        headers.put(SET_COOKIE, cookie);
     }
 
     public String getHeader() {

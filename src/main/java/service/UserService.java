@@ -2,6 +2,8 @@ package service;
 
 import db.DataBase;
 import dto.UserCreateDto;
+import dto.UserLoginDto;
+import model.User;
 
 public class UserService {
 
@@ -19,5 +21,14 @@ public class UserService {
 
     public void register(UserCreateDto userCreateDto) {
         DataBase.addUser(userCreateDto.toEntity());
+    }
+
+    public User login(UserLoginDto userLoginDto) {
+        User result = DataBase.findUserById(userLoginDto.getUserId());
+        if (result == null || !result.getPassword().equals(userLoginDto.getPassword())) {
+            return null;
+        }
+
+        return result;
     }
 }
