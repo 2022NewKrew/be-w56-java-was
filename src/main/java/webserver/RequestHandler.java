@@ -63,8 +63,8 @@ public class RequestHandler extends Thread {
                 responseBody(dos, body);
             }
             else {
-                RequestController.uriMatcher(methodType, uri, requestBody);
-                response302Header(dos, "http://localhost:8080/index.html");
+                Map<String, String> headerInfo = RequestController.uriMatcher(methodType, uri, requestBody);
+                response302Header(dos, headerInfo);
             }
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -93,10 +93,14 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void response302Header (DataOutputStream dos, String location) {
+    private void response302Header (DataOutputStream dos, Map<String, String> headerInfo) {
         try {
-            dos.writeBytes("HTTP/1.1 302 OK \r\n");
-            dos.writeBytes("Location: " + location + "\r\n");
+            dos.writeBytes("HTTP/1.1 302 FOUND \r\n");
+            dos.writeBytes("Location: " + headerInfo.get("redirectUrl") + "\r\n");
+            if (headerInfo.get("Set-Cookie") != null) {
+                System.out.println(headerInfo.get("Set-Cookie"));
+                dos.writeBytes("Set-Cookie: " + headerInfo.get("Set-Cookie") + "\r\n");
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
