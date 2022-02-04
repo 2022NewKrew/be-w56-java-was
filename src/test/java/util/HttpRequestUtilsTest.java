@@ -2,7 +2,6 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
-import exception.InvalidParameterKeyException;
 import exception.InvalidRequestLineException;
 import http.request.Queries;
 import http.request.RequestLine;
@@ -86,12 +85,11 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseQueries_invalid() {
+    public void parseQueries_null2() {
         String targetToken = "/users/create?userId=javajigi";
         Queries queries = HttpRequestUtils.parseQueries(targetToken);
         assertThat(queries.getValue("userId")).isEqualTo("javajigi");
-        assertThatThrownBy(() -> queries.getValue("password"))
-                .isInstanceOf(InvalidParameterKeyException.class);
+        assertThat(queries.getValue("password")).isNull();
     }
 
     @Test

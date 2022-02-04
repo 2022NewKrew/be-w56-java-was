@@ -12,8 +12,7 @@ class MediaTypeTest {
     @Test
     void getMediaType() {
         URI uri = new URI("/css/styles.css", new Queries(new HashMap<>()));
-
-        MediaType result = MediaType.getMediaType(uri);
+        MediaType result = MediaType.getMediaType(uri.getPath());
 
         assertThat(result.getType()).isEqualTo("text/css");
     }
@@ -21,8 +20,7 @@ class MediaTypeTest {
     @Test
     void getMediaType_default() {
         URI uri = new URI("/users/create", new Queries(new HashMap<>()));
-
-        MediaType result = MediaType.getMediaType(uri);
+        MediaType result = MediaType.getMediaType(uri.getPath());
 
         assertThat(result.getType()).isEqualTo("*/*");
     }
