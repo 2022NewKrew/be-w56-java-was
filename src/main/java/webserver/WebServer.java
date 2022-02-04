@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import db.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.handler.RequestHandler;
@@ -22,6 +23,7 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
+        ConnectionFactory.init();
 
         // 스레드풀 생성
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);

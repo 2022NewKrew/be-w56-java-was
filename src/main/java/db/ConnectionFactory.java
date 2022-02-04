@@ -5,8 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,16 +23,16 @@ public class ConnectionFactory {
     private static final String DB_SCHEMA_PATH = DEFAULT_RESOURCES_DIR + "/schema.sql";
     private static final String DB_DATA_PATH = DEFAULT_RESOURCES_DIR + "/data.sql";
 
-    private static final MysqlDataSource DATA_SOURCE;
+    private static MysqlDataSource DATA_SOURCE;
 
-    static {
+    public static void init() throws IOException {
         Properties properties = new Properties();
         try {
             FileInputStream is = new FileInputStream(DB_PROPERTIES_PATH);
             properties.load(is);
-            System.out.println();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("initializing failed while load file input stream: {}", e.getMessage());
+            throw e;
         }
 
         String username = properties.getProperty(DB_USERNAME_PROPERTY_KEY);
@@ -49,25 +47,34 @@ public class ConnectionFactory {
         executeSqlScript(DB_DATA_PATH);
     }
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws IOException, SQLException {
+        if (DATA_SOURCE == null) {
+            init();
+        }
         return DATA_SOURCE.getConnection();
     }
 
     private static void executeSqlScript(String path) {
-        if (Files.notExists(Path.of(path))) {
+        File script = new File(path);
+        if (!script.isFile()) {
             return;
         }
-        File script = new File(path);
 
-        try (Connection connection = getConnection(); BufferedReader br = new BufferedReader(new FileReader(script))) {
-            Statement stmt = connection.createStatement();
-            String line;
-            while ((line = br.readLine()) != null) {
-                stmt.execute(line);
-            }
+        try (Connection conn = getConnection();
+            BufferedReader br = new BufferedReader(new FileReader(script));
+            Statement stmt = conn.createStatement()
+        ) {
+            executeLines(stmt, br);
             log.info("{} was successfully executed.", script.getName());
         } catch (IOException | SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void executeLines(Statement stmt, BufferedReader br) throws IOException, SQLException {
+        String line;
+        while ((line = br.readLine()) != null) {
+            stmt.execute(line);
         }
     }
 
