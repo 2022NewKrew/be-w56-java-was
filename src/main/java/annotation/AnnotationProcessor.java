@@ -1,7 +1,10 @@
 package annotation;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
+import webserver.http.HttpMethod;
 import webserver.http.HttpRequest;
 
 import java.lang.reflect.InvocationTargetException;
@@ -10,14 +13,10 @@ import java.util.Set;
 
 public class AnnotationProcessor {
     private static final AnnotationProcessor instance = new AnnotationProcessor();
+    private static Table<HttpMethod, String, Method> requestMap;
 
-    private AnnotationProcessor(){}
-
-    public static AnnotationProcessor getInstance(){
-        return instance;
-    }
-
-    public Object requestMappingProcessor(HttpRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private AnnotationProcessor(){
+        requestMap = HashBasedTable.create();
         Reflections reflections = new Reflections("webserver.controller",
                 new MethodAnnotationsScanner()
         );
@@ -25,10 +24,20 @@ public class AnnotationProcessor {
         Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
         for (Method m : methods) {
             RequestMapping annotation = m.getAnnotation(RequestMapping.class);
-            if (annotation.method() == request.getMethod() && annotation.url().equals(request.getUrl())) {
-                Object controller = m.getDeclaringClass().getMethod("getInstance").invoke(null);
-                return m.invoke(controller, request);
-            }
+            requestMap.put(annotation.method(), annotation.url(), m);
+        }
+    }
+
+    public static AnnotationProcessor getInstance(){
+        return instance;
+    }
+
+    public Object requestMappingProcessor(HttpRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        if(requestMap.contains(request.getMethod(), request.getUrl())){
+            Method method = requestMap.get(request.getMethod(), request.getUrl());
+            Object controller = method.getDeclaringClass().getMethod("getInstance").invoke(null);
+
+            return method.invoke(controller, request);
         }
 
         return null;

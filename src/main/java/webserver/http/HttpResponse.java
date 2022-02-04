@@ -10,7 +10,6 @@ public class HttpResponse {
     private String url;
     private Map<String, String> headers = new HashMap<>();
     private Map<String, String> cookie = new HashMap<>();
-    private byte[] body = new byte[0];
 
     public HttpResponse(HttpStatus status) {
         this.status = status;
@@ -34,9 +33,6 @@ public class HttpResponse {
         return status;
     }
 
-    public void setBody(byte[] body) {
-        this.body = body;
-    }
 
     public void setHeader(String key, String value) {
         headers.put(key, value);
@@ -46,7 +42,7 @@ public class HttpResponse {
         cookie.put(key, value);
     }
 
-    public void send(DataOutputStream dos) throws IOException {
+    public void send(DataOutputStream dos, byte[] body) throws IOException {
         if (!cookie.isEmpty()) {
             responseSetCookie();
         }

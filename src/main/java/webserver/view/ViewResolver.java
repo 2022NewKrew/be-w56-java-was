@@ -27,8 +27,8 @@ public class ViewResolver {
         }
         try {
             byte[] file = Files.readAllBytes(new File(HttpConst.STATIC_ROOT + url).toPath());
-            response.setBody(file);
-            response.send(dos);
+
+            response.send(dos, file);
         } catch (IOException e) {
             render(dos, new HttpResponse(HttpStatus.NOT_FOUND, HttpConst.ERROR_PAGE));
         }
