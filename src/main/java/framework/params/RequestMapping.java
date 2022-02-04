@@ -1,6 +1,6 @@
-package framework;
+package framework.params;
 
-import framework.variable.RequestMethod;
+import framework.constant.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

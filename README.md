@@ -57,5 +57,26 @@ userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajig
     - 현재는 200 OK 와 302 Found 두 가지의 status code만 있는 상태
     
 GET으로 param을 받아 회원가입하는 기능 구현  
-POST로 request body의 내용을 받아 회원가입 하는 기능 구현  
-redirect 기능 구현  
+
+## 웹 서버 구현 3단계
+- POST로 회원 가입 구현
+### 구현 내용
+- POST로 request body의 내용을 받아 회원가입 하는 기능 구현
+- redirect 기능 구현
+
+## 웹 서버 구현 4단계
+- Cookie를 이용한 로그인 기능 구현
+- HttpResponse 예시
+```
+HTTP/1.1 200 OK
+Content-Type: text/html
+Set-Cookie: logined=true; Path=/
+```
+
+### 구현 내용
+- Model, Session 클래스 생성
+  - 메서드마다 다른 매개변수를 받기 위해 HandlerMapping 클래스에서 invoke 하는 부분 변경
+  - Model, Session 및 추후 추가될 매개변수의 인스턴스들을 담고 매핑해줄 Params 클래스 생성
+- 추후 html을 동적으로 생성, 수정하여 보내줄 것을 고려하여 View 클래스 생성
+  - 기존에 ViewResolver에서 수행하던 HttpResponse의 Body를 세팅하는 부분을 View에서 수행
+- HttpResponse에 Cookie 처리를 위한 로직 추가

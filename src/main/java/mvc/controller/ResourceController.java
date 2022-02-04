@@ -1,33 +1,38 @@
 package mvc.controller;
 
-import framework.RequestMapping;
-import framework.variable.RequestMethod;
+import framework.params.RequestMapping;
+import framework.params.HttpRequest;
+import framework.constant.RequestMethod;
 
 public class ResourceController implements Controller {
 
-    @RequestMapping(value = "/*.html", method = RequestMethod.GET)
-    public String getStaticHtml(String url) {
-        return url;
+    @RequestMapping(value = "/.*\\.html", method = RequestMethod.GET)
+    public String getStaticHtml(HttpRequest request) {
+        return request.getUrl();
     }
 
-    @RequestMapping(value = "/*.ico", method = RequestMethod.GET)
-    public String getIcon(String url) {
-        return url;
+    @RequestMapping(value = "/.*\\.ico", method = RequestMethod.GET)
+    public String getIcon(HttpRequest request) {
+        return request.getUrl();
     }
 
-    @RequestMapping(value = "/*.css", method = RequestMethod.GET)
-    public String getCss(String url) {
-        return url;
+    @RequestMapping(value = "/.*\\.css", method = RequestMethod.GET)
+    public String getCss(HttpRequest request) {
+        return request.getUrl();
     }
 
-    @RequestMapping(value = "/*.js", method = RequestMethod.GET)
-    public String getJs(String url) {
-        return url;
+    @RequestMapping(value = "/.*\\.js", method = RequestMethod.GET)
+    public String getJs(HttpRequest request) {
+        return request.getUrl();
     }
 
-    @RequestMapping(value = "/*.woff", method = RequestMethod.GET)
-    public String getWoff(String url) { return url; }
+    @RequestMapping(value = "/.*\\.woff", method = RequestMethod.GET)
+    public String getWoff(HttpRequest request) {
+        return request.getUrl();
+    }
 
-    @RequestMapping(value = "/*.ttf", method = RequestMethod.GET)
-    public String getTtf(String url) { return url; }
+    @RequestMapping(value = "/.*\\.ttf", method = RequestMethod.GET)
+    public String getTtf(HttpRequest request) {
+        return request.getUrl();
+    }
 }

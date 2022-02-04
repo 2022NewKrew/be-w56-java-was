@@ -1,8 +1,7 @@
-package webserver;
+package framework.webserver;
 
 import java.io.*;
 import java.net.Socket;
-
 import framework.Beans;
 import framework.FrontController;
 import org.slf4j.Logger;

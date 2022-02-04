@@ -1,6 +1,9 @@
 package framework;
 
 import com.google.common.collect.Maps;
+import framework.params.HttpRequest;
+import framework.params.HttpResponse;
+import framework.params.Params;
 import framework.util.HttpRequestUtils;
 import framework.util.IOUtils;
 
@@ -8,8 +11,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +20,6 @@ public class FrontController {
 
     private final HandlerMapping handlerMapping;
     private final ViewResolver viewResolver;
-    private final List<String> allowedExtension = Arrays.asList(".html", ".css", ".js", ".ico", ".woff", ".ttf");
 
     public FrontController(HandlerMapping handlerMapping, ViewResolver viewResolver) {
         this.handlerMapping = handlerMapping;
@@ -27,20 +27,21 @@ public class FrontController {
     }
 
     public DataOutputStream request(InputStream in, OutputStream out) throws IOException {
+        Params params = new Params();
         try {
-            String viewName = requestToController(in);
-            HttpResponse response = viewResolver.getResponse(viewName);
+            String viewName = requestToController(in, params);
+            HttpResponse response = viewResolver.getResponse(viewName, params);
             return response.getResponse(out);
         } catch (Exception e) {
             e.printStackTrace();
-            HttpResponse response = viewResolver.getResponse("error");
+            HttpResponse response = viewResolver.getResponse("error", params);
             return response.getResponse(out);
         }
     }
 
-    private String requestToController(InputStream in) throws InvocationTargetException, IllegalAccessException, IOException {
+    private String requestToController(InputStream in, Params params) throws InvocationTargetException, IllegalAccessException, IOException {
         HttpRequest request = parseRequest(in);
-        return handlerMapping.requestToController(request);
+        return handlerMapping.requestToController(request, params);
     }
 
     private HttpRequest parseRequest(InputStream in) throws IOException {
@@ -53,19 +54,10 @@ public class FrontController {
         HttpRequest reqeust = new HttpRequest();
         reqeust.setMethod(method);
         reqeust.setUrl(url);
-        setIsStaticResource(reqeust);
         reqeust.setRequestParam(getRequestParam(urlTokens));
         reqeust.setRequestBody(getRequestBody(br, method));
 
         return reqeust;
-    }
-
-    private void setIsStaticResource(HttpRequest request) {
-        // url에 allowedExtension이 포함된 경우 static resource를 요청하는 것으로 판단
-        allowedExtension.stream()
-                .filter(extension -> request.getUrl().contains(extension))
-                .findAny()
-                .ifPresent(extension -> request.setStaticResource(true));
     }
 
     private Map<String, String> getRequestParam(String[] urlTokens) {
@@ -73,8 +65,7 @@ public class FrontController {
             return Maps.newHashMap();
         }
 
-        String queryString = "";
-        queryString = URLDecoder.decode(urlTokens[1], StandardCharsets.UTF_8);
+        String queryString = URLDecoder.decode(urlTokens[1], StandardCharsets.UTF_8);
         return parseQueryString(queryString);
     }
 
