@@ -14,7 +14,11 @@ import java.nio.file.Files;
 public class StaticHandler {
 
     public Response get(Request request) {
-        File file = new File("./webapp/" + request.getPath());
+        String filePath = request.getPath();
+        if (filePath.endsWith("/")) {
+            filePath += "index.html";
+        }
+        File file = new File("./webapp" + filePath);
         if (!file.exists()) {
             return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
         }
