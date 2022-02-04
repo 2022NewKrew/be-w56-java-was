@@ -1,5 +1,6 @@
 package webserver;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.HttpResponse;
@@ -10,6 +11,7 @@ import webserver.http.PathInfo;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 
 public class ResponseGenerator {
     private static final Logger log = LoggerFactory.getLogger(ResponseGenerator.class);
@@ -43,6 +45,24 @@ public class ResponseGenerator {
                 .header("Location", PathInfo.PATH_LOGIN_FAILED)
                 .header("Set-Cookie", "logined=false; Path=/")
                 .build();
+    }
+
+    public static HttpResponse generateUserListResponse(Collection<User> userList) {
+        StringBuilder body = new StringBuilder();
+        body.append(UserListHtml.HEAD);
+        int index = 1;
+        for (User user : userList) {
+            body.append(String.format(UserListHtml.TABLE_ELEMENT_FORMAT, index, user.getUserId(), user.getName(), user.getEmail()));
+            index += 1;
+        }
+        body.append(UserListHtml.TAIL);
+
+        return HttpResponse.builder()
+                .status(HttpStatus.OK)
+                .contentType(MIME.HTML.getExtension())
+                .body(body.toString().getBytes())
+                .build();
+
     }
 
     public static HttpResponse generateResponse302(String path) {

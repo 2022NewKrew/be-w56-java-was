@@ -25,7 +25,7 @@ public class UserController implements Controller{
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
                 log.debug("User: {}", user);
                 DataBase.addUser(user);
-                return ResponseGenerator.generateResponse302(PathInfo.PATH_USER_LIST);
+                return ResponseGenerator.generateResponse302(PathInfo.PATH_USER_LIST_FILE);
             } catch (Exception e) {
                 return ResponseGenerator.generateResponse400(e);
             }
@@ -44,11 +44,11 @@ public class UserController implements Controller{
             }
             log.debug("Login failed: Password mismatch");
             return ResponseGenerator.generateLoginFailedResponse();
-        } else if(path.equals(PathInfo.PATH_USER_LIST)) {
+        } else if(path.equals(PathInfo.PATH_USER_LIST_FILE)) {
             boolean logined = Boolean.parseBoolean(httpRequest.getCookies().get("logined"));
             log.debug("logined: {}", logined);
             if (logined) {
-                return ResponseGenerator.generateStaticResponse(path);
+                return ResponseGenerator.generateUserListResponse(DataBase.findAll());
             }
             return ResponseGenerator.generateResponse302(PathInfo.PATH_LOGIN_PAGE);
         } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
