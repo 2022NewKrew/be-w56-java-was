@@ -11,6 +11,7 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 import javax.xml.crypto.Data;
 
@@ -35,17 +36,18 @@ public class RequestHandler extends Thread {
             //log.debug("request line : {}", line);
             Map<String, String> requestLine = HttpRequestUtils.parseRequestLine(line);
             Map<String, String> header = HttpRequestUtils.parseHeader(br);
-            RequestMapper(requestLine, header, dos);
+            RequestMapper(requestLine, header, dos, br);
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
 
-    private void RequestMapper(Map<String, String> requestLine, Map<String, String> header, DataOutputStream dos) throws InvalidHttpMethodException, IOException {
+    private void RequestMapper(Map<String, String> requestLine, Map<String, String> header, DataOutputStream dos, BufferedReader br) throws InvalidHttpMethodException, IOException {
+        String url = requestLine.get("url");
         switch (requestLine.get("method")) {
             case "GET":
-                String url = requestLine.get("url");
                 if (url.contains("?")) {
                     int index = url.indexOf("?");
                     String requestPath = url.substring(0, index);
@@ -54,23 +56,27 @@ public class RequestHandler extends Thread {
                     urlMapper(dos, requestPath, header, params);
                     break;
                 }
-                urlMapper(dos, url, header);
+                urlMapper(dos, url, header, br);
                 break;
             case "POST":
+                urlMapper(dos, url, header, br);
                 break;
             default:
                 throw new InvalidHttpMethodException("유효하지 않은 HTTP 메소드입니다");
         }
     }
 
-    private void urlMapper(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
+    private void urlMapper(DataOutputStream dos, String url, Map<String, String> header, BufferedReader br) throws IOException {
         if (url.contains(".html")) {
             getHtml(dos, url, header);
+        }
+        if (url.startsWith("/create")) {
+            createUserByPost(dos, url, header, br);
         }
     }
 
     private void urlMapper(DataOutputStream dos, String url, Map<String, String> header, Map<String, String> params) throws IOException {
-        if (url.startsWith("/user/create")) {
+        if (url.startsWith("/create")) {
             createUserByGet(dos, url, header, params);
         }
     }
@@ -86,12 +92,21 @@ public class RequestHandler extends Thread {
         view(dos, "/index.html", header);
     }
 
+    private void createUserByPost(DataOutputStream dos, String url, Map<String, String> header, BufferedReader br) throws IOException {
+        String body = IOUtils.readData(br,Integer.parseInt(header.get("Content-Length")));
+        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
+        User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
+        System.out.println(user);
+        DataBase.addUser(user);
+        view(dos, "/index.html", header);
+    }
+
+
     private void view(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
         response200Header(dos, body.length);
         responseBody(dos, body);
     }
-
 
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
