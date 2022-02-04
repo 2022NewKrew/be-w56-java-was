@@ -1,7 +1,5 @@
 package webserver.response;
 
-import org.apache.tika.Tika;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,14 +30,4 @@ public class ResponseFile {
         }
         return null;
     }
-
-    public String getFileType () {
-        try {
-            return new Tika().detect(file);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 }
