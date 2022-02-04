@@ -5,7 +5,6 @@ import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import model.User;
 import util.ControllerUtils;

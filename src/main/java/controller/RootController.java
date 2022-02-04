@@ -5,12 +5,12 @@ import http.response.HttpResponse;
 import java.io.DataOutputStream;
 import util.ControllerUtils;
 
-public class RootController implements Controller{
+public class RootController implements Controller {
 
     private static RootController instance;
 
     public static synchronized RootController getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new RootController();
         }
         return instance;

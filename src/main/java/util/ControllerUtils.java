@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ControllerUtils {
-    public static Map<String, String> getEmptyCookieMap(){
+
+    public static Map<String, String> getEmptyCookieMap() {
         return Collections.unmodifiableMap(new HashMap<>());
     }
 

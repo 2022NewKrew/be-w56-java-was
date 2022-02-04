@@ -52,7 +52,7 @@ public class RequestHeader {
     private static Map<String, String> getCookies(String cookieLine) {
         Map<String, String> result = new HashMap<>();
 
-        if(cookieLine.isEmpty()) {
+        if (cookieLine.isEmpty()) {
             return result;
         }
 

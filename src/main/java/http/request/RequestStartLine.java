@@ -7,12 +7,14 @@ import java.util.Map;
 import webserver.HttpMethod;
 
 public class RequestStartLine {
+
     private final HttpMethod method;
     private final String url;
     private final String protocol;
     private final Map<String, String> query;
 
-    public RequestStartLine(HttpMethod method, String url, String protocol, Map<String, String> query) {
+    public RequestStartLine(HttpMethod method, String url, String protocol,
+            Map<String, String> query) {
         this.method = method;
         this.url = url;
         this.protocol = protocol;
@@ -24,7 +26,7 @@ public class RequestStartLine {
         HttpMethod method = HttpMethod.valueOf(components.get(0));
         String protocol = components.get(2);
         String url = components.get(1);
-        if(url.contains("?")){
+        if (url.contains("?")) {
             List<String> urlComponents = List.of(url.split("\\?"));
             url = urlComponents.get(0);
             Map<String, String> queries = getQueries(urlComponents.get(1));

@@ -11,12 +11,12 @@ import java.util.Map;
 import model.User;
 import util.ControllerUtils;
 
-public class UserListController implements Controller{
+public class UserListController implements Controller {
 
     private static UserListController instance;
 
     public static synchronized UserListController getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new UserListController();
         }
 
@@ -30,7 +30,7 @@ public class UserListController implements Controller{
 
         String logined = request.getCookie("logined");
 
-        if(Boolean.parseBoolean(logined)) {
+        if (Boolean.parseBoolean(logined)) {
             model.put("users", users);
             return HttpResponse.ok(
                     request.getUrl(),

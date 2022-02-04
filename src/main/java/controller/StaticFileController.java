@@ -3,7 +3,6 @@ package controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
-import java.util.HashMap;
 import util.ControllerUtils;
 
 public class StaticFileController implements Controller {

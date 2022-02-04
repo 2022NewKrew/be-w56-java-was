@@ -1,7 +1,6 @@
 package controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import db.DataBase;
 import http.request.HttpRequest;
@@ -27,7 +26,6 @@ class UserListControllerTest {
         DataBase.addUser(new User("userId1", "password", "name1", "email1"));
         DataBase.addUser(new User("userId2", "password", "name2", "email2"));
         DataBase.addUser(new User("userId3", "password", "name3", "email3"));
-
 
         String startLineString = "GET /user/list.html HTTP/1.1\r\n";
         String headerString = "Cookie: logined=true\r\nheaderKey1: headerValue1\r\nheaderKey2: headerValue2\r\n";
@@ -74,7 +72,8 @@ class UserListControllerTest {
         HttpResponse response = controller.run(request, dos);
         response.sendResponse();
         //then
-        assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location", "/user/login.html");
+        assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location",
+                "/user/login.html");
 
         DataBase.deleteUser("userId1");
         DataBase.deleteUser("userId2");

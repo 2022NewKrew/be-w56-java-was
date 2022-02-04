@@ -10,7 +10,7 @@ import view.template.ViewTemplate;
 public class ViewMaker {
 
     public static byte[] getView(String filePath, Map<String, Object> model) {
-        if(ViewMatcher.getTemplate(filePath) != null) {
+        if (ViewMatcher.getTemplate(filePath) != null) {
             return applyModel(ViewMatcher.getTemplate(filePath), model);
         }
         return getFile("./webapp" + filePath);
