@@ -1,5 +1,6 @@
 package service;
 
+import dao.UserDao;
 import db.DataBase;
 import model.User;
 import util.HtmlUtils;
@@ -8,6 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HtmlService {
+
+    private UserDao userDao;
+
+    public HtmlService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public void makeUserList() {
         StringBuilder sb = new StringBuilder();
@@ -99,7 +106,8 @@ public class HtmlService {
     }
 
     private void writeUserList(StringBuilder sb) {
-        List<User> userList = new ArrayList<>(DataBase.findAll()) ;
+        //List<User> userList = new ArrayList<>(DataBase.findAll());
+        List<User> userList = new ArrayList<>(userDao.findAll());
         sb.append("<div class=\"container\" id=\"main\">\n");
         sb.append("<div class=\"col-md-10 col-md-offset-1\">\n");
         sb.append("<div class=\"panel panel-default\">\n");

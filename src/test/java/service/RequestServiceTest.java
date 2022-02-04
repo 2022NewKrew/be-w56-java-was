@@ -1,5 +1,6 @@
 package service;
 
+import dao.UserDao;
 import db.DataBase;
 import model.User;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +18,8 @@ import static org.assertj.core.api.Assertions.*;
 class RequestServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestServiceTest.class);
-    private RequestService requestService = new RequestService();
+    private UserDao userDao = new UserDao();
+    private RequestService requestService = new RequestService(userDao);
 
     @Test
     public void createUser() throws IOException {

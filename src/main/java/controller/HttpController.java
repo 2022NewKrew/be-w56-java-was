@@ -1,5 +1,6 @@
 package controller;
 
+import dao.UserDao;
 import enums.HttpStatus;
 import org.slf4j.Logger;
 import service.HtmlService;
@@ -18,9 +19,10 @@ public class HttpController {
     private Map<String, String> headerMap;
     private Logger log;
     private BufferedReader br;
-    private RequestService requestService = new RequestService();
+    private RequestService requestService;
     private ResponseService responseService;
     private HtmlService htmlService;
+    private UserDao userDao;
 
     public HttpController(Map<String, String> requestMap, Map<String, String> headerMap,
                           Logger log, BufferedReader br, OutputStream out) {
@@ -29,7 +31,9 @@ public class HttpController {
         this.log = log;
         this.br = br;
         responseService = new ResponseService(out);
-        htmlService = new HtmlService();
+        userDao = new UserDao();
+        htmlService = new HtmlService(userDao);
+        requestService = new RequestService(userDao);
     }
 
     public void run() throws IOException {
