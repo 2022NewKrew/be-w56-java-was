@@ -98,7 +98,7 @@ public class RequestHandler extends Thread {
         User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
         System.out.println(user);
         DataBase.addUser(user);
-        view(dos, "/index.html", header);
+        redirect(dos, "/index.html", header);
     }
 
 
@@ -108,12 +108,28 @@ public class RequestHandler extends Thread {
         responseBody(dos, body);
     }
 
+    private void redirect(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
+        byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+        response302Header(dos, body.length, url);
+        responseBody(dos, body);
+    }
+
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos, int lengthOfBodyContent, String url) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + url + " \r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
