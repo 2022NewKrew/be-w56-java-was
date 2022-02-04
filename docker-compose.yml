@@ -9,5 +9,9 @@ services:
     build: .
     ports:
       - "8080:8080"
+    links:
+      - "db:database"
     depends_on:
       - db
+
+# run "gradle java-was" for artifect
