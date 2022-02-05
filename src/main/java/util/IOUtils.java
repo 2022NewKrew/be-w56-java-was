@@ -47,9 +47,7 @@ public class IOUtils {
         return headerDTO;
     }
 
-    public static byte[] readHeaderPathFile(String firstLine) throws IOException {
-
-        String requestURL = extractRequestURL(firstLine);
+    public static byte[] readHeaderPathFile(String requestURL) throws IOException {
         byte[] body = IOUtils.readFileByte(requestURL);
 
         return body;
