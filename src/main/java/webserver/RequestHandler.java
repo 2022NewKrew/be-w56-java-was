@@ -4,8 +4,10 @@ import java.beans.beancontext.BeanContext;
 import java.io.*;
 import java.net.Socket;
 
+import DTO.HeaderDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.IOUtils;
 
 import static util.IOUtils.readHeader;
 
@@ -24,9 +26,10 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            String strHeader = readHeader(in);
+            HeaderDTO headerDTO = readHeader(in);
+            byte[] body = IOUtils.readHeaderPathFile(headerDTO.getFirstLine());
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {

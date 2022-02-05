@@ -1,16 +1,11 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+import DTO.HeaderDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.WebServer;
 
 import static util.RequestPathUtils.extractRequestURL;
 
@@ -33,54 +28,50 @@ public class IOUtils {
 
     /**
      * @param BufferedReader : Request Header READER
-     * */
-    public static String readHeader(InputStream in) throws IOException {
+     * @return*/
+    public static HeaderDTO readHeader(InputStream in) throws IOException {
         InputStreamReader reader = new InputStreamReader(in);
         BufferedReader bufferedReader = new BufferedReader(reader);
 
-        String line = readHeaderPath(bufferedReader);
-        byte[] fileBytes = readFileByte(line);
-
-        StringBuilder sb = new StringBuilder();
+        String line = "init";
+        HeaderDTO headerDTO = new HeaderDTO();
 
         while (!"".equals(line)) {
-            line = readHeaderLine(bufferedReader, sb);
+            line = readHeaderLine(bufferedReader, headerDTO);
 
             if(line == null){
                 log.info("Buffer finish");
                 break;
             }
         }
-        return sb.toString();
+        return headerDTO;
     }
 
-    /**
-     * @param BufferedReader : Request Header READER
-     * */
-    private static String readHeaderPath(BufferedReader bufferedReader) throws IOException {
+    public static byte[] readHeaderPathFile(String firstLine) throws IOException {
 
-        String line = bufferedReader.readLine();
-        String requestURL = extractRequestURL(line);
+        String requestURL = extractRequestURL(firstLine);
+        byte[] body = IOUtils.readFileByte(requestURL);
 
-        return requestURL;
+        return body;
     }
 
-    private static String readHeaderLine(BufferedReader bufferedReader, StringBuilder sb ) throws IOException {
-
+    private static String readHeaderLine(BufferedReader bufferedReader, HeaderDTO headerDTO) throws IOException {
         String line = bufferedReader.readLine();
-        sb.append(line);
+        headerDTO.addBufferLine(line);
         log.info("Buffer read: {}",line);
         return line;
 
     }
 
-    private static byte[] readFileByte(String url) throws IOException {
-        Path filepath = Paths.get("./webapp" + url);
-        byte[] byteBody = Files.readAllBytes(filepath);
+    public static byte[] readFileByte(String url) throws IOException {
+
+        byte[] byteBody = Files.readAllBytes(new File("./webapp" + url).toPath());
+        //log.info("File Body Bytes\n: {}", byteBody);
         //String strBody = byteToStr(byteBody);
         return byteBody;
     }
 
+    //helper function  -- not used
     private static String byteToStr(byte[] body){
         String strBody = new String(body); // convert byte array to string
         log.info("File Body Bytes\n: {}", strBody);
