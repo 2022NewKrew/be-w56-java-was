@@ -28,4 +28,9 @@ public class RequestPathUtils {
         return parseQueryString(tokens[1]);
     }
 
+    public static String extractRequestUrlOnly(String url){
+        String[] tokens = url.split("\\?");
+        return tokens[0];
+    }
+
 }

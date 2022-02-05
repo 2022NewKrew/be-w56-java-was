@@ -14,6 +14,7 @@ import util.RequestPathUtils;
 
 import static util.IOUtils.readHeader;
 import static util.RequestPathUtils.extractRequestURL;
+import static webserver.MemberController.requestMapping;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -68,12 +69,15 @@ public class RequestHandler extends Thread {
     }
 
     private void responseParam(String requestUrl){
-        Map<String, String> param = RequestPathUtils.extractRequestParam(requestUrl);
-        // TO DO!!
+
+        Map<String, String> requestParam = RequestPathUtils.extractRequestParam(requestUrl);
+        String requestUrlOnly = RequestPathUtils.extractRequestUrlOnly(requestUrl);
+
         // check url (uesr/create) match with a specific function !!
-        User user = new User(param);
-        log.info("Create New User : {}", user);
+        requestMapping(requestUrlOnly, requestParam);
     }
+
+
 
 
 }
