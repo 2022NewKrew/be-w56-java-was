@@ -7,7 +7,6 @@ import DTO.HeaderDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static util.RequestPathUtils.extractRequestURL;
 
 public class IOUtils {
     private static final Logger log = LoggerFactory.getLogger(IOUtils.class);
@@ -29,7 +28,7 @@ public class IOUtils {
     /**
      * @param BufferedReader : Request Header READER
      * @return*/
-    public static HeaderDTO readHeader(InputStream in) throws IOException {
+    public static HeaderDTO readHeader(InputStream in) throws IOException  {
         InputStreamReader reader = new InputStreamReader(in);
         BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -38,23 +37,34 @@ public class IOUtils {
 
         while (!"".equals(line)) {
             line = readHeaderLine(bufferedReader, headerDTO);
-
-            if(line == null){
-                log.info("Buffer finish");
-                break;
-            }
         }
+
+        readBody(bufferedReader, headerDTO);
+
         return headerDTO;
+    }
+
+    public static void readBody(BufferedReader bufferedReader, HeaderDTO headerDTO) throws IOException {
+        int contentLeng = headerDTO.getContentLength();
+
+        if (contentLeng > 0){
+            log.info("content length : {}", contentLeng);
+            String body = readData(bufferedReader, contentLeng);
+            log.info("body : {}", body);
+            headerDTO.addBody(body);
+        }
     }
 
     public static byte[] readHeaderPathFile(String requestURL) throws IOException {
         byte[] body = IOUtils.readFileByte(requestURL);
-
         return body;
     }
 
     private static String readHeaderLine(BufferedReader bufferedReader, HeaderDTO headerDTO) throws IOException {
         String line = bufferedReader.readLine();
+
+        if("".equals(line)){return "";}
+
         headerDTO.addBufferLine(line);
         log.info("Buffer read: {}",line);
         return line;
@@ -64,17 +74,10 @@ public class IOUtils {
     public static byte[] readFileByte(String url) throws IOException {
 
         byte[] byteBody = Files.readAllBytes(new File("./webapp" + url).toPath());
-        //log.info("File Body Bytes\n: {}", byteBody);
-        //String strBody = byteToStr(byteBody);
         return byteBody;
     }
 
-    //helper function  -- not used
-    private static String byteToStr(byte[] body){
-        String strBody = new String(body); // convert byte array to string
-        log.info("File Body Bytes\n: {}", strBody);
-        return strBody;
-    }
+
 
 
 

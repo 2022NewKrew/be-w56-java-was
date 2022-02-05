@@ -12,11 +12,7 @@ public class RequestPathUtils {
 
     private static final Logger log = LoggerFactory.getLogger(RequestPathUtils.class);
 
-    public static String extractRequestURL(String line){
-        String[] tokens = line.split(" ");
-        log.info("Request URL: {}", tokens[1]);
-        return tokens[1];
-    }
+
 
     public static Boolean containsParam(String url){
         return url.contains("?");
