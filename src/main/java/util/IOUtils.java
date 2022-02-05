@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,7 @@ public class IOUtils {
         BufferedReader bufferedReader = new BufferedReader(reader);
 
         String line = readHeaderPath(bufferedReader);
+        byte[] fileBytes = readFileByte(line);
 
         StringBuilder sb = new StringBuilder();
 
@@ -67,6 +71,19 @@ public class IOUtils {
         sb.append(line);
         log.info("Buffer read: {}",line);
 
+    }
+
+    private static byte[] readFileByte(String url) throws IOException {
+        Path filepath = Paths.get("./webapp" + url);
+        byte[] byteBody = Files.readAllBytes(filepath);
+        //String strBody = byteToStr(byteBody);
+        return byteBody;
+    }
+
+    private static String byteToStr(byte[] body){
+        String strBody = new String(body); // convert byte array to string
+        log.info("File Body Bytes\n: {}", strBody);
+        return strBody;
     }
 
 
