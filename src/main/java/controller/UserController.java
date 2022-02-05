@@ -25,19 +25,19 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    public static HttpResponse indexView(HttpRequest httpRequest) throws IOException {
+    public static Controller indexView = (httpRequest) -> {
         byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
         return new HttpResponse(headers, body);
-    }
+    };
 
-    public static HttpResponse signupView(HttpRequest httpRequest) throws IOException {
+    public static Controller signupView = (httpRequest) -> {
         byte[] body = Files.readAllBytes(new File("./webapp/user/form.html").toPath());
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
         return new HttpResponse(headers, body);
-    }
+    };
 
-    public static HttpResponse signup(HttpRequest httpRequest) {
+    public static Controller signup = (httpRequest) -> {
         String requestBody = httpRequest.getBody();
         Map<String, String> data = HttpRequestUtils.parseQueryString(requestBody);
 
@@ -51,21 +51,21 @@ public class UserController {
 
         List<String> headers = HttpResponseUtils.response302(httpRequest, "/");
         return new HttpResponse(headers);
-    }
+    };
 
-    public static HttpResponse loginView(HttpRequest httpRequest) throws IOException {
+    public static Controller loginView = (httpRequest) -> {
         byte[] body = Files.readAllBytes(new File("./webapp/user/login.html").toPath());
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
         return new HttpResponse(headers, body);
-        }
+    };
 
-    public static HttpResponse loginFailedView(HttpRequest httpRequest) throws IOException {
+    public static Controller loginFailedView = (httpRequest) -> {
         byte[] body = Files.readAllBytes(new File("./webapp/user/login_failed.html").toPath());
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
         return new HttpResponse(headers, body);
-    }
+    };
 
-    public static HttpResponse login(HttpRequest httpRequest) {
+    public static Controller login = (httpRequest) -> {
         String requestBody = httpRequest.getBody();
         Map<String, String> data = HttpRequestUtils.parseQueryString(requestBody);
 
@@ -83,9 +83,9 @@ public class UserController {
         List<String> headers = HttpResponseUtils.response302(httpRequest, location);
         headers.add(1, String.format("Set-Cookie: logined=%b; Path=/\r\n", logined));
         return new HttpResponse(headers);
-    }
+    };
 
-    public static HttpResponse userListView(HttpRequest httpRequest) throws IOException {
+    public static Controller userListView = (httpRequest) -> {
         if (!httpRequest.checkLoginCookie()) {
             List<String> headers = HttpResponseUtils.response302(httpRequest, "/user/login");
             return new HttpResponse(headers);
@@ -100,6 +100,5 @@ public class UserController {
         byte[] body = html.toString().getBytes();
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
         return new HttpResponse(headers, body);
-
-    }
+    };
 }

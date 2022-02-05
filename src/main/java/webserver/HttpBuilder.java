@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.Controller;
 import network.HttpRequest;
 import network.HttpResponse;
 import org.slf4j.Logger;
@@ -33,7 +34,8 @@ public class HttpBuilder {
     }
 
     public void response(HttpRequest httpRequest) throws IOException {
-        HttpResponse httpResponse = RequestMapper.requestMapping(httpRequest);
+        Controller controller = RequestMapper.requestMapping(httpRequest);
+        HttpResponse httpResponse = controller.response(httpRequest);
         List<String> headers = httpResponse.getHeaders();
         headers.forEach(this::writeResponseHeader);
         byte[] body = httpResponse.getBody();
