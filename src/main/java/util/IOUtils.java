@@ -44,7 +44,7 @@ public class IOUtils {
         StringBuilder sb = new StringBuilder();
 
         while (!"".equals(line)) {
-            readHeaderLine(bufferedReader, sb);
+            line = readHeaderLine(bufferedReader, sb);
 
             if(line == null){
                 log.info("Buffer finish");
@@ -65,11 +65,12 @@ public class IOUtils {
         return requestURL;
     }
 
-    private static void readHeaderLine(BufferedReader bufferedReader, StringBuilder sb ) throws IOException {
+    private static String readHeaderLine(BufferedReader bufferedReader, StringBuilder sb ) throws IOException {
 
         String line = bufferedReader.readLine();
         sb.append(line);
         log.info("Buffer read: {}",line);
+        return line;
 
     }
 
