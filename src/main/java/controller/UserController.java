@@ -1,5 +1,6 @@
 package controller;
 
+import db.DataBase;
 import java.util.Map;
 import model.User;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ public class UserController {
                 try {
                     User user = new User(bodyData.get("userId"), bodyData.get("password"),
                             bodyData.get("name"), bodyData.get("email"));
+                    DataBase.addUser(user);
                     LOG.info("Success SignIn - {}", user);
                     ResponseHeader responseHeader = new ResponseHeaderBuilder()
                             .set(ResHeader.LOCATION, "/")
@@ -61,7 +63,7 @@ public class UserController {
                             .setHeader(responseHeader)
                             .build();
 
-                } catch (NullPointerException e) {
+                } catch (NullPointerException | IllegalArgumentException e) {
                     LOG.error(e.getMessage());
                     return new HttpResponseBuilder(HttpStatusCode.NOT_ACCEPTABLE).build();
                 }
