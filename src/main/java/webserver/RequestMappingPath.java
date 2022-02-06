@@ -16,33 +16,34 @@ public enum RequestMappingPath {
     ROOT("/") {
         @Override
         public Response handle(Request request, DataOutputStream dos) throws Exception {
-            byte[] body = Files.readAllBytes(new File("./webapp" + "/index.html").toPath());
-            return new Response(dos, body, HttpStatus.OK, new HashMap<>(), request.headers().map().get("Accept").get(0));
+            return new Response.Builder(dos)
+                    .body(Files.readAllBytes(new File("./webapp" + "/index.html").toPath()))
+                    .status(HttpStatus.OK)
+                    .contentType(request.getContentType())
+                    .build();
         }
     },
     SIGN_UP("/user/create") {
         @Override
-        public Response handle(Request request, DataOutputStream dos) throws Exception {
+        public Response handle(Request request, DataOutputStream dos) {
             AuthService.createUser(request);
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Location", "/");
-            return new Response(dos, new byte[]{}, HttpStatus.FOUND, headers, request.headers().map().get("Accept").get(0));
+            return new Response.Builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .headers("Location", "/")
+                    .contentType(request.getContentType())
+                    .build();
         }
     },
     LOG_IN("/user/login") {
         @Override
-        public Response handle(Request request, DataOutputStream dos) throws Exception {
-            Map<String, String> headers = new HashMap<>();
-            if (AuthService.login(request)){
-                Cookie cookie = new Cookie("logined","true");
-                headers.put("Set-Cookie", cookie.toString());
-                headers.put("Location", "/");
-            }
-           else {
-                Cookie cookie = new Cookie("logined","false");
-                headers.put("Location", "/");
-            }
-            return new Response(dos, new byte[]{}, HttpStatus.FOUND, headers, request.headers().map().get("Accept").get(0));
+        public Response handle(Request request, DataOutputStream dos) {
+            Cookie cookie = (AuthService.login(request))? new Cookie("logined", "true") : new Cookie("logined", "false");
+            return new Response.Builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .headers("Set-Cookie", cookie.toString())
+                    .headers("Location", "/")
+                    .contentType(request.getContentType())
+                    .build();
         }
     };
 

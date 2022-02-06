@@ -17,29 +17,22 @@ public class AuthService {
         Map<String, String> reqParam;
         if (request.method().equals("GET")) {
             reqParam = request.getParams();
-        }
-        else {
+        } else {
             reqParam = HttpRequestUtils.parseQueryString(request.getBody());
         }
-        try {
-            String userId = reqParam.get("userId");
-            String password = reqParam.get("password");
-            String name = reqParam.get("name");
-            String email = reqParam.get("email");
-            User user = new User(userId, password, name, email);
-            DataBase.addUser(user);
-        }
-        catch (NoSuchElementException e) {
-            logger.info(e.getMessage());
-        }
+        String userId = reqParam.get("userId");
+        String password = reqParam.get("password");
+        String name = reqParam.get("name");
+        String email = reqParam.get("email");
+        User user = new User(userId, password, name, email);
+        DataBase.addUser(user);
     }
 
     public static boolean login(Request request) {
         Map<String, String> reqParam;
         if (request.method().equals("GET")) {
             reqParam = request.getParams();
-        }
-        else {
+        } else {
             reqParam = HttpRequestUtils.parseQueryString(request.getBody());
         }
         try {
@@ -47,8 +40,7 @@ public class AuthService {
             String password = reqParam.get("password");
             User userRetrieved = DataBase.findUserById(userId);
             return userRetrieved.getUserId().equals(userId) && userRetrieved.getPassword().equals(password);
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             logger.info(e.getMessage());
             return false;
         }

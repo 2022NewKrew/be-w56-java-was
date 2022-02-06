@@ -51,7 +51,7 @@ public class Request extends HttpRequest {
     }
 
     private void setHeaderAndBody(BufferedReader br) throws IOException {
-        String nextLine = "";
+        String nextLine;
         Map<String, List<String>> headers = new HashMap<>();
         while (!(nextLine = br.readLine()).equals("")) {
             String[] header = nextLine.split(": ");
@@ -64,7 +64,7 @@ public class Request extends HttpRequest {
     }
 
     public String getContentType() {
-        return headers.get("Accept").get(0);
+        return this.headers().map().get("Accept").get(0);
     }
 
     public String getBody() {
