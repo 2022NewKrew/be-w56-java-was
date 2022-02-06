@@ -11,8 +11,8 @@ public class Request {
 
     @Builder
     private Request(StartLine startLine, Headers headers) {
-        this.startLine = startLine;
-        this.headers = headers;
+        this.startLine = new StartLine(startLine);
+        this.headers = new Headers(headers);
     }
 
     public static Request createRequest(String line, List<Pair> headerPairs) {
@@ -28,7 +28,23 @@ public class Request {
         return headers.getHeaderAttribute(key);
     }
 
-    public String getRequestUrl() {
-        return startLine.getRequestUrl();
+    public String getQueryStringAttribute(String key) {
+        return startLine.getQueryStringAttribute(key);
+    }
+
+    public String getPath() {
+        return startLine.getPath();
+    }
+
+    public String getHttpMethod(){
+        return startLine.getHttpMethod();
+    }
+
+    public boolean isFile() {
+        return startLine.isFile();
+    }
+
+    public boolean startsWith(String path) {
+        return startLine.startsWith(path);
     }
 }
