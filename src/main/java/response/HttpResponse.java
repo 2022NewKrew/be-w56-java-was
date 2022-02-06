@@ -2,18 +2,13 @@ package response;
 
 import java.util.HashMap;
 import java.util.Map;
+import response.ResponseHeader.ResponseHeaderBuilder;
 
 public class HttpResponse {
 
     private final String responseStatusLine;
-    private final Map<String, String> responseHeader;
+    private final ResponseHeader responseHeader;
     private final byte[] responseBody;
-
-    public HttpResponse() {
-        responseStatusLine = "";
-        responseHeader = new HashMap<>();
-        responseBody = new byte[0];
-    }
 
     private HttpResponse(HttpResponseBuilder builder) {
         responseStatusLine = String.format("%s %s", builder.protocol, builder.statusCode);
@@ -32,7 +27,7 @@ public class HttpResponse {
         return responseStatusLine;
     }
 
-    public Map<String, String> getResponseHeader() {
+    public ResponseHeader getResponseHeader() {
         return responseHeader;
     }
 
@@ -44,11 +39,10 @@ public class HttpResponse {
 
         private final HttpStatusCode statusCode;
         private String protocol = "HTTP/1.1";
-        private Map<String, String> header = new HashMap<>();
+        private ResponseHeader header = new ResponseHeaderBuilder().build();
         private byte[] body = new byte[0];
 
         public HttpResponseBuilder(HttpStatusCode statusCode) {
-            header.put("Content-Type", "text/html;charset=utf-8");
             this.statusCode = statusCode;
         }
 
@@ -57,7 +51,7 @@ public class HttpResponse {
             return this;
         }
 
-        public HttpResponseBuilder setHeader(Map<String, String> header) {
+        public HttpResponseBuilder setHeader(ResponseHeader header) {
             this.header = header;
             return this;
         }

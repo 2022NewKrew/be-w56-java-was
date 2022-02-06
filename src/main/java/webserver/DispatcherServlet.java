@@ -4,10 +4,13 @@ import controller.IndexController;
 import controller.UserController;
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponse.HttpResponseBuilder;
+import response.HttpStatusCode;
 import util.UrlUtils;
 
 /**
- * HttpRequest 의 method 와 url 을 확인해 올바른 Controller 메서드를 찾아 실행시키고 HttpResponse 를 반환한다.
+ * HttpRequest 의 method 와 url 을 확인해
+ * <p>올바른 Controller 메서드를 실행시키고 HttpResponse 를 반환한다.
  */
 public class DispatcherServlet {
 
@@ -22,7 +25,7 @@ public class DispatcherServlet {
 
     public static HttpResponse dispatch(HttpRequest httpRequest) {
         if (!httpRequest.validate()) {
-            return new HttpResponse();
+            return new HttpResponseBuilder(HttpStatusCode.NOT_FOUND).build();
         }
 
         String method = httpRequest.getMethod();

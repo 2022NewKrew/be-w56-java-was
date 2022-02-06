@@ -39,7 +39,7 @@ public class RequestHeader {
     }
 
     public Integer getContentLength() {
-        String contentLength = headerMap.get(ReqHeaders.CONTENT_LENGTH.getKey());
+        String contentLength = headerMap.get(ReqHeader.CONTENT_LENGTH.getText());
         return contentLength == null ? 0 : Integer.parseInt(contentLength);
     }
 
@@ -48,9 +48,8 @@ public class RequestHeader {
         boolean isFirstLine = true;
         StringBuilder builder = new StringBuilder(NEW_LINE + "Request Header - ");
         for (Map.Entry<String, String> entry: headerMap.entrySet()) {
-            builder.append(isFirstLine ? "" : "               - ")
-                    .append(entry.getKey()).append(" : ")
-                    .append(entry.getValue()).append(NEW_LINE);
+            String prefix = isFirstLine ? "" : "               - ";
+            builder.append(String.format("%s%s: %s", prefix, entry.getKey(), entry.getValue()));
             isFirstLine = false;
         }
         builder.append(NEW_LINE);

@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import request.RequestBody;
-import response.HttpResponse;
 import response.HttpResponse.HttpResponseBuilder;
 import response.HttpStatusCode;
+import response.ResHeader;
+import response.ResponseHeader;
+import response.ResponseHeader.ResponseHeaderBuilder;
 import util.IOUtils;
 import util.UrlUtils;
 import webserver.UrlMapper;
@@ -27,10 +29,14 @@ public class UserController {
             "GET",
             (HttpRequest httpRequest) -> {
                 byte[] body = IOUtils.readFile("./webapp/user/form.html");
+                ResponseHeader responseHeader = new ResponseHeaderBuilder()
+                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
+                        .build();
+
                 return new HttpResponseBuilder(HttpStatusCode.OK)
-                    .setHeader(HttpResponse.defaultHeader(body.length))
-                    .setBody(body)
-                    .build();
+                        .setHeader(responseHeader)
+                        .setBody(body)
+                        .build();
             }
         );
 
@@ -47,7 +53,14 @@ public class UserController {
                     User user = new User(bodyData.get("userId"), bodyData.get("password"),
                             bodyData.get("name"), bodyData.get("email"));
                     LOG.info("Success SignIn - {}", user);
-                    return new HttpResponseBuilder(HttpStatusCode.OK).build();
+                    ResponseHeader responseHeader = new ResponseHeaderBuilder()
+                            .set(ResHeader.LOCATION, "/")
+                            .build();
+
+                    return new HttpResponseBuilder(HttpStatusCode.FOUND)
+                            .setHeader(responseHeader)
+                            .build();
+
                 } catch (NullPointerException e) {
                     LOG.error(e.getMessage());
                     return new HttpResponseBuilder(HttpStatusCode.NOT_ACCEPTABLE).build();
