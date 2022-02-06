@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
 
+    private final static String START_LINE_SEPARATOR = " ";
+    private final static String PATH_SEPARATOR = "\\?";
+
     /**
      * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      */
@@ -47,6 +50,14 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
+    }
+
+    public static String[] parseStartLine(String line) {
+        return line.split(START_LINE_SEPARATOR);
+    }
+
+    public static String[] parsePath(String path) {
+        return path.split(PATH_SEPARATOR);
     }
 
     public static class Pair {

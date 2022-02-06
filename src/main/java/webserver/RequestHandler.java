@@ -2,21 +2,19 @@ package webserver;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
-import webserver.domain.HttpStatus;
 import webserver.domain.Request;
 import webserver.domain.Response;
 
@@ -40,15 +38,15 @@ public class RequestHandler extends Thread {
             Response response = readRequestToResponse(br);
             dos.write(response.getBytes());
             dos.flush();
-        } catch (IOException e) {
+        } catch (IOException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             log.error(e.getMessage());
         }
     }
 
-    private Response readRequestToResponse(BufferedReader br) throws IOException {
+    private Response readRequestToResponse(BufferedReader br)
+        throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Request request = createRequest(br);
-        byte[] body = Files.readAllBytes(new File(request.getRequestUrl()).toPath());
-        return Response.createResponse(HttpStatus.OK, body, request.getHeaderAttribute("Accept"));
+        return ControllerHandler.run(request);
     }
 
     public Request createRequest(BufferedReader br) throws IOException {

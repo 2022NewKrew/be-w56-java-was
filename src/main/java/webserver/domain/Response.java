@@ -22,11 +22,19 @@ public class Response {
     public static Response createResponse(HttpStatus httpStatus, byte[] body, String contentTypes) {
         StatusLine statusLine = StatusLine.createStatus(httpStatus);
         Headers headers = Headers.createResponseHeader(body.length, contentTypes);
-
         return Response.builder()
             .statusLine(statusLine)
             .headers(headers)
             .body(body)
+            .build();
+    }
+
+    public static Response createResponse(HttpStatus httpStatus, String redirect) {
+        StatusLine statusLine = StatusLine.createStatus(httpStatus);
+        Headers headers = Headers.createResponseHeader(redirect);
+        return Response.builder()
+            .statusLine(statusLine)
+            .headers(headers)
             .build();
     }
 
@@ -35,7 +43,9 @@ public class Response {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(header.getBytes());
-        baos.write(body);
+        if (body != null) {
+            baos.write(body);
+        }
 
         return baos.toByteArray();
     }
