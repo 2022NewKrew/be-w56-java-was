@@ -15,19 +15,6 @@ import app.model.user.User;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    // @RequestMapping(value = "/user/create", method = "GET")
-    // public HttpResponse createUser(Map<String, String> query) {
-    //     User user = new User(
-    //             query.get("userId"),
-    //             query.get("password"),
-    //             query.get("name"),
-    //             query.get("email"));
-    //     DataBase.addUser(user);
-    //     Map<String, String> headers = new HashMap<>();
-    //     headers.put("Location", "/index.html");
-    //     return new HttpResponse(headers, HttpStatus.Found);
-    // }
-
     @GetMapping(value = "/")
     public String index() {
         return "/index.html";
@@ -43,6 +30,20 @@ public class UserController {
         );
         DataBase.addUser(user);
         log.debug("add User: {} {} {} {}", user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
+        return "redirect:/index.html";
+    }
+
+    @PostMapping(value = "/user/login")
+    public String login(Map<String, String> body) {
+        String userId = body.get("userId");
+        String password = body.get("password");
+        User user = DataBase.findUserById(userId);
+        if (user == null || !user.validatePassword(password)) {
+            return "redirect:/user/login_failed.html";
+        }
+//        httpResponse.setCookie("logined", true);
+//        httpResponse.setCookie("Path", "/");
+//        httpResponse.setCookie("max-age", 100);
         return "redirect:/index.html";
     }
 }

@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -24,6 +27,7 @@ import app.http.HttpRequest;
 import app.http.HttpRequestBody;
 
 public class HttpRequestUtils {
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
     public static String parseRedirect(String url) {
         if(url.contains(REDIRECT)) {
             url = url.replace(REDIRECT, EMPTY);
@@ -81,10 +85,12 @@ public class HttpRequestUtils {
     public static HttpRequest parseInput(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String requestLine = br.readLine();
+        log.debug("request 내용: {}", requestLine);
         List<Pair> headers = new ArrayList<>();
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
             headers.add(parseHeader(line));
+            log.debug("request 내용: {}", line);
         }
         HttpHeader header = HttpHeader.of(headers);
         int length = Integer.parseInt(header.get(CONTENT_LENGTH, ZERO));

@@ -13,6 +13,7 @@ public class HttpResponse {
     private final HttpVersion version;
     private final HttpStatus status;
     private final HttpHeader headers;
+    private Cookie cookie;
     private final byte[] body;
     private final Integer bodyLength;
 

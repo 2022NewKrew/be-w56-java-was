@@ -16,4 +16,5 @@ public class Constant {
     public static final String INDEX_PATH = "/index.html";
     public static final String WEBAPP_PATH = "./webapp";
     public static final String HEADER_FORMAT = "%s: %s";
+    public static final String SET_COOKIE_FORMAT = "Set-Cookie: %s=%s; Path=%s; maxAge=%s;";
 }

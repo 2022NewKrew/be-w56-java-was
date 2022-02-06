@@ -1,13 +1,13 @@
 package app.http;
 
-import util.HttpRequestUtils.Pair;
+import static util.Constant.HEADER_FORMAT;
+import static util.Constant.NEW_LINE;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static util.Constant.HEADER_FORMAT;
-import static util.Constant.NEW_LINE;
+import util.HttpRequestUtils.Pair;
 
 public class HttpHeader {
     private final Map<String, String> headers;
@@ -27,6 +27,10 @@ public class HttpHeader {
 
     public String get(String key, String defaultValue) {
         return headers.getOrDefault(key, defaultValue);
+    }
+
+    public void set(String key, String value) {
+        headers.put(key, value);
     }
 
     public String headers() {
