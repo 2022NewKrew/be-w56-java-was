@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class AbstractKeyValueParser {
+public class BaseKeyValueParser {
 
     protected static Map<String, String> parseInternal(String values, String itemDelimiter, String keyValueDelimiter) {
         if (Strings.isNullOrEmpty(values)) {

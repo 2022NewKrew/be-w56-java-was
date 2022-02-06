@@ -1,17 +1,12 @@
 package http.request;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class HttpQueries {
+public class Queries {
     private final Map<String, String> queries;
 
-    public HttpQueries(Map<String, String> queries) {
+    Queries(Map<String, String> queries) {
         this.queries = queries;
-    }
-
-    public HttpQueries() {
-        this(new HashMap<>());
     }
 
     public String getQuery(String name) {
@@ -20,8 +15,8 @@ public class HttpQueries {
 
     @Override
     public String toString() {
-        return "HttpQueries{" +
-                "queryMap=" + queries +
+        return "Queries{" +
+                "queries=" + queries +
                 '}';
     }
 }

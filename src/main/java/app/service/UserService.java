@@ -1,6 +1,7 @@
 package app.service;
 
 import app.db.DataBase;
+import app.dto.UserLoginInfo;
 import app.model.User;
 
 public class UserService {
@@ -10,7 +11,7 @@ public class UserService {
     private UserService() {
     }
 
-    public static UserService getInstance() {
+    public synchronized static UserService getInstance() {
         if (instance == null) {
             instance = new UserService();
         }
@@ -19,5 +20,9 @@ public class UserService {
 
     public void signupUser(User user) {
         DataBase.addUser(user);
+    }
+
+    public User loginUser(UserLoginInfo info) {
+        return DataBase.findUserByLoginInfo(info);
     }
 }

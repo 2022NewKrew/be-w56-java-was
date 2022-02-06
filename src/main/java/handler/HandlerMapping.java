@@ -1,41 +1,36 @@
 package handler;
 
 import annotation.Controller;
-import annotation.RequestMapping;
 import http.request.HttpRequest;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 
 public class HandlerMapping {
-    private static final Set<Class<?>> CONTROLLERS;
+    private static final Set<HandlerMethod> HANDLER_METHODS;
     static{
-        CONTROLLERS = new Reflections(new ConfigurationBuilder()
+        HANDLER_METHODS = new HashSet<>();
+        Set<Class<?>> controllers = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage("app")))
                 .getTypesAnnotatedWith(Controller.class);
+
+        for (Class<?> controller : controllers) {
+            for (Method method : controller.getDeclaredMethods()) {
+                HANDLER_METHODS.add(new HandlerMethod(controller, method));
+            }
+        }
     }
 
-    public static HandlerMethod findHandlerMethodOf(HttpRequest httpRequest) {
-        for (Class<?> controller : CONTROLLERS) {
-            for (Method method : controller.getDeclaredMethods()) {
-                if (isHandlerMatched(method, httpRequest)) {
-                    return new HandlerMethod(controller, method);
-                }
+    public static HandlerMethod findHandlerMethodOf(HttpRequest rawHttpRequest) {
+        for (HandlerMethod handlerMethod : HANDLER_METHODS) {
+            if (handlerMethod.isHandleable(rawHttpRequest)) {
+                return handlerMethod;
             }
         }
         return null;
-    }
-
-    private static boolean isHandlerMatched(Method method, HttpRequest request) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return false;
-        }
-
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-
-        return annotation.method().equals(request.getHttpMethod()) && annotation.uri().equals(request.getHttpUri());
     }
 }
