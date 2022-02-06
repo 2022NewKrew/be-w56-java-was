@@ -25,6 +25,7 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'org.reflections:reflections:0.10.2'
 }
 
 test {
