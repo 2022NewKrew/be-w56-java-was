@@ -5,19 +5,19 @@ import java.io.IOException;
 import webserver.WebServerConfig;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.servlet.ApplicationContext;
 import webserver.servlet.FileHandleable;
 import webserver.servlet.FileHandler;
 import webserver.servlet.HttpControllable;
 import webserver.servlet.HttpHandleable;
+import webserver.servlet.RequestMapping;
 
 public class GetHandler implements HttpHandleable {
 
     private final FileHandleable fileHandleable = new FileHandler();
-    private final ApplicationContext applicationContext;
+    private final RequestMapping requestMapping;
 
-    public GetHandler(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public GetHandler(RequestMapping requestMapping) {
+        this.requestMapping = requestMapping;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class GetHandler implements HttpHandleable {
             return;
         }
 
-        HttpControllable controller = applicationContext.getHandler(request.getUri());
+        HttpControllable controller = requestMapping.getHandler(request.getUri());
         controller.call(request, response);
     }
 }

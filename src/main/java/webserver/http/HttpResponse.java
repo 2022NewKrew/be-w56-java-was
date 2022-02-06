@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.WebServerConfig;
 import webserver.util.HttpResponseUtil;
 
@@ -29,14 +31,19 @@ public class HttpResponse {
         setDateHeader();
     }
 
-    public void send() throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-        dos.writeBytes(HttpResponseUtil.responseLineString(this));
-        dos.writeBytes(HttpResponseUtil.headerString(this));
-        if (body != null && body.length > 0) {
-            dos.write(HttpResponseUtil.bodyString(this).getBytes(StandardCharsets.UTF_8));
+    public void send() {
+        try {
+            DataOutputStream dos = new DataOutputStream(out);
+            dos.writeBytes(HttpResponseUtil.responseLineString(this));
+            dos.writeBytes(HttpResponseUtil.headerString(this));
+            if (body != null && body.length > 0) {
+                dos.write(HttpResponseUtil.bodyString(this).getBytes(StandardCharsets.UTF_8));
+            }
+            dos.flush();
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(HttpResponse.class);
+            logger.error(e.getMessage());
         }
-        dos.flush();
     }
 
     private void setDateHeader() {

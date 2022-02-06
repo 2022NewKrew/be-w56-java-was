@@ -3,6 +3,7 @@ package app.user.adapter.in;
 import app.user.application.port.in.CreateUserUseCase;
 import app.user.application.port.in.SignUpUserDto;
 import app.user.domain.User;
+import app.user.domain.UserId;
 import com.google.common.net.HttpHeaders;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import webserver.util.HttpRequestUtils;
 
 public class SignUpController implements HttpControllable {
 
-    public static final String path = "/user";
+    public static final String path = "/user/create";
     private final Logger logger = LoggerFactory.getLogger(SignUpController.class);
     private final CreateUserUseCase createUserUseCase;
 
@@ -25,23 +26,17 @@ public class SignUpController implements HttpControllable {
     }
 
     public void call(HttpRequest request, HttpResponse response) {
-        if (request.getUri().startsWith(path + "/create")) {
-            logger.info("call signUp()");
-            signUp(request, response);
-        }
-    }
-
-    private void signUp(HttpRequest request, HttpResponse response) {
         Map<String, String> params = HttpRequestUtils.parseQueryString(request.getBody());
+        UserId userId = new UserId(params.get("userId"));
         SignUpUserDto signUpUserDto = new SignUpUserDto(
-            params.get("userId"),
+            userId,
             params.get("password"),
             params.get("name"),
             params.get("email")
         );
 
         User user = this.createUserUseCase.signUp(signUpUserDto);
-        logger.info("sign up :" + user.getUserId());
+        logger.info("sign up :" + user.getUserId().getValue());
         response.setStatus(HttpResponseStatus.FOUND);
         response.headers()
             .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + WebServerConfig.ENTRY_FILE);

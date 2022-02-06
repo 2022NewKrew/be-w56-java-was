@@ -9,15 +9,15 @@ import webserver.servlet.method.PostHandler;
 
 public class HttpHandler implements HttpHandleable {
 
-    private final ApplicationContext applicationContext;
+    private final RequestMapping requestMapping;
     private final Logger logger = LoggerFactory.getLogger(HttpHandler.class);
     private final HttpHandleable getHandler;
     private final HttpHandleable postHandler;
 
     private HttpHandler() {
-        this.applicationContext = ApplicationContext.getInstance();
-        this.getHandler = new GetHandler(applicationContext);
-        this.postHandler = new PostHandler(applicationContext);
+        this.requestMapping = RequestMapping.getInstance();
+        this.getHandler = new GetHandler(requestMapping);
+        this.postHandler = new PostHandler(requestMapping);
     }
 
     public static HttpHandler getInstance() {

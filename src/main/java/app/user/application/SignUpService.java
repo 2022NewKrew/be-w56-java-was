@@ -1,11 +1,11 @@
-package app.user.application.port;
+package app.user.application;
 
 import app.user.application.port.in.CreateUserUseCase;
 import app.user.application.port.in.SignUpUserDto;
 import app.user.domain.User;
 
 public class SignUpService implements CreateUserUseCase {
-
+    
     public SignUpService() {
     }
 

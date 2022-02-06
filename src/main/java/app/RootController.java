@@ -13,6 +13,6 @@ public class RootController implements HttpControllable {
 
     @Override
     public void call(HttpRequest request, HttpResponse response) {
-
+        
     }
 }

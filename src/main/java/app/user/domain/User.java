@@ -2,19 +2,23 @@ package app.user.domain;
 
 public class User {
 
-    private final String userId;
+    private final UserId userId;
     private final String password;
     private final String name;
     private final String email;
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
     }
 
-    public String getUserId() {
+    public boolean isPasswordMatch(String tryPassword) {
+        return this.password.equals(tryPassword);
+    }
+
+    public UserId getUserId() {
         return userId;
     }
 
@@ -30,9 +34,4 @@ public class User {
         return email;
     }
 
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email="
-            + email + "]";
-    }
 }
