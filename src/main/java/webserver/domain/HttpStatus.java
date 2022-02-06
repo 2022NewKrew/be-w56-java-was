@@ -1,5 +1,8 @@
 package webserver.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum HttpStatus {
     OK(200, "OK"),
     CREATED(201, "Created"),
