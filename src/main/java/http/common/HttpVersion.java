@@ -14,7 +14,7 @@ public enum HttpVersion {
 
     public static HttpVersion fromString(String version) {
         return Arrays.stream(HttpVersion.values())
-                .filter((httpVersion -> httpVersion.version.equals(version)))
+                .filter((httpHttpVersion -> httpHttpVersion.version.equals(version)))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }

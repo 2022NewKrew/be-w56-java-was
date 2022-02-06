@@ -4,7 +4,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class QueryParser extends AbstractKeyValueParser {
+public class QueryParser extends BaseKeyValueParser {
     private static final String QUERY_ITEM_DELIMITER = "&";
     private static final String QUERY_KEY_VALUE_DELIMITER = "=";
 

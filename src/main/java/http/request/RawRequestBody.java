@@ -1,10 +1,14 @@
 package http.request;
 
-public class HttpUri {
+public class RawRequestBody {
     private final String value;
 
-    public HttpUri(String value) {
+    RawRequestBody(String value) {
         this.value = value;
+    }
+
+    public static RawRequestBody empty() {
+        return new RawRequestBody("");
     }
 
     public String getValue() {
@@ -13,7 +17,7 @@ public class HttpUri {
 
     @Override
     public String toString() {
-        return "HttpUri{" +
+        return "RequestBody{" +
                 "value='" + value + '\'' +
                 '}';
     }

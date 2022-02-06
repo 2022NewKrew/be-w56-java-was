@@ -2,5 +2,12 @@ package http.request;
 
 public enum HttpMethod {
     GET,
-    POST
+    HEAD,
+    POST,
+    PUT,
+    DELETE,
+    CONNECT,
+    OPTIONS,
+    TRACE,
+    PATCH
 }

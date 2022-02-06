@@ -13,8 +13,9 @@ public enum Mime {
     WOFF(".woff", "font/woff"),
     WOFF2(".woff2", "font/woff2"),
     EOT(".eot", "application/vnd.ms-fontobject"),
-    PLAIN_TEXT(".*", "text/plain"),
-    X_URL_FORM_ENCODED(".*", "application/x-url-form-encoded");
+    JSON(".json", "application/json"),
+    X_URL_FORM_ENCODED(".*", "application/x-url-form-encoded"),
+    PLAIN_TEXT(".*", "text/plain");
 
     private final String extension;
     private final String contentType;
@@ -24,11 +25,18 @@ public enum Mime {
         this.contentType = contentType;
     }
 
-    public static Mime of(String target) {
+    public static Mime fromFileName(String fileName) {
         return Arrays.stream(Mime.values())
-                .filter((mime -> target.endsWith(mime.extension)))
+                .filter((mime -> fileName.endsWith(mime.extension)))
                 .findAny()
                 .orElse(Mime.PLAIN_TEXT);
+    }
+
+    public static Mime fromContentType(String contentType) {
+        return Arrays.stream(Mime.values())
+                .filter((mime -> mime.contentType.equals(contentType)))
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public String getContentType() {
