@@ -5,6 +5,7 @@ import model.Pair;
 import model.User;
 import model.request.Body;
 import model.request.Headers;
+import model.request.HttpLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
@@ -44,14 +45,14 @@ public class UserController {
         try {
             add(map);
         } catch (IllegalArgumentException e) {
-            list.add(new Pair(Headers.HEADER_LOCATION, "/error.html"));
+            list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/error.html").getLocation()));
             return;
         } catch (IllegalStateException e) {
-            list.add(new Pair(Headers.HEADER_LOCATION, "/user/dupId.html"));
+            list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/user/dupId.html").getLocation()));
             return;
         }
 
-        list.add(new Pair(Headers.HEADER_LOCATION, "/index.html"));
+        list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/index.html").getLocation()));
     }
 
     private void userLogin(final List<Pair> list, final Body body) {
@@ -60,12 +61,12 @@ public class UserController {
 
         final User user = dataBase.findUserById(map.get("id"));
         if (user != null && SecurePassword.verify(user.getPassword(), map.getOrDefault("password", ""))) {
-            list.add(new Pair(Headers.HEADER_LOCATION, "/index.html"));
+            list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/index.html").getLocation()));
             list.add(new Pair(Headers.HEADER_SET_COOKIE, "logined=true; Path=/"));
             return;
         }
 
-        list.add(new Pair(Headers.HEADER_LOCATION, "/user/login_failed.html"));
+        list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/user/login_failed.html").getLocation()));
         list.add(new Pair(Headers.HEADER_SET_COOKIE, "logined=false; Path=/"));
     }
 
