@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class UserService {
     private UserService() {
@@ -31,7 +32,11 @@ public class UserService {
     }
 
     public static boolean isLoginState(Request request) {
-        return request.getCookies().get("logined").equals("true");
+        String cookieValue = request.getCookies().get("logined");
+        String opBool = Optional.
+                ofNullable(cookieValue).
+                orElse("false");
+        return opBool.equals("true");
     }
 
     public static byte[] userListToByte() throws IOException, SQLException {
