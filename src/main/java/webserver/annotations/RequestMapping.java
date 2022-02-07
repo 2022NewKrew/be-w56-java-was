@@ -1,4 +1,4 @@
-package annotations;
+package webserver.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,10 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Component
-public @interface Service {
+public @interface RequestMapping {
+
+    String[] value() default {};
+
+    String[] path() default {};
+
 }

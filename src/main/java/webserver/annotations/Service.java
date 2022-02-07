@@ -1,11 +1,12 @@
-package annotations;
+package webserver.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.CONSTRUCTOR)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Autowired {
+@Component
+public @interface Service {
 }

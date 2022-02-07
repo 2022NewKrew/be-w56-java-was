@@ -1,16 +1,17 @@
-package annotations;
+package webserver.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
+@RequestMapping
+public @interface GetMapping {
 
-    String value() default  "";
+    String[] value() default  {};
 
-    String path() default  "";
+    String[] path() default  {};
 
 }
