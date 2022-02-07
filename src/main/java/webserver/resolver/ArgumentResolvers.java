@@ -3,7 +3,6 @@ package webserver.resolver;
 import com.google.common.collect.Lists;
 import http.HttpRequest;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ArgumentResolvers {
@@ -14,8 +13,11 @@ public class ArgumentResolvers {
         resolvers.add(new ControllerArgumentResolver());
     }
 
+    private ArgumentResolvers() {
+    }
+
     public static Object[] resolve(Method method, HttpRequest httpRequest) throws Exception {
-        List<Object> args = new ArrayList<>();
+        List<Object> args = Lists.newArrayList();
         for (Class<?> parameterType : method.getParameterTypes()) {
             args.add(getObject(parameterType, httpRequest));
         }
