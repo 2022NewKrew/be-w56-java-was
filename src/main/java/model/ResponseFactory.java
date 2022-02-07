@@ -11,10 +11,12 @@ public class ResponseFactory {
 
     private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
 
-    private static String parseExtension(String path) {
+    private static String getContentType(String path) {
         List<String> splitResult = List.of(path.split("\\."));
         int length = splitResult.size();
-        return splitResult.get(length - 1);
+        String extension = splitResult.get(length - 1);
+
+        return Mime.getMime(extension);
     }
 
     public static HttpResponse getResponse(HttpRequest request, HttpStatus httpStatus) throws IOException {
@@ -25,14 +27,14 @@ public class ResponseFactory {
             case OK:
                 File file = new File("./webapp" + request.getUrl());
                 byte[] body = Files.readAllBytes(file.toPath());
-                headerKeyMap.put("Content-Type", parseExtension(request.getUrl()));
+                headerKeyMap.put("Content-Type", getContentType(request.getUrl()));
                 headerKeyMap.put("Content-Length", Integer.toString(body.length));
                 return new HttpSuccessfulResponse(statusLine, new Header(headerKeyMap), body);
             case FOUND:
-                headerKeyMap.put("Location: ", "/index.html");
+                headerKeyMap.put("Location", "/index.html");
                 return new HttpRedirectionResponse(statusLine, new Header(headerKeyMap));
             default:
-                headerKeyMap.put("Content-Type", parseExtension(request.getUrl()));
+                headerKeyMap.put("Content-Type", getContentType(request.getUrl()));
                 headerKeyMap.put("Content-Length", Integer.toString(NOT_FOUNT_MESSAGE.length));
                 return new HttpClientErrorResponse(statusLine, new Header(headerKeyMap), NOT_FOUNT_MESSAGE);
         }
