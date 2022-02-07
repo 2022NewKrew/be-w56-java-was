@@ -1,12 +1,16 @@
 package mapper;
 
+import model.UserAccount;
+import webserver.session.Session;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ResponseSendDataModel {
     private final String name;
-    private Boolean login = null;
+    private Optional<Session> login = Optional.empty();
     private final Map<String, Object> dataModel;
 
     public ResponseSendDataModel(String name){
@@ -15,18 +19,11 @@ public class ResponseSendDataModel {
     }
 
     public String makeCookieString(){
-        if(!Objects.isNull(login)){
-            if(login)
-                return "Set-Cookie: logined=true; Path=/";
-
-            return "Set-Cookie: logined=false; Path=/";
-        }
-        
-        return "";
+        return login.map(session -> "Set-Cookie: id=" + session.getSessionId() + "; max-age:" + session.getMaxAge() + "; Path=/").orElse("");
     }
 
-    public void setLogin(Boolean isLogin){
-        login = isLogin;
+    public void setLogin(Optional<Session> userAccount){
+        login = userAccount;
     }
 
     public String getName() {

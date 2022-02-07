@@ -13,6 +13,14 @@ public class Session {
         this.userAccount = userAccount;
     }
 
+    public int getMaxAge(){
+        if(validTime.isAfter(LocalDateTime.now())){
+            return 18000;
+        }
+
+        return 0;
+    }
+
     public void invalidate(){
         validTime = LocalDateTime.now();
     }

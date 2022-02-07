@@ -63,4 +63,8 @@ public class HttpRequest {
     public Map<String, String> getBody() {
         return httpRequestBody.getBodyMap();
     }
+
+    public HttpRequestHeader getHeader() {
+        return httpRequestHeader;
+    }
 }
