@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class StartLine {
     private StartLine(HttpMethod httpMethod, String url, Map<String, String> query, String httpVersion) {
         this.httpMethod = httpMethod;
         this.url = url;
-        this.query = query;
+        this.query = Collections.unmodifiableMap(query);
         this.httpVersion = httpVersion;
     }
 
