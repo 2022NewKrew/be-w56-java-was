@@ -1,5 +1,6 @@
 package webserver.controller;
 
+import webserver.ModelAndView;
 import webserver.Request;
 import webserver.Response;
 
@@ -14,7 +15,9 @@ public class StaticFileController{
         return instance;
     }
 
-    public String control(Request request, Response response) throws IOException {
-        return request.getUri();
+    public ModelAndView control(Request request, Response response) throws IOException {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName(request.getUri());
+        return mv;
     }
 }

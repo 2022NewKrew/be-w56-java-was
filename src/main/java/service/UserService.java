@@ -1,10 +1,13 @@
 package service;
 
 import dto.UserCreateDto;
+import dto.UserResponseDto;
 import dto.mapper.UserMapper;
 import model.User;
 import model.repository.UserRepository;
 import model.repository.UserRepositoryList;
+
+import java.util.List;
 
 public class UserService {
     private static final UserService instance = new UserService();
@@ -19,6 +22,10 @@ public class UserService {
 
     public void create(UserCreateDto userCreateDto){
         userRepository.save(UserMapper.INSTANCE.toEntityFromSaveDto(userCreateDto));
+    }
+
+    public List<UserResponseDto> findAll(){
+        return UserMapper.INSTANCE.toDtoList(userRepository.findAll());
     }
 
     public Boolean login(String stringId, String password){

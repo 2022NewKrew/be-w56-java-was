@@ -13,12 +13,12 @@ public class HandlerMapper {
     private static final Logger log = LoggerFactory.getLogger(HandlerMapper.class);
     private static final StaticFileController staticFileController = StaticFileController.getInstance();
 
-    public String map(Request request, Response response) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public ModelAndView map(Request request, Response response) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         for(Class cls : ReflectionUtils.findAllClasses("webserver.controller")){
             for(Method method : cls.getDeclaredMethods()){
                 RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
                 if(annotation!=null && request.getUri().equals(annotation.value()) && request.getMethod().equals(annotation.method())){
-                    return (String)method.invoke(cls.getMethod("getInstance").invoke(null), request, response);
+                    return (ModelAndView)method.invoke(cls.getMethod("getInstance").invoke(null), request, response);
                 }
             }
         }

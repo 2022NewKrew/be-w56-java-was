@@ -3,6 +3,7 @@ package webserver.controller;
 import dto.UserCreateDto;
 import service.UserService;
 import util.annotation.RequestMapping;
+import webserver.ModelAndView;
 import webserver.Request;
 import webserver.Response;
 
@@ -18,24 +19,36 @@ public class UserController {
 
 
     @RequestMapping(value="/users/create", method="GET")
-    public String createByGet(Request request, Response response) {
+    public ModelAndView createByGet(Request request, Response response) {
         userService.create(UserCreateDto.builder()
                 .stringId(request.getParameter("stringId"))
                 .password(request.getParameter("password"))
                 .name(request.getParameter("name"))
                 .email(request.getParameter("email"))
                 .build());
-        return "redirect:/index.html";
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("redirect:/index.html");
+        return mv;
     }
 
     @RequestMapping(value="/users", method="POST")
-    public String createByPost(Request request, Response response) {
+    public ModelAndView createByPost(Request request, Response response) {
         userService.create(UserCreateDto.builder()
                 .stringId(request.getParameter("stringId"))
                 .password(request.getParameter("password"))
                 .name(request.getParameter("name"))
                 .email(request.getParameter("email"))
                 .build());
-        return "redirect:/index.html";
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("redirect:/index.html");
+        return mv;
+    }
+
+    @RequestMapping(value="/user/list", method="GET")
+    public ModelAndView findAll(Request request, Response response) {
+        ModelAndView mv = new ModelAndView();
+        mv.addAttribute("users", userService.findAll());
+        mv.setViewName("/user/list.html");
+        return mv;
     }
 }
