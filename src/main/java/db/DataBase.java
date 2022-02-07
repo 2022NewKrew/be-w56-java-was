@@ -10,6 +10,11 @@ import model.User;
 public class DataBase {
     private static Map<String, User> users = Maps.newHashMap();
 
+    static {
+        User user = new User("jaden.dev", "123", "허홍준", "jaden.dev@kakaocorp.com");
+        users.put(user.getUserId(), user);
+    }
+
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
     }
