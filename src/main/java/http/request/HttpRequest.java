@@ -48,7 +48,6 @@ public class HttpRequest {
         } catch (IOException e) {
             throw new IOException("failed to read HttpRequest");
         }
-
         return new HttpRequest(requestLine, requestHeader, requestBody);
     }
 

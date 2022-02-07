@@ -25,6 +25,9 @@ public class ControllerContainer {
      * default controller = MainController
      */
     public static HttpResponse map(HttpRequest request) throws IOException {
+        if (request == null) {
+            throw new IOException("HttpRequest is null. (failed to read request)");
+        }
         String url = request.line().path();
         String[] tokens = url.split("/");
         String urlKey = "";

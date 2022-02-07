@@ -5,6 +5,8 @@ import util.HttpRequestUtils;
 import java.util.Map;
 
 public class HttpRequestLine {
+    private static final String DEFAULT_REQUEST = "GET / HTTP/1.1";
+
     private final String method;
     private final String path;
     private final Map<String, String> queryString;
@@ -17,7 +19,10 @@ public class HttpRequestLine {
         this.httpVersion = httpVersion;
     }
 
-    public static HttpRequestLine parseRequestLine(final String request) {
+    public static HttpRequestLine parseRequestLine(String request) {
+        if (request == null) {
+            request = DEFAULT_REQUEST;
+        }
         String[] tokens = request.split(" ");
         Map<String, String> queryString = null;
         String path = tokens[1];
