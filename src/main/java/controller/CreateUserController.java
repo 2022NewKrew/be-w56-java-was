@@ -12,12 +12,11 @@ import java.util.Map;
 public class CreateUserController implements Controller {
 
 
-
     @Override
     public void service(HttpRequest request, HttpResponse response) {
-        HttpMethod method = request.getRequestLine().getHttpMethod();
+        HttpMethod httpMethod = request.getRequestLine().getHttpMethod();
 
-        if (method.isPOST()) {
+        if (httpMethod.isPOST()) {
             doPost(request, response);
         }
     }
