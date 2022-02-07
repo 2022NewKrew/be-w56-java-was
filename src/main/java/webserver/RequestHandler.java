@@ -19,11 +19,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
-public class RequestHandler {
+public class RequestHandler implements Runnable{
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final UrlMapper urlMapper = new UrlMapper();
+    private static final UrlMapper urlMapper = new UrlMapper();
+    private final Socket socket;
 
-    public void sendResponseMessage(Socket socket){
+    public RequestHandler(Socket socket) {
+        this.socket = socket;
+    }
+
+    @Override
+    public void run(){
         log.debug("New Client Connect! Connected IP : {}, Port : {}", socket.getInetAddress(),
                 socket.getPort());
 

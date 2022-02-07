@@ -31,16 +31,6 @@ public class UserAccountNoDbUseRepository implements Repository<UserAccount, Use
         return new ArrayList<>(USER_ID_USER_ACCOUNT_DB.values());
     }
 
-    @Override
-    public void delete(String id) {
-
-    }
-
-    @Override
-    public void update(UserAccountDTO dto) {
-
-    }
-
     public void clearStore() {
         USER_ID_USER_ACCOUNT_DB.clear();
     }

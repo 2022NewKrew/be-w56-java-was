@@ -13,12 +13,10 @@ public class WebServerSocketHandler {
     private static final Logger log = LoggerFactory.getLogger(WebServerSocketHandler.class);
     private final int port;
     private final ExecutorService executorService;
-    private final RequestHandler requestHandler;
 
     public WebServerSocketHandler(int port){
         this.port = port;
         executorService = Executors.newCachedThreadPool();
-        requestHandler = new RequestHandler();
     }
 
     public void run(){
@@ -27,8 +25,8 @@ public class WebServerSocketHandler {
 
             Socket socket;
             while((socket = serverSocket.accept()) != null){
-                Socket finalSocket = socket;
-                executorService.execute(() -> requestHandler.sendResponseMessage(finalSocket));
+                RequestHandler requestHandler = new RequestHandler(socket);
+                executorService.execute(requestHandler);
             }
         } catch (IOException e) {
             e.printStackTrace();
