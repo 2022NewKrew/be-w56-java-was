@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 
+import static util.HttpCookieUtils.ATTR_DELIMITER;
+
 public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
 
@@ -62,7 +64,7 @@ public class Response {
             dos.writeBytes("Set-Cookie: ");
 
             for(String keyValueStr : updateCookieList) {
-                dos.writeBytes(keyValueStr + HttpCookie.ATTR_DELIMITER + " ");
+                dos.writeBytes(keyValueStr + ATTR_DELIMITER + " ");
             }
 
             dos.writeBytes("Path=/");
