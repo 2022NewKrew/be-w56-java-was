@@ -2,28 +2,31 @@ package springmvc.controller;
 
 import springmvc.db.DataBase;
 import model.User;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
 
 import java.util.Map;
 
-public class LoginController implements Controller {
+public class LoginController extends Controller {
 
     @Override
-    public String doGet(Map<String, String> param, Map<String, String> sessionCookie) {
-        if (sessionCookie.getOrDefault("logined", "false").equals("true")){
+    public String doGet(HttpRequest httpRequest, HttpResponse httpResponse) {
+        if (httpRequest.getCookies().getOrDefault("logined", "false").equals("true")){
             return "redirect:/index.html";
         }
         return "redirect:/user/login.html";
     }
 
     @Override
-    public String doPost(Map<String, String> param, Map<String, String> body, Map<String, String> sessionCookie) {
+    public String doPost(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
+            Map<String, String> body = httpRequest.getBody();
             User user = findUser(body.get("userId"));
             validatePassword(user, body.get("password"));
-            sessionCookie.put("logined", "true");
+            httpResponse.addCookie("logined", "true");
             return "redirect:/index.html";
         } catch (Exception e) {
-            sessionCookie.put("logined", "false");
+            httpResponse.addCookie("logined", "false");
             return "redirect:/user/login_failed.html";
         }
     }

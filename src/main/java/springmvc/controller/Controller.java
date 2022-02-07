@@ -1,9 +1,21 @@
 package springmvc.controller;
 
-import java.util.Map;
+import webserver.HttpMethod;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
 
-public interface Controller {
+public abstract class Controller {
 
-    public String doGet(Map<String, String> param, Map<String, String> sessionCookie);
-    public String doPost(Map<String, String> param, Map<String, String> body, Map<String, String> sessionCookie);
+    public String doService(HttpRequest httpRequest, HttpResponse httpResponse) {
+        if (httpRequest.getMethod().equals(HttpMethod.GET)) {
+            doGet(httpRequest, httpResponse);
+        } else if (httpRequest.getMethod().equals(HttpMethod.POST)) {
+            doPost(httpRequest, httpResponse);
+        }
+        return "";
+    }
+
+    protected abstract String doGet(HttpRequest httpRequest, HttpResponse httpResponse);
+
+    protected abstract String doPost(HttpRequest httpRequest, HttpResponse httpResponse);
 }

@@ -24,7 +24,7 @@ class HandlerMappingTest {
         String version = "HTTP/1.1";
         Map<String, String> headers = new HashMap<>();
 
-        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers, "");
+        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers);
 
         // When
         Optional<Controller> controller = HandlerMapping.getController(httpRequest);
@@ -42,7 +42,7 @@ class HandlerMappingTest {
         String version = "HTTP/1.1";
         Map<String, String> headers = new HashMap<>();
 
-        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers, "");
+        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers);
 
         // When
         Optional<Controller> controller = HandlerMapping.getController(httpRequest);
