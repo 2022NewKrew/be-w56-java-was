@@ -1,12 +1,92 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import webserver.exception.BadRequestException;
+import webserver.http.HttpCookie;
+import webserver.http.HttpMethod;
+import webserver.http.HttpRequest;
 
 public class HttpRequestUtils {
+
+    private static final String END_OF_REQUEST_LINE = "";
+    private static final String REQUEST_LINE_DELIMITER = " ";
+    private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
+    private static final String HEADER_VALUE_DELIMITER = ",";
+
+    public static HttpRequest parseRequest(BufferedReader br) throws IOException {
+        // REQUEST LINE
+        String requestLine = br.readLine();
+        String[] requestLineParams = requestLine.split(REQUEST_LINE_DELIMITER);
+        validateRequestLine(requestLineParams);
+        HttpMethod method = HttpMethod.valueOf(requestLineParams[0]);
+        String requestURI = requestLineParams[1];
+        String version = requestLineParams[2];
+
+        // REQUEST HEADER
+        Map<String, List<String>> headers = readRequestHeaderFromBuffer(br);
+        Map<String, HttpCookie> cookies = getCookieFromHeaders(headers);
+
+        // REQUEST BODY
+        int contentLength = getContentLength(headers);
+        String body = readRequestBodyFromBuffer(br, contentLength);
+
+        return new HttpRequest(method, requestURI, version, headers, cookies, body);
+    }
+
+    private static void validateRequestLine(String[] requestLineParams) {
+        if (requestLineParams.length != 3) {
+            throw new BadRequestException("에러: 요청 헤더가 적절하지 않습니다.");
+        }
+    }
+
+    private static Map<String, List<String>> readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
+        Map<String, List<String>> headers = new HashMap<>();
+        String inputLine;
+        while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
+            String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
+
+            List<String> values = Arrays.stream(inputs[1].split(HEADER_VALUE_DELIMITER))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+
+            headers.put(inputs[0], values);
+        }
+        return headers;
+    }
+
+    private static Map<String, HttpCookie> getCookieFromHeaders(Map<String, List<String>> headers) {
+        if (headers.containsKey("Cookie")) {
+            Map<String, HttpCookie> cookies = new HashMap<>();
+            List<String> cookie = headers.get("Cookie");
+            String cookieString = cookie.get(0);
+            Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(cookieString);
+            cookiesMap.forEach((k, v) -> cookies.put(k, new HttpCookie(k, v)));
+            return cookies;
+        }
+        return Collections.emptyMap();
+    }
+
+    private static int getContentLength(Map<String, List<String>> headers) {
+        if (headers.containsKey("Content-Length")) {
+            List<String> values = headers.get("Content-Length");
+            return Integer.parseInt(values.get(0));
+        }
+        return 0;
+    }
+
+    private static String readRequestBodyFromBuffer(BufferedReader br, int contentLength) throws IOException {
+        String body = IOUtils.readData(br, contentLength);
+        return URLDecoder.decode(body, StandardCharsets.UTF_8);
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
