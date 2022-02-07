@@ -10,6 +10,7 @@ import webserver.exception.*;
 import webserver.http.*;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
+import webserver.repository.MemoRepository;
 import webserver.repository.UserRepository;
 
 import java.io.DataOutputStream;
@@ -22,7 +23,9 @@ public enum RequestMappingInfo {
     ROOT("/", HttpMethod.GET) {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
-            byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
+            Iterable<Memo> memos = memoRepository.findAll();
+
+            byte[] body = renderDynamicTemplate(memos, "/index.html").getBytes();
 
             return HttpResponse.builder(dos)
                     .status(HttpStatus.OK)
@@ -83,15 +86,35 @@ public enum RequestMappingInfo {
                     .body(body)
                     .build();
         }
+    },
+    NEW_MEMO("/memo/create", HttpMethod.POST) {
+        @Override
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
+            Map<String, HttpCookie> cookies = request.cookies();
+            HttpCookie auth = cookies.get("auth");
+            if (auth == null) {
+                throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
+            }
+            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), auth.getValue());
+            Memo memo = memoRepository.save(memoCreateRequest.toEntity());
+            log.info("New memo created : {}", memo);
+
+            return HttpResponse.builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .header("Location", "/")
+                    .build();
+        }
     };
 
     private static final Logger log = LoggerFactory.getLogger(RequestMappingInfo.class);
 
     private static final Map<String, RequestMappingInfo> requestMap;
     private static final UserRepository userRepository;
+    private static final MemoRepository memoRepository;
 
     static {
         userRepository = new UserRepository();
+        memoRepository = new MemoRepository();
         requestMap = new HashMap<>();
         for (RequestMappingInfo value : values()) {
             requestMap.put(value.path, value);
