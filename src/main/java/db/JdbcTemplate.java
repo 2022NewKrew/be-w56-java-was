@@ -63,7 +63,7 @@ public class JdbcTemplate {
                 setParams(statement, params);
                 return f.apply(statement);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Failed to run statement " + sql, e);
             }
         });
     }
@@ -81,7 +81,7 @@ public class JdbcTemplate {
         try (Connection connection = DriverManager.getConnection(url, user, pass)) {
             return f.apply(connection);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to establish DB connection", e);
         }
     }
 
