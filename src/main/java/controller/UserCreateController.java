@@ -29,6 +29,8 @@ public class UserCreateController implements Controller {
 
     @Override
     public HttpResponse run(HttpRequest request) throws IOException {
+        // TODO - User DB에 저장
+        // TODO - index 파일 다운로드 되는 거 해결하기 (Why..?)
         File file = new File("./webapp/index.html");
         if (!file.exists()) {
             return HttpResponse.of(HttpStatus.NOT_FOUND, NOT_FOUNT_MESSAGE, Mime.getMime(""));
