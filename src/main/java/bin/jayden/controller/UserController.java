@@ -30,7 +30,7 @@ public class UserController {
         User user = userService.getLoginUser(userId, password);
         if (user != null) {
             session.addAttribute("sessionUser", user);
-            return "redirect:/index.html";
+            return "redirect:/";
         }
         return "redirect:/user/login_failed.html";
     }

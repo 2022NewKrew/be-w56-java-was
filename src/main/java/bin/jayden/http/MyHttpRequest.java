@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyHttpRequest {
-    private final static String DEFAULT_PAGE = "/index.html";
+    private final static String DEFAULT_PAGE = "/";
     private final String method;
     private final String path;
     private final MyHttpResponseHeader header;

@@ -47,7 +47,7 @@ public class UserService {
         int count = repository.insertUser(user);
         if (count > 0) {
             log.info("new User (userId : {}, name : {})", user.getUserId(), user.getName());
-            return "redirect:/index.html";
+            return "redirect:/";
         } else {
             return "중복된 ID입니다.</br><button onclick=\"history.back()\">뒤로가기</button>\n";
         }

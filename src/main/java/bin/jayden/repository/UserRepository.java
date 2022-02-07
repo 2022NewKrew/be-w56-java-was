@@ -13,20 +13,22 @@ public class UserRepository {
         this.jdbc = jdbc;
     }
 
-    public List<User> getUserList() {
-        return jdbc.queryObjectList("Select userId,password,name,email from User", getUserRowMapper());
-    }
-
     public int insertUser(User user) {
         return jdbc.update("insert into User(userId, password, name, email) values ('" + user.getUserId() + "','" + user.getPassword() + "','" + user.getPassword() + "','" + user.getEmail() + "')");
     }
 
+    public List<User> getUserList() {
+        return jdbc.queryObjectList("Select id,userId,password,name,email from User", getUserRowMapper());
+    }
+
+
     public User getUser(String userId, String password) {
-        return jdbc.queryObject("SELECT userId,password,name,email from User where userId = " + userId + " and password = " + password, getUserRowMapper());
+        return jdbc.queryObject("SELECT id,userId,password,name,email from User where userId = " + userId + " and password = " + password, getUserRowMapper());
     }
 
     private MyRowMapper<User> getUserRowMapper() {
         return resultSet -> new User(
+                resultSet.getLong("id"),
                 resultSet.getString("userId"),
                 resultSet.getString("password"),
                 resultSet.getString("name"),

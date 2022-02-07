@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class Router {
-    private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
+    private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지입니다.".getBytes();
     private static final String REDIRECT = "redirect:";
     private static final Map<String, Method> postRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getPostRoutingMap());
     private static final Map<String, Method> getRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getGetRoutingMap());
@@ -42,7 +42,6 @@ public class Router {
         MyHttpResponse.Builder responseBuilder = new MyHttpResponse.Builder();
         Method responseMethod = getRoutingMap.get(request.getPath());
         if (responseMethod != null) {
-
             routing(responseMethod, request, responseBuilder);
 
         } else { //라우팅 맵에 URL에 해당하는 리소스를 찾아본다.
