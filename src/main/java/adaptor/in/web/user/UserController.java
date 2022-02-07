@@ -5,6 +5,7 @@ import adaptor.in.web.exception.UriNotFoundException;
 import adaptor.in.web.model.RequestPath;
 import application.exception.user.AlreadyExistingUserException;
 import application.exception.user.NonExistsUserIdException;
+import application.in.session.SetSessionUseCase;
 import application.in.user.LoginUseCase;
 import application.in.user.SignUpUserUseCase;
 import domain.user.User;
@@ -21,10 +22,12 @@ import java.util.Map;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final SetSessionUseCase setSessionUseCase;
     private final SignUpUserUseCase signUpUserUseCase;
     private final LoginUseCase loginUseCase;
 
-    public UserController(SignUpUserUseCase signUpUserUseCase, LoginUseCase loginUseCase) {
+    public UserController(SetSessionUseCase setSessionUseCase, SignUpUserUseCase signUpUserUseCase, LoginUseCase loginUseCase) {
+        this.setSessionUseCase = setSessionUseCase;
         this.signUpUserUseCase = signUpUserUseCase;
         this.loginUseCase = loginUseCase;
     }
@@ -81,17 +84,18 @@ public class UserController {
         try {
             boolean result = loginUseCase.login(userId, password);
             if (result) {
+                Long sessionId = setSessionUseCase.setSession("loginId", userId);
+
                 return HttpResponse.builder()
                         .status(HttpStatus.FOUND)
                         .setHeader("Location", ServerConfig.getAuthority() + "/index.html")
-                        .setCookie("logined=true; Path=/")
+                        .setCookie("SESSION_ID=" + sessionId + "; Path=/")
                         .build();
             }
 
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .setHeader("Location", ServerConfig.getAuthority() + "/user/login_failed.html")
-                    .setCookie("logined=false; Path=/")
                     .build();
         } catch (NonExistsUserIdException e) {
             log.debug(e.getMessage());
@@ -99,7 +103,6 @@ public class UserController {
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .setHeader("Location", ServerConfig.getAuthority() + "/user/login_failed.html")
-                    .setCookie("logined=false; Path=/")
                     .build();
         }
     }

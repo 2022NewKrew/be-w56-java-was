@@ -23,6 +23,10 @@ public class HttpRequest {
         return requestLine.getRequestMethod();
     }
 
+    public String getHeader(String key) {
+        return httpHeader.getHeader(key);
+    }
+
     public Path getRequestPath() {
         return requestLine.getPath();
     }

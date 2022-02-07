@@ -18,18 +18,6 @@ public class HttpResponse {
         this.responseBody = responseBody;
     }
 
-    //    public HttpResponse(ResponseLine responseLine, HttpHeader httpHeader) {
-//        this.responseLine = responseLine;
-//        this.httpHeader = httpHeader;
-//    }
-//
-//    public HttpResponse(ResponseLine responseLine, HttpHeader httpHeader, HttpBody responseBody) {
-//        this.responseLine = responseLine;
-//        this.httpHeader = httpHeader;
-//        httpHeader.addHeader(Pair.of("Content-Length", String.valueOf(responseBody.length())));
-//        this.responseBody = responseBody;
-//    }
-
     public ResponseLine getResponseLine() {
         return responseLine;
     }
