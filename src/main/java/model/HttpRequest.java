@@ -65,8 +65,4 @@ public class HttpRequest {
     public String getUrl() {
         return startLine.getUrl();
     }
-
-    public String getHeader(String key) {
-        return header.get(key);
-    }
 }
