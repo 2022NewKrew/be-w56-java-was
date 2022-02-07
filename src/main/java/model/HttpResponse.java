@@ -1,48 +1,23 @@
 package model;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpResponse {
 
-    private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
-    private static String parseExtension(String path) {
-        List<String> splitResult = List.of(path.split("\\."));
-        int length = splitResult.size();
-        return splitResult.get(length - 1);
-    }
+    public static HttpResponse of(HttpStatus httpStatus, byte[] body, String mime) {
 
-    public static HttpResponse of(String path) {
-        int statusCode = HttpStatus.OK.getCode();
-        String statusMessage = HttpStatus.OK.getMessage();
-        byte[] body = {};
-
-        try {
-            File file = new File("./webapp" + path);
-            if (file.exists()) {
-                body = Files.readAllBytes(file.toPath());
-            } else {
-                body = NOT_FOUNT_MESSAGE;
-                statusCode = HttpStatus.NOT_FOUND.getCode();
-                statusMessage = HttpStatus.NOT_FOUND.getMessage();
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-
-        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), statusCode, statusMessage);
+        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
+                httpStatus.getMessage());
         Map<String, String> headerKeyMap = Map.of(
-                "Content-Type", Mime.getMime(parseExtension(path)),
+                "Content-Type", mime,
                 "Content-Length", Integer.toString(body.length)
         );
         Header header = new Header(headerKeyMap);

@@ -1,5 +1,8 @@
 package webserver;
 
+import controller.Controller;
+import controller.ControllerType;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -23,7 +26,9 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream();) {
             HttpRequest httpRequest = HttpRequest.of(in);
-            HttpResponse httpResponse = HttpResponse.of(httpRequest.getPath());
+            Controller controller = ControllerType.getControllerType(httpRequest.getPath());
+
+            HttpResponse httpResponse = controller.run(httpRequest);
             httpResponse.sendResponse(connection);
         } catch (IOException e) {
             log.error(e.getMessage());
