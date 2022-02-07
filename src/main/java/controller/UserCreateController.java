@@ -1,11 +1,14 @@
 package controller;
 
+import db.DataBase;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import model.HttpRequest;
 import model.HttpResponse;
 import model.HttpStatus;
 import model.ResponseFactory;
+import model.User;
 
 public class UserCreateController implements Controller {
 
@@ -26,8 +29,10 @@ public class UserCreateController implements Controller {
 
     @Override
     public HttpResponse run(HttpRequest request) throws IOException {
-        // TODO - User DB에 저장
-        // TODO - index 파일 다운로드 되는 거 해결하기 (Why..?)
+        Map<String, String> queries = request.getQuery();
+        User user = new User(queries.get("userId"), queries.get("password"), queries.get("name"), queries.get("email"));
+
+        DataBase.addUser(user);
         return ResponseFactory.getResponse(request, HttpStatus.FOUND);
     }
 }

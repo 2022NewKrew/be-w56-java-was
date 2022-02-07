@@ -48,6 +48,10 @@ public class StartLine {
         return url;
     }
 
+    public Map<String, String> getQuery() {
+        return query;
+    }
+
     @Override
     public String toString() {
         return "StartLine{" +
