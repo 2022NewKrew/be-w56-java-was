@@ -21,7 +21,7 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
 //    private final UserRepository userRepository = MemoryUserRepository.getInstance();
-    private final UserRepository userRepository = new DbUserRepository();
+    private final UserRepository userRepository = DbUserRepository.getInstance();
 
     public AppResponse getCreate(HttpRequest httpRequest) {
         String userId = httpRequest.getQueryStringParams(ATTRIBUTE_USER_ID);
