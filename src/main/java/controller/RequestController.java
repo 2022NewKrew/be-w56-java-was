@@ -1,6 +1,5 @@
 package controller;
 
-import exception.ExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.ResponseHeader;
@@ -8,7 +7,6 @@ import model.SignUpService;
 import model.builder.NormalRequestBuilder;
 import model.builder.PostUserCreateBuilder;
 import model.builder.PostUserLoginBuilder;
-import model.builder.ResponseBuilder;
 
 @Slf4j
 public class RequestController {
@@ -22,16 +20,15 @@ public class RequestController {
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 
-        ResponseBuilder responseBuilder = new NormalRequestBuilder();
-
         if (uri.equals("/user/create") && method.equals("POST")) {
             SignUpService.signup(requestHeader);
-            responseBuilder = new PostUserCreateBuilder();
+            return new PostUserCreateBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/login") && method.equals("POST")) {
-            responseBuilder = new PostUserLoginBuilder();
+            return new PostUserLoginBuilder().build(requestHeader);
         }
-        return responseBuilder.build(requestHeader);
+
+        return new NormalRequestBuilder().build(requestHeader);
     }
 }
