@@ -26,14 +26,11 @@ public class ConnectionManager {
     private final String username;
     private final String password;
 
-    public static synchronized ConnectionManager getInstance() throws SQLException {
-        if (instance == null) {
-            init();
-        }
+    public static ConnectionManager getInstance() {
         return instance;
     }
 
-    private static void init() throws SQLException {
+    static {
         Properties properties = new Properties();
         try {
             FileInputStream is = new FileInputStream(DB_PROPERTIES_PATH);
@@ -46,7 +43,12 @@ public class ConnectionManager {
         String username = properties.getProperty(DB_USERNAME_PROPERTY_KEY);
         String password = properties.getProperty(DB_PASSWORD_PROPERTY_KEY);
 
-        instance = new ConnectionManager(url, username, password);
+        try {
+            instance = new ConnectionManager(url, username, password);
+        } catch (SQLException e) {
+            log.error("fail to initialize while create new ConnectionManager: {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private ConnectionManager(String url, String username, String password) throws SQLException {
