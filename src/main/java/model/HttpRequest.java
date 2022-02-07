@@ -1,16 +1,23 @@
 package model;
 
+import com.google.common.base.Strings;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 public class HttpRequest {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final String BODY_SEPARATOR = "";
+
+    private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
     private static int getBodyIndex(List<String> requestLineList) {
         for (int i = 0; i < requestLineList.size(); i++) {
@@ -21,30 +28,27 @@ public class HttpRequest {
         return requestLineList.size();
     }
 
-    private static List<String> getHeaderLineList(List<String> requestLineList, int bodyIndex) {
-        List<String> headerLineList = new ArrayList<>();
-        for (int i = 1; i < bodyIndex; i++) {
-            headerLineList.add(requestLineList.get(i));
+    public static List<String> convertToStringList(BufferedReader bufferedReader) throws IOException {
+        List<String> requestLineList = new ArrayList<>();
+        String line = bufferedReader.readLine();
+        while (!Strings.isNullOrEmpty(line)) {
+            log.debug("header: {}", line);
+
+            requestLineList.add(line);
+            line = bufferedReader.readLine();
         }
-        return headerLineList;
+        return requestLineList;
     }
 
-    private static List<String> getBodyLineList(List<String> requestLineList, int bodyIndex) {
-        List<String> bodyLineList = new ArrayList<>();
-        for (int i = bodyIndex + 1; i < requestLineList.size(); i++) {
-            bodyLineList.add(requestLineList.get(i));
-        }
-        return bodyLineList;
-    }
-
-    public static HttpRequest of(List<String> requestLineList) {
+    public static HttpRequest of(InputStream in) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        List<String> requestLineList = convertToStringList(bufferedReader);
         StartLine startLine = StartLine.of(requestLineList.get(0));
 
         int bodyIndex = getBodyIndex(requestLineList);
-        Header header = Header.of(getHeaderLineList(requestLineList, bodyIndex));
-        Body body = Body.of(getBodyLineList(requestLineList, bodyIndex));
-
-        log.debug("HttpRequest: \n{}\n {}\n {}", startLine, header, body);
+        Header header = Header.of(requestLineList.subList(1, bodyIndex));
+        Body body = Body.of(requestLineList.subList(Math.min(bodyIndex + 1, requestLineList.size()),
+                requestLineList.size()));
 
         return new HttpRequest(startLine, header, body);
     }
@@ -54,16 +58,17 @@ public class HttpRequest {
     private final Body body;
 
     private HttpRequest(StartLine startLine, Header header, Body body) {
+        log.debug("HttpRequest: \n{}\n {}\n {}", startLine, header, body);
         this.startLine = startLine;
         this.header = header;
         this.body = body;
     }
 
-    public String getPath() {
-        return startLine.getRequestTarget();
+    public String getUrl() {
+        return startLine.getUrl();
     }
 
-    public String get(String key) { // TODO - 명칭 알아낸 다음 키 대신 다른 이름 쓰기
-        return header.get(key);
+    public Map<String, String> getQuery() {
+        return startLine.getQuery();
     }
 }

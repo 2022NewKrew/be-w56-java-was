@@ -1,8 +1,11 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
 
@@ -21,12 +24,22 @@ public class Header {
 
     private final Map<String, String> header;
 
-    private Header(Map<String, String> header) {
-        this.header = header;
+    public Header(Map<String, String> header) {
+        this.header = Collections.unmodifiableMap(header);
     }
 
     public String get(String key) {
         return header.get(key);
+    }
+
+    public List<String> messageList() {
+        List<String> messageList = new ArrayList<>();
+        for (Entry<String, String> entry : header.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            messageList.add(key + ": " + value);
+        }
+        return messageList;
     }
 
     @Override

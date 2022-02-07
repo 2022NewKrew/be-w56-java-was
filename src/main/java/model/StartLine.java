@@ -1,32 +1,63 @@
 package model;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class StartLine {
+
+    private static Map<String, String> parseQuery(String target) {
+        if (!target.contains("?"))
+            return new HashMap<>();
+
+        Map<String, String> queryMap = new HashMap<>();
+        String parseString = List.of(target.split("\\?")).get(1);
+
+        List<String> queries = List.of(parseString.split("&"));
+        for (String query : queries) {
+            List<String> splitQuery = List.of(query.split("="));
+            queryMap.put(splitQuery.get(0), splitQuery.get(1));
+        }
+        return queryMap;
+    }
+
+    private static String parseUrl(String target) {
+        return List.of(target.split("\\?")).get(0);
+    }
 
     public static StartLine of(String startLine) {
         String[] token = startLine.split(" ");
 
-        return new StartLine(token[0], token[1], token[2]);
+        return new StartLine(HttpMethod.fromString(token[0]), parseUrl(token[1]), parseQuery(token[1]), token[2]);
     }
 
-    private final String httpMethod; // TODO - 메소드 같은 경우는 enum으로 처리해도 괜찮을 것 같음
-    private final String requestTarget;
+    private final HttpMethod httpMethod;
+    private final String url;
+    private final Map<String, String> query;
     private final String httpVersion;
 
-    private StartLine(String httpMethod, String requestTarget, String httpVersion) {
+    private StartLine(HttpMethod httpMethod, String url, Map<String, String> query, String httpVersion) {
         this.httpMethod = httpMethod;
-        this.requestTarget = requestTarget;
+        this.url = url;
+        this.query = Collections.unmodifiableMap(query);
         this.httpVersion = httpVersion;
     }
 
-    public String getRequestTarget() {
-        return requestTarget;
+    public String getUrl() {
+        return url;
+    }
+
+    public Map<String, String> getQuery() {
+        return query;
     }
 
     @Override
     public String toString() {
         return "StartLine{" +
-                "httpMethod='" + httpMethod + '\'' +
-                ", requestTarget='" + requestTarget + '\'' +
+                "httpMethod=" + httpMethod +
+                ", url='" + url + '\'' +
+                ", query=" + query +
                 ", httpVersion='" + httpVersion + '\'' +
                 '}';
     }
