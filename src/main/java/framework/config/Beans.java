@@ -1,8 +1,8 @@
 package framework.config;
 
-import domain.UserService;
-import controller.UserController;
-import db.DataBase;
+import application.domain.UserService;
+import application.controller.UserController;
+import application.db.DataBase;
 
 public class Beans {
 

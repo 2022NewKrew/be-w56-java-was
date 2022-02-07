@@ -1,11 +1,11 @@
-package db;
+package application.db;
 
 import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import domain.User;
+import application.domain.User;
 
 public class DataBase {
 

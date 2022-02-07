@@ -1,7 +1,6 @@
 package framework.config;
 
-import controller.Controller;
-import controller.UserController;
+import application.controller.Controller;
 import framework.HandlerMapping;
 import framework.ViewResolver;
 import framework.handler.Handler;

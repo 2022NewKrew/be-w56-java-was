@@ -1,9 +1,9 @@
-package controller;
+package application.controller;
 
-import domain.UserService;
+import application.domain.UserService;
 import framework.util.RequestMapping;
-import domain.User;
-import domain.dto.LoginDto;
+import application.domain.User;
+import application.domain.dto.LoginDto;
 import util.HttpRequest;
 import util.HttpRequestUtils;
 import util.HttpResponse;
