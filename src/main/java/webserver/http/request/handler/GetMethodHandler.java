@@ -7,9 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import webserver.http.request.exceptions.PageNotFoundException;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
+import webserver.http.request.exceptions.PageNotFoundException;
 import webserver.http.response.HttpResponse;
 
 public class GetMethodHandler implements MethodHandler {
@@ -19,6 +19,8 @@ public class GetMethodHandler implements MethodHandler {
     static {
         // GET Method Controller 추가
     }
+
+    private final StaticFileController staticFileController = new StaticFileController();
 
     public void handle(HttpRequest request, HttpResponse response)
         throws IOException, PageNotFoundException {
@@ -31,7 +33,7 @@ public class GetMethodHandler implements MethodHandler {
         Controller controller = getController(uri);
 
         if (controller == null) {
-            new StaticFileController().process(request, response);
+            staticFileController.process(request, response);
             return;
         }
 
