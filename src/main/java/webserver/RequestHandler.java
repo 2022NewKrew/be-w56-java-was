@@ -75,7 +75,7 @@ public class RequestHandler extends Thread {
                 "Content-Length", "0",
                 "Location","/index.html"
         );
-        return getResponseHeader(302, headers).toString().getBytes();
+        return getResponseHeader(302, headers);
     }
 
     private byte[] postUserLogin(String requestUrlPath, String requestBody) {
@@ -89,11 +89,11 @@ public class RequestHandler extends Thread {
         if(user == null || !user.getPassword().equals(requestBodyMap.get("password"))) {
             responseHeaders.put("Set-Cookie", "logined=false; Path=/");
             responseHeaders.put("Location", "/user/login_failed.html");
-            return getResponseHeader(302, responseHeaders).toString().getBytes();
+            return getResponseHeader(302, responseHeaders);
         }
         responseHeaders.put("Set-Cookie", "logined=true; Path=/");
         responseHeaders.put("Location", "/index.html");
-        return getResponseHeader(302, responseHeaders).toString().getBytes();
+        return getResponseHeader(302, responseHeaders);
     }
 
     private byte[] staticPageResponse(String requestUrlPath) throws IOException {
@@ -105,7 +105,7 @@ public class RequestHandler extends Thread {
                     "Content-Length", Integer.toString(responseBody.length)
             );
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(getResponseHeader(200, headers).toString().getBytes());
+            baos.write(getResponseHeader(200, headers));
             baos.write(responseBody);
             return baos.toByteArray();
         }
@@ -114,7 +114,7 @@ public class RequestHandler extends Thread {
                 "Content-Length", "0",
                 "Location","/index.html"
         );
-        return getResponseHeader(302, headers).toString().getBytes();
+        return getResponseHeader(302, headers);
     }
 
     private Map<String, String> getHeaders(BufferedReader br) throws IOException {
@@ -129,7 +129,7 @@ public class RequestHandler extends Thread {
         return headers;
     }
 
-    private StringBuilder getResponseHeader(int httpCode, Map<String, String> headers) {
+    private byte[] getResponseHeader(int httpCode, Map<String, String> headers) {
         StringBuilder sb = new StringBuilder();
         switch(httpCode) {
             case(200): sb.append("HTTP/1.1 200 OK \n");
@@ -137,6 +137,6 @@ public class RequestHandler extends Thread {
         }
         sb.append(headers.entrySet().stream().map(x -> x.getKey() + ": " + x.getValue() + "\r\n").collect(Collectors.joining()));
         sb.append("\r\n");
-        return sb;
+        return sb.toString().getBytes();
     }
 }
