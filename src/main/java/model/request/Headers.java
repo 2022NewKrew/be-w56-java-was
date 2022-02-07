@@ -30,4 +30,12 @@ public class Headers {
                 .findFirst()
                 .orElse(Pair.NONE);
     }
+
+    public void updateLocation(final HttpLocation newLocation) {
+        final Pair old = getPair(HEADER_LOCATION);
+        if (!old.isNone()) {
+            list.remove(old);
+        }
+        list.add(new Pair(HEADER_LOCATION, newLocation.getLocation()));
+    }
 }
