@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
 import webserver.controller.FrontController;
+import webserver.http.HttpConst;
 import webserver.http.HttpMethod;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
@@ -28,19 +29,18 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            HttpRequest request = requestParser(br);
+            HttpRequest request = getRequest(br);
+            HttpResponse response = new HttpResponse();
 
-            HttpResponse response = FrontController.getInstance().process(request);
+            FrontController.getInstance().process(request, response);
             DataOutputStream dos = new DataOutputStream(out);
-
-            ViewResolver resolver = ViewResolver.getInstance();
-            resolver.render(dos, response);
+            response.send(dos);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    public HttpRequest requestParser(BufferedReader br) throws IOException {
+    private HttpRequest getRequest(BufferedReader br) throws IOException {
         String requestLine = br.readLine();
         if (requestLine == null) {
             throw new IllegalArgumentException("요청을 찾을 수 없습니다.");
@@ -60,7 +60,6 @@ public class RequestHandler extends Thread {
             int contentLength = Integer.parseInt(request.getHeader("Content-Length"));
             request.setBody(IOUtils.readData(br, contentLength));
         }
-
         return request;
     }
 }

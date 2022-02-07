@@ -6,6 +6,9 @@ import webserver.http.HttpConst;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
+import webserver.view.ModelAndView;
+import webserver.view.View;
+import webserver.view.ViewResolver;
 
 
 public class FrontController {
@@ -18,25 +21,18 @@ public class FrontController {
         return frontController;
     }
 
-    public HttpResponse process(HttpRequest request) {
+    public void process(HttpRequest request, HttpResponse response) {
         try {
-            HttpResponse response = (HttpResponse) AnnotationProcessor.getInstance().requestMappingProcessor(request);
+            ModelAndView mv = (ModelAndView) AnnotationProcessor.getInstance().requestMappingProcessor(request, response);
 
-            if (response == null) {
-                response = new HttpResponse(HttpStatus.OK, request.getUrl());
+            if(mv == null){
+                mv = new ModelAndView(request.getUrl());
             }
 
-            return response;
-
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return new HttpResponse(HttpStatus.BAD_REQUEST, HttpConst.ERROR_PAGE);
-        } catch (UnAuthorizedException e) {
-            e.printStackTrace();
-            return new HttpResponse(HttpStatus.UNAUTHORIZED, HttpConst.LOGIN_PAGE);
+            View view = ViewResolver.getInstance().resolve(mv);
+            view.render(mv.getModel(), request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpConst.ERROR_PAGE);
         }
     }
 }

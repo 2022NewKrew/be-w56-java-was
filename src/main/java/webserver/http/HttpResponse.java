@@ -7,23 +7,9 @@ import java.util.Map;
 
 public class HttpResponse {
     private HttpStatus status;
-    private String url;
     private Map<String, String> headers = new HashMap<>();
     private Map<String, String> cookie = new HashMap<>();
-
-    public HttpResponse(HttpStatus status) {
-        this.status = status;
-        this.url = "/";
-    }
-
-    public HttpResponse(HttpStatus status, String url) {
-        this.status = status;
-        this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
-    }
+    private byte[] body = new byte[0];
 
     public Map<String, String> getHeaders() {
         return headers;
@@ -31,6 +17,10 @@ public class HttpResponse {
 
     public HttpStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
 
 
@@ -42,7 +32,15 @@ public class HttpResponse {
         cookie.put(key, value);
     }
 
-    public void send(DataOutputStream dos, byte[] body) throws IOException {
+    public byte[] getBody() {
+        return body;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
+    }
+
+    public void send(DataOutputStream dos) throws IOException {
         if (!cookie.isEmpty()) {
             responseSetCookie();
         }
@@ -67,9 +65,6 @@ public class HttpResponse {
                     .append(cookie.get(key))
                     .append(";");
         }
-
-        int lastIndex = sb.length()-1;
-        sb.deleteCharAt(lastIndex);
 
         headers.put("Set-Cookie", sb.toString());
     }
