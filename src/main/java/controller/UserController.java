@@ -51,7 +51,7 @@ public class UserController implements Controller{
             }
             log.debug("Login failed: Password mismatch");
             return ResponseGenerator.generateLoginFailedResponse();
-        } else if(path.equals(PathInfo.PATH_USER_LIST_FILE)) {
+        } else if(path.equals(PathInfo.PATH_USER_LIST)) {
             boolean logined = Boolean.parseBoolean(httpRequest.getCookies().get("logined"));
             log.debug("logined: {}", logined);
             if (logined) {
