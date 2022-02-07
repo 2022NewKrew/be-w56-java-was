@@ -1,8 +1,7 @@
-package domain;
+package application.domain;
 
-import db.DataBase;
-import domain.User;
-import domain.dto.LoginDto;
+import application.db.DataBase;
+import application.domain.dto.LoginDto;
 
 public class UserService {
 

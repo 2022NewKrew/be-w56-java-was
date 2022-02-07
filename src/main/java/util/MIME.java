@@ -12,7 +12,7 @@ public class MIME {
         put("woff2", "application/font-woff2");
         put("js", "application/javascript");
         put("ico", "image/x-icon");
-
+        put("woff", "font/woof");
     }};
 
     public static String findMimeMapping(String extension) {
