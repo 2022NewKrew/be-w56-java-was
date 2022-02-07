@@ -1,6 +1,6 @@
 package handler;
 
-import db.DataBase;
+import db.Database;
 import http.Request;
 import http.Response;
 import model.User;
@@ -31,7 +31,7 @@ class UserHandlerTest {
 
     @Test
     void login() {
-        DataBase.addUser(new User("javajigi", "password", "자바지기", "email@example.com"));
+        Database.addUser(new User("javajigi", "password", "자바지기", "email@example.com"));
         String body = "userId=javajigi&password=password\n";
         Request request = Request.newBuilder().body(body).build();
 
@@ -44,7 +44,7 @@ class UserHandlerTest {
 
     @Test
     void login_failed() {
-        DataBase.addUser(new User("javajigi", "password", "자바지기", "email@example.com"));
+        Database.addUser(new User("javajigi", "password", "자바지기", "email@example.com"));
         String body = "userId=javajigi&password=wrongPassword\n";
         Request request = Request.newBuilder().body(body).build();
 

@@ -1,7 +1,7 @@
 package handler;
 
 import annotation.Bean;
-import db.DataBase;
+import db.Database;
 import http.ContentType;
 import http.Headers;
 import http.Request;
@@ -26,7 +26,7 @@ public class UserHandler {
         String email = params.get("email");
         String name = params.get("name");
         User user = new User(userId, password, name, email);
-        DataBase.addUser(user);
+        Database.addUser(user);
         Map<String, String> headers = Map.of(
                 "Content-Type", "text/plain",
                 "Location", "/user/profile.html"
@@ -39,7 +39,7 @@ public class UserHandler {
         Map<String, String> params = HttpRequestUtils.parseQueryString(body);
         String userId = params.get("userId");
         String password = params.get("password");
-        User user = DataBase.findUserById(userId);
+        User user = Database.findUserById(userId);
         if (user == null || !user.getPassword().equals(password)) {
             var headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
@@ -71,7 +71,7 @@ public class UserHandler {
         try {
             String content = Files.readString(file.toPath());
             Map<String, Object> values = Map.of(
-                    "users", DataBase.findAll()
+                    "users", Database.findAll()
             );
             String filled = new TemplateEngine().render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);
