@@ -59,7 +59,7 @@ public class HttpRequest {
     }
 
     public String getPath() {
-        return startLine.getRequestTarget();
+        return startLine.getUrl();
     }
 
     public String getHeader(String key) {

@@ -23,14 +23,12 @@ public class HttpResponse {
     }
 
     public static HttpResponse of(String path) {
-        String httpVersion = HttpVersion.HTTP_1_1.getVersion();
         int statusCode = HttpStatus.OK.getCode();
         String statusMessage = HttpStatus.OK.getMessage();
         byte[] body = {};
 
         try {
             File file = new File("./webapp" + path);
-
             if (file.exists()) {
                 body = Files.readAllBytes(file.toPath());
             } else {
@@ -42,7 +40,7 @@ public class HttpResponse {
             log.error(e.getMessage());
         }
 
-        StatusLine statusLine = new StatusLine(httpVersion, statusCode, statusMessage);
+        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), statusCode, statusMessage);
         Map<String, String> headerKeyMap = Map.of(
                 "Content-Type", Mime.getMime(parseExtension(path)),
                 "Content-Length", Integer.toString(body.length)
