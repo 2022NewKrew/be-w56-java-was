@@ -1,0 +1,37 @@
+package webserver.controller.user;
+
+import lombok.RequiredArgsConstructor;
+import util.request.HttpRequest;
+import util.request.MethodType;
+import util.response.FileType;
+import util.response.HttpResponse;
+import util.response.HttpStatus;
+import util.response.ModelAndView;
+import webserver.controller.Controller;
+import webserver.domain.entity.User;
+import webserver.domain.repository.UserRepository;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+public class UserListController implements Controller {
+    private final UserRepository userRepository;
+
+    @Override
+    public boolean supports(HttpRequest httpRequest) {
+        return httpRequest.getMethod() == MethodType.GET
+                && httpRequest.getUrl().equals("/users");
+    }
+
+    @Override
+    public HttpResponse doHandle(HttpRequest httpRequest) {
+        List<User> users = userRepository.getUsers();
+        ModelAndView mav = new ModelAndView("/user/list.html", FileType.STRING);
+        mav.addAttribute("users", users);
+
+        return HttpResponse.builder()
+                .status(HttpStatus.SUCCESS)
+                .modelAndView(mav)
+                .build();
+    }
+}

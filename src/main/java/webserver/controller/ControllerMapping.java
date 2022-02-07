@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class ControllerMapping {
-    private final List<Controller<?>> controllers = ControllerFactory.getNormalControllers();
-    private final Controller<?> errorController = ControllerFactory.getNotFoundController();
+    private final List<Controller> controllers = ControllerFactory.getNormalControllers();
+    private final Controller errorController = ControllerFactory.getNotFoundController();
 
-    public Controller<?> getController(HttpRequest httpRequest){
-        Optional<Controller<?>> controllerOptional
+    public Controller getController(HttpRequest httpRequest){
+        Optional<Controller> controllerOptional
                 = controllers.stream()
                 .filter(controller -> controller.supports(httpRequest))
                 .findFirst();

@@ -4,17 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
 import util.request.MethodType;
+import util.response.FileType;
 import util.response.HttpResponse;
-import util.response.HttpResponseDataType;
-import util.response.HttpResponseStatus;
+import util.response.HttpStatus;
 import util.response.ModelAndView;
 import webserver.controller.Controller;
 
-import java.util.Set;
-
-public class StaticController implements Controller<String> {
+public class StaticController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(StaticController.class);
-    private static final Set<String> supportExtensions = Set.of("html", "css", "js", "ico", "eot", "svg", "ttf", "woff", "woff2", "png");
 
     @Override
     public boolean supports(HttpRequest httpRequest){
@@ -26,13 +23,11 @@ public class StaticController implements Controller<String> {
             return true;
         }
 
-        String[] split = httpRequest.getUrl().split("\\.");
-        String extensionName = split[split.length-1];
-        return supportExtensions.contains(extensionName);
+        return FileType.getFileType(httpRequest.getUrl()) != FileType.NONE;
     }
 
     @Override
-    public HttpResponse<String> doHandle(HttpRequest httpRequest){
+    public HttpResponse doHandle(HttpRequest httpRequest){
         String fileName = isRootUrl(httpRequest.getUrl())
                 ? "/index.html"
                 : httpRequest.getUrl();
@@ -40,8 +35,8 @@ public class StaticController implements Controller<String> {
         log.info("return file {}", fileName);
 
         return HttpResponse.<String>builder()
-                .status(HttpResponseStatus.SUCCESS)
-                .modelAndView(new ModelAndView(fileName))
+                .status(HttpStatus.SUCCESS)
+                .modelAndView(new ModelAndView(fileName, FileType.getFileType(fileName)))
                 .build();
     }
 

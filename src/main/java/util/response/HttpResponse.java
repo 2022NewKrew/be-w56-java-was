@@ -8,20 +8,20 @@ import java.util.Map;
 
 @Builder
 @Getter
-public class HttpResponse<T> {
-    private HttpResponseStatus status;
+public class HttpResponse {
+    private HttpStatus status;
 
     @Builder.Default
     private Map<String, String> headers = Collections.emptyMap();
 
     private ModelAndView modelAndView;
 
-    public static HttpResponse<String> of(Exception e){
-        ModelAndView modelAndView = new ModelAndView("error.html");
+    public static HttpResponse of(Exception e){
+        ModelAndView modelAndView = new ModelAndView("error.html", FileType.STRING);
         modelAndView.addAttribute("message", e.getMessage());
 
         return HttpResponse.<String>builder()
-                .status(HttpResponseStatus.INTERNAL_ERROR)
+                .status(HttpStatus.INTERNAL_ERROR)
                 .modelAndView(modelAndView)
                 .build();
     }

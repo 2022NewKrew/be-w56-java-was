@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
 import util.response.HttpResponse;
 
-public interface Controller<T> {
+public interface Controller {
     Logger log = LoggerFactory.getLogger(Controller.class);
 
-    default HttpResponse<?> handle(HttpRequest httpRequest){
+    default HttpResponse handle(HttpRequest httpRequest){
         try{
             return doHandle(httpRequest);
         }catch (Exception e){
@@ -19,5 +19,5 @@ public interface Controller<T> {
     }
 
     boolean supports(HttpRequest httpRequest);
-    HttpResponse<T> doHandle(HttpRequest httpRequest);
+    HttpResponse doHandle(HttpRequest httpRequest);
 }

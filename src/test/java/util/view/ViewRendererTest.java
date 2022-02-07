@@ -2,6 +2,7 @@ package util.view;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import util.response.FileType;
 import util.response.ModelAndView;
 import webserver.domain.entity.User;
 
@@ -16,7 +17,7 @@ class ViewRendererTest {
     @DisplayName("for loop가 있는 View Render 성공 확인")
     void successViewRenderWithLoop() throws IOException, NoSuchFieldException, IllegalAccessException {
         // given
-        final ModelAndView mav = new ModelAndView("/user/list.html");
+        final ModelAndView mav = new ModelAndView("/user/list.html", FileType.STRING);
         final List<User> users = getUsers();
         mav.addAttribute("users", users);
 

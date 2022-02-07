@@ -17,11 +17,11 @@ public class ViewRenderer {
     public static String getRenderedView(ModelAndView modelAndView)
             throws IOException, NoSuchFieldException, IllegalAccessException {
 
-        if(modelAndView == null || modelAndView.getViewName() == null){
+        if(modelAndView == null || modelAndView.getFileName() == null){
             return "";
         }
 
-        String filePath = String.format("%s%s", STATIC_FILE_BASE_DIRECTORY, modelAndView.getViewName());
+        String filePath = String.format("%s%s", STATIC_FILE_BASE_DIRECTORY, modelAndView.getFileName());
         String fileString = Files.readString(new File(filePath).toPath());
         return addModel(fileString, modelAndView.getModel());
     }
