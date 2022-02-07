@@ -56,7 +56,7 @@ public class Response {
     }
 
     private void addNewCookies(DataOutputStream dos) throws IOException {
-        String sessionId = request.getCookie().getValue("sessionId");
+        String sessionId = request.getCookieValue("sessionId");
         List<String> updateCookieList = CookieManager.getNewCookie(sessionId);
         if(updateCookieList.size() > 0){
             dos.writeBytes("Set-Cookie: ");

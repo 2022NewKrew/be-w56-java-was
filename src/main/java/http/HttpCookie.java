@@ -38,5 +38,4 @@ public class HttpCookie {
     public void addValue(String key, String value){
         attribute.put(key, value);
     }
-
 }

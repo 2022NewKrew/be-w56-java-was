@@ -52,8 +52,12 @@ public class Request {
         return requestBody;
     }
 
-    public HttpCookie getCookie() {
-        return cookie;
+    public void setCookieValue(String key, String value) {
+        this.cookie.addValue(key, value);
+    }
+
+    public String getCookieValue(String key) {
+        return this.cookie.getValue(key);
     }
 
     @Override

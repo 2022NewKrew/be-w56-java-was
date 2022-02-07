@@ -49,7 +49,7 @@ public class UserController {
             canLogin = false;
         }
 
-        String sessionId = request.getCookie().getValue("sessionId");
+        String sessionId = request.getCookieValue("sessionId");
         CookieManager.addNewCookie(sessionId, "logined", (canLogin ? "true" : "false"));
 
         if(canLogin) {
