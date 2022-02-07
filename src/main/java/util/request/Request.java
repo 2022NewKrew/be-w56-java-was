@@ -24,8 +24,8 @@ public class Request {
         return line;
     }
 
-    public Map<String, String> getHeader() {
-        return header;
+    public String getHeader(String key) {
+        return header.get(key);
     }
 
     public String getBody() {
