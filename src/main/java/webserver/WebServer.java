@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
+    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
@@ -24,6 +25,11 @@ public class WebServer {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
 
+            try {
+                Class.forName(JDBC_DRIVER);
+            } catch (ClassNotFoundException e) {
+                log.error("JDBC Driver Not Found");
+            }
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {

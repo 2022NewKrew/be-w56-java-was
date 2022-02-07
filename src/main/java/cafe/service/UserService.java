@@ -1,8 +1,8 @@
 package cafe.service;
 
 import cafe.controller.exception.IncorrectLoginUserException;
-import cafe.db.DataBase;
 import cafe.model.User;
+import cafe.repository.UserRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,12 @@ public class UserService {
 
     private static final String WEBAPP_PATH = "./webapp";
 
+    private final UserRepository userRepository;
+
+    public UserService() {
+        this.userRepository = new UserRepository();
+    }
+
     public String getUserListHtml() throws IOException {
         File file = new File(WEBAPP_PATH + "/user/list.html");
         byte[] bytes = Files.readAllBytes(file.toPath());
@@ -21,7 +27,7 @@ public class UserService {
         StringBuilder usersHtml = new StringBuilder();
 
         AtomicInteger index = new AtomicInteger(1);
-        DataBase.findAll().stream()
+        userRepository.findAll().stream()
                 .forEach(user -> {
                     usersHtml.append("<tr>");
                     usersHtml.append("<th scope=\"row\">").append(index.get()).append("</th>");
@@ -37,11 +43,11 @@ public class UserService {
 
     public void createUser(String userId, String password, String name, String email) {
         User user = new User(userId, password, name, email);
-        DataBase.addUser(user);
+        userRepository.addUser(user);
     }
 
     public void authenticateUser(String userId, String password) throws IncorrectLoginUserException {
-        User user = DataBase.findUserById(userId);
+        User user = userRepository.findUserById(userId);
 
         if (user == null || !user.isValidPassword(password)) {
             throw new IncorrectLoginUserException();
