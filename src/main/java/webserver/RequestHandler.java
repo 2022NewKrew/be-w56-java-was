@@ -2,12 +2,15 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ReadUrl;
+import service.WebService;
 
 public class RequestHandler extends Thread {
+
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
@@ -25,27 +28,24 @@ public class RequestHandler extends Thread {
             // java inputstream bufferedreader 변환
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String ansURL = "";
-            while(true){
-                String next = br.readLine().trim();
-                if(next.isEmpty()){
-                    break;
-                }
-                ansURL = ReadUrl.parseUrl(next, "GET");
-                if (!ansURL.equals("")){
-                    log.debug("ansURL {}", ansURL);
-                    break;
-                }
-            }
-            log.debug("final ansURL {}, br.ready {}", ansURL, br.ready());
+            HashMap<String, String> parseRequest =  WebService.parseRequest(br);
 
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = ReadUrl.openUrl(ansURL);
-            response200Header(dos, body.length);
+            String url = callFunction(parseRequest);
+
+            byte[] body = WebService.openUrl(url);
+            if (url.equals(parseRequest.get("URL"))){
+                response200Header(dos, body.length);
+            }
+            else{
+                response302Header(dos, url);
+            }
+
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -60,6 +60,16 @@ public class RequestHandler extends Thread {
         }
     }
 
+    private void response302Header(DataOutputStream dos, String redirectURL) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + redirectURL + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
@@ -68,4 +78,18 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
+
+    private String callFunction(HashMap<String, String> parameters){
+
+        String method = WebService.extractFunction(parameters.get("URL"));
+        String redirectURL = parameters.get("URL");
+        if (method.equals("create")) {
+            User user = WebService.createUser(parameters.get("body"));
+            redirectURL = "/index.html";
+        }
+        log.debug("callFunction results, method : {}, redirectURL : {}", method , redirectURL);
+        return redirectURL;
+    }
+
+
 }
