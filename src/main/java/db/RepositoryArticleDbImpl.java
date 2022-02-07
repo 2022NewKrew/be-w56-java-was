@@ -2,24 +2,22 @@ package db;
 
 import model.Article;
 import model.Request;
-import model.User;
+import util.DbUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static query.ArticleQuery.*;
+import static query.ArticleQuery.FIND_ALL_QUERY;
+import static query.ArticleQuery.INSERT_QUERY;
 
 
 public class RepositoryArticleDbImpl {
-    private static String url = "jdbc:mysql://muscle-db.ay1.krane.9rum.cc:3306/test";
-    private static String userName = "root";
-    private static String password = "1234";
 
     public static void save(Request request) throws SQLException {
         Map<String, String> queryString = request.getQueryString();
-        Connection connection = DriverManager.getConnection(url, userName, password);
+        Connection connection = DbUtils.getDbConnection();
 
         PreparedStatement pstmt = connection.prepareStatement(INSERT_QUERY);
         pstmt.setString(1, queryString.get("writer"));
@@ -33,7 +31,7 @@ public class RepositoryArticleDbImpl {
 
     public static List<Article> findAll() throws SQLException {
         List<Article> articleList = new ArrayList<>();
-        Connection connection = DriverManager.getConnection(url, userName, password);
+        Connection connection = DbUtils.getDbConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY);
 

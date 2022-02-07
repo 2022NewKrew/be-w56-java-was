@@ -2,19 +2,19 @@ package db;
 
 import model.Request;
 import model.User;
+import util.DbUtils;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static query.UserQuery.*;
 
 public class RepositoryUserDbImpl {
-        private static String url = "jdbc:mysql://muscle-db.ay1.krane.9rum.cc:3306/test";
-        private static String userName = "root";
-        private static String password = "1234";
 
         public static User findUserById(String userId) throws SQLException {
-            Connection connection = DriverManager.getConnection(url, userName, password);
+            Connection connection = DbUtils.getDbConnection();
 
             PreparedStatement pstmt = connection.prepareStatement(FIND_BY_ID_QUERY);
             pstmt.setString(1,userId);
@@ -37,7 +37,7 @@ public class RepositoryUserDbImpl {
 
         public static void save(Request request) throws SQLException {
             Map<String, String> queryString = request.getQueryString();
-            Connection connection = DriverManager.getConnection(url, userName, password);
+            Connection connection = DbUtils.getDbConnection();
 
             PreparedStatement pstmt = connection.prepareStatement(INSERT_QUERY);
             pstmt.setString(1, queryString.get("userId"));
@@ -52,7 +52,7 @@ public class RepositoryUserDbImpl {
 
         public static List<User> findAll() throws SQLException {
             List<User> userList = new ArrayList<>();
-            Connection connection = DriverManager.getConnection(url, userName, password);
+            Connection connection = DbUtils.getDbConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY);
 
