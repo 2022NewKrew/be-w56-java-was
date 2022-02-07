@@ -14,12 +14,11 @@ public class ResponseBuilder {
     public static void build(String path, HttpRequest request, HttpResponse response) throws IOException {
         response.setHttpVersion("HTTP/1.1");
         byte[] body = {};
-        HttpHeader responseHeader = new HttpHeader();
+        HttpHeader responseHeader = response.getHeader();
 
         if(Objects.isNull(path)){
             response.setStatusCode(HttpStatusCode.NOTFOUND);
             response.setBody(body);
-            response.setHeader(responseHeader);
             return;
         }
 
@@ -29,7 +28,6 @@ public class ResponseBuilder {
             response.setBody(body);
             responseHeader.addHeader("Location: " + redirectUrl);
             responseHeader.addHeader("Content-Length: 0");
-            response.setHeader(responseHeader);
             return;
         }
 
@@ -39,6 +37,5 @@ public class ResponseBuilder {
 
         responseHeader.addHeader("Content-Type: text/html;charset=utf-8");
         responseHeader.addHeader("Content-Length: " + body.length);
-        response.setHeader(responseHeader);
     }
 }

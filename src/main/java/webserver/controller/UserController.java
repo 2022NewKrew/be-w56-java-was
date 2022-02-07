@@ -1,5 +1,6 @@
 package webserver.controller;
 
+import db.DataBase;
 import http.HttpHeader;
 import http.HttpStatusCode;
 import http.request.HttpRequest;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserController implements Controller {
     private static final Controller instance = new UserController();
@@ -24,36 +26,22 @@ public class UserController implements Controller {
     }
 
     @Override
-    public String handleGet(HttpRequest request, HttpResponse response) throws IOException {
-        if (request.getStartLine().getTargetUri().equals("/user/create")) {
-            return getCreateUser(request, response);
-        }
-
+    public String handleGet(HttpRequest request, HttpResponse response) {
         return null;
     }
 
     @Override
-    public String handlePost(HttpRequest request, HttpResponse response) throws IOException {
+    public String handlePost(HttpRequest request, HttpResponse response) {
         if (request.getStartLine().getTargetUri().equals("/user/create")) {
             return postCreateUser(request, response);
+        }
+        if (request.getStartLine().getTargetUri().equals("/user/login")) {
+            return postLoginUser(request, response);
         }
         return null;
     }
 
-    private String getCreateUser(HttpRequest request, HttpResponse response) throws IOException {
-        Map<String, String> queryParams = request.getStartLine().getQueryParams();
-
-        User user = new User(
-                queryParams.get("userId"),
-                queryParams.get("password"),
-                queryParams.get("name"),
-                queryParams.get("email")
-        );
-
-        return "redirect:/";
-    }
-
-    private String postCreateUser(HttpRequest request, HttpResponse response) throws IOException {
+    private String postCreateUser(HttpRequest request, HttpResponse response) {
         String bodyString = request.getHttpBody().getBody();
         Map<String, String> bodyParams = HttpRequestUtils.parseQueryString(bodyString);
 
@@ -64,6 +52,22 @@ public class UserController implements Controller {
                 bodyParams.get("email")
         );
 
+        DataBase.addUser(user);
+
+        return "redirect:/";
+    }
+
+    private String postLoginUser(HttpRequest request, HttpResponse response) {
+        String bodyString = request.getHttpBody().getBody();
+        Map<String, String> bodyParams = HttpRequestUtils.parseQueryString(bodyString);
+
+        User user = DataBase.findUserById(bodyParams.get("userId"));
+        if (Objects.isNull(user) || !user.isCorrectPassword(bodyParams.get("password"))) {
+            response.getHeader().addHeader("Set-Cookie: logined=false; Path=/");
+            return "redirect:/user/login_failed.html";
+        }
+
+        response.getHeader().addHeader("Set-Cookie: logined=true; Path=/");
         return "redirect:/";
     }
 }
