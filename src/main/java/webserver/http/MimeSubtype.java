@@ -5,7 +5,9 @@ public enum MimeSubtype {
     TEXT_CSS("text/css"),
     APPLICATION_JSON("app/json"),
     TEXT_JS("text/javascript"),
-    X_ICON("image/x-icon");
+    X_ICON("image/x-icon"),
+    FONT_WOFF("font/woff"),
+    FONT_TTF("font/ttf");
 
     private final String value;
 

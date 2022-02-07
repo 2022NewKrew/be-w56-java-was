@@ -1,6 +1,5 @@
 package webserver.servlet.method;
 
-import app.user.adapter.in.SignUpController;
 import java.io.File;
 import java.io.IOException;
 import webserver.WebServerConfig;
@@ -8,26 +7,36 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.servlet.FileHandleable;
 import webserver.servlet.FileHandler;
+import webserver.servlet.HttpControllable;
+import webserver.servlet.HttpHandleable;
+import webserver.servlet.RequestMapping;
 
-public class GetHandler implements MethodHandler {
+public class GetHandler implements HttpHandleable {
 
     private final FileHandleable fileHandleable = new FileHandler();
-    private final SignUpController signUpController;
+    private final RequestMapping requestMapping;
 
-    public GetHandler(SignUpController signUpController) {
-        this.signUpController = signUpController;
+    public GetHandler(RequestMapping requestMapping) {
+        this.requestMapping = requestMapping;
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request, HttpResponse response) throws IOException {
-        File file = new File(WebServerConfig.BASE_PATH + request.getUri());
-        if (file.exists()) {
-            return fileHandleable.write(response, file);
+    public void handle(HttpRequest request, HttpResponse response) throws IOException {
+        String uriPath = WebServerConfig.BASE_PATH + request.getUri();
+        File file = new File(uriPath);
+
+        if (file.isDirectory()) {
+            File entryFile = new File(uriPath + WebServerConfig.ENTRY_FILE);
+            fileHandleable.write(response, entryFile);
+            return;
         }
 
-        if (request.getUri().startsWith(SignUpController.path)) {
-            return signUpController.call(request, response);
+        if (file.exists()) {
+            fileHandleable.write(response, file);
+            return;
         }
-        return response;
+
+        HttpControllable controller = requestMapping.getHandler(request.getUri());
+        controller.call(request, response);
     }
 }

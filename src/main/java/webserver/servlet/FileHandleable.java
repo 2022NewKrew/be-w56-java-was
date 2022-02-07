@@ -6,6 +6,6 @@ import webserver.http.HttpResponse;
 
 public interface FileHandleable {
 
-    HttpResponse write(HttpResponse response, File file) throws IOException;
+    void write(HttpResponse response, File file) throws IOException;
 
 }

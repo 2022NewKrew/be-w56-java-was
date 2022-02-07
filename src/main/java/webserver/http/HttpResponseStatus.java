@@ -4,6 +4,8 @@ public enum HttpResponseStatus {
     OK("200", "OK"),
     CREATED("201", "Created"),
     FOUND("302", "Found"),
+    UNAUTHORIZED("401", "Unauthorized"),
+    FORBIDDEN("403", "Forbidden"),
     NOT_FOUND("404", "Not found"),
     INTERNAL_ERROR("500", "Internal Server Error");
 

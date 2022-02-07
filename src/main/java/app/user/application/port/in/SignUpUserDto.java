@@ -1,20 +1,22 @@
 package app.user.application.port.in;
 
+import app.user.domain.UserId;
+
 public class SignUpUserDto {
 
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+    private final UserId userId;
+    private final String password;
+    private final String name;
+    private final String email;
 
-    public SignUpUserDto(String userId, String password, String name, String email) {
+    public SignUpUserDto(UserId userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 

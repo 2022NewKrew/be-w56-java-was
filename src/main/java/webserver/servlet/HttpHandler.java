@@ -1,25 +1,23 @@
 package webserver.servlet;
 
-import app.user.adapter.in.SignUpController;
-import app.user.application.port.SignUpService;
-import app.user.application.port.in.CreateUserUseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.http.HttpResponseStatus;
 import webserver.servlet.method.GetHandler;
+import webserver.servlet.method.PostHandler;
 
 public class HttpHandler implements HttpHandleable {
 
-    private final RequestLogger logger = new RequestLogger();
-    private final GetHandler getHandler;
-    private final CreateUserUseCase createUserUseCase;
-    private final SignUpController signUpController;
+    private final RequestMapping requestMapping;
+    private final Logger logger = LoggerFactory.getLogger(HttpHandler.class);
+    private final HttpHandleable getHandler;
+    private final HttpHandleable postHandler;
 
     private HttpHandler() {
-        this.createUserUseCase = new SignUpService();
-        this.signUpController = new SignUpController(createUserUseCase);
-
-        this.getHandler = new GetHandler(signUpController);
+        this.requestMapping = RequestMapping.getInstance();
+        this.getHandler = new GetHandler(requestMapping);
+        this.postHandler = new PostHandler(requestMapping);
     }
 
     public static HttpHandler getInstance() {
@@ -27,19 +25,21 @@ public class HttpHandler implements HttpHandleable {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request, HttpResponse response) {
+    public void handle(HttpRequest request, HttpResponse response) {
         try {
-            logger.request(request);
+            logger.info("{} {}", request.getMethod(), request.getUri());
             switch (request.getMethod()) {
                 case GET:
-                    response = getHandler.handle(request, response);
+                    getHandler.handle(request, response);
+                    break;
                 case POST:
+                    postHandler.handle(request, response);
                     break;
             }
+            response.send();
         } catch (Exception e) {
-            response.setStatus(HttpResponseStatus.INTERNAL_ERROR);
+            logger.error(e.getMessage());
         }
-        return response;
     }
 
     private static class HttpHandlerHolder {
