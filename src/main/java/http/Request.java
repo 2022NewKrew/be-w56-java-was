@@ -16,6 +16,7 @@ public class Request {
     private HttpMethod method;
     private Map<String, String> elements;
     private HttpCookie cookie;
+    private HttpSession session;
 
     public Request(InputStream in) throws IOException {
         String[] requestString = RequestParser.inputStreamToString(in).split("START_BODY");
@@ -30,6 +31,7 @@ public class Request {
         this.elements.putAll(RequestParser.parseElementsFromPost(this));
 
         this.cookie = new HttpCookie(this.requestHeader);
+        this.session = HttpSessions.getSession(this.cookie.getValue("sessionId"));
     }
 
     public List<String> getRequestHeader() {
@@ -58,6 +60,14 @@ public class Request {
 
     public String getCookieValue(String key) {
         return this.cookie.getValue(key);
+    }
+
+    public void setSessionValue(String key, Object value){
+        this.session.setValue(key, value);
+    }
+
+    public Object getSessionValue(String key){
+        return session.getValue(key);
     }
 
     @Override

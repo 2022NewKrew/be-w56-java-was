@@ -54,9 +54,7 @@ public class UserController {
 
         if(canLogin) {
             log.debug(String.format("user logined : %s", user.getUserId()));
-
-            HttpSession session = HttpSessions.getSession(sessionId);
-            session.setValue("user", user);
+            request.setSessionValue("user", user);
         }
 
         return (canLogin ? "redirect:/index.html" : "redirect:/user/login_failed.html");
