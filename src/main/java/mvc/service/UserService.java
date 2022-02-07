@@ -16,7 +16,6 @@ public class UserService {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .build();
-        System.out.printf("add user ... %s, %s\n", dto, newUser);
         DataBase.addUser(newUser);
         return dto;
     }
@@ -32,7 +31,6 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         var userList = DataBase.findAll();
-        System.out.println(userList);
         return userList.stream()
                 .map(this::convertUserToUserDto)
                 .collect(Collectors.toList());

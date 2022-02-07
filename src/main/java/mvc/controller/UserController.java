@@ -35,7 +35,6 @@ public class UserController implements Controller {
     @RequestMapping(value = "/user/create", method = RequestMethod.POST)
     public String create(HttpRequest request) {
         var body = request.getRequestBody();
-        log.debug("body ... {}", body);
         UserDto dto = new UserDto(body);
         userService.create(dto);
         return "redirect:/";
