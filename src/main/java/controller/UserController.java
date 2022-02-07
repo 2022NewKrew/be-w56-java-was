@@ -5,9 +5,11 @@ import model.RequestHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ResponseStatus;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Map;
 
 import static controller.RequestPathMapper.*;
@@ -36,5 +38,38 @@ public class UserController {
         }
         log.info("Log-in Success");
         response302Header(requestHeader.getContentType(), ROOT, true, dos);
+    }
+
+    protected static void userListPath(RequestHeader requestHeader, DataOutputStream dos) throws IOException {
+        byte[] body = userListFile().getBytes(StandardCharsets.UTF_8);
+        responseHeader(ResponseStatus.OK, requestHeader.getContentType(), dos, body.length);
+        responseBody(dos, body);
+    }
+
+    private static String userListFile() throws IOException {
+        final String USERLIST_FORMAT = "" +
+                "                <tr>\n" +
+                "                    <th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n" +
+                "                </tr>";
+
+        Collection<User> users = DataBase.findAll();
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(LOCAL_PREFIX + "/user/list.html"));
+
+        String line;
+        while (!(line = br.readLine()).endsWith("<tbody>")) {
+            sb.append(line);
+        }
+        sb.append(br.readLine());
+
+        int idx = 1;
+        for (User user : users) {
+            sb.append(String.format(USERLIST_FORMAT, idx++, user.getUserId(), user.getName(), user.getEmail()));
+        }
+
+        while (!(line = br.readLine()).equals("")) {
+            sb.append(line);
+        }
+        return sb.toString();
     }
 }
