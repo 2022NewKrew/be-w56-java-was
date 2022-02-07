@@ -7,7 +7,7 @@ import util.request.HttpRequestReader;
 import util.response.HttpResponse;
 import webserver.controller.Controller;
 import webserver.controller.ControllerMapping;
-import webserver.view.ViewRenderer;
+import util.view.ResponseSender;
 
 import java.io.DataOutputStream;
 import java.net.Socket;
@@ -33,7 +33,7 @@ public class DispatcherServlet extends Thread {
             Controller<?> controller = controllerMapping.getController(httpRequest);
 
             HttpResponse<?> httpResponse = controller.handle(httpRequest);
-            ViewRenderer.render(httpResponse, dos);
+            ResponseSender.send(httpResponse, dos);
         }catch (Exception exception){
             log.error(exception.getMessage());
             exception.printStackTrace();

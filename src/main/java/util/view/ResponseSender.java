@@ -1,32 +1,21 @@
-package webserver.view;
+package util.view;
 
 import util.response.HttpResponse;
-import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
-import util.response.ModelAndView;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class ViewRenderer {
-    private static final String STATIC_FILE_BASE_DIRECTORY = "./webapp";
+public class ResponseSender {
 
-    public static <T> void render(HttpResponse<T> response, DataOutputStream dos) throws IOException {
-        byte[] body = getBodyBytes(response.getModelAndView());
+    public static <T> void send(HttpResponse<T> response, DataOutputStream dos)
+            throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        byte[] body = ViewRenderer.getRenderedView(response.getModelAndView()).getBytes(StandardCharsets.UTF_8);
         responseHeader(dos, body.length, response.getStatus(), response.getHeaders());
         responseBody(dos, body);
-    }
-
-    private static <T> byte[] getBodyBytes(ModelAndView modelAndView) throws IOException {
-        if(modelAndView == null || modelAndView.getViewName() == null){
-            return new byte[0];
-        }
-
-        String filePath = String.format("%s%s", STATIC_FILE_BASE_DIRECTORY, modelAndView.getViewName());
-        return Files.readAllBytes(new File(filePath).toPath());
     }
 
     private static void responseHeader(DataOutputStream dos, int lengthOfBodyContent
