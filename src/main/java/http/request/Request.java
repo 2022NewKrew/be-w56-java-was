@@ -1,5 +1,6 @@
 package http.request;
 
+import http.HttpMethod;
 import http.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class Request {
 
     private final BufferedReader br;
 
-    private String method;
+    private HttpMethod method;
     private String url;
     private Queries requestQueries = null;
     private final RequestHeaders requestHeaders = new RequestHeaders();
@@ -46,7 +47,7 @@ public class Request {
 
     private void readRequestLine(String line){
         String[] requestConditions = HttpRequestUtils.parseRequestLine(line);
-        method = requestConditions[METHOD_IDX];
+        method = HttpMethod.valueOf(requestConditions[METHOD_IDX]);
         String uri = requestConditions[URI_IDX];
         separateQuery(uri);
     }
@@ -65,7 +66,7 @@ public class Request {
         return queries;
     }
 
-    public String getMethod() { return  method; }
+    public HttpMethod getMethod() { return  method; }
 
     public String getUrl(){ return url; }
 

@@ -1,5 +1,6 @@
 package controller;
 
+import http.HttpMethod;
 import model.ModelAndView;
 import http.request.Request;
 import util.RequestMapping;
@@ -23,7 +24,7 @@ public interface Controller {
         }
     }
 
-    default Method aliasMethod(String method, String url, Class<?> currentClass) throws NoSuchMethodException {
+    default Method aliasMethod(HttpMethod method, String url, Class<?> currentClass) throws NoSuchMethodException {
         return Arrays.stream(currentClass.getDeclaredMethods())
                 .filter(m -> {
                     RequestMapping rm = m.getAnnotation(RequestMapping.class);
