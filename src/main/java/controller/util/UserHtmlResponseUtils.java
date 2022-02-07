@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class UserHtmlUtils {
+public class UserHtmlResponseUtils {
 
     private static final String header;
     private static final String footer;
@@ -29,9 +29,9 @@ public class UserHtmlUtils {
 
     static {
         header = readFromInputStream(
-            UserHtmlUtils.class.getClassLoader().getResourceAsStream("templates/header.html"));
+            UserHtmlResponseUtils.class.getClassLoader().getResourceAsStream("templates/header.html"));
         footer = readFromInputStream(
-            UserHtmlUtils.class.getClassLoader().getResourceAsStream("templates/footer.html"));
+            UserHtmlResponseUtils.class.getClassLoader().getResourceAsStream("templates/footer.html"));
     }
 
     private static String readFromInputStream(InputStream inputStream) {

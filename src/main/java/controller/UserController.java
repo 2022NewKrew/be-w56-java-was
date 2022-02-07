@@ -1,7 +1,7 @@
 package controller;
 
 import controller.exception.ControllerMismatchException;
-import controller.util.UserHtmlUtils;
+import controller.util.UserHtmlResponseUtils;
 import domain.user.dto.UserCreate;
 import domain.user.dto.UserInfo;
 import domain.user.service.UserService;
@@ -53,7 +53,7 @@ public class UserController implements Controller {
 
         List<UserInfo> userInfos = userService.readAll();
 
-        String body = UserHtmlUtils.generateUsersHtml(userInfos);
+        String body = UserHtmlResponseUtils.generateUsersHtml(userInfos);
 
         return HttpResponse.builder()
             .status(HttpStatus.OK)
