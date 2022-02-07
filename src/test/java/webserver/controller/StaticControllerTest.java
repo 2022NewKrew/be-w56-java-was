@@ -80,8 +80,6 @@ class StaticControllerTest {
 
         //then
         assertThat(httpResponse.getStatus()).isEqualTo(HttpResponseStatus.SUCCESS);
-        assertThat(httpResponse.getDataType()).isEqualTo(HttpResponseDataType.FILE_NAME);
-        assertThat(httpResponse.getData()).isEqualTo(url);
     }
 
     private static Stream<Arguments> getExistFileStream(){

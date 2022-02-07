@@ -7,6 +7,7 @@ import util.request.MethodType;
 import util.response.HttpResponse;
 import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
+import util.response.ModelAndView;
 import webserver.controller.Controller;
 
 import java.util.Set;
@@ -40,8 +41,7 @@ public class StaticController implements Controller<String> {
 
         return HttpResponse.<String>builder()
                 .status(HttpResponseStatus.SUCCESS)
-                .data(fileName)
-                .dataType(HttpResponseDataType.FILE_NAME)
+                .modelAndView(new ModelAndView(fileName))
                 .build();
     }
 

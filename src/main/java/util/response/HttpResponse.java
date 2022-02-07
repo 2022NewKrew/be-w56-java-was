@@ -14,15 +14,15 @@ public class HttpResponse<T> {
     @Builder.Default
     private Map<String, String> headers = Collections.emptyMap();
 
-    private T data;
-
-    private HttpResponseDataType dataType;
+    private ModelAndView modelAndView;
 
     public static HttpResponse<String> of(Exception e){
+        ModelAndView modelAndView = new ModelAndView("error.html");
+        modelAndView.addAttribute("message", e.getMessage());
+
         return HttpResponse.<String>builder()
                 .status(HttpResponseStatus.INTERNAL_ERROR)
-                .data(e.getMessage())
-                .dataType(HttpResponseDataType.STRING)
+                .modelAndView(modelAndView)
                 .build();
     }
 }

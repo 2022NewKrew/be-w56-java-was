@@ -3,6 +3,7 @@ package webserver.view;
 import util.response.HttpResponse;
 import util.response.HttpResponseDataType;
 import util.response.HttpResponseStatus;
+import util.response.ModelAndView;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -14,22 +15,18 @@ public class ViewRenderer {
     private static final String STATIC_FILE_BASE_DIRECTORY = "./webapp";
 
     public static <T> void render(HttpResponse<T> response, DataOutputStream dos) throws IOException {
-        byte[] body = getBodyBytes(response);
+        byte[] body = getBodyBytes(response.getModelAndView());
         responseHeader(dos, body.length, response.getStatus(), response.getHeaders());
         responseBody(dos, body);
     }
 
-    private static <T> byte[] getBodyBytes(HttpResponse<T> response) throws IOException {
-        if(response.getDataType() == HttpResponseDataType.FILE_NAME){
-            String filePath = String.format("%s%s", STATIC_FILE_BASE_DIRECTORY, response.getData());
-            return Files.readAllBytes(new File(filePath).toPath());
+    private static <T> byte[] getBodyBytes(ModelAndView modelAndView) throws IOException {
+        if(modelAndView == null || modelAndView.getViewName() == null){
+            return new byte[0];
         }
 
-        if(response.getDataType() == HttpResponseDataType.STRING){
-            return  ((String)response.getData()).getBytes();
-        }
-
-        return new byte[0];
+        String filePath = String.format("%s%s", STATIC_FILE_BASE_DIRECTORY, modelAndView.getViewName());
+        return Files.readAllBytes(new File(filePath).toPath());
     }
 
     private static void responseHeader(DataOutputStream dos, int lengthOfBodyContent
