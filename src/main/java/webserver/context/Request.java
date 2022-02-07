@@ -37,4 +37,34 @@ public class Request {
     public Map<String, String> getBodyDataMap() {
         return bodyDataMap;
     }
+
+    public boolean isCookie() {
+        return headerDataMap.containsKey("Cookie");
+    }
+
+    public String getCookie() {
+        if (!headerDataMap.containsKey("Cookie")) return "";
+        return headerDataMap.get("Cookie");
+    }
+
+    public String getParameter(String name) {
+        if (paramMap.containsKey(name))
+            return paramMap.get(name);
+        if (headerDataMap.containsKey(name))
+            return headerDataMap.get(name);
+        if (bodyDataMap.containsKey(name))
+            return bodyDataMap.get(name);
+        return null;
+    }
+
+    public boolean contains(String name) {
+        if (paramMap.containsKey(name))
+            return true;
+        if (headerDataMap.containsKey(name))
+            return true;
+        if (bodyDataMap.containsKey(name))
+            return true;
+        return false;
+    }
+
 }
