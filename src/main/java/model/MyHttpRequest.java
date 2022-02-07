@@ -20,6 +20,8 @@ public class MyHttpRequest {
     private final Map<String, String> parameters = new HashMap<>();
     private final Map<String, String> headers = new HashMap<>();
 
+    private static final String CONTENT_LENGTH = "Content-Length";
+
     private static final Logger logger = LoggerFactory.getLogger(MyHttpRequest.class);
 
     public MyHttpRequest() {}
@@ -35,7 +37,7 @@ public class MyHttpRequest {
                 .forEach(this::setHeader);
 
         if(method.equals(HttpMethod.POST)) {
-            String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get(CONTENT_LENGTH)));
             Stream.of(body.split("&"))
                     .forEach(this::setParameters);
         }
