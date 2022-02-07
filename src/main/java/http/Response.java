@@ -55,7 +55,7 @@ public class Response {
         dos.flush();
     }
 
-    private void addUpdateCookies(DataOutputStream dos) throws IOException {
+    private void addNewCookies(DataOutputStream dos) throws IOException {
         String sessionId = request.getCookie().getValue("sessionId");
         List<String> updateCookieList = CookieManager.getNewCookie(sessionId);
         if(updateCookieList.size() > 0){
@@ -75,9 +75,7 @@ public class Response {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-
-            addUpdateCookies(dos);
-
+            addNewCookies(dos);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

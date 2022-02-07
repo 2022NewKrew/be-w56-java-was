@@ -11,7 +11,7 @@ public class HttpCookie {
     public HttpCookie(List<String> requestHeader){
         this.attribute = new HashMap<>();
 
-        //parsing cookie
+        //parse cookies from request.
         for(String lineStr : requestHeader){
             if(lineStr.startsWith(START_DELIMITER)){
                 String cookieStr = lineStr.substring(START_DELIMITER.length(), lineStr.length());
@@ -23,11 +23,11 @@ public class HttpCookie {
             }
         }
 
-        //initialize sessionId
+        //set sessionId at the first request.
         if(attribute.get("sessionId") == null){
             String sessionId = UUID.randomUUID().toString();
             attribute.put("sessionId", sessionId);
-            CookieManager.addNewCookie(sessionId, "sessionId", sessionId);
+            CookieManager.addNewCookie(sessionId, "sessionId", sessionId); //response에서 SetCookie에 해당될 요소를 버퍼에 추가.
         }
     }
 

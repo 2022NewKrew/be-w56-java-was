@@ -15,7 +15,8 @@ public class HttpSessions {
         HttpSession session = sessions.get(sessionId);
 
         if(session == null){
-            sessions.put(sessionId, new HttpSession());
+            session = new HttpSession();
+            sessions.put(sessionId, session);
         }
 
         return session;

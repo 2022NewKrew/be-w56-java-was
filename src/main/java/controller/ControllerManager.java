@@ -18,6 +18,8 @@ public class ControllerManager {
     static{
         //@PostMapping(value = "/user/create") 를 UserController클래스 execute라는 static method를 매핑해줌.
         map.put(new RequestType(HttpMethod.POST, "/user/create"), UserController::createUser);
+        map.put(new RequestType(HttpMethod.POST, "/user/login/check"), UserController::loginUser);
+
     }
 
 
