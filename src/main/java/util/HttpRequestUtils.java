@@ -45,6 +45,7 @@ public class HttpRequestUtils {
     }
 
     public static RequestHeader parseRequestHeader(BufferedReader br) throws IOException {
+        final String defaultCookie = "logined=false";
         String line;
         Map<String, String> header = new HashMap<>();
         while (!(line = br.readLine()).equals("")) {
@@ -52,8 +53,11 @@ public class HttpRequestUtils {
             String[] split = line.split(":", 2);
             header.put(split[0].trim(), split[1].trim());
         }
-        return new RequestHeader(Integer.parseInt(Optional.ofNullable(header.get("Content-Length")).orElse("0")),
-                Optional.ofNullable(header.get("Accept")).orElse("").split(",")[0]);
+
+        int contentLength = Integer.parseInt(Optional.ofNullable(header.get("Content-Length")).orElse("0"));
+        String contentType = Optional.ofNullable(header.get("Accept")).orElse("").split(",")[0];
+        boolean cookie = Boolean.parseBoolean(Optional.ofNullable(header.get("Cookie")).orElse(defaultCookie).split("=")[1]);
+        return new RequestHeader(contentLength, contentType, cookie);
     }
 
     private static Map<String, String> parseValues(String values, String separator) {

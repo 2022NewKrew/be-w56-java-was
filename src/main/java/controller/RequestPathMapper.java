@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static controller.GeneralController.defaultPath;
-import static controller.GeneralController.rootPath;
+import static controller.HomeController.homePath;
 import static controller.UserController.*;
 
 public class RequestPathMapper {
@@ -26,7 +26,8 @@ public class RequestPathMapper {
         log.info("Request Url : {}", requestLine.getUrl());
         switch (requestLine.getUrl()) {
             case "/":
-                rootPath(dos);
+            case "/index.html":
+                homePath(requestHeader, dos);
                 break;
             case "/user":
                 userCreatePath(requestHeader, requestBody, dos);

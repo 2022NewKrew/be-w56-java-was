@@ -4,10 +4,12 @@ public class RequestHeader {
 
     private int contentLength;
     private String contentType;
+    private boolean cookie;
 
-    public RequestHeader(int contentLength, String contentType) {
+    public RequestHeader(int contentLength, String contentType, boolean cookie) {
         this.contentLength = contentLength;
         this.contentType = contentType;
+        this.cookie = cookie;
     }
 
     public int getContentLength() {
@@ -16,5 +18,9 @@ public class RequestHeader {
 
     public String getContentType() {
         return contentType;
+    }
+
+    public boolean isCookie() {
+        return cookie;
     }
 }
