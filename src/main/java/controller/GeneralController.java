@@ -19,13 +19,13 @@ public class GeneralController {
 
     protected static void rootPath(DataOutputStream dos) throws IOException {
         log.info("Root Path Go to index.html");
-        byte[] body = Files.readAllBytes(new File(URL_PREFIX + "/index.html").toPath());
+        byte[] body = Files.readAllBytes(new File(LOCAL_PREFIX + "/index.html").toPath());
         responseHeader(ResponseStatus.OK, DEFAULT_CONTENT_TYPE, dos, body.length);
         responseBody(dos, body);
     }
 
     protected static void defaultPath(RequestLine requestLine, RequestHeader requestHeader, DataOutputStream dos) throws IOException {
-        File file = new File(URL_PREFIX + requestLine.getUrl());
+        File file = new File(LOCAL_PREFIX + requestLine.getUrl());
         byte[] body;
 
         if (file.exists()) {

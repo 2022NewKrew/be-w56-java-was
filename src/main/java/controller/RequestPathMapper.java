@@ -17,9 +17,9 @@ import static controller.UserController.*;
 public class RequestPathMapper {
     private static final Logger log = LoggerFactory.getLogger(RequestPathMapper.class);
 
-    protected static final String URL_PREFIX = "./webapp";
+    protected static final String LOCAL_PREFIX = "./webapp";
     protected static final String DEFAULT_CONTENT_TYPE = "text/html";
-    protected static final String REDIRECT_PATH = "http://localhost:8080/index.html";
+    protected static final String PATH_PREFIX = "http://localhost:8080";
 
     public static void urlMapping(RequestLine requestLine, RequestHeader requestHeader,
                                   Map<String, String> requestBody, DataOutputStream dos) throws IOException {
@@ -51,10 +51,22 @@ public class RequestPathMapper {
         }
     }
 
-    protected static void response302Header(String contentType, boolean isLogined, DataOutputStream dos) {
+    protected static void response302Header(String contentType, String path, DataOutputStream dos) {
         try {
             dos.writeBytes("HTTP/1.1 " + ResponseStatus.FOUND.getValue() + " " + ResponseStatus.FOUND.name() + " \r\n");
-            dos.writeBytes("Location: " + REDIRECT_PATH + "\r\n");
+            dos.writeBytes("Location: " + PATH_PREFIX + path + "\r\n");
+            dos.writeBytes("Content-Type: " + contentType + "; charset = utf - 8\r\n ");
+            dos.writeBytes("Content-Length: " + 0 + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    protected static void response302Header(String contentType, String path, boolean isLogined, DataOutputStream dos) {
+        try {
+            dos.writeBytes("HTTP/1.1 " + ResponseStatus.FOUND.getValue() + " " + ResponseStatus.FOUND.name() + " \r\n");
+            dos.writeBytes("Location: " + PATH_PREFIX + path + "\r\n");
             dos.writeBytes("Content-Type: " + contentType + "; charset = utf - 8\r\n ");
             dos.writeBytes("Content-Length: " + 0 + "\r\n");
             dos.writeBytes("Set-Cookie: logined=" + isLogined + "; Path=/");
