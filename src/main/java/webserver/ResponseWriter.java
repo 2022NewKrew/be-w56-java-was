@@ -19,7 +19,7 @@ public class ResponseWriter {
     private static final String FILE_PREFIX = "./webapp";
 
     private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK\r\n";
-    private static final String RESPONSE_TOP_HEADER_MOVED_PERMANENTLY = "HTTP/1.1 301 Moved Permanently\r\n";
+    private static final String RESPONSE_TOP_HEADER_SEE_OTHER = "HTTP/1.1 303 See Other\r\n";
     private static final String RESPONSE_BODY_SEPARATOR = "\r\n";
 
     public void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
@@ -43,7 +43,7 @@ public class ResponseWriter {
             writeErrorResponse(out);
             return;
         }
-        write301Response(out, headers);
+        write303Response(out, headers);
     }
 
     public void writeErrorResponse(final OutputStream out) {
@@ -58,10 +58,9 @@ public class ResponseWriter {
         responseBody(dos, body);
     }
 
-    private void write301Response(final OutputStream out, final Headers headers) {
+    private void write303Response(final OutputStream out, final Headers headers) {
         final DataOutputStream dos = new DataOutputStream(out);
-
-        response301Header(dos, headers);
+        response303Header(dos, headers);
     }
 
     private String createHeaderString(final String key, final String value) {
@@ -79,9 +78,9 @@ public class ResponseWriter {
         }
     }
 
-    private void response301Header(DataOutputStream dos, final Headers headers) {
+    private void response303Header(DataOutputStream dos, final Headers headers) {
         try {
-            dos.writeBytes(RESPONSE_TOP_HEADER_MOVED_PERMANENTLY);
+            dos.writeBytes(RESPONSE_TOP_HEADER_SEE_OTHER);
             for (Pair pair : headers.getList()) {
                 dos.writeBytes(createHeaderString(pair.getKey(), pair.getValue()));
             }
