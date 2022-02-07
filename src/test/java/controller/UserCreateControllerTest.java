@@ -3,7 +3,7 @@ package controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import db.DataBase;
+import dao.UserDao;
 import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.request.RequestBody;
@@ -39,14 +39,11 @@ class UserCreateControllerTest {
         Controller controller = UserCreateController.getInstance();
         //when
         HttpResponse response = controller.run(request, dos);
-        User user = DataBase.findUserById("userId");
         response.sendResponse();
         //then
-        assertThat(user).isNotNull();
         assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location");
-        assertThat(user.toString()).contains("userId", "password", "name", "email");
 
-        DataBase.deleteUser("userId");
+        UserDao.getInstance().delete(new User("userId", "password", "name", "email"));
     }
 
     @DisplayName("HttpRequest 의 body 가 올바르지 못한 경우 BadRequestException 을 던진다.")

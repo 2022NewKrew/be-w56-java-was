@@ -17,7 +17,7 @@ class ResponseHeaderTest {
     @ValueSource(strings = {"test.html", "test.css", "test.js"})
     void addContentTypeToUrl(String testUrl) {
         //give
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
         String testExtension = testUrl.split("\\.")[1];
         //when
         header.addContentType(testUrl);
@@ -30,7 +30,7 @@ class ResponseHeaderTest {
     @EnumSource(ContentType.class)
     void testAddContentToContentType(ContentType testType) {
         //give
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
         String testExtension = testType.getExtension();
         //when
         header.addContentType(testType);
@@ -43,7 +43,7 @@ class ResponseHeaderTest {
     @ValueSource(ints = {0, 10, 100})
     void addContentLength(int testLength) {
         //give
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
         //when
         header.addContentLength(testLength);
         //then
@@ -56,7 +56,7 @@ class ResponseHeaderTest {
     @ValueSource(strings = {"/testPath1", "/testPath2", "/testPath3"})
     void addLocation(String testLocation) {
         //give
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
         //when
         header.addLocation(testLocation);
         //then
@@ -69,7 +69,7 @@ class ResponseHeaderTest {
         //give
         Map<String, String> testCookie = Map.of("testCookie1", "firstCookie", "testCookie2",
                 "secondCookie");
-        ResponseHeader header = new ResponseHeader();
+        ResponseHeader header = ResponseHeader.empty();
         //when
         header.addCookie(testCookie);
         //then

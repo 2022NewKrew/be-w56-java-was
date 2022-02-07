@@ -24,8 +24,8 @@ public class ResponseHeader {
         this.cookies = cookies;
     }
 
-    public ResponseHeader() {
-        this(MapUtil.newEmptyMap(String.class, String.class),
+    public static ResponseHeader empty() {
+        return new ResponseHeader(MapUtil.newEmptyMap(String.class, String.class),
                 MapUtil.newEmptyMap(String.class, String.class));
     }
 

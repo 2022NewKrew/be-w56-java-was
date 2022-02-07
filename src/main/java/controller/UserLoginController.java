@@ -1,5 +1,6 @@
 package controller;
 
+import dao.UserDao;
 import db.DataBase;
 import exception.BadRequestException;
 import http.request.HttpRequest;
@@ -20,6 +21,8 @@ public class UserLoginController implements Controller {
         return instance;
     }
 
+    private final UserDao userDao = UserDao.getInstance();
+
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         Map<String, String> bodyData = request.getBodyData();
@@ -28,7 +31,7 @@ public class UserLoginController implements Controller {
 
         String userId = bodyData.get("userId");
         String password = bodyData.get("password");
-        User user = DataBase.findUserById(userId);
+        User user = userDao.find(userId);
 
         if (user != null && user.getPassword().equals(password)) {
             return loginSuccess(dos);
