@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import webserver.enums.HttpMethod;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,7 +25,7 @@ class HttpRequestTest {
         myHttpRequest.setRequest(request);
 
         // then
-        assertEquals(myHttpRequest.getMethod(), "GET");
+        assertEquals(myHttpRequest.getMethod(), HttpMethod.GET);
         assertEquals(myHttpRequest.getUri(), "/index.html");
         assertEquals(myHttpRequest.getProtocol(), "HTTP/1.1");
     }

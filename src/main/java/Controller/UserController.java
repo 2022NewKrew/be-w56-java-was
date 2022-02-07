@@ -24,7 +24,7 @@ public class UserController {
     public boolean login(Map<String, String> userInfo) {
         LoginInfo loginInfo = new LoginInfo(userInfo.get("userId"), userInfo.get("password"));
         User user = DataBase.findUserById(loginInfo.getUserId());
-        if (user == null) {
+        if (user.isDummyUser()) {
             return false;
         }
         return loginInfo.getPassword().equals(user.getPassword());
