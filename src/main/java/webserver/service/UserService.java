@@ -2,6 +2,9 @@ package webserver.service;
 
 import domain.User;
 import network.HttpRequest;
+import network.Status;
+
+import java.util.Map;
 
 public class UserService {
 
@@ -10,8 +13,17 @@ public class UserService {
         this.httpRequest = httpRequest;
     }
 
-    public void signUp(){
-        User user = new User(httpRequest.getBody());
-        System.out.println(user);
+    public Status signUp(){
+
+        Map<String, String> body = httpRequest.getBody();
+        if(!body.isEmpty()){
+            User user = new User(body);
+            return Status.FOUND;
+        }
+        return Status.NOTFOUND;
+    }
+
+    public Status home(){
+        return Status.OK;
     }
 }
