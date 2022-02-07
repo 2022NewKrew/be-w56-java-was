@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,13 @@ public class HttpResponse {
     private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
-    public static HttpResponse of(String path, String contentType) {
+    private static String parseExtension(String path) {
+        List<String> splitResult = List.of(path.split("\\."));
+        int length = splitResult.size();
+        return splitResult.get(length - 1);
+    }
+
+    public static HttpResponse of(String path) {
         String httpVersion = HttpVersion.HTTP_1_1.getVersion();
         int statusCode = HttpStatus.OK.getCode();
         String statusMessage = HttpStatus.OK.getMessage();
@@ -37,7 +44,7 @@ public class HttpResponse {
 
         StatusLine statusLine = new StatusLine(httpVersion, statusCode, statusMessage);
         Map<String, String> headerKeyMap = Map.of(
-                "Content-Type", contentType,
+                "Content-Type", Mime.getMime(parseExtension(path)),
                 "Content-Length", Integer.toString(body.length)
         );
         Header header = new Header(headerKeyMap);

@@ -31,10 +31,7 @@ public class RequestHandler extends Thread {
             List<String> lineList = HttpRequestUtils.convertToStringList(bufferedReader);
             HttpRequest httpRequest = HttpRequest.of(lineList);
 
-            String path = httpRequest.getPath();
-            String contentType = httpRequest.getHeader("Accept").split(",")[0]; // TODO - Accept 없는 경우 처리
-
-            HttpResponse httpResponse = HttpResponse.of(path, contentType);
+            HttpResponse httpResponse = HttpResponse.of(httpRequest.getPath());
             httpResponse.sendResponse(connection);
         } catch (IOException e) {
             log.error(e.getMessage());
