@@ -7,15 +7,15 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
 
-    private static MysqlDataSource DATA_SOURCE;
+    private static MysqlDataSource dataSource;
 
     public static Connection createConnection(String url, String user, String password) throws SQLException {
-        if (DATA_SOURCE == null) {
-            DATA_SOURCE = new MysqlDataSource();
-            DATA_SOURCE.setUrl(url);
-            DATA_SOURCE.setUser(user);
-            DATA_SOURCE.setPassword(password);
+        if (dataSource == null) {
+            dataSource = new MysqlDataSource();
+            dataSource.setUrl(url);
+            dataSource.setUser(user);
+            dataSource.setPassword(password);
         }
-        return DATA_SOURCE.getConnection();
+        return dataSource.getConnection();
     }
 }
