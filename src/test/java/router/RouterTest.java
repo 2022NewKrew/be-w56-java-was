@@ -15,7 +15,7 @@ class RouterTest {
 
     @Test
     @DisplayName("/index로 입력시 /index.html로 라우팅 테스트")
-    void routing_default() {
+    void routing_default() throws Exception {
         Request testRequest = Request.builder().
                 requestLine( new String[]{"GET", "/index", "HTTP/1.1"})
                 .header(Collections.singletonMap("Accept", "text"))
@@ -27,7 +27,7 @@ class RouterTest {
 
     @Test
     @DisplayName("/user/create로 입력시 /user/list.html로 라우팅 테스트")
-    void routing_user_create() {
+    void routing_user_create() throws Exception {
         Map<String, String> testQueryMap = new HashMap<>();
         testQueryMap.put("userId", "wook961206");
         testQueryMap.put("password","123");

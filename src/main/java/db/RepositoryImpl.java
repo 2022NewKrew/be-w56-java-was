@@ -36,15 +36,4 @@ public class RepositoryImpl {
                 .build();
         addUser(newUser);
     }
-
-    public static boolean isRightLogin(Request request) {
-        Map<String, String> queryString = request.getQueryString();
-        User newUser = User.builder()
-                .userId(queryString.get("userId"))
-                .password(queryString.get("password"))
-                .build();
-        User findUser = findUserById(queryString.get("userId"));
-
-        return newUser.equals(findUser);
-    }
 }

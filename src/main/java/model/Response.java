@@ -10,17 +10,16 @@ public class Response {
     private String respContextType;
     private String filePath;
     private String cookie;
-    public static Response of(Request request, String urlPath) {
-        String filePath = fixFilePath(urlPath);
+    private byte[] body;
+
+    public static Response of(Request request, String urlPath, byte[] body) {
         return Response.builder()
                 .httpMethod(request.getHttpMethod())
                 .respContextType(request.getRespContextType())
-                .filePath(filePath)
+                .filePath(urlPath)
+                .body(body)
                 .cookie("")
                 .build();
-    }
-    private static String fixFilePath(String urlPath) {
-        return urlPath.contains(".") ? urlPath : urlPath + ".html";
     }
 
     public void setCookie(String cookie) {

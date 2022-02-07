@@ -39,3 +39,16 @@
 
 ### 회고
 - 이번 프로젝트를 완성하고 돌아보니 절차지향적으로 코드를 작성한 것 같습니다. 그래서 내일은 좀 더 구조적인 리팩토링을 진행할 예정입니다.
+
+# step5
+- [x] 객체지향적으로 리팩토링
+- [x] router에서 controller와 method를 서칭하는 로직을 reflection을 사용하여 리팩토링
+- [x] db 연결(mysql)
+- [x] 5단계 기능구현(GET /user/list 구현)
+- [x] 7단계 기능구현(GET /article/list 구현)
+
+### 회고
+- db 연결 순서
+  1. db jar파일 다운로드
+  2. db 버전에 맞게 build.gradle에 추가(implementation 'mysql:mysql-connector-java:8.0.27')
+  3. 끝
