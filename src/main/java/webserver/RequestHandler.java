@@ -1,16 +1,12 @@
 package webserver;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.List;
 import model.HttpRequest;
 import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
 
@@ -26,11 +22,7 @@ public class RequestHandler extends Thread {
         log.debug("요청: IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream();) {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-
-            List<String> lineList = HttpRequestUtils.convertToStringList(bufferedReader);
-            HttpRequest httpRequest = HttpRequest.of(lineList);
-
+            HttpRequest httpRequest = HttpRequest.of(in);
             HttpResponse httpResponse = HttpResponse.of(httpRequest.getPath());
             httpResponse.sendResponse(connection);
         } catch (IOException e) {

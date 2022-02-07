@@ -17,18 +17,6 @@ public class HttpRequestUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
-    public static List<String> convertToStringList(BufferedReader bufferedReader) throws IOException {
-        List<String> requestLineList = new ArrayList<>();
-        String line = bufferedReader.readLine();
-        while (!Strings.isNullOrEmpty(line)) {
-            log.debug("header: {}", line);
-
-            requestLineList.add(line);
-            line = bufferedReader.readLine();
-        }
-        return requestLineList;
-    }
-
     /**
      * @param queryString: URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return

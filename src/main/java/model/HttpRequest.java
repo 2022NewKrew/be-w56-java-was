@@ -1,5 +1,10 @@
 package model;
 
+import com.google.common.base.Strings;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,28 +26,27 @@ public class HttpRequest {
         return requestLineList.size();
     }
 
-    private static List<String> getHeaderLineList(List<String> requestLineList, int bodyIndex) {
-        List<String> headerLineList = new ArrayList<>();
-        for (int i = 1; i < bodyIndex; i++) {
-            headerLineList.add(requestLineList.get(i));
+    public static List<String> convertToStringList(BufferedReader bufferedReader) throws IOException {
+        List<String> requestLineList = new ArrayList<>();
+        String line = bufferedReader.readLine();
+        while (!Strings.isNullOrEmpty(line)) {
+            log.debug("header: {}", line);
+
+            requestLineList.add(line);
+            line = bufferedReader.readLine();
         }
-        return headerLineList;
+        return requestLineList;
     }
 
-    private static List<String> getBodyLineList(List<String> requestLineList, int bodyIndex) {
-        List<String> bodyLineList = new ArrayList<>();
-        for (int i = bodyIndex + 1; i < requestLineList.size(); i++) {
-            bodyLineList.add(requestLineList.get(i));
-        }
-        return bodyLineList;
-    }
-
-    public static HttpRequest of(List<String> requestLineList) {
+    public static HttpRequest of(InputStream in) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        List<String> requestLineList = convertToStringList(bufferedReader);
         StartLine startLine = StartLine.of(requestLineList.get(0));
 
         int bodyIndex = getBodyIndex(requestLineList);
-        Header header = Header.of(getHeaderLineList(requestLineList, bodyIndex));
-        Body body = Body.of(getBodyLineList(requestLineList, bodyIndex));
+        Header header = Header.of(requestLineList.subList(1, bodyIndex));
+        Body body = Body.of(requestLineList.subList(Math.min(bodyIndex + 1, requestLineList.size()),
+                requestLineList.size()));
 
         return new HttpRequest(startLine, header, body);
     }
