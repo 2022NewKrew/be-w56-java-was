@@ -12,10 +12,10 @@ public class ControllerMapper {
     private static final StaticController staticController = new StaticController();
 
     public static Controller mapController(String path) {
-        if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
-            return staticController;
-        } else if(path.startsWith("/user")) {
+        if (path.startsWith("/user")) {
             return userController;
+        } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+            return staticController;
         } else {
             throw new IllegalArgumentException("Controller corresponding to path not found");
         }
