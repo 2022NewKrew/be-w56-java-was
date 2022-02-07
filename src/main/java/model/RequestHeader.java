@@ -14,10 +14,10 @@ public class RequestHeader {
     private final String protocol;
     private Map<String, String> params = new HashMap<>();
     private final Map<String, String> body;
+    private final Map<String, String> requestInfo;
 
 
     public RequestHeader(BufferedReader requestHeaderInfo) throws IOException {
-        int contentLength;
         String rawBody;
         String[] headerToken = requestHeaderInfo.readLine().split(" ");
         String[] uriToken = headerToken[1].split("\\?");
@@ -29,9 +29,13 @@ public class RequestHeader {
             this.params = HttpRequestUtils.parseQueryString(uriToken[1]);
         }
 
-        contentLength = IOUtils.parseContentLength(requestHeaderInfo);
-        rawBody = IOUtils.readData(requestHeaderInfo, contentLength);
+        this.requestInfo = HttpRequestUtils.parseRequestInfo(requestHeaderInfo);
+        rawBody = IOUtils.readData(requestHeaderInfo, Integer.parseInt(requestInfo.getOrDefault("Content-Length", "0")));
         this.body = HttpRequestUtils.parseQueryString(rawBody);
+    }
+
+    public Map<String, String> getRequestInfo() {
+        return requestInfo;
     }
 
     public Map<String, String> getBody() {
