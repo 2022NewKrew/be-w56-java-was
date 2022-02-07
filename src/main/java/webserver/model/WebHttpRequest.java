@@ -28,26 +28,24 @@ public class WebHttpRequest extends HttpRequest {
         this.method = RequestMethod.valueOf(request[0]);
         this.requestURI = request[1];
         this.version = request[2];
-        headers = new HashMap<>();
+        this.headers = Maps.newHashMap();
+        this.cookies = Maps.newHashMap();
         String lines = in.lines()
                 .takeWhile(line -> !line.equals(""))
                 .collect(Collectors.joining(System.lineSeparator()));
-        List<HttpRequestUtils.Pair> headers = Arrays.stream(lines.split(System.lineSeparator()))
+        Map<Boolean, List<HttpRequestUtils.Pair>> partitionedHeader = Arrays.stream(lines.split(System.lineSeparator()))
                 .map(HttpRequestUtils::parseHeader)
-                .collect(Collectors.toList());
-        cookies = headers.stream()
-                .filter(header -> header.getKey().equals("Cookie"))
-                .findFirst()
+                .collect(Collectors.partitioningBy(header -> header.getKey().equals("Cookie")));
+        partitionedHeader.get(Boolean.TRUE).stream()
                 .map(HttpRequestUtils.Pair::getValue)
                 .map(HttpRequestUtils::parseCookies)
-                .orElse(Maps.newHashMap());
-        headers.stream()
-                .filter(header -> !header.getKey().equals("Cookie"))
-                .forEach(header -> {
-                    List<String> values = Arrays.stream(header.getValue().split(","))
+                .forEach(cookies -> this.cookies.putAll(cookies));
+        partitionedHeader.get(Boolean.FALSE).stream()
+                .forEach(pair -> {
+                    List<String> values = Arrays.stream(pair.getValue().split(","))
                             .map(String::trim)
                             .collect(Collectors.toList());
-                    this.headers.put(header.getKey(), values);
+                    this.headers.put(pair.getKey(), values);
                 });
         if (method == RequestMethod.POST && this.headers.containsKey("Content-Length")) {
             this.body = IOUtils.readData(in, Integer.parseInt((String) this.headers.get("Content-Length").get(0)));
