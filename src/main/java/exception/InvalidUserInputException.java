@@ -1,14 +1,10 @@
 package exception;
 
-public class InvalidUserInputException extends RuntimeException {
+import http.HttpStatus;
 
-    private static final String MESSAGE = "사용자 입력이 유효하지 않습니다.";
-
-    public InvalidUserInputException() {
-        super(MESSAGE);
-    }
+public class InvalidUserInputException extends CustomException {
 
     public InvalidUserInputException(String message) {
-        super(message);
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }

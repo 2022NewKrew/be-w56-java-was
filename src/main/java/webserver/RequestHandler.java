@@ -1,6 +1,5 @@
 package webserver;
 
-import controller.Controller;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.BufferedReader;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 import java.nio.charset.StandardCharsets;
@@ -19,6 +19,8 @@ import util.IOUtils;
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final HandlerMapping handlerMapping = HandlerMapping.getInstance();
+    private static final HandlerExceptionResolver handlerExceptionResolver = HandlerExceptionResolver.getInstance();
 
     private Socket connection;
 
@@ -31,17 +33,27 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-            HttpRequest httpRequest = HttpRequest.from(br);
+                HttpRequest httpRequest = HttpRequest.from(br);
+                HttpResponse httpResponse = new HttpResponse();
+                ModelAndView mv = handlerMapping.invokeHandlerMethod(httpRequest, httpResponse);
 
-            HandlerMapping handlerMapping = HandlerMapping.getInstance();
-            Controller controller = handlerMapping.getController(httpRequest.getRequestLine().getPath());
+                httpResponse.from(mv);
+                IOUtils.write(new DataOutputStream(out), httpResponse);
 
-            HttpResponse httpResponse = controller.service(httpRequest);
-            IOUtils.write(new DataOutputStream(out), httpResponse);
+            } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                if (e instanceof InvocationTargetException) {
+                    HttpResponse httpResponse = handlerExceptionResolver.resolveException(((InvocationTargetException) e).getTargetException());
+                    IOUtils.write(new DataOutputStream(out), httpResponse);
+                    return;
+                }
+                HttpResponse httpResponse = handlerExceptionResolver.resolveException(e);
+                IOUtils.write(new DataOutputStream(out), httpResponse);
+            }
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("Failure while trying to get input/output stream\n message: " + e.getMessage());
         }
     }
 }

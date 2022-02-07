@@ -1,5 +1,7 @@
 package http.request;
 
+import http.HttpHeaders;
+import http.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -25,8 +27,14 @@ public class HttpRequest {
         List<String> headerStrings = IOUtils.readHttpHeaders(br);
         HttpHeaders headers = HttpRequestUtils.parseHeaders(headerStrings);
 
-        String bodyString = IOUtils.readData(br, headers.getContentLength());
-        RequestBody body = HttpRequestUtils.parseRequestBody(bodyString);
+        int contentLength = headers.getContentLength();
+        if (contentLength == 0) {
+            return new HttpRequest(requestLine, headers, RequestBody.empty());
+        }
+
+        String bodyString = IOUtils.readData(br, contentLength);
+        MediaType contentType = headers.getContentType();
+        RequestBody body = HttpRequestUtils.parseRequestBody(contentType, bodyString);
 
         return new HttpRequest(requestLine, headers, body);
     }

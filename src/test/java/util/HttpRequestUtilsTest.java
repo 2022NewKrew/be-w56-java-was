@@ -2,7 +2,7 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
-import exception.InvalidParameterKeyException;
+import exception.InvalidRequestLineException;
 import http.request.Queries;
 import http.request.RequestLine;
 import java.util.Map;
@@ -19,8 +19,22 @@ public class HttpRequestUtilsTest {
         RequestLine requestLine = HttpRequestUtils.parseRequestLine(requestLineString);
 
         assertThat(requestLine.getMethod()).isEqualTo(HttpMethod.GET);
-        assertThat(requestLine.getPath()).isEqualTo("/index.html");
-        assertThat(requestLine.getQueries().getParams()).hasSize(0);
+        assertThat(requestLine.getUri().getPath()).isEqualTo("/index.html");
+        assertThat(requestLine.getUri().getQueries().getParams()).hasSize(0);
+    }
+
+    @Test
+    public void parseRequestLine_null() {
+        assertThatThrownBy(() -> HttpRequestUtils.parseRequestLine(null))
+                .isInstanceOf(InvalidRequestLineException.class);
+    }
+
+    @Test
+    public void parseRequestLine_invalid() {
+        String requestLineString = "GET HTTP/1.1";
+
+        assertThatThrownBy(() -> HttpRequestUtils.parseRequestLine(requestLineString))
+                .isInstanceOf(InvalidRequestLineException.class);
     }
 
     @Test
@@ -71,12 +85,11 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void parseQueries_invalid() {
+    public void parseQueries_null2() {
         String targetToken = "/users/create?userId=javajigi";
         Queries queries = HttpRequestUtils.parseQueries(targetToken);
         assertThat(queries.getValue("userId")).isEqualTo("javajigi");
-        assertThatThrownBy(() -> queries.getValue("password"))
-                .isInstanceOf(InvalidParameterKeyException.class);
+        assertThat(queries.getValue("password")).isNull();
     }
 
     @Test
