@@ -39,9 +39,10 @@ public class HttpResponse {
         }
 
         StatusLine statusLine = new StatusLine(httpVersion, statusCode, statusText);
-        Map<String, String> headerKeyMap = new HashMap<>();
-        headerKeyMap.put("Content-Type", contentType);
-        headerKeyMap.put("Content-Length", Integer.toString(body.length));
+        Map<String, String> headerKeyMap = Map.of(
+                "Content-Type", contentType,
+                "Content-Length", Integer.toString(body.length)
+        );
         Header header = new Header(headerKeyMap);
 
         return new HttpResponse(statusLine, header, body);
@@ -52,7 +53,7 @@ public class HttpResponse {
     private final byte[] body;
 
     private HttpResponse(StatusLine statusLine, Header header, byte[] body) {
-        log.debug("HttpResponse: \n{}\n {}\n {}", statusLine, header, body);
+        log.debug("HttpResponse: \n{}\n {}\n", statusLine, header);
         this.statusLine = statusLine;
         this.header = header;
         this.body = body;
