@@ -11,15 +11,22 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ArticleService {
-    public static void save(Request request) throws SQLException {
-        RepositoryArticleDbImpl.save(request);
+
+    private final RepositoryArticleDbImpl repositoryArticleDb;
+
+    public ArticleService() {
+        this.repositoryArticleDb = new RepositoryArticleDbImpl();
     }
 
-    public static byte[] articleListToByte() throws SQLException, IOException {
+    public void save(Request request) throws SQLException {
+        repositoryArticleDb.save(request);
+    }
+
+    public byte[] articleListToByte() throws SQLException, IOException {
         byte[] htmlBytes = Files.readAllBytes(new File("./webapp" + "/qna/list.html").toPath());
         String htmlString = new String(htmlBytes);
 
-        List<Article> articleList = RepositoryArticleDbImpl.findAll();
+        List<Article> articleList = repositoryArticleDb.findAll();
         StringBuilder sb = new StringBuilder();
 
         for (Article article : articleList) {

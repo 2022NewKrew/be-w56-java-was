@@ -15,9 +15,18 @@ import static query.ArticleQuery.INSERT_QUERY;
 
 public class RepositoryArticleDbImpl {
 
-    public static void save(Request request) throws SQLException {
+    private final Connection connection;
+
+    public RepositoryArticleDbImpl() {
+        try {
+            this.connection = DbUtils.getDbConnection();
+        } catch (SQLException e) {
+            throw new IllegalStateException("connection fail");
+        }
+    }
+
+    public void save(Request request) throws SQLException {
         Map<String, String> queryString = request.getQueryString();
-        Connection connection = DbUtils.getDbConnection();
 
         PreparedStatement pstmt = connection.prepareStatement(INSERT_QUERY);
         pstmt.setString(1, queryString.get("writer"));
@@ -29,9 +38,8 @@ public class RepositoryArticleDbImpl {
         connection.close();
     }
 
-    public static List<Article> findAll() throws SQLException {
+    public  List<Article> findAll() throws SQLException {
         List<Article> articleList = new ArrayList<>();
-        Connection connection = DbUtils.getDbConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY);
 

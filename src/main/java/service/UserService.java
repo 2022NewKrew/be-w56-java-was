@@ -12,26 +12,29 @@ import java.util.Map;
 import java.util.Optional;
 
 public class UserService {
-    private UserService() {
-        throw new IllegalStateException("Utility class");
+
+    private final RepositoryUserDbImpl repositoryUserDb;
+
+    public UserService() {
+        this.repositoryUserDb = new RepositoryUserDbImpl();
     }
     
-    public static void save(Request request) throws SQLException {
-        RepositoryUserDbImpl.save(request);
+    public void save(Request request) throws SQLException {
+        repositoryUserDb.save(request);
     }
 
-    public static boolean isRightLogin(Request request) throws SQLException {
+    public boolean isRightLogin(Request request) throws SQLException {
         Map<String, String> queryString = request.getQueryString();
         User newUser = User.builder()
                 .userId(queryString.get("userId"))
                 .password(queryString.get("password"))
                 .build();
-        User findUser = RepositoryUserDbImpl.findUserById(queryString.get("userId"));
+        User findUser = repositoryUserDb.findUserById(queryString.get("userId"));
 
         return newUser.equals(findUser);
     }
 
-    public static boolean isLoginState(Request request) {
+    public boolean isLoginState(Request request) {
         String cookieValue = request.getCookies().get("logined");
         String opBool = Optional.
                 ofNullable(cookieValue).
@@ -39,11 +42,11 @@ public class UserService {
         return opBool.equals("true");
     }
 
-    public static byte[] userListToByte() throws IOException, SQLException {
+    public byte[] userListToByte() throws IOException, SQLException {
         byte[] htmlBytes = Files.readAllBytes(new File("./webapp" + "/user/list.html").toPath());
         String htmlString = new String(htmlBytes);
 
-        List<User> userList = RepositoryUserDbImpl.findAll();
+        List<User> userList = repositoryUserDb.findAll();
         StringBuilder sb = new StringBuilder();
 
         for (User user : userList) {

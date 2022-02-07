@@ -13,9 +13,17 @@ import static query.UserQuery.*;
 
 public class RepositoryUserDbImpl {
 
-        public static User findUserById(String userId) throws SQLException {
-            Connection connection = DbUtils.getDbConnection();
+        private final Connection connection;
 
+        public RepositoryUserDbImpl() {
+            try {
+                this.connection = DbUtils.getDbConnection();
+            } catch (SQLException e) {
+                throw new IllegalStateException("connection fail");
+            }
+        }
+
+        public User findUserById(String userId) throws SQLException {
             PreparedStatement pstmt = connection.prepareStatement(FIND_BY_ID_QUERY);
             pstmt.setString(1,userId);
             ResultSet resultSet = pstmt.executeQuery();
@@ -35,9 +43,8 @@ public class RepositoryUserDbImpl {
             return findUser;
         }
 
-        public static void save(Request request) throws SQLException {
+        public void save(Request request) throws SQLException {
             Map<String, String> queryString = request.getQueryString();
-            Connection connection = DbUtils.getDbConnection();
 
             PreparedStatement pstmt = connection.prepareStatement(INSERT_QUERY);
             pstmt.setString(1, queryString.get("userId"));
@@ -50,9 +57,8 @@ public class RepositoryUserDbImpl {
             connection.close();
         }
 
-        public static List<User> findAll() throws SQLException {
+        public List<User> findAll() throws SQLException {
             List<User> userList = new ArrayList<>();
-            Connection connection = DbUtils.getDbConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY);
 
