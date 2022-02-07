@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
-import javax.xml.crypto.Data;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -67,11 +66,14 @@ public class RequestHandler extends Thread {
     }
 
     private void urlMapper(DataOutputStream dos, String url, Map<String, String> header, BufferedReader br) throws IOException {
-        if (url.contains(".html")) {
+        if (url.endsWith(".html")) {
             getHtml(dos, url, header);
         }
-        if (url.startsWith("/create")) {
+        else if (url.startsWith("/create")) {
             createUserByPost(dos, url, header, br);
+        }
+        else if (url.equals("/login")){
+            login(dos,url,header,br);
         }
     }
 
@@ -101,6 +103,18 @@ public class RequestHandler extends Thread {
         redirect(dos, "/index.html", header);
     }
 
+    private void login(DataOutputStream dos, String url, Map<String, String> header, BufferedReader br) throws  IOException{
+        String body = IOUtils.readData(br, Integer.parseInt(header.get("Content-Length")));
+        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
+        User user = DataBase.findUserById(params.get("userId"));
+        if(user == null){
+            throw new IOException("존재하지 않는 아이디입니다");
+        }
+        else if(!user.getPassword().equals(params.get("password"))){
+            throw new IOException("유저 아이디와 비밀번호가 일치하지 않습니다");
+        }
+        redirectWithCookie(dos, "/index.html", header);
+    }
 
     private void view(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
@@ -114,6 +128,11 @@ public class RequestHandler extends Thread {
         responseBody(dos, body);
     }
 
+    private void redirectWithCookie(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
+        byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+        response302HeaderWithCookie(dos, body.length, url, "logined=true");
+        responseBody(dos, body);
+    }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
@@ -135,6 +154,18 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
+
+    private void response302HeaderWithCookie(DataOutputStream dos, int lengthOfBodyContent, String url, String cookie) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + url + " \r\n");
+            dos.writeBytes("Set-Cookie: " + cookie + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
 
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
