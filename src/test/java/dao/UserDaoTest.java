@@ -1,8 +1,6 @@
 package dao;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import model.User;
@@ -30,7 +28,7 @@ class UserDaoTest {
         dao.save(testUser);
 
         //when
-        User user = dao.find(userId).orElseThrow();
+        User user = dao.find(userId);
 
         //then
         assertThat(user.getUserId()).isEqualTo(userId);
@@ -87,7 +85,7 @@ class UserDaoTest {
 
         //when
         dao.save(testUser);
-        User savedUser = dao.find(userId).orElseThrow();
+        User savedUser = dao.find(userId);
 
         //then
         assertThat(savedUser.getUserId()).isEqualTo(userId);
@@ -112,7 +110,7 @@ class UserDaoTest {
 
         //when
         dao.update(new User(user.getUserId(), newPassword, newName, newEmail));
-        User updateUser = dao.find(user.getUserId()).orElseThrow();
+        User updateUser = dao.find(user.getUserId());
 
         //then
         assertThat(updateUser.getPassword()).isEqualTo(newPassword);
@@ -135,12 +133,12 @@ class UserDaoTest {
 
         User testUser = new User(userId, password, name, email);
         dao.save(testUser);
-        assertThat(dao.find(userId).orElseThrow().getUserId()).isEqualTo(userId);
+        assertThat(dao.find(userId).getUserId()).isEqualTo(userId);
 
         //when
         dao.delete(testUser);
 
         //then
-        assertThatThrownBy(() -> dao.find(userId).orElseThrow()).isInstanceOf(Exception.class);
+        assertThat(dao.find(userId)).isNull();
     }
 }

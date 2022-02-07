@@ -2,13 +2,14 @@ package webserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import db.DataBase;
+import dao.UserDao;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -57,7 +58,7 @@ class RequestHandlerTest {
         //then
         assertThat(os.toString()).contains("302", "Found", "HTTP/1.1", "Location");
 
-        DataBase.deleteUser("userId");
+        UserDao.getInstance().delete(new User("userId", "password", "name", "email"));
     }
 
     @DisplayName("POST /user/login 테스트")
