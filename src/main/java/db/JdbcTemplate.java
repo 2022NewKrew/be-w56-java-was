@@ -89,7 +89,7 @@ public class JdbcTemplate {
         String sql = readSchemaScript();
         withConnection((connection) -> {
            Statement statement = connection.createStatement();
-           var foo = statement.execute(sql);
+           statement.execute(sql);
            return null;
         });
     }

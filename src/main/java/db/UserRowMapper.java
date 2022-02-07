@@ -11,6 +11,7 @@ public class UserRowMapper implements RowMapper<User> {
 
     @Override
     public User map(ResultSet rs) throws SQLException {
+        rs.next();
         return new User(
                 rs.getInt("id"),
                 rs.getString("userId"),
