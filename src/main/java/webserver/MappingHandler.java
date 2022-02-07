@@ -1,5 +1,6 @@
 package webserver;
 
+import com.google.common.collect.Maps;
 import controller.Controller;
 import http.GetMapping;
 import http.HttpMethod;
@@ -8,7 +9,6 @@ import http.PostMapping;
 import http.Url;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -17,12 +17,15 @@ import webserver.resolver.ArgumentResolvers;
 public class MappingHandler {
 
     private static final String CONTROLLER_PACKAGE = "controller";
-    private static final Map<Url, Method> mappings = new HashMap<>();
+    private static final Map<Url, Method> mappings = Maps.newHashMap();
 
     static {
         Set<Class<?>> controllers = new Reflections(CONTROLLER_PACKAGE)
             .getTypesAnnotatedWith(Controller.class);
         controllers.forEach(MappingHandler::registerMethod);
+    }
+
+    private MappingHandler() {
     }
 
     private static void registerMethod(Class<?> controllerClass) {

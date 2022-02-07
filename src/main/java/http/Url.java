@@ -2,16 +2,13 @@ package http;
 
 public class Url {
 
+    private static final String QUESTION_MARK = "\\?";
     private final HttpMethod method;
     private final String path;
 
     public Url(HttpMethod method, String path) {
         this.method = method;
         this.path = path;
-    }
-
-    public HttpMethod getMethod() {
-        return method;
     }
 
     public String getPath() {
@@ -32,13 +29,16 @@ public class Url {
         if (method != url.method) {
             return false;
         }
-        return path.equals(url.path);
+
+        String splitPath = path.split(QUESTION_MARK)[0];
+        return splitPath.equals(url.path.split(QUESTION_MARK)[0]);
     }
 
     @Override
     public int hashCode() {
         int result = method.hashCode();
-        result = 31 * result + path.hashCode();
+        String splitPath = path.split("\\?")[0];
+        result = 31 * result + splitPath.hashCode();
         return result;
     }
 }
