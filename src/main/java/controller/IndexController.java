@@ -11,13 +11,11 @@ import webserver.UrlMapper;
 
 public class IndexController {
 
-    private static final UrlMapper URL_MAPPER = UrlMapper.getInstance();
-
     private IndexController() {}
 
     public static void register() {
 
-        URL_MAPPER.put(
+        UrlMapper.put(
             "/",
             "GET",
             (HttpRequest httpRequest) -> {

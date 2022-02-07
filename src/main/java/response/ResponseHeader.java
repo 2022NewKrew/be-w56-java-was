@@ -17,10 +17,9 @@ public class ResponseHeader {
 
     public static class ResponseHeaderBuilder {
 
-        private final Map<ResHeader, String> headerMap;
+        private final Map<ResHeader, String> headerMap = new EnumMap<> (ResHeader.class);
 
         public ResponseHeaderBuilder() {
-            headerMap = new EnumMap<> (ResHeader.class);
             headerMap.put(ResHeader.CONTENT_TYPE, "text/html;charset=utf-8");
         }
 

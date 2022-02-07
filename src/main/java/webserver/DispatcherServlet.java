@@ -14,8 +14,6 @@ import util.UrlUtils;
  */
 public class DispatcherServlet {
 
-    private static final UrlMapper URL_MAPPER = UrlMapper.getInstance();
-
     static {
         UserController.register();
         IndexController.register();
@@ -32,6 +30,6 @@ public class DispatcherServlet {
         String url = UrlUtils.decode(httpRequest.getUrl());
         String trimmedUrl = UrlUtils.trimParams(url);
 
-        return URL_MAPPER.get(trimmedUrl, method).apply(httpRequest);
+        return UrlMapper.get(trimmedUrl, method).apply(httpRequest);
     }
 }
