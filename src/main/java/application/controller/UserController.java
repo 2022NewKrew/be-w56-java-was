@@ -4,6 +4,7 @@ import application.domain.UserService;
 import framework.util.RequestMapping;
 import application.domain.User;
 import application.domain.dto.LoginDto;
+import framework.modelAndView.ModelAndView;
 import util.HttpRequest;
 import util.HttpRequestUtils;
 import util.HttpResponse;
@@ -19,7 +20,7 @@ public class UserController implements Controller{
     }
 
     @RequestMapping(path = "/user/create", method = "GET")
-    public String create(HttpRequest req, HttpResponse res) {
+    public String create(ModelAndView mv, HttpRequest req, HttpResponse res) {
         Map<String, String> parameters = req.getQueryStrings();
         User user = new User(parameters.get("userId"), parameters.get("password"), parameters.get("name"), parameters.get("email"));
         userService.addUser(user);
@@ -28,7 +29,7 @@ public class UserController implements Controller{
     }
 
     @RequestMapping(path = "/user/create", method = "POST")
-    public String createPOST(HttpRequest req, HttpResponse res) {
+    public String createPOST(ModelAndView mv, HttpRequest req, HttpResponse res) {
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(req.getBody());
         User user = new User(parameters.get("userId"), parameters.get("password"), parameters.get("name"), parameters.get("email"));
         userService.addUser(user);
@@ -37,13 +38,13 @@ public class UserController implements Controller{
     }
 
     @RequestMapping(path = "/user/login", method = "POST")
-    public String login(HttpRequest req, HttpResponse res) {
+    public String login(ModelAndView mv, HttpRequest req, HttpResponse res) {
         Map<String, String> parameters = HttpRequestUtils.parseQueryString(req.getBody());
         LoginDto loginDto = new LoginDto(parameters.get("userId"), parameters.get("password"));
         if (!userService.login(loginDto))
             return "/user/login_failed.html";
 
         res.addHeader("Set-Cookie", "logined=true; Path=/");
-        return "/index.html";
+        return "redirect:/index.html";
     }
 }

@@ -1,9 +1,9 @@
 package framework.handler;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import framework.modelAndView.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.MIME;
@@ -19,7 +19,7 @@ public class ResourceRequestHandler extends Handler {
     public ResourceRequestHandler() {}
 
     @Override
-    public String handle(HttpRequest req, HttpResponse res) throws IOException {
+    public ModelAndView handle(HttpRequest req, HttpResponse res) throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp" + req.getPath()).toPath());
         res.addHeader("Content-Type", MIME.getMediaType(req.getPath()));
         res.setBody(body);

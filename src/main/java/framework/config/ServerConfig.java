@@ -7,12 +7,13 @@ import framework.handler.Handler;
 import framework.handler.HandlerMethod;
 import framework.handler.RequestMappingHandler;
 import framework.handler.ResourceRequestHandler;
+import framework.modelAndView.view.RedirectView;
 import framework.util.RequestMapping;
+import framework.modelAndView.view.StaticView;
+import framework.modelAndView.View;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ServerConfig {
 
@@ -20,7 +21,8 @@ public class ServerConfig {
     public static List<Handler> handlers = new ArrayList<>();
     public static List<HandlerMethod> handlerMethods = new ArrayList<>();
     public static HandlerMapping handlerMapping;
-    public static ViewResolver viewResolver = new ViewResolver();
+    public static Map<String, View> viewMap = new LinkedHashMap<>();
+    public static ViewResolver viewResolver;
 
     // Controller 등록 - HandlerMethod 수집
     static {
@@ -34,6 +36,12 @@ public class ServerConfig {
         handlers.add(new RequestMappingHandler(handlerMethods));
         handlers.add(new ResourceRequestHandler());
         initializeHandlerMapping();
+    }
+
+    static {
+        viewMap.put("redirect:/", new RedirectView());
+        viewMap.put("/", new StaticView());
+        initializeViewResolver();
     }
 
     // Controller 에서 Annotation(@RequestMapping) 이 붙은 method 를 handlerMethod 로 등록
@@ -55,5 +63,9 @@ public class ServerConfig {
     private static void initializeHandlerMapping() {
         handlerMapping = new HandlerMapping();
         handlers.stream().forEach(h -> handlerMapping.addHandler(h));
+    }
+
+    private static void initializeViewResolver() {
+        viewResolver = new ViewResolver(viewMap);
     }
 }
