@@ -1,4 +1,4 @@
-package model;
+package defaultpjt.model;
 
 public class User {
     private String userId;
