@@ -13,6 +13,10 @@ public class Cookie {
         return cookie.isEmpty();
     }
 
+    public String getAttribute(String key) {
+        return cookie.get(key);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
