@@ -1,24 +1,101 @@
 package db;
 
-import java.util.Collection;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataBase {
-    private static Map<String, User> users = Maps.newHashMap();
+//    private static Map<String, User> users = Maps.newHashMap();
+    private static Logger log = LoggerFactory.getLogger(DataBase.class);
+    private static Connection conn = null;
+
+    private static String DRIVER = "org.h2.Driver";
+    private static String DB_URL = "jdbc:h2:~/test";
+    private static String DB_ID = "sa";
+    private static String DB_PW = "";
+
+    static {
+        try {
+            Class.forName(DRIVER);
+            conn = DriverManager.getConnection(DB_URL, DB_ID, DB_PW);
+
+            String sql = "CREATE TABLE IF NOT EXISTS member (\n"
+                    + "userId varchar(30) PRIMARY KEY,\n"
+                    + "password varchar(30) NOT NULL,\n"
+                    + "name varchar(30) NOT NULL,\n"
+                    + "email varchar(50) NOT NULL\n"
+                    + ")\n";
+            conn.prepareStatement(sql).execute();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void addUser(User user) {
-        users.put(user.getUserId(), user);
+        String sql = "INSERT INTO member (userId, password, name, email)\n"
+                + "VALUES (?,?,?,?)";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,user.getUserId());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getName());
+            pstmt.setString(4,user.getEmail());
+
+            boolean addResult = pstmt.execute();
+            log.info(">>>> Database addUser = " + addResult);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static User findUserById(String userId) {
-        return users.get(userId);
+        User resultUser = null;
+        String sql = "SELECT password, name, email FROM member\n"
+                + "WHERE userId=?";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()) {
+                String password = rs.getString("password");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                resultUser = new User(userId, password, name, email);
+            }
+            log.info(">>>> Database findUserById");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultUser;
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public static List<User> findAll() {
+        List<User> resultUser = new ArrayList<>();
+        String sql = "SELECT userId, password, name, email FROM member\n";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                String userId = rs.getString("userId");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                resultUser.add(new User(userId, name, email));
+            }
+            log.info(">>>> Database findAll");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultUser;
     }
 }

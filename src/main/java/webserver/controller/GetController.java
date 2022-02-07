@@ -1,9 +1,11 @@
 package webserver.controller;
 
+import db.DataBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 import webserver.manage.RequestParser;
+import webserver.page.PageOfUserList;
 import webserver.response.format.ForwardResponseFormat;
 import webserver.response.format.ResponseFormat;
 import webserver.response.ResponseCode;
@@ -45,7 +47,11 @@ public class GetController implements MethodController {
             rf.sendResponse(ResponseCode.STATUS_200);
             return;
         }
-        ResponseFormat rf = new ForwardResponseFormat(os, USER_LIST+".html");
+
+        String page = PageOfUserList.draw(DataBase.findAll());
+
+        ForwardResponseFormat rf = new ForwardResponseFormat(os);
+        rf.setHtmlPage(page);
         rf.sendResponse(ResponseCode.STATUS_200);
     }
 

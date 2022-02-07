@@ -15,10 +15,19 @@ public class ForwardResponseFormat implements ResponseFormat {
     private DataOutputStream dos;
     private String cookie;
     private ResponseFile responseFile;
+    private String htmlPage;
+
+    public ForwardResponseFormat(OutputStream os) {
+        this.dos = new DataOutputStream(os);
+    }
 
     public ForwardResponseFormat(OutputStream os, String filePath) {
         this.dos = new DataOutputStream(os);
         this.responseFile = new ResponseFile(filePath);
+    }
+
+    public void setHtmlPage (String htmlPage) {
+        this.htmlPage = htmlPage;
     }
 
     public void setCookie (String key, String value) {
@@ -27,7 +36,7 @@ public class ForwardResponseFormat implements ResponseFormat {
 
     @Override
     public void sendResponse (ResponseCode status) {
-        byte[] body = responseFile.getFileBytes();
+        byte[] body = htmlPage == null ? responseFile.getFileBytes() : htmlPage.getBytes();
         responseHeader(status, body.length);
         responseBody(body);
     }
