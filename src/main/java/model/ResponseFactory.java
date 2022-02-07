@@ -29,7 +29,7 @@ public class ResponseFactory {
                 headerKeyMap.put("Content-Length", Integer.toString(body.length));
                 return new HttpSuccessfulResponse(statusLine, new Header(headerKeyMap), body);
             case FOUND:
-                headerKeyMap.put("Location: ", request.getUrl());
+                headerKeyMap.put("Location: ", "/index.html");
                 return new HttpRedirectionResponse(statusLine, new Header(headerKeyMap));
             default:
                 headerKeyMap.put("Content-Type", parseExtension(request.getUrl()));
