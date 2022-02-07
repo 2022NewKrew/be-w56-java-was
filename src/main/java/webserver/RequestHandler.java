@@ -29,7 +29,7 @@ public class RequestHandler extends Thread {
 
             Request request = new Request(in);
             String path = ControllerManager.matchController(request);
-            Response response = new Response(path, out);
+            Response response = new Response(request, path, out);
             response.send();
         } catch (IOException e) {
             log.error(e.getMessage());

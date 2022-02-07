@@ -9,17 +9,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 
 public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
 
     private String path;
     private DataOutputStream dos;
+    private Request request;
     private byte[] body;
 
-    public Response(String path, OutputStream out) throws IOException {
+    public Response(Request request, String nextPath, OutputStream out) throws IOException {
+        this.request = request;
+        this.path = nextPath;
         this.dos = new DataOutputStream(out);
-        this.path = path;
 
         //redirect
         if(path.startsWith("redirect:")){
@@ -41,6 +44,7 @@ public class Response {
 
     private void setBody() throws IOException {
         try {
+            dos.writeBytes("\r\n");
             dos.write(body, 0, body.length);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -51,12 +55,29 @@ public class Response {
         dos.flush();
     }
 
+    private void addUpdateCookies(DataOutputStream dos) throws IOException {
+        String sessionId = request.getCookie().getValue("sessionId");
+        List<String> updateCookieList = CookieManager.getNewCookie(sessionId);
+        if(updateCookieList.size() > 0){
+            dos.writeBytes("Set-Cookie: ");
+
+            for(String keyValueStr : updateCookieList) {
+                dos.writeBytes(keyValueStr + HttpCookie.ATTR_DELIMITER + " ");
+            }
+
+            dos.writeBytes("Path=/");
+        }
+    }
+
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+
+            addUpdateCookies(dos);
+
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
