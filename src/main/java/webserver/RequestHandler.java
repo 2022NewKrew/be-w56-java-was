@@ -2,6 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.domain.Model;
 import webserver.domain.Request;
 import webserver.domain.Response;
 import webserver.resolver.ControllerResolver;
@@ -30,9 +31,10 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             Request request = new Request(br);
+            Model model = new Model();
 
-            String resultFromController = controllerResolver.resolveRequest(request);
-            Response response = viewResolver.resolveResponse(resultFromController, request.getCookie());
+            String resultFromController = controllerResolver.resolveRequest(request, model);
+            Response response = viewResolver.resolveResponse(resultFromController, request.getCookie(), model);
 
             responseHeader(dos, response.getHeader());
             responseBody(dos, response.getBody());

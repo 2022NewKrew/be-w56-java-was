@@ -4,9 +4,13 @@ import db.DataBase;
 import model.User;
 import webserver.RequestHandler;
 import webserver.annotation.Controller;
+import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
 import webserver.annotation.RequestParam;
 import webserver.domain.Cookie;
+import webserver.domain.Model;
+
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -32,5 +36,15 @@ public class UserController {
         }
         cookie.addData("logined", "false");
         return "redirect:/user/login_failed.html";
+    }
+
+    @GetMapping("/user/list")
+    public String userList(Cookie cookie, Model model) {
+        String logined = cookie.getData("logined");
+        if(logined == null || logined.equals("false")) {
+            return "redirect:/user/login.html";
+        }
+        model.addAttribute("users", DataBase.findAll().stream().collect(Collectors.toList()));
+        return "/user/list";
     }
 }
