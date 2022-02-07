@@ -14,7 +14,7 @@ public class LoginService implements LoginUseCase {
     }
 
     @Override
-    public boolean login(String userId, String password) {
+    public boolean login(String userId, String password) throws NonExistsUserIdException {
         User user = findUserPort.findByUserId(userId)
                 .orElseThrow(NonExistsUserIdException::new);
 

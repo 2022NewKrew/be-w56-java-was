@@ -3,6 +3,7 @@ package adaptor.in.web.user;
 import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
 import adaptor.in.web.model.RequestPath;
+import application.exception.user.AlreadyExistingUserException;
 import application.exception.user.NonExistsUserIdException;
 import application.in.user.LoginUseCase;
 import application.in.user.SignUpUserUseCase;
@@ -55,7 +56,13 @@ public class UserController {
                 .email(body.get("email"))
                 .build();
 
-        signUpUserUseCase.signUp(user);
+        try {
+            signUpUserUseCase.signUp(user);
+        } catch (AlreadyExistingUserException e) {
+            log.debug(e.getMessage());
+
+            return HttpResponseUtils.badRequest();
+        }
 
         return HttpResponseUtils.found("/index.html");
     }

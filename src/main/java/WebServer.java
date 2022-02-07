@@ -29,7 +29,7 @@ public class WebServer {
         final UserDao userDao = new UserInMemoryDao();
         final SignUpUserPort signUpUserPort = new SignUpUserInMemoryAdaptor(userDao);
         final FindUserPort findUserPort = new FindUserInMemoryAdaptor(userDao);
-        final SignUpUserUseCase signUpUserUseCase = new SignUpUserService(signUpUserPort);
+        final SignUpUserUseCase signUpUserUseCase = new SignUpUserService(signUpUserPort, findUserPort);
         final LoginUseCase loginUseCase = new LoginService(findUserPort);
         final UserController userController = new UserController(signUpUserUseCase, loginUseCase);
         final HomeController homeController = new HomeController();
