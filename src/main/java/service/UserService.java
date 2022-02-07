@@ -8,7 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import repository.UserRepository;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,6 +46,12 @@ public class UserService {
         return entityToDto(user);
     }
 
+    public List<UserDto> getAllUser() {
+        return userRepository.findAll().stream()
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
+    }
+
     public void update(UserDto dto) {
         User user = userRepository.findById(dtoToEntity(dto).getUserId())
                 .filter(entity -> entity.getPassword().equals(dto.getPassword()))
@@ -74,7 +81,6 @@ public class UserService {
     }
 
     private AuthDto entityToAuthDto(User entity) {
-        System.out.println(entity);
         return AuthDto.builder()
                 .userId(entity.getUserId())
                 .name(entity.getName())
