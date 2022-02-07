@@ -1,16 +1,23 @@
 package model;
 
 public class User {
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+    private final String userId;
+    private final String password;
+    private final String name;
+    private final String email;
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+        validate();
+    }
+
+    public void validate() {
+        if (userId.isBlank() || password.isBlank() || name.isBlank() || email.isBlank()) {
+            throw new IllegalArgumentException("[ERROR] 회원가입을 위한 사용자 정보가 올바르지 않습니다.");
+        }
     }
 
     public String getUserId() {

@@ -10,28 +10,24 @@ import response.HttpStatusCode;
 
 public class UrlMapper {
 
-    private static final UrlMapper INSTANCE = new UrlMapper();
-    private final Map<String, Function<HttpRequest, HttpResponse>> urlMap;
+    private static final Map<String, Function<HttpRequest, HttpResponse>>
+            URLS = new ConcurrentHashMap<>();
 
     private UrlMapper() {
-        urlMap = new ConcurrentHashMap<>();
+
     }
 
-    public static UrlMapper getInstance() {
-        return INSTANCE;
-    }
-
-    public Function<HttpRequest, HttpResponse> get(String url, String method) {
+    public static Function<HttpRequest, HttpResponse> get(String url, String method) {
         String key = getKey(url, method);
-        if (!urlMap.containsKey(key)) {
+        if (!URLS.containsKey(key)) {
             return httpRequest ->  new HttpResponseBuilder(HttpStatusCode.NOT_FOUND).build();
         }
-        return urlMap.get(key);
+        return URLS.get(key);
     }
 
-    public void put(String url, String method, Function<HttpRequest, HttpResponse> func) {
+    public static void put(String url, String method, Function<HttpRequest, HttpResponse> func) {
         String key = getKey(url, method);
-        urlMap.put(key, func);
+        URLS.put(key, func);
     }
 
     private static String getKey(String url, String method) {
@@ -40,16 +36,6 @@ public class UrlMapper {
 
     @Override
     public String toString() {
-        return "UrlMapper{" +
-            "urlMap=" + urlMap +
-            '}';
+        return "UrlMapper{" + URLS + '}';
     }
-
-    //    public void replace(String url, String method, Function<HttpRequest, HttpResponse> func) {
-//        urlMap.replace(new String[] {url, method.toUpperCase()}, func);
-//    }
-
-//    public void remove(String url, String method) {
-//        urlMap.remove(new String[] {url, method.toUpperCase()});
-//    }
 }

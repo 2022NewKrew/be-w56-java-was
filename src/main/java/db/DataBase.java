@@ -1,22 +1,31 @@
 package db;
 
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import model.User;
+import model.UserLogin;
 
 public class DataBase {
-    private static Map<String, User> users = Maps.newHashMap();
+
+    private static final Map<String, User> USERS = new ConcurrentHashMap<>();
+
+    private DataBase() {}
 
     public static void addUser(User user) {
-        users.put(user.getUserId(), user);
+        USERS.put(user.getUserId(), user);
     }
 
     public static User findUserById(String userId) {
-        return users.get(userId);
+        return USERS.get(userId);
     }
 
     public static Collection<User> findAll() {
-        return users.values();
+        return USERS.values();
+    }
+
+    public static boolean login(UserLogin userLogin) {
+        User user = findUserById(userLogin.getUserId());
+        return user != null && userLogin.getPassword().equals(user.getPassword());
     }
 }
