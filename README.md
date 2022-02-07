@@ -72,3 +72,12 @@
   1. HTTP 에서 request cookie와 response cookie는 성격이 다르다.
      - Request Cookie: 브라우저의 쿠키 값(Cookie: foo=bar)
      - Response Cookie: 쿠키를 생성할 때의 추가 조건들이 붙음(Set-Cookie: foo=bar;Path="/";Expires=???;Secure;)
+
+# 구현 6단계
+- 이전 단계에서 이미 구현했으므로 생략
+
+# 구현 7단계
+- [x] 요구사항 7: 데이터베이스 연동 및 한줄 메모장 구현
+   - H2 또는 MySQL 혹은 NoSQL 등 데이터베이스를 활용하여 회원정보를 DB에 저장한다.
+   - index.html에 로그인한 사용자가 글을 쓸 수 있는 한 줄 메모장을 구현한다.
+   - 로그인하지 않은 사용자도 게시글을 볼 수 있다.
