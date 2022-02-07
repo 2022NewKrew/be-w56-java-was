@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 @Controller("/user")
 public class UserController {
+    private static final String ROOT_PATH = "./webapp";
     private final UserService userService;
 
     public UserController() {
@@ -22,11 +23,11 @@ public class UserController {
     @RequestMapping(value = "/user/login", requestMethod = "POST")
     public Response loginRouting(Request request) throws SQLException, IOException {
         if (userService.isRightLogin(request)) {
-            Response response = Response.of(request, "/index.html", Files.readAllBytes(new File("./webapp" + "/index.html").toPath()));
+            Response response = Response.of(request, "/index.html", Files.readAllBytes(new File(ROOT_PATH + "/index.html").toPath()));
             response.setCookie("logined=true");
             return response;
         }
-        Response response = Response.of(request, "/user/login_failed.html",Files.readAllBytes(new File("./webapp" + "/user/login_failed.html").toPath()));
+        Response response = Response.of(request, "/user/login_failed.html", Files.readAllBytes(new File(ROOT_PATH + "/user/login_failed.html").toPath()));
         response.setCookie("logined=false");
         return response;
     }
@@ -34,21 +35,21 @@ public class UserController {
     @RequestMapping(value = "/user/create", requestMethod = "POST")
     public Response createRouting(Request request) throws SQLException, IOException {
         userService.save(request);
-        return Response.of(request, "/user/list",Files.readAllBytes(new File("./webapp" + "/user/list.html").toPath()));
+        return Response.of(request, "/user/list", Files.readAllBytes(new File(ROOT_PATH + "/user/list.html").toPath()));
     }
 
     @RequestMapping(value = "/user", requestMethod = "GET")
-    public static Response defaultRouting(Request request) throws IOException {
+    public Response defaultRouting(Request request) throws IOException {
         return Response.of(request,
-                request.getUrlPath(),Files.readAllBytes(new File("./webapp" + request.getUrlPath()).toPath()));
+                request.getUrlPath(), Files.readAllBytes(new File(ROOT_PATH + request.getUrlPath()).toPath()));
     }
 
     @RequestMapping(value = "/user/list", requestMethod = "GET")
     public Response listRouting(Request request) throws IOException, SQLException {
-        if(userService.isLoginState(request)) {
+        if (userService.isLoginState(request)) {
             byte[] body = userService.userListToByte();
             return Response.of(request, "/user/list.html", body);
         }
-        return Response.of(request, "/user/login.html", Files.readAllBytes(new File("./webapp" + "/user/login.html").toPath()));
+        return Response.of(request, "/user/login.html", Files.readAllBytes(new File(ROOT_PATH + "/user/login.html").toPath()));
     }
 }

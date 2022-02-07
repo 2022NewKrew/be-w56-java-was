@@ -32,18 +32,18 @@ public class RepositoryArticleDbImpl {
         pstmt.setString(1, queryString.get("writer"));
         pstmt.setString(2, queryString.get("title"));
         pstmt.setString(3, queryString.get("contents"));
-        int result = pstmt.executeUpdate();
+        pstmt.executeUpdate();
 
         pstmt.close();
         connection.close();
     }
 
-    public  List<Article> findAll() throws SQLException {
+    public List<Article> findAll() throws SQLException {
         List<Article> articleList = new ArrayList<>();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY);
 
-        while(resultSet.next()) {
+        while (resultSet.next()) {
             Article newArticle = Article.builder()
                     .id(resultSet.getLong(1))
                     .writer(resultSet.getString(2))

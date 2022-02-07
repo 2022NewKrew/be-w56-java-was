@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 @Controller("/article")
 public class ArticleController {
-
+    private static final String ROOT_PATH = "./webapp";
     private final ArticleService articleService;
     private final UserService userService;
 
@@ -25,16 +25,16 @@ public class ArticleController {
 
     @RequestMapping(value = "/article/form", requestMethod = "GET")
     public Response formRouting(Request request) throws IOException {
-        if(userService.isLoginState(request)) {
-            return Response.of(request, "/qna/form.html", Files.readAllBytes(new File("./webapp" + "/qna/form.html").toPath()));
+        if (userService.isLoginState(request)) {
+            return Response.of(request, "/qna/form.html", Files.readAllBytes(new File(ROOT_PATH + "/qna/form.html").toPath()));
         }
-        return Response.of(request, "/user/login.html", Files.readAllBytes(new File("./webapp" + "/user/login.html").toPath()));
+        return Response.of(request, "/user/login.html", Files.readAllBytes(new File(ROOT_PATH + "/user/login.html").toPath()));
     }
 
     @RequestMapping(value = "/article", requestMethod = "POST")
     public Response saveRouting(Request request) throws IOException, SQLException {
         articleService.save(request);
-        return Response.of(request, "/article/list",Files.readAllBytes(new File("./webapp" + "/index.html").toPath()));
+        return Response.of(request, "/article/list", Files.readAllBytes(new File(ROOT_PATH + "/index.html").toPath()));
     }
 
     @RequestMapping(value = "/article/list", requestMethod = "GET")

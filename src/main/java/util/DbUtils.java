@@ -9,6 +9,10 @@ public class DbUtils {
     private static String userName = "root";
     private static String password = "1234";
 
+    private DbUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Connection getDbConnection() throws SQLException {
         return DriverManager.getConnection(url, userName, password);
     }

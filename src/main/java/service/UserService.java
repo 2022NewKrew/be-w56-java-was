@@ -4,7 +4,8 @@ import db.RepositoryUserDbImpl;
 import model.Request;
 import model.User;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,7 +19,7 @@ public class UserService {
     public UserService() {
         this.repositoryUserDb = new RepositoryUserDbImpl();
     }
-    
+
     public void save(Request request) throws SQLException {
         repositoryUserDb.save(request);
     }
