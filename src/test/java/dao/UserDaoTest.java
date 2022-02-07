@@ -45,6 +45,8 @@ class UserDaoTest {
     void testFind(int numberOfUser) {
         //give
         UserDao dao = UserDao.getInstance();
+        int baseSize = dao.find().size();
+
         for (int i = 0; i < numberOfUser; i++) {
             String userId = "userId" + i;
             String password = "password" + i;
@@ -58,7 +60,7 @@ class UserDaoTest {
         List<User> users = dao.find();
 
         //then
-        assertThat(users.size()).isEqualTo(numberOfUser);
+        assertThat(users.size()).isEqualTo(numberOfUser + baseSize);
 
         for (int i = 0; i < numberOfUser; i++) {
             String userId = "userId" + i;
