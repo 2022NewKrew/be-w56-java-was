@@ -1,8 +1,10 @@
 package webserver;
 
 import controller.Controller;
+import controller.MainController;
 import controller.StaticController;
 import controller.UserController;
+import util.Url;
 import util.request.Request;
 import util.request.RequestLine;
 import util.response.Response;
@@ -20,6 +22,7 @@ public class ControllerMapper {
     private ControllerMapper() {
         controllerMap.put("static",StaticController.getController());
         controllerMap.put("user",UserController.getUserController());
+        controllerMap.put("", MainController.getMainController());
     }
 
     public Response mapping(Request request) throws IOException {
@@ -30,9 +33,10 @@ public class ControllerMapper {
             return controllerMap.get("static").view(request, url);
         }
         // Controller Mapping
-        String key = url.split("/")[1];
+
+        Url splitUrl = new Url(url);
         try {
-            return controllerMap.get(key).view(request,url.split("/" + key)[1]);
+            return controllerMap.get(splitUrl.getKey()).view(request,splitUrl.getNextUrl());
         } catch (NullPointerException e) {
             // 404 Not Found
             return ResponseException.notFoundResponse();
