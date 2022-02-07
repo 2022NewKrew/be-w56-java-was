@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 
 public class BeanParser {
 
+    // TODO refactor
     public BeanContainer parse(Class<?>[] classes) {
         BeanContainer container = new BeanContainer();
         for (Class<?> clazz : classes) {
