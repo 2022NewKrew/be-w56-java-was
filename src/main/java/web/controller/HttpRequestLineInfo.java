@@ -5,6 +5,7 @@ public enum HttpRequestLineInfo {
     SIGN_UP("/user/create", "POST"),
     LOGIN_PAGE("/user/login", "GET"),
     LOGIN_REQUEST("/user/login", "POST"),
+    USER_LIST_PAGE("/user/list", "GET"),
     OTHERS(null, "GET");
 
     private final String url;

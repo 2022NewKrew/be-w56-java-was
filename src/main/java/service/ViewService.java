@@ -43,6 +43,22 @@ public class ViewService {
         return others(httpRequest);
     }
 
+    public static HttpResponse userListPage(HttpRequest httpRequest) throws IOException {
+        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+        HttpRequestHeaders requestHeaders = httpRequest.getHttpRequestHeaders();
+
+        if (!requestHeaders.isHeader("Cookie") || !checkCookieLogin(requestHeaders)){
+            HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.REDIRECT);
+            HttpResponseHeaders headers = new HttpResponseHeaders();
+            headers.addHeader(new Pair("Location", "http://localhost:8080/user/login.html"));
+
+            HttpResponseBody body = new HttpResponseBody();
+            return new HttpResponse(statusLine, headers, body);
+        }
+
+        return others(httpRequest);
+    }
+
     public static boolean checkCookieLogin(HttpRequestHeaders headers){
         String cookieValue = headers.getHeaderValueByKey("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieValue);
