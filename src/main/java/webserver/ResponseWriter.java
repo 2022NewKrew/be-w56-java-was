@@ -2,7 +2,6 @@ package webserver;
 
 import model.Pair;
 import model.request.Headers;
-import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,21 +18,16 @@ public class ResponseWriter {
 
     private static final String FILE_PREFIX = "./webapp";
 
-    private static final String MIME_PLAIN_TEXT = "text/plain";
-
     private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK\r\n";
     private static final String RESPONSE_TOP_HEADER_MOVED_PERMANENTLY = "HTTP/1.1 301 Moved Permanently\r\n";
     private static final String RESPONSE_BODY_SEPARATOR = "\r\n";
-
-    private final Tika tika = new Tika();
 
     public void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
         final File file = new File(FILE_PREFIX + filePath);
         if (file.exists() && file.isFile()) {
             final Path path = file.toPath();
             final byte[] body = Files.readAllBytes(path);
-            write200Response(out, body, tika.detect(path));
-
+            write200Response(out, body);
             return;
         }
 
@@ -54,13 +48,13 @@ public class ResponseWriter {
 
     public void writeErrorResponse(final OutputStream out) {
         byte[] body = "Error".getBytes(StandardCharsets.UTF_8);
-        write200Response(out, body, MIME_PLAIN_TEXT);
+        write200Response(out, body);
     }
 
-    private void write200Response(final OutputStream out, final byte[] body, final String mime) {
+    private void write200Response(final OutputStream out, final byte[] body) {
         final DataOutputStream dos = new DataOutputStream(out);
 
-        response200Header(dos, body.length, mime);
+        response200Header(dos, body.length);
         responseBody(dos, body);
     }
 
@@ -74,10 +68,9 @@ public class ResponseWriter {
         return key + Headers.HEADER_VALUE_SEPARATOR + value + Headers.HEADER_NEWLINE;
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, final String mime) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes(RESPONSE_TOP_HEADER_OK);
-            dos.writeBytes(createHeaderString(Headers.HEADER_CONTENT_TYPE, mime + ";charset=utf-8"));
             dos.writeBytes(createHeaderString(Headers.HEADER_CONTENT_LENGTH, String.valueOf(lengthOfBodyContent)));
             dos.writeBytes(RESPONSE_BODY_SEPARATOR);
             dos.flush();

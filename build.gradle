@@ -15,8 +15,6 @@ dependencies {
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 
     implementation 'at.favre.lib:bcrypt:0.9.0'
-    // https://mvnrepository.com/artifact/org.apache.tika/tika-core
-    implementation 'org.apache.tika:tika-core:1.28'
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
