@@ -6,6 +6,7 @@ import java.nio.file.Files;
 
 import controller.ControllerManager;
 import http.Request;
+import http.Response;
 import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,50 +28,9 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
             Request request = new Request(in);
-
             String path = ControllerManager.matchController(request);
-
-            DataOutputStream dos = new DataOutputStream(out);
-
-            if(path.startsWith("redirect:")){
-                path = path.substring("redirect:".length(), path.length());
-                response302Header(dos, path);
-                return;
-            }
-
-            byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String path) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + path + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
+            Response response = new Response(path, out);
+            response.send();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
