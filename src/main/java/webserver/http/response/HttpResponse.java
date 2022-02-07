@@ -7,6 +7,7 @@ import static webserver.http.HttpMeta.MIME_TYPE_OF_JAVASCRIPT;
 import static webserver.http.HttpMeta.SUFFIX_OF_CSS_FILE;
 import static webserver.http.HttpMeta.SUFFIX_OF_JS_FILE;
 import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
+import static webserver.http.HttpMeta.VIEW_LOGIN_PAGE;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -109,5 +110,10 @@ public class HttpResponse {
     public void redirectBasicPage() {
         setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
         setLocation(VIEW_BASIC_PAGE);
+    }
+
+    public void redirectLoginPage() {
+        setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
+        setLocation(VIEW_LOGIN_PAGE);
     }
 }

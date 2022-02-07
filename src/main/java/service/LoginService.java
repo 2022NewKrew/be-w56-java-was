@@ -1,7 +1,7 @@
 package service;
 
 import db.DataBase;
-import java.util.Map;
+import model.LoginRequest;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +10,9 @@ public class LoginService {
 
     private static final Logger log = LoggerFactory.getLogger(LoginService.class);
 
-    public static boolean login(Map<String, String> queryData) {
-        String userId = queryData.get("userId");
-        String password = queryData.get("password");
+    public static boolean login(LoginRequest loginRequest) {
+        String userId = loginRequest.getUserId();
+        String password = loginRequest.getPassword();
 
         log.debug("User {} tries to login", userId);
 

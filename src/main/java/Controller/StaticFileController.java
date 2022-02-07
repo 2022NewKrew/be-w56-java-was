@@ -17,7 +17,7 @@ public class StaticFileController implements Controller {
     public void process(HttpRequest request, HttpResponse response) throws IOException {
         File file = getFileFromUrl(request.getUri());
 
-        checkFileValidation(file);
+        validateFile(file);
 
         Path filePath = file.toPath();
         response.setContentTypeWithFilePath(filePath);
@@ -32,7 +32,7 @@ public class StaticFileController implements Controller {
         return new File(ROOT_PATH_OF_WEB_RESOURCE_FILES + uri.getPath());
     }
 
-    private void checkFileValidation(File file) throws IOException {
+    private void validateFile(File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException("File Not Found for requested URL '" + file.getPath() + "'");
         }

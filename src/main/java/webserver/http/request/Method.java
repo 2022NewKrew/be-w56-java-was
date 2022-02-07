@@ -1,5 +1,6 @@
 package webserver.http.request;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,5 +18,9 @@ public enum Method {
 
     public static Method getMethodFromString(String str) {
         return stringToMethod.get(str);
+    }
+
+    public static boolean contain(Method method) {
+        return Arrays.asList(values()).contains(method);
     }
 }

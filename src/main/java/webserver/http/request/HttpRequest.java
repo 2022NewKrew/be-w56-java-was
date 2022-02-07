@@ -1,5 +1,7 @@
 package webserver.http.request;
 
+import static webserver.http.HttpMeta.LOGINED;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
@@ -49,6 +51,14 @@ public class HttpRequest {
     private Map<String, String> getQueryDataFromBody() {
         String body = getRequestBody();
         return HttpRequestUtils.parseQueryString(body);
+    }
+
+    public boolean isLogin() {
+        String cookieStr = requestHeaders.getCookie();
+        if (cookieStr == null) {
+            return false;
+        }
+        return cookieStr.endsWith(LOGINED);
     }
 
     public void checkRequestValidation() throws NullRequestException {

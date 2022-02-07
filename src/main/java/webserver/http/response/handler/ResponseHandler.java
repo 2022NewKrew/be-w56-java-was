@@ -8,6 +8,7 @@ import static webserver.http.HttpMeta.SEPARATOR_OF_STATUS_LINE;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -48,16 +49,21 @@ public class ResponseHandler {
     private void sendNormalResponse() throws IOException {
         buildOutputStreamOfHeaders();
         byte[] body = getBody();
-        dos.write(body, 0, body.length);
+        if (body != null) {
+            dos.write(body, 0, body.length);
+        }
     }
 
     private byte[] getBody() throws IOException {
-        byte[] body = null;
         String filePath = response.getViewPage();
         if (filePath != null) {
-            body = Files.readAllBytes(Path.of(filePath));
+            return Files.readAllBytes(Path.of(filePath));
         }
-        return body;
+        String message = response.getMessage();
+        if (message != null) {
+            return message.getBytes(StandardCharsets.UTF_8);
+        }
+        return null;
     }
 
     private void buildOutputStreamOfHeaders() throws IOException {
