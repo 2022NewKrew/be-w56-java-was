@@ -20,26 +20,38 @@ public class Response {
     private DataOutputStream dos;
     private Request request;
     private byte[] body;
+    private boolean isRedirection;
+    private boolean isError;
 
     public Response(Request request, String nextPath, OutputStream out) throws IOException {
         this.request = request;
         this.path = nextPath;
         this.dos = new DataOutputStream(out);
+        this.isRedirection = false;
+        this.isError = false;
 
         //redirect
         if(path.startsWith("redirect:")){
             path = path.substring("redirect:".length(), path.length());
-            response302Header(dos, path);
-            return;
+            isRedirection = true;
         }
 
-        this.body = Files.readAllBytes(new File("./webapp" + path).toPath());
+        try {
+            this.body = Files.readAllBytes(new File("./webapp" + path).toPath());
+        } catch (IOException e){
+            log.error(String.format("path %s doesn't exist.", path));
+            isError = true;
+        }
 
         setHeader();
         setBody();
     }
 
     private void setHeader() {
+        if(isRedirection){
+            response302Header(dos, path);
+        }
+
         response200Header(dos, body.length);
     }
 
@@ -59,7 +71,7 @@ public class Response {
 
     private void addNewCookies(DataOutputStream dos) throws IOException {
         String sessionId = request.getCookieValue("sessionId");
-        List<String> updateCookieList = CookieManager.getNewCookie(sessionId);
+        List<String> updateCookieList = CookieManager.getNewCookie(sessionId); //sessionId에 해당하는 갱신해줘야 할 쿠키들을 가져온다.
         if(updateCookieList.size() > 0){
             dos.writeBytes("Set-Cookie: ");
 
@@ -88,6 +100,7 @@ public class Response {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + path + "\r\n");
+            addNewCookies(dos);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
