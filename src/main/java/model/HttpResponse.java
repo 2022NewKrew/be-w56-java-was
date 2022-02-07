@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +16,9 @@ public class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
     public static HttpResponse of(String path, String contentType) {
-        String httpVersion = "HTTP/1.1";
-        int statusCode = 200;
-        String statusText = "OK";
+        String httpVersion = HttpVersion.HTTP_1_1.getVersion();
+        int statusCode = HttpStatus.OK.getCode();
+        String statusMessage = HttpStatus.OK.getMessage();
         byte[] body = {};
 
         try {
@@ -27,18 +26,16 @@ public class HttpResponse {
 
             if (file.exists()) {
                 body = Files.readAllBytes(file.toPath());
-                statusCode = 200;
-                statusText = "OK";
             } else {
                 body = NOT_FOUNT_MESSAGE;
-                statusCode = 404;
-                statusText = "Not Found";
+                statusCode = HttpStatus.NOT_FOUND.getCode();
+                statusMessage = HttpStatus.NOT_FOUND.getMessage();
             }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
 
-        StatusLine statusLine = new StatusLine(httpVersion, statusCode, statusText);
+        StatusLine statusLine = new StatusLine(httpVersion, statusCode, statusMessage);
         Map<String, String> headerKeyMap = Map.of(
                 "Content-Type", contentType,
                 "Content-Length", Integer.toString(body.length)

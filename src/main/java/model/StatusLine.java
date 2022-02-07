@@ -6,15 +6,15 @@ public class StatusLine {
 
     private final String httpVersion;
     private final int statusCode;
-    private final String statusText;
+    private final String statusMessage;
 
-    public StatusLine(String httpVersion, int statusCode, String statusText) {
+    public StatusLine(String httpVersion, int statusCode, String statusMessage) {
         this.httpVersion = httpVersion;
         this.statusCode = statusCode;
-        this.statusText = statusText;
+        this.statusMessage = statusMessage;
     }
 
     public String message() {
-        return httpVersion + SEPARATOR + statusCode + SEPARATOR + statusText;
+        return httpVersion + SEPARATOR + statusCode + SEPARATOR + statusMessage;
     }
 }
