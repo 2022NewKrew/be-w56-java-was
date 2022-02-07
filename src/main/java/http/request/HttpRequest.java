@@ -22,20 +22,18 @@ public class HttpRequest {
         HttpRequestLine requestLine;
         HttpRequestHeader requestHeader;
         HttpRequestBody requestBody;
-
         try {
             // Read request line
             String line = br.readLine();
             requestLine = HttpRequestLine.parseRequestLine(line);
-
             // Read request header
             List<String> headerArr = new ArrayList<>();
-            while (!"".equals(line)) {
-                line = br.readLine();
+            line = br.readLine();
+            while (line != null && !"".equals(line)) {
                 headerArr.add(line);
+                line = br.readLine();
             }
             requestHeader = HttpRequestHeader.parseHeader(headerArr);
-
             // Read request body
             int contentLength;
             try {
