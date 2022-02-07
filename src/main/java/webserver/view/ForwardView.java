@@ -1,7 +1,6 @@
 package webserver.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import util.MimeParser;
 import webserver.exception.NotFoundException;
 import webserver.model.HttpResponse;
@@ -12,9 +11,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+@Slf4j
 public class ForwardView implements View {
-
-    private static final Logger log = LoggerFactory.getLogger(ForwardView.class);
 
     private final String path;
     private final HttpStatus status;

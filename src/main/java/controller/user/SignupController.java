@@ -1,18 +1,16 @@
 package controller.user;
 
 import controller.BaseController;
+import lombok.extern.slf4j.Slf4j;
 import model.UserSignupRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import service.user.SignupService;
 import webserver.model.HttpRequest;
 import webserver.model.HttpResponse;
 import webserver.model.HttpStatus;
 import webserver.model.ModelAndView;
 
+@Slf4j
 public class SignupController implements BaseController {
-
-    private static final Logger log = LoggerFactory.getLogger(SignupController.class);
 
     private final SignupService signupService = new SignupService();
 

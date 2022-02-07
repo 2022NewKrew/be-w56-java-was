@@ -1,9 +1,8 @@
 package controller.user;
 
 import controller.BaseController;
+import lombok.extern.slf4j.Slf4j;
 import model.UserLoginRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import service.user.LoginService;
 import webserver.exception.AuthenticationFailureException;
 import webserver.model.HttpRequest;
@@ -11,9 +10,8 @@ import webserver.model.HttpResponse;
 import webserver.model.HttpStatus;
 import webserver.model.ModelAndView;
 
+@Slf4j
 public class LoginController implements BaseController {
-
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService = new LoginService();
 

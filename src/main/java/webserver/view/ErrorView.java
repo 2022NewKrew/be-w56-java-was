@@ -1,16 +1,14 @@
 package webserver.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import webserver.exception.BaseException;
 import webserver.model.HttpResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Slf4j
 public class ErrorView implements View {
-
-    private static final Logger log = LoggerFactory.getLogger(ErrorView.class);
 
     private final BaseException exception;
     private HttpResponse response;
