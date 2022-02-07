@@ -27,11 +27,12 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest request = new HttpRequest(in);
             HttpResponse response = new HttpResponse(out);
-
             Controller controller = RequestMapping.getController(request.getRequestLine().getUrl());
+            if (controller == null) {
+                response.forward(request.getRequestLine().getUrl());
+                return;
+            }
             controller.service(request, response);
-
-
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -24,16 +24,30 @@ public class HttpResponse {
         dos = new DataOutputStream(out);
     }
 
+    public HttpHeader getHttpHeader() {
+        return httpHeader;
+    }
+
     public void forward(String url) {
         byte[] body;
         try {
             body = Files.readAllBytes(new File("./webapp" + url).toPath());
-            response200Header(dos, body.length);
+            httpHeader.addHeaderParameter("Content-Type: " + HttpContentType.getContentType(url));
+            httpHeader.addHeaderParameter("Content-Length: " + body.length);
+            response200Header();
         } catch (IOException e) {
             body = NOT_FOUND_MESSAGE.getBytes(StandardCharsets.UTF_8);
-            response404Header(dos, body.length);
+            response404Header(body.length);
         }
-        responseBody(dos, body);
+        responseBody(body);
+    }
+
+    public void forwardBody(String body) {
+        byte[] contents = body.getBytes();
+        httpHeader.addHeaderParameter("Content-Type: " + "text/html; charset=utf-8");
+        httpHeader.addHeaderParameter("Content-Length: " + contents.length);
+        response200Header();
+        responseBody(contents);
     }
 
     public void sendRedirect302Header(String redirectUrl) {
@@ -46,10 +60,6 @@ public class HttpResponse {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-    }
-
-    public HttpHeader getHttpHeader() {
-        return httpHeader;
     }
 
 
@@ -65,19 +75,17 @@ public class HttpResponse {
     }
 
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header() {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             writeHeaderParams();
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
+    private void responseBody(byte[] body) {
         try {
             dos.write(body, 0, body.length);
             dos.flush();
@@ -86,7 +94,7 @@ public class HttpResponse {
         }
     }
 
-    private void response404Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response404Header(int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
