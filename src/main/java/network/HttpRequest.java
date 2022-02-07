@@ -30,6 +30,9 @@ public class HttpRequest {
         String[] firstLineToken = bufferedReader.readLine().split(" ");
         this.method = Method.valueOf(firstLineToken[0]);
         this.path = firstLineToken[1];
+        if (this.path.equals("/")||this.path.equals("")) {
+            this.path = "/index.html";
+        }
         this.protocol = firstLineToken[2];
 
         handleMethod(this.method);
