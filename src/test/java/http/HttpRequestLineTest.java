@@ -11,7 +11,7 @@ class HttpRequestLineTest {
     @Test
     void testHttpRequestLineFromString() {
         HttpRequestLine requestLine = HttpRequestLine.from("GET /user/create HTTP/1.1");
-        HttpRequestLine actual = new HttpRequestLine("GET", URI.create("/user/create"), HttpVersion.HTTP_1_1);
+        HttpRequestLine actual = new HttpRequestLine(HttpMethod.GET, URI.create("/user/create"), HttpVersion.HTTP_1_1);
         assertEquals(requestLine, actual);
     }
 }

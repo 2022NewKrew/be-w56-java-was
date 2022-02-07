@@ -1,5 +1,6 @@
 package http;
 
+import util.HttpRequestUtils;
 import util.IOUtils;
 
 import java.io.BufferedReader;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.Map;
 
 public class HttpRequest {
     private final HttpRequestLine requestLine;
@@ -51,7 +53,7 @@ public class HttpRequest {
         return IOUtils.readData(reader, Integer.parseInt(contentLength));
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return requestLine.getMethod();
     }
 
@@ -69,6 +71,10 @@ public class HttpRequest {
 
     public String getBody() {
         return body;
+    }
+
+    public Map<String, String> getCookies() {
+        return HttpRequestUtils.parseCookies(headers.get("Cookie"));
     }
 
     @Override

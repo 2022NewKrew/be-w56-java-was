@@ -3,11 +3,11 @@ package http;
 import java.net.URI;
 
 public class HttpRequestLine {
-    private final String method;
+    private final HttpMethod method;
     private final URI uri;
     private final HttpVersion version;
 
-    protected HttpRequestLine(String method, URI uri, HttpVersion version) {
+    protected HttpRequestLine(HttpMethod method, URI uri, HttpVersion version) {
         this.method = method;
         this.uri = uri;
         this.version = version;
@@ -15,12 +15,13 @@ public class HttpRequestLine {
 
     public static HttpRequestLine from(String line) {
         String[] tokens = line.split(" ");
+        HttpMethod method = HttpMethod.valueOf(tokens[0].toUpperCase());
         URI uri = URI.create(tokens[1]);
         HttpVersion version = HttpVersion.fromString(tokens[2]);
-        return new HttpRequestLine(tokens[0], uri, version);
+        return new HttpRequestLine(method, uri, version);
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
