@@ -11,6 +11,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import webserver.exception.BadRequestException;
 import webserver.http.HttpCookie;
+import webserver.http.HttpHeader;
 import webserver.http.HttpMethod;
 import webserver.http.HttpRequest;
 
@@ -31,7 +32,7 @@ public class HttpRequestUtils {
         String version = requestLineParams[2];
 
         // REQUEST HEADER
-        Map<String, List<String>> headers = readRequestHeaderFromBuffer(br);
+        HttpHeader headers = readRequestHeaderFromBuffer(br);
         Map<String, HttpCookie> cookies = getCookieFromHeaders(headers);
 
         // REQUEST BODY
@@ -47,7 +48,7 @@ public class HttpRequestUtils {
         }
     }
 
-    private static Map<String, List<String>> readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
+    private static HttpHeader readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
         Map<String, List<String>> headers = new HashMap<>();
         String inputLine;
         while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
@@ -59,24 +60,24 @@ public class HttpRequestUtils {
 
             headers.put(inputs[0], values);
         }
-        return headers;
+        return new HttpHeader(headers);
     }
 
-    private static Map<String, HttpCookie> getCookieFromHeaders(Map<String, List<String>> headers) {
+    private static Map<String, HttpCookie> getCookieFromHeaders(HttpHeader headers) {
         if (headers.containsKey("Cookie")) {
-            Map<String, HttpCookie> cookies = new HashMap<>();
-            List<String> cookie = headers.get("Cookie");
-            String cookieString = cookie.get(0);
-            Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(cookieString);
-            cookiesMap.forEach((k, v) -> cookies.put(k, new HttpCookie(k, v)));
-            return cookies;
+            Map<String, HttpCookie> result = new HashMap<>();
+            List<String> cookies = headers.getValues("Cookie");
+            String joinedCookies = String.join(HEADER_VALUE_DELIMITER, cookies);
+            Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(joinedCookies);
+            cookiesMap.forEach((k, v) -> result.put(k, new HttpCookie(k, v)));
+            return result;
         }
         return Collections.emptyMap();
     }
 
-    private static int getContentLength(Map<String, List<String>> headers) {
+    private static int getContentLength(HttpHeader headers) {
         if (headers.containsKey("Content-Length")) {
-            List<String> values = headers.get("Content-Length");
+            List<String> values = headers.getValues("Content-Length");
             return Integer.parseInt(values.get(0));
         }
         return 0;
@@ -88,8 +89,8 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString
+     * URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, List<String>> parseQueryString(String queryString) {
@@ -111,8 +112,8 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param cookies
+     * 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {

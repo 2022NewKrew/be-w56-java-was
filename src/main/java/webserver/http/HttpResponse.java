@@ -6,9 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
@@ -16,11 +14,12 @@ public class HttpResponse {
     private static final HttpStatus DEFAULT_STATUS = HttpStatus.OK;
     private static final String[] DEFAULT_CONTENT_TYPE = new String[]{"text/html", "charset=utf-8"};
     private static final String CRLF = "\r\n";
+    private static final String HEADER_VALUE_DELIMITER = ",";
 
     private final DataOutputStream dos;
     private final String version;
     private final HttpStatus status;
-    private final Map<String, List<String>> headers;
+    private final HttpHeader headers;
     private final List<HttpCookie> cookies;
     private final String[] contentType;
     private final int contentLength;
@@ -65,7 +64,9 @@ public class HttpResponse {
 
     private void writeBytesHeaders() throws IOException {
         for (String key : headers.keySet()) {
-            dos.writeBytes(String.format("%s: %s%s", key, headers.get(key), CRLF));
+            List<String> values = headers.getValues(key);
+            String joinedValues = String.join(HEADER_VALUE_DELIMITER, values);
+            dos.writeBytes(String.format("%s: %s%s", key, joinedValues, CRLF));
         }
     }
 
@@ -89,7 +90,7 @@ public class HttpResponse {
     public static class Builder {
 
         private final DataOutputStream dos;
-        private final Map<String, List<String>> headers = new HashMap<>();
+        private final HttpHeader headers = new HttpHeader();
         private final List<HttpCookie> cookies = new ArrayList<>();
         private String version = DEFAULT_VERSION;
         private HttpStatus status = DEFAULT_STATUS;
@@ -111,9 +112,7 @@ public class HttpResponse {
         }
 
         public Builder header(String key, String value) {
-            List<String> values = headers.getOrDefault(key, new ArrayList<>());
-            values.add(value);
-            headers.put(key, values);
+            headers.put(key, value);
             return this;
         }
 

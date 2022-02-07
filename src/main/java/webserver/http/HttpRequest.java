@@ -9,11 +9,11 @@ public class HttpRequest {
     private final HttpMethod method;
     private final String requestURI;
     private final String version;
-    private final Map<String, List<String>> headers;
+    private final HttpHeader headers;
     private final Map<String, HttpCookie> cookies;
     private final String body;
 
-    public HttpRequest(HttpMethod method, String requestURI, String version, Map<String, List<String>> headers, Map<String, HttpCookie> cookies, String body) {
+    public HttpRequest(HttpMethod method, String requestURI, String version, HttpHeader headers, Map<String, HttpCookie> cookies, String body) {
         this.method = method;
         this.requestURI = requestURI;
         this.version = version;
@@ -40,7 +40,7 @@ public class HttpRequest {
         return Optional.empty();
     }
 
-    public Map<String, List<String>> headers() {
+    public HttpHeader headers() {
         return headers;
     }
 
