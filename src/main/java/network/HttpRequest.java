@@ -3,6 +3,7 @@ package network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,47 +13,19 @@ import java.util.Map;
 public class HttpRequest {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
-    private final BufferedReader bufferedReader;
-    private HttpMethod method;
-    private String path;
-    private Map<String, String> queryString;
-    private String version;
-    private final Map<String, String> headers = new HashMap<>();
-    private String body;
 
-    public HttpRequest(BufferedReader bufferedReader) {
-        this.bufferedReader = bufferedReader;
-        parseRequest();
-    }
+    private final HttpMethod method;
+    private final String path;
+    private final Map<String, String> queryString;
+    private final Map<String, String> headers;
+    private final String body;
 
-    private void parseRequest() {
-        try {
-            String line = bufferedReader.readLine();
-            parseRequestLine(line);
-
-            line = bufferedReader.readLine();
-            while (!"".equals(line)) {
-                parseHeader(line);
-                line = bufferedReader.readLine();
-            }
-
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-
-    }
-
-    private void parseRequestLine(String line) {
-        Map<String, String> tokens = HttpRequestUtils.parseRequestLine(line);
+    public HttpRequest(Map<String, String> tokens, Map<String, String> headers, String body) {
         this.method = HttpMethod.valueOf(tokens.get("method"));
         this.path = tokens.get("path");
         this.queryString = HttpRequestUtils.parseQueryString(tokens.get("queryString"));
-        this.version = tokens.get("version");
-    }
-
-    private void parseHeader(String line) {
-        HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(line);
-        headers.put(pair.getKey(), pair.getValue());
+        this.headers = headers;
+        this.body = body;
     }
 
     public HttpMethod getMethod() {
@@ -63,12 +36,27 @@ public class HttpRequest {
         return path;
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
     public Map<String, String> getQueryString() {
         return queryString;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public String getContentType() {
         String accept = headers.get("Accept");
         return HttpRequestUtils.contentNegotation(accept);
+    }
+
+    public Boolean checkLoginCookie() {
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(headers.get("Cookie"));
+        String logined = cookies.get("logined");
+        if (logined == null) return false;
+        return Boolean.parseBoolean(logined);
     }
 }

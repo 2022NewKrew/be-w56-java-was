@@ -3,10 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 import network.HttpRequest;
-import network.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +25,9 @@ public class RequestHandler extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequest httpRequest = new HttpRequest(bufferedReader);
-            new HttpResponse(dos, httpRequest);
+            HttpBuilder httpBuilder = new HttpBuilder(bufferedReader, dos);
+            HttpRequest httpRequest = httpBuilder.request();
+            httpBuilder.response(httpRequest);
 
         } catch (IOException e) {
             log.error(e.getMessage());
