@@ -6,7 +6,6 @@ import util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -63,7 +62,9 @@ public class RequestFactory {
     }
 
     private static Map<String,String> createBodyDataMapByHeaderDataMap(BufferedReader br, int contentLength) throws IOException {
-        return HttpRequestUtils.parseQueryString(readData(br, contentLength));
+        String bodyData = readData(br, contentLength);
+        log.debug("bodyData : {}", bodyData);
+        return HttpRequestUtils.parseQueryString(bodyData);
     }
 
     public static Request createRequestBy(BufferedReader br) throws IOException {
