@@ -29,10 +29,9 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             RequestHeader requestHeader = mapRequestHeader(bufferedReader);
-            writeResponse(new DataOutputStream(out), RequestController.controlRequest(requestHeader));
+            writeResponse(new DataOutputStream(out), getResponseHeader(requestHeader));
         } catch (Exception e) {
             e.printStackTrace();
-            //ExceptionHandler.handleException(e);
         }
     }
 
@@ -56,5 +55,13 @@ public class RequestHandler extends Thread {
         responseHeader.getHtmlResponseHeader()
                 .response(dos, responseHeader);
         responseHeader.responseBody(dos);
+    }
+
+    private ResponseHeader getResponseHeader(RequestHeader requestHeader) throws IOException {
+        try {
+            return RequestController.controlRequest(requestHeader);
+        } catch (Exception exception) {
+            return ExceptionHandler.handleException(exception, requestHeader);
+        }
     }
 }
