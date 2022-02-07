@@ -2,23 +2,14 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
 import model.HttpRequest;
 import model.HttpResponse;
 import model.HttpStatus;
-import model.Mime;
+import model.ResponseFactory;
 
 public class StaticFileController implements Controller {
 
-    private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
     private static StaticFileController instance;
-
-    private static String parseExtension(String path) {
-        List<String> splitResult = List.of(path.split("\\."));
-        int length = splitResult.size();
-        return splitResult.get(length - 1);
-    }
 
     public static synchronized StaticFileController getInstance() {
         if (instance == null) {
@@ -29,10 +20,10 @@ public class StaticFileController implements Controller {
 
     @Override
     public HttpResponse run(HttpRequest request) throws IOException {
-        File file = new File("./webapp" + request.getPath());
+        File file = new File("./webapp" + request.getUrl());
         if (!file.exists()) {
-            return HttpResponse.of(HttpStatus.NOT_FOUND, NOT_FOUNT_MESSAGE, Mime.getMime(""));
+            return ResponseFactory.getResponse(request, HttpStatus.NOT_FOUND);
         }
-        return HttpResponse.of(HttpStatus.OK, Files.readAllBytes(file.toPath()), parseExtension(request.getPath()));
+        return ResponseFactory.getResponse(request, HttpStatus.OK);
     }
 }

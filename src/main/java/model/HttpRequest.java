@@ -62,7 +62,7 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public String getPath() {
+    public String getUrl() {
         return startLine.getUrl();
     }
 
