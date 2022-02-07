@@ -133,7 +133,7 @@ public class RequestUtills {
                 return false;
             if (getClass() != obj.getClass())
                 return false;
-            HttpRequestUtils.Pair other = (HttpRequestUtils.Pair) obj;
+            RequestUtills.Pair other = (RequestUtills.Pair) obj;
             if (key == null) {
                 if (other.key != null)
                     return false;
