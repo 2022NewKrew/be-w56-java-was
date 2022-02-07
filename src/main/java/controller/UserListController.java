@@ -1,5 +1,6 @@
 package controller;
 
+import dao.UserDao;
 import db.DataBase;
 import dto.UserDto;
 import http.request.HttpRequest;
@@ -23,6 +24,8 @@ public class UserListController implements Controller {
         return instance;
     }
 
+    private final UserDao userDao = UserDao.getInstance();
+
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         String logined = request.getCookie("logined");
@@ -34,7 +37,8 @@ public class UserListController implements Controller {
             );
         }
 
-        List<UserDto> userDtos = DataBase.findAll()
+        List<UserDto> userDtos = userDao
+                .find()
                 .stream()
                 .map(UserMapper.instance::userToDto)
                 .collect(Collectors.toList());

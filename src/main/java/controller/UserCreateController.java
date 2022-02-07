@@ -1,6 +1,6 @@
 package controller;
 
-import db.DataBase;
+import dao.UserDao;
 import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
@@ -20,15 +20,18 @@ public class UserCreateController implements Controller {
         return instance;
     }
 
+    private final UserDao userDao = UserDao.getInstance();
+
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
         Map<String, String> bodyData = request.getBodyData();
 
         checkBodyData(bodyData);
 
-        DataBase.addUser(
-                new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
-                        bodyData.get("email")));
+        User user = new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
+                bodyData.get("email"));
+
+        userDao.save(user);
 
         return HttpResponse.found(
                 "/index.html",
