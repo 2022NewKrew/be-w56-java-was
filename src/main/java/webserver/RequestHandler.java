@@ -38,7 +38,12 @@ public class RequestHandler {
     public void handle(WebHttpRequest httpRequest, WebHttpResponse httpResponse) {
         if (!RequestMapping.isRegistered(httpRequest)) {
             httpResponse.setHttpStatus(HttpStatus.OK);
-            setContent(httpResponse, httpRequest.uri().getPath(), new Model());
+            try {
+                setContent(httpResponse, httpRequest.uri().getPath(), new Model());
+            } catch (IOException | StringIndexOutOfBoundsException e) {
+                httpResponse.setHttpStatus(HttpStatus.FOUND);
+                httpResponse.setHeaders("Location", "/error/error.html");
+            }
             return;
         }
 
@@ -56,7 +61,12 @@ public class RequestHandler {
                 return;
             }
             httpResponse.setHttpStatus(HttpStatus.OK);
-            setContent(httpResponse, result, model);
+            try {
+                setContent(httpResponse, result, model);
+            } catch (IOException e) {
+                httpResponse.setHttpStatus(HttpStatus.FOUND);
+                httpResponse.setHeaders("Location", "/error/error.html");
+            }
         } catch (InvocationTargetException | IllegalAccessException e) {
             httpResponse.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -97,7 +107,6 @@ public class RequestHandler {
     }
 
     private String getMimeType(String pathString) {
-
         try {
             String extension = pathString.substring(pathString.lastIndexOf("."));
             Path tmpPath = new File("file" + extension).toPath();
@@ -116,24 +125,21 @@ public class RequestHandler {
         }
     }
 
-    private void setContent(WebHttpResponse httpResponse, String pathString, Model model) {
+    private void setContent(WebHttpResponse httpResponse, String pathString, Model model) throws IOException {
         String mimeType = getMimeType(pathString);
         httpResponse.setHeaders("Content-Type", mimeType + ";charset=utf-8");
         Path path = new File("./webapp" + pathString).toPath();
-        try {
-            if (mimeType.equals("text/html")) {
-                List<String> lines = Files.readAllLines(path);
-                String bodyString = render(lines, model);
-                byte[] body = bodyString.getBytes(StandardCharsets.UTF_8);
-                httpResponse.setHeaders("Content-Length", Integer.toString(body.length));
-                httpResponse.setBody(body);
-            } else {
-                byte[] body = Files.readAllBytes(path);
-                httpResponse.setHeaders("Content-Length", Integer.toString(body.length));
-                httpResponse.setBody(body);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mimeType.equals("text/html")) {
+            List<String> lines = null;
+            lines = Files.readAllLines(path);
+            String bodyString = render(lines, model);
+            byte[] body = bodyString.getBytes(StandardCharsets.UTF_8);
+            httpResponse.setHeaders("Content-Length", Integer.toString(body.length));
+            httpResponse.setBody(body);
+        } else {
+            byte[] body = Files.readAllBytes(path);
+            httpResponse.setHeaders("Content-Length", Integer.toString(body.length));
+            httpResponse.setBody(body);
         }
     }
 
