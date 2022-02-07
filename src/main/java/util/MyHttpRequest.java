@@ -149,11 +149,7 @@ public class MyHttpRequest {
         attribute.set(key, value);
     }
 
-    public Object getAttribute(String key) {
-        return attribute.get(key);
-    }
-
-    public List<Object> getAttributeAll() {
-        return attribute.getAll();
+    public MyAttribute getAttribute() {
+        return attribute;
     }
 }

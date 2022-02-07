@@ -24,4 +24,8 @@ public class MyAttribute {
 
         return keys.stream().map(k -> info.get(k)).collect(Collectors.toList());
     }
+
+    public Map<String, Object> getInfo() {
+        return info;
+    }
 }

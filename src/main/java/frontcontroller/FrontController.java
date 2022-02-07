@@ -50,7 +50,7 @@ public class FrontController {
         String viewName = mv.getViewName();
         MyView view = viewResolver(viewName);
 
-        view.render(request, response);
+        view.render(mv.getModel(), request, response);
 
     }
 
