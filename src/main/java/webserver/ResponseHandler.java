@@ -17,6 +17,19 @@ public class ResponseHandler {
         return MediaType.ANY_TYPE;
     }
 
+    public static void response200HeaderWithCookie(DataOutputStream dos, int lengthOfBodyContent, String cookie, MediaType mediaType) {
+        try {
+            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes(String.format("Content-Type: %s\r\n", mediaType.toString()));
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("Vary: " + "Accept-Encoding" + "\r\n");
+            if (!cookie.isBlank()) dos.writeBytes(String.format("Set-Cookie: %s" + "\r\n", cookie));
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     public static void response200Header(DataOutputStream dos, int lengthOfBodyContent, MediaType mediaType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");

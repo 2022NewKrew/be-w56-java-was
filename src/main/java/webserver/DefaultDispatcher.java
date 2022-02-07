@@ -1,7 +1,7 @@
 package webserver;
 
-import db.DataBase;
-import model.User;
+import defaultpjt.db.DataBase;
+import defaultpjt.model.User;
 import webserver.context.Request;
 
 import java.io.DataOutputStream;
