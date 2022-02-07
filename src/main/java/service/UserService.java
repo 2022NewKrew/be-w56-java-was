@@ -5,15 +5,12 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
+import util.HttpResponseMaker;
 import util.Pair;
 import web.http.request.HttpRequest;
-import web.http.request.HttpRequestHeaders;
 import web.http.request.HttpRequestLine;
 import web.http.response.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
 
 public class UserService {
@@ -33,18 +30,10 @@ public class UserService {
     }
 
     public static HttpResponse signUp(HttpRequest httpRequest) {
-        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
         String requestBody = httpRequest.getBodyData();
-
         addUser(requestBody);
 
-        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.REDIRECT);
-        HttpResponseHeaders headers = new HttpResponseHeaders();
-        headers.addHeader(new Pair("Location", "http://localhost:8080/index.html"));
-
-        HttpResponseBody body = new HttpResponseBody();
-
-        return new HttpResponse(statusLine, headers, body);
+        return HttpResponseMaker.redirectIndexPage(httpRequest);
     }
 
     public static HttpResponse login(HttpRequest httpRequest) {

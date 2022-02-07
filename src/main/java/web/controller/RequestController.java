@@ -27,10 +27,10 @@ public class RequestController {
                 return ViewService.loginPage(httpRequest);
             case LOGIN_REQUEST:
                 return UserService.login(httpRequest);
+            case USER_LIST_PAGE:
+                return ViewService.userListPage(httpRequest);
             default:
                 return ViewService.others(httpRequest);
         }
     }
-
-
 }
