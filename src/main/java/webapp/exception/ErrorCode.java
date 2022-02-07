@@ -2,7 +2,7 @@ package webapp.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import webapp.util.HttpStatus;
+import webserver.http.HttpStatus;
 
 @RequiredArgsConstructor
 @Getter

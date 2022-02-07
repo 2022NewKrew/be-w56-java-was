@@ -1,4 +1,4 @@
-package webapp.util;
+package webserver.http;
 
 import org.apache.tika.Tika;
 
@@ -51,7 +51,7 @@ public class HttpResponse {
         baos.write(BYTE_TOKEN_CRLF);
 
         // Headers
-        for(var header : headers.entrySet()) {
+        for (var header : headers.entrySet()) {
             baos.write(header.getKey().getBytes());
             baos.write(BYTE_TOKEN_COLON);
             baos.write(header.getValue().getBytes());

@@ -1,4 +1,4 @@
-package webapp.util;
+package webserver.http;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

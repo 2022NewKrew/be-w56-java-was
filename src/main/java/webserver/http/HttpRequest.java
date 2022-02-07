@@ -1,4 +1,10 @@
-package webapp.util;
+package webserver.http;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,14 +12,26 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+@Getter
+@ToString
+public class HttpRequest {
+    private final HttpMethod httpMethod;
+    private final String uri;
+    private final String path;
+    private final String httpVersion;
+    private final Map<String, String> queryStrings;
 
-@Slf4j
-public class HttpRequestUtils {
+    @Builder
+    public HttpRequest(HttpMethod httpMethod, String uri, String path, String httpVersion,
+                       Map<String, String> queryStrings) {
+        this.httpMethod = httpMethod;
+        this.uri = uri;
+        this.path = path;
+        this.httpVersion = httpVersion;
+        this.queryStrings = queryStrings;
+    }
 
-    public static HttpRequest parseRequest(BufferedReader br) throws IOException {
+    public static HttpRequest parseFrom(BufferedReader br) throws IOException {
         HttpRequest.HttpRequestBuilder httpRequestBuilder = HttpRequest.builder();
         parseRequestLine(br, httpRequestBuilder);
         parseRequestHeaders(br, httpRequestBuilder);
@@ -21,19 +39,21 @@ public class HttpRequestUtils {
     }
 
     private static void parseRequestLine(BufferedReader br,
-                                  HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
+                                         HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
         String requestLine = br.readLine();
-        log.info(requestLine);
 
         String[] splitRequestLine = requestLine.split(" ");
-        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(splitRequestLine[0]));
-        httpRequestBuilder.uri(splitRequestLine[1]);
-        httpRequestBuilder.queryStrings(parseQueryString(splitRequestLine[1].substring(splitRequestLine[1].lastIndexOf("?") + 1)));
-        httpRequestBuilder.httpVersion(splitRequestLine[2]);
+        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(splitRequestLine[0]))
+                          .uri(splitRequestLine[1])
+                          .path(splitRequestLine[1].substring(0, splitRequestLine[1].contains(
+                                  "?") ? splitRequestLine[1].lastIndexOf("?") : splitRequestLine[1].length()))
+                          .queryStrings(parseQueryString(
+                                  splitRequestLine[1].substring(splitRequestLine[1].lastIndexOf("?") + 1)))
+                          .httpVersion(splitRequestLine[2]);
     }
 
     private static void parseRequestHeaders(BufferedReader br,
-                                     HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
+                                            HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
         // No support for any headers yet
     }
 
@@ -60,7 +80,7 @@ public class HttpRequestUtils {
 
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                     .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

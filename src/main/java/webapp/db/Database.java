@@ -1,13 +1,12 @@
 package webapp.db;
 
+import com.google.common.collect.Maps;
+import webapp.model.User;
+
 import java.util.Collection;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
-import webapp.model.User;
-
-public class DataBase {
+public class Database {
     private static Map<String, User> users = Maps.newHashMap();
 
     public static void addUser(User user) {

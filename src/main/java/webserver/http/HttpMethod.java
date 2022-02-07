@@ -1,4 +1,4 @@
-package webapp.util;
+package webserver.http;
 
 import webapp.exception.UnsupportedHttpMethodException;
 import lombok.ToString;
