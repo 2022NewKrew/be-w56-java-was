@@ -5,9 +5,10 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.custom.ComponentManager;
-import webserver.custom.DispatcherServlet;
-import webserver.custom.HandlerMapping;
+import webserver.core.*;
+import webserver.handler.ArgumentResolverHandler;
+import webserver.handler.InterceptorHandler;
+import webserver.handler.WebConfigHandler;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
@@ -21,8 +22,9 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        // Custom DispatcherServlet set-up
-        Dispatcher customDispatcherServlet = new DispatcherServlet(HandlerMapping.of(ComponentManager.of()));
+        // Custom Spring DispatcherServlet set-up
+        WebConfigHandler.init(ComponentManager.getInstance(), ArgumentResolverHandler.getInstance(), InterceptorHandler.getInstance());
+        Dispatcher customDispatcherServlet = new DispatcherServlet(InterceptorHandler.getInstance(), HandlerMapping.getInstance(ComponentManager.getInstance()));
 
         // 기존 dispatcher
         Dispatcher defaultDispatcherServlet = new DefaultDispatcher();
@@ -34,7 +36,7 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection, defaultDispatcherServlet);
+                RequestHandler requestHandler = new RequestHandler(connection, customDispatcherServlet);
                 requestHandler.start();
             }
         }
