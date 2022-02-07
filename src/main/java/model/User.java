@@ -1,5 +1,7 @@
 package model;
 
+import java.net.URLDecoder;
+
 public class User {
     private final String REGEX_USER_ID = "^\\w+$";
     private final String REGEX_PASSWORD = "^\\w+$";
@@ -11,10 +13,10 @@ public class User {
     private String name;
     private String email;
 
-    public User(String userId, String name, String email) {
+    public User(String userId, String name, String email) throws Exception {
         this.userId = userId;
         this.name = name;
-        this.email = email;
+        this.email = URLDecoder.decode(email, "UTF-8");
     }
 
     public User(String userId, String password, String name, String email) throws Exception {
@@ -24,7 +26,7 @@ public class User {
         this.userId = userId;
         this.password = password;
         this.name = name;
-        this.email = email;
+        this.email = URLDecoder.decode(email, "UTF-8");
     }
 
     private boolean checkRegexOfUser (String userId, String password, String name, String email) {

@@ -22,6 +22,8 @@ public class GetController implements MethodController {
     private final String USER_LIST = "/user/list";
     private final String LOGIN_PAGE = "/user/login.html";
 
+    private final String HTML_USER_LIST = "/user/list.html";
+
     public GetController(RequestParser rp, OutputStream os) {
         this.rp = rp;
         this.os = os;
@@ -32,6 +34,7 @@ public class GetController implements MethodController {
 
         switch (rp.getPath()) {
             case USER_LIST:
+            case HTML_USER_LIST:
                 methodUserList();
                 break;
             default:
