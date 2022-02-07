@@ -12,12 +12,20 @@ import java.nio.file.Files;
 public class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
-    public static void handleHtmlResponse(String path, OutputStream out) throws IOException {
-        byte[] body = getHtmlBytes(path);
+    public static void handleHtmlResponse(String path, OutputStream out, Status status) throws IOException {
 
         DataOutputStream dos = new DataOutputStream(out);
-        response200Header(dos, body.length);
-        responseBody(dos, body);
+
+        switch (status) {
+            case OK:
+                byte[] body = getHtmlBytes(path);
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+                break;
+            case FOUND:
+                response302Header(dos, "/index.html");
+                break;
+        }
     }
 
     private static byte[] getHtmlBytes(String url) throws IOException {
@@ -29,6 +37,16 @@ public class HttpResponse {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private static void response302Header(DataOutputStream dos, String url) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + url);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
