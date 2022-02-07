@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -20,7 +19,7 @@ public class Request {
     private String url;
     private Map<String, String> queryString;
     private String httpVersion;
-    private final Map<String, String> headers = new HashMap<>();
+    private RequestHeader requestHeader;
     private Map<String, String> body;
 
     private static final Logger log = LoggerFactory.getLogger(Request.class);
@@ -34,9 +33,7 @@ public class Request {
         // headers 파싱
         parseHeaders(br);
         // body 파싱
-        if (headers.containsKey("Content-Length")) {
-            parseBody(br, Integer.parseInt(headers.get("Content-Length")));
-        }
+        parseBody(br, requestHeader.getContentLength());
     }
 
     private void parseRequestLine(BufferedReader br) throws IOException {
@@ -58,12 +55,11 @@ public class Request {
     }
 
     private void parseHeaders(BufferedReader br) throws IOException {
+        requestHeader = new RequestHeader();
         String line = br.readLine();
         while (!(line).equals("")) {
-            HttpRequestUtils.Pair header = HttpRequestUtils.parseHeader(line);
-            headers.put(header.getKey(), header.getValue());
-
-            log.debug("header {} {}", header.getKey(), header.getValue());
+            requestHeader.addLine(line);
+            log.debug("header : {}", line);
             line = br.readLine();
         }
     }
@@ -89,8 +85,8 @@ public class Request {
         return httpVersion;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public RequestHeader getRequestHeader() {
+        return requestHeader;
     }
 
     public Map<String, String> getBody() {
