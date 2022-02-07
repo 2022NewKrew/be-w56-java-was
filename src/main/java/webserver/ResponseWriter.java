@@ -24,7 +24,10 @@ public class ResponseWriter {
     private static final String RESPONSE_BODY_SEPARATOR = "\r\n";
 
     public void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
-        final File file = new File(FILE_PREFIX + filePath);
+        File file = new File(FILE_PREFIX + filePath);
+        if (filePath.endsWith("/")) {
+            file = new File(file, "index.html");
+        }
         if (file.exists() && file.isFile()) {
             final Path path = file.toPath();
             final byte[] body = Files.readAllBytes(path);
