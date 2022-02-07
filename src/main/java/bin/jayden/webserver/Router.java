@@ -18,13 +18,8 @@ import java.util.Map;
 public class Router {
     private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
     private static final String REDIRECT = "redirect:";
-    private static final Map<String, Method> postRoutingMap;
-    private static final Map<String, Method> getRoutingMap;
-
-    static {
-        getRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getGetRoutingMap());
-        postRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getPostRoutingMap());
-    }
+    private static final Map<String, Method> postRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getPostRoutingMap());
+    private static final Map<String, Method> getRoutingMap = Collections.unmodifiableMap(AnnotationProcessor.getGetRoutingMap());
 
     private Router() {//인스턴스의 생성을 방지
     }
