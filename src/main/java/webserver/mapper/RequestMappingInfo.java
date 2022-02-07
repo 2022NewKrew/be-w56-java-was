@@ -1,6 +1,8 @@
 package webserver.mapper;
 
+import dto.MemoCreateRequest;
 import dto.UserLoginRequest;
+import model.Memo;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +34,7 @@ public enum RequestMappingInfo {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
-            User user = userCreateRequest.toEntity();
-            userRepository.save(user);
+            User user = userRepository.save(userCreateRequest.toEntity());
             log.info("New user created : {}", user);
 
             return HttpResponse.builder(dos)
@@ -55,7 +56,7 @@ public enum RequestMappingInfo {
             log.info("user login: {}", user);
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            HttpCookie cookie = new HttpCookie("login", "true");
+            HttpCookie cookie = new HttpCookie("auth", String.valueOf(user.getId()));
             cookie.setPath("/");
 
             return HttpResponse.builder(dos)
@@ -70,8 +71,8 @@ public enum RequestMappingInfo {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             Map<String, HttpCookie> cookies = request.cookies();
-            HttpCookie loginCookie = cookies.get("login");
-            if (loginCookie == null || loginCookie.getValue().equals("false")) {
+            HttpCookie auth = cookies.get("auth");
+            if (auth == null) {
                 throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
             }
             Iterable<User> users = userRepository.findAll();
