@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class StaticController extends Controller{
+public class StaticController extends Controller {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private static final StaticController staticController = new StaticController();
@@ -24,6 +24,7 @@ public class StaticController extends Controller{
     public static StaticController getController() {
         return staticController;
     }
+
     @Override
     public Response view(Request request, String url) throws IOException {
         File file = new File("./webapp" + url);
@@ -33,7 +34,7 @@ public class StaticController extends Controller{
             String contentType = new Tika().detect(file);
             log.debug("static url : {}, content type : {}, file : {}", url, contentType, path.getFileName());
             return new ResponseBuilder().setHttpStatus(HttpStatus.OK)
-                    .addHeader("Content-Type",contentType + ";charset=utf-8")
+                    .addHeader("Content-Type", contentType + ";charset=utf-8")
                     .addHeader("Content-Length", String.valueOf(body.length))
                     .setBody(body)
                     .build();
