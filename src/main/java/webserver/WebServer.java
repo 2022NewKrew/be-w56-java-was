@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
-    private static final int THREAD_POOL_SIZE = 1;
+    private static final int THREAD_POOL_SIZE = 10;
     private static final int SOCKET_TIMEOUT = 3 * 60 * 1000; // 3 mins
 
     public void run(String[] args) throws Exception {
