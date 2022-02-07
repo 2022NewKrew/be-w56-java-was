@@ -36,7 +36,7 @@ public class ViewRenderer {
             , HttpResponseStatus status, Map<String, String> headers) throws IOException {
 
         dos.writeBytes(String.format("HTTP/1.1 %s %s \r\n", status.getStatusCode(), status.getText()));
-        dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+        dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
 
         for (Map.Entry<String, String> entry : headers.entrySet()){
