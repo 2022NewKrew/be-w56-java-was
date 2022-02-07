@@ -35,7 +35,7 @@ public class ResponseWriter {
     }
 
     /**
-     * @param headers Location 키 값을 가진 Pair가 반드시 포함되어 있어야 한다
+     * @param headers Location 키 값을 가진 Pair가 없으면 Error 문자열 페이지를 출력한다
      */
     public void writeRedirectResponse(final OutputStream out, final Headers headers)
     {
