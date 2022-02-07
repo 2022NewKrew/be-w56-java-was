@@ -1,7 +1,8 @@
 package webserver.mapper;
 
-import db.DataBase;
+import dto.MemoCreateRequest;
 import dto.UserLoginRequest;
+import model.Memo;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,8 @@ import webserver.exception.*;
 import webserver.http.*;
 import webserver.provider.StaticResourceProvider;
 import dto.UserCreateRequest;
+import webserver.repository.MemoRepository;
+import webserver.repository.UserRepository;
 
 import java.io.DataOutputStream;
 import java.util.*;
@@ -20,7 +23,9 @@ public enum RequestMappingInfo {
     ROOT("/", HttpMethod.GET) {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
-            byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
+            Iterable<Memo> memos = memoRepository.findAll();
+
+            byte[] body = renderDynamicTemplate(memos, "/index.html").getBytes();
 
             return HttpResponse.builder(dos)
                     .status(HttpStatus.OK)
@@ -32,8 +37,7 @@ public enum RequestMappingInfo {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
-            User user = userCreateRequest.toEntity();
-            DataBase.addUser(user);
+            User user = userRepository.save(userCreateRequest.toEntity());
             log.info("New user created : {}", user);
 
             return HttpResponse.builder(dos)
@@ -46,15 +50,16 @@ public enum RequestMappingInfo {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             UserLoginRequest userLoginRequest = UserLoginRequest.from(request.body());
+            User user = userRepository.findByUserId(userLoginRequest.getUserId())
+                    .orElseThrow(() -> new UserUnauthorizedException("에러: 존재하지 않는 유저입니다."));
 
-            User user = DataBase.findUserById(userLoginRequest.getUserId());
-            if (user == null || user.isNotValidPassword(userLoginRequest.getPassword())) {
+            if (user.isNotValidPassword(userLoginRequest.getPassword())) {
                 throw new UserUnauthorizedException("에러: 로그인에 실패했습니다.");
             }
             log.info("user login: {}", user);
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            HttpCookie cookie = new HttpCookie("login", "true");
+            HttpCookie cookie = new HttpCookie("auth", String.valueOf(user.getId()));
             cookie.setPath("/");
 
             return HttpResponse.builder(dos)
@@ -69,11 +74,11 @@ public enum RequestMappingInfo {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
             Map<String, HttpCookie> cookies = request.cookies();
-            HttpCookie loginCookie = cookies.get("login");
-            if (loginCookie == null || loginCookie.getValue().equals("false")) {
+            HttpCookie auth = cookies.get("auth");
+            if (auth == null) {
                 throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
             }
-            Collection<User> users = DataBase.findAll();
+            Iterable<User> users = userRepository.findAll();
 
             byte[] body = renderDynamicTemplate(users, "/user/list.html").getBytes();
             return HttpResponse.builder(dos)
@@ -81,13 +86,35 @@ public enum RequestMappingInfo {
                     .body(body)
                     .build();
         }
+    },
+    NEW_MEMO("/memo/create", HttpMethod.POST) {
+        @Override
+        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
+            Map<String, HttpCookie> cookies = request.cookies();
+            HttpCookie auth = cookies.get("auth");
+            if (auth == null) {
+                throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
+            }
+            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), auth.getValue());
+            Memo memo = memoRepository.save(memoCreateRequest.toEntity());
+            log.info("New memo created : {}", memo);
+
+            return HttpResponse.builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .header("Location", "/")
+                    .build();
+        }
     };
 
     private static final Logger log = LoggerFactory.getLogger(RequestMappingInfo.class);
 
     private static final Map<String, RequestMappingInfo> requestMap;
+    private static final UserRepository userRepository;
+    private static final MemoRepository memoRepository;
 
     static {
+        userRepository = new UserRepository();
+        memoRepository = new MemoRepository();
         requestMap = new HashMap<>();
         for (RequestMappingInfo value : values()) {
             requestMap.put(value.path, value);

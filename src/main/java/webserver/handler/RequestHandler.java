@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 import webserver.mapper.RequestMapper;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
@@ -25,10 +26,10 @@ public class RequestHandler extends Thread {
         HttpResponse response = null;
 
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             OutputStream out = connection.getOutputStream();
 
-            HttpRequest request = HttpRequest.from(in);
+            HttpRequest request = HttpRequestUtils.parseRequest(br);
             response = RequestMapper.process(request, out);
         } catch (Exception e) {
             log.error(e.getMessage());

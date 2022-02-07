@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import db.ConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.handler.RequestHandler;
@@ -13,7 +14,9 @@ public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
     private static final int DEFAULT_THREAD_POOL_SIZE = 10;
-    public static final String DEFAULT_RESOURCES_DIR = "src/main/resources/templates";
+    public static final String DEFAULT_RESOURCES_DIR = "src/main/resources";
+    private static final String DB_SCHEMA_PATH = DEFAULT_RESOURCES_DIR + "/schema.sql";
+    private static final String DB_DATA_PATH = DEFAULT_RESOURCES_DIR + "/data.sql";
 
     public static void main(String args[]) throws Exception {
         int port = 0;
@@ -22,6 +25,9 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
+        ConnectionManager connectionManager = ConnectionManager.getInstance();
+        connectionManager.executeSqlScript(DB_SCHEMA_PATH);
+        connectionManager.executeSqlScript(DB_DATA_PATH);
 
         // 스레드풀 생성
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);

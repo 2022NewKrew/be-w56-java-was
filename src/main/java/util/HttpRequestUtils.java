@@ -1,15 +1,96 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import webserver.exception.BadRequestException;
+import webserver.http.HttpCookie;
+import webserver.http.HttpHeader;
+import webserver.http.HttpMethod;
+import webserver.http.HttpRequest;
 
 public class HttpRequestUtils {
+
+    private static final String END_OF_REQUEST_LINE = "";
+    private static final String REQUEST_LINE_DELIMITER = " ";
+    private static final String HEADER_KEY_VALUE_DELIMITER = ": ";
+    private static final String HEADER_VALUE_DELIMITER = ",";
+
+    public static HttpRequest parseRequest(BufferedReader br) throws IOException {
+        // REQUEST LINE
+        String requestLine = br.readLine();
+        String[] requestLineParams = requestLine.split(REQUEST_LINE_DELIMITER);
+        validateRequestLine(requestLineParams);
+        HttpMethod method = HttpMethod.valueOf(requestLineParams[0]);
+        String requestURI = requestLineParams[1];
+        String version = requestLineParams[2];
+
+        // REQUEST HEADER
+        HttpHeader headers = readRequestHeaderFromBuffer(br);
+        Map<String, HttpCookie> cookies = getCookieFromHeaders(headers);
+
+        // REQUEST BODY
+        int contentLength = getContentLength(headers);
+        String body = readRequestBodyFromBuffer(br, contentLength);
+
+        return new HttpRequest(method, requestURI, version, headers, cookies, body);
+    }
+
+    private static void validateRequestLine(String[] requestLineParams) {
+        if (requestLineParams.length != 3) {
+            throw new BadRequestException("에러: 요청 헤더가 적절하지 않습니다.");
+        }
+    }
+
+    private static HttpHeader readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
+        Map<String, List<String>> headers = new HashMap<>();
+        String inputLine;
+        while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
+            String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
+
+            List<String> values = Arrays.stream(inputs[1].split(HEADER_VALUE_DELIMITER))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+
+            headers.put(inputs[0], values);
+        }
+        return new HttpHeader(headers);
+    }
+
+    private static Map<String, HttpCookie> getCookieFromHeaders(HttpHeader headers) {
+        if (headers.containsKey("Cookie")) {
+            Map<String, HttpCookie> result = new HashMap<>();
+            List<String> cookies = headers.getValues("Cookie");
+            String joinedCookies = String.join(HEADER_VALUE_DELIMITER, cookies);
+            Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(joinedCookies);
+            cookiesMap.forEach((k, v) -> result.put(k, new HttpCookie(k, v)));
+            return result;
+        }
+        return Collections.emptyMap();
+    }
+
+    private static int getContentLength(HttpHeader headers) {
+        if (headers.containsKey("Content-Length")) {
+            List<String> values = headers.getValues("Content-Length");
+            return Integer.parseInt(values.get(0));
+        }
+        return 0;
+    }
+
+    private static String readRequestBodyFromBuffer(BufferedReader br, int contentLength) throws IOException {
+        String body = IOUtils.readData(br, contentLength);
+        return URLDecoder.decode(body, StandardCharsets.UTF_8);
+    }
+
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString
+     * URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, List<String>> parseQueryString(String queryString) {
@@ -31,8 +112,8 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param cookies
+     * 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {

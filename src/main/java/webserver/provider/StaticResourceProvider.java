@@ -16,7 +16,7 @@ public class StaticResourceProvider {
         if (resourceCacheMap.containsKey(path)) {
             return resourceCacheMap.get(path).value;
         }
-        byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + path).toPath());
+        byte[] body = Files.readAllBytes(new File(DEFAULT_RESOURCES_DIR + "/templates" + path).toPath());
         resourceCacheMap.put(path, new ByteArray(body));
         return body;
     }
