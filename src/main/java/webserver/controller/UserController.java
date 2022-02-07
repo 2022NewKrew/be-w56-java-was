@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserController implements Controller {
     private static final Controller instance = new UserController();
@@ -34,6 +35,9 @@ public class UserController implements Controller {
         if (request.getStartLine().getTargetUri().equals("/user/create")) {
             return postCreateUser(request, response);
         }
+        if (request.getStartLine().getTargetUri().equals("/user/login")) {
+            return postLoginUser(request, response);
+        }
         return null;
     }
 
@@ -50,6 +54,20 @@ public class UserController implements Controller {
 
         DataBase.addUser(user);
 
+        return "redirect:/";
+    }
+
+    private String postLoginUser(HttpRequest request, HttpResponse response) {
+        String bodyString = request.getHttpBody().getBody();
+        Map<String, String> bodyParams = HttpRequestUtils.parseQueryString(bodyString);
+
+        User user = DataBase.findUserById(bodyParams.get("userId"));
+        if (Objects.isNull(user) || !user.isCorrectPassword(bodyParams.get("password"))) {
+            response.getHeader().addHeader("Set-Cookie: logined=false; Path=/");
+            return "redirect:/user/login_failed.html";
+        }
+
+        response.getHeader().addHeader("Set-Cookie: logined=true; Path=/");
         return "redirect:/";
     }
 }

@@ -11,6 +11,7 @@ public class ControllerMap {
         controllerMap = new HashMap<>();
         controllerMap.put("/", HomeController.getInstance());
         controllerMap.put("/user/create", UserController.getInstance());
+        controllerMap.put("/user/login", UserController.getInstance());
     }
 
     public Controller getController(String path){
