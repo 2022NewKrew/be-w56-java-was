@@ -1,8 +1,5 @@
 package webserver;
 
-import static util.HttpRequestUtils.parseRedirect;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import app.http.HttpRequest;
 import app.http.HttpResponse;
-import webserver.handler.DefaultMapping;
-import webserver.handler.DefaultMappingHandlerAdapter;
-import webserver.handler.HandlerAdapter;
-import webserver.handler.HandlerMapping;
+import webserver.handler.handlerAdapter.DefaultHandlerAdapter;
+import webserver.handler.handlerAdapter.StaticHandlerAdapter;
+import webserver.handler.handlerMapping.DefaultMapping;
+import webserver.handler.handlerAdapter.HandlerAdapter;
+import webserver.handler.handlerMapping.HandlerMapping;
 import webserver.handler.HandlerMethod;
 
 public class DispatcherServlet{
@@ -34,22 +32,16 @@ public class DispatcherServlet{
 
     private void init() {
         handlerMappings.add(new DefaultMapping());
-        handlerAdapters.add(new DefaultMappingHandlerAdapter());
+        handlerAdapters.add(new DefaultHandlerAdapter());
+        handlerAdapters.add(new StaticHandlerAdapter());
     }
 
-    protected HttpResponse doService(HttpRequest request) {
+    protected void doService(HttpRequest request, HttpResponse response) {
         HandlerMethod handlerMethod = getHandler(request);
-        if(handlerMethod == null) {
-            return request.makeResponse();
+        HandlerAdapter ha = getHandlerAdapter(handlerMethod);
+        if(ha != null) {
+            ha.handle(request, response, handlerMethod);
         }
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if(handlerAdapter.supports(handlerMethod)) {
-                Method method = handlerMethod.getMethod();
-                String handlerResponse = handlerAdapter.handle(request, handlerMethod);
-                return getHttpResponse(request, handlerResponse);
-            }
-        }
-        return null;
     }
 
     private HandlerMethod getHandler(HttpRequest request){
@@ -66,7 +58,13 @@ public class DispatcherServlet{
         return null;
     }
 
-    private HttpResponse getHttpResponse(HttpRequest request, String handlerResponse) {
-        return request.makeResponse(parseRedirect(handlerResponse));
+    private HandlerAdapter getHandlerAdapter(HandlerMethod handlerMethod){
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if(handlerAdapter.supports(handlerMethod)) {
+                log.debug("getHandlerAdpater: {}", handlerMethod==null);
+                return handlerAdapter;
+            }
+        }
+        return null;
     }
 }

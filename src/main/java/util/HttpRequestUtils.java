@@ -1,5 +1,6 @@
 package util;
 
+import static util.Constant.BLANK;
 import static util.Constant.CONTENT_LENGTH;
 import static util.Constant.EMPTY;
 import static util.Constant.QUESTION_MARK;
@@ -10,10 +11,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -22,9 +22,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import app.http.HttpHeader;
+import app.http.HttpMethod;
 import app.http.HttpRequest;
 import app.http.HttpRequestBody;
+import app.http.HttpRequestParams;
+import app.http.HttpVersion;
 
 public class HttpRequestUtils {
     private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
@@ -61,8 +63,8 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
@@ -83,23 +85,27 @@ public class HttpRequestUtils {
     }
 
     public static HttpRequest parseInput(InputStream in) throws IOException {
+        HttpRequest httpRequest = HttpRequest.of();
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String requestLine = br.readLine();
         log.debug("request 내용: {}", requestLine);
-        List<Pair> headers = new ArrayList<>();
+        String[] tokens = requestLine.split(BLANK);
+        httpRequest.setMethod(HttpMethod.valueOf(tokens[0]));
+        String[] targetTokens = parseTarget(tokens[1]);
+        httpRequest.setUrl(targetTokens[0]);
+        httpRequest.setParams(HttpRequestParams.of(parseParams(targetTokens)));
+        httpRequest.setVersion(HttpVersion.from(tokens[2]));
+
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
-            headers.add(parseHeader(line));
+            Pair pair = parseHeader(line);
+            httpRequest.put(pair.getKey(), pair.getValue());
             log.debug("request 내용: {}", line);
         }
-        HttpHeader header = HttpHeader.of(headers);
-        int length = Integer.parseInt(header.get(CONTENT_LENGTH, ZERO));
+        int length = Integer.parseInt(httpRequest.get(CONTENT_LENGTH, ZERO));
         HttpRequestBody body = HttpRequestBody.of(parseQueryString(IOUtils.readData(br, length)));
-        return HttpRequest.builder()
-                .requestLine(requestLine)
-                .header(header)
-                .body(body)
-                .build();
+        httpRequest.setBody(body);
+        return httpRequest;
     }
 
     public static class Pair {

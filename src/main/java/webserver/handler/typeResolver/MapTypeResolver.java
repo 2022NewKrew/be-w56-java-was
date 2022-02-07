@@ -1,6 +1,7 @@
 package webserver.handler.typeResolver;
 
 import app.http.HttpRequest;
+import app.http.HttpResponse;
 
 public class MapTypeResolver implements TypeResolver {
     private static final MapTypeResolver mapTypeResolver = new MapTypeResolver();
@@ -13,7 +14,7 @@ public class MapTypeResolver implements TypeResolver {
     }
 
     @Override
-    public Object getType(HttpRequest request) {
+    public Object getType(HttpRequest request, HttpResponse httpResponse) {
         return request.getBody().getBody();
     }
 }
