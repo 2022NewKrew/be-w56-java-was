@@ -8,8 +8,7 @@ import util.request.HttpRequest;
 import util.request.HttpVersion;
 import util.request.MethodType;
 import util.response.HttpResponse;
-import util.response.HttpResponseDataType;
-import util.response.HttpResponseStatus;
+import util.response.HttpStatus;
 import webserver.controller.common.StaticController;
 
 import java.io.DataOutputStream;
@@ -26,7 +25,7 @@ class StaticControllerTest {
     @MethodSource("getUrlSupportStream")
     void supports(MethodType methodType, String url, boolean expected) {
         //given
-        final Controller<String> controller = new StaticController();
+        final Controller controller = new StaticController();
         final HttpRequest httpRequest = HttpRequest.builder()
                 .method(methodType)
                 .url(url)
@@ -66,7 +65,7 @@ class StaticControllerTest {
     @MethodSource("getExistFileStream")
     void handle(String url) throws IOException {
         //given
-        final Controller<?> controller = new StaticController();
+        final Controller controller = new StaticController();
         final DataOutputStream dos = mock(DataOutputStream.class);
 
         final HttpRequest httpRequest = HttpRequest.builder()
@@ -76,12 +75,10 @@ class StaticControllerTest {
                 .build();
 
         //when
-        HttpResponse<String> httpResponse = (HttpResponse<String>) controller.doHandle(httpRequest);
+        HttpResponse httpResponse = (HttpResponse) controller.doHandle(httpRequest);
 
         //then
-        assertThat(httpResponse.getStatus()).isEqualTo(HttpResponseStatus.SUCCESS);
-        assertThat(httpResponse.getDataType()).isEqualTo(HttpResponseDataType.FILE_NAME);
-        assertThat(httpResponse.getData()).isEqualTo(url);
+        assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.SUCCESS);
     }
 
     private static Stream<Arguments> getExistFileStream(){

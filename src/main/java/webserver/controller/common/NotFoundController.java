@@ -1,23 +1,26 @@
 package webserver.controller.common;
 
 import util.request.HttpRequest;
+import util.response.FileType;
 import util.response.HttpResponse;
-import util.response.HttpResponseDataType;
-import util.response.HttpResponseStatus;
+import util.response.HttpStatus;
+import util.response.ModelAndView;
 import webserver.controller.Controller;
 
-public class NotFoundController implements Controller<String> {
+public class NotFoundController implements Controller {
     @Override
     public boolean supports(HttpRequest httpRequest) {
         return true;
     }
 
     @Override
-    public HttpResponse<String> doHandle(HttpRequest httpRequest){
+    public HttpResponse doHandle(HttpRequest httpRequest){
+        ModelAndView modelAndView = new ModelAndView("error", FileType.STRING);
+        modelAndView.addAttribute("message", "Not Found Page");
+
         return HttpResponse.<String>builder()
-                .status(HttpResponseStatus.NOT_FOUND)
-                .data("Not Found")
-                .dataType(HttpResponseDataType.STRING)
+                .status(HttpStatus.NOT_FOUND)
+                .modelAndView(modelAndView)
                 .build();
     }
 }

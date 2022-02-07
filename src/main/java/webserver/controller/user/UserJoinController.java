@@ -7,7 +7,7 @@ import util.converter.ConverterService;
 import util.request.HttpRequest;
 import util.request.MethodType;
 import util.response.HttpResponse;
-import util.response.HttpResponseStatus;
+import util.response.HttpStatus;
 import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
@@ -15,7 +15,7 @@ import webserver.domain.repository.UserRepository;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class UserJoinController implements Controller<String> {
+public class UserJoinController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserJoinController.class);
     private static final String JOIN_URL = "/user/create";
 
@@ -27,7 +27,7 @@ public class UserJoinController implements Controller<String> {
     }
 
     @Override
-    public HttpResponse<String> doHandle(HttpRequest httpRequest){
+    public HttpResponse doHandle(HttpRequest httpRequest){
         if(!supports(httpRequest)){
             throw new IllegalStateException("해당 요청을 지원하지 않습니다.");
         }
@@ -35,13 +35,13 @@ public class UserJoinController implements Controller<String> {
         return handleJoin(httpRequest);
     }
 
-    private HttpResponse<String> handleJoin(HttpRequest httpRequest){
+    private HttpResponse handleJoin(HttpRequest httpRequest){
         User user = createUser(httpRequest);
         userRepository.saveUser(user);
         log.info("created user {}", user);
 
         return HttpResponse.<String>builder()
-                .status(HttpResponseStatus.REDIRECT)
+                .status(HttpStatus.REDIRECT)
                 .headers(Map.of("Location", "/"))
                 .build();
     }
