@@ -3,6 +3,7 @@ package model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
+import webserver.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class MyHttpRequest {
-    private String method = "";
+    private HttpMethod method;
     private String uri = "";
     private String protocol = "";
     private final Map<String, String> parameters = new HashMap<>();
@@ -33,7 +34,7 @@ public class MyHttpRequest {
                 .peek(h -> logger.debug("        : {}", h))
                 .forEach(this::setHeader);
 
-        if(method.equals("POST")) {
+        if(method.equals(HttpMethod.POST)) {
             String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
             Stream.of(body.split("&"))
                     .forEach(this::setParameters);
@@ -47,7 +48,7 @@ public class MyHttpRequest {
             throw new IOException("http request 포맷이 잘못 되었습니다.");
         }
 
-        this.method = tokens[0];
+        this.method = HttpMethod.valueOf(tokens[0]);
         setUri(tokens[1]);
         this.protocol = tokens[2];
     }
@@ -73,7 +74,7 @@ public class MyHttpRequest {
         this.headers.put(tokens[0], tokens[1]);
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 

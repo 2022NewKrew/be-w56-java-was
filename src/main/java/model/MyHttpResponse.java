@@ -3,6 +3,7 @@ package model;
 import Controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.enums.HttpMethod;
 import webserver.enums.HttpStatus;
 
 import java.io.File;
@@ -27,9 +28,9 @@ public class MyHttpResponse {
     public MyHttpResponse(MyHttpRequest myHttpRequest) throws IOException {
         HttpStatus httpStatus = HttpStatus.OK;
 
-        if (myHttpRequest.getMethod().equals("GET")) {
+        if (myHttpRequest.getMethod().equals(HttpMethod.GET)) {
             httpStatus = get(myHttpRequest);
-        } else if (myHttpRequest.getMethod().equals("POST")) {
+        } else if (myHttpRequest.getMethod().equals(HttpMethod.POST)) {
             httpStatus = post(myHttpRequest);
         }
 
