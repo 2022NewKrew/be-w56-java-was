@@ -23,7 +23,6 @@ public class AnnotationProcessor {
         Reflections reflections = new Reflections("bin.jayden", new SubTypesScanner(false));
         controllers = reflections.getSubTypesOf(Object.class).stream().filter(aClass -> aClass.getAnnotation(Controller.class) != null).collect(Collectors.toSet());
         controllerInstanceMap = Collections.unmodifiableMap(controllers.stream().collect(Collectors.toMap(controller -> controller, DependencyInjector::getControllerInstance)));
-
     }
 
     private AnnotationProcessor() {//인스턴스의 생성을 방지

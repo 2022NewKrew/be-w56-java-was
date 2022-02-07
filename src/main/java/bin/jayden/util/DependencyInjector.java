@@ -1,5 +1,6 @@
 package bin.jayden.util;
 
+import bin.jayden.db.MyJDBC;
 import bin.jayden.exception.CannotInjectDependencyException;
 
 import java.lang.reflect.Constructor;
@@ -12,6 +13,14 @@ import java.util.Map;
 public class DependencyInjector {
     private static final Map<Class<?>, Object> beans = new HashMap<>();
 
+    static {
+        initBeans();
+    }
+
+    private static void initBeans() {
+        beans.put(MyJDBC.class, new MyJDBC());
+    }
+
     private DependencyInjector() {//인스턴스의 생성을 방지
     }
 
@@ -20,7 +29,8 @@ public class DependencyInjector {
             Object instance = getInstance(controller);
             if (instance != null)
                 return instance;
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
         throw new CannotInjectDependencyException(controller.getName() + "의 의존성을 주입할 수 없습니다.");
     }

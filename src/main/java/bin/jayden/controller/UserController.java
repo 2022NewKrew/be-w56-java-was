@@ -4,7 +4,6 @@ import bin.jayden.annotation.Controller;
 import bin.jayden.annotation.GetMapping;
 import bin.jayden.annotation.PostMapping;
 import bin.jayden.annotation.RequestMapping;
-import bin.jayden.db.DataBase;
 import bin.jayden.http.MyHttpSession;
 import bin.jayden.model.User;
 import bin.jayden.service.UserService;
@@ -28,10 +27,10 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(String userId, String password, MyHttpSession session) {
-        User user = DataBase.findUserById(userId);
-        if (user != null && user.getPassword().equals(password)) {
+        User user = userService.getLoginUser(userId, password);
+        if (user != null) {
             session.addAttribute("sessionUser", user);
-            return "redirect:/index.html";
+            return "redirect:/";
         }
         return "redirect:/user/login_failed.html";
     }
