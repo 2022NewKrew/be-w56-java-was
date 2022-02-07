@@ -45,7 +45,6 @@ public class UserController {
         try {
             add(map);
         } catch (IllegalArgumentException e) {
-            list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/error.html").getLocation()));
             return;
         } catch (IllegalStateException e) {
             list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/user/dupId.html").getLocation()));
