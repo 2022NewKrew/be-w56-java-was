@@ -1,5 +1,6 @@
 package http.request;
 
+import http.Cookie;
 import http.HttpHeaders;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class HttpRequest {
         return requestHeaders;
     }
 
-    public Map<String, String> getHeaders() {
-        return requestHeaders.getHeaders();
+    public Optional<Cookie> getCookie() {
+        return getHeader("Cookie").map(Cookie::new);
     }
 }
