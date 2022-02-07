@@ -4,6 +4,7 @@ import annotation.Inject;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,12 +15,12 @@ class BeanInjectorTest {
     @Test
     void inject() {
         BeanContainer container = new BeanContainer();
-        container.put(String.class, "Hello");
-        container.put(String.class, "World");
-        container.put(Integer.class, 1);
-        container.put(Integer.class, 2);
-        container.put(Integer.class, 3);
-        container.put(Boolean.class, true);
+        container.put(String.class, new ConstantInstantiator("Hello"));
+        container.put(String.class, new ConstantInstantiator("World"));
+        container.put(int.class, new ConstantInstantiator(1));
+        container.put(Integer.class, new ConstantInstantiator(2));
+        container.put(int.class, new ConstantInstantiator(3));
+        container.put(boolean.class, new ConstantInstantiator(true));
         BeanInjector subject = new BeanInjector(mock(Logger.class));
 
         Foo foo = new Foo();
@@ -51,6 +52,25 @@ class BeanInjectorTest {
 
         public Boolean getBoolean() {
             return booleanValue;
+        }
+    }
+
+    private static class ConstantInstantiator implements Instantiator {
+
+        private final Object value;
+
+        public ConstantInstantiator(Object value) {
+            this.value = value;
+        }
+
+        @Override
+        public Class<?>[] getParameterTypes() {
+            return new Class[0];
+        }
+
+        @Override
+        public Object newInstance(Object[] parameters) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+            return value;
         }
     }
 }

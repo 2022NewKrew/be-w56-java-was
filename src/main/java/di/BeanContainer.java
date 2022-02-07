@@ -1,30 +1,47 @@
 package di;
 
+import com.google.common.primitives.Primitives;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BeanContainer {
 
-    private final Map<Class<?>, List<Object>> beans = new HashMap<>();
+    private final Map<Class<?>, List<Instantiator>> beans = new HashMap<>();
 
-    public void put(Class<?> clazz, Object bean) {
-        putBeans(clazz, bean);
-    }
-
-    private void putBeans(Class<?> key, Object value) {
-        beans.putIfAbsent(key, new ArrayList<>());
-        beans.computeIfPresent(key, (k, v) -> {
-            v.add(value);
+    public void put(Class<?> clazz, Instantiator instantiator) {
+        Class<?> wrapped = Primitives.wrap(clazz);
+        beans.putIfAbsent(wrapped, new ArrayList<>());
+        beans.computeIfPresent(wrapped, (k, v) -> {
+            v.add(instantiator);
             return v;
         });
     }
 
     public Object getFirst(Class<?> x) {
-        return Optional.ofNullable(beans.get(x))
+        Class<?> wrapped = Primitives.wrap(x);
+        return Optional.ofNullable(beans.get(wrapped))
                 .map(list -> list.get(0))
+                .map(this::instantiate)
                 .orElse(null);
     }
 
     public List<Object> getAll(Class<?> x) {
-        return beans.get(x);
+        return beans.getOrDefault(x, Collections.emptyList())
+                .stream()
+                .map(this::instantiate)
+                .collect(Collectors.toList());
+    }
+
+    private Object instantiate(Instantiator instantiator) {
+        Object[] parameters = Arrays.stream(instantiator.getParameterTypes())
+                .map(this::getFirst)
+                .toArray();
+        try {
+            return instantiator.newInstance(parameters);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Constructor mismatch occurred", e);
+        }
     }
 }

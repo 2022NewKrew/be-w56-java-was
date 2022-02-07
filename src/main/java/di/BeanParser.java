@@ -1,75 +1,63 @@
 package di;
 
 import annotation.Bean;
-import org.slf4j.Logger;
+import annotation.Inject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class BeanParser {
 
-    private final Logger logger;
-
-    public BeanParser(Logger logger) {
-        this.logger = logger;
-    }
-
+    // TODO refactor
     public BeanContainer parse(Class<?>[] classes) {
         BeanContainer container = new BeanContainer();
         for (Class<?> clazz : classes) {
-            parseBeans(container, clazz);
+            Constructor<?> constructor = getInjectableConstructor(clazz);
+            if (constructor == null) {
+                continue;
+            }
+            container.put(clazz, new ClassInstantiator(constructor));
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.getAnnotation(Bean.class) == null) {
+                    continue;
+                }
+                container.put(m.getReturnType(), new Instantiator() {
+                    @Override
+                    public Class<?>[] getParameterTypes() {
+                        return m.getParameterTypes();
+                    }
+
+                    @Override
+                    public Object newInstance(Object[] parameters)
+                            throws IllegalAccessException, InvocationTargetException {
+                        return m.invoke(container.getFirst(clazz), parameters);
+                    }
+                });
+            }
         }
         return container;
     }
 
-    private void parseBeans(BeanContainer container, Class<?> clazz) {
+    private Constructor<?> getInjectableConstructor(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(Bean.class)) {
-            return;
+            return null;
         }
-        Object typeBean;
-        Constructor<?> constructor;
-        try {
-            constructor = clazz.getDeclaredConstructor();
-        } catch (NoSuchMethodException e) {
-            logger.error("No default constructor for class {}", clazz.getName());
-            return;
+        Constructor<?> constructor = null;
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        for (Constructor<?> c : constructors) {
+            if (c.getParameterTypes().length == 0) {
+                constructor = c;
+            }
+            Inject annotation = c.getAnnotation(Inject.class);
+            if (annotation != null) {
+                constructor = c;
+                break;
+            }
         }
-        try {
-            typeBean = constructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            logger.error("Error while instantiating class {}", clazz.getName(), e);
-            return;
+        if (constructor == null) {
+            throw new RuntimeException("No matching constructor for class " + clazz.getName());
         }
-        container.put(clazz, typeBean);
-        parseMethodBeans(container, clazz, typeBean);
-    }
-
-    private void parseMethodBeans(BeanContainer container, Class<?> clazz, Object instance) {
-        for (Method method : clazz.getDeclaredMethods()) {
-            parseMethodBean(container, instance, method);
-        }
-    }
-
-    private void parseMethodBean(BeanContainer container, Object instance, Method method) {
-        if (!method.isAnnotationPresent(Bean.class)) {
-            return;
-        }
-        Class<?>[] parameters = method.getParameterTypes();
-        Object[] arguments = Arrays.stream(parameters).map(container::getFirst).toArray();
-        Object methodBean;
-        try {
-            methodBean = method.invoke(instance, arguments);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            logger.error(
-                    "Error while invoking method {} on {}",
-                    method.getName(),
-                    instance.getClass().getName(),
-                    e
-            );
-            return;
-        }
-        container.put(method.getReturnType(), methodBean);
+        return constructor;
     }
 }

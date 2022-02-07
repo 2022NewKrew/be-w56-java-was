@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    def jdbcVersion = '6.0.6'
+    implementation "mysql:mysql-connector-java:${jdbcVersion}"
+
     def junitVersion = '5.8.2'
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"

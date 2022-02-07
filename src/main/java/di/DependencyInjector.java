@@ -10,7 +10,7 @@ public class DependencyInjector {
 
     public DependencyInjector(Logger logger) {
         analyzer = new PackageAnalyzer(logger);
-        parser = new BeanParser(logger);
+        parser = new BeanParser();
         injector = new BeanInjector(logger);
     }
 

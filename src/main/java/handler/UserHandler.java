@@ -1,7 +1,8 @@
 package handler;
 
 import annotation.Bean;
-import db.DataBase;
+import annotation.Inject;
+import db.Database;
 import http.ContentType;
 import http.Headers;
 import http.Request;
@@ -18,6 +19,13 @@ import java.util.Map;
 @Bean
 public class UserHandler {
 
+    private final Database database;
+
+    @Inject
+    public UserHandler(Database database) {
+        this.database = database;
+    }
+
     public Response create(Request request) {
         String body = request.getBody();
         Map<String, String> params = HttpRequestUtils.parseQueryString(body);
@@ -25,8 +33,8 @@ public class UserHandler {
         String password = params.get("password");
         String email = params.get("email");
         String name = params.get("name");
-        User user = new User(userId, password, name, email);
-        DataBase.addUser(user);
+        User user = new User(0, userId, password, name, email);
+        database.addUser(user);
         Map<String, String> headers = Map.of(
                 "Content-Type", "text/plain",
                 "Location", "/user/profile.html"
@@ -39,7 +47,7 @@ public class UserHandler {
         Map<String, String> params = HttpRequestUtils.parseQueryString(body);
         String userId = params.get("userId");
         String password = params.get("password");
-        User user = DataBase.findUserById(userId);
+        User user = database.findUserById(userId);
         if (user == null || !user.getPassword().equals(password)) {
             var headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
@@ -71,7 +79,7 @@ public class UserHandler {
         try {
             String content = Files.readString(file.toPath());
             Map<String, Object> values = Map.of(
-                    "users", DataBase.findAll()
+                    "users", database.findAll()
             );
             String filled = new TemplateEngine().render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);
