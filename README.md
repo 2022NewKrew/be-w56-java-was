@@ -121,7 +121,7 @@ ___
 
 ___
 
-## 요구사항 1-4 : Cookie 를 이용한 로그인 구
+## 요구사항 1-4 : Cookie 를 이용한 로그인 구현
 
 “로그인” 메뉴를 클릭하면 http://localhost:8080/user/login.html 으로 이동해 로그인할 수 있다. 로그인이 성공하면 index.html로 이동하고, 로그인이 실패하면 /user/login_failed.html로 이동해야 한다.
 
@@ -142,3 +142,12 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 Set-Cookie: logined=true; Path=/
 ```
+
+___
+
+## 요구사항 5 : 동적인 HTML 구현
+
+> 접근한 사용자가 `로그인` 상태일 경우 (Cookie 값이 logined=true 인 경우) http://localhost:8080/user/list 에서 등록된 사용자 목록을 출력한다. \
+> 만약 `로그인` 상태가 아닌 경우, 로그인 페이지 (http://localhost:8080/user/login.html) 로 이동한다.
+
+동적인 HTML 생성을 위한 `UserHtmlResponseUtils` 클래스를 구현하고, 해당 Util 클래스를 `UserController` 에서 활용해 도메인에서 읽어온 사용자 목록을 가지고 동적인 HTML 을 생성하고 이를 Response 의 Body 로 전달한다.   

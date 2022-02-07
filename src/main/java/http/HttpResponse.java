@@ -30,4 +30,8 @@ public class HttpResponse {
     public byte[] getResponseBody() {
         return responseBody;
     }
+
+    public String getHeader(String key) {
+        return header.get(key);
+    }
 }
