@@ -4,6 +4,8 @@ import annotation.CookieValue;
 import annotation.RequestBody;
 import http.HttpRequest;
 import http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import webserver.HandlerAdapter;
 import webserver.SingletonBeanRegistry;
@@ -14,6 +16,7 @@ import java.lang.reflect.Parameter;
 import java.util.Map;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
+    private static final Logger log = LoggerFactory.getLogger(RequestMappingHandlerAdapter.class);
 
     @Override
     public boolean supports(Object handler) {
@@ -29,7 +32,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         try {
             return (HttpResponse) method.invoke(controller, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("Failed to invoke request mapping method of " + method.getName());
         }
         return null;
     }

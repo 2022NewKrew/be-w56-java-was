@@ -3,6 +3,8 @@ package webserver;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.method.RequestMappingHandlerAdapter;
 import webserver.method.RequestMappingHandlerMapping;
 import webserver.method.StaticFileHandlerAdapter;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class DispatcherServlet {
+    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
@@ -76,7 +79,7 @@ public class DispatcherServlet {
         try {
             response.render(out);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to render output");
         }
     }
 }

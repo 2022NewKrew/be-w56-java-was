@@ -1,6 +1,8 @@
 package webserver;
 
 import annotation.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.ClassUtils;
 
 import java.lang.annotation.Annotation;
@@ -8,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.util.Set;
 
 public class WebServerConfiguration {
+    private static final Logger log = LoggerFactory.getLogger(WebServerConfiguration.class);
 
     public static void doConfigure() {
         initializeStereoTypes();
@@ -29,7 +32,7 @@ public class WebServerConfiguration {
             Object instance = constructor.newInstance();
             SingletonBeanRegistry.registerBean(clazz.getName(), instance);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            log.error("Failed to register class of " + clazz.getName());
         }
     }
 
