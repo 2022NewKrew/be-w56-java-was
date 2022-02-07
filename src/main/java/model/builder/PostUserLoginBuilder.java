@@ -1,6 +1,7 @@
 package model.builder;
 
 import db.DataBase;
+import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.ResponseHeader;
 import util.HtmlResponseHeader;
@@ -25,7 +26,7 @@ public class PostUserLoginBuilder extends ResponseBuilder {
     private ResponseHeader buildSuccessLogin(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.MAIN)
-                .body(readBody(Links.MAIN))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN)))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGIN_COOKIE)
                 .accept(requestHeader.getAccept())
                 .build();
@@ -34,7 +35,7 @@ public class PostUserLoginBuilder extends ResponseBuilder {
     private ResponseHeader buildFailLogin(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.LOGIN_FAILED)
-                .body(readBody(Links.LOGIN_FAILED))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.LOGIN_FAILED)))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
                 .build();

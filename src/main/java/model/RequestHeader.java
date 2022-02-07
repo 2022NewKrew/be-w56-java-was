@@ -43,4 +43,8 @@ public class RequestHeader {
     public String getCookie(String key) {
         return cookies.get(key);
     }
+
+    public boolean existCookie(String key) {
+        return cookies.containsKey(key);
+    }
 }

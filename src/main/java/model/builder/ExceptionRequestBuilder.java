@@ -1,5 +1,6 @@
 package model.builder;
 
+import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.ResponseHeader;
 import util.HtmlResponseHeader;
@@ -12,7 +13,7 @@ public class ExceptionRequestBuilder extends ResponseBuilder {
     public ResponseHeader build(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.ERROR)
-                .body(readBody(Links.ERROR))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR)))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept("text/html")
                 .build();

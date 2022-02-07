@@ -1,5 +1,6 @@
 package model.builder;
 
+import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.ResponseHeader;
 import util.HtmlResponseHeader;
@@ -22,7 +23,7 @@ public class NormalRequestBuilder extends ResponseBuilder {
         return ResponseHeader.builder()
                 .uri(uri)
                 .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
-                .body(readBody(uri))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(uri)))
                 .accept(requestHeader.getAccept())
                 .build();
     }
