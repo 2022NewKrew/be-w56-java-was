@@ -2,7 +2,6 @@ package controller;
 
 import db.DataBase;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import model.HttpRequest;
 import model.HttpResponse;
@@ -13,12 +12,6 @@ import model.User;
 public class UserCreateController implements Controller {
 
     private static UserCreateController instance;
-
-    private static String parseExtension(String path) {
-        List<String> splitResult = List.of(path.split("\\."));
-        int length = splitResult.size();
-        return splitResult.get(length - 1);
-    }
 
     public static synchronized UserCreateController getInstance() {
         if (instance == null) {

@@ -1,15 +1,12 @@
 package model;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import view.View;
 
 public class ResponseFactory {
-
-    private static final byte[] NOT_FOUNT_MESSAGE = "없는 페이지 입니다.".getBytes();
 
     private static String getContentType(String path) {
         List<String> splitResult = List.of(path.split("\\."));
@@ -23,10 +20,11 @@ public class ResponseFactory {
         StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
                 httpStatus.getMessage());
         Map<String, String> headerKeyMap = new HashMap<>();
+        byte[] body;
+
         switch (httpStatus) {
             case OK:
-                File file = new File("./webapp" + request.getUrl());
-                byte[] body = Files.readAllBytes(file.toPath());
+                body = View.get(request.getUrl());
                 headerKeyMap.put("Content-Type", getContentType(request.getUrl()));
                 headerKeyMap.put("Content-Length", Integer.toString(body.length));
                 return new HttpSuccessfulResponse(statusLine, new Header(headerKeyMap), body);
@@ -34,9 +32,10 @@ public class ResponseFactory {
                 headerKeyMap.put("Location", "/index.html");
                 return new HttpRedirectionResponse(statusLine, new Header(headerKeyMap));
             default:
+                body = View.get("/notFound.html");
                 headerKeyMap.put("Content-Type", getContentType(request.getUrl()));
-                headerKeyMap.put("Content-Length", Integer.toString(NOT_FOUNT_MESSAGE.length));
-                return new HttpClientErrorResponse(statusLine, new Header(headerKeyMap), NOT_FOUNT_MESSAGE);
+                headerKeyMap.put("Content-Length", Integer.toString(body.length));
+                return new HttpClientErrorResponse(statusLine, new Header(headerKeyMap), body);
         }
     }
 }
