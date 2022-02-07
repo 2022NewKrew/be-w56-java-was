@@ -41,10 +41,14 @@ public class HttpRequestHeaders {
     }
 
     public int getContentLength() {
-        String contentLengthStr = headers.get("Content-Length");
+        String contentLengthStr = headers.get(HttpRequestHeader.Content_Length.toString());
         if (contentLengthStr == null) {
             return 0;
         }
         return Integer.parseInt(contentLengthStr);
+    }
+
+    public String getCookie() {
+        return headers.get(HttpRequestHeader.Cookie.toString());
     }
 }

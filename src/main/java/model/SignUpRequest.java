@@ -1,5 +1,7 @@
 package model;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class SignUpRequest {
@@ -20,7 +22,7 @@ public class SignUpRequest {
         String userId = queryData.get("userId");
         String password = queryData.get("password");
         String name = queryData.get("name");
-        String email = queryData.get("email");
+        String email = URLDecoder.decode(queryData.get("email"), StandardCharsets.UTF_8);
 
         return new SignUpRequest(userId, password, name, email);
     }
