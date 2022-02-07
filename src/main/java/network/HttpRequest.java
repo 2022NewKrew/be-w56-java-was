@@ -15,7 +15,7 @@ public class HttpRequest {
     private String protocol;
     private Map<String, String> queryString;
     private Map<String, String> header = new HashMap<>();
-    private Map<String, String> body;
+    private Map<String, String> body = new HashMap<>();
 
     public HttpRequest(BufferedReader bufferedReader) throws IOException {
         this.bufferedReader = bufferedReader;
@@ -39,7 +39,7 @@ public class HttpRequest {
     }
 
     private void handleMethod(Method method) throws IOException {
-        switch (method){
+        switch (method) {
             case GET:
                 parseHeader();
                 break;
@@ -49,27 +49,38 @@ public class HttpRequest {
                 break;
         }
     }
+
     private void parseHeader() throws IOException {
         String[] token = this.path.split("\\?");
         this.path = token[0];
 
-        if(token.length > 1){
+        if (token.length > 1) {
             this.queryString = HttpRequestUtils.parseQueryString(token[1]);
         }
 
         String line;
-        while(!(line = bufferedReader.readLine()).equals("")){
+        while (!(line = bufferedReader.readLine()).equals("")) {
             Pair pair = HttpRequestUtils.parseHeader(line);
             header.put(pair.getKey(), pair.getValue());
         }
     }
 
     private void parseBody() throws IOException {
-        String line = bufferedReader.readLine();
+        char[] bytes = new char[55];
+        bufferedReader.read(bytes, 0, 55);
+        String line = makeStringToArray(bytes);
         this.body = HttpRequestUtils.parseQueryString(line);
     }
 
-    public Map<String, String> getQueryString(){
+    private String makeStringToArray(char[] array){
+        StringBuilder result = new StringBuilder();
+        for(char word : array){
+            result.append(word);
+        }
+        return result.toString();
+    }
+
+    public Map<String, String> getQueryString() {
         return queryString;
     }
 
@@ -77,7 +88,7 @@ public class HttpRequest {
         return path;
     }
 
-    public Map<String, String> getBody(){
+    public Map<String, String> getBody() {
         return body;
     }
 
