@@ -1,5 +1,7 @@
 package controller;
 
+import dao.UserDao;
+import dao.UserDaoImpl;
 import db.DataBase;
 import http.HttpStatus;
 import http.request.HttpRequest;
@@ -17,8 +19,10 @@ import util.HttpRequestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 /**
@@ -27,6 +31,7 @@ import java.util.function.Function;
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private static UserController INSTANCE;
+    private final UserDao userDao;
     private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
 
     {
@@ -35,12 +40,20 @@ public class UserController implements Controller {
         methodMap.put("GET /user/list", this::list);
     }
 
-    private UserController() {
+    private UserController(UserDao userDao) {
+        this.userDao = userDao;
+        try {
+            userDao.openConnection();
+        } catch (ClassNotFoundException cnfe) {
+            log.error(cnfe.getMessage());
+        } catch (SQLException sqle) {
+            log.error(sqle.getMessage());
+        }
     }
 
     public static synchronized UserController getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new UserController();
+            INSTANCE = new UserController(new UserDaoImpl());
         return INSTANCE;
     }
 
@@ -72,10 +85,16 @@ public class UserController implements Controller {
                 queryString.get(UserDBConstants.COLUMN_NAME),
                 queryString.get(UserDBConstants.COLUMN_EMAIL));
 
-        if (DataBase.findUserById(newUser.getUserId()) != null)
+        try {
+            if (userDao.findByUserId(newUser.getUserId()) != null) {
+                log.debug("POST /user/create failed. duplicate user id {}", newUser.getUserId());
+                return redirect("/user/form_failed.html");
+            }
+            userDao.save(newUser);
+        } catch (SQLException sqle) {
+            log.error("POST /user/create failed. user_id = {}. error_code = {}", newUser.getUserId(), sqle.getErrorCode());
             return redirect("/user/form_failed.html");
-
-        DataBase.addUser(newUser);
+        }
         return redirect("/index.html");
     }
 
@@ -87,8 +106,14 @@ public class UserController implements Controller {
     private HttpResponse login(HttpRequest request) {
         HttpRequestBody requestBody = request.body();
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
+        String userId = queryString.get(UserDBConstants.COLUMN_USER_ID);
+        User user = null;
 
-        User user = DataBase.findUserById(queryString.get(UserDBConstants.COLUMN_USER_ID));
+        try {
+            user = userDao.findByUserId(userId);
+        } catch (SQLException e) {
+            log.error("POST /user/login failed. user id = {}, error_code = {}", userId, e.getErrorCode());
+        }
 
         if (user == null || !user.getPassword().equals(queryString.get(UserDBConstants.COLUMN_PASSWORD)))
             return redirect("/user/login_failed.html");
@@ -116,7 +141,7 @@ public class UserController implements Controller {
             StringBuilder newsb = new StringBuilder();
             int row = 0;
 
-            for (User user : DataBase.findAll()) {
+            for (User user : userDao.findAll()) {
                 newsb.append("<tr>");
                 newsb.append(String.format("<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td>",
                         ++row, user.getUserId(), user.getName(), user.getEmail()));
@@ -128,9 +153,12 @@ public class UserController implements Controller {
             HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
 
             return new HttpResponse(responseHeader, responseBody);
-        } catch (IOException e) {
-            log.error("GET /user/list error");
-            return errorPage();
+        } catch (IOException ioe) {
+            log.error("GET /user/list failed. {}", ioe.getMessage());
+        } catch (SQLException sqle) {
+            log.error("GET /user/list failed. error_code = {}", sqle.getErrorCode());
         }
+
+        return errorPage(); // Exception 발생한 경우
     }
 }
