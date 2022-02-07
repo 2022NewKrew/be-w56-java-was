@@ -1,23 +1,30 @@
 package db;
 
-import com.google.common.collect.Maps;
+import annotation.Bean;
+import annotation.Inject;
 import model.User;
 
 import java.util.Collection;
-import java.util.Map;
 
+@Bean
 public class Database {
-    private static final Map<String, User> users = Maps.newHashMap();
 
-    public static void addUser(User user) {
-        users.put(user.getUserId(), user);
+    private final JdbcTemplate template;
+
+    @Inject
+    public Database(JdbcTemplate template) {
+        this.template = template;
     }
 
-    public static User findUserById(String userId) {
-        return users.get(userId);
+    public void addUser(User user) {
+
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public User findUserById(String userId) {
+        return null;
+    }
+
+    public Collection<User> findAll() {
+        return null;
     }
 }

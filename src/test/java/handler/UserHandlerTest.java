@@ -8,14 +8,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class UserHandlerTest {
 
+    private Database database;
     private UserHandler subject;
 
     @BeforeEach
     void setUp() {
-        subject = new UserHandler();
+        database = mock(Database.class);
+        subject = new UserHandler(database);
     }
 
     @Test
@@ -31,7 +36,8 @@ class UserHandlerTest {
 
     @Test
     void login() {
-        Database.addUser(new User("javajigi", "password", "자바지기", "email@example.com"));
+        User user = new User("javajigi", "password", "자바지기", "email@example.com");
+        when(database.findUserById(anyString())).thenReturn(user);
         String body = "userId=javajigi&password=password\n";
         Request request = Request.newBuilder().body(body).build();
 
@@ -44,7 +50,8 @@ class UserHandlerTest {
 
     @Test
     void login_failed() {
-        Database.addUser(new User("javajigi", "password", "자바지기", "email@example.com"));
+        User user = new User("javajigi", "password", "자바지기", "email@example.com");
+        when(database.findUserById(anyString())).thenReturn(user);
         String body = "userId=javajigi&password=wrongPassword\n";
         Request request = Request.newBuilder().body(body).build();
 
