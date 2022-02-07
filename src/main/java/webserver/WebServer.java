@@ -7,29 +7,27 @@ import org.slf4j.LoggerFactory;
 import router.RouterFunction;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
-import java.util.Properties;
 
 public class WebServer {
 
-    private static final ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
     @Inject
     private List<RouterFunction> routers;
 
-    public WebServer() {
-        Properties properties = new Properties();
-        try (InputStream is = loader.getResourceAsStream("application.properties")) {
-            properties.load(is);
+    static {
+        try {
+            PropertiesLoader.load();
         } catch (IOException e) {
             log.error("Failed to load application.properties", e);
         }
-        properties.forEach((k, v) -> System.setProperty(k.toString(), v.toString()));
+    }
+
+    public WebServer() {
         DependencyInjector injector = new DependencyInjector(log);
         injector.inject("", this);
     }
