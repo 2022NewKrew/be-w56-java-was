@@ -20,7 +20,7 @@ public class HttpResponse {
     private final DataOutputStream dos;
     private final String version;
     private final HttpStatus status;
-    private final Map<String, String> headers;
+    private final Map<String, List<String>> headers;
     private final List<HttpCookie> cookies;
     private final String[] contentType;
     private final int contentLength;
@@ -89,7 +89,7 @@ public class HttpResponse {
     public static class Builder {
 
         private final DataOutputStream dos;
-        private final Map<String, String> headers = new HashMap<>();
+        private final Map<String, List<String>> headers = new HashMap<>();
         private final List<HttpCookie> cookies = new ArrayList<>();
         private String version = DEFAULT_VERSION;
         private HttpStatus status = DEFAULT_STATUS;
@@ -111,7 +111,9 @@ public class HttpResponse {
         }
 
         public Builder header(String key, String value) {
-            headers.put(key, value);
+            List<String> values = headers.getOrDefault(key, new ArrayList<>());
+            values.add(value);
+            headers.put(key, values);
             return this;
         }
 
