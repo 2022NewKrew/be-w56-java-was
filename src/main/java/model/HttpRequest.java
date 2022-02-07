@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 public class HttpRequest {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final String BODY_SEPARATOR = "";
+
+    private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
     private static int getBodyIndex(List<String> requestLineList) {
         for (int i = 0; i < requestLineList.size(); i++) {
@@ -44,8 +44,6 @@ public class HttpRequest {
         Header header = Header.of(getHeaderLineList(requestLineList, bodyIndex));
         Body body = Body.of(getBodyLineList(requestLineList, bodyIndex));
 
-        log.debug("HttpRequest: \n{}\n {}\n {}", startLine, header, body);
-
         return new HttpRequest(startLine, header, body);
     }
 
@@ -54,6 +52,7 @@ public class HttpRequest {
     private final Body body;
 
     private HttpRequest(StartLine startLine, Header header, Body body) {
+        log.debug("HttpRequest: \n{}\n {}\n {}", startLine, header, body);
         this.startLine = startLine;
         this.header = header;
         this.body = body;
@@ -63,7 +62,7 @@ public class HttpRequest {
         return startLine.getRequestTarget();
     }
 
-    public String get(String key) { // TODO - 명칭 알아낸 다음 키 대신 다른 이름 쓰기
+    public String getHeader(String key) {
         return header.get(key);
     }
 }
