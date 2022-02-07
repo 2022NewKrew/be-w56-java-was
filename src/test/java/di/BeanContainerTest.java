@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BeanContainerTest {
 
@@ -19,7 +18,7 @@ class BeanContainerTest {
     }
 
     @Test
-    void getFirst_none() {
+    void getFirst_noBeans() {
         subject.put(String.class, new ConstantInstantiator("foo"));
 
         Object result = subject.getFirst(Integer.class);
@@ -28,7 +27,7 @@ class BeanContainerTest {
     }
 
     @Test
-    void getFirst_one() {
+    void getFirst_singleBean() {
         subject.put(String.class, new ConstantInstantiator("foo"));
 
         Object result = subject.getFirst(String.class);
@@ -37,7 +36,7 @@ class BeanContainerTest {
     }
 
     @Test
-    void getFirst_multiple() {
+    void getFirst_multipleBeans() {
         subject.put(String.class, new ConstantInstantiator("foo"));
         subject.put(int.class, new ConstantInstantiator(1));
         subject.put(int.class, new ConstantInstantiator(2));
@@ -45,6 +44,16 @@ class BeanContainerTest {
         Object result = subject.getFirst(Integer.class);
 
         assertEquals(1, result);
+    }
+
+    @Test
+    void getFirst_multipleCalls() throws NoSuchMethodException {
+        subject.put(Foo.class, new ClassInstantiator(Foo.class.getDeclaredConstructor()));
+
+        Object result1 = subject.getFirst(Foo.class);
+        Object result2 = subject.getFirst(Foo.class);
+
+        assertSame(result1, result2);
     }
 
     @Test
@@ -77,4 +86,6 @@ class BeanContainerTest {
             return value;
         }
     }
+
+    public static class Foo {}
 }

@@ -29,7 +29,8 @@ public class BeanParser {
                     }
 
                     @Override
-                    public Object newInstance(Object[] parameters) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+                    public Object newInstance(Object[] parameters)
+                            throws IllegalAccessException, InvocationTargetException {
                         return m.invoke(container.getFirst(clazz), parameters);
                     }
                 });

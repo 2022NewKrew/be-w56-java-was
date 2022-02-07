@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 public class ClassInstantiator implements Instantiator {
 
     private final Constructor<?> constructor;
+    private Object instance = null;
 
     public ClassInstantiator(Constructor<?> constructor) {
         this.constructor = constructor;
@@ -19,6 +20,9 @@ public class ClassInstantiator implements Instantiator {
     @Override
     public Object newInstance(Object[] parameters)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
-        return constructor.newInstance(parameters);
+        if (instance == null) {
+            instance = constructor.newInstance(parameters);
+        }
+        return instance;
     }
 }
