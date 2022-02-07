@@ -7,13 +7,8 @@ import app.user.application.LoginService;
 import app.user.application.SignUpService;
 import app.user.application.port.in.CreateUserUseCase;
 import app.user.application.port.in.LoginUseCase;
-import app.user.application.port.out.LoadUserPort;
 
 public class AppConfig {
-
-    public RootController rootController() {
-        return new RootController();
-    }
 
     public SignUpController signUpController() {
         return new SignUpController(createUserUseCase());
@@ -24,14 +19,14 @@ public class AppConfig {
     }
 
     private CreateUserUseCase createUserUseCase() {
-        return new SignUpService();
+        return new SignUpService(userRepository());
     }
 
     private LoginUseCase loginUseCase() {
-        return new LoginService(loadUserRepository());
+        return new LoginService(userRepository());
     }
 
-    private LoadUserPort loadUserRepository() {
+    private UserRepository userRepository() {
         return new UserRepository();
     }
 

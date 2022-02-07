@@ -4,17 +4,20 @@ import app.user.application.port.in.LoginUseCase;
 import app.user.application.port.in.LoginUserDto;
 import app.user.domain.UserId;
 import app.user.exception.WrongPasswordException;
+import com.google.common.net.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import webserver.WebServerConfig;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpResponseStatus;
+import webserver.http.MimeSubtype;
 import webserver.servlet.HttpControllable;
 import webserver.util.HttpRequestUtils;
 
 public class LoginController implements HttpControllable {
 
-    public static final String path = "/user";
+    public static final String path = "/user/login";
     private final LoginUseCase loginUseCase;
 
 
@@ -29,10 +32,18 @@ public class LoginController implements HttpControllable {
             LoginUserDto loginUserDto = new LoginUserDto(new UserId(params.get("userId")),
                 params.get("password"));
             loginUseCase.login(loginUserDto);
+
+            response.setStatus(HttpResponseStatus.FOUND);
+            response.headers()
+                .set(HttpHeaders.CONTENT_TYPE, MimeSubtype.TEXT_HTML)
+                .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + WebServerConfig.ENTRY_FILE);
+            response.setCookie("logined=true; Path=/");
         } catch (WrongPasswordException e) {
-            response.setStatus(HttpResponseStatus.UNAUTHORIZED);
+            response.setStatus(HttpResponseStatus.FOUND);
+            response.headers()
+                .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + "/user/login_failed.html");
+            response.setCookie("logined=false;");
             response.setBody(e.getMessage().getBytes(StandardCharsets.UTF_8));
-            response.send();
         }
     }
 }

@@ -52,6 +52,10 @@ public class HttpResponse {
         trailingHeaders.set(HttpHeaders.DATE, dateTimeFormatter.format(ZonedDateTime.now()));
     }
 
+    public void setCookie(String cookieValue) {
+        headers().set(HttpHeaders.COOKIE, cookieValue);
+    }
+
     public HttpVersion getVersion() {
         return version;
     }

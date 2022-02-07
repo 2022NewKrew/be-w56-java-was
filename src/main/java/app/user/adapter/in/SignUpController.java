@@ -36,7 +36,7 @@ public class SignUpController implements HttpControllable {
         );
 
         User user = this.createUserUseCase.signUp(signUpUserDto);
-        logger.info("sign up :" + user.getUserId().getValue());
+        logger.info("[회원가입] :" + user.getUserId().getValue());
         response.setStatus(HttpResponseStatus.FOUND);
         response.headers()
             .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + WebServerConfig.ENTRY_FILE);

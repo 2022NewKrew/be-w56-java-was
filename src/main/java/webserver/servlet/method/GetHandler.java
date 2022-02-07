@@ -24,15 +24,15 @@ public class GetHandler implements HttpHandleable {
     public void handle(HttpRequest request, HttpResponse response) throws IOException {
         String uriPath = WebServerConfig.BASE_PATH + request.getUri();
         File file = new File(uriPath);
-        File entryFile = new File(uriPath + WebServerConfig.ENTRY_FILE);
 
-        if (file.exists()) {
-            fileHandleable.write(response, file);
+        if (file.isDirectory()) {
+            File entryFile = new File(uriPath + WebServerConfig.ENTRY_FILE);
+            fileHandleable.write(response, entryFile);
             return;
         }
 
-        if (entryFile.exists()) {
-            fileHandleable.write(response, entryFile);
+        if (file.exists()) {
+            fileHandleable.write(response, file);
             return;
         }
 
