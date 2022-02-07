@@ -1,5 +1,7 @@
 package webserver.model;
 
+import webserver.http.HttpStatus;
+
 public class ModelAndView {
     private final String viewPath;
     private final HttpStatus status;

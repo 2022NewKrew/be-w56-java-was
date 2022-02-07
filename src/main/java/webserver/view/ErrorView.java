@@ -1,8 +1,8 @@
 package webserver.view;
 
+import exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
-import webserver.exception.BaseException;
-import webserver.model.HttpResponse;
+import webserver.http.HttpResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;

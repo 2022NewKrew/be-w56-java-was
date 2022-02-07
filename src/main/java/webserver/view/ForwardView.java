@@ -1,10 +1,10 @@
 package webserver.view;
 
+import exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import util.MimeParser;
-import webserver.exception.NotFoundException;
-import webserver.model.HttpResponse;
-import webserver.model.HttpStatus;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;

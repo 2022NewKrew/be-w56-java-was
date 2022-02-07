@@ -1,6 +1,6 @@
 package webserver.view;
 
-import webserver.model.HttpResponse;
+import webserver.http.HttpResponse;
 
 import java.io.IOException;
 

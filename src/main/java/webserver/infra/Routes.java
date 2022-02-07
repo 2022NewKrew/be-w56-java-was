@@ -1,11 +1,12 @@
-package webserver.model;
+package webserver.infra;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import controller.BaseController;
 import controller.StaticResourceController;
-import controller.user.LoginController;
-import controller.user.SignupController;
+import controller.auth.LoginController;
+import controller.auth.SignupController;
+import webserver.http.HttpMethod;
 
 public class Routes {
 

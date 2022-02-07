@@ -1,13 +1,13 @@
-package controller.user;
+package controller.auth;
 
 import controller.BaseController;
+import exception.AuthenticationFailureException;
 import lombok.extern.slf4j.Slf4j;
-import model.UserLoginRequest;
-import service.user.LoginService;
-import webserver.exception.AuthenticationFailureException;
-import webserver.model.HttpRequest;
-import webserver.model.HttpResponse;
-import webserver.model.HttpStatus;
+import model.auth.LoginRequest;
+import service.auth.LoginService;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import webserver.model.ModelAndView;
 
 @Slf4j
@@ -17,7 +17,7 @@ public class LoginController implements BaseController {
 
     @Override
     public ModelAndView process(HttpRequest request, HttpResponse response) {
-        UserLoginRequest loginRequest = request.getRequestParams().mapModelObject(UserLoginRequest.class);
+        LoginRequest loginRequest = request.getRequestParams().mapModelObject(LoginRequest.class);
         log.info("Login Request : {}", loginRequest);
 
         ModelAndView modelAndView;

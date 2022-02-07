@@ -1,14 +1,14 @@
-package service.user;
+package service.auth;
 
 import db.DataBase;
-import model.User;
-import model.UserLoginRequest;
+import domain.user.User;
+import exception.AuthenticationFailureException;
+import model.auth.LoginRequest;
 import org.apache.commons.lang3.ObjectUtils;
-import webserver.exception.AuthenticationFailureException;
 
 public class LoginService {
 
-    public void login(UserLoginRequest request) {
+    public void login(LoginRequest request) {
         request.validate();
         login(request.getUserId(), request.getPassword());
     }

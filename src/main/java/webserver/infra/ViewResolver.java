@@ -8,16 +8,7 @@ import webserver.view.View;
 public class ViewResolver {
     private static final String DEFAULT_PREFIX = "./webapp";
 
-    private static final ViewResolver instance = new ViewResolver();
-
-    private ViewResolver() {}
-
-    public static ViewResolver getInstance() {
-        if (instance == null) {
-            return new ViewResolver();
-        }
-        return instance;
-    }
+    public ViewResolver() {}
 
     public View resolve(ModelAndView modelAndView) {
         if (modelAndView.isRedirectView()) {

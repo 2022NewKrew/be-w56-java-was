@@ -1,13 +1,13 @@
-package model;
+package model.auth;
 
+import exception.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import webserver.exception.InvalidInputException;
 
 @AllArgsConstructor
 @Getter
-public class UserLoginRequest {
+public class LoginRequest {
     private final String userId;
     private final String password;
 

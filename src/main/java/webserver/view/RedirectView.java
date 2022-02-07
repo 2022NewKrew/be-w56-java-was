@@ -1,8 +1,8 @@
 package webserver.view;
 
 import lombok.extern.slf4j.Slf4j;
-import webserver.model.HttpResponse;
-import webserver.model.HttpStatus;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,6 +1,6 @@
-package webserver.exception;
+package exception;
 
-import webserver.model.HttpStatus;
+import webserver.http.HttpStatus;
 
 public class AuthenticationFailureException extends BaseException {
 

@@ -1,4 +1,4 @@
-package webserver.model;
+package webserver.http;
 
 public class Cookie {
     private final static String DEFAULT_PATH = "/";
