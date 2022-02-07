@@ -13,4 +13,8 @@ public class HttpSession {
     public Object getValue(String key){
         return attribute.get(key);
     }
+
+    public void setValue(String key, Object value){
+        this.attribute.put(key, value);
+    }
 }
