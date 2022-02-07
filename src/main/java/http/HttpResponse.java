@@ -32,7 +32,9 @@ public class HttpResponse {
         byte[] body;
         try {
             body = Files.readAllBytes(new File("./webapp" + url).toPath());
-            response200Header(body.length);
+            httpHeader.addHeaderParameter("Content-Type: " + HttpContentType.getContentType(url));
+            httpHeader.addHeaderParameter("Content-Length: " + body.length);
+            response200Header();
         } catch (IOException e) {
             body = NOT_FOUND_MESSAGE.getBytes(StandardCharsets.UTF_8);
             response404Header(body.length);
@@ -42,7 +44,9 @@ public class HttpResponse {
 
     public void forwardBody(String body) {
         byte[] contents = body.getBytes();
-        response200Header(contents.length);
+        httpHeader.addHeaderParameter("Content-Type: " + "text/html; charset=utf-8");
+        httpHeader.addHeaderParameter("Content-Length: " + contents.length);
+        response200Header();
         responseBody(contents);
     }
 
@@ -71,12 +75,10 @@ public class HttpResponse {
     }
 
 
-    private void response200Header(int lengthOfBodyContent) {
+    private void response200Header() {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             writeHeaderParams();
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

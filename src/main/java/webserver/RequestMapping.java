@@ -11,7 +11,6 @@ public class RequestMapping {
 
     static {
         mappingController.put("/", new StaticController("/index.html"));
-        mappingController.put("/error", new StaticController("/error.html"));
         mappingController.put("/users/form", new StaticController("/user/form.html"));
         mappingController.put("/users/create", new CreateUserController());
         mappingController.put("/users/login", new LoginController());
@@ -20,7 +19,7 @@ public class RequestMapping {
     }
 
     public static Controller getController(String url) {
-        return mappingController.getOrDefault(url, mappingController.get("/error"));
+        return mappingController.get(url);
     }
 
 }
