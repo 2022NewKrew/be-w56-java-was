@@ -1,13 +1,11 @@
 package view;
 
 import dto.ResponseBodyDto;
+import model.Memo;
 import model.User;
 import org.apache.tika.Tika;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -41,6 +39,17 @@ public class HtmlView {
         return sb.toString().getBytes();
     }
 
+    public byte[] indexView(Collection<Memo> memos) throws IOException {
+        File file = new File("./webapp" + "/index.html");
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line = br.readLine();
+        StringBuilder sb = new StringBuilder();
+
+        makeIndexView(memos, br, line, sb);
+
+        return sb.toString().getBytes();
+    }
+
     private void makeListView(Collection<User> users, BufferedReader br, String line, StringBuilder sb) throws IOException {
         while (line != null) {
             sb.append(line).append("\r\n");
@@ -52,6 +61,24 @@ public class HtmlView {
                     sb.append("<td>").append(user.getUserId()).append("</td>\r\n");
                     sb.append("<td>").append(user.getName()).append("</td>\r\n");
                     sb.append("<td>").append(user.getEmail()).append("</td>\r\n");
+                    cnt++;
+                }
+            }
+            line = br.readLine();
+        }
+    }
+
+    private void makeIndexView(Collection<Memo> memos, BufferedReader br, String line, StringBuilder sb) throws IOException {
+        while (line != null) {
+            sb.append(line).append("\r\n");
+            if (line.contains("<tbody>")) {
+                int cnt = 1;
+                for (Memo memo : memos) {
+                    sb.append("<tr>\r\n");
+                    sb.append("<th scope=\"row\">").append(cnt).append("</th>\r\n");
+                    sb.append("<td>").append(memo.getCreatedAt()).append("</td>\r\n");
+                    sb.append("<td>").append(memo.getName()).append("</td>\r\n");
+                    sb.append("<td>").append(memo.getContent()).append("</td>\r\n");
                     cnt++;
                 }
             }

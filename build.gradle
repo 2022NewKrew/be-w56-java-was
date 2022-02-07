@@ -25,6 +25,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.tika/tika-core
     implementation 'org.apache.tika:tika-core:2.2.1'
+
+    // https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
+    implementation 'org.mongodb:mongo-java-driver:3.12.10'
 }
 
 test {

@@ -57,4 +57,14 @@ public class PostController implements Controller {
         return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
     }
 
+    public Response post(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) {
+        var temp = new HashMap<String, String>();
+        temp.put("Location", "/");
+        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+
+        userService.post(requestBody.getBodies());
+
+        return response;
+    }
+
 }

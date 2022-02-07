@@ -38,6 +38,7 @@ public class RequestHandler extends Thread {
         put("/user/list", "userList");
         put("/", "index");
         put("/user/logout", "userLogout");
+        put("/post/create", "post");
     }};
 
     private Socket connection;

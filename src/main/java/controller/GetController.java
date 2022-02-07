@@ -6,6 +6,7 @@ import collections.RequestStartLine;
 import dto.Response;
 import collections.ResponseHeaders;
 import dto.ResponseBodyDto;
+import model.Memo;
 import model.User;
 import org.apache.tika.Tika;
 import service.UserService;
@@ -16,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GetController implements Controller {
@@ -68,7 +70,7 @@ public class GetController implements Controller {
 
         if (logined.equals("true")) {
             // 사용자 목록 로직
-            Collection<User> users = userService.list();
+            Collection<User> users = userService.userList();
             byte[] body = HTML_VIEW.userListView(users);
 
             var temp = new HashMap<String, String>();
@@ -78,22 +80,18 @@ public class GetController implements Controller {
         }
 
         // 로그인 화면으로 redirect
-        ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView("/user/login.html");
-        byte[] body = responseBodyDto.getBody();
-
         var temp = new HashMap<String, String>();
-        temp.put("Content-Length", String.valueOf(body.length));
         temp.put("Location", "/user/login.html");
-        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), body);
+        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
     }
 
     public Response index(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView("/index.html");
-        byte[] body = responseBodyDto.getBody();
+        List<Memo> memos = userService.postList();
+        byte[] body = HTML_VIEW.indexView(memos);
 
         var temp = new HashMap<String, String>();
         temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", responseBodyDto.getContentType());
+        temp.put("Content-Type", "text/html; charset=utf-8");
         return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
     }
 
@@ -101,6 +99,27 @@ public class GetController implements Controller {
         var temp = new HashMap<String, String>();
         temp.put("Set-Cookie", "logined=false; Path=/");
         temp.put("Location", "/");
+        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+    }
+
+    public Response post(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+        String cookieString = requestHeaders.getHeader("Cookie");
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieString);
+        String logined = cookies.get("logined");
+
+        if (logined.equals("true")) {
+            ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView("/qna/form.html");
+            byte[] body = responseBodyDto.getBody();
+
+            var temp = new HashMap<String, String>();
+            temp.put("Content-Length", String.valueOf(body.length));
+            temp.put("Content-Type", "text/html; charset=utf-8");
+            return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
+        }
+
+        // 로그인 화면으로 redirect
+        var temp = new HashMap<String, String>();
+        temp.put("Location", "/user/login.html");
         return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
     }
 
