@@ -9,6 +9,7 @@ import webserver.annotation.Controller;
 import webserver.annotation.RequestMapping;
 import webserver.annotation.RequestParam;
 import webserver.domain.Cookie;
+import webserver.domain.Model;
 import webserver.domain.Request;
 import webserver.domain.RequestMethod;
 
@@ -32,18 +33,20 @@ public class ControllerResolver {
         return instance;
     }
 
-    public String resolveRequest(Request request) throws InvocationTargetException, IllegalAccessException {
+    public String resolveRequest(Request request, Model model) throws InvocationTargetException, IllegalAccessException {
         if (request.getAcceptType() != null) return request.getUrl();
 
         Method method = methodForRequest.get(request);
-        return (String) method.invoke(controllerForMethod.get(method), resolveParameter(method, request));
+        return (String) method.invoke(controllerForMethod.get(method), resolveParameter(method, request, model));
     }
 
-    private Object[] resolveParameter(Method method, Request request) {
+    private Object[] resolveParameter(Method method, Request request, Model model) {
         Parameter[] parameters = method.getParameters();
         return Arrays.stream(parameters).map(p -> {
             if (p.isAnnotationPresent(RequestParam.class))
                 return request.getBody().get(p.getAnnotation(RequestParam.class).value());
+            if (p.getParameterizedType().equals(Model.class))
+                return model;
             if (p.getParameterizedType().equals(Cookie.class))
                 return request.getCookie();
             return null;

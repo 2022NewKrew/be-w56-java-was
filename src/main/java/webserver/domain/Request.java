@@ -5,6 +5,7 @@ import webserver.util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class Request {
         headerDatas = getHeaderDatas(br);
 
         if (headerDatas.containsKey("Content-Length"))
-            bodyString = IOUtils.readData(br, Integer.valueOf(headerDatas.get("Content-Length")));
+            bodyString = URLDecoder.decode(IOUtils.readData(br, Integer.valueOf(headerDatas.get("Content-Length"))), "UTF-8");
         if (bodyString != null)
             body = HttpRequestUtils.parseQueryString(bodyString);
 

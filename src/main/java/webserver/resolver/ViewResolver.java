@@ -1,13 +1,18 @@
 package webserver.resolver;
 
+import model.User;
+import webserver.RequestHandler;
 import webserver.domain.Cookie;
+import webserver.domain.Model;
 import webserver.domain.Response;
 import webserver.util.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,7 +29,7 @@ public class ViewResolver {
         redirect.put("/", "/index.html");
     }
 
-    public Response resolveResponse(String returnFromController, Cookie cookie) throws IOException {
+    public Response resolveResponse(String returnFromController, Cookie cookie, Model model) throws IOException {
         if (returnFromController.startsWith("redirect:"))
             return makeResponse(getRedirectResponseHeader(returnFromController.substring("redirect:".length())),
                     cookie,
@@ -32,12 +37,11 @@ public class ViewResolver {
         if (redirect.containsKey(returnFromController))
             returnFromController = redirect.get(returnFromController);
 
-        String bodyType = "html";
-        byte[] body = "wrong url".getBytes();
-        if (returnFromController.indexOf('.') != -1) {
-            bodyType = IOUtils.getFileFormat(returnFromController);
-            body = getFileResponseBody(returnFromController);
+        if (returnFromController.indexOf('.') == -1) {
+            returnFromController += ".html";
         }
+        String bodyType = IOUtils.getFileFormat(returnFromController);
+        byte[] body = getFileResponseBody(returnFromController, model);
 
         return makeResponse(getFileResponseHeader(body.length, bodyType), cookie, body);
     }
@@ -65,7 +69,57 @@ public class ViewResolver {
                 "Location: " + url + "\r\n";
     }
 
-    private byte[] getFileResponseBody(String url) throws IOException {
-        return Files.readAllBytes(new File("./webapp" + url).toPath());
+    private byte[] getFileResponseBody(String url, Model model) throws IOException {
+        if (model.isEmpty())
+            return Files.readAllBytes(new File("./webapp" + url).toPath());
+
+        String fileString = Files.readString(new File("./webapp" + url).toPath());
+        RequestHandler.log.debug(fileString);
+        for (String key : model.getKeys()) {
+            Object object = model.getAttribute(key);
+            fileString = insertModel(fileString, key, object);
+        }
+
+        return fileString.getBytes();
+    }
+
+    private String insertModel(String string, String key, Object value) {
+        StringBuilder sb = new StringBuilder(string);
+        StringBuilder contentBuilder = new StringBuilder();
+
+        int start = string.indexOf("{{#" + key + "}}");
+        int end = string.indexOf("{{/" + key + "}}");
+        String content = string.substring(start + ("{{#" + key + "}}").length(), end);
+        sb.delete(start, end + ("{{/"+key+"}}").length());
+
+        if (value instanceof List) {
+            ((List<?>) value).forEach(e -> contentBuilder.append(insertFields(content, e)));
+        } else {
+            contentBuilder.append(insertFields(content, value));
+        }
+        sb.insert(start, contentBuilder);
+
+        return sb.toString();
+    }
+
+    private String insertFields(String string, Object value) {
+        RequestHandler.log.debug("insertFields");
+        User user = (User)value;
+        RequestHandler.log.debug(user.toString());
+        Field[] fields = value.getClass().getDeclaredFields();
+        for(Field field : fields) {
+            field.setAccessible(true);
+            String name = field.getName();
+            String fieldValue = null;
+            try {
+                fieldValue = (String)field.get(value);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            RequestHandler.log.debug(name);
+            RequestHandler.log.debug(fieldValue);
+            string = string.replace("{{"+name+"}}", fieldValue);
+        }
+        return string;
     }
 }
