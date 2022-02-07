@@ -85,6 +85,14 @@ public class HttpRequestUtils {
         return new RequestLine(method, url, version);
     }
 
+    public static String getQueryString(String url) {
+        String[] tokens = url.split("\\?");
+        if (tokens.length == 1) {
+            return null;
+        }
+        return tokens[1];
+    }
+
     public static class Pair {
         String key;
         String value;
