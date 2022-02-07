@@ -1,7 +1,9 @@
-package cafe.controller;
+package cafe.controller.qna;
 
+import cafe.dto.QnaCreateDto;
 import cafe.service.QnaService;
 import framework.annotation.Controller;
+import framework.annotation.RequestBody;
 import framework.annotation.RequestMapping;
 import framework.http.enums.MediaType;
 import framework.http.request.HttpRequest;
@@ -10,34 +12,32 @@ import framework.http.response.HttpResponseHeader;
 import framework.http.response.HttpStatus;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Controller
-public class IndexController {
+public class QnaController {
     private final QnaService qnaService;
 
-    public IndexController() {
+    public QnaController() {
         this.qnaService = new QnaService();
     }
 
-    @RequestMapping(value = "/index.html", method = "GET")
-    public HttpResponse getIndexHtml(HttpRequest httpRequest) throws IOException {
+    @RequestMapping(value = "/qna/form.html", method = "GET")
+    public HttpResponse getCreateQnaForm(HttpRequest httpRequest) throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
 
-        String qnaListHtml = qnaService.getQnaListHtml();
-
-        return new HttpResponse(HttpStatus.OK, responseHeader, qnaListHtml.getBytes(StandardCharsets.UTF_8));
+        return new HttpResponse(HttpStatus.OK, responseHeader, httpRequest.getPath());
     }
 
-    @RequestMapping(method = "GET")
-    public HttpResponse getIndex() throws IOException {
+    @RequestMapping(value = "/qna", method = "POST")
+    public HttpResponse createQna(@RequestBody QnaCreateDto qnaCreateDto) throws IOException {
+        qnaService.makeQna(qnaCreateDto);
+
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
+        responseHeader.setLocation("/index.html");
 
-        String qnaListHtml = qnaService.getQnaListHtml();
-
-        return new HttpResponse(HttpStatus.OK, responseHeader, qnaListHtml.getBytes(StandardCharsets.UTF_8));
+        return new HttpResponse(HttpStatus.FOUND, responseHeader);
     }
 
 }

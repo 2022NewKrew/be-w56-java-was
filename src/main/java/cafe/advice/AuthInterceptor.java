@@ -14,7 +14,7 @@ public class AuthInterceptor {
     private static final String COOKIE_PARSE_DELIMITER = "; ";
     private static final String LOGIN_COOKIE_STRING = "logined=true";
 
-    @PreHandle(includePathPattern = {"/user/list.html", "/user/profile.html"})
+    @PreHandle(includePathPattern = {"/user/list.html", "/user/profile.html", "/qna/form.html"})
     public boolean loginPreHandle(HttpRequest httpRequest, HttpResponse httpResponse) {
         if (!isLoginedUser(httpRequest.getCookie())) {
             HttpResponseHeader responseHeader = httpResponse.getHeader();
