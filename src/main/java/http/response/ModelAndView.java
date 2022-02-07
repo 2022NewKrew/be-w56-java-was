@@ -22,7 +22,7 @@ public class ModelAndView {
         return viewName.contains("redirect:");
     }
 
-    public String getAttr(String key) {
+    public Object getAttr(String key) {
         return model.getAttr(key);
     }
 
