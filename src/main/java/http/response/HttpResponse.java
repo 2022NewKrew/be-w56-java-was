@@ -14,7 +14,7 @@ public class HttpResponse {
     private final OutputStream out;
     private String httpVersion;
     private HttpStatusCode statusCode;
-    private HttpHeader header;
+    private HttpHeader header = new HttpHeader();
     private byte[] body;
 
     public HttpResponse(OutputStream out) {
