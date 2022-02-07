@@ -5,6 +5,8 @@ import util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +32,7 @@ public class RequestHeader {
         }
 
         this.requestInfo = HttpRequestUtils.parseRequestInfo(requestHeaderInfo);
-        rawBody = IOUtils.readData(requestHeaderInfo, Integer.parseInt(requestInfo.getOrDefault("Content-Length", "0")));
+        rawBody = URLDecoder.decode(IOUtils.readData(requestHeaderInfo, Integer.parseInt(requestInfo.getOrDefault("Content-Length", "0"))), StandardCharsets.UTF_8);
         this.body = HttpRequestUtils.parseQueryString(rawBody);
     }
 
