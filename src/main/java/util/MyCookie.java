@@ -4,6 +4,9 @@ import java.util.*;
 
 public class MyCookie {
 
+    public static final int KEY = 0;
+    public static final int VALUE = 1;
+
     Map<String, Object> info = new HashMap<>();
 
     public String get(String key) {
@@ -15,6 +18,18 @@ public class MyCookie {
 
     public void set(final String key, final Object value) {
         info.put(key, value);
+    }
+
+    public void set(final String cookieString) {
+        String[] cookies = cookieString.split(";");
+
+        for (String cookie : cookies) {
+            String[] cookieSplit = cookie.split("=");
+            String key = cookieSplit[KEY].trim();
+            String value = cookieSplit[VALUE].trim();
+
+            info.put(key, value);
+        }
     }
 
     public int size() {

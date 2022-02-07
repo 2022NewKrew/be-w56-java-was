@@ -9,7 +9,6 @@ import java.util.List;
 
 public class MyHttpResponse {
 
-    private static final String PRE_FIX = "./webapp";
     private String redirectURI;
     private DataOutputStream dos;
     private String accept;
@@ -50,7 +49,7 @@ public class MyHttpResponse {
     }
 
     public void setBody(String viewPath) throws IOException {
-        this.body = Files.readAllBytes(new File(PRE_FIX + viewPath).toPath());
+        this.body = Files.readAllBytes(new File(viewPath).toPath());
     }
 
     public void setDos(DataOutputStream dos) {

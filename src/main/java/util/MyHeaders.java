@@ -8,6 +8,7 @@ public class MyHeaders {
 
     private static final String HEADER_SEPARATOR = ": ";
     private final Map<String, Pair> info = new LinkedHashMap<>();
+    private final MyCookie myCookie = new MyCookie();
 
     public String get(String key) {
         if (info.containsKey(key.toLowerCase(Locale.ROOT))) {
@@ -25,7 +26,15 @@ public class MyHeaders {
 
         Pair pair = new Pair(key, value);
 
-        info.put(key.toLowerCase(Locale.ROOT), pair);
+        if ("Cookie".equals(key)) {
+            myCookie.set(value);
+        } else {
+            info.put(key.toLowerCase(Locale.ROOT), pair);
+        }
+    }
+
+    public MyCookie getMyCookie() {
+        return myCookie;
     }
 
     private static class Pair {

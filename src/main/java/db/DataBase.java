@@ -22,8 +22,11 @@ public class DataBase {
         return users.values();
     }
 
+    /**
+     * init database
+     */
     static {
-        User user1 = new User("jm.hong", "jm.hong", "Hongjeongmin", "jm.hong@kakaocorp.com");
-        addUser(user1);
+        addUser(new User("jm.hong", "jm.hong", "Hongjeongmin", "jm.hong@kakaocorp.com"));
+        addUser(new User("sangin", "mark.lim", "limSangZin", "mark.lim@kakaocorp.com"));
     }
 }

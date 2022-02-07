@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class MyHttpRequest {
@@ -21,6 +22,7 @@ public class MyHttpRequest {
 
     private final RequestParams params = new RequestParams();
     private final MyHeaders headers = new MyHeaders();
+    private final MyAttribute attribute = new MyAttribute();
     private MyHttpStatus method;
     private String requestURI;
     private String httpVersion;
@@ -119,6 +121,10 @@ public class MyHttpRequest {
         }
     }
 
+    public MyCookie getCookie() {
+        return headers.getMyCookie();
+    }
+
     public String getPathVariable(String key) {
         return params.get(key);
     }
@@ -137,5 +143,17 @@ public class MyHttpRequest {
 
     public MyRequestDispatcher getRequestDispatcher(String viewPath) {
         return new MyRequestDispatcher(viewPath);
+    }
+
+    public void setAttribute(String key, Object value) {
+        attribute.set(key, value);
+    }
+
+    public Object getAttribute(String key) {
+        return attribute.get(key);
+    }
+
+    public List<Object> getAttributeAll() {
+        return attribute.getAll();
     }
 }

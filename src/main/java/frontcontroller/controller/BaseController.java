@@ -1,9 +1,9 @@
 package frontcontroller.controller;
 
+import frontcontroller.ModelView;
 import frontcontroller.MyController;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
-import util.MyRequestDispatcher;
 
 import java.io.IOException;
 
@@ -16,8 +16,9 @@ public class BaseController implements MyController {
     }
 
     @Override
-    public void process(MyHttpRequest request, MyHttpResponse response) throws IOException {
-        MyRequestDispatcher dispatcher = request.getRequestDispatcher(URL);
-        dispatcher.forward(request, response);
+    public ModelView process(MyHttpRequest request, MyHttpResponse response) throws IOException {
+
+        ModelView mv = new ModelView(URL);
+        return mv;
     }
 }

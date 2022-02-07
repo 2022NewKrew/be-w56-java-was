@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface MyController {
 
-    void process(MyHttpRequest request, MyHttpResponse response) throws IOException;
+    ModelView process(MyHttpRequest request, MyHttpResponse response) throws IOException;
 }

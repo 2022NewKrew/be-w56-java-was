@@ -3,6 +3,7 @@ package webserver;
 import frontcontroller.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.MyCookie;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 public class RequestHandler implements Callable<Void> {
@@ -33,7 +35,12 @@ public class RequestHandler implements Callable<Void> {
             MyHttpResponse response = new MyHttpResponse(out);
 
             // FILTER
-            doFilter(request, response);
+            try {
+                doFilter(request, response);
+            } catch (SecurityException e) {
+                log.info("권한 없는 사용자 접근");
+                throw e;
+            }
 
             new FrontController().service(request, response);
 
@@ -44,8 +51,23 @@ public class RequestHandler implements Callable<Void> {
         return null;
     }
 
-    private void doFilter(MyHttpRequest request, MyHttpResponse response) {
+    private void doFilter(MyHttpRequest request, MyHttpResponse response) throws SecurityException {
+        String requestURI = request.getRequestURI();
 
+        // login Filter
+        if (requestURI.equals("/user/list")) {
+            loginAuth(request);
+        }
+    }
+
+    private void loginAuth(MyHttpRequest request) throws SecurityException {
+        MyCookie cookie = request.getCookie();
+
+        Optional<String> login = Optional.ofNullable(cookie.get("logined"));
+
+        if (!login.orElse("").equals("true")) {
+            throw new SecurityException("로그인한 회원만 접근 가능합니다.");
+        }
     }
 
 

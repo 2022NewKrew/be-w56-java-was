@@ -1,6 +1,7 @@
 package frontcontroller.controller;
 
 import db.DataBase;
+import frontcontroller.ModelView;
 import frontcontroller.MyController;
 import model.User;
 import util.*;
@@ -10,22 +11,24 @@ import java.io.IOException;
 public class MemberFormController implements MyController {
 
     @Override
-    public void process(MyHttpRequest request, MyHttpResponse response) throws IOException {
+    public ModelView process(MyHttpRequest request, MyHttpResponse response) throws IOException {
 
         if (request.getMethod() == MyHttpStatus.GET) {
-            get(request, response);
+            return get(request, response);
         } else if (request.getMethod() == MyHttpStatus.POST) {
-            post(request, response);
+            return post(request, response);
         }
+
+        return null;
     }
 
-    private void get(MyHttpRequest request, MyHttpResponse response) throws IOException {
-        MyRequestDispatcher dispatcher = request.getRequestDispatcher("/user/form.html");
-        dispatcher.forward(request, response);
+    private ModelView get(MyHttpRequest request, MyHttpResponse response) throws IOException {
+        ModelView mv = new ModelView("/user/form");
+        return mv;
     }
 
 
-    private void post(MyHttpRequest request, MyHttpResponse response) throws IOException {
+    private ModelView post(MyHttpRequest request, MyHttpResponse response) throws IOException {
         String userId = request.getPathVariable("userId");
         String password = request.getPathVariable("password");
         String name = request.getPathVariable("name");
@@ -35,7 +38,7 @@ public class MemberFormController implements MyController {
         DataBase.addUser(user);
 
         response.setStatus(MyHttpResponseStatus.FOUND);
-        MyRequestDispatcher dispatcher = request.getRequestDispatcher("redirect:/index.html");
-        dispatcher.forward(request, response);
+        ModelView mv = new ModelView("redirect:/index");
+        return mv;
     }
 }
