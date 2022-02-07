@@ -2,7 +2,7 @@ package http;
 
 import util.ParsingUtils;
 
-import java.util.Objects;
+import java.io.File;
 
 public class RequestLine {
     public static final String DELIMITER = " ";
@@ -33,28 +33,15 @@ public class RequestLine {
         return new RequestLine(method, requestTarget, version);
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        RequestLine that = (RequestLine) object;
-        return method == that.method && Objects.equals(requestTarget, that.requestTarget) && version == that.version;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(method, requestTarget, version);
-    }
-
     public RequestTarget getRequestTarget() {
         return requestTarget;
     }
 
     public HttpMethod getMethod() {
         return method;
+    }
+
+    public File createStaticFile() {
+        return new File(requestTarget.createStaticPath());
     }
 }

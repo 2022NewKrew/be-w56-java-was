@@ -2,8 +2,6 @@ package http;
 
 import util.ParsingUtils;
 
-import java.util.Objects;
-
 public class RequestTarget {
     public static final String DELIMITER = "\\?";
     public static final int PARAMETER_COUNT = 2;
@@ -31,28 +29,15 @@ public class RequestTarget {
         }
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        RequestTarget requestTarget = (RequestTarget) object;
-        return Objects.equals(this.path, requestTarget.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(path);
-    }
-
     public Path getPath() {
         return path;
     }
 
     public Parameters getQueryParameters() {
         return parameters;
+    }
+
+    public String createStaticPath() {
+        return path.createStaticPath();
     }
 }

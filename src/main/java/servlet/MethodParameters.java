@@ -18,7 +18,7 @@ public class MethodParameters {
     public static MethodParameters create(Method method) {
         Map<ParameterConstructor, Fields> parameters = new LinkedHashMap<>();
         for (var parameter : method.getParameterTypes()) {
-            if (parameter != Cookie.class) {
+            if (parameter != Cookie.class && parameter != Model.class) {
                 Fields fields = Fields.create(parameter.getDeclaredFields());
                 ParameterConstructor constructor = ParameterConstructor.create(parameter, fields);
                 parameters.put(constructor, fields);

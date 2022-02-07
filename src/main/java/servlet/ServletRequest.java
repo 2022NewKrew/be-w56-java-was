@@ -15,6 +15,7 @@ public class ServletRequest {
         this.method = method;
         this.path = path;
         this.parameters = parameters;
+        this.cookie = cookie;
     }
 
     public MappingKey createMappingKey() {

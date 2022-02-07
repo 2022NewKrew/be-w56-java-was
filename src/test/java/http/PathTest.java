@@ -2,6 +2,7 @@ package http;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PathTest {
@@ -27,5 +28,11 @@ public class PathTest {
     @Test
     void startWithPrefix() {
         new Path("/abc");
+    }
+
+    @Test
+    void createStaticPath() {
+        assertThat(new Path("/abc").createStaticPath())
+                .isEqualTo("./webapp/static/abc");
     }
 }

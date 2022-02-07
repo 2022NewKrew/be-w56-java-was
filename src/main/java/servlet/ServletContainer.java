@@ -1,5 +1,6 @@
 package servlet;
 
+import http.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.controller.UserController;
@@ -32,13 +33,11 @@ public class ServletContainer {
                 .collect(Collectors.toMap(MappingKey::create, Servlet::create)));
     }
 
-    public void process(ServletRequest request, ServletResponse response) {
+    public ResponseMessage process(ServletRequest request) {
         Servlet servlet = container.get(request.createMappingKey());
-        servlet.service(request, response);
-
+        ServletResponse response = servlet.service(request);
         View view = ViewResolver.findView(response);
-        view.render();
-        view.createResponse();
+        return view.render();
     }
 
     public void destroy() {

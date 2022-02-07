@@ -24,6 +24,6 @@ public class RequestLineTest {
     void findStaticFileSuccess() {
         String input = "GET /index.html HTTP/1.1";
         RequestLine requestLine = RequestLine.create(input);
-        //requestLine.findStaticFile();
+        requestLine.createStaticFile();
     }
 }

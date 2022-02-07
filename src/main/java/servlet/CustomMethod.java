@@ -21,19 +21,23 @@ public class CustomMethod {
         return new CustomMethod(method, MethodParameters.create(method));
     }
 
-    public Object invoke(Object controller, Map<String, String> inputs, Cookie cookie) {
+    public Object invoke(Object controller, Map<String, String> inputs, Cookie cookie, Model model) {
         boolean isExistCookie = Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Cookie.class).count() == 1;
+        boolean isExistModel = Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Model.class).count() == 1;
         // TODO 예외처리
         try {
-            if (parameters.isEmpty() && !isExistCookie) {
+            if (parameters.isEmpty() && !isExistCookie && !isExistModel) {
                 return method.invoke(controller);
             }
+
+            List<Object> inputParameters = parameters.makeParameters(inputs);
             if (isExistCookie) {
-                List<Object> inputParameters = parameters.makeParameters(inputs);
                 inputParameters.add(cookie);
-                return method.invoke(controller, inputParameters.toArray());
             }
-            return method.invoke(controller, parameters.makeParameters(inputs).toArray());
+            if (isExistModel) {
+                inputParameters.add(model);
+            }
+            return method.invoke(controller, inputParameters.toArray());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return "";

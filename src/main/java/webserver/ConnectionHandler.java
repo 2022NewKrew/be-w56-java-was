@@ -9,10 +9,13 @@ import servlet.ServletContainer;
 import servlet.ServletRequest;
 import util.Mapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ConnectionHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
@@ -40,10 +43,10 @@ public class ConnectionHandler extends Thread {
         }
     }
 
-    private ResponseMessage createResponseMessage(RequestMessage request) {
-        byte[] file = StaticResourceContainer.process(request);
-        if (file.length != 0) {
-            return ResponseMessage.create(HttpStatus.OK, file);
+    private ResponseMessage createResponseMessage(RequestMessage request) throws IOException {
+        File file = request.createStaticFile();
+        if (file.exists() && file.isFile()) {
+            return ResponseMessage.create(HttpStatus.OK, Files.readAllBytes(Path.of(file.getPath())));
         }
         ServletRequest servletRequest = Mapper.toServletRequest(request);
         return servletContainer.process(servletRequest);

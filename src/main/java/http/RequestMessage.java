@@ -1,5 +1,7 @@
 package http;
 
+import java.io.File;
+
 public class RequestMessage {
     private final RequestLine requestLine;
     private final Headers headers;
@@ -28,5 +30,9 @@ public class RequestMessage {
 
     public Headers getHeader() {
         return headers;
+    }
+
+    public File createStaticFile() {
+        return requestLine.createStaticFile();
     }
 }

@@ -47,4 +47,8 @@ public class Path {
     public int hashCode() {
         return Objects.hash(value);
     }
+
+    public String createStaticPath() {
+        return "./webapp" + value;
+    }
 }

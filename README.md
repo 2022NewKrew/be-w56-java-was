@@ -124,9 +124,9 @@ CRLF
   - [x] 컨트롤러에서 쿠키 값을 변경할 수 있다.
     - [x] 이때 기존에 key가 있다면 값만 바꾼다.
     - [x] 없다면 새로 추가한다.
-- [ ] html 동적 생성하기
+- [x] html 동적 생성하기
   - [x] 컨트롤러의 Model에 전체 사용자 목록을 넣는다.
-  - [ ] html을 StringBuilder로 읽어서 model객체의 parameter와 비교하면서 넣는다.
+  - [x] html을 StringBuilder로 읽어서 model객체의 parameter와 비교하면서 넣는다.
 - Filter 구현하기
   - 서블릿 실행 전 필터에서 요청 url과 Cookie를 비교한다.(필터에서 확인할 url을 설정한다.)
     - [ ] “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 사용자 목록을 출력한다.

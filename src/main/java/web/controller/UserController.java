@@ -6,8 +6,10 @@ import annotation.PostMapping;
 import db.DataBase;
 import http.Cookie;
 import model.User;
+import servlet.Model;
 import web.dto.LoginDto;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Controller
@@ -41,5 +43,12 @@ public class UserController {
         cookie.setCookie("logined", false);
         cookie.setCookie("Path", "/");
         return "redirect:/";
+    }
+
+    @GetMapping("/user/list")
+    public String userLists(Model model) {
+        Collection<User> users = DataBase.findAll();
+        model.setAttribute("users", users);
+        return "/user/list.html";
     }
 }
