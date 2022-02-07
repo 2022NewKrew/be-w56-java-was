@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.h2.util.StringUtils;
+//import org.h2.util.StringUtils;
+
+//import com.mysql.cj.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import http.common.HttpMethod;
 
@@ -36,7 +39,7 @@ public class HttpRequest {
 
         // Parse request Body
         String contentLength = requestHeader.getFirst("Content-Length");
-        if (StringUtils.isNullOrEmpty(contentLength) || !StringUtils.isNumber(contentLength)) {
+        if (StringUtils.isEmpty(contentLength)) {
             return new HttpRequest(requestLine, requestHeader, RequestBody.of());
         }
         RequestBody requestBody = RequestBody.of(br, Integer.parseInt(contentLength));

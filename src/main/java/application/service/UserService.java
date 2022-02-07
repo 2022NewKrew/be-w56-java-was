@@ -4,12 +4,15 @@ import static application.service.UserServiceConstants.*;
 
 import java.util.List;
 
-import org.h2.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import application.repository.DataBase;
+import org.apache.commons.lang3.StringUtils;
+
+import application.repository.DbUserRepository;
+import application.repository.MemoryUserRepository;
 import application.model.User;
+import application.repository.UserRepository;
 import http.request.HttpRequest;
 import infrastructure.dto.AppResponse;
 import http.common.Status;
@@ -17,7 +20,8 @@ import http.common.Status;
 public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final DataBase userRepository = DataBase.getInstance();
+//    private final UserRepository userRepository = MemoryUserRepository.getInstance();
+    private final UserRepository userRepository = new DbUserRepository();
 
     public AppResponse getCreate(HttpRequest httpRequest) {
         String userId = httpRequest.getQueryStringParams(ATTRIBUTE_USER_ID);
@@ -30,8 +34,9 @@ public class UserService {
 
 
     private AppResponse commonCreate(String userId, String password, String name, String email) {
-        if (StringUtils.isNullOrEmpty(userId) || StringUtils.isNullOrEmpty(password)
-                || StringUtils.isNullOrEmpty(name) || StringUtils.isNullOrEmpty(email)) {
+
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(password)
+                || StringUtils.isEmpty(name) || StringUtils.isEmpty(email)) {
             return AppResponse.of(SIGNUP_FAIL_FILE, Status.OK);
         }
         userRepository.addUser(new User(userId, password, name, email));
