@@ -2,6 +2,7 @@ package framework.webserver;
 
 import java.io.*;
 import java.net.Socket;
+
 import framework.Beans;
 import framework.FrontController;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class RequestHandler extends Thread {
             FrontController frontController = Beans.frontController;
             DataOutputStream dos = frontController.request(in, out);
             dos.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }

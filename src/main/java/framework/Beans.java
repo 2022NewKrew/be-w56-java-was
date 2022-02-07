@@ -1,6 +1,7 @@
 package framework;
 
 import framework.util.ReflectionManager;
+import framework.util.TemplateParser;
 import mvc.controller.Controller;
 import mvc.controller.ResourceController;
 import mvc.controller.UserController;
@@ -18,6 +19,7 @@ import java.util.Set;
  */
 public class Beans {
     public static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    public static final TemplateParser templateParser = new TemplateParser();
     // controller
     public static final UserService userService = new UserService();
     // handlerMapping
@@ -25,7 +27,7 @@ public class Beans {
     public static final Map<Method, Object> methodObjectMap = ReflectionManager.getMethodObjectMap(controllerList);
     // frontController
     public static final HandlerMapping handlerMapping = new HandlerMapping(methodObjectMap);
-    public static final View view = new View();
+    public static final View view = new View(templateParser);
     public static final ViewResolver viewResolver = new ViewResolver(view);
     public static final FrontController frontController = new FrontController(handlerMapping, viewResolver);
 }

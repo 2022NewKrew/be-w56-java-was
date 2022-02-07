@@ -4,6 +4,9 @@ import mvc.db.DataBase;
 import mvc.dto.UserDto;
 import mvc.model.User;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class UserService {
 
     public UserDto create(UserDto dto) {
@@ -23,11 +26,22 @@ public class UserService {
             throw new IllegalArgumentException("존재하지 않는 회원입니다.");
         }
         validatePassword(dbUser, dto);
+        return convertUserToUserDto(dbUser);
+    }
+
+    public List<UserDto> getAllUsers() {
+        var userList = DataBase.findAll();
+        return userList.stream()
+                .map(this::convertUserToUserDto)
+                .collect(Collectors.toList());
+    }
+
+    private UserDto convertUserToUserDto(User user) {
         return UserDto.builder()
-                .userId(dbUser.getUserId())
-                .password(dbUser.getPassword())
-                .name(dbUser.getName())
-                .email(dbUser.getEmail())
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .name(user.getName())
+                .email(user.getEmail())
                 .build();
     }
 

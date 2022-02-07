@@ -80,3 +80,29 @@ Set-Cookie: logined=true; Path=/
 - 추후 html을 동적으로 생성, 수정하여 보내줄 것을 고려하여 View 클래스 생성
   - 기존에 ViewResolver에서 수행하던 HttpResponse의 Body를 세팅하는 부분을 View에서 수행
 - HttpResponse에 Cookie 처리를 위한 로직 추가
+
+## 웹 서버 구현 5단계
+- 동적인 html 구현
+  - 접근하고 있는 사용자가 “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다.
+    만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
+
+### 구현 내용
+- Mustache 일부 기능 구현
+  - TemplateParser 클래스에서 템플릿 문법이 적용된 html파일을 파싱하여 model 적용
+  - ```{{attr}}``` 
+    - attr을 key값으로 가지는 value를 model에서 찾아 교체
+  - ```{{#attr}} ... {{/attr}}```
+    - attr이 model에 존재하지 않으면 해당 블럭 전체를 무시
+    - attr이 model에 존재하면,
+      - 내부 mustache 문법이 적용된 부분을 전부 모델 값으로 변경
+      - 이 때, attr 객체의 필드 값에 우선순위를 두되, attr 객체의 필드 값에 일치하는 값이 없을 시 model에서 key값으로 검색
+      - attr에 해당하는 객체가 List라면 ```{{#attr}} ... {{/attr}}``` 블럭으로 래핑된 영역을 반복하여 렌더
+- RequestHeaderParser 클래스 생성
+  - http request header에서 쿠키값을 받아와야할 필요가 생김 -> header 파싱하는 부분을 frontcontroller에서 수행하기에는 너무 비대해졌다고 판단되어 해더를 파싱하는 역할만 수행하는 클래스 별도로 분리
+  - request header에서 http method, url, request param, cookie, content length 값을 추출하여 HttpRequest 객체로 넘겨주는 역할 수행
+
+## 웹 서버 구현 6단계
+- 다양한 mimetype에 대응하여 response 보내주기. ex> css 요청은 text/css로 보내주기
+
+### 구현 내용
+- 1단계 구현에서 Tika lib을 사용하여 적절한 mimetype을 설정해주도록 구현하였음 

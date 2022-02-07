@@ -14,6 +14,7 @@ import java.util.Map;
 public class HttpRequest {
     private String url;
     private String method;
+    private Cookie cookie;
     private Map<String, String> requestParam;
     private Map<String, String> requestBody;
 }

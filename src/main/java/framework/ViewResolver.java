@@ -5,6 +5,7 @@ import framework.params.HttpResponse;
 import framework.params.Params;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 
 /**
@@ -17,7 +18,7 @@ public class ViewResolver {
         this.view = view;
     }
 
-    public HttpResponse getResponse(String viewName, Params params) throws IOException {
+    public HttpResponse getResponse(String viewName, Params params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (viewName.contains("redirect")) {
             return getResponse3xx(HttpStatusCode.REDIRECT, viewName, params);
         }
@@ -29,7 +30,7 @@ public class ViewResolver {
         return viewName.contains(".") ? viewName : viewName + ".html";
     }
 
-    private HttpResponse getResponse2xx(HttpStatusCode httpStatusCode, String viewFileName, Params params) throws IOException {
+    private HttpResponse getResponse2xx(HttpStatusCode httpStatusCode, String viewFileName, Params params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         HttpResponse httpResponse = new HttpResponse(httpStatusCode, params.session);
         view.setResponseBody(httpResponse, viewFileName, params.model);
         return httpResponse;
