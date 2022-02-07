@@ -1,4 +1,4 @@
-package util;
+package webserver.http.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -2,19 +2,17 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.security.NoSuchProviderException;
 
-import controller.Controller;
-import controller.ControllerCommander;
+import webserver.controller.Controller;
+import webserver.controller.ControllerCommander;
+import webserver.http.domain.Cookie;
+import webserver.http.domain.CookieConst;
+import webserver.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ModelAndView;
-import view.ViewResolver;
-import webserver.config.WebConst;
-
-import static util.HttpResponseUtils.response200Header;
-import static util.HttpResponseUtils.responseBody;
+import webserver.http.request.HttpRequestParser;
+import webserver.http.response.HttpResponse;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -29,36 +27,35 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            DataOutputStream res = new DataOutputStream(out);
-            HttpRequest httpRequest = HttpRequest.from(in);
-            createResponse(httpRequest, res);
+            DataOutputStream dos = new DataOutputStream(out);
+            HttpRequest httpRequest = HttpRequestParser.parse(in);
+            HttpResponse httpResponse = new HttpResponse(dos);
+
+            Cookie cookie = httpRequest.getCookie();
+            System.out.println(cookie.getCookie(CookieConst.LOGIN_COOKIE.toString()));
+
+            handleRequest(httpRequest, httpResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void createResponse(HttpRequest request, DataOutputStream dos) throws IOException {
+    public void handleRequest(HttpRequest request, HttpResponse response) throws IOException {
         log.info("[REQUEST URI] - " + request.getRequestUri());
         try {
             Controller controller = ControllerCommander.findController(request);
-            ModelAndView modelAndView = controller.execute(request, dos);
+            if(controller == null) {
+                response.setUrl(request.getRequestUri());
+                response.forward();
+                return;
+            }
 
-            //redirect 에 따라서 조절 해야함. 다 옮기기
-            byte[] body = ViewResolver.render(modelAndView.getViewName());
+            controller.execute(request, response);
 
-            response200Header(dos, body.length);
-            responseBody(dos, body);
         } catch (NoSuchProviderException e) {
+            response.setStatusCode(404, "Not Found");
+            System.out.println("handle Error");
             e.printStackTrace();
-        }
-    }
-
-    public void printReq(InputStream in) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-        String line = bufferedReader.readLine();
-        while(!"".equals(line)) {
-            System.out.println(line);
-            line = bufferedReader.readLine();
         }
     }
 }

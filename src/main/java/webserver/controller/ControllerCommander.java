@@ -1,11 +1,10 @@
-package controller;
+package webserver.controller;
 
-import webserver.HttpRequest;
+import webserver.http.request.HttpRequest;
 
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ControllerCommander {
     private static List<Controller> controllers = new ArrayList<>();
@@ -17,7 +16,6 @@ public class ControllerCommander {
 
     public static Controller findController(HttpRequest req) throws NoSuchProviderException {
         return controllers.stream()
-                .filter(controller -> controller.isSupport(req.getMethod() + req.getRequestUri())).findFirst()
-                .orElseThrow(() -> new NoSuchProviderException("404 Error"));
+                .filter(controller -> controller.isSupport(req)).findFirst().orElse(null);
     }
 }
