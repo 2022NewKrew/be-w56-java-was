@@ -33,7 +33,7 @@ public class UserHandler {
         String password = params.get("password");
         String email = params.get("email");
         String name = params.get("name");
-        User user = new User(userId, password, name, email);
+        User user = new User(0, userId, password, name, email);
         database.addUser(user);
         Map<String, String> headers = Map.of(
                 "Content-Type", "text/plain",

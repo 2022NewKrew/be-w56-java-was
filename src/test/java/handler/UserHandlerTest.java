@@ -36,7 +36,7 @@ class UserHandlerTest {
 
     @Test
     void login() {
-        User user = new User("javajigi", "password", "자바지기", "email@example.com");
+        User user = new User(0, "javajigi", "password", "자바지기", "email@example.com");
         when(database.findUserById(anyString())).thenReturn(user);
         String body = "userId=javajigi&password=password\n";
         Request request = Request.newBuilder().body(body).build();
@@ -50,7 +50,7 @@ class UserHandlerTest {
 
     @Test
     void login_failed() {
-        User user = new User("javajigi", "password", "자바지기", "email@example.com");
+        User user = new User(0, "javajigi", "password", "자바지기", "email@example.com");
         when(database.findUserById(anyString())).thenReturn(user);
         String body = "userId=javajigi&password=wrongPassword\n";
         Request request = Request.newBuilder().body(body).build();
