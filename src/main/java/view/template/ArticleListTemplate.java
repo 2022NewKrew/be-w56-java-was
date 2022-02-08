@@ -47,6 +47,7 @@ public class ArticleListTemplate implements ViewTemplate {
                     + "          <ul class=\"list\">\n"
                     + "%s" // articleBlock
                     + "          </ul>\n"
+                    + "          <div class=\"row\">"
                     + "              <div class=\"col-md-3 qna-write\">\n"
                     + "                  <a href=\"./qna/form.html\" class=\"btn btn-primary pull-right\" role=\"button\">질문하기</a>\n"
                     + "              </div>\n"
