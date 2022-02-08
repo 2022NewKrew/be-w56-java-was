@@ -1,22 +1,23 @@
 package util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import http.Response;
+import webserver.DynamicHtmlMapper;
+import webserver.RequestHandler;
 
-public final class ResponseGenerator {
-    private static final String HTTP_RESPONSE_200 = "HTTP/1.1 200 OK ";
-    private static final String HTTP_RESPONSE_302 = "HTTP/1.1 302 OK ";
+public final class ResponseParser {
     private static final String CONTENT_LENGTH = "Content-Length: ";
     private static final String CONTENT_TYPE = "Content-Type: ";
     private static final String SET_COOKIE = "Set-Cookie: ";
     private static final String CHARSET = "charset=utf-8";
-    private static final String NEW_LINE = "\r\n";
 
     private static final String KEY_VALUE_SEPARATOR = "\\?";
+    private static final String NEW_LINE = "\r\n";
 
     private static final String SOURCE_ROOT = "webapp";
 
@@ -29,14 +30,16 @@ public final class ResponseGenerator {
     private static final String CONTENT_TYPE_CSS = "text/css;";
     private static final String CONTENT_TYPE_REDIRECT = "/";
 
-    private ResponseGenerator() {}
+    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+
+    private ResponseParser() {}
 
     public static byte[] responseToBytes(String fullUrl, Response response) {
         String url = fullUrl.split(KEY_VALUE_SEPARATOR)[0];
-        String cookie = response.getCookie();
 
-        byte[] body = getBody(url);
-        byte[] header = getHeader(url, body.length, cookie);
+        byte[] body = getBody(url, response);
+        byte[] header = getHeader(url, body.length, response);
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             outputStream.write(header);
@@ -48,19 +51,15 @@ public final class ResponseGenerator {
         return outputStream.toByteArray();
     }
 
-    private static byte[] getHeader(String url, int contentLength, String cookie) {
+    private static byte[] getHeader(String url, Integer contentLength, Response response) {
         StringBuilder stringBuilder = new StringBuilder();
-        String contentType = getContentType(url);
 
-        String responseType = HTTP_RESPONSE_200;
-        if (contentType.equals(CONTENT_TYPE_REDIRECT)) {
-            responseType = HTTP_RESPONSE_302;
-        }
+        String cookieString = response.getCookie().toString();
 
-        stringBuilder.append(responseType).append(NEW_LINE)
-                     .append(CONTENT_TYPE).append(contentType).append(NEW_LINE);
-        if (cookie.length() > 1) {
-            stringBuilder.append(SET_COOKIE).append(cookie).append(NEW_LINE);
+        stringBuilder.append(response.getType()).append(NEW_LINE)
+                     .append(CONTENT_TYPE).append(getContentType(url)).append(NEW_LINE);
+        if (cookieString.length() > 1) {
+            stringBuilder.append(SET_COOKIE).append(cookieString).append(NEW_LINE);
         }
         stringBuilder.append(CHARSET).append(NEW_LINE)
                      .append(CONTENT_LENGTH).append(contentLength).append(NEW_LINE).append(NEW_LINE);
@@ -68,16 +67,11 @@ public final class ResponseGenerator {
         return stringBuilder.toString().getBytes();
     }
 
-    private static byte[] getBody(String url) {
-        try {
-            return Files.readAllBytes(new File(SOURCE_ROOT + url).toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new byte[0];
-        }
+    private static byte[] getBody(String url, Response response) {
+        return DynamicHtmlMapper.getMapper(url).getPage(response, url);
     }
 
-    public static String getContentType(String url) {
+    private static String getContentType(String url) {
         if (url.contains(EXTENSION_JS)) {
             return CONTENT_TYPE_JS;
         }

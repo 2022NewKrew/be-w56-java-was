@@ -16,4 +16,6 @@
 - 앞에서 회원가입한 사용자로 로그인할 수 있어야 한다.
   - 로그인이 성공하면 cookie를 활용해 로그인 상태를 유지할 수 있어야 한다.
   - 로그인이 성공할 경우 요청 header의 Cookie header 값이 logined=true, 로그인이 실패하면 Cookie header 값이 logined=false로 전달되어야 한다.
-
+  - 접근하고 있는 사용자가 “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다. 
+    - 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
+  - 지금까지 구현한 소스 코드는 stylesheet 파일을 지원하지 못하고 있다. Stylesheet 파일을 지원하도록 구현하도록 한다.
