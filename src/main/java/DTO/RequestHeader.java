@@ -76,7 +76,13 @@ public class RequestHeader {
     }
     public void setCookie(String name, String value){
         String cookie = name+"="+value;
-        headerList.put("Cookie: ",cookie);
+        headerList.put("Cookie",cookie);
+    }
+
+
+    public void removeCookie(String name, String value){
+        String cookie = name + "=" + value+"; Path=/; Max-Age=0; domain=localhost:8081";
+        headerList.put("Cookie", cookie);
     }
 
 
