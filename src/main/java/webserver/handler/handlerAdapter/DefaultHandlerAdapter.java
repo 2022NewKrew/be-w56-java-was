@@ -1,8 +1,5 @@
 package webserver.handler.handlerAdapter;
 
-import static util.Constant.ACCEPT;
-import static util.Constant.ALL_CONTENT_TYPE;
-import static util.Constant.COMMA;
 import static util.Constant.CONTENT_LENGTH;
 import static util.Constant.CONTENT_TYPE;
 import static util.Constant.INDEX_PATH;
@@ -11,6 +8,7 @@ import static util.Constant.REDIRECT;
 import static util.Constant.ROOT_PATH;
 import static util.Constant.UTF_8;
 import static util.Constant.WEBAPP_PATH;
+import static util.Constant.ZERO;
 import static util.HttpRequestUtils.parseRedirect;
 
 import java.io.File;
@@ -31,6 +29,7 @@ import app.http.HttpRequest;
 import app.http.HttpResponse;
 import app.http.HttpStatus;
 import app.http.HttpVersion;
+import app.http.Mime;
 import webserver.handler.HandlerMethod;
 import webserver.handler.typeResolver.HttpResponseTypeResolver;
 import webserver.handler.typeResolver.MapTypeResolver;
@@ -89,20 +88,22 @@ public class DefaultHandlerAdapter implements HandlerAdapter {
     }
 
     private void setResponse(HttpRequest request, HttpResponse response, String path) {
-        log.debug("setResponse000: {}", path);
         if(path.startsWith(REDIRECT)) {
-            response.setStatus(HttpStatus.FOUND);
+            path = parseRedirect(path);
+            response.put(CONTENT_TYPE, Mime.getMime(path).getContentType() + UTF_8);
             response.setVersion(HttpVersion.HTTP_1_1);
-            response.put(LOCATION, parseRedirect(path));
+            response.setStatus(HttpStatus.FOUND);
+            response.put(LOCATION, path);
             response.setBody(new byte[0]);
+            response.put(CONTENT_LENGTH, ZERO);
             return;
         }
-        response.put(CONTENT_TYPE, request.get(ACCEPT, ALL_CONTENT_TYPE).split(COMMA)[0] + UTF_8);
         try {
             if (path.equals(ROOT_PATH)) {
                 path = INDEX_PATH;
             }
             path = WEBAPP_PATH + path;
+            response.put(CONTENT_TYPE, Mime.getMime(path).getContentType() + UTF_8);
             byte[] body = Files.readAllBytes(new File(path).toPath());
             response.put(CONTENT_LENGTH, String.valueOf(body.length));
             response.setVersion(HttpVersion.HTTP_1_1);

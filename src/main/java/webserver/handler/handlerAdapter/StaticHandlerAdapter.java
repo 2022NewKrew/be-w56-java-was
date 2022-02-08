@@ -21,6 +21,7 @@ import app.http.HttpRequest;
 import app.http.HttpResponse;
 import app.http.HttpStatus;
 import app.http.HttpVersion;
+import app.http.Mime;
 import webserver.handler.HandlerMethod;
 
 public class StaticHandlerAdapter implements HandlerAdapter{
@@ -42,10 +43,9 @@ public class StaticHandlerAdapter implements HandlerAdapter{
             if (path.equals(ROOT_PATH)) {
                 path = INDEX_PATH;
             }
-            log.debug("setResponse111: {}", path);
             path = WEBAPP_PATH + path;
+            response.put(CONTENT_TYPE, Mime.getMime(path).getContentType() + UTF_8);
             byte[] body = Files.readAllBytes(new File(path).toPath());
-            log.debug("setResponse222: {}", path);
             response.put(CONTENT_LENGTH, String.valueOf(body.length));
             response.setVersion(HttpVersion.HTTP_1_1);
             response.setStatus(HttpStatus.OK);
