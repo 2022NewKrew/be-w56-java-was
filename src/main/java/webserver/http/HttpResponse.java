@@ -2,11 +2,10 @@ package webserver.http;
 
 public class HttpResponse {
 
-    private static final String DEFAULT_VERSION = "HTTP/1.1";
     private static final HttpStatus DEFAULT_STATUS = HttpStatus.OK;
     private static final String[] DEFAULT_CONTENT_TYPE = new String[]{"text/html", "charset=utf-8"};
 
-    private final String version;
+    private final HttpVersion version;
     private final HttpStatus status;
     private final HttpHeader headers;
     private final HttpCookie cookies;
@@ -31,7 +30,7 @@ public class HttpResponse {
         return 0;
     }
 
-    public String getVersion() {
+    public HttpVersion getVersion() {
         return version;
     }
 
@@ -70,12 +69,12 @@ public class HttpResponse {
 
         private final HttpHeader headers = new HttpHeader();
         private final HttpCookie cookies = new HttpCookie();
-        private String version = DEFAULT_VERSION;
+        private HttpVersion version = HttpVersion.HTTP_1_1;
         private HttpStatus status = DEFAULT_STATUS;
         private String[] contentType = DEFAULT_CONTENT_TYPE;
         private byte[] body;
 
-        public Builder version(String version) {
+        public Builder version(HttpVersion version) {
             this.version = version;
             return this;
         }

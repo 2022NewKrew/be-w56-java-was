@@ -23,7 +23,7 @@ public class ResponseHandler {
     }
 
     private static void writeBytes(HttpResponse response, DataOutputStream dos) {
-        String version = response.getVersion();
+        HttpVersion version = response.getVersion();
         HttpStatus status = response.getStatus();
         HttpHeader headers = response.getHeaders();
         HttpCookie cookies = response.getCookies();
@@ -32,7 +32,7 @@ public class ResponseHandler {
         byte[] body = response.getBody();
 
         try {
-            dos.writeBytes(String.format("%s %s %s", version, status, CRLF));
+            dos.writeBytes(String.format("%s %s %s", version.text(), status, CRLF));
             writeBytesHeaders(headers, dos);
             dos.writeBytes(String.format("Content-Type: %s%s", contentType, CRLF));
             writeBytesCookies(cookies, dos);

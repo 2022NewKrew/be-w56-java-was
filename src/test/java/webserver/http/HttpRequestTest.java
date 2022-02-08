@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils;
 
 import java.io.*;
-import java.net.http.HttpClient;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +27,7 @@ class HttpRequestTest {
         // then
         assertThat(httpRequest.method()).isEqualTo(HttpMethod.GET);
         assertThat(httpRequest.uri().toString()).isEqualTo("/index.html");
-        assertThat(httpRequest.version()).hasValue(HttpClient.Version.HTTP_1_1);
+        assertThat(httpRequest.version()).isEqualTo(HttpVersion.HTTP_1_1);
         assertThat(httpRequest.headers())
                 .extracting(
                         h -> h.getValues("Host"),
@@ -65,7 +64,7 @@ class HttpRequestTest {
         // then
         assertThat(httpRequest.method()).isEqualTo(HttpMethod.POST);
         assertThat(httpRequest.uri().toString()).isEqualTo("/user/create");
-        assertThat(httpRequest.version()).hasValue(HttpClient.Version.HTTP_1_1);
+        assertThat(httpRequest.version()).isEqualTo(HttpVersion.HTTP_1_1);
         assertThat(httpRequest.headers())
                 .extracting(
                         h -> h.getValues("Host"),
