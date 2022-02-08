@@ -1,10 +1,10 @@
 package controller;
 
-import util.Request;
-import util.Response;
+import util.HttpRequest;
+import util.HttpResponse;
 
 import java.io.IOException;
 
 public interface Router {
-    void send(Request request, Response response) throws IOException;
+    void send(HttpRequest request, HttpResponse response) throws IOException;
 }
