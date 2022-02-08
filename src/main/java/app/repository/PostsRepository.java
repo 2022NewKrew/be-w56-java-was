@@ -13,10 +13,6 @@ import java.util.List;
 public class PostsRepository {
     private final Connection connection;
 
-    public PostsRepository(Connection connection) {
-        this.connection = connection;
-    }
-
     @Autowired
     public PostsRepository(DbConfigure dbConfigure) {
         this.connection = dbConfigure.getConnection();

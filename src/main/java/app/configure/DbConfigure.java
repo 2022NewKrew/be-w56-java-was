@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 public class DbConfigure {
 
+    //Todo 필수 인자들을 생성 시 환경변수를 사용해서 외부에서 주입받도록 구현
     private static final String URL = "jdbc:mysql://database:3306/JAVA_WAS";
     private static final String USER = "root";
     private static final String PASSWORD = "test";

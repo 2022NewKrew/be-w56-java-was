@@ -28,12 +28,28 @@ public class MyHttpServlet implements HttpServlet {
     private final Map<HttpMethod, Map<String, Method>> httpMethodMapMap;
     private final Map<String, Object> clazzNameMap;
 
-    public MyHttpServlet() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+    // LazyHolder : https://medium.com/@joongwon/multi-thread-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%EC%9D%98-%EC%98%AC%EB%B0%94%EB%A5%B8-singleton-578d9511fd42
+    public static MyHttpServlet getInstance() {
+        return LazyHolder.INSTANCE;
+    }
+
+    private static class LazyHolder {
+        private static MyHttpServlet INSTANCE = null;
+
+        static {
+            try {
+                INSTANCE = new MyHttpServlet();
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public MyHttpServlet() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         methodClassMap = new HashMap<>();
         httpMethodMapMap = new EnumMap<>(HttpMethod.class);
         clazzNameMap = DependencyInjector.inject();
         Arrays.stream(HttpMethod.values()).forEach(v -> httpMethodMapMap.put(v, new HashMap<>()));
-        // Todo 각 요청마다 새로 만들고있다. 고칠필요가 있음.
         Set<Class<?>> s = findAllClassesUsingReflectionsLibrary("app");
         for (Class<?> controller : s.toArray(new Class[0])) {
             if (controller.getAnnotation(Controller.class) == null) continue;
@@ -116,7 +132,7 @@ public class MyHttpServlet implements HttpServlet {
         return parameter.getType().getConstructor(types.toArray(new Class[0])).newInstance(paramList.toArray());
     }
 
-    private void controllerResponse(String controllerResult, Model model, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    private void controllerResponse(String controllerResult, Model model, HttpRequest httpRequest, HttpResponse httpResponse) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         String[] controllerResults = controllerResult.split(":");
         if (controllerResults[0].equals("redirect")) {
             HttpResponseUtils.redirectResponse(httpResponse, controllerResults[1].trim(), httpRequest.getHeader("Host"));
@@ -133,11 +149,12 @@ public class MyHttpServlet implements HttpServlet {
         try {
             HttpResponseUtils.staticResponse(httpResponse, httpRequest.url());
         } catch (IOException exception) {
+            log.error("404 not found : {}", httpRequest.url());
             HttpResponseUtils.notFoundResponse(httpResponse);
         }
     }
 
-    private void doResponse(HttpRequest request, HttpResponse response) throws IOException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+    private void doResponse(HttpRequest request, HttpResponse response) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         Method method = methodFromUrl(request);
         if (method == null) {
             responseStatic(request, response);

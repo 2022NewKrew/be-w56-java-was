@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+// Todo User도 DB 연동시키도록 만든다.
 @Controller
 public class UserController {
 

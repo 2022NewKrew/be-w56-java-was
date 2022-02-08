@@ -59,27 +59,27 @@ public class TemplateEngine {
 
 
     public static StringBuilder divideByList(String template, Object object) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        Pattern pattern = Pattern.compile(START_REGEX);
-        Matcher matcher = pattern.matcher(template);
+        Pattern startPattern = Pattern.compile(START_REGEX);
+        Matcher startMatcher = startPattern.matcher(template);
         StringBuilder sb = new StringBuilder();
         // Check all list occurrences
-        if (matcher.find()) {
-            Pattern pattern1 = Pattern.compile(END_REGEX);
-            Matcher matcher1 = pattern1.matcher(template);
-            if (!matcher1.find())
+        if (startMatcher.find()) {
+            Pattern endPattern = Pattern.compile(END_REGEX);
+            Matcher endMatcher = endPattern.matcher(template);
+            if (!endMatcher.find())
                 throw new TemplateSyntaxException("템플릿이 잘못되었습니다!");
-            String tmp = matcher.group();
+            String tmp = startMatcher.group();
             String target = tmp.substring(3, tmp.length() - 2);
             //first part
-            sb.append(renderObjectValues(template.substring(0, matcher.start()), object));
-            String middleTemplate = template.substring(matcher.end(), matcher1.start());
+            sb.append(renderObjectValues(template.substring(0, startMatcher.start()), object));
+            String middleTemplate = template.substring(startMatcher.end(), endMatcher.start());
 
             //middle part
             List<?> list = (List<?>) getValue(object, target);
             for (Object o : list) sb.append(divideByList(middleTemplate, o));
 
             //last part
-            return sb.append(divideByList(template.substring(matcher1.end()), object));
+            return sb.append(divideByList(template.substring(endMatcher.end()), object));
         }
         return sb.append(renderObjectValues(template, object));
     }
