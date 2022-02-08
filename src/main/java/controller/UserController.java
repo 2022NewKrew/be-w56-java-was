@@ -29,9 +29,12 @@ public class UserController {
 
     private final DataBase dataBase = new DataBase();
 
-    public Body processGet(final String location) {
+    public Body processGet(final String location, final boolean isLogin) {
         if (LOCATION_USER_LIST.equals(location)) {
-            return getUserList();
+            if (isLogin) {
+                return getUserList();
+            }
+            throw new IllegalStateException("Login is required!");
         }
 
         return Body.EMPTY;

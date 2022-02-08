@@ -10,6 +10,7 @@ public class Headers {
     public static final String HEADER_CONTENT_LENGTH = "Content-Length";
     public static final String HEADER_LOCATION = "Location";
     public static final String HEADER_SET_COOKIE = "Set-Cookie";
+    public static final String HEADER_COOKIE = "Cookie";
 
     public static final String HEADER_VALUE_SEPARATOR = ": ";
     public static final String HEADER_NEWLINE = "\r\n";
