@@ -33,6 +33,10 @@ public enum Mime {
     }
 
     public static Mime fromContentType(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+
         return Arrays.stream(Mime.values())
                 .filter((mime -> mime.contentType.equals(contentType)))
                 .findAny()

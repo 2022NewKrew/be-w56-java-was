@@ -36,7 +36,7 @@ public class Headers {
                 .filter(httpHeader -> httpHeader.isNameMatched(name))
                 .findAny()
                 .map(HttpHeader::getValue)
-                .orElse("");
+                .orElse(null);
     }
 
     public void addHeader(HttpHeader httpHeader) {
