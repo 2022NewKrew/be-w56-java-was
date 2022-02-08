@@ -1,5 +1,8 @@
 package framework.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +11,7 @@ import java.util.Set;
  * ModelView에서 활용할 Attributes 정보들을 담을 일급 컬렉션 클래스
  */
 public class ModelViewAttributes {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final Map<String, Object> modelViewAttributes = new HashMap<>();
 
     public Object getAttribute(String key) {
@@ -43,6 +47,14 @@ public class ModelViewAttributes {
      * @return 파싱된 JSON 형태의 String
      */
     public String parseAttributesToJson() {
-        return "";
+        String parsedStr = "";
+
+        try {
+            parsedStr = OBJECT_MAPPER.writeValueAsString(modelViewAttributes);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return parsedStr;
     }
 }

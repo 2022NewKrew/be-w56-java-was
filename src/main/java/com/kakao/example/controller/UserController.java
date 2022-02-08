@@ -1,5 +1,6 @@
 package com.kakao.example.controller;
 
+import com.kakao.example.application.dto.UserDto;
 import com.kakao.example.application.service.UserService;
 import com.kakao.example.model.domain.User;
 import com.kakao.example.util.exception.UserNotFoundException;
@@ -24,14 +25,6 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-
-        // 미리 관리자 계정을 추가
-        userService.addUser(User.builder()
-                .userId("admin")
-                .password("admin")
-                .name("관리자")
-                .email("admin@kakao.com")
-                .build());
     }
 
     // GET 방식으로 회원가입, 2단계 미션 수행을 위해 존재
@@ -72,15 +65,17 @@ public class UserController {
         String password = request.getAttribute("password");
 
         HttpSession session = request.getSession();
+        UserDto user;
 
         try {
-            userService.findUserByLoginInfo(userId, password);
+            user = userService.findUserByLoginInfo(userId, password);
         } catch (UserNotFoundException e) {
-            return "redirect:/user/login_failed";
+            return "user/login_failed";
         }
 
         // 로그인한 아이디를 Session에 저장
         session.setAttribute("USER_ID", userId);
+        session.setAttribute("USER_NAME", user.getName());
         return "redirect:/";
     }
 

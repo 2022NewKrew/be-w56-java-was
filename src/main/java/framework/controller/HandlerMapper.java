@@ -3,6 +3,7 @@ package framework.controller;
 import framework.container.Container;
 import framework.util.HttpSession;
 import framework.util.annotation.RequestMapping;
+import framework.util.annotation.ResponseBody;
 import framework.util.exception.ClassNotFoundException;
 import framework.util.exception.MethodNotFoundException;
 import framework.util.exception.WrongReturnTypeException;
@@ -11,13 +12,13 @@ import framework.webserver.HttpRequestHandler;
 import framework.webserver.HttpResponseHandler;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
@@ -30,6 +31,9 @@ import static framework.util.Constants.REDIRECT_MARK;
  */
 public class HandlerMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlerMapper.class);
+
+    /** Controller 객체에서 호출할 메소드 */
+    private static Method currentMethod;
 
     /**
      * 받은 요청 정보에 맞는 Controller 클래스를 찾고 해당 Controller로부터 받은 데이터를 ModelView로 반환해주는 메소드
@@ -61,6 +65,12 @@ public class HandlerMapper {
         if (object instanceof ModelView) {
             // 해당 내용을 복사
             modelView.copy((ModelView) object);
+
+            // ResponseBody 어노테이션이 붙어있는지 확인
+            if (currentMethod.isAnnotationPresent(ResponseBody.class)) {
+                modelView.setResponseBody(true);
+            }
+
             return;
         }
 
@@ -81,15 +91,14 @@ public class HandlerMapper {
 
         // Controller를 찾아서 process 메소드 호출
         Object controller = findController(uri);
-        Method method = findMethod(controller, requestMethod, uri);
-        Object object = invokeMethod(controller, method, request, response, modelView);
+        currentMethod = findMethod(controller, requestMethod, uri);
 
-        // String형이나 ModelView형이 아니라면 예외 발생
-        if (!(object instanceof String || object instanceof ModelView)) {
-            throw new IllegalArgumentException();
+        // ResponseBody 어노테이션이 붙어있는지 확인
+        if (currentMethod.isAnnotationPresent(ResponseBody.class)) {
+            modelView.setResponseBody(true);
         }
 
-        return object;
+        return invokeMethod(controller, request, response, modelView);
     }
 
     /**
@@ -119,16 +128,13 @@ public class HandlerMapper {
      * @return 찾은 메소드
      */
     private static Method findMethod(Object controller, String requestMethod, String uri) {
-        Reflections reflections = new Reflections(
-                new ConfigurationBuilder()
-                        .setUrls(ClasspathHelper.forClass(controller.getClass()))
-                        .setScanners(Scanners.MethodsAnnotated));
+        // Controller 내에서 모든 선언된 메소드들을 찾음
+        Method[] methods = controller.getClass().getDeclaredMethods();
 
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
-
-        return methods.stream()
+        return Arrays.stream(methods)
                 .filter(m -> {
                     RequestMapping requestPath = m.getAnnotation(RequestMapping.class);
+
                     return uri.endsWith(requestPath.value()) &&
                             requestPath.requestMethod().toUpperCase(Locale.ROOT).equals(requestMethod);
                 })
@@ -139,16 +145,15 @@ public class HandlerMapper {
     /**
      * 현재 Controller 객체 내에서 찾은 메소드를 호출시켜 그 값을 반환해주는 메소드
      * @param controller 현재 Controller 객체
-     * @param method Controller 객체에서 호출할 메소드
      * @param request Client로부터 받은 요청 정보
      * @param response Client에게 응답해줄 정보
      * @param modelView View에 전달해야 할 정보들을 담을 객체
      * @return 메소드 실행 후 반환된 데이터 (null (void일 때), String형 객체, ModelView형 객체)
      */
-    private static Object invokeMethod(Object controller, Method method, HttpRequestHandler request,
+    private static Object invokeMethod(Object controller, HttpRequestHandler request,
                                        HttpResponseHandler response, ModelView modelView) {
         // 현재 메소드에 넘겨줘야 하는 매개변수들
-        Parameter[] parameters = method.getParameters();
+        Parameter[] parameters = currentMethod.getParameters();
         int size = parameters.length;
 
         // 현재 메소드에 넘겨줄 인자들 (객체들)
@@ -177,8 +182,8 @@ public class HandlerMapper {
 
         // 메소드 호출
         try {
-            return method.invoke(controller, arguments);
-        } catch (Exception e) {
+            return currentMethod.invoke(controller, arguments);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new MethodNotFoundException();
         }
     }
