@@ -1,6 +1,9 @@
 package util;
 
+import org.apache.tika.Tika;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 
 public class IOUtils {
@@ -16,6 +19,10 @@ public class IOUtils {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
+    }
+
+    public static String getContentType(File file) throws IOException {
+        return new Tika().detect(file);
     }
 
     public static String getHttpRequestHeader(BufferedReader bufferedReader) throws IOException{
