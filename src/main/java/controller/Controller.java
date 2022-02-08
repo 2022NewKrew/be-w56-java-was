@@ -1,24 +1,23 @@
 package controller;
 
-import annotation.GetMapping;
-import annotation.PostMapping;
-import annotation.RequestBody;
-import annotation.RequestParam;
+import annotation.*;
 import controller.dto.EnrollUserRequest;
 import controller.dto.LoginUserRequest;
+import model.Model;
 import service.UserService;
 import service.dto.EnrollUserCommand;
+import service.dto.GetAllUserInfoResult;
 import service.dto.LoginUserCommand;
 import service.dto.LoginUserResult;
-import webserver.header.Cookie;
-import webserver.response.Response;
+import webserver.http.Cookie;
+import webserver.http.Response;
 
 
 public class Controller {
 
     @GetMapping(path = "/")
     public Response getIndex() {
-        return new Response("/index.html");
+        return new Response("/index.html", 200);
     }
 
     @GetMapping(path = "/user/create")
@@ -30,7 +29,7 @@ public class Controller {
 
         UserService.enroll(new EnrollUserCommand(userId, password, name, email));
 
-        return new Response("redirect:/");
+        return new Response("/", 302);
     }
 
     @PostMapping(path = "/user/create")
@@ -44,7 +43,7 @@ public class Controller {
                         enrollUserRequest.getEmail()
                 ));
 
-        return new Response("redirect:/");
+        return new Response("/", 302);
     }
 
     @PostMapping(path = "/user/login")
@@ -56,12 +55,30 @@ public class Controller {
                         loginUserRequest.getPassword()));
 
         if(!result.isSame()) {
-            return new Response("/user/login_failed.html");
+            Response failResponse = new Response("/user/login_failed.html", 200);
+            failResponse.addCookie(Cookie.create("logined", "false"));
+            return failResponse;
         }
 
         Cookie cookie = Cookie.create("logined", "true");
-        Response response = new Response("redirect:/");
+        Response response = new Response("/", 302);
         response.addCookie(cookie);
+        return response;
+    }
+
+    @GetMapping(path = "/user/list")
+    public Response userList(@HttpCookie(name = "logined") String login) {
+
+        GetAllUserInfoResult allUserInfo = UserService.getAllUserInfo();
+
+        if(login.equals("false") || login.equals("")) {
+            return new Response("/user/login.html", 200);
+        }
+
+        Model model = Model.create();
+        model.addAttribute("userList", allUserInfo.getUserInfos());
+        Response response = new Response("/userList", 200);
+        response.setModel(model);
         return response;
     }
 }
