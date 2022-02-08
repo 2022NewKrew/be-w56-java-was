@@ -24,7 +24,7 @@ public class HttpHeaders implements Iterable<Map.Entry<String, String>> {
     }
 
     public boolean containsName(String name) {
-        return headers.containsKey(name);
+        return headers.containsKey(name.toLowerCase());
     }
 
     public String getValue(String name) {
@@ -32,6 +32,6 @@ public class HttpHeaders implements Iterable<Map.Entry<String, String>> {
             throw new NoSuchElementException();
         }
 
-        return headers.get(name);
+        return headers.get(name.toLowerCase());
     }
 }
