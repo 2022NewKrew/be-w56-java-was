@@ -44,6 +44,10 @@ public class Path {
         return variables;
     }
 
+    public boolean equals(String value) {
+        return this.value.equals(value);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

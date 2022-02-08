@@ -7,7 +7,8 @@ public enum RequestPath {
     HOME("/"),
     SIGN_UP("/user/create"),
     LOGIN("/user/login"),
-    LOGIN_FAILED("/user/login_failed.html");
+    LOGIN_FAILED("/user/login_failed.html"),
+    USER_LIST("/user/list");
 
     private final String value;
 

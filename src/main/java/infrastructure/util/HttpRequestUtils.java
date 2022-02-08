@@ -4,7 +4,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import infrastructure.model.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -12,18 +15,10 @@ public class HttpRequestUtils {
 
     private static final String REQUEST_SEPARATE_TOKEN = " ";
 
-    /**
-     * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param cookies 값은 name1=value1; name2=value2 형식임
-     * @return
-     */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
     }
@@ -47,12 +42,12 @@ public class HttpRequestUtils {
             return null;
         }
 
-        String[] tokens = keyValue.split(regex);
-        if (tokens.length != 2) {
+        List<String> tokens = Arrays.stream(keyValue.split(regex)).map(e -> URLDecoder.decode(e, StandardCharsets.UTF_8)).collect(Collectors.toList());
+        if (tokens.size() != 2) {
             return null;
         }
 
-        return new Pair(tokens[0], tokens[1]);
+        return new Pair(tokens.get(0), tokens.get(1));
     }
 
     public static RequestLine parseRequestLine(String requestLine) throws NullPointerException, IllegalArgumentException {
