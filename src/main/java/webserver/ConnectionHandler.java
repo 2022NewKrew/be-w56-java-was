@@ -1,5 +1,6 @@
 package webserver;
 
+import http.header.MimeType;
 import http.message.RequestMessage;
 import http.message.ResponseMessage;
 import http.startline.HttpStatus;
@@ -47,7 +48,8 @@ public class ConnectionHandler extends Thread {
     private ResponseMessage createResponseMessage(RequestMessage request) throws IOException {
         File file = request.createStaticFile();
         if (file.exists() && file.isFile()) {
-            return ResponseMessage.create(HttpStatus.OK, Files.readAllBytes(Path.of(file.getPath())));
+            String path = file.getPath();
+            return ResponseMessage.create(HttpStatus.OK, MimeType.matchOf(path), Files.readAllBytes(Path.of(path)), null);
         }
         ServletRequest servletRequest = Mapper.toServletRequest(request);
         ServletResponse servletResponse = new ServletResponse();

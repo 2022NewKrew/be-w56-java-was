@@ -5,19 +5,13 @@ import http.message.ResponseMessage;
 import http.startline.HttpStatus;
 
 public class RedirectView implements View {
-    private final String url;
-    private final Cookie cookie;
+    private final String path;
 
-    public RedirectView(String url, Cookie cookie) {
-        this.url = url;
-        this.cookie = cookie;
+    public RedirectView(String path) {
+        this.path = "http://localhost:8080" + path;
     }
 
-    @Override
-    public ResponseMessage render() {
-        if (cookie != null) {
-            return ResponseMessage.create(HttpStatus.FOUND, url, cookie);
-        }
-        return ResponseMessage.create(HttpStatus.FOUND, url);
+    public ResponseMessage render(Model model, Cookie cookie) {
+        return ResponseMessage.create(HttpStatus.FOUND, path, cookie);
     }
 }

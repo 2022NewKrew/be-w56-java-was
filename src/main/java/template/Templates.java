@@ -1,7 +1,5 @@
 package template;
 
-import servlet.view.Model;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -12,7 +10,7 @@ public class Templates {
         this.templates = templates;
     }
 
-    public byte[] concat(Model model) {
+    public byte[] concat() {
         StringBuilder sb = new StringBuilder();
         for (Template template : templates) {
             sb.append(template.load());

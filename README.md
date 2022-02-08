@@ -65,22 +65,32 @@ CRLF
 - https://www.baeldung.com/java-method-reflection
 
 ## Class Loading
+
 - https://velog.io/@agugu95/%EC%9E%90%EB%B0%94-%ED%81%B4%EB%9E%98%EC%8A%A4-%EB%A1%9C%EB%94%A9%EA%B3%BC-%EC%86%8D%EB%8F%84-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EA%B8%B0%EB%B2%95%EB%93%A4
 - https://baeldung-cn.com/java-list-classes-class-loader
 - https://www.baeldung.com/java-find-all-classes-in-package
 
 # @AliasFor
 
+## MIME TYPE, Content-Type, ticka
+
+https://developer.mozilla.org/ko/docs/Web/HTTP/Content_negotiation
+https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+https://bbbicb.tistory.com/54?category=975839
+https://tika.apache.org/2.3.0/detection.html
 
 # 요구사항
+
 ## 구현 요구사항
+
 ### 1단계 : 정적 html 파일 응답
+
 - [x] request 메시지를 받아서 파싱한다.
-    - [x] 첫 번째 줄은 request-line 이다.
-    - [x] 2째줄 ~ CRLF 전까지는 header-field 이다.
-    - [x] 일반적으로 body는 없다.
+  - [x] 첫 번째 줄은 request-line 이다.
+  - [x] 2째줄 ~ CRLF 전까지는 header-field 이다.
+  - [x] 일반적으로 body는 없다.
 - [x] response 메시지를 만들어 보낸다.
-    - [x] request-line의 path에 맞는 파일을 찾는다.
+  - [x] request-line의 path에 맞는 파일을 찾는다.
     - [x] 파일이 있다면 response-line의 status-code를 200으로 reason-phase를 OK로 설정한다.
         - [x] html 파일을 byte로 변환해서 body에 담는다.
     - [x] 파일이 없다면 response-line의 status-code를 404로 reason-phase를 NotFound로 설정한다.
@@ -125,12 +135,15 @@ CRLF
 - [x] html 동적 생성하기
   - [x] 컨트롤러의 Model에 전체 사용자 목록을 넣는다.
   - [x] html을 StringBuilder로 읽어서 model객체의 parameter와 비교하면서 넣는다.
-- Filter 구현하기
-  - 서블릿 실행 전 필터에서 요청 url과 Cookie를 비교한다.(필터에서 확인할 url을 설정한다.)
+- [x] Filter 구현하기
+  - [x] 서블릿 실행 전 필터에서 요청 url과 Cookie를 비교한다.(필터에서 확인할 url을 설정한다.)
     - [x] “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 사용자 목록을 출력한다.
     - [x] 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
 
-## 도메인 요구사항
+### 6단계 : Stylesheet 지원
+
+- 파일 타입에 따라 응답 반환하도록 수정
+-
 
 ### message
 

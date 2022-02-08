@@ -21,7 +21,7 @@ public class LoginFilter extends ServletFilter {
     public void doFilter(ServletRequest request, ServletResponse response) {
         Cookie cookie = request.getCookie("logined");
         if (cookie.getValue().equals("false")) {
-            response.setResponse("redirect:/user/login.html");
+            response.setPath("redirect:/user/login.html");
         }
     }
 }

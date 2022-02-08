@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Model {
-    private Map<String, Object> attributes;
+    private final Map<String, Object> attributes;
 
     public Model() {
         attributes = new HashMap<>();
@@ -18,7 +18,7 @@ public class Model {
         return attributes.get(key);
     }
 
-    public boolean isEmpthy() {
+    public boolean isEmpty() {
         return attributes.isEmpty();
     }
 }

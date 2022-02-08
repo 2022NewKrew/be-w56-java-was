@@ -5,19 +5,31 @@ import http.header.Cookies;
 import http.startline.HttpMethod;
 import servlet.container.MappingKey;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServletRequest {
-    private HttpMethod method;
-    private String path;
-    private Map<String, String> parameters;
-    private Cookies cookies;
+    private final HttpMethod method;
+    private final String path;
+    private final Map<String, String> parameters;
+    private final Cookies cookies;
 
-    public ServletRequest(HttpMethod method, String path, Map<String, String> parameters, Cookies cookies) {
+    public ServletRequest(HttpMethod method, String path, Map<String, String> queryParameters, Map<String, String> bodyParameters, Cookies cookies) {
         this.method = method;
         this.path = path;
-        this.parameters = parameters;
         this.cookies = cookies;
+        parameters = concatParameters(queryParameters, bodyParameters);
+    }
+
+    private Map<String, String> concatParameters(Map<String, String> queryParameters, Map<String, String> bodyParameters) {
+        Map<String, String> concat = new HashMap<>();
+        if (queryParameters != null) {
+            concat.putAll(queryParameters);
+        }
+        if (bodyParameters != null) {
+            concat.putAll(bodyParameters);
+        }
+        return concat;
     }
 
     public MappingKey createMappingKey() {
