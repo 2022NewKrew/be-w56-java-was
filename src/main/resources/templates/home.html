@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+</head>
+<body>
+<div class="background">
+    <div class="container" id="main">
+        <header class="post-header">
+            <ul>
+                {{loop users}}
+                <li>
+                    <div>index : {{index}}</div>
+                    <div>아이디: {{name}}</div>
+                    <div> 친구 :
+                        {{loop friends}}
+                        {{name}}
+                        {{/friends}}
+                    </div>
+                </li>
+                {{/users}}
+            </ul>
+        </header>
+    </div>
+</div>
+</body>
+</html>
