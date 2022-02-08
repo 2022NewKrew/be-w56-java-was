@@ -1,31 +1,30 @@
 package webserver.model;
 
+import lombok.Getter;
 import webserver.http.HttpStatus;
 
+@Getter
 public class ModelAndView {
     private final String viewPath;
-    private final HttpStatus status;
+    private final HttpStatus httpStatus;
+    private final Model model;
 
-    public ModelAndView(String viewPath, HttpStatus status) {
+    public ModelAndView(String viewPath, HttpStatus httpStatus) {
         this.viewPath = viewPath;
-        this.status = status;
+        this.httpStatus = httpStatus;
+        this.model = new Model();
     }
 
     public ModelAndView(String viewPath) {
-        this.viewPath = viewPath;
-        this.status = HttpStatus.OK;
-    }
-
-    public String getViewPath() {
-        return viewPath;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return status;
+        this(viewPath, HttpStatus.OK);
     }
 
     public boolean isRedirectView() {
-        return status.equals(HttpStatus.FOUND);
+        return httpStatus.equals(HttpStatus.FOUND);
+    }
+
+    public void addAttribute(String name, Object value) {
+        model.addAttribute(name, value);
     }
 
 }

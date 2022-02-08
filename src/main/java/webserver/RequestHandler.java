@@ -6,6 +6,7 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.infra.Router;
 import webserver.infra.ViewResolver;
+import webserver.model.Model;
 import webserver.model.ModelAndView;
 import webserver.view.ErrorView;
 import webserver.view.View;
@@ -48,10 +49,10 @@ public class RequestHandler extends Thread {
         try {
             ModelAndView modelAndView = router.route(request, response);
             View view = viewResolver.resolve(modelAndView);
-            view.render(response);
+            view.render(response, modelAndView.getModel());
         } catch (BaseException e) {
             ErrorView errorView = new ErrorView(e);
-            errorView.render(response);
+            errorView.render(response, new Model());
         }
     }
 

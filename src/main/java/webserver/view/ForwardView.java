@@ -3,8 +3,10 @@ package webserver.view;
 import exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import util.MimeParser;
+import util.TemplateUtils;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
+import webserver.model.Model;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ public class ForwardView implements View {
     private final String path;
     private final HttpStatus status;
     private HttpResponse response;
+    private Model model;
     private OutputStream os;
 
     public ForwardView(String viewPath, HttpStatus status) {
@@ -25,9 +28,10 @@ public class ForwardView implements View {
     }
 
     @Override
-    public void render(HttpResponse response) throws IOException {
+    public void render(HttpResponse response, Model model) throws IOException {
         this.response = response;
         this.os = response.getOutputStream();
+        this.model = model;
 
         log.info("forward : {}", path);
         forward();
@@ -53,6 +57,10 @@ public class ForwardView implements View {
         File file = new File(path);
         if (!file.exists() || file.isDirectory()) {
             throw new NotFoundException("페이지를 찾을 수 없습니다.");
+        }
+
+        if (path.endsWith(".html")) {
+            return TemplateUtils.parse(file, model);
         }
         return Files.readAllBytes(file.toPath());
     }

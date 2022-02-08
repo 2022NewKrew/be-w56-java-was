@@ -3,6 +3,7 @@ package webserver.view;
 import exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import webserver.http.HttpResponse;
+import webserver.model.Model;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,7 +20,7 @@ public class ErrorView implements View {
     }
 
     @Override
-    public void render(HttpResponse response) throws IOException {
+    public void render(HttpResponse response, Model model) throws IOException {
         this.response = response;
         this.out = response.getOutputStream();
 
