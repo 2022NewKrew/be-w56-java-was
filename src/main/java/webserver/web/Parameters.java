@@ -16,18 +16,17 @@ public class Parameters {
     public Parameters(Request request) {
         parameters.put("request", request);
         parameters.put("builder", new Response.ResponseBuilder());
-        parameters.put("model", new Model());
+        parameters.put("model", request.getModel());
         inputData(request.getUrl().getParameters());
         inputData(request.getBody().getBody());
     }
 
     public void inputData(Map<String, String> data) {
-        data.keySet().forEach(key -> {
-            parameters.put(key, data.get(key));
-        });
+        data.keySet().forEach(key ->
+                parameters.put(key, data.get(key)));
     }
 
-    public Object inquireData(String name, Class type) {
+    public Object inquireData(String name, Class<?> type) {
         if (type.equals(Model.class)) {
             return parameters.get("model");
         }
