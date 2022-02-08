@@ -37,12 +37,12 @@ public class LoginController implements HttpControllable {
             response.headers()
                 .set(HttpHeaders.CONTENT_TYPE, MimeSubtype.TEXT_HTML)
                 .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + WebServerConfig.ENTRY_FILE);
-            response.setCookie("logined=true; Path=/");
+            response.setCookie(WebServerConfig.LOGIN_SUCCESS_COOKIE);
         } catch (WrongPasswordException e) {
             response.setStatus(HttpResponseStatus.FOUND);
             response.headers()
                 .set(HttpHeaders.LOCATION, WebServerConfig.ENDPOINT + "/user/login_failed.html");
-            response.setCookie("logined=false;");
+            response.setCookie(WebServerConfig.LOGIN_FAILED_COOKIE);
             response.setBody(e.getMessage().getBytes(StandardCharsets.UTF_8));
         }
     }

@@ -18,6 +18,10 @@ public class AppConfig {
         return new LoginController(loginUseCase());
     }
 
+    public RootController rootController() {
+        return new RootController();
+    }
+
     private CreateUserUseCase createUserUseCase() {
         return new SignUpService(userRepository());
     }

@@ -1,6 +1,7 @@
 package webserver.servlet;
 
 import app.AppConfig;
+import app.RootController;
 import app.user.adapter.in.LoginController;
 import app.user.adapter.in.SignUpController;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class RequestMapping {
     public RequestMapping() {
         AppConfig appConfig = new AppConfig();
         map = new HashMap<>();
+        map.put(RootController.path, appConfig.rootController());
         map.put(SignUpController.path, appConfig.signUpController());
         map.put(LoginController.path, appConfig.loginController());
     }
