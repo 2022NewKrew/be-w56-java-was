@@ -80,5 +80,70 @@ public class ViewServiceTest {
                 .isEqualTo("Location: http://localhost:8080/index.html");
     }
 
+    @ParameterizedTest
+    @DisplayName("로그인 정보에 따라 유저 목록 페이지 접근이 다르다.")
+    @MethodSource("getLoginInfo")
+    public void 로그인_정보에_따른_유저목록페이지_접근테스트(LoginInfo loginInfo) throws IOException {
+        // given
+        String request = loginInfo.getLoginRequest();
+        HttpStatus status = loginInfo.getStatus();
+        String redirectUrl = loginInfo.getRedirectUrl();
 
+        StringReader sr = new StringReader(request);
+        BufferedReader br = new BufferedReader(sr);
+        HttpRequest httpRequest = new HttpRequest(br);
+
+        // when
+        HttpResponse httpResponse = RequestController.getResponse(httpRequest);
+
+        // then
+        assertThat(httpResponse.getStatus()).isEqualTo(status);
+        if(status.equals(HttpStatus.REDIRECT)){
+            assertThat(httpResponse.getHeaders().getHeaderByKey("Location"))
+                    .isEqualTo("Location: http://localhost:8080" + redirectUrl);
+        }
+    }
+
+    private static Stream<LoginInfo> getLoginInfo(){
+        return Stream.of(
+                new LoginInfo("GET /user/list.html HTTP/1.1\r\n" +
+                        "Host: localhost:8080\r\n" +
+                        "Connection: keep-alive\r\n" +
+                        "Accept: */*\r\n\r\n", HttpStatus.REDIRECT,"/user/login.html"),
+                new LoginInfo("GET /user/list.html HTTP/1.1\r\n" +
+                        "Host: localhost:8080\r\n" +
+                        "Connection: keep-alive\r\n" +
+                        "Cookie: logined=true; Path=/\r\n" +
+                        "Accept: */*\r\n\r\n", HttpStatus.OK, "/user/list.html"),
+                new LoginInfo("GET /user/list.html HTTP/1.1\r\n" +
+                        "Host: localhost:8080\r\n" +
+                        "Connection: keep-alive\r\n" +
+                        "Cookie: logined=false; Path=/\r\n" +
+                        "Accept: */*\r\n\r\n", HttpStatus.REDIRECT,"/user/login.html")
+        );
+    }
+
+    private static class LoginInfo{
+        private final String loginRequest;
+        private final HttpStatus status;
+        private final String redirectUrl;
+
+        public LoginInfo(String loginRequest, HttpStatus status, String redirectUrl) {
+            this.loginRequest = loginRequest;
+            this.status = status;
+            this.redirectUrl = redirectUrl;
+        }
+
+        public String getLoginRequest() {
+            return loginRequest;
+        }
+
+        public HttpStatus getStatus() {
+            return status;
+        }
+
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
+    }
 }
