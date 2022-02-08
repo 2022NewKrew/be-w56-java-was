@@ -25,7 +25,7 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
-    private void runHttp(InputStream in, OutputStream out) throws IOException{
+    private void runHttp(InputStream in, OutputStream out) throws IOException {
         try {
             HttpRequest httpRequest = HttpRequest.of(in);
             Controller controller = ControllerType.getControllerType(httpRequest.getUrl());

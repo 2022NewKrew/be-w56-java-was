@@ -11,9 +11,9 @@ public class HttpSuccessfulResponse extends HttpResponse {
         StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
                 httpStatus.getMessage());
         byte[] body = View.get(url);
-        Map<String, String> headerKeyMap = Map.of(
-                "Content-Type", getContentType(url),
-                "Content-Length", Integer.toString(body.length)
+        Map<HttpHeader, String> headerKeyMap = Map.of(
+                HttpHeader.CONTENT_TYPE, getContentType(url),
+                HttpHeader.CONTENT_LENGTH, Integer.toString(body.length)
         );
         return new HttpSuccessfulResponse(statusLine, new Header(headerKeyMap), body);
     }

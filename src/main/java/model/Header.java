@@ -12,19 +12,19 @@ import util.HttpRequestUtils.Pair;
 public class Header {
 
     public static Header of(List<String> headerLineList) {
-        Map<String, String> header = new HashMap<>();
+        Map<HttpHeader, String> header = new HashMap<>();
 
         for (String headerLine : headerLineList) {
             Pair parseHeaderResult = HttpRequestUtils.parseHeader(headerLine);
-            header.put(parseHeaderResult.getKey(), parseHeaderResult.getValue());
+            header.put(HttpHeader.of(parseHeaderResult.getKey()), parseHeaderResult.getValue());
         }
 
         return new Header(header);
     }
 
-    private final Map<String, String> header;
+    private final Map<HttpHeader, String> header;
 
-    public Header(Map<String, String> header) {
+    public Header(Map<HttpHeader, String> header) {
         this.header = Collections.unmodifiableMap(header);
     }
 
@@ -34,8 +34,8 @@ public class Header {
 
     public List<String> messageList() {
         List<String> messageList = new ArrayList<>();
-        for (Entry<String, String> entry : header.entrySet()) {
-            String key = entry.getKey();
+        for (Entry<HttpHeader, String> entry : header.entrySet()) {
+            HttpHeader key = entry.getKey();
             String value = entry.getValue();
             messageList.add(key + ": " + value);
         }
