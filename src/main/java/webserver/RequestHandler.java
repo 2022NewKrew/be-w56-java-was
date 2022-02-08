@@ -8,6 +8,7 @@ import model.User;
 import webserver.controller.BaseController;
 import webserver.controller.LoginController;
 import webserver.controller.SignupController;
+import webserver.controller.UserListController;
 
 import java.io.*;
 import java.net.Socket;
@@ -31,7 +32,7 @@ public class RequestHandler extends Thread {
     static {
         controllerMap.put("/user/create", new SignupController());
         controllerMap.put("/user/login", new LoginController());
-//        controllerMap.put("/user/list", new UserListController());
+        controllerMap.put("/user/list", new UserListController());
     }
 
     // TODO: thread -> event loop

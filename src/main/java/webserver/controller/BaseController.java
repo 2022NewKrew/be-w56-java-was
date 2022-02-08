@@ -16,21 +16,6 @@ public class BaseController implements Controller {
 
     @Override
     public HttpResponse service(HttpRequest request) {
-        // FIXME
-        try {
-            List<Cookie> cookies = request.getCookies();
-            Long sessionId = cookies.stream()
-                    .filter(x -> x.getName().equals("sessionId"))
-                    .findAny()
-                    .map(x -> Long.parseLong(x.getValue()))
-                    .orElseThrow(NotFound::new);
-            User user = RequestHandler.getSessionUser(sessionId);
-
-            log.debug("세션 유저: {}", user);
-        } catch (Exception e) {
-            log.debug(e.getMessage());
-        }
-
         switch (request.getMethod()) {
             case GET:
                 return get(request);
