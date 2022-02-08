@@ -9,24 +9,13 @@ import app.annotation.Controller;
 import app.annotation.GetMapping;
 import app.annotation.PostMapping;
 import app.db.DataBase;
+import app.exception.UserNotFoundException;
+import app.http.HttpResponse;
 import app.model.user.User;
 
 @Controller
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
-    // @RequestMapping(value = "/user/create", method = "GET")
-    // public HttpResponse createUser(Map<String, String> query) {
-    //     User user = new User(
-    //             query.get("userId"),
-    //             query.get("password"),
-    //             query.get("name"),
-    //             query.get("email"));
-    //     DataBase.addUser(user);
-    //     Map<String, String> headers = new HashMap<>();
-    //     headers.put("Location", "/index.html");
-    //     return new HttpResponse(headers, HttpStatus.Found);
-    // }
 
     @GetMapping(value = "/")
     public String index() {
@@ -43,6 +32,22 @@ public class UserController {
         );
         DataBase.addUser(user);
         log.debug("add User: {} {} {} {}", user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
+        return "redirect:/index.html";
+    }
+
+    @PostMapping(value = "/user/login")
+    public String login(Map<String, String> body, HttpResponse httpResponse) {
+        log.debug("UserController - login");
+        String userId = body.get("userId");
+        String password = body.get("password");
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        if (!user.validatePassword(password)) {
+            log.debug("로그인 실패, 비밀번호 불일치 {}", httpResponse.getCookie().cookieValue());
+            return "redirect:/user/login_failed.html";
+        }
+        httpResponse.setCookie("logined", "true");
+        log.debug("로그인 성공 {}", httpResponse.getCookie().cookieValue());
         return "redirect:/index.html";
     }
 }

@@ -29,7 +29,9 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
             HttpRequest httpRequest = HttpRequestUtils.parseInput(in);
-            HttpResponse httpResponse = DispatcherServlet.getInstance().doService(httpRequest);
+            if(httpRequest == null) return;
+            HttpResponse httpResponse = HttpResponse.of();
+            DispatcherServlet.getInstance().doService(httpRequest, httpResponse);
             if(httpResponse != null) {
                 sendResponse(dos, httpResponse);
             }
@@ -41,7 +43,7 @@ public class RequestHandler extends Thread {
     private void sendResponse(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusLine());
-            dos.writeBytes(httpResponse.responseHeader());
+            dos.writeBytes(httpResponse.header());
             dos.write(httpResponse.getBody(), 0, httpResponse.getBodyLength());
             dos.flush();
         } catch (IOException e) {

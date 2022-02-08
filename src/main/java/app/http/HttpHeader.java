@@ -1,24 +1,17 @@
 package app.http;
 
-import util.HttpRequestUtils.Pair;
-
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static util.Constant.HEADER_FORMAT;
-import static util.Constant.NEW_LINE;
 
 public class HttpHeader {
     private final Map<String, String> headers;
 
-    public static HttpHeader of(List<Pair> pairs) {
-        return new HttpHeader(pairs);
+    public static HttpHeader of() {
+        return new HttpHeader();
     }
 
-    private HttpHeader(List<Pair> pairs) {
-        headers = pairs.stream()
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    private HttpHeader() {
+        headers = new LinkedHashMap<>();
     }
 
     public String get(String key) {
@@ -29,10 +22,11 @@ public class HttpHeader {
         return headers.getOrDefault(key, defaultValue);
     }
 
-    public String headers() {
-        return headers.entrySet()
-                .stream()
-                .map(entry -> String.format(HEADER_FORMAT, entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(NEW_LINE)) + NEW_LINE + NEW_LINE;
+    public void put(String key, String value) {
+        headers.put(key, value);
+    }
+
+    public Map<String, String> header() {
+        return headers;
     }
 }

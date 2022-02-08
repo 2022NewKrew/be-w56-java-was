@@ -1,4 +1,4 @@
-package webserver.handler;
+package webserver.handler.handlerMapping;
 
 import static webserver.IocContainer.getAllAnnotatedClass;
 
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import app.annotation.Controller;
 import app.http.HttpMethod;
 import app.http.HttpRequest;
+import webserver.handler.HandlerMethod;
 import webserver.handler.mappingValidator.DeleteMappingValidator;
 import webserver.handler.mappingValidator.GetMappingValidator;
 import webserver.handler.mappingValidator.MappingValidator;
