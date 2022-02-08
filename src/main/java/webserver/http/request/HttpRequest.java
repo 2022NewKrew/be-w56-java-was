@@ -1,6 +1,7 @@
 package webserver.http.request;
 
-import static webserver.http.HttpMeta.LOGINED;
+import static webserver.http.HttpMeta.NO_SESSION;
+import static webserver.http.HttpMeta.SESSION_ID_IN_COOKIE;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,12 +54,14 @@ public class HttpRequest {
         return HttpRequestUtils.parseQueryString(body);
     }
 
-    public boolean isLogin() {
+    public int getSessionId() {
         String cookieStr = requestHeaders.getCookie();
-        if (cookieStr == null) {
-            return false;
+        Map<String, String> cookie = HttpRequestUtils.parseCookies(cookieStr);
+        String sessionIdStr = cookie.get(SESSION_ID_IN_COOKIE);
+        if (sessionIdStr == null) {
+            return NO_SESSION;
         }
-        return cookieStr.endsWith(LOGINED);
+        return Integer.parseInt(sessionIdStr);
     }
 
     public void checkRequestValidation() throws NullRequestException {

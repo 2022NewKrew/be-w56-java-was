@@ -1,13 +1,16 @@
 package Controller;
 
 import static webserver.http.HttpMeta.MIME_TYPE_OF_HTML;
+import static webserver.http.HttpMeta.NO_SESSION;
 
+import db.SessionStorage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import model.Session;
 import model.User;
 import service.GetUserListService;
 import webserver.http.request.HttpRequest;
@@ -20,7 +23,7 @@ public class PrintUserListController implements Controller {
 
     @Override
     public void process(HttpRequest request, HttpResponse response) throws IOException {
-        if (!request.isLogin()) {
+        if (!isLogin(request)) {
             response.redirectLoginPage();
             return;
         }
@@ -58,5 +61,15 @@ public class PrintUserListController implements Controller {
               .append("</tr>\n");
         }
         return sb.toString();
+    }
+
+    private boolean isLogin(HttpRequest request) {
+        int session_id = request.getSessionId();
+        if (session_id == NO_SESSION) {
+            return false;
+        }
+
+        Session session = SessionStorage.findUserById(session_id);
+        return session != null && !session.isExpired();
     }
 }
