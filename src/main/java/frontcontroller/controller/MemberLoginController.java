@@ -7,15 +7,16 @@ import model.User;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 import util.MyHttpStatus;
+import util.MySession;
 
 import java.io.IOException;
 
 public class MemberLoginController implements MyController {
 
     @Override
-    public ModelView process(MyHttpRequest request, MyHttpResponse response) throws IOException {
+    public ModelView process(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
         if (request.getMethod() == MyHttpStatus.POST) {
-            return post(request, response);
+            return post(request, response, session);
         } else if (request.getMethod() == MyHttpStatus.GET) {
             return get(request, response);
         }
@@ -27,20 +28,18 @@ public class MemberLoginController implements MyController {
         return mv;
     }
 
-    private ModelView post(MyHttpRequest request, MyHttpResponse response) throws IOException {
-
+    private ModelView post(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
         String userId = request.getPathVariable("userId");
         String password = request.getPathVariable("password");
-
         User user = DataBase.findUserById(userId);
 
         if (user != null && user.getPassword().equals(password)) {
+            session.setAttribute("loginUser", user);
+            session.setAttribute("logined", true);
             response.getCookie().set("logined", true);
-        } else {
-            response.getCookie().set("logined", false);
         }
 
-        ModelView mv = new ModelView("redirect:/index");
+        ModelView mv = new ModelView("redirect:/");
         return mv;
     }
 }

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 import util.MyHttpResponseStatus;
+import util.MySession;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class FrontController {
         controllerMapping.put("/user/list", new UserListController());
     }
 
-    public void service(MyHttpRequest request, MyHttpResponse response) throws IOException {
+    public void service(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
 
         String requestURI = request.getRequestURI();
 
@@ -46,7 +47,7 @@ public class FrontController {
         }
 
         response.setStatus(MyHttpResponseStatus.OK);
-        ModelView mv = controller.process(request, response);
+        ModelView mv = controller.process(request, response, session);
         String viewName = mv.getViewName();
         MyView view = viewResolver(viewName);
 
@@ -55,6 +56,10 @@ public class FrontController {
     }
 
     private MyView viewResolver(String viewName) {
+        if (viewName.indexOf("redirect:") == 0) {
+            return new MyView(viewName);
+        }
+
         int extensionOf = viewName.indexOf(".");
 
         if (haveExtension(extensionOf)) {

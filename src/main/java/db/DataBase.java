@@ -26,7 +26,7 @@ public class DataBase {
      * init database
      */
     static {
-        addUser(new User("jm.hong", "jm.hong", "Hongjeongmin", "jm.hong@kakaocorp.com"));
-        addUser(new User("sangin", "mark.lim", "limSangZin", "mark.lim@kakaocorp.com"));
+        addUser(new User.Builder().userId("jm.hong").password("jm.hong").name("Hongjeongmin").email("jm.hong@kakaocorp.com").build());
+        addUser(new User.Builder().userId("sangin").password("mark.lim").name("limSangZin").email("mark.lim@kakaocorp.com").build());
     }
 }
