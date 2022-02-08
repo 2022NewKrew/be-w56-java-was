@@ -5,10 +5,11 @@ import exception.InternalErrorException;
 import filter.FilterChain;
 import handler.HandlerMapping;
 import handler.HandlerMethod;
-import handler.HandlerResult;
+import handler.result.HandlerResult;
 import http.request.HttpRequest;
 import http.request.RawHttpRequest;
 import http.response.HttpResponse;
+import http.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +40,11 @@ public class RequestDispatcher extends Thread {
             HttpResponse httpResponse;
 
             try{
-                FilterChain filterChain = new FilterChain();
+                FilterChain filterChain = FilterChain.getInstance();
                 filterChain.doFilter(rawHttpRequest);
             } catch (IllegalContentTypeException e) {
                 log.error(e.getMessage());
-                httpResponse = HttpResponse.error();
+                httpResponse = HttpResponse.error(Status.BAD_REQUEST);
                 httpResponse.send(out);
             }
 
@@ -52,7 +53,7 @@ public class RequestDispatcher extends Thread {
             HandlerMethod handlerMethod = HandlerMapping.findHandlerMethodOf(httpRequest);
 
             if (handlerMethod == null) {
-                httpResponse = HttpResponse.ofStatic(httpRequest);
+                httpResponse = HttpResponse.fromStaticRequest(httpRequest);
                 log.info(httpResponse.toString());
                 httpResponse.send(out);
                 return;
@@ -60,10 +61,10 @@ public class RequestDispatcher extends Thread {
 
             try {
                 HandlerResult handlerResult = handlerMethod.invoke(httpRequest);
-                httpResponse = HttpResponse.fromHandlerResult(httpRequest, handlerResult);
+                httpResponse = HttpResponse.fromHandlerResult(handlerResult);
             } catch (InternalErrorException e) {
                 log.error(e.getMessage());
-                httpResponse = HttpResponse.error();
+                httpResponse = HttpResponse.error(Status.INTERNAL_SERVER_ERROR);
             }
 
             log.info(httpResponse.toString());

@@ -2,7 +2,7 @@ package http.response;
 
 public class Cookie {
     private static final String COOKIE_DEFAULT_PATH = "/";
-    private static final int COOKIE_DEFAULT_MAX_AGE = 60 * 60 * 1000; // 1h
+    private static final int COOKIE_DEFAULT_MAX_AGE = 60 * 60; // 1h
 
     private final String key;
     private final String value;
@@ -21,8 +21,8 @@ public class Cookie {
     }
 
     public static class Builder {
-        private String key;
-        private String value;
+        private final String key;
+        private final String value;
         private String path;
         private int maxAge;
 
