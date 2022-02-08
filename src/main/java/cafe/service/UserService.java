@@ -4,14 +4,13 @@ import cafe.controller.exception.IncorrectLoginUserException;
 import cafe.model.User;
 import cafe.repository.UserRepository;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserService {
 
-    private static final String WEBAPP_PATH = "./webapp";
+    private static final String WEBAPP_PATH = "/webapp";
 
     private final UserRepository userRepository;
 
@@ -20,8 +19,8 @@ public class UserService {
     }
 
     public String getUserListHtml() throws IOException {
-        File file = new File(WEBAPP_PATH + "/user/list.html");
-        byte[] bytes = Files.readAllBytes(file.toPath());
+        InputStream resourceAsStream = this.getClass().getResourceAsStream(WEBAPP_PATH + "/user/list.html");
+        byte[] bytes = resourceAsStream.readAllBytes();
         String htmlString = new String(bytes);
 
         StringBuilder usersHtml = new StringBuilder();
