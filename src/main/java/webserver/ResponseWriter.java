@@ -18,6 +18,7 @@ public class ResponseWriter {
     private static final Logger log = LoggerFactory.getLogger(ResponseWriter.class);
 
     private static final String FILE_PREFIX = "./webapp";
+    private static final String FILE_DEFAULT = "index.html";
 
     private static final String RESPONSE_TOP_HEADER_OK = "HTTP/1.1 200 OK\r\n";
     private static final String RESPONSE_TOP_HEADER_SEE_OTHER = "HTTP/1.1 303 See Other\r\n";
@@ -26,7 +27,7 @@ public class ResponseWriter {
     public void writeFileResponse(final OutputStream out, final String filePath) throws IOException {
         File file = new File(FILE_PREFIX + filePath);
         if (filePath.endsWith("/")) {
-            file = new File(file, "index.html");
+            file = new File(file, FILE_DEFAULT);
         }
         if (file.exists() && file.isFile()) {
             final Path path = file.toPath();
