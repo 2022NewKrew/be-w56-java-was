@@ -1,10 +1,11 @@
 package web.http.request;
 
 import util.IOUtils;
-import web.http.response.HttpResponseStatusLine;
+import util.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 
 public class HttpRequest {
     private final HttpRequestLine httpRequestLine;
@@ -20,8 +21,12 @@ public class HttpRequest {
         return httpRequestLine;
     }
 
-    public HttpRequestHeaders getHttpRequestHeaders() {
+    public HttpRequestHeaders getHeaders() {
         return httpRequestHeaders;
+    }
+
+    public List<Pair> getHeadersList() {
+        return httpRequestHeaders.getHeaders();
     }
 
     public String getBodyData(){

@@ -39,8 +39,7 @@ class UserServiceTest {
         assertThat(httpRequest.getHttpRequestLine().toString()).isEqualTo(requestStrings.get(0));
 
         AtomicInteger index = new AtomicInteger();
-        httpRequest.getHttpRequestHeaders()
-                .getHeaders().forEach(header ->
+        httpRequest.getHeadersList().forEach(header ->
                         assertThat(header.toString()).isEqualTo(requestStrings.get(index.getAndIncrement()+1)));
     }
 
