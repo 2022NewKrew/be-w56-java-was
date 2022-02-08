@@ -23,3 +23,19 @@
 * Spring Controller가 리플렉션을 이용해 구현한 것을 알게 됐다.
   * 다음 미션이 진행되면 어노테이션과 리플렉션을 이용해 구조를 변경할 수 있을 것 같다.
 * 전략 패턴에 대해 알게 됐다.
+
+## Step 5
+
+### 요구사항
+* 접근하고 있는 사용자가 “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다.
+* 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
+
+#### 동적인 html 생성 힌트
+* 자바 클래스 중 StringBuilder를 활용해 사용자 목록을 출력하는 html을 동적으로 생성한 후 응답으로 보낸다.
+* 구글에서 “java stringbuilder example”로 검색해 StringBuilder 사용법을 찾는다.
+
+### 새롭게 알게된 내용
+* URLDecoder를 통해 URL의 한글, 특수문자 등을 decode할 수 있는 것을 알게 됐다.
+  * HttpRequestBody의 내용도 같은 방식으로 decode할 수 있는 것을 알게 됐다.
+* TemplateEngine이 reflection을 통해 구현된 것을 알게 됐다.
+* Interface의 default method에 대해서 알게 됐다.
