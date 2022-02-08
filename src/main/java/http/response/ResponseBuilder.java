@@ -31,11 +31,14 @@ public class ResponseBuilder {
             return;
         }
 
-        body = Files.readAllBytes(new File("./webapp" + path).toPath());
-        response.setBody(body);
+        if(response.getBody()==null) {
+            body = Files.readAllBytes(new File("./webapp" + path).toPath());
+            response.setBody(body);
+        }
+
         response.setStatusCode(HttpStatusCode.OK);
 
         responseHeader.addHeader("Content-Type: text/html;charset=utf-8");
-        responseHeader.addHeader("Content-Length: " + body.length);
+        responseHeader.addHeader("Content-Length: " + response.getBody().length);
     }
 }

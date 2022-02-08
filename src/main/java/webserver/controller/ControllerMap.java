@@ -12,6 +12,7 @@ public class ControllerMap {
         controllerMap.put("/", HomeController.getInstance());
         controllerMap.put("/user/create", UserController.getInstance());
         controllerMap.put("/user/login", UserController.getInstance());
+        controllerMap.put("/user/list", UserController.getInstance());
     }
 
     public Controller getController(String path){
