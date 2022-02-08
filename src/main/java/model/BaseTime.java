@@ -7,12 +7,26 @@ public class BaseTime {
     private LocalDateTime modifiedTime;
 
     public BaseTime(LocalDateTime createTime, LocalDateTime modifiedTime) {
+        checkCreateTime(createTime);
+        checkModifiedTime(modifiedTime);
+
         this.createTime = createTime;
         this.modifiedTime = modifiedTime;
     }
 
     public BaseTime() {
         this(LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    private void checkCreateTime(LocalDateTime createTime) {
+        if(createTime == null) {
+            throw new IllegalArgumentException("illegal CreateTime");
+        }
+    }
+    private void checkModifiedTime(LocalDateTime modifiedTime) {
+        if(modifiedTime == null) {
+            throw new IllegalArgumentException("illegal ModifiedTime");
+        }
     }
 
     public LocalDateTime getCreateTime() {

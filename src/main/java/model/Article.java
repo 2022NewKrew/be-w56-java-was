@@ -13,6 +13,12 @@ public class Article extends BaseTime {
     public Article(ObjectId id, String title, String author, String content,
             LocalDateTime createTime, LocalDateTime modifiedTime) {
         super(createTime, modifiedTime);
+
+        checkId(id);
+        checkTitle(title);
+        checkAuthor(author);
+        checkContent(content);
+
         this.id = id;
         this.title = title;
         this.author = author;
@@ -23,6 +29,29 @@ public class Article extends BaseTime {
         this(id, title, author, content, LocalDateTime.now(), LocalDateTime.now());
     }
 
+    private void checkId(ObjectId id) {
+        if(id == null) {
+            throw new IllegalArgumentException("illegal id");
+        }
+    }
+
+    private void checkTitle(String title) {
+        if(title == null) {
+            throw new IllegalArgumentException("illegal title");
+        }
+    }
+
+    private void checkAuthor(String author) {
+        if(author == null) {
+            throw new IllegalArgumentException("illegal author");
+        }
+    }
+
+    private void checkContent(String content) {
+        if(content == null) {
+            throw new IllegalArgumentException("illegal content");
+        }
+    }
     public ObjectId getId() {
         return id;
     }
