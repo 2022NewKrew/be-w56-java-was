@@ -1,5 +1,6 @@
 package webserver;
 
+import DTO.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.controller.Controller;
@@ -19,9 +20,12 @@ public class HandlerMapper {
         memberController.map(controllerList);
     }
 
-    public static Controller requestMapping(String requestUrl){
-        log.info("[handlerMapper] request url: {}",requestUrl);
-        log.info("[handlerMapper] request url: {}",controllerList.keySet());
+    public static Controller requestMapping(RequestHeader requestHeader){
+        String requestUrl = requestHeader.getRequestUrl();
+
+        log.info("[HandlerMapper] request url: {}",requestUrl);
+        log.info("[HandlerMapper] existing url list: {}",controllerList.keySet());
+
         return controllerList.get(requestUrl);
     }
 }
