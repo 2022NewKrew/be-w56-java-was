@@ -12,31 +12,37 @@ import java.nio.file.Files;
 public class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
-    public static void handleHtmlResponse(String path, OutputStream out, Status status) throws IOException {
+    public static void handleHtmlResponse(String path, OutputStream out, Status status, boolean cookie) throws IOException {
 
         DataOutputStream dos = new DataOutputStream(out);
 
         switch (status) {
             case OK:
                 byte[] body = getHtmlBytes(path);
-                response200Header(dos, body.length);
+                response200Header(dos, body.length, cookie);
                 responseBody(dos, body);
                 break;
             case FOUND:
-                response302Header(dos, "/index.html");
+                response302Header(dos, path);
                 break;
         }
+    }
+
+    public static void redirect(String path, OutputStream out){
+        DataOutputStream dos = new DataOutputStream(out);
+        response302Header(dos, path);
     }
 
     private static byte[] getHtmlBytes(String url) throws IOException {
         return Files.readAllBytes(new File("./webapp" + url).toPath());
     }
 
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, boolean cookie) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("Set-Cookie: logined="+cookie+"; Path=/\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

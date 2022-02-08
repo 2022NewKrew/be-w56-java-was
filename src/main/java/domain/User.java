@@ -15,6 +15,14 @@ public class User {
         this.email = query.get("email");
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     @Override
     public String toString() {
         return "User{" +
