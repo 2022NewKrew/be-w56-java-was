@@ -81,3 +81,88 @@
    - H2 또는 MySQL 혹은 NoSQL 등 데이터베이스를 활용하여 회원정보를 DB에 저장한다.
    - index.html에 로그인한 사용자가 글을 쓸 수 있는 한 줄 메모장을 구현한다.
    - 로그인하지 않은 사용자도 게시글을 볼 수 있다.
+
+# HTTP 리팩터링
+- Cookie 클래스 추가, HttpCookie 일급 컬렉션 구현
+- DataOutputStream 객체 처리 리팩터링
+- ResponseHandler 클래스 추가
+- HttpVersion enum 추가
+- Cookie, HttpRequest, HttpResponse 테스트 케이스 추가
+
+### 스트링의 + 연산은 컴파일러에서 최적화 해준다.(JDK 버전마다 다르다!)
+
+#### 스트링 + 연산의 역컴파일 결과
+
+* 원래 소스
+```java
+public class StringTest {  
+    public static void main(String[] args) {  
+        String str0 = "It's a string....";  
+        String str1 = "It's" + " a string" + "....";  
+        String str2 = "It's a string...." + str0 + "000";  
+        str2 = str0 + str1 + "1111" ;        
+        str2 = str2 + "1111";  
+        str2 += "1111";        
+        for (int i=0;i<10;i++){  
+            str2 = str2 + "1111";  
+            str2 += "1111";        
+        }  
+    }  
+}
+```
+
+* JDK 1.4
+```java
+public class StringTest{
+ 
+    public StringTest()    {  
+    }
+ 
+    public static void main(String args[])    {  
+        String str0 = "It's a string....";  
+        String str1 = "It's a string....";  
+        String str2 = "It's a string...." + str0 + "000";  
+        str2 = str0 + str1 + "1111";  
+        str2 = str2 + "1111";  
+        str2 = str2 + "1111";  
+        for(int i = 0; i < 10; i++)        {  
+            str2 = str2 + "1111";  
+            str2 = str2 + "1111";  
+        }
+
+    }  
+} 
+```
+
+* JDK 1.5
+```java
+public class StringTest{  
+    public StringTest()    {  
+    }
+
+    public static void main(String args[])    {  
+        String str0 = "It's a string....";  
+        String str1 = "It's a string....";  
+        String str2 = (new StringBuilder("It's a string....")).append(str0).append("000").toString();  
+        str2 = (new StringBuilder(String.valueOf(str0))).append(str1).append("1111").toString();  
+        str2 = (new StringBuilder(String.valueOf(str2))).append("1111").toString();  
+        str2 = (new StringBuilder(String.valueOf(str2))).append("1111").toString();  
+        for(int i = 0; i < 10; i++)        {  
+            str2 = (new StringBuilder(String.valueOf(str2))).append("1111").toString();  
+            str2 = (new StringBuilder(String.valueOf(str2))).append("1111").toString();  
+        }  
+    }  
+}
+```
+
+> JDK 1.5 버전 부터 StringBuilder로 자동 치환된다.    
+> 하지만 new 키워드를 통해 계속해서 매 라인마다 StringBuilder 객체가 생성되므로 메모리에 비효율적이며 GC로 인해 성능이 저하될 수 있다!
+
+* JDK 9
+
+> JDK 9 버전 부터는 스트링 + 연산에서 StringBuilder 객체를 생성하지 않고, StringConcatFactory 의 메서드들을 호출한다.   
+> 따라서, JDK 8 에 비해 엄청난 최적화가 되었다.
+>    
+> 관련 글   
+> [https://dzone.com/articles/jdk-9jep-280-string-concatenations-will-never-be-t](https://dzone.com/articles/jdk-9jep-280-string-concatenations-will-never-be-t)   
+> [https://medium.com/javarevisited/5-effective-string-practices-you-should-know-e9a75811b123](https://medium.com/javarevisited/5-effective-string-practices-you-should-know-e9a75811b123)   
