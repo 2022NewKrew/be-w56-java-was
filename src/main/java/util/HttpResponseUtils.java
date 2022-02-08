@@ -10,25 +10,27 @@ import java.io.IOException;
 public class HttpResponseUtils {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    public static void response200Header(DataOutputStream dos, String respContextType, int lengthOfBodyContent) {
+    public static void responseHeader(DataOutputStream dos, HttpResponse response) {
+        System.out.println(response.getStatusCode());
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + respContextType + ";charset=utf-8\r\n");
-//            dos.writeBytes("Set-Cookie: logined=true; Path=/\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    public static void response302Header(DataOutputStream dos, String url, String headers) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + url + "\r\n");
-            dos.writeBytes(headers);
-//            dos.writeBytes("Set-Cookie: logined=true; Path=/\r\n");
-            dos.writeBytes("\r\n");
+            switch (response.getStatusCode()) {
+                case "200":
+                    dos.writeBytes(response.getHttpVersion() + " 200 OK \r\n");
+                    dos.writeBytes(response.getTotalHeader());
+//                    dos.writeBytes("Content-Type: " + response.getHeaderElem("Content-Type") + ";charset=utf-8\r\n");
+//                    dos.writeBytes("Content-Length: " + response.getHeaderElem("Content-Length") + "\r\n");
+                    dos.writeBytes("\r\n");
+                    break;
+                case "302":
+                    dos.writeBytes(response.getHttpVersion() + " 302 Found \r\n");
+                    dos.writeBytes(response.getTotalHeader());
+//                    dos.writeBytes("Location: " + response.getHeaderElem("Location") + "\r\n");
+//                    dos.writeBytes(re);
+                    dos.writeBytes("\r\n");
+                    break;
+                default:
+                    break;
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }

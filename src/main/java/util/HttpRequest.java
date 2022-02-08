@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class Request {
+public class HttpRequest {
     private String method;
     private String url;
     private String protocol;
@@ -16,16 +16,17 @@ public class Request {
     private String body;
     private Map<String, String> query;
 
-    public Request(InputStream in) throws IOException {
+    public HttpRequest(InputStream in) throws IOException {
         parse(in);
     }
 
     private void parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-        // request parsing
+        // requestLine parsing
         String line = br.readLine();
-        Map<String, String> requestLine = HttpRequestUtils.parseReponseLine(line);
+        System.out.println(line);
+        Map<String, String> requestLine = HttpRequestUtils.parseRequestLine(line);
         method = requestLine.get("method");
         url = requestLine.get("url");
         protocol = requestLine.get("protocol");
@@ -34,7 +35,6 @@ public class Request {
         // header parsing
         headers = HttpRequestUtils.parseResponseHeader(br);
         MIME = headers.get("Accept").split(",")[0];
-
         if (method.equals("POST")) {
             body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
         }
