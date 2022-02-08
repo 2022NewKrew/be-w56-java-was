@@ -6,11 +6,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HttpRequestUtils {
+public final class HttpRequestUtils {
 
     private static final String REQUEST_DELIMITER = " ";
     private static final String ACCEPT_TYPE_DELIMITER = ",";
     private static final String PATH_DELIMITER = "\\?";
+
+    private HttpRequestUtils() {}
 
     public static String[] parsePath(String path) {
         return path.split(PATH_DELIMITER);
