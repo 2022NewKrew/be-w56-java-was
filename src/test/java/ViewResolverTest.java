@@ -24,8 +24,10 @@ public class ViewResolverTest {
         users.add(User.builder().id(1).name("test1").email("asdf@asdf").build());
         users.add(User.builder().id(2).name("test2").email("asdf2@asdf").build());
         mv.addAttribute("users", users);
-        System.out.println(users);
-        viewResolver.render(mv, body);
-        System.out.println(users.getClass().getName());
+        String resultHtml = new String(viewResolver.render(mv, body));
+        System.out.println(resultHtml);
+
+        assertThat(resultHtml).contains("<th scope=\"row\"><a href=\"/users/1\" />1</a></th><td>null</td> <td>test1</td> <td>asdf@asdf</td><td><a href=\"/users/1/form\"");
+        assertThat(resultHtml).contains("<th scope=\"row\"><a href=\"/users/2\" />2</a></th><td>null</td> <td>test2</td> <td>asdf2@asdf</td><td><a href=\"/users/2/form\"");
     }
 }
