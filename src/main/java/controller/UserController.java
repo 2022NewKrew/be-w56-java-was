@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import util.ResponseStatus;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
 import static controller.RequestPathMapper.*;
+import static java.net.URLDecoder.decode;
 
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -64,7 +66,10 @@ public class UserController {
 
         int idx = 1;
         for (User user : users) {
-            sb.append(String.format(USERLIST_FORMAT, idx++, user.getUserId(), user.getName(), user.getEmail()));
+            String userId = decode(user.getUserId(), StandardCharsets.UTF_8);
+            String userName = decode(user.getName(), StandardCharsets.UTF_8);
+            String userEmail = decode(user.getEmail(), StandardCharsets.UTF_8);
+            sb.append(String.format(USERLIST_FORMAT, idx++, userId, userName, userEmail));
         }
 
         while (!(line = br.readLine()).equals("")) {
