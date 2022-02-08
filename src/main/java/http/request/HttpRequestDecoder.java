@@ -34,8 +34,8 @@ public class HttpRequestDecoder {
 
         // read body if "content-length" header exists
         String body = null;
-        if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.toString())) {
-            int contentLength = Integer.parseInt(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.toString()));
+        if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.getValue())) {
+            int contentLength = Integer.parseInt(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.getValue()));
             body = HttpRequestUtils.readData(br, contentLength);
             body = URLDecoder.decode(body, StandardCharsets.UTF_8);
         }
