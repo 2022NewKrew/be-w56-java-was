@@ -17,16 +17,17 @@ public class HttpCookieUtils {
 
         //parse cookies from requestHeader
         for (String lineStr : requestHeader) {
-            if (lineStr.startsWith(START_DELIMITER)) {
-                String cookieStr = lineStr.substring(START_DELIMITER.length(), lineStr.length());
-                Arrays.asList(cookieStr.split(ATTR_DELIMITER)).stream().forEach(
-                        (keyValueStr) -> {
-                            String[] keyValue = keyValueStr.split(KEY_VALUE_DELIMITER);
-                            attribute.put(keyValue[0], keyValue[1]);
-                        });
-
-                break;
+            if(!lineStr.startsWith(START_DELIMITER)){
+                continue;
             }
+
+            String cookieStr = lineStr.substring(START_DELIMITER.length(), lineStr.length());
+            Arrays.asList(cookieStr.split(ATTR_DELIMITER)).stream().forEach(
+                    (keyValueStr) -> {
+                        String[] keyValue = keyValueStr.split(KEY_VALUE_DELIMITER);
+                        attribute.put(keyValue[0], keyValue[1]);
+                    });
+            break;
         }
 
         return attribute;
