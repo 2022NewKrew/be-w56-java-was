@@ -8,6 +8,7 @@ import webserver.annotation.RequestMethod;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
@@ -26,7 +27,7 @@ public class WebHttpRequest extends HttpRequest {
     private WebHttpRequest(BufferedReader in) throws IOException {
         String[] request = in.readLine().split(" ");
         this.method = RequestMethod.valueOf(request[0]);
-        this.requestURI = request[1];
+        this.requestURI = URLDecoder.decode(request[1], "UTF-8");
         this.version = request[2];
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
@@ -48,7 +49,10 @@ public class WebHttpRequest extends HttpRequest {
                     this.headers.put(pair.getKey(), values);
                 });
         if (method == RequestMethod.POST && this.headers.containsKey("Content-Length")) {
-            this.body = IOUtils.readData(in, Integer.parseInt((String) this.headers.get("Content-Length").get(0)));
+            this.body = URLDecoder.decode(
+                    IOUtils.readData(in, Integer.parseInt((String) this.headers.get("Content-Length").get(0))),
+                    "UTF-8"
+            );
         } else {
             this.body = "";
         }
