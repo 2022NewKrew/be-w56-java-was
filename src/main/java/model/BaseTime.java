@@ -14,10 +14,6 @@ public class BaseTime {
         this.modifiedTime = modifiedTime;
     }
 
-    public BaseTime() {
-        this(LocalDateTime.now(), LocalDateTime.now());
-    }
-
     private void checkCreateTime(LocalDateTime createTime) {
         if(createTime == null) {
             throw new IllegalArgumentException("illegal CreateTime");
