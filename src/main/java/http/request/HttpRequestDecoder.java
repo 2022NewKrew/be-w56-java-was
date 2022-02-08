@@ -6,6 +6,7 @@ import http.header.HttpHeaders;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * {@link BufferedReader}에서 {@link HttpRequest} 디코딩해 반환하는 클래스
@@ -30,18 +31,12 @@ public class HttpRequestDecoder {
         HttpHeaders headers = getHeaders(br);
 
         // read body if "content-length" header exists
-        StringBuilder sb = new StringBuilder();
-        if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.name())) {
-            long contentLength = Long.parseLong(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.name()));
-
-            long cursor = 0;
-            while ((cursor < contentLength) && !Strings.isNullOrEmpty(line = br.readLine())) {
-                cursor += line.getBytes().length;
-                if (cursor > contentLength) {
-                    line = line.substring(0, (int) (line.length() - (cursor-contentLength)));
-                }
-                sb.append(line);
-            }
+        String body = null;
+        if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.toString())) {
+            int contentLength = Integer.parseInt(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.toString()));
+            char[] buf = new char[contentLength];
+            br.read(buf, 0, contentLength);
+            body = String.valueOf(buf);
         }
 
         return HttpRequest.builder()
@@ -49,7 +44,7 @@ public class HttpRequestDecoder {
                 .uri(uri)
                 .protocolVersion(protocolVersion)
                 .headers(headers)
-                .body(sb.toString())
+                .body(body)
                 .build();
     }
 

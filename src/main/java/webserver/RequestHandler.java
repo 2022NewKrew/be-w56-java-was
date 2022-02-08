@@ -4,7 +4,7 @@ import http.request.HttpRequest;
 import http.request.HttpRequestDecoder;
 import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
-import webserver.controller.AbstractController;
+import webserver.controller.BaseController;
 import webserver.controller.SignupController;
 
 import java.io.*;
@@ -22,7 +22,7 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
-    private static final Map<String, AbstractController> controllerMap = new HashMap<>();
+    private static final Map<String, BaseController> controllerMap = new HashMap<>();
 
     static {
         controllerMap.put("/user/create", new SignupController());
@@ -45,7 +45,7 @@ public class RequestHandler extends Thread {
              DataOutputStream dos = new DataOutputStream(out);
         ) {
             HttpRequest request = HttpRequestDecoder.decode(br);
-            AbstractController controller = getController(request.getUri());
+            BaseController controller = getController(request.getUri());
 
             HttpResponse response = controller.service(request);
             response.send(dos);
@@ -56,8 +56,8 @@ public class RequestHandler extends Thread {
 
     /* ---------------------------------------------------------------------- */
 
-    public static AbstractController getController(String path) {
+    public static BaseController getController(String path) {
         return controllerMap
-                .getOrDefault(path, new AbstractController());
+                .getOrDefault(path, new BaseController());
     }
 }

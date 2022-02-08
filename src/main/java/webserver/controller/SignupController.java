@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class SignupController extends AbstractController {
+public class SignupController extends BaseController {
 
     @Override
     public HttpResponse post(HttpRequest request) {
         // FIXME: post는 body에서 가져와야 함 (Content-Type: application/x-www-form-urlencoded)
-        Map<String, String> queryParams = request.getQueryParams();
+        Map<String, String> queryParams = request.parseUrlEncodedBody();
         List<String> userProperties = List.of("userId", "password", "name", "email");
 
         if (!userProperties.stream().allMatch(queryParams::containsKey)) {

@@ -4,7 +4,7 @@ import http.exception.UnsupportedHttpMethod;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 
-public class AbstractController implements Controller {
+public class BaseController implements Controller {
 
     @Override
     public HttpResponse service(HttpRequest request) {
