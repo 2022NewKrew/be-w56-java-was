@@ -3,10 +3,10 @@ package controller;
 import db.DataBase;
 import java.io.IOException;
 import java.util.Map;
+import model.HttpRedirectionResponse;
 import model.HttpRequest;
 import model.HttpResponse;
 import model.HttpStatus;
-import model.ResponseFactory;
 import model.User;
 
 public class UserCreateController implements Controller {
@@ -26,6 +26,6 @@ public class UserCreateController implements Controller {
         User user = new User(queries.get("userId"), queries.get("password"), queries.get("name"), queries.get("email"));
 
         DataBase.addUser(user);
-        return ResponseFactory.getResponse(request, HttpStatus.FOUND);
+        return HttpRedirectionResponse.of(HttpStatus.FOUND, request.getUrl());
     }
 }

@@ -2,10 +2,11 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import model.HttpClientErrorResponse;
 import model.HttpRequest;
 import model.HttpResponse;
 import model.HttpStatus;
-import model.ResponseFactory;
+import model.HttpSuccessfulResponse;
 
 public class StaticFileController implements Controller {
 
@@ -22,8 +23,8 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request) throws IOException {
         File file = new File("./webapp" + request.getUrl());
         if (!file.exists()) {
-            return ResponseFactory.getResponse(request, HttpStatus.NOT_FOUND);
+            return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, "/errors/notFoundError.html");
         }
-        return ResponseFactory.getResponse(request, HttpStatus.OK);
+        return HttpSuccessfulResponse.of(HttpStatus.OK, request.getUrl());
     }
 }
