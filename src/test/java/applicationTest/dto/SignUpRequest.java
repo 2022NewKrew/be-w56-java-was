@@ -1,4 +1,4 @@
-package application.dto;
+package applicationTest.dto;
 
 public class SignUpRequest {
 

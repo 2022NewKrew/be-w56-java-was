@@ -15,9 +15,6 @@ public class RequestParams {
     }
 
     public Object getValue(String key) {
-        if(!params.containsKey(key)) {
-            throw new NullPointerException("해당 파라미터가 존재하지 않습니다.");
-        }
-        return params.get(key);
+        return params.getOrDefault(key, new Object());
     }
 }

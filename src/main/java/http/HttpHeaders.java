@@ -15,6 +15,8 @@ public class HttpHeaders {
 
     public static final String SET_COOKIE = "Set-Cookie";
 
+    public static final String COOKIE = "Cookie";
+
     private final MultiValueMap<String, String> headers;
 
     private HttpHeaders(MultiValueMap<String, String> headers) {

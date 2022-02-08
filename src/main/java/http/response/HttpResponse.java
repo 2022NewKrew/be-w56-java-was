@@ -4,6 +4,7 @@ import http.HttpBody;
 import http.HttpHeaders;
 import http.HttpStatus;
 import http.MultiValueMap;
+import webapplication.dto.ViewRenderingResult;
 
 import java.util.Map;
 
@@ -49,10 +50,6 @@ public class HttpResponse {
 
     public HttpHeaders getHeaders() {
         return this.headers;
-    }
-
-    public StatusLine getStatusLine() {
-        return statusLine;
     }
 
     public static class Builder {

@@ -4,7 +4,8 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.routes.Router;
+import webapplication.WebApplication;
+import webapplication.routes.Router;
 import webserver.handler.StaticFileHandler;
 
 public class HttpProcessor {
@@ -17,9 +18,8 @@ public class HttpProcessor {
      * 3. 없다면, Page Not Found
      */
     public static HttpResponse handle(HttpRequest httpRequest) {
-        Router router = Router.getInstance();
-        if(router.canRoute(httpRequest)) {
-            return router.route(httpRequest);
+        if(WebApplication.canService(httpRequest)) {
+            return WebApplication.doService(httpRequest);
         }
         return StaticFileHandler.handle(httpRequest);
     }
