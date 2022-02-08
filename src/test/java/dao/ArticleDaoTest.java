@@ -26,10 +26,9 @@ class ArticleDaoTest {
 
         for (int i = 0; i < numberOfArticle; i++) {
             ObjectId id = new ObjectId();
-            String title = "title" + i;
             String author = "author" + i;
             String content = "content" + i;
-            Article article = new Article(id, title, author, content);
+            Article article = new Article(id, author, content);
             dao.save(article);
         }
 
@@ -41,10 +40,9 @@ class ArticleDaoTest {
 
         for (int i = 0; i < numberOfArticle; i++) {
             ObjectId id = articles.get(i).getId();
-            String title = "title" + i;
             String author = "author" + i;
             String content = "content" + i;
-            Article article = new Article(id, title, author, content);
+            Article article = new Article(id, author, content);
             dao.delete(article);
         }
     }
@@ -54,10 +52,9 @@ class ArticleDaoTest {
     void saveAndFindAndDelete() {
         //give
         ArticleDao dao = ArticleDao.getInstance();
-        String title = "title";
         String author = "author";
         String content = "content";
-        Article article = new Article(new ObjectId(), title, author, content);
+        Article article = new Article(new ObjectId(), author, content);
         ObjectId id = dao.save(article);
         System.out.println(id.toString());
         //when
@@ -65,11 +62,10 @@ class ArticleDaoTest {
 
         //then
         assertThat(newArticle.getId()).isEqualTo(id);
-        assertThat(newArticle.getTitle()).isEqualTo(title);
         assertThat(newArticle.getAuthor()).isEqualTo(author);
         assertThat(newArticle.getContent()).isEqualTo(content);
 
-        dao.delete(new Article(id, title, author, content));
+        dao.delete(new Article(id, author, content));
 
         Article nullArticle = dao.find(id);
         assertThat(nullArticle).isNull();
@@ -80,22 +76,19 @@ class ArticleDaoTest {
     void update() {
         //give
         ArticleDao dao = ArticleDao.getInstance();
-        String title = "testTitle";
         String author = "testAuthor";
         String content = "testContent";
-        Article article = new Article(new ObjectId(), title, author, content);
+        Article article = new Article(new ObjectId(), author, content);
         dao.save(article);
 
-        String newTitle = "newTitle";
         String newAuthor = "newAuthor";
         String newContent = "newContent";
 
         //when
-        dao.update(new Article(article.getId(), newTitle, newAuthor, newContent));
+        dao.update(new Article(article.getId(), newAuthor, newContent));
         Article updateArticle = dao.find(article.getId());
 
         //then
-        assertThat(updateArticle.getTitle()).isEqualTo(newTitle);
         assertThat(updateArticle.getAuthor()).isEqualTo(newAuthor);
         assertThat(updateArticle.getContent()).isEqualTo(newContent);
 

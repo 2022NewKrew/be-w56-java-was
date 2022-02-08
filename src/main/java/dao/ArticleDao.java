@@ -9,6 +9,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.time.LocalDateTime;
 import java.util.List;
 import mapper.ArticleMapper;
 import model.Article;
@@ -58,10 +59,10 @@ public class ArticleDao implements CrudDao<Article, ObjectId> {
 
     @Override
     public void update(Article entity) {
-        Bson updatePassword = set(ArticleAttribute.TITLE.getValue(), entity.getTitle());
-        Bson updateName = set(ArticleAttribute.AUTHOR.getValue(), entity.getAuthor());
-        Bson updateEmail = set(ArticleAttribute.CONTENT.getValue(), entity.getContent());
-        Bson combineBson = combine(updatePassword, updateName, updateEmail);
+        Bson updateAuthor = set(ArticleAttribute.AUTHOR.getValue(), entity.getAuthor());
+        Bson updateContent = set(ArticleAttribute.CONTENT.getValue(), entity.getContent());
+        Bson updateModifiedDate = set(ArticleAttribute.MODIFIED_TIME.getValue(), LocalDateTime.now());
+        Bson combineBson = combine(updateAuthor, updateContent, updateModifiedDate);
         collection.findOneAndUpdate(eq("_id", entity.getId()), combineBson);
     }
 

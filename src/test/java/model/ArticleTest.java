@@ -14,13 +14,12 @@ class ArticleTest {
     void constructor() {
         //give
         ObjectId id = new ObjectId();
-        String title = "title";
         String author = "author";
         String content = "content";
 
         //when
         //then
-        assertThatCode(() -> new Article(id, title, author, content)).doesNotThrowAnyException();
+        assertThatCode(() -> new Article(id, author, content)).doesNotThrowAnyException();
     }
 
     @DisplayName("id가 null 일때 IllegalArgumentException을 던진다.")
@@ -28,58 +27,40 @@ class ArticleTest {
     void illegalConstructor1() {
         //give
         ObjectId id = null;
-        String title = "title";
         String author = "author";
         String content = "content";
 
         //when
         //then
-        assertThatThrownBy(() -> new Article(id, title, author, content)).isInstanceOf(
-                IllegalArgumentException.class);
-    }
-
-    @DisplayName("title이 null 일때 IllegalArgumentException을 던진다.")
-    @Test
-    void illegalConstructor2() {
-        //give
-        ObjectId id = new ObjectId();
-        String title = null;
-        String author = "author";
-        String content = "content";
-
-        //when
-        //then
-        assertThatThrownBy(() -> new Article(id, title, author, content)).isInstanceOf(
+        assertThatThrownBy(() -> new Article(id, author, content)).isInstanceOf(
                 IllegalArgumentException.class);
     }
 
     @DisplayName("author가 null 일때 IllegalArgumentException을 던진다.")
     @Test
-    void illegalConstructor3() {
+    void illegalConstructor2() {
         //give
         ObjectId id = new ObjectId();
-        String title = "title";
         String author = null;
         String content = "content";
 
         //when
         //then
-        assertThatThrownBy(() -> new Article(id, title, author, content)).isInstanceOf(
+        assertThatThrownBy(() -> new Article(id, author, content)).isInstanceOf(
                 IllegalArgumentException.class);
     }
 
     @DisplayName("content가 null 일때 IllegalArgumentException을 던진다.")
     @Test
-    void illegalConstructor4() {
+    void illegalConstructor3() {
         //give
         ObjectId id = new ObjectId();
-        String title = "title";
         String author = "author";
         String content = null;
 
         //when
         //then
-        assertThatThrownBy(() -> new Article(id, title, author, content)).isInstanceOf(
+        assertThatThrownBy(() -> new Article(id, author, content)).isInstanceOf(
                 IllegalArgumentException.class);
     }
 }

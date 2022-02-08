@@ -1,5 +1,6 @@
 package mapper;
 
+import dto.ArticleDto;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
@@ -15,13 +16,14 @@ public interface ArticleMapper {
 
     List<Article> documentsToArticles(List<Document> documents);
 
+    List<ArticleDto> articlesToDtos(List<Article> articles);
+
     default Document articleToDocument(Article article) {
         if (article == null) {
             return null;
         }
         Document document = new Document();
         document.put("_id", article.getId());
-        document.put("title", article.getTitle());
         document.put("author", article.getAuthor());
         document.put("content", article.getContent());
         document.put("createTime", article.getCreateTime());
@@ -36,7 +38,6 @@ public interface ArticleMapper {
 
         return new Article(
                 document.getObjectId("_id"),
-                document.getString("title"),
                 document.getString("author"),
                 document.getString("content"),
                 Instant.ofEpochMilli(document.getDate("createTime").getTime())

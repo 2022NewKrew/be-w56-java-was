@@ -1,7 +1,7 @@
 package dao;
 
 public enum ArticleAttribute {
-    ID("_id"), TITLE("title"), AUTHOR("author"), CONTENT("content"),
+    ID("_id"), AUTHOR("author"), CONTENT("content"),
     CREATE_TIME("createTime"), MODIFIED_TIME("modifiedTime");
 
     private final String value;

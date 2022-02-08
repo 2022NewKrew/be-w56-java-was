@@ -2,7 +2,7 @@ package mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
+import dto.ArticleDto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +27,6 @@ class ArticleMapperTest {
         Document firstDocument = documents.get(0);
 
         assertThat(documents.size()).isEqualTo(articles.size());
-        assertThat(firstDocument.getString("title")).isEqualTo(firstArticle.getTitle());
         assertThat(firstDocument.getString("author")).isEqualTo(firstArticle.getAuthor());
         assertThat(firstDocument.getString("content")).isEqualTo(firstArticle.getContent());
     }
@@ -52,13 +51,11 @@ class ArticleMapperTest {
     @DisplayName("Article을 Document로 매핑한다.")
     @Test
     void articleToDocument() {
-        String title = "title";
         String author = "author";
         String content = "content";
-        Article article = new Article(new ObjectId(), title, author, content);
+        Article article = new Article(new ObjectId(), author, content);
         Document document = ArticleMapper.instance.articleToDocument(article);
 
-        assertThat(document.getString("title")).isEqualTo(article.getTitle());
         assertThat(document.getString("author")).isEqualTo(article.getAuthor());
         assertThat(document.getString("content")).isEqualTo(article.getContent());
     }
@@ -66,16 +63,44 @@ class ArticleMapperTest {
     @DisplayName("Document를 Article로 매핑한다.")
     @Test
     void documentToArticle() {
-        String title = "title";
         String author = "author";
         String content = "content";
         Document document = new Document();
-        document.putAll(Map.of("_id", new ObjectId(), "title", title, "author", author, "content", content, "createTime",
-                new Date(), "modifiedTime", new Date()));
+        document.putAll(
+                Map.of("_id", new ObjectId(), "author", author, "content", content,
+                        "createTime",
+                        new Date(), "modifiedTime", new Date()));
         Article article = ArticleMapper.instance.documentToArticle(document);
 
-        assertThat(document.getString("title")).isEqualTo(article.getTitle());
         assertThat(document.getString("author")).isEqualTo(article.getAuthor());
         assertThat(document.getString("content")).isEqualTo(article.getContent());
+    }
+
+    @DisplayName("Article list를 ArticleDto list로 매핑한다.")
+    @ParameterizedTest
+    @MethodSource("getArticles")
+    void articlesToDtos(List<Article> articles) {
+        List<ArticleDto> dtos = ArticleMapper.instance.articlesToDtos(articles);
+
+        Article firstArticle = articles.get(0);
+        ArticleDto firstDto = dtos.get(0);
+
+        assertThat(articles.size()).isEqualTo(dtos.size());
+        assertThat(firstArticle.getCreateTime()).isEqualTo(firstDto.getCreateTime());
+        assertThat(firstArticle.getAuthor()).isEqualTo(firstDto.getAuthor());
+        assertThat(firstArticle.getContent()).isEqualTo(firstDto.getContent());
+    }
+
+    private static Stream<List<Article>> getArticles() {
+        List<Article> result = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            ObjectId id = new ObjectId();
+            String author = "author";
+            String content = "content";
+            result.add(new Article(id, author, content));
+        }
+
+        return Stream.of(result);
     }
 }
