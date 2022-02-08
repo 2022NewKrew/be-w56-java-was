@@ -9,6 +9,18 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'webserver.WebServer'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
@@ -22,7 +34,7 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.9.0'
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
-    implementation 'org.reflections:reflections:0.9.11'
+    implementation 'org.reflections:reflections:0.9.10'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     runtimeOnly 'mysql:mysql-connector-java:8.0.21'
 }
