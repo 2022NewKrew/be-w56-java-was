@@ -40,6 +40,16 @@ public class RequestData {
     }
 
     @Override
+    public String toString() {
+        return "RequestData{" +
+                "method='" + method + '\'' +
+                ", urlPath='" + urlPath + '\'' +
+                ", urlQuery='" + urlQuery + '\'' +
+                ", httpVersion='" + httpVersion + '\'' +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(method, urlPath, urlQuery, httpVersion);
     }
