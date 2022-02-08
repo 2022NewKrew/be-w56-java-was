@@ -59,10 +59,21 @@ public class RequestHandler extends Thread {
     }
 
     private HttpRequest parseRequest(BufferedReader br) throws IOException {
+        HttpRequest.HttpRequestBuilder httpRequestBuilder = HttpRequest.builder();
+
+        parseRequestLine(httpRequestBuilder, br);
+        parseRequestHeadersAndBody(httpRequestBuilder, br);
+
+        return httpRequestBuilder.build();
+    }
+
+    private void parseRequestLine(
+        HttpRequest.HttpRequestBuilder builder, BufferedReader br) throws IOException {
         String buffer = br.readLine();
         log.debug("HTTP Request Start Line :: {}", buffer);
 
         String[] requestTokens = HttpRequestUtils.parseRequestLine(buffer);
+
         HttpMethod method = HttpMethod.valueOf(requestTokens[REQUEST_METHOD_INDEX]);
         String path = requestTokens[REQUEST_PATH_INDEX];
         String version = requestTokens[REQUEST_VERSION_INDEX];
@@ -74,6 +85,15 @@ public class RequestHandler extends Thread {
             pathQueryString = HttpRequestUtils.parseQueryString(parsedPath[1]);
         }
 
+        builder.method(method)
+            .path(path)
+            .version(version)
+            .pathParameters(RequestParameters.of(pathQueryString));
+    }
+
+    private void parseRequestHeadersAndBody(
+        HttpRequest.HttpRequestBuilder builder, BufferedReader br) throws IOException {
+        String buffer;
         Map<String, String> headers = new HashMap<>();
         while ((buffer = br.readLine()) != null && !buffer.isBlank()) {
             log.debug("HTTP Request Header :: {}", buffer);
@@ -81,18 +101,17 @@ public class RequestHandler extends Thread {
             headers.put(header.getKey(), header.getValue());
         }
 
+        builder.header(HttpHeader.of(headers));
+        parseRequestBody(headers, builder, br);
+    }
+
+    private void parseRequestBody(Map<String, String> headers,
+        HttpRequest.HttpRequestBuilder builder, BufferedReader br) throws IOException {
         int length = Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
         String body = IOUtils.readData(br, length);
         log.debug("HTTP Request Body :: {}", body);
 
-        return HttpRequest.builder()
-            .method(method)
-            .path(path)
-            .version(version)
-            .header(HttpHeader.of(headers))
-            .pathParameters(RequestParameters.of(pathQueryString))
-            .bodyParameters(RequestParameters.of(HttpRequestUtils.parseQueryString(body)))
-            .build();
+        builder.bodyParameters(RequestParameters.of(HttpRequestUtils.parseQueryString(body)));
     }
 
     private void sendResponse(DataOutputStream dos, HttpRequest httpRequest,
