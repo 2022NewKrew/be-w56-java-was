@@ -7,6 +7,7 @@ import bin.jayden.http.MyHttpSession;
 import bin.jayden.model.Article;
 import bin.jayden.model.User;
 import bin.jayden.service.ArticleService;
+import bin.jayden.util.Constants;
 
 import java.io.IOException;
 
@@ -21,6 +22,14 @@ public class ArticleController {
     @GetMapping
     public String articleList() throws IOException {
         return articleService.getArticleListHtml();
+    }
+
+    @GetMapping("/article/form")
+    public String getForm(MyHttpSession session) throws IOException {
+        User user = (User) session.getAttribute("sessionUser");
+        if (user == null)
+            return "redirect:/user/login.html";
+        return new String(getClass().getResourceAsStream(Constants.TEMPLATE_PATH + "/article/form.html").readAllBytes());
     }
 
     @PostMapping("/article/create")

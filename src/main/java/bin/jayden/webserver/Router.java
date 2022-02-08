@@ -44,7 +44,7 @@ public class Router {
             routing(responseMethod, request, responseBuilder);
 
         } else { //라우팅 맵에 URL에 해당하는 리소스를 찾아본다.
-            URL fileURL = Router.class.getResource(request.getPath());
+            URL fileURL = Router.class.getResource(Constants.RESOURCE_PATH + request.getPath());
             if (fileURL != null) {
                 byte[] body = fileURL.openStream().readAllBytes();
                 responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_200).setMime(request.getMime()).setBody(body);

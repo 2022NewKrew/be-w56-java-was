@@ -2,11 +2,15 @@ package bin.jayden.service;
 
 import bin.jayden.model.Article;
 import bin.jayden.repository.ArticleRepository;
+import bin.jayden.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ArticleService {
+    private static final Logger log = LoggerFactory.getLogger("USERLOG");
     private final ArticleRepository repository;
 
     public ArticleService(ArticleRepository repository) {
@@ -14,7 +18,7 @@ public class ArticleService {
     }
 
     public String getArticleListHtml() throws IOException {
-        byte[] htmlBytes = getClass().getResourceAsStream("/index.html").readAllBytes();
+        byte[] htmlBytes = getClass().getResourceAsStream(Constants.TEMPLATE_PATH + "/index.html").readAllBytes();
         String htmlString = new String(htmlBytes);
         List<Article> articleList = repository.getArticleList();
         StringBuilder listHtml = new StringBuilder();
@@ -34,6 +38,7 @@ public class ArticleService {
     }
 
     public int createArticle(Article article) {
+        log.info("create Article (userId : {}, title : {})", article.getWriterId(), article.getTitle());
         return repository.createArticle(article);
     }
 }

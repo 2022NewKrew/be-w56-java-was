@@ -4,6 +4,7 @@ import bin.jayden.annotation.Controller;
 import bin.jayden.annotation.GetMapping;
 import bin.jayden.annotation.PostMapping;
 import bin.jayden.annotation.RequestMapping;
+import bin.jayden.exception.DataAccessException;
 import bin.jayden.http.MyHttpSession;
 import bin.jayden.model.User;
 import bin.jayden.service.UserService;
@@ -22,7 +23,11 @@ public class UserController {
     @PostMapping("/create")
     public String createUser(String userId, String password, String name, String email) {
         User user = new User(userId, password, name, email);
-        return userService.getUserAddResult(user);
+        try {
+            return userService.getUserAddResult(user);
+        } catch (DataAccessException exception) {
+            return "중복된 ID혹은 이메일 입니다.</br><button onclick=\"history.back()\">뒤로가기</button>";
+        }
     }
 
     @PostMapping("/login")

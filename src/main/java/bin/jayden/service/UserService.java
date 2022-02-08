@@ -2,6 +2,7 @@ package bin.jayden.service;
 
 import bin.jayden.model.User;
 import bin.jayden.repository.UserRepository;
+import bin.jayden.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private static final Logger log = LoggerFactory.getLogger("USERLOG");
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
@@ -18,7 +19,7 @@ public class UserService {
     }
 
     public String getUserListHtml() throws IOException {
-        byte[] htmlBytes = getClass().getResourceAsStream("/user/list.html").readAllBytes();
+        byte[] htmlBytes = getClass().getResourceAsStream(Constants.TEMPLATE_PATH + "/user/list.html").readAllBytes();
         String htmlString = new String(htmlBytes);
         StringBuilder listHtml = new StringBuilder();
         List<User> users = repository.getUserList();
@@ -50,7 +51,13 @@ public class UserService {
     }
 
     public User getLoginUser(String userId, String password) {
-        return repository.getUser(userId, password);
+        User user = repository.getUser(userId, password);
+        if (user != null)
+            log.info("login User (userId : {})", userId);
+        else
+            log.info("login fail (userId : {})", userId);
+
+        return user;
     }
 
 }
