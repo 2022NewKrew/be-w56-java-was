@@ -13,6 +13,7 @@ import model.User;
 import model.UserDBConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HtmlUtils;
 import util.HttpRequestUtils;
 
 import java.io.File;
@@ -134,18 +135,7 @@ public class UserController implements Controller {
         File file = new File(HttpResponseBody.STATIC_ROOT + "/user/list.html");
 
         try {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            StringBuilder sb = new StringBuilder(new String(bytes));
-            StringBuilder newsb = new StringBuilder();
-            int row = 0;
-
-            for (User user : userDao.findAll()) {
-                newsb.append("<tr>");
-                newsb.append(String.format("<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td>",
-                        ++row, user.getUserId(), user.getName(), user.getEmail()));
-                newsb.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
-            }
-            sb.insert(sb.lastIndexOf("<tbody>"), newsb);
+            StringBuilder sb = HtmlUtils.renderTemplate(file, userDao.findAll());
 
             HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
             HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
