@@ -1,6 +1,9 @@
 package view;
 
 import model.ModelAndView;
+import view.redirect.ViewRedirect;
+import view.render.ViewDynamic;
+import view.render.ViewStatic;
 
 import java.io.IOException;
 import java.util.Map;

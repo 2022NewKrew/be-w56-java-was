@@ -4,8 +4,8 @@ import http.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.View;
-import view.ViewRedirect;
-import view.ViewRender;
+import view.redirect.ViewRedirect;
+import view.render.ViewRender;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

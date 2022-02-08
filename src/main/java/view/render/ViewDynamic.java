@@ -1,4 +1,4 @@
-package view;
+package view.render;
 
 import http.HttpStatusCode;
 import model.ModelAndView;
@@ -26,7 +26,7 @@ public class ViewDynamic implements ViewRender{
 
     public ViewDynamic(ModelAndView mv) throws IOException {
         this.mv = mv;
-        this.url = ROOT_DIRECTORY + mv.getViewName();
+        this.url = ROOT_DIRECTORY + this.mv.getViewName();
         if(Files.isRegularFile(Path.of(this.url))){
             this.statusCode = HttpStatusCode.SUCCESS;
         }
@@ -56,9 +56,5 @@ public class ViewDynamic implements ViewRender{
         while((line = br.readLine()) != null){
             sb.append(String.format("%s\r\n", line));
         }
-    }
-
-    public ModelAndView getModel(){
-        return mv;
     }
 }

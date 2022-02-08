@@ -9,8 +9,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public interface Controller {
-//    ModelAndView proceed(Request request);
-
     default ModelAndView proceed(Request request) {
         Class<?> currentClass = getClass();
 

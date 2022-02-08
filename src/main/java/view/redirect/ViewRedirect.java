@@ -1,12 +1,13 @@
-package view;
+package view.redirect;
 
 import http.HttpStatusCode;
 import model.ModelAndView;
+import view.View;
 
 import static util.ConstantValues.REDIRECT_COMMAND;
 import static util.ConstantValues.ROOT_URL;
 
-public class ViewRedirect implements View{
+public class ViewRedirect implements View {
 
     private final ModelAndView mv;
     private final String url;

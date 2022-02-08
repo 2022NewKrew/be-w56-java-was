@@ -1,4 +1,4 @@
-package view;
+package view.render;
 
 import http.HttpStatusCode;
 import util.IOUtils;
