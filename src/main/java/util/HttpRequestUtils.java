@@ -12,10 +12,10 @@ public class HttpRequestUtils {
     private final static String PATH_SEPARATOR = "\\?";
 
     /**
-     * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param data URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      */
-    public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, "&");
+    public static Map<String, String> parseData(String data) {
+        return parseValues(data, "&");
     }
 
     /**

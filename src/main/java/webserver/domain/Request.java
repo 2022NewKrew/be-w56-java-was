@@ -1,26 +1,26 @@
 package webserver.domain;
 
-import java.util.List;
+import java.util.Map;
 import lombok.Builder;
-import util.HttpRequestUtils.Pair;
 
 public class Request {
 
     private final StartLine startLine;
     private final Headers headers;
+    private final Data body;
 
     @Builder
-    private Request(StartLine startLine, Headers headers) {
+    private Request(StartLine startLine, Headers headers, Data body) {
         this.startLine = new StartLine(startLine);
         this.headers = new Headers(headers);
+        this.body = body;
     }
 
-    public static Request createRequest(String line, List<Pair> headerPairs) {
-        StartLine startLine = StartLine.createStartLine(line);
-        Headers headers = Headers.createRequestHeader(headerPairs);
+    public static Request createRequest(String line, Map<String, String> headers, String bodyString) {
         return Request.builder()
-            .startLine(startLine)
-            .headers(headers)
+            .startLine(StartLine.createStartLine(line))
+            .headers(Headers.createRequestHeader(headers))
+            .body(Data.createData(bodyString))
             .build();
     }
 
@@ -32,11 +32,15 @@ public class Request {
         return startLine.getQueryStringAttribute(key);
     }
 
+    public String getBodyAttribute(String key) {
+        return body.getDataAttribute(key);
+    }
+
     public String getPath() {
         return startLine.getPath();
     }
 
-    public String getHttpMethod(){
+    public String getHttpMethod() {
         return startLine.getHttpMethod();
     }
 
