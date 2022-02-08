@@ -2,6 +2,7 @@ package http;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,7 @@ public class HttpResponse {
     private final HttpStatus status;
     private final Map<String, String> headers;
     private final byte[] body;
+    private final Map<String, String> cookies = new HashMap<>();
 
     public HttpResponse(HttpStatus status) {
         this(null, null, status);
@@ -38,9 +40,15 @@ public class HttpResponse {
         headers.put("Content-Length", String.valueOf(body.length));
     }
 
-    public void send(DataOutputStream dos) throws IOException {
+    public void addCookie(String key, String value) {
+        cookies.put(key, value);
+    }
+
+    public void render(OutputStream out) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
         dos.writeBytes(getStatusLine());
         dos.writeBytes(getResponseHeader());
+        dos.writeBytes(getCookieString());
         dos.writeBytes("\r\n");
         if (body != null) {
             dos.write(body, 0, body.length);
@@ -64,6 +72,18 @@ public class HttpResponse {
                     .append("\r\n");
         }
         return headerString.toString();
+    }
+
+    private String getCookieString() {
+        StringBuilder cookieString = new StringBuilder();
+        for (String key : cookies.keySet()) {
+            cookieString.append("Set-Cookie: ")
+                    .append(key)
+                    .append("=")
+                    .append(cookies.get(key))
+                    .append("; Path=/\r\n");
+        }
+        return cookieString.toString();
     }
 
     public HttpStatus getStatus() {

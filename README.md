@@ -40,6 +40,15 @@
 - DI: 메모리에 올라가있는 Bean 객체들을 받아서 실행할 수 있도록 하는 것
 - Singleton Registry: 스프링에서는 만들어진 Singleton을 Registry에서 관리
 
+### Spring mvc
+- [Spring4는 어떻게 url를 통해 Controller를 가져올까 - github.io](https://rerewww.github.io/spring/spring-handler-mapping)
+- [[스프링 프레임워크] 좐의 좐니쉬운 스프링 - naver blog](https://blog.naver.com/todoskr/220824834903)
+- [[Spring MVC] Dispatcher Servlet 내부 처리 과정 분석](https://dynaticy.tistory.com/entry/Spring-MVC-Dispatcher-Servlet-%EB%82%B4%EB%B6%80-%EC%B2%98%EB%A6%AC-%EA%B3%BC%EC%A0%95-%EB%B6%84%EC%84%9D)
+- ```text
+  DispatcherServlet -> HandlerMapping -> HandlerExecutionChain -> HandlerAdapter
+                    -> ModelAndView -> ViewResolver
+  ```
+
 ### Issues
 - Request에 body가 있을 때 오류
   - BufferedReader를 readLine으로 읽으면 body의 마지막이 개행문자가 아니므로 무한대기

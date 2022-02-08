@@ -22,7 +22,7 @@ class HttpRequestTest {
         headers.add("User-Agent: curl/7.64.1");
         headers.add("Accept: */*");
 
-        assertEquals(request.getMethod(), "GET");
+        assertEquals(request.getMethod(), HttpMethod.GET);
         assertEquals(request.getUri(), URI.create("/users"));
         assertEquals(request.getVersion(), HttpVersion.HTTP_1_1);
         assertEquals(request.getHeaders(), headers);

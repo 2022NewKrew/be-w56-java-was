@@ -17,7 +17,7 @@ class HttpResponseTest {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             HttpResponse response = new HttpResponse(HttpStatus.OK);
             DataOutputStream dos = new DataOutputStream(out);
-            response.send(dos);
+            response.render(dos);
             String actual = "HTTP/1.1 200 OK\r\n\r\n";
             assertEquals(out.toString(),actual);
         }
@@ -29,7 +29,7 @@ class HttpResponseTest {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             HttpResponse response = new HttpResponse(body.getBytes(), HttpStatus.OK);
             DataOutputStream dos = new DataOutputStream(out);
-            response.send(dos);
+            response.render(dos);
             String actual = "HTTP/1.1 200 OK\r\n" +
                     "Content-Length: 11\r\n\r\n" +
                     "Test string";
@@ -44,7 +44,7 @@ class HttpResponseTest {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             HttpResponse response = new HttpResponse(headers, HttpStatus.Found);
             DataOutputStream dos = new DataOutputStream(out);
-            response.send(dos);
+            response.render(dos);
             String actual = "HTTP/1.1 301 Found\r\n" +
                     "Location: /index.html\r\n\r\n";
             assertEquals(out.toString(), actual);
