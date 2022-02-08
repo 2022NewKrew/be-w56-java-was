@@ -2,6 +2,7 @@ package webserver.framwork.http.request;
 
 import webserver.framwork.http.Header;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class HttpRequest {
@@ -49,6 +50,10 @@ public class HttpRequest {
 
     public void setBody(Map<String, String> body) {
         this.body = body;
+    }
+
+    public String getCookie(String key) {
+        return this.header.getCookie(key);
     }
 }
 

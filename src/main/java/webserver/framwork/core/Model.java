@@ -13,4 +13,8 @@ public class Model {
     public Object getAttribute(String key) {
         return model.get(key);
     }
+
+    public boolean hasAttribute(String key) {
+        return model.containsKey(key);
+    }
 }
