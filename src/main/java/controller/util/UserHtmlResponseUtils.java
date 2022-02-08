@@ -7,32 +7,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class UserHtmlResponseUtils {
+public final class UserHtmlResponseUtils {
 
-    private static final String header;
-    private static final String footer;
-    private static final String containerPrefix = "<div class=\"container\" id=\"main\">\n"
-        + "<div class=\"col-md-10 col-md-offset-1\">\n"
-        + "<div class=\"panel panel-default\">\n"
-        + "<table class=\"table table-hover\">\n"
-        + "<thead>\n"
-        + "<tr>\n"
-        + "<th>#</th> <th>사용자 아이디</th> <th>이름</th> <th>이메일</th><th></th>\n"
-        + "</tr>\n"
-        + "</thead>\n"
-        + "<tbody>\n";
-    private static final String containerPostFix = "</tbody>\n"
-        + "</table>\n"
-        + "</div>\n"
-        + "</div>\n"
-        + "</div>";
+    private static final String USERS_HTML_TEMPLATE;
+    private static final String USERS_HTML_TARGET = "{{userInfos}}";
 
     static {
-        header = readFromInputStream(
-            UserHtmlResponseUtils.class.getClassLoader().getResourceAsStream("templates/header.html"));
-        footer = readFromInputStream(
-            UserHtmlResponseUtils.class.getClassLoader().getResourceAsStream("templates/footer.html"));
+        USERS_HTML_TEMPLATE = readFromInputStream(UserHtmlResponseUtils.class.getClassLoader()
+            .getResourceAsStream("templates/user/list.html"));
     }
+
+    private UserHtmlResponseUtils() {}
 
     private static String readFromInputStream(InputStream inputStream) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -48,12 +33,11 @@ public class UserHtmlResponseUtils {
     }
 
     public static String generateUsersHtml(List<UserInfo> userInfos) {
-        StringBuilder stringBuilder = new StringBuilder(header);
-        stringBuilder.append(containerPrefix);
+        StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = 0; i < userInfos.size(); i++) {
             stringBuilder.append("<tr>")
-                .append("<th scope=\"row\">").append(i).append("</th>")
+                .append("<th scope=\"row\">").append(i + 1).append("</th>")
                 .append("<td>").append(userInfos.get(i).getUserId()).append("</td>")
                 .append("<td>").append(userInfos.get(i).getName()).append("</td>")
                 .append("<td>").append(userInfos.get(i).getEmail()).append("</td>")
@@ -61,9 +45,6 @@ public class UserHtmlResponseUtils {
                 .append("</tr>");
         }
 
-        stringBuilder.append(containerPostFix)
-            .append(footer);
-
-        return stringBuilder.toString();
+        return USERS_HTML_TEMPLATE.replace(USERS_HTML_TARGET, stringBuilder.toString());
     }
 }
