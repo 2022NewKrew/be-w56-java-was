@@ -7,10 +7,10 @@ import java.util.Map;
 
 @Getter
 public class HttpRequestLine {
-    private String method;
-    private String url;
-    private String version;
-    private Map<String, String> params;
+    private final String method;
+    private final String url;
+    private final String version;
+    private final Map<String, String> params;
 
     public HttpRequestLine(String requestLine) {
         String[] splits = requestLine.split(" ");

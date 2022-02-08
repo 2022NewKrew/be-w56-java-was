@@ -13,26 +13,26 @@ class ControllerTest {
     public void annotationTest() {
         Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
         Arrays.stream(requestUrlControllerClass.getDeclaredMethods())
-                .forEach(method -> {
-                    String name = method.getName();
-                    System.out.println("name = " + name);
-                    boolean annotationPresent = method.isAnnotationPresent(RequestMapping.class);
-                    System.out.println("annotationPresent = " + annotationPresent);
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    String url = annotation.value();
-                    System.out.println("url = " + url);
-                    String met = annotation.method();
-                    System.out.println("met = " + met);
-                    if (name.equals("index")) {
-                        try {
-                            Constructor<RequestUrlController> constructor = requestUrlControllerClass.getConstructor();
-                            RequestUrlController requestUrlController = constructor.newInstance();
-                            Object invoke = method.invoke(requestUrlController, (Object) null);
-                            System.out.println("invoke = " + invoke);
-                        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
-                            e.printStackTrace();
-                        }
+            .forEach(method -> {
+                String name = method.getName();
+                System.out.println("name = " + name);
+                boolean annotationPresent = method.isAnnotationPresent(RequestMapping.class);
+                System.out.println("annotationPresent = " + annotationPresent);
+                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+                String url = annotation.value();
+                System.out.println("url = " + url);
+                String met = annotation.method();
+                System.out.println("met = " + met);
+                if (name.equals("index")) {
+                    try {
+                        Constructor<RequestUrlController> constructor = requestUrlControllerClass.getConstructor();
+                        RequestUrlController requestUrlController = constructor.newInstance();
+                        Object invoke = method.invoke(requestUrlController, (Object) null);
+                        System.out.println("invoke = " + invoke);
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+            });
     }
 }

@@ -6,19 +6,27 @@ import controller.annotation.RequestMapping;
 import http.header.HttpHeaders;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import http.response.ModelAndView;
 import http.status.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class UrlMappingHandlerAdapter implements HandlerAdapter {
     private static final Class<RequestUrlController> requestUrlControllerClass = RequestUrlController.class;
+    private static final Pattern REGEX_TEMPLATE_ITER = Pattern.compile("\\{\\{\\#(\\w+)\\}\\}([\\w\\W]*)\\{\\{\\/(\\w+)\\}\\}");
+    public static final Pattern REGEX_TEMPLATE_VARS = Pattern.compile("\\{\\{(\\w+)\\}\\}");
 
     @Override
     public boolean supports(HttpRequest request) {
@@ -36,47 +44,106 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
         Method handlerMethod = findHandlerMethod(request);
 
         try {
-            String viewName = invokeHandlerMethod(request, response, handlerMethod);
-            if (viewName.contains("redirect:")) {
-                redirect(request, response, viewName);
+            ModelAndView mv = invokeHandlerMethod(request, response, handlerMethod);
+            if (mv.isRedirect()) {
+                redirect(request, response, mv);
                 return;
             }
-            ok(response, viewName);
+            resolve(response, mv);
         } catch (Exception exception) {
             log.error(exception.getMessage());
         }
     }
 
     private Method findHandlerMethod(HttpRequest request) {
-        Method handlerMethod = Arrays.stream(requestUrlControllerClass.getDeclaredMethods())
+        return Arrays.stream(requestUrlControllerClass.getDeclaredMethods())
                 .filter(method -> {
                     RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                     return annotation.value().equals(request.getUrl()) && annotation.method().equals(request.getMethod());
                 })
                 .findAny()
                 .orElseThrow();
-        return handlerMethod;
     }
 
-    private String invokeHandlerMethod(HttpRequest request, HttpResponse response, Method handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private ModelAndView invokeHandlerMethod(HttpRequest request, HttpResponse response, Method handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         RequestUrlController requestUrlController = requestUrlControllerClass.getConstructor().newInstance();
         Object methodReturn = handlerMethod.invoke(requestUrlController, request, response);
-        if (!(methodReturn instanceof String)) {
+        if (!(methodReturn instanceof ModelAndView)) {
             throw new IllegalStateException("invalid return type");
         }
-        return (String) methodReturn;
+        return (ModelAndView) methodReturn;
     }
 
-    private void redirect(HttpRequest request, HttpResponse response, String viewName) {
-        String redirectUrl = viewName.replace("redirect:", "");
+    private void redirect(HttpRequest request, HttpResponse response, ModelAndView mv) {
+        String redirectUrl = mv.getRedirectUrl();
         response.status(HttpStatus.FOUND);
-        response.addHeader(HttpHeaders.LOCATION, request.getHeader(HttpHeaders.ORIGIN) + redirectUrl);
+        response.addHeader(HttpHeaders.LOCATION, redirectUrl);
     }
 
-    private void ok(HttpResponse response, String viewName) throws IOException {
-        String url = GlobalConfig.WEB_ROOT + viewName + GlobalConfig.SUFFIX;
-        byte[] body = Files.readAllBytes(Paths.get(url));
-        response.body(body);
+    private void resolve(HttpResponse response, ModelAndView mv) throws IOException {
+        Path path = Paths.get(GlobalConfig.WEB_ROOT + mv.getViewName() + GlobalConfig.SUFFIX);
+        String html = Files.readString(path);
+        if (mv.hasModel()) {
+            html = applyModelInView(mv, html);
+        }
+        response.body(html.getBytes(StandardCharsets.UTF_8));
         response.addHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
+    }
+
+    private String applyModelInView(ModelAndView mv, String html) {
+        html = replaceTemplateIter(mv, html);
+        return replaceTemplateVars(mv, html);
+    }
+
+    private String replaceTemplateIter(ModelAndView mv, String html) {
+        StringBuilder sb = new StringBuilder();
+        Matcher iterMatcher = REGEX_TEMPLATE_ITER.matcher(html);
+        while (iterMatcher.find()) {
+            StringBuilder innerSb = new StringBuilder();
+            String var = iterMatcher.group(1);
+            String innerHtml = iterMatcher.group(2);
+            Iterable<?> iter = (Iterable<?>) mv.getAttr(var);
+            iter.forEach(obj -> {
+                String inner = replaceTemplateIterInner(obj, innerHtml);
+                innerSb.append(inner);
+            });
+            iterMatcher.appendReplacement(sb, innerSb.toString());
+        }
+        iterMatcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private String replaceTemplateIterInner(Object obj, String html) {
+        StringBuilder sb = new StringBuilder();
+        Matcher matcher = REGEX_TEMPLATE_VARS.matcher(html);
+        while (matcher.find()) {
+            String varName = matcher.group(1);
+            String value = getField(obj, varName);
+            matcher.appendReplacement(sb, value);
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private String getField(Object obj, String varName) {
+        try {
+            Field field = obj.getClass().getDeclaredField(varName);
+            field.setAccessible(true);
+            return field.get(obj).toString();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private String replaceTemplateVars(ModelAndView mv, String html) {
+        StringBuilder sb = new StringBuilder();
+        Matcher matcher = REGEX_TEMPLATE_VARS.matcher(html);
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            matcher.appendReplacement(sb, (String) mv.getAttr(key));
+        }
+        matcher.appendTail(sb);
+        html = sb.toString();
+        return html;
     }
 }

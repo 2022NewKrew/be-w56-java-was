@@ -27,7 +27,9 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     private void initHeader(List<String> headerString) {
         headerString.forEach(header -> {
             String[] split = header.split(": ");
-            add(split[0], split[1]);
+            for (String value : split[1].split(",")) {
+                add(split[0], value.trim());
+            }
         });
     }
 
