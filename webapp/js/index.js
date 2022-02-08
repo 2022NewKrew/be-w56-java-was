@@ -36,6 +36,11 @@ window.onload = function () {
         document.getElementById("memoAddButton").onclick = function () {
             let content = document.getElementById("memoContent").value;
 
+            if (content.length === 0) {
+                alert("메모 내용이 비어있습니다.")
+                return;
+            }
+
             let data = {
                 content,
             };
@@ -46,5 +51,13 @@ window.onload = function () {
                 });
 
         };
+
+        document.getElementById("memoContent")
+            .addEventListener("keydown", function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    document.getElementById("memoAddButton").click();
+                }
+            });
     }
 }
