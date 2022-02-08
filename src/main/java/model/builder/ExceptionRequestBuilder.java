@@ -13,7 +13,7 @@ public class ExceptionRequestBuilder extends ResponseBuilder {
     public ResponseHeader build(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.ERROR)
-                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR)))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept("text/html")
                 .build();

@@ -23,7 +23,6 @@ public class GetUserListBuilder extends ResponseBuilder {
     }
 
     private ResponseHeader logined(RequestHeader requestHeader) throws IOException {
-        DynamicModel model = new DynamicModel();
         List<User> users = (List<User>) DataBase.findAll();
         model.addAttribute("users", users);
 
@@ -38,7 +37,7 @@ public class GetUserListBuilder extends ResponseBuilder {
     private ResponseHeader notLogined(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.MAIN)
-                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN)))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
                 .build();

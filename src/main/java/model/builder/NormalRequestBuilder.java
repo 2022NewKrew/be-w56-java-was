@@ -20,10 +20,15 @@ public class NormalRequestBuilder extends ResponseBuilder {
             uri += ".html";
         }
 
+        byte[] body = readBody(uri);
+        if (uri.contains(".html")) {
+            body = DynamicHtmlBuilder.getDynamicHtml(body, model);
+        }
+
         return ResponseHeader.builder()
                 .uri(uri)
                 .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
-                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(uri)))
+                .body(body)
                 .accept(requestHeader.getAccept())
                 .build();
     }

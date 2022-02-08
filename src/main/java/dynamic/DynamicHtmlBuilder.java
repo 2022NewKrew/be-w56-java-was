@@ -17,10 +17,6 @@ public class DynamicHtmlBuilder {
 
     }
 
-    public static byte[] getDynamicHtml(byte[] byteBody) {
-        return byteBody;
-    }
-
     public static byte[] getDynamicHtml(byte[] byteBody, DynamicModel model) {
         String body = new String(byteBody);
         body = body.replace("{{ #", "{{#");

@@ -13,7 +13,7 @@ public class PostUserCreateBuilder extends ResponseBuilder {
     public ResponseHeader build(RequestHeader requestHeader) throws IOException {
         return ResponseHeader.builder()
                 .uri(Links.MAIN)
-                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN)))
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
                 .build();
