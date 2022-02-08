@@ -2,7 +2,9 @@ package mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -38,7 +40,8 @@ class ArticleMapperTest {
             document.put("title", "title" + i);
             document.put("author", "author" + i);
             document.put("content", "content" + i);
-
+            document.put("createTime", new Date());
+            document.put("modifiedTime", new Date());
             result.add(document);
         }
 
@@ -66,7 +69,8 @@ class ArticleMapperTest {
         String author = "author";
         String content = "content";
         Document document = new Document();
-        document.putAll(Map.of("title", title, "author", author, "content", content));
+        document.putAll(Map.of("title", title, "author", author, "content", content, "createTime",
+                new Date(), "modifiedTime", new Date()));
         Article article = ArticleMapper.instance.documentToArticle(document);
 
         assertThat(document.getString("title")).isEqualTo(article.getTitle());

@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import dao.UserDao;
 import dto.UserDto;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 import model.User;
@@ -83,7 +84,8 @@ class UserMapperTest {
             document.put("password", "password" + i);
             document.put("name", "name" + i);
             document.put("email", "email" + i);
-
+            document.put("createTime", new Date());
+            document.put("modifiedTime", new Date());
             result.add(document);
         }
 
@@ -110,6 +112,8 @@ class UserMapperTest {
         document.put("password", "testPassword");
         document.put("name", "testName");
         document.put("email", "testEmail");
+        document.put("createTime", new Date());
+        document.put("modifiedTime", new Date());
         User user = userMapper.documentToUser(document);
 
         assertThat(user.getUserId()).isEqualTo(document.get("userId"));
