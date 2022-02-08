@@ -61,7 +61,6 @@ public class RequestMapper {
             e.printStackTrace();
             return response500InternalServerError(dos);
         }
-
     }
     private static Response response404NotFound(DataOutputStream dos) {
         return new Response.Builder(dos)
@@ -82,6 +81,4 @@ public class RequestMapper {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
     }
-
-
 }

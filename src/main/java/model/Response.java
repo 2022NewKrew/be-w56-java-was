@@ -29,7 +29,7 @@ public class Response {
         private final Map<String, String> headers = new HashMap<>();
 
         private byte[] body = new byte[]{};
-        private String version = "HTTP 1.1";
+        private String version = "HTTP/1.1";
         private HttpStatus status = HttpStatus.OK;
         private String contentType = "";
         private int lengthOfBodyContent = 0;
@@ -69,13 +69,13 @@ public class Response {
     }
 
     private Response(Builder builder){
-        dos = builder.dos;
-        body = builder.body;
-        version = builder.version;
-        status = builder.status;
-        headers = builder.headers;
-        contentType = builder.contentType;
-        lengthOfBodyContent = builder.lengthOfBodyContent;
+        this.dos = builder.dos;
+        this.body = builder.body;
+        this.version = builder.version;
+        this.status = builder.status;
+        this.headers = builder.headers;
+        this.contentType = builder.contentType;
+        this.lengthOfBodyContent = builder.lengthOfBodyContent;
     }
 
     public void write() {
@@ -99,4 +99,13 @@ public class Response {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Response is : " + dos.toString()
+                + version
+                + status.toString()
+                + headers
+                + contentType
+                + lengthOfBodyContent;
+    }
 }

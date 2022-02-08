@@ -45,6 +45,16 @@ public enum RequestMappingPath {
                     .contentType(request.getContentType())
                     .build();
         }
+    },
+    USER_LIST("/user/list") {
+        @Override
+        public Response handle(Request request, DataOutputStream dos){
+            // Request의 Cookie를 검사
+            // 로그인한 상태라면 사용자 목록 출력
+            // 아니라면 로그인 페이지로 리다이렉트
+            return new Response.Builder(dos)
+                    .build();
+        }
     };
 
     private final String path;
