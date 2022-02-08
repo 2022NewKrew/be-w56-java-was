@@ -17,10 +17,10 @@ public class HttpResponse extends HttpMessage {
 
     @Builder
     public HttpResponse(String protocolVersion, HttpHeaders headers,
-                        String status, String path) {
+                        String status, String uri) {
         super(protocolVersion, headers);
         this.status = status;
-        this.body = ViewResolver.getView(path);
+        this.body = uri != null ? ViewResolver.getView(uri) : new byte[0];
     }
 
     public void send(DataOutputStream dos) throws IOException {
@@ -44,12 +44,24 @@ public class HttpResponse extends HttpMessage {
 
     // --------------------------------------------------------------------------------
     // Factory methods
+    // TODO: 재사용 가능하도록 리팩토링
     public static HttpResponse ok(String path) {
         return HttpResponse.builder()
                 .protocolVersion("HTTP/1.1")
                 .headers(new HttpHeaders())
                 .status("200 OK")
-                .path(path)
+                .uri(path)
+                .build();
+    }
+
+    public static HttpResponse found(String redirectLocation) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", redirectLocation);
+
+        return HttpResponse.builder()
+                .protocolVersion("HTTP/1.1")
+                .headers(headers)
+                .status("302 Found")
                 .build();
     }
 }

@@ -41,10 +41,6 @@ public class SignupController extends BaseController {
         log.debug("회원가입 성공");
         log.debug(user.toString());
 
-        return HttpResponse.builder()
-                .protocolVersion("HTTP/1.1")
-                .headers(new HttpHeaders())
-                .status("201 Created")
-                .build();
+        return HttpResponse.found("/index.html");
     }
 }

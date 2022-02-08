@@ -6,7 +6,6 @@ import http.header.HttpHeaders;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * {@link BufferedReader}에서 {@link HttpRequest} 디코딩해 반환하는 클래스
