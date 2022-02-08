@@ -9,6 +9,7 @@ import service.UserService;
 import util.HttpRequestUtils;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -69,11 +70,12 @@ public class UserListController implements WebController{
         StringBuilder sb = new StringBuilder(header);
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
+            System.out.println(user);
             sb.append("\n<tr>")
                     .append("\n<th scope=\"row\">").append(i + 1).append("</th>")
                     .append("<td>").append(user.getUserId()).append("</td>")
-                    .append("<td>").append(user.getName()).append("</td>")
-                    .append("<td>").append(user.getEmail()).append("</td>\n")
+                    .append("<td>").append(URLDecoder.decode(user.getName(), StandardCharsets.UTF_8)).append("</td>")
+                    .append("<td>").append(URLDecoder.decode(user.getEmail(), StandardCharsets.UTF_8)).append("</td>\n")
                     .append("</tr>\n");
         }
         sb.append(footer);

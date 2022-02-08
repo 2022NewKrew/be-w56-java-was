@@ -125,5 +125,22 @@ public enum ContentType {
 
 #### 구현 관련 고찰
 
-- 회원가입 시 특수문자 사용할 경우 회원 목록 조회 시 올바르게 표시되지 않음.
+- 회원가입 시 특수문자, 한글 사용할 경우 회원 목록 조회 시 올바르게 표시되지 않음.
   - HTML 특수문자 문제
+    - `URLDecoder::decode` 적용 시 해결 됨
+    - `StringEscapeUtils::unescapeHtml4` 적용 시 해결되지 않음
+    - 회원가입 시 문자열은 `x-www-form-urlencoded` 형식으로 변환되어 전달되므로 `URLDecoder::decode`로 변환 시 올바르게 변환 됨
+
+### 2022-02-08 (화)
+
+#### 구현 내용
+
+- CSS 적용
+- MongoDB 적용한 회원 관리 기능 구현
+
+#### 구현 관련 고찰
+
+- MongoDB 연결을 어디서 닫아줘야 할까?
+  - 닫아주지 않아도 됨
+  > 참고 : https://www.mongodb.com/community/forums/t/where-to-close-db-connection/1368
+- MongoDB 에서 Nested POJO 사용 방법: `@BsonProperty("user")`
