@@ -1,9 +1,7 @@
 package webserver;
 
-import controller.Controller;
-import controller.LoginController;
-import controller.StaticController;
-import controller.JoinController;
+import controller.*;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMapper {
@@ -13,6 +11,7 @@ public class RequestMapper {
     static {
         requestMap.put("/user/create", new JoinController());
         requestMap.put("/user/login", new LoginController());
+        requestMap.put("/user/list", new UserListController());
     }
 
     public static Controller mapping(String url) {

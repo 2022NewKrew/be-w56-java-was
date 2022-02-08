@@ -1,6 +1,8 @@
 package service;
 
 import db.DataBase;
+import http.Request;
+import http.RequestHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,13 @@ public class UserService {
             return false;
         }
         return Objects.equals(user.getPassword(), password);
+    }
 
+    public static boolean checkLogin(Request request) {
+        RequestHeader requestHeader = request.getRequestHeader();
+        String cookie = requestHeader.getHeaders().get("Cookie");
+        log.debug("Cookie: {}", cookie);
 
+        return cookie.contains("logined=true");
     }
 }
