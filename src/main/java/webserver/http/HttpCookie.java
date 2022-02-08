@@ -1,29 +1,50 @@
 package webserver.http;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 public class HttpCookie {
 
-    private final String name;
-    private final String value;
-    private String path;
+    private final Map<String, Cookie> cookieMap;
 
-    public HttpCookie(String name, String value) {
-        this.name = name;
-        this.value = value;
+    public HttpCookie() {
+        cookieMap = new HashMap<>();
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public boolean containsCookie(String name) {
+        return cookieMap.containsKey(name);
     }
 
-    public String getValue() {
-        return value;
+    public <X extends Throwable> String orElseThrow(String name, Supplier<? extends X> exceptionSupplier) throws X {
+        if (cookieMap.containsKey(name)) {
+            return cookieMap.get(name).getValue();
+        } else {
+            throw exceptionSupplier.get();
+        }
+    }
+
+    public void putCookie(Cookie cookie) {
+        cookieMap.put(cookie.getName(), cookie);
+    }
+
+    public Optional<String> getValue(String name) {
+        Cookie cookie = cookieMap.get(name);
+        if (cookie == null) {
+            return Optional.empty();
+        }
+        return Optional.of(cookie.getValue());
+    }
+
+    public Iterable<Cookie> iterator() {
+        return cookieMap.values();
     }
 
     @Override
     public String toString() {
-        if (path == null) {
-            return name + "=" + value;
-        }
-        return name + "=" + value + ";Path=" + path;
+        StringBuilder stringBuilder = new StringBuilder();
+        cookieMap.forEach((k, v) -> stringBuilder.append(v));
+        return stringBuilder.toString();
     }
 }
