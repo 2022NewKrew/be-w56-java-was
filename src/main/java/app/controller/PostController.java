@@ -1,6 +1,5 @@
 package app.controller;
 
-import app.configure.DbConfigure;
 import app.core.annotation.Autowired;
 import app.core.annotation.components.Controller;
 import app.core.annotation.mapping.GetMapping;
@@ -22,10 +21,6 @@ public class PostController {
     @Autowired
     public PostController(PostsRepository postsRepository) {
         this.postsRepository = postsRepository;
-    }
-
-    public PostController() throws SQLException {
-        this.postsRepository = new PostsRepository(new DbConfigure().getConnection());
     }
 
     @GetMapping(url = "/posts")

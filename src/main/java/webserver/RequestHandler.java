@@ -9,7 +9,6 @@ import util.http.HttpResponse;
 import util.http.HttpResponseUtils;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
@@ -26,13 +25,7 @@ public class RequestHandler extends Thread {
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-        HttpServlet httpServlet = null;
-        try {
-            httpServlet = new MyHttpServlet();
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-            return;
-        }
+        HttpServlet httpServlet = MyHttpServlet.getInstance();
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
