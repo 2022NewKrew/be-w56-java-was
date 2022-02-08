@@ -2,6 +2,7 @@ package servlet;
 
 import http.Cookie;
 import http.HttpMethod;
+import servlet.container.MappingKey;
 
 import java.util.Map;
 
@@ -28,5 +29,9 @@ public class ServletRequest {
 
     public Cookie getCookie() {
         return cookie;
+    }
+
+    public String getPath() {
+        return path;
     }
 }

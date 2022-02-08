@@ -1,4 +1,4 @@
-package servlet;
+package servlet.view;
 
 import http.ResponseMessage;
 

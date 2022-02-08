@@ -1,6 +1,6 @@
 package template;
 
-import servlet.Model;
+import servlet.view.Model;
 
 import java.util.ArrayList;
 import java.util.List;

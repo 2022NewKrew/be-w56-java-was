@@ -32,6 +32,10 @@ public class Cookie {
         }
     }
 
+    public String getCookie(String key) {
+        return cookies.get(key);
+    }
+
     public String createCookieHeader() {
         return cookies.entrySet()
                 .stream()

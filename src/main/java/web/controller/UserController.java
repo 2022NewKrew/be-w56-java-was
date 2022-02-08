@@ -6,7 +6,7 @@ import annotation.PostMapping;
 import db.DataBase;
 import http.Cookie;
 import model.User;
-import servlet.Model;
+import servlet.view.Model;
 import web.dto.LoginDto;
 
 import java.util.Collection;

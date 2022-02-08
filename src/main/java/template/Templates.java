@@ -1,6 +1,6 @@
 package template;
 
-import servlet.Model;
+import servlet.view.Model;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

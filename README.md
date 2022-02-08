@@ -129,8 +129,8 @@ CRLF
   - [x] html을 StringBuilder로 읽어서 model객체의 parameter와 비교하면서 넣는다.
 - Filter 구현하기
   - 서블릿 실행 전 필터에서 요청 url과 Cookie를 비교한다.(필터에서 확인할 url을 설정한다.)
-    - [ ] “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 사용자 목록을 출력한다.
-    - [ ] 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
+    - [x] “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 사용자 목록을 출력한다.
+    - [x] 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.
 
 ## 도메인 요구사항
 

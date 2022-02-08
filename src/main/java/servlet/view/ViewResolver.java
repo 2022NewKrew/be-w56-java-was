@@ -1,4 +1,6 @@
-package servlet;
+package servlet.view;
+
+import servlet.ServletResponse;
 
 public class ViewResolver {
     private static final String STATIC_FILE_PREFIX = "./webapp";
