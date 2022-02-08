@@ -3,8 +3,6 @@ package http.request;
 import http.cookie.HttpCookie;
 import http.header.HttpHeaders;
 
-import java.util.List;
-
 public class HttpRequest {
     private HttpRequestLine requestLine;
     private HttpHeaders headers;

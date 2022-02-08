@@ -95,7 +95,7 @@
       <div class="panel panel-default" style="padding: 2em">
           <div>
               <h3>한 줄 메모장</h3>
-              <form>
+              <form method="post" action="/comment">
                   <textarea name="comment" style="width: 100%; height: 6.25em"></textarea>
                   <div style="display: flex; justify-content: end"><button type="submit">저장</button></div>
               </form>
@@ -111,11 +111,13 @@
                   <th>작성자</th>
                   <th>내용</th>
               </tr>
+              {{#comments}}
               <tr>
-                  <td>2022</td>
-                  <td>carrot</td>
-                  <td>내용</td>
+                  <td>{{registerDate}}</td>
+                  <td>{{writer}}</td>
+                  <td>{{comment}}</td>
               </tr>
+              {{/comments}}
           </table>
         </div>
     </div>
