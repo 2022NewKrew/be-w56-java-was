@@ -30,6 +30,11 @@ public class Response {
         responseBody(body);
     }
 
+    public void staticResponse(byte[] body) {
+        response200Header("text/html", body.length);
+        responseBody(body);
+    }
+
     public void redirectResponse(String location) {
         response302Header(location);
     }
