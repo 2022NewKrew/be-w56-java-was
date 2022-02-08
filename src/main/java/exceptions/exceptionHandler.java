@@ -15,8 +15,13 @@ public class exceptionHandler {
 
     public static void httpMethodNotFound(OutputStream out, String message) throws IOException {
         log.error(message);
-        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED, "/errors"
-                + "/methodNotAllowed.html");
+        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED, "/errors/methodNotAllowed.html");
+        View.sendResponse(out, httpResponse.message());
+    }
+
+    public static void badRequestFormat(OutputStream out, String message) throws IOException {
+        log.error(message);
+        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.BAD_REQUEST, "/errors/badRequest.html");
         View.sendResponse(out, httpResponse.message());
     }
 }

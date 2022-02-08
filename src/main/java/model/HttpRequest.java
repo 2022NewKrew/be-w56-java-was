@@ -1,6 +1,7 @@
 package model;
 
 import com.google.common.base.Strings;
+import exceptions.BadRequestFormatException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class HttpRequest {
 
     private static final String BODY_SEPARATOR = "";
+    private static final int VALID_REQUEST_LINE_SIZE = 2;
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
@@ -36,6 +38,9 @@ public class HttpRequest {
 
             requestLineList.add(line);
             line = bufferedReader.readLine();
+        }
+        if (requestLineList.size() < VALID_REQUEST_LINE_SIZE) {
+            throw new BadRequestFormatException("request 형식이 맞지 않습니다");
         }
         return requestLineList;
     }
