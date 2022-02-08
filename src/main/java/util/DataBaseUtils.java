@@ -42,7 +42,8 @@ public class DataBaseUtils {
             String password = properties.getProperty("DB_PASSWORD");
             return DriverManager.getConnection(url, id, password);
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            log.error(e.getMessage());
         }
+        return null;
     }
 }
