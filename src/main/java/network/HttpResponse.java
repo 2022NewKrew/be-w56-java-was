@@ -23,9 +23,14 @@ public class HttpResponse {
                 responseBody(dos, body);
                 break;
             case FOUND:
-                response302Header(dos, "/index.html");
+                response302Header(dos, path);
                 break;
         }
+    }
+
+    public static void redirect(String path, OutputStream out){
+        DataOutputStream dos = new DataOutputStream(out);
+        response302Header(dos, path);
     }
 
     private static byte[] getHtmlBytes(String url) throws IOException {
