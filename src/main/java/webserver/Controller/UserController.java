@@ -18,7 +18,7 @@ import java.util.Map;
 public class UserController {
     private byte[] outputBody = new byte[0];
     private final String INDEX_PATH = "/index.html";
-    private final String ROOT_DIRECTORY = "./webapp";
+    private final String STATIC_ROOT_PATH = "./webapp";
 
     public void signUp(DataOutputStream dos, RequestHeader header) throws IOException {
         Map<String, String> body = header.getBody();
@@ -39,7 +39,7 @@ public class UserController {
         Map<String, String> body = header.getBody();
         User user = DataBase.findUserById(body.get("userId"));
         if (user != null && user.getPassword().equals(body.get("password"))) {
-            File file = new File(ROOT_DIRECTORY+INDEX_PATH);
+            File file = new File(STATIC_ROOT_PATH +INDEX_PATH);
             outputBody = Files.readAllBytes(file.toPath());
             HttpResponseUtils.writeStatusCode(dos, 302);
             HttpResponseUtils.writeLocation(dos, INDEX_PATH);
@@ -47,7 +47,7 @@ public class UserController {
             HttpResponseUtils.writeBody(dos, outputBody);
             return;
         }
-        String path = ROOT_DIRECTORY+"/user/login_failed.html";
+        String path = STATIC_ROOT_PATH +"/user/login_failed.html";
         File file = new File(path);
         outputBody = Files.readAllBytes(file.toPath());
         HttpResponseUtils.writeStatusCode(dos, 302);
@@ -61,7 +61,7 @@ public class UserController {
         String token = requestInfo.getOrDefault("Cookie", "");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(token);
         if (cookies.getOrDefault("logined", "false").equals("true")) {
-            File file = new File(ROOT_DIRECTORY+"/user/list.html");
+            File file = new File(STATIC_ROOT_PATH +"/user/list.html");
             outputBody = Files.readAllBytes(file.toPath());
             StringBuilder sb = new StringBuilder(new String(outputBody));
             StringBuilder newSb = new StringBuilder();
@@ -80,7 +80,7 @@ public class UserController {
             HttpResponseUtils.writeBody(dos, outputBody);
             return;
         }
-        String path = ROOT_DIRECTORY+"/user/login.html";
+        String path = STATIC_ROOT_PATH +"/user/login.html";
         File file = new File(path);
         outputBody = Files.readAllBytes(file.toPath());
         HttpResponseUtils.writeStatusCode(dos, 302);

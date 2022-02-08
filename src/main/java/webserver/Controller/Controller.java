@@ -12,12 +12,12 @@ import java.nio.file.Files;
 
 @Slf4j
 public class Controller {
-    private static final String BASE_PATH = "./webapp";
+    private static final String STATIC_ROOT_PATH = "./webapp";
 
     public void responseStaticFile(DataOutputStream dos, RequestHeader header) {
         byte[] body;
         try {
-            String path = header.getUri().equals("/") ? BASE_PATH+"/index.html" : BASE_PATH + header.getUri();
+            String path = header.getUri().equals("/") ? STATIC_ROOT_PATH +"/index.html" : STATIC_ROOT_PATH + header.getUri();
             File file = new File(path);
             body = Files.readAllBytes(file.toPath());
             String s = header.getRequestInfo().getOrDefault("Accept", "0").split(",")[0];
