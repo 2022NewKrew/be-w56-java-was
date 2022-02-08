@@ -73,8 +73,8 @@ public class RequestHandler extends Thread {
     }
 
     private void urlMapper(DataOutputStream dos, String url, Map<String, String> header, BufferedReader br) throws IOException {
-        if (url.endsWith(".html")) {
-            getHtml(dos, url, header);
+        if (url.contains(".")) {
+            getFile(dos, url, header);
         } else if (url.startsWith("/create")) {
             createUserByPost(dos, url, header, br);
         } else if (url.equals("/login")) {
@@ -97,7 +97,7 @@ public class RequestHandler extends Thread {
 
     }
 
-    private void getHtml(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
+    private void getFile(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
         view(dos, url, header);
     }
 
@@ -153,13 +153,18 @@ public class RequestHandler extends Thread {
         byte[] body = new String(Files.readAllBytes(new File("./webapp" + url).toPath()))
                 .replace("{{userList}}", URLDecoder.decode(sb.toString(), StandardCharsets.UTF_8))
                 .getBytes();
-        response200Header(dos, body.length);
+        response200Header(dos, body.length, "html");
         responseBody(dos, body);
     }
 
     private void view(DataOutputStream dos, String url, Map<String, String> header) throws IOException {
         byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-        response200Header(dos, body.length);
+        String[] tokens = url.split("\\.");
+        String fileType = tokens[tokens.length-1];
+        if(fileType == null){
+            throw new IOException();
+        }
+        response200Header(dos, body.length, fileType);
         responseBody(dos, body);
     }
 
@@ -169,10 +174,10 @@ public class RequestHandler extends Thread {
         responseBody(dos, body);
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String fileType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: text/"+ fileType +";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
