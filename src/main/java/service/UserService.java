@@ -1,6 +1,6 @@
 package service;
 
-import db.DataBase;
+import db.UserRepository;
 import java.util.List;
 import model.User;
 import org.slf4j.Logger;
@@ -9,10 +9,14 @@ import org.slf4j.LoggerFactory;
 public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User login(User user) {
-        User expectedUser = DataBase
-            .findUserById(user.getUserId())
+        User expectedUser = userRepository.findById(user.getUserId())
             .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저입니다."));
 
         if (expectedUser.checkPassword(user.getPassword())) {
@@ -23,11 +27,11 @@ public class UserService {
     }
 
     public List<User> findAll() {
-        return DataBase.findAll();
+        return userRepository.findAll();
     }
 
     public void save(User user) {
-        DataBase.addUser(user);
+        userRepository.addUser(user);
         LOG.info("{} user create success", user.getUserId());
     }
 }

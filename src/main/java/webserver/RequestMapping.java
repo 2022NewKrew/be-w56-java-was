@@ -5,6 +5,7 @@ import controller.FrontController;
 import controller.LoginController;
 import controller.RegisterController;
 import controller.UsersController;
+import db.UserRepository;
 import httpmodel.HttpRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class RequestMapping {
     private static final String FRONT = "front";
 
     static {
-        UserService userService = new UserService();
+        UserService userService = new UserService(new UserRepository());
         CONTROLLERS.put("/users/login", new LoginController(userService));
         CONTROLLERS.put(FRONT, new FrontController());
         CONTROLLERS.put("/users", new RegisterController(userService));
