@@ -22,8 +22,8 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public String method() {
-        return method.name();
+    public HttpMethod method() {
+        return method;
     }
 
     public URI uri() {

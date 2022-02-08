@@ -129,8 +129,8 @@ public enum RequestMappingInfo {
         this.method = method;
     }
 
-    public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, String method) {
-        String mappingMethod = requestMappingInfo.method.name();
+    public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, HttpMethod method) {
+        HttpMethod mappingMethod = requestMappingInfo.method;
         return !mappingMethod.equals(method);
     }
 
