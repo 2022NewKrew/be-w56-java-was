@@ -12,10 +12,10 @@ public class TemplateEngine {
         String bodyString = new String(body);
         while(bodyString.contains("{{#")){
             String key = bodyString.substring(bodyString.indexOf("{{#")+3, bodyString.indexOf("}}"));
-            int start = bodyString.indexOf("{{#"+key+"}}")+key.length()+5;
+            int start = bodyString.indexOf("{{#"+key+"}}");
             int end = bodyString.indexOf("{{/"+key+"}}");
-            String stringToReplace = bodyString.substring(start, end);
-            bodyString = bodyString.substring(0, bodyString.indexOf(start)) + findReplacedString(stringToReplace, mv.getAttribute(key)) + bodyString.substring(bodyString.indexOf(end)+key.length()+5);
+            String stringToReplace = bodyString.substring(start+key.length()+5, end);
+            bodyString = bodyString.substring(0, start) + findReplacedString(stringToReplace, mv.getAttribute(key)) + bodyString.substring(end+key.length()+5);
         }
         return bodyString.getBytes(StandardCharsets.UTF_8);
     }
