@@ -11,24 +11,14 @@ import static util.HttpRequestUtils.parseQueryString;
 public class RequestMapper {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    public static String requestMapping (String requestMethod, String requestUrl) {
-        // URL에서 접근경로와 이름=값 추출
-        List<String> urlElement = List.of(requestUrl.split("\\?"));
-        String requestPath = urlElement.get(0);
-        log.debug("urlPath : {}", requestPath);
+    public static String requestMapping (Map<String, String> requestMap) {
 
-        // 이름=값 추출
-        Map<String, String> dataPairs = null;
-        if (urlElement.size() > 1) {
-            dataPairs = parseQueryString(urlElement.get(1));
-            log.debug("userId : {}", dataPairs.get("userId"));
-            log.debug("password : {}", dataPairs.get("password"));
-            log.debug("name : {}", dataPairs.get("name"));
-            log.debug("email : {}", dataPairs.get("email"));
+        if (requestMap.get("method").equals("GET")) {
+            return GetMapper.getMapping(requestMap);
         }
 
-        if (requestMethod.equals("GET")) {
-            return GetMapper.getMapping(requestPath, dataPairs);
+        if (requestMap.get("method").equals("POST")) {
+            return PostMapper.postMapping(requestMap);
         }
         return null;
     }
