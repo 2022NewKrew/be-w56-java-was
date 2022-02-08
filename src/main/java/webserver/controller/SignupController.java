@@ -2,6 +2,7 @@ package webserver.controller;
 
 import db.DB;
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersions;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class SignupController extends BaseController {
             log.debug("회원가입 실패: {}", queryParams);
             return HttpResponse
                     .builder()
-                    .protocolVersion("HTTP/1.1")
+                    .protocolVersion(HttpProtocolVersions.HTTP_1_1.getValue())
                     .headers(new HttpHeaders())
                     .status("400 Bad Request")
                     .build();

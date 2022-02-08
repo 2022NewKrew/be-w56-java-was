@@ -2,6 +2,7 @@ package http.response;
 
 import http.HttpMessage;
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersions;
 import http.view.ViewResolver;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class HttpResponse extends HttpMessage {
     // TODO: 재사용 가능하도록 리팩토링
     public static HttpResponse ok(String path) {
         return HttpResponse.builder()
-                .protocolVersion("HTTP/1.1")
+                .protocolVersion(HttpProtocolVersions.HTTP_1_1.getValue())
                 .headers(new HttpHeaders())
                 .status("200 OK")
                 .uri(path)
@@ -59,7 +60,7 @@ public class HttpResponse extends HttpMessage {
         headers.add("Location", redirectLocation);
 
         return HttpResponse.builder()
-                .protocolVersion("HTTP/1.1")
+                .protocolVersion(HttpProtocolVersions.HTTP_1_1.getValue())
                 .headers(headers)
                 .status("302 Found")
                 .build();

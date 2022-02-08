@@ -6,14 +6,14 @@ public enum HttpHeaderNames {
     CONTENT_TYPE("content-type"),
     ;
 
-    final String name;
+    final String value;
 
-    HttpHeaderNames(String name) {
-        this.name = name;
+    HttpHeaderNames(String value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return name.toString().toLowerCase();
+        return value.toLowerCase();
     }
 }
