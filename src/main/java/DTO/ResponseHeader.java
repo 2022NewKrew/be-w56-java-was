@@ -33,7 +33,7 @@ public class ResponseHeader {
     }
 
     public void removeCookie(String name, String value){
-        String cookie = name + "=" + value + "; Path=/; Max-Age=0; domain=localhost:8081";
+        String cookie = name + "=" + value + "; Path=/; Max-age=0";
         headerList.put("Set-Cookie", cookie);
     }
 

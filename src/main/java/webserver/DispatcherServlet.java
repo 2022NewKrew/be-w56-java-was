@@ -15,10 +15,11 @@ public class DispatcherServlet {
         HandlerMapper.initController();
     }
 
-    public static ModelAndView handleRequest(RequestHeader requestHeader, ResponseHeader responseHeader) {
+    public static ModelAndView handleRequest(RequestHeader requestHeader, ResponseHeader responseHeader) throws NullPointerException{
 
         try {
             Controller controller = HandlerMapper.requestMapping(requestHeader);
+            log.error(" handle request : {}", controller);
             ModelAndView modelAndView = HandlerAdapter.request(controller, requestHeader, responseHeader);
             return modelAndView;
 

@@ -75,9 +75,6 @@ public class MemberController implements Controller {
             String sessionId = UserService.login(requestParam);
             log.info("User Login : {}", sessionId);
 
-            responseHeader.setCookie("logined","true", cookieOptions);
-            requestHeader.setCookie("logined","true");
-
             // 1. create sessionID in db
             // 2. return session id in cookie
             // 3. store session id in db.
@@ -108,27 +105,16 @@ public class MemberController implements Controller {
         public ModelAndView getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){
             log.info("Print DB : {}", DataBase.printUserIdPw());
 
-            try{
-                logout(requestHeader, responseHeader);
-                return new ModelAndView("redirect:/index.html");
-
-            }catch (Exception e){
-                log.debug(e.getMessage());
-                return new ModelAndView("redirect:/index.html");
-            }
+            logout(requestHeader, responseHeader);
+            return new ModelAndView("redirect:/index.html");
 
         }
 
         private void logout(RequestHeader requestHeader, ResponseHeader responseHeader){
+            log.info("User LogOut ");
             String sid = UserService.logout(); // session logout;
 
-            log.info("User LogOut ");
-
             responseHeader.removeCookie("SESSIONID", sid);
-            requestHeader.removeCookie("SESSIONID", sid);
-
-            responseHeader.setCookie("logined","false", cookieOptions);
-            requestHeader.setCookie("logined","false");
 
 
         }

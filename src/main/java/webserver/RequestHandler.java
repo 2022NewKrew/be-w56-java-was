@@ -33,10 +33,11 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
 
             ModelAndView mav = DispatcherServlet.handleRequest(requestHeader, responseHeader);
-
             mav.render(requestHeader, responseHeader, dos);
 
         } catch (IOException e) {
+            log.error(e.getMessage());
+        } catch (NullPointerException e){
             log.error(e.getMessage());
         }
     }
