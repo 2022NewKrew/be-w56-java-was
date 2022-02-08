@@ -10,6 +10,6 @@ public enum HttpMethod {
     OPTIONS("OPTIONS"),
     TRACE("TRACE");
 
-    HttpMethod(String name) {
+    HttpMethod(String options) {
     }
 }

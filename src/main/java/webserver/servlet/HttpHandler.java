@@ -1,9 +1,11 @@
 package webserver.servlet;
 
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.HttpResponseStatus;
 import webserver.servlet.method.GetHandler;
 import webserver.servlet.method.PostHandler;
 
@@ -39,6 +41,9 @@ public class HttpHandler implements HttpHandleable {
             response.send();
         } catch (Exception e) {
             logger.error(e.getMessage());
+            response.setStatus(HttpResponseStatus.INTERNAL_ERROR);
+            response.setBody(e.getMessage().getBytes(StandardCharsets.UTF_8));
+            response.send();
         }
     }
 

@@ -17,8 +17,8 @@ public class LoginService implements LoginUseCase {
     @Override
     public User login(LoginUserDto loginUserDto) {
         User user = loadUserPort.findUserById(loginUserDto.getUserId());
-        boolean isPasswordMatched = user.isPasswordMatch(loginUserDto.getPassword());
-        if (!isPasswordMatched) {
+        boolean passwordMatched = user.isPasswordMatch(loginUserDto.getPassword());
+        if (!passwordMatched) {
             throw new WrongPasswordException();
         }
         return user;
