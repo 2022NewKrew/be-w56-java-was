@@ -1,20 +1,19 @@
 package controller;
 
 import dao.UserDao;
-import db.DataBase;
 import dto.UserDto;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import java.io.DataOutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import mapper.UserMapper;
 import util.MapUtil;
 
 public class UserListController implements Controller {
 
     private static UserListController instance;
+    private static final UserMapper userMapper = UserMapper.instance;
 
     public static synchronized UserListController getInstance() {
         if (instance == null) {
@@ -37,11 +36,7 @@ public class UserListController implements Controller {
             );
         }
 
-        List<UserDto> userDtos = userDao
-                .find()
-                .stream()
-                .map(UserMapper.instance::userToDto)
-                .collect(Collectors.toList());
+        List<UserDto> userDtos = userMapper.usersToDtos(userDao.find());
 
         Map<String, Object> model = Map.of("users", userDtos);
 
