@@ -3,14 +3,13 @@ package controller;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpStatus;
-import util.request.Request;
-import util.response.Response;
-import util.response.ResponseBuilder;
-import util.response.ResponseException;
 import webserver.RequestHandler;
+import webserver.http.HttpStatus;
+import webserver.request.Request;
+import webserver.response.Response;
+import webserver.response.ResponseBuilder;
+import webserver.response.ResponseException;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +20,10 @@ public class StaticController extends Controller {
 
     private static final StaticController staticController = new StaticController();
 
-    public static StaticController getController() {
+    private StaticController() {
+    }
+
+    public static StaticController getInstance() {
         return staticController;
     }
 
@@ -34,8 +36,7 @@ public class StaticController extends Controller {
             String contentType = new Tika().detect(file);
             log.debug("static url : {}, content type : {}, file : {}", url, contentType, path.getFileName());
             return new ResponseBuilder().setHttpStatus(HttpStatus.OK)
-                    .addHeader("Content-Type", contentType + ";charset=utf-8")
-                    .addHeader("Content-Length", String.valueOf(body.length))
+                    .setContent(contentType, body)
                     .setBody(body)
                     .build();
         } catch (IOException e) {

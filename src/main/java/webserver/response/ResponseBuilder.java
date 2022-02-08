@@ -1,6 +1,6 @@
-package util.response;
+package webserver.response;
 
-import util.HttpStatus;
+import webserver.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +13,12 @@ public class ResponseBuilder {
 
     public ResponseBuilder setHttpStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
+        return this;
+    }
+
+    public ResponseBuilder setContent(String contentType, byte[] body) {
+        header.put("Content-Type", contentType + ";charset=utf-8");
+        header.put("Content-Length", String.valueOf(body.length));
         return this;
     }
 

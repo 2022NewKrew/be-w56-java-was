@@ -1,9 +1,9 @@
-package util.response;
+package webserver.response;
 
-import util.HtmlBuilder;
-import util.HttpStatus;
-import util.Message;
-import util.Model;
+import webserver.html.HtmlBuilder;
+import webserver.html.Message;
+import webserver.html.Model;
+import webserver.http.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +16,7 @@ public class ResponseException {
         byte[] body = Files.readAllBytes(new File("./webapp/404.html").toPath());
         return new ResponseBuilder()
                 .setHttpStatus(HttpStatus.NOT_FOUND)
-                .addHeader("Content-Type","text/html;charset=utf-8")
-                .addHeader("Content-length", String.valueOf(body.length))
+                .setContent("text/html", body)
                 .setBody(body)
                 .build();
     }
@@ -32,8 +31,7 @@ public class ResponseException {
         byte[] body = html.getBytes();
         return new ResponseBuilder()
                 .setHttpStatus(httpStatus)
-                .addHeader("Content-Type","text/html;charset=utf-8")
-                .addHeader("Content-length", String.valueOf(body.length))
+                .setContent("text/html", body)
                 .setBody(body)
                 .build();
     }
