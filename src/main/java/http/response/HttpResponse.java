@@ -17,7 +17,7 @@ public class HttpResponse extends HttpMessage {
     private final byte[] body;
 
     @Builder
-    public HttpResponse(String protocolVersion, HttpHeaders headers,
+    public HttpResponse(HttpProtocolVersion protocolVersion, HttpHeaders headers,
                         String status, String uri) {
         super(protocolVersion, headers);
         this.status = status;
@@ -25,7 +25,7 @@ public class HttpResponse extends HttpMessage {
     }
 
     public void send(DataOutputStream dos) throws IOException {
-        dos.writeBytes(String.format("%s %s\r\n", protocolVersion, status));
+        dos.writeBytes(String.format("%s %s\r\n", protocolVersion.getValue(), status));
         for (Map.Entry<String, String> header: headers) {
             dos.writeBytes(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
         }
@@ -48,7 +48,7 @@ public class HttpResponse extends HttpMessage {
     // TODO: 재사용 가능하도록 리팩토링
     public static HttpResponse ok(String path) {
         return HttpResponse.builder()
-                .protocolVersion(HttpProtocolVersion.HTTP_1_1.getValue())
+                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                 .headers(new HttpHeaders())
                 .status("200 OK")
                 .uri(path)
@@ -60,7 +60,7 @@ public class HttpResponse extends HttpMessage {
         headers.add("Location", redirectLocation);
 
         return HttpResponse.builder()
-                .protocolVersion(HttpProtocolVersion.HTTP_1_1.getValue())
+                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                 .headers(headers)
                 .status("302 Found")
                 .build();

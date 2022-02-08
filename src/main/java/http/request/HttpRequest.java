@@ -2,6 +2,7 @@ package http.request;
 
 import http.HttpMessage;
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersion;
 import http.util.HttpRequestUtils;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class HttpRequest extends HttpMessage {
     private final String body;
 
     @Builder
-    public HttpRequest(String protocolVersion, HttpHeaders headers, String body,
+    public HttpRequest(HttpProtocolVersion protocolVersion, HttpHeaders headers, String body,
                        HttpRequestMethod method, String uri) {
         super(protocolVersion, headers);
         this.method = method;

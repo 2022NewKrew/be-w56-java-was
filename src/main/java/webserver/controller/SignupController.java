@@ -23,7 +23,7 @@ public class SignupController extends BaseController {
             log.debug("회원가입 실패: {}", queryParams);
             return HttpResponse
                     .builder()
-                    .protocolVersion(HttpProtocolVersion.HTTP_1_1.getValue())
+                    .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                     .headers(new HttpHeaders())
                     .status("400 Bad Request")
                     .build();

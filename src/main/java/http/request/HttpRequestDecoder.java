@@ -3,6 +3,7 @@ package http.request;
 import com.google.common.base.Strings;
 import http.header.HttpHeaderName;
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersion;
 import http.util.HttpRequestUtils;
 
 import java.io.BufferedReader;
@@ -28,7 +29,7 @@ public class HttpRequestDecoder {
 
         HttpRequestMethod method = HttpRequestMethod.valueOf(tokens[0]);
         String uri = tokens[1];
-        String protocolVersion = tokens[2];
+        HttpProtocolVersion protocolVersion = HttpProtocolVersion.parseProtocolVersion(tokens[2]);
 
         HttpHeaders headers = getHeaders(br);
 

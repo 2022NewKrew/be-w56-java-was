@@ -45,7 +45,7 @@ class HttpRequestDecoderTest {
                         HttpRequest.builder()
                                 .method(HttpRequestMethod.GET)
                                 .uri("/")
-                                .protocolVersion(HttpProtocolVersion.HTTP_1_1.getValue())
+                                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                                 .headers(headers1)
                                 .build()
                 ),
@@ -58,7 +58,7 @@ class HttpRequestDecoderTest {
                         HttpRequest.builder()
                                 .method(HttpRequestMethod.POST)
                                 .uri("/abc")
-                                .protocolVersion(HttpProtocolVersion.HTTP_1_1.getValue())
+                                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                                 .headers(headers2)
                                 .body("abcde")
                                 .build()
