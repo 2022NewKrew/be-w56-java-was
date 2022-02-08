@@ -33,6 +33,10 @@ public class HttpRequestDecoder {
 
         HttpHeaders headers = getHeaders(br);
 
+        if (headers.containsName("cookie")) {
+
+        }
+
         // read body if "content-length" header exists
         String body = null;
         if (headers.containsName(HttpHeaderName.CONTENT_LENGTH.getValue())) {

@@ -73,4 +73,12 @@ public class HttpResponse extends HttpMessage {
                 .status("400 Bad Request")
                 .build();
     }
+
+    public static HttpResponse notFound() {
+        return HttpResponse.builder()
+                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
+                .headers(new HttpHeaders())
+                .status("404 Not Found")
+                .build();
+    }
 }
