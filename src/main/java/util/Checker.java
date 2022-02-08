@@ -20,6 +20,15 @@ public final class Checker {
     }
 
     public static void checkString(
+            final String str
+    ) throws IllegalArgumentException
+    {
+        if (str == null || str.isBlank()) {
+            throw new IllegalArgumentException("String is null or blank!");
+        }
+    }
+
+    public static void checkString(
             final String name,
             final String str,
             final String regex,

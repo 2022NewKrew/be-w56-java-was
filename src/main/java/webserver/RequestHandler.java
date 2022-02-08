@@ -149,6 +149,14 @@ public class RequestHandler implements Callable<Void> {
             final String location
     ) throws IOException
     {
+        if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
+            final Body body = userController.processGet(location);
+            if (body.isNotEmpty()) {
+                responseWriter.writeBodyResponse(out, body);
+                return;
+            }
+        }
+
         responseWriter.writeFileResponse(out, location);
     }
 
@@ -159,7 +167,7 @@ public class RequestHandler implements Callable<Void> {
     ) throws IOException
     {
         if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
-            responseWriter.writeRedirectResponse(out, userController.process(location, body));
+            responseWriter.writeRedirectResponse(out, userController.processPost(location, body));
             return;
         }
 

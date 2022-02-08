@@ -1,6 +1,7 @@
 package webserver;
 
 import model.Pair;
+import model.request.Body;
 import model.request.Headers;
 import model.request.HttpLocation;
 import org.slf4j.Logger;
@@ -37,6 +38,10 @@ public class ResponseWriter {
         }
 
         writeErrorResponse(out);
+    }
+
+    public void writeBodyResponse(final OutputStream out, final Body body) {
+        write200Response(out, body.get().getBytes(StandardCharsets.UTF_8));
     }
 
     /**

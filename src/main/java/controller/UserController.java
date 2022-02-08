@@ -8,6 +8,8 @@ import model.request.Headers;
 import model.request.HttpLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import templates.TemplateAttribute;
+import templates.TemplateEngine;
 import util.HttpRequestUtils;
 import util.SecurePassword;
 
@@ -21,12 +23,31 @@ import java.util.Objects;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    private static final String LOCATION_USER_LIST = "/user/list";
     private static final String LOCATION_USER_CREATE = "/user/create";
     private static final String LOCATION_USER_LOGIN = "/user/login";
 
     private final DataBase dataBase = new DataBase();
 
-    public Headers process(final String location, final Body body) {
+    public Body processGet(final String location) {
+        if (LOCATION_USER_LIST.equals(location)) {
+            return getUserList();
+        }
+
+        return Body.EMPTY;
+    }
+
+    static TemplateEngine userListTpl;
+    private Body getUserList() {
+        if (userListTpl == null) {
+            userListTpl = new TemplateEngine(LOCATION_USER_LIST);
+        }
+        TemplateAttribute<User> tplAttr = new TemplateAttribute<>();
+        tplAttr.set("userlist", dataBase.findAll());
+        return userListTpl.processTemplate(tplAttr);
+    }
+
+    public Headers processPost(final String location, final Body body) {
         final List<Pair> list = new ArrayList<>();
         if (LOCATION_USER_CREATE.equals(location)) {
             userCreate(list, body);
