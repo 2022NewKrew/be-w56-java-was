@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>☕️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="../css/reset.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="../css/post/show.css" rel="stylesheet">
+</head>
+<body>
+<div class="background">
+  <nav class="navbar navbar-fixed-top header">
+  <div class="col-md-12">
+    <div class="navbar-header">
+      <a href="/" class="navbar-brand">
+        <img src="/images/KakaoCI.png" />
+      </a>
+
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="active"><a href="/users">멤버 리스트</a></li>
+      {{^sessionUser}}
+      <li><a class="black-component" href="/user/login" role="button">로그인</a></li>
+      <li><a class="black-component" href="/user/signup" role="button">회원가입</a></li>
+      {{/sessionUser}}
+      {{#sessionUser}}
+      <li><a class="black-component" href="#" role="button">내정보수정</a></li>
+      <li><a class="black-component" href="/users/logout" role="button">로그아웃</a></li>
+      {{/sessionUser}}
+    </ul>
+  </div>
+</nav>
+
+  <div class="container" id="main">
+    <div class="col-md-12 col-sm-12 col-lg-12">
+      <div class="panel panel-default">
+        <header class="post-header">
+          <p class="post-title">{{post.title}}</p>
+        </header>
+        <div class="content-main">
+          <article class="article">
+            <div class="article-header">
+              <div class="article-header-text">
+                <p class="article-content"><a href="/users/{{post.userId}}">{{post.name}}</a></p>
+                <p class="article-content">
+                  작성일자:{{post.createdAt}}
+                </p>
+              </div>
+            </div>
+            <div class="article-doc">
+              {{post.content}}
+            </div>
+          </article>
+
+          <ul class="nav navbar-nav navbar-right">
+            {{#sessionUser}}
+            <li><a class="black-component" href="/posts/{{post.postId}}/update" role="button">수정</a>
+            </li>
+            <li>
+              <form action="/posts/{{post.postId}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button class="black-component" type="submit">삭제</button>
+              </form>
+            </li>
+            {{/sessionUser}}
+          </ul>
+
+          <div class="post-comment">
+            <div class="post-comment-slipp">
+              <p class="post-comment-count">댓글 {{replies.size}}개</p>
+              <div class="post-comment-slipp-articles">
+                {{#replies}}
+                <article class="comment">
+                  <div class="article-text">
+                    <p class="comment-content comment-author-name">{{name}}</p>
+                    <div class="comment-content comment-doc">
+                      <p>{{comment}}</p>
+                    </div>
+                    <p class="comment-content comment-time">
+                      {{createdAt}}
+                    </p>
+                  </div>
+                  <form action="/posts/{{post.postId}}/replies/{{replyId}}" method="post">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button class="black-component" type="submit">삭제</button>
+                  </form>
+                </article>
+                {{/replies}}
+
+                <form class="submit-write" method="post"
+                      action="/posts/{{post.postId}}/replies">
+                  <div class="comment-writer-container">
+                    <p class="comment-writer" id="writer">{{sessionUser.userName}}</p>
+                  </div>
+                  <div class="form-group">
+                    <textarea class="form-control" id="comment" name="comment"
+                              placeholder="내용을 입력하세요"></textarea>
+                  </div>
+                  <input class="post-write-btn" type="submit" value="등록"/>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
