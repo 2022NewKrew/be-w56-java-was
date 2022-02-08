@@ -44,9 +44,16 @@ public class HandlerMapping {
             return ModelAndView.from(viewName);
         }
 
-        Object methodInstance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        String viewName = (String) method.invoke(methodInstance, httpRequest, httpResponse);
+        Object controller = method.getDeclaringClass().getDeclaredConstructor().newInstance();
+        Class<?>[] parameterTypes = method.getParameterTypes();
 
+        if (parameterTypes.length > 2 && parameterTypes[2].equals(Model.class)) {
+            Model model = new Model();
+            String viewName = (String) method.invoke(controller, httpRequest, httpResponse, model);
+            return ModelAndView.of(viewName, model);
+        }
+
+        String viewName = (String) method.invoke(controller, httpRequest, httpResponse);
         return ModelAndView.from(viewName);
     }
 
