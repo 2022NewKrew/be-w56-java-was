@@ -1,40 +1,35 @@
 package webserver.resolver;
 
+import com.google.common.collect.Lists;
 import http.HttpRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ControllerArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String SETTER_METHOD_PREFIX = "set";
-
     @Override
     public boolean supportsParameter(Class<?> clazz, HttpRequest httpRequest) {
-        List<String> fields = Arrays.stream(clazz.getDeclaredFields())
+        List<String> parameters = Arrays.stream(clazz.getDeclaredFields())
             .map(Field::getName)
             .collect(Collectors.toList());
-        return httpRequest.hasAllFields(fields);
+        return httpRequest.hasAllParameters(parameters);
     }
 
     @Override
     public Object resolveArgument(Object instance, HttpRequest httpRequest) throws Exception {
-        Map<String, String> fields = httpRequest.getFields();
-        Method[] methods = instance.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.getName().startsWith(SETTER_METHOD_PREFIX)) {
-                String field = getField(method.getName());
-                method.invoke(instance, fields.get(field));
-            }
+        Class<?> clazz = instance.getClass();
+        List<Class<?>> parameterTypes = Lists.newArrayList();
+        List<String> parameterNames = Lists.newArrayList();
+        for (Field field : clazz.getDeclaredFields()) {
+            parameterTypes.add(field.getType());
+            parameterNames.add(field.getName());
         }
-        return instance;
-    }
-
-    private static String getField(String methodName) {
-        String field = methodName.substring(SETTER_METHOD_PREFIX.length());
-        return Character.toLowerCase(field.charAt(0)) + field.substring(1);
+        Constructor<?> constructor = clazz.getDeclaredConstructor(
+            parameterTypes.toArray(new Class[0]));
+        Object[] args = parameterNames.stream().map(httpRequest::getParameter).toArray();
+        return constructor.newInstance(args);
     }
 }

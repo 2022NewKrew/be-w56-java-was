@@ -1,14 +1,15 @@
 package webserver;
 
+import com.google.common.collect.Maps;
 import controller.Controller;
 import http.GetMapping;
 import http.HttpMethod;
 import http.HttpRequest;
+import http.HttpResponse;
 import http.PostMapping;
 import http.Url;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -17,12 +18,15 @@ import webserver.resolver.ArgumentResolvers;
 public class MappingHandler {
 
     private static final String CONTROLLER_PACKAGE = "controller";
-    private static final Map<Url, Method> mappings = new HashMap<>();
+    private static final Map<Url, Method> mappings = Maps.newHashMap();
 
     static {
         Set<Class<?>> controllers = new Reflections(CONTROLLER_PACKAGE)
             .getTypesAnnotatedWith(Controller.class);
         controllers.forEach(MappingHandler::registerMethod);
+    }
+
+    private MappingHandler() {
     }
 
     private static void registerMethod(Class<?> controllerClass) {
@@ -40,13 +44,14 @@ public class MappingHandler {
             });
     }
 
-    public static String invoke(HttpRequest httpRequest) throws Exception {
+    public static void invoke(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
         Method method = mappings.get(httpRequest.getUrl());
         if (method == null) {
-            return httpRequest.getUrl().getPath();
+            httpResponse.ok(httpRequest.getUrl().getPath());
+            return;
         }
-        Object[] args = ArgumentResolvers.resolve(method, httpRequest);
+        Object[] args = ArgumentResolvers.resolve(method, httpRequest, httpResponse);
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        return (String) method.invoke(instance, args);
+        method.invoke(instance, args);
     }
 }

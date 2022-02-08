@@ -9,10 +9,13 @@ import java.util.stream.Stream;
 public enum HttpHeader {
 
     ACCEPT("Accept"),
+    CONNECTION("Connection"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_TYPE("Content-Type"),
-    HOST("HOST"),
-    CONNECTION("Connection");
+    COOKIE("Cookie"),
+    HOST("Host"),
+    LOCATION("Location"),
+    SET_COOKIE("Set-Cookie");
 
     private static final Map<String, HttpHeader> mappings = Collections.unmodifiableMap(
         Stream.of(values()).collect(
@@ -25,6 +28,10 @@ public enum HttpHeader {
 
     public static HttpHeader of(String value) {
         return mappings.get(value);
+    }
+
+    public static boolean contains(String key) {
+        return mappings.containsKey(key);
     }
 
     public String getValue() {

@@ -14,6 +14,10 @@ public class User {
         this.email = builder.email;
     }
 
+    public boolean matches(String password) {
+        return this.password.equals(password);
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -48,5 +52,15 @@ public class User {
         public User build() {
             return new User(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "userId='" + userId + '\'' +
+            ", password='" + password + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 }
