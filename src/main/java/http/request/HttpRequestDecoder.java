@@ -3,6 +3,7 @@ package http.request;
 import com.google.common.base.Strings;
 import http.header.HttpHeaderNames;
 import http.header.HttpHeaders;
+import http.util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,9 +34,7 @@ public class HttpRequestDecoder {
         String body = null;
         if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.toString())) {
             int contentLength = Integer.parseInt(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.toString()));
-            char[] buf = new char[contentLength];
-            br.read(buf, 0, contentLength);
-            body = String.valueOf(buf);
+            body = HttpRequestUtils.readData(br, contentLength);
         }
 
         return HttpRequest.builder()

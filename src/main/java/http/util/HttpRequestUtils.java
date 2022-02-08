@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,12 @@ public class HttpRequestUtils {
      */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
+    }
+
+    public static String readData(BufferedReader br, int contentLength) throws IOException {
+        char[] buf = new char[contentLength];
+        br.read(buf, 0, contentLength);
+        return String.valueOf(buf);
     }
 
     /* ---------------------------------------------------------------------- */
