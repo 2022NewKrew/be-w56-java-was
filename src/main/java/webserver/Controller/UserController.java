@@ -28,32 +28,21 @@ public class UserController {
         String email = body.get("email");
         User user = new User(userId, password, name, email);
         DataBase.addUser(user);
-        File file = new File(ROOT_DIRECTORY+INDEX_PATH);
-        outputBody = Files.readAllBytes(file.toPath());
         HttpResponseUtils.writeStatusCode(dos, 302);
         HttpResponseUtils.writeLocation(dos, INDEX_PATH);
-        HttpResponseUtils.writeBody(dos, outputBody);
     }
 
     public void login(DataOutputStream dos, RequestHeader header) throws IOException {
         Map<String, String> body = header.getBody();
         User user = DataBase.findUserById(body.get("userId"));
+        HttpResponseUtils.writeStatusCode(dos, 302);
         if (user != null && user.getPassword().equals(body.get("password"))) {
-            File file = new File(STATIC_ROOT_PATH +INDEX_PATH);
-            outputBody = Files.readAllBytes(file.toPath());
-            HttpResponseUtils.writeStatusCode(dos, 302);
             HttpResponseUtils.writeLocation(dos, INDEX_PATH);
             HttpResponseUtils.writeCookie(dos, "logined", "true", "/");
-            HttpResponseUtils.writeBody(dos, outputBody);
             return;
         }
-        String path = STATIC_ROOT_PATH +"/user/login_failed.html";
-        File file = new File(path);
-        outputBody = Files.readAllBytes(file.toPath());
-        HttpResponseUtils.writeStatusCode(dos, 302);
         HttpResponseUtils.writeLocation(dos, "/user/login_failed.html");
         HttpResponseUtils.writeCookie(dos, "logined", "false", "/");
-        HttpResponseUtils.writeBody(dos, outputBody);
     }
 
     public void userList(DataOutputStream dos, RequestHeader header) throws IOException {
@@ -66,8 +55,7 @@ public class UserController {
             StringBuilder sb = new StringBuilder(new String(outputBody));
             StringBuilder newSb = new StringBuilder();
             int row = 0;
-            for (User user :
-                    DataBase.findAll()) {
+            for (User user : DataBase.findAll()) {
                 newSb.append("<tr>");
                 newSb.append(String.format("<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td>",
                         ++row, user.getUserId(), user.getName(), user.getEmail()));
@@ -76,15 +64,10 @@ public class UserController {
             sb.insert(sb.lastIndexOf("<tbody>"), newSb);
             outputBody = sb.toString().getBytes(StandardCharsets.UTF_8);
             HttpResponseUtils.writeStatusCode(dos, 200);
-            HttpResponseUtils.writeLocation(dos, INDEX_PATH);
             HttpResponseUtils.writeBody(dos, outputBody);
             return;
         }
-        String path = STATIC_ROOT_PATH +"/user/login.html";
-        File file = new File(path);
-        outputBody = Files.readAllBytes(file.toPath());
         HttpResponseUtils.writeStatusCode(dos, 302);
         HttpResponseUtils.writeLocation(dos, "/user/login.html");
-        HttpResponseUtils.writeBody(dos, outputBody);
     }
 }
