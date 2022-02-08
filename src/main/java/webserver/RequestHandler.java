@@ -31,24 +31,28 @@ public class RequestHandler extends Thread {
             Map<String, String> requestMap = requestParser.getRequestMap();
 
             // Request Method에 맞는 동작 & template 반환
-            String templatePath = requestMapping(requestMap);
+            Map<String, String> responseMap = requestMapping(requestMap);
+            String templatePath = responseMap.get("templatePath");
 
             // Response 메시지 구성
             DataOutputStream dos = new DataOutputStream(out);
             // 요구한 URL의 html파일로 응답
             byte[] body = Files.readAllBytes(new File("./webapp" + templatePath).toPath());
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, responseMap);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, Map<String, String> responseMap) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            if (responseMap.containsKey("cookie")) {
+                dos.writeBytes("Set-Cookie: " + responseMap.get("cookie") + "\r\n");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

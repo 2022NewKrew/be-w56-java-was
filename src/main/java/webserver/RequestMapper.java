@@ -11,7 +11,7 @@ import static util.HttpRequestUtils.parseQueryString;
 public class RequestMapper {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    public static String requestMapping (Map<String, String> requestMap) {
+    public static Map<String, String> requestMapping (Map<String, String> requestMap) {
 
         if (requestMap.get("method").equals("GET")) {
             return GetMapper.getMapping(requestMap);
