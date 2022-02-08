@@ -20,12 +20,12 @@ public class HttpRequestHeader {
         for(String line: headerLine){
             String[] lineSplit = line.split(":");
 
-            if(lineSplit.length == 2)
-                if("Cookie".equals(lineSplit[0].trim())){
+            if(lineSplit.length == 2) {
+                if ("Cookie".equals(lineSplit[0].trim()))
                     cookieMap = makeCookieMap(lineSplit[1].trim());
-                }
 
                 headerMap.put(lineSplit[0].trim(), lineSplit[1].trim());
+            }
         }
 
         return new HttpRequestHeader(headerMap, cookieMap);

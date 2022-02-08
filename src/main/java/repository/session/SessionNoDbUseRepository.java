@@ -38,4 +38,8 @@ public class SessionNoDbUseRepository implements Repository<Session, Session, St
     public List<Session> findAll() {
         return null;
     }
+
+    public void clearStore() {
+        SESSION_ID_SESSION_DB.clear();
+    }
 }

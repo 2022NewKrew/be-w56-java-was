@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class HtmlTemplate {
-    public static StringBuilder includeHtml(String fileName, ResponseSendDataModel model) throws IOException {
+    private static StringBuilder includeHtml(String fileName, ResponseSendDataModel model) throws IOException {
         List<String> fileData = Files.readAllLines(new File("./webapp/" + fileName + ".html").toPath());
 
         return dynamicHtmlParsing(fileData, model);
     }
 
-    public static StringBuilder iterHtmlTag(StringBuilder body, Object datas){
+    private static StringBuilder iterHtmlTag(StringBuilder body, Object datas){
         if(!(datas instanceof List)){
             return new StringBuilder();
         }

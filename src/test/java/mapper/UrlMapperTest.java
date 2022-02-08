@@ -31,9 +31,9 @@ class UrlMapperTest {
 
             HttpRequest httpRequest = new HttpRequest(httpRequestLine, httpRequestHeader, httpRequestBody);
 
-            UrlMapper urlMaper = new UrlMapper();
+            UrlMapper urlMapper = new UrlMapper();
 
-            ResponseSendDataModel responseSendDataModel = urlMaper.mappingResult(httpRequest);
+            ResponseSendDataModel responseSendDataModel = urlMapper.mappingResult(httpRequest);
 
             assertThat(responseSendDataModel.getName()).isEqualTo(result);
         } catch (IOException e) {}

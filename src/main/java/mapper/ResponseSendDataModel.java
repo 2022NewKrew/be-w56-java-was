@@ -29,6 +29,14 @@ public class ResponseSendDataModel {
         }
     }
 
+    //테스트용 생성자
+    public ResponseSendDataModel(String name){
+        this.name = name;
+        this.dataModel = new HashMap<>();
+
+        this.login = Optional.empty();
+    }
+
     public String makeCookieString(){
         return login.map(session -> "Set-Cookie: id=" + session.getSessionId() + "; max-age:" + session.getMaxAge() + "; Path=/").orElse("");
     }
