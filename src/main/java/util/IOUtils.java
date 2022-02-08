@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 
 import DTO.RequestHeader;
+import DTO.ResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +56,9 @@ public class IOUtils {
         }
     }
 
-    public static byte[] readHeaderPathFile(String requestURL) throws IOException {
+    public static byte[] readHeaderPathFile(String requestURL, ResponseHeader responseHeader) throws IOException {
         byte[] body = IOUtils.readFileByte(requestURL);
+        responseHeader.setContentLength(body.length);
         return body;
     }
 

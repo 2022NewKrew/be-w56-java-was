@@ -1,5 +1,6 @@
 package webserver.controller;
 
+import DTO.ModelAndView;
 import DTO.RequestHeader;
 import DTO.ResponseHeader;
 import org.slf4j.Logger;
@@ -13,8 +14,8 @@ public interface Controller {
     Logger log = LoggerFactory.getLogger(Controller.class);
     List<Controller> controllers = new ArrayList<>();
 
-    default ResponseHeader getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){
-        return responseHeader;
+    default ModelAndView getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){
+        return null;
     }
 
     default String getUrl(){

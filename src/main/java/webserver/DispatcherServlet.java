@@ -1,5 +1,6 @@
 package webserver;
 
+import DTO.ModelAndView;
 import DTO.RequestHeader;
 import DTO.ResponseHeader;
 import org.slf4j.Logger;
@@ -14,14 +15,16 @@ public class DispatcherServlet {
         HandlerMapper.initController();
     }
 
-    public static void handleRequest(RequestHeader requestHeader, ResponseHeader responseHeader) {
-        //requestMethod(requestHeader.checkMethod(), requestHeader);
+    public static ModelAndView handleRequest(RequestHeader requestHeader, ResponseHeader responseHeader) {
+
         try {
             Controller controller = HandlerMapper.requestMapping(requestHeader);
-            controller.getResponse(requestHeader, responseHeader);
+            ModelAndView modelAndView = HandlerAdapter.request(controller, requestHeader, responseHeader);
+            return modelAndView;
+
         } catch (NullPointerException e) {
-
+            log.error(e.getMessage());
+            return null;
         }
-
     }
 }

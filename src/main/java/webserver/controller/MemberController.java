@@ -1,7 +1,9 @@
 package webserver.controller;
 
+import DTO.ModelAndView;
 import DTO.RequestHeader;
 import DTO.ResponseHeader;
+import Service.UserService;
 import db.DataBase;
 import model.User;
 
@@ -19,16 +21,16 @@ public class MemberController implements Controller {
         final private String url = "/user/create";
 
         @Override
-        public ResponseHeader getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){
+        public ModelAndView getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){
             Map<String, String> requestParam = requestHeader.getBody();
             String requestUrl= requestHeader.getRequestUrl();
-            User user = User.join(requestParam);
+            User user = UserService.join(requestParam);
             log.info("Create New User : {}", user);
             log.info("Url Changed: {}", requestUrl);
             log.info("DB Changed: {}", DataBase.allIdsToString());
 
-            responseHeader.setRedirect("/index.html");
-            return responseHeader;
+
+            return new ModelAndView("redirect:/index.html");
         }
 
         @Override

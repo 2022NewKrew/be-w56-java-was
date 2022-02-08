@@ -3,12 +3,13 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import DTO.ModelAndView;
 import DTO.RequestHeader;
 
 import DTO.ResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.IOUtils;
+import util.HttpResponseUtils;
 
 import static util.IOUtils.readHeader;
 
@@ -29,14 +30,11 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             RequestHeader requestHeader = readHeader(in);
             ResponseHeader responseHeader = new ResponseHeader(requestHeader);
-
-            // do GET or POST
-            DispatcherServlet.handleRequest(requestHeader, responseHeader);
-
-            String requestUrl = responseHeader.getLocation();
-            byte[] body = IOUtils.readHeaderPathFile(requestUrl);
             DataOutputStream dos = new DataOutputStream(out);
-            ResponseViewer.response(dos, body);
+
+            ModelAndView mav = DispatcherServlet.handleRequest(requestHeader, responseHeader);
+
+            mav.render(requestHeader, responseHeader, dos);
 
         } catch (IOException e) {
             log.error(e.getMessage());
