@@ -1,5 +1,7 @@
 package domain;
 
+import util.HttpRequestUtils;
+
 import java.util.Map;
 
 public class HttpRequest {
@@ -27,5 +29,9 @@ public class HttpRequest {
 
     public int getContentLength() {
         return Integer.parseInt(headers.getValueByHeader("Content-Length"));
+    }
+
+    public String getCookie(String cookieName) {
+        return HttpRequestUtils.parseCookies(headers.getValueByHeader("Cookie")).get(cookieName);
     }
 }
