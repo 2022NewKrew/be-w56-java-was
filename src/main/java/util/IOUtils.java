@@ -17,4 +17,16 @@ public class IOUtils {
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
     }
+
+    public static String getHttpRequestHeader(BufferedReader bufferedReader) throws IOException{
+        StringBuilder httpRequestHeader = new StringBuilder();
+        while (true) {
+            String line = bufferedReader.readLine();
+            if(line==null || "".equals(line))
+                break;
+            httpRequestHeader.append(line);
+            httpRequestHeader.append(System.lineSeparator());
+        }
+        return httpRequestHeader.toString();
+    }
 }
