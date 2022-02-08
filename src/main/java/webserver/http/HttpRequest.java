@@ -45,4 +45,8 @@ public class HttpRequest {
     public int getContentLength() {
         return Integer.parseInt(httpRequestHeader.getHeaders().get("Content-Length"));
     }
+
+    public String getCookie() {
+        return httpRequestHeader.getHeaders().get("Cookie");
+    }
 }

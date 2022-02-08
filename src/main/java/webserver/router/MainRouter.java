@@ -7,9 +7,9 @@ import webserver.http.HttpResponse;
 
 public class MainRouter {
     public static void routing(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        boolean isRouted = ControllerRouter.routing(httpRequest, httpResponse);
+        boolean isRoutedByController = ControllerRouter.routing(httpRequest, httpResponse);
 
-        if (!isRouted) {
+        if (!isRoutedByController) {
             StaticRouter.routing(httpRequest, httpResponse);
         }
     }
