@@ -1,0 +1,29 @@
+package model;
+
+import java.time.LocalDateTime;
+
+public class BaseTime {
+    private final LocalDateTime createTime;
+    private LocalDateTime modifiedTime;
+
+    public BaseTime(LocalDateTime createTime, LocalDateTime modifiedTime) {
+        this.createTime = createTime;
+        this.modifiedTime = modifiedTime;
+    }
+
+    public BaseTime() {
+        this(LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public LocalDateTime getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(LocalDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+}
