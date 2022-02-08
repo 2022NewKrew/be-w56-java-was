@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class DataBase {
 
     private static final Logger log = LoggerFactory.getLogger(DataBase.class);
-    private static Map<String, User> users = Maps.newHashMap();
+    private static Map<String, User> users = Maps.newConcurrentMap();
 
     public static void addUser(User user) {
         users.put(user.getUserId(), user);

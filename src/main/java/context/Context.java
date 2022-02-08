@@ -20,7 +20,7 @@ public final class Context {
 
     private static Set<Class<?>> controllerAClasses;
     private static Map<Class<?>, Object> controllerObjects = Maps.newHashMap();
-    private static Map<String, Pair> postMappingMethods = Maps.newHashMap();
+    private static Map<String, ObjectMethodPair> postMappingMethods = Maps.newHashMap();
 
     public static void init() {
         try {
@@ -52,7 +52,7 @@ public final class Context {
             for (Method method : methods) {
                 PostMapping postMapping = method.getAnnotation(PostMapping.class);
                 postMappingMethods.put(postMapping.value(),
-                    new Pair(controllerObjects.get(controller), method));
+                    new ObjectMethodPair(controllerObjects.get(controller), method));
             }
         }
     }
@@ -63,16 +63,16 @@ public final class Context {
 
     public static Object invokePostMappingMethod(String uri, Object... object)
         throws Exception {
-        Pair pair = postMappingMethods.get(uri);
-        return pair.getMethod().invoke(pair.getObject(), object);
+        ObjectMethodPair objectMethodPair = postMappingMethods.get(uri);
+        return objectMethodPair.getMethod().invoke(objectMethodPair.getObject(), object);
     }
 
-    static class Pair {
+    static class ObjectMethodPair {
 
         Object object;
         Method method;
 
-        Pair(Object object, Method method) {
+        ObjectMethodPair(Object object, Method method) {
             this.object = object;
             this.method = method;
         }

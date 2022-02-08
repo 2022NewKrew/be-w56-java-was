@@ -15,8 +15,7 @@ public final class ResponseWriter {
     }
 
     public static void write(OutputStream out, Response response) {
-        try {
-            DataOutputStream dos = new DataOutputStream(out);
+        try (DataOutputStream dos = new DataOutputStream(out)) {
             writeResponseLine(dos, response);
             writeHeaderLine(dos, response);
             writeBody(dos, response);

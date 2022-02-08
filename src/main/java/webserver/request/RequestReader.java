@@ -17,21 +17,25 @@ public final class RequestReader {
     }
 
     public static Request read(InputStream in) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        try {
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(in, StandardCharsets.UTF_8));
+            String requestLine = readLine(br);
+            HttpMethod method = HttpRequestUtils.parseHttpMethod(requestLine);
+            String uri = HttpRequestUtils.parseUri(requestLine);
+            Map<String, String> headers = readHeaderLines(br);
+            Map<String, String> body = readBody(br,
+                Integer.parseInt(headers.getOrDefault("Content-Length", "0")));
 
-        String requestLine = readLine(br);
-        HttpMethod method = HttpRequestUtils.parseHttpMethod(requestLine);
-        String uri = HttpRequestUtils.parseUri(requestLine);
-        Map<String, String> headers = readHeaderLines(br);
-        Map<String, String> body = readBody(br,
-            Integer.parseInt(headers.getOrDefault("Content-Length", "0")));
-
-        return Request.builder()
-            .method(method)
-            .uri(uri)
-            .headers(Collections.unmodifiableMap(headers))
-            .body(Collections.unmodifiableMap(body))
-            .build();
+            return Request.builder()
+                .method(method)
+                .uri(uri)
+                .headers(Collections.unmodifiableMap(headers))
+                .body(Collections.unmodifiableMap(body))
+                .build();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     private static String readLine(BufferedReader br) throws IOException {
