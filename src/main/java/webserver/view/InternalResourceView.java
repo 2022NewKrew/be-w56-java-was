@@ -5,8 +5,7 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public class InternalResourceView implements View{
     }
 
     @Override
-    public void render(Map<String, ?> model, HttpRequest request, HttpResponse response) {
+    public void render(Map<String, Object> model, HttpRequest request, HttpResponse response) {
         try{
             byte[] body = Files.readAllBytes(new File(HttpConst.STATIC_ROOT + viewName).toPath());
             response.setBody(body);

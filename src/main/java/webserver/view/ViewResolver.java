@@ -18,6 +18,6 @@ public class ViewResolver {
            return new RedirectView(redirectView);
        }
 
-       return new InternalResourceView(view);
+       return new TemplateEngineView(view);
     }
 }

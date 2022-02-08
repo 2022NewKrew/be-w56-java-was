@@ -6,5 +6,5 @@ import webserver.http.HttpResponse;
 import java.util.Map;
 
 public interface View {
-    void render(Map<String, ?> model, HttpRequest request, HttpResponse response);
+    void render(Map<String, Object> model, HttpRequest request, HttpResponse response);
 }
