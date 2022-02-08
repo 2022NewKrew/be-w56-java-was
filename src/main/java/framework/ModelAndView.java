@@ -1,11 +1,11 @@
-package webserver.view;
+package framework;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-    private String view;
     private final Map<String, Object> model;
+    private String view;
 
     public ModelAndView(String view) {
         this.view = view;
@@ -20,7 +20,7 @@ public class ModelAndView {
         this.view = view;
     }
 
-    public Map<String, Object> getModel(){
+    public Map<String, Object> getModel() {
         return model;
     }
 

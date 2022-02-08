@@ -1,14 +1,15 @@
-package webserver.view;
+package framework.view;
 
-import webserver.http.HttpRequest;
-import webserver.http.HttpResponse;
-import webserver.http.HttpStatus;
+import framework.http.HttpRequest;
+import framework.http.HttpResponse;
+import framework.http.HttpStatus;
 
 import java.util.Map;
 
-public class RedirectView implements View{
+public class RedirectView implements View {
     private final String viewName;
-    public RedirectView(String viewName){
+
+    public RedirectView(String viewName) {
         this.viewName = viewName;
     }
 

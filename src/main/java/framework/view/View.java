@@ -1,7 +1,7 @@
-package webserver.view;
+package framework.view;
 
-import webserver.http.HttpRequest;
-import webserver.http.HttpResponse;
+import framework.http.HttpRequest;
+import framework.http.HttpResponse;
 
 import java.util.Map;
 

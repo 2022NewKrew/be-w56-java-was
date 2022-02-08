@@ -1,7 +1,7 @@
-package webserver.service;
+package mvc.service;
 
 import db.DataBase;
-import model.User;
+import mvc.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class UserService {
         return DataBase.findUserById(userId);
     }
 
-    public List<User> findAllUser(){
+    public List<User> findAllUser() {
         return new ArrayList<>(DataBase.findAll());
     }
 }

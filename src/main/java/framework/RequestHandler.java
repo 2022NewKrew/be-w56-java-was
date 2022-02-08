@@ -1,14 +1,11 @@
-package webserver;
+package framework;
 
+import framework.http.HttpMethod;
+import framework.http.HttpRequest;
+import framework.http.HttpResponse;
+import framework.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.IOUtils;
-import webserver.controller.FrontController;
-import webserver.http.HttpConst;
-import webserver.http.HttpMethod;
-import webserver.http.HttpRequest;
-import webserver.http.HttpResponse;
-import webserver.view.ViewResolver;
 
 import java.io.*;
 import java.net.Socket;

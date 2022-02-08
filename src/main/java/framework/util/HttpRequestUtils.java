@@ -1,9 +1,9 @@
-package util;
+package framework.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.http.HttpConst;
-import webserver.http.HttpMethod;
+import framework.http.HttpConst;
+import framework.http.HttpMethod;
 
 import java.util.Arrays;
 import java.util.Map;

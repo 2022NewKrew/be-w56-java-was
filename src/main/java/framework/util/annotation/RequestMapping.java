@@ -1,6 +1,6 @@
-package annotation;
+package framework.util.annotation;
 
-import webserver.http.HttpMethod;
+import framework.http.HttpMethod;
 
 import java.lang.annotation.*;
 

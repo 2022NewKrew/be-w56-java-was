@@ -1,14 +1,9 @@
-package webserver.controller;
+package framework;
 
-import annotation.AnnotationProcessor;
-import exception.UnAuthorizedException;
-import webserver.http.HttpConst;
-import webserver.http.HttpRequest;
-import webserver.http.HttpResponse;
-import webserver.http.HttpStatus;
-import webserver.view.ModelAndView;
-import webserver.view.View;
-import webserver.view.ViewResolver;
+import framework.http.HttpRequest;
+import framework.http.HttpResponse;
+import framework.util.annotation.AnnotationProcessor;
+import framework.view.View;
 
 
 public class FrontController {
@@ -25,7 +20,7 @@ public class FrontController {
         try {
             ModelAndView mv = (ModelAndView) AnnotationProcessor.getInstance().requestMappingProcessor(request, response);
 
-            if(mv == null){
+            if (mv == null) {
                 mv = new ModelAndView(request.getUrl());
             }
 

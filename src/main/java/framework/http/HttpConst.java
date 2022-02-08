@@ -1,4 +1,4 @@
-package webserver.http;
+package framework.http;
 
 public class HttpConst {
     public static final String STATIC_ROOT = "./webapp";

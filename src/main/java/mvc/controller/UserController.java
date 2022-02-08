@@ -1,12 +1,12 @@
-package webserver.controller;
+package mvc.controller;
 
-import annotation.RequestMapping;
-import model.User;
+import framework.ModelAndView;
+import framework.http.*;
+import framework.util.annotation.RequestMapping;
+import mvc.model.User;
+import mvc.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.*;
-import webserver.service.UserService;
-import webserver.view.ModelAndView;
 
 public class UserController {
     private static final UserService userService = new UserService();
@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @RequestMapping(method = HttpMethod.GET, url = "/")
-    public ModelAndView home(HttpRequest request, HttpResponse response){
+    public ModelAndView home(HttpRequest request, HttpResponse response) {
         return new ModelAndView("/index.html");
     }
 
@@ -41,10 +41,10 @@ public class UserController {
     }
 
     @RequestMapping(method = HttpMethod.GET, url = "/user/login.html")
-    public ModelAndView loginForm(HttpRequest request, HttpResponse response){
+    public ModelAndView loginForm(HttpRequest request, HttpResponse response) {
         String logined = request.getCookie(HttpConst.COOKIE_LOGINED);
 
-        if((logined != null) && logined.equals("true")){
+        if ((logined != null) && logined.equals("true")) {
             return new ModelAndView("redirect:/index.html");
         }
 
@@ -71,10 +71,10 @@ public class UserController {
     }
 
     @RequestMapping(method = HttpMethod.GET, url = "/user/list")
-    public ModelAndView userList(HttpRequest request, HttpResponse response){
+    public ModelAndView userList(HttpRequest request, HttpResponse response) {
         String logined = request.getCookie(HttpConst.COOKIE_LOGINED);
 
-        if(logined == null || logined.equals("false")){
+        if (logined == null || logined.equals("false")) {
             response.setStatus(HttpStatus.UNAUTHORIZED);
             return new ModelAndView(HttpConst.LOGIN_PAGE);
         }
