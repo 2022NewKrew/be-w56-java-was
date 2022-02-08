@@ -143,7 +143,6 @@ https://tika.apache.org/2.3.0/detection.html
 ### 6단계 : Stylesheet 지원
 
 - 파일 타입에 따라 응답 반환하도록 수정
--
 
 ### message
 
@@ -177,11 +176,14 @@ https://tika.apache.org/2.3.0/detection.html
 
 ## 고민 / 수정 사항
 
-- 왜 서블릿은 싱글톤이여야 할까?
-- 지금은 웹서버에서 스레드를 만드는데 보통 웹 컨테이너(서블릿 컨테이너)에서 만든다고 하는데 이게 이거가 맞을까...?
 - 테스트 코드 작성하기
 - 예외처리 한 곳에서 할 수 있도록 하기
 - 컨테이너 자동으로 찾아서 서블릿 만들 수 있도록 하기
+
+- 예외 처리 추가 (에러 화면 보여주기)
+- status에 따른 Response 반환
+- StaticFile 최초 1번만 생성하도록 바꾸기
+- userController도 한번만 생성하도록 변경
 
 ## 찾아 보기
 - guava
