@@ -10,6 +10,7 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
     private Connection connection;
 
+    @Override
     public void openConnection() throws SQLException, ClassNotFoundException {
         if (connection != null)
             return;
@@ -26,9 +27,9 @@ public class UserDaoImpl implements UserDao {
         } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("failed to load driver");
         }
-
     }
 
+    @Override
     public void closeConnection() throws SQLException {
         try {
             if (connection != null && connection.isClosed()) {
@@ -39,6 +40,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
     public void save(User user) throws SQLException {
         String sql = String.format("insert into %s (%s, %s, %s, %s) values (?,?,?,?)",
                 UserDBConstants.TABLE_NAME,
@@ -62,6 +64,7 @@ public class UserDaoImpl implements UserDao {
         preparedStatement.close();
     }
 
+    @Override
     public User findByUserId(final String userId) throws SQLException {
         String sql = String.format("SELECT * from %s where %s = \"%s\"",
                 UserDBConstants.TABLE_NAME,
@@ -83,6 +86,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
     public List<User> findAll() throws SQLException {
         List<User> userList = new ArrayList<>();
         String sql = String.format("Select * from %s", UserDBConstants.TABLE_NAME);
@@ -102,6 +106,7 @@ public class UserDaoImpl implements UserDao {
         return userList;
     }
 
+    @Override
     public void delete(final String userId) throws SQLException {
         String sql = String.format("DELETE FROM %s WHERE %s = \"%s\"",
                 UserDBConstants.TABLE_NAME,
