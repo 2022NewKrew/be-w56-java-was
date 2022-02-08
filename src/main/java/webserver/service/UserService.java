@@ -4,6 +4,10 @@ import db.DataBase;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @Slf4j
 public class UserService {
 
@@ -28,5 +32,10 @@ public class UserService {
         if (user == null)
             return false;
         return user.getPassword().equals(password);
+    }
+
+    public List<User> getAllUsers() {
+        Collection<User> users = DataBase.findAll();
+        return new ArrayList<>(users);
     }
 }

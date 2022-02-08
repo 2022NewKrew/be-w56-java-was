@@ -17,7 +17,11 @@ public class Model {
         data.put(name, object);
     }
 
-    public void addAllAttribute(String name, List<Object> objects) {
+    public void addAllAttribute(String name, List<?> objects) {
         data.put(name, objects);
+    }
+
+    public Object getAttribute(String key) {
+        return data.get(key);
     }
 }

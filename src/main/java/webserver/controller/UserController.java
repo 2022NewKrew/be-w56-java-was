@@ -4,9 +4,12 @@ import annotation.GetMapping;
 import annotation.PostMapping;
 import lombok.extern.slf4j.Slf4j;
 import model.*;
+import webserver.Model;
 import webserver.service.UserService;
 import webserver.web.request.Request;
 import webserver.web.response.Response;
+
+import java.util.List;
 
 @Slf4j
 @annotation.Controller
@@ -20,13 +23,6 @@ public class UserController extends BaseController {
 
     public static UserController getInstance() {
         return userController;
-    }
-
-    @GetMapping(url = "/user/create")
-    public String getJoinUser(String userId, String name, String password, String email) {
-        User user = setUserInformation(userId, name, password, email);
-        userService.joinUser(user);
-        return "redirect:/index.html";
     }
 
     @PostMapping(url = "/user/create")
@@ -50,6 +46,16 @@ public class UserController extends BaseController {
         builder.setCookie("logined=false");
         log.info("로그인 실패");
         return "redirect:/user/login_failed.html";
+    }
+
+    @GetMapping(url = "/user/list")
+    public String showUserList(Request request, Model model) {
+        if (!request.inquireHeaderData("Cookie").contains("logined=true")) {
+            return "redirect:/user/login";
+        }
+        List<User> users = userService.getAllUsers();
+        model.addAllAttribute("users", users);
+        return "user/list.html";
     }
 
     private User setUserInformation(String userId, String name, String password, String email) {
