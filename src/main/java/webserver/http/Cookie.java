@@ -97,6 +97,10 @@ public class Cookie {
             stringBuilder
                     .append("; Secure");
         }
+        if (isHttpOnly) {
+            stringBuilder
+                    .append("; HttpOnly");
+        }
         return stringBuilder.toString();
     }
 }
