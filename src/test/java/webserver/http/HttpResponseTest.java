@@ -14,30 +14,43 @@ class HttpResponseTest {
     void testHttpResponse() {
         // given
         HttpHeader expectedHeaders = new HttpHeader();
-        String key = "test";
-        String value = "true";
-        expectedHeaders.put(key, value);
+        expectedHeaders.put("myHeader", "headerValue");
 
         HttpCookie expectedCookies = new HttpCookie();
         Cookie expectedCookie = new Cookie("myCookie", "yummy");
         expectedCookies.putCookie(expectedCookie);
 
+        String[] expectedContentType = new String[]{"text/html"};
+        byte[] expectedBody = "this is a body".getBytes();
+        int expectedContentLength = expectedBody.length;
+
         // when
         HttpResponse httpResponse = HttpResponse.builder()
                 .status(HttpStatus.OK)
-                .header(key, value)
+                .header("myHeader", "headerValue")
                 .cookie(expectedCookie)
+                .version(HttpVersion.HTTP_1_1)
+                .contentType(expectedContentType)
+                .body(expectedBody)
                 .build();
 
         // then
         assertThat(httpResponse).extracting(
                         HttpResponse::getStatus,
                         HttpResponse::getHeaders,
-                        HttpResponse::getCookies)
+                        HttpResponse::getCookies,
+                        HttpResponse::getVersion,
+                        HttpResponse::getContentType,
+                        HttpResponse::getBody,
+                        HttpResponse::getContentLength)
                 .containsExactly(
                         HttpStatus.OK,
                         expectedHeaders,
-                        expectedCookies);
+                        expectedCookies,
+                        HttpVersion.HTTP_1_1,
+                        expectedContentType,
+                        expectedBody,
+                        expectedContentLength);
     }
 
     @Test
