@@ -1,5 +1,8 @@
 package http;
 
+import http.body.ResponseBody;
+import http.header.Cookie;
+import http.header.Headers;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -31,13 +34,12 @@ public class ResponseBodyTest {
     void createResponseHeaderWithUrlAndCookie() {
         ResponseBody responseBody = new ResponseBody(new byte[]{1, 1, 1, 1});
 
-        Cookie cookie = Cookie.parse(null);
-        cookie.setCookie("logined", "true");
+        Cookie cookie = new Cookie("logined", "true");
 
         Map<String, String> map = new HashMap<>();
         map.put("Content-Length", "4");
         map.put("Location", "/");
-        map.put("Set-Cookie", cookie.createCookieHeader());
+        map.put("Set-Cookie", cookie.createHeader());
         Headers headers = Headers.create(map);
 
         assertThat(responseBody.createResponseHeader("/", cookie).getHeaders()).isEqualTo(headers.getHeaders());

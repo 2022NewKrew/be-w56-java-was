@@ -1,4 +1,4 @@
-package http;
+package http.startline;
 
 public enum HttpStatus {
     OK("200", "OK"),

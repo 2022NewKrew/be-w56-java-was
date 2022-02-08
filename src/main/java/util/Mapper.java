@@ -1,7 +1,7 @@
 package util;
 
-import http.HttpMethod;
-import http.RequestMessage;
+import http.message.RequestMessage;
+import http.startline.HttpMethod;
 import servlet.ServletRequest;
 
 public class Mapper {
@@ -15,7 +15,7 @@ public class Mapper {
                     request.getRequestLine().getMethod(),
                     request.getRequestLine().getRequestTarget().getPath().getValue(),
                     request.getRequestBody().getQueryParameters().getParameters(),
-                    request.getHeader().createCookie()
+                    request.getHeader().createCookies()
             );
         }
 
@@ -23,7 +23,7 @@ public class Mapper {
                 request.getRequestLine().getMethod(),
                 request.getRequestLine().getRequestTarget().getPath().getValue(),
                 request.getRequestLine().getRequestTarget().getQueryParameters().getParameters(),
-                request.getHeader().createCookie()
+                request.getHeader().createCookies()
         );
     }
 }

@@ -1,5 +1,7 @@
 package http;
 
+import http.startline.HttpStatus;
+import http.startline.StatusLine;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

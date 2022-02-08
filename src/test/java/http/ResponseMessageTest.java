@@ -1,5 +1,8 @@
 package http;
 
+import http.header.Cookie;
+import http.message.ResponseMessage;
+import http.startline.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,10 +11,10 @@ public class ResponseMessageTest {
 
     @Test
     void createFailed_WhenNull() {
-        assertThatThrownBy(() -> ResponseMessage.create(HttpStatus.OK, null))
+        assertThatThrownBy(() -> ResponseMessage.create(HttpStatus.OK, (byte[]) null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThatThrownBy(() -> ResponseMessage.create(null, null))
+        assertThatThrownBy(() -> ResponseMessage.create(null, (byte[]) null))
                 .isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> ResponseMessage.create(null, null, null))

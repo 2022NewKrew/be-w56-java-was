@@ -1,11 +1,12 @@
 package webserver;
 
-import http.HttpStatus;
-import http.RequestMessage;
-import http.ResponseMessage;
+import http.message.RequestMessage;
+import http.message.ResponseMessage;
+import http.startline.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.ServletRequest;
+import servlet.ServletResponse;
 import servlet.container.ServletContainer;
 import util.Mapper;
 
@@ -49,6 +50,7 @@ public class ConnectionHandler extends Thread {
             return ResponseMessage.create(HttpStatus.OK, Files.readAllBytes(Path.of(file.getPath())));
         }
         ServletRequest servletRequest = Mapper.toServletRequest(request);
-        return servletContainer.process(servletRequest);
+        ServletResponse servletResponse = new ServletResponse();
+        return servletContainer.process(servletRequest, servletResponse);
     }
 }

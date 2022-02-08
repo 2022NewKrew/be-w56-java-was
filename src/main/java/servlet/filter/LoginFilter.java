@@ -1,9 +1,8 @@
 package servlet.filter;
 
-import http.Cookie;
+import http.header.Cookie;
 import servlet.ServletRequest;
 import servlet.ServletResponse;
-import servlet.container.Servlet;
 
 import java.util.List;
 
@@ -19,17 +18,10 @@ public class LoginFilter extends ServletFilter {
     }
 
     @Override
-    void initialize() {
-
-    }
-
-    @Override
-    public ServletResponse doFilter(ServletRequest request, Servlet servlet) {
-        Cookie cookie = request.getCookie();
-        boolean logined = Boolean.getBoolean(cookie.getCookie("logined"));
-        if (!logined) {
-            return new ServletResponse("redirect:/user/login.html", cookie);
+    public void doFilter(ServletRequest request, ServletResponse response) {
+        Cookie cookie = request.getCookie("logined");
+        if (cookie.getValue().equals("false")) {
+            response.setResponse("redirect:/user/login.html");
         }
-        return servlet.service(request);
     }
 }

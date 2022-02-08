@@ -1,7 +1,7 @@
 package servlet.view;
 
-import http.HttpStatus;
-import http.ResponseMessage;
+import http.message.ResponseMessage;
+import http.startline.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;

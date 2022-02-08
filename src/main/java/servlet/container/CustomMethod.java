@@ -1,6 +1,6 @@
 package servlet.container;
 
-import http.Cookie;
+import servlet.ServletResponse;
 import servlet.view.Model;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,26 +22,28 @@ public class CustomMethod {
         return new CustomMethod(method, MethodParameters.create(method));
     }
 
-    public Object invoke(Object controller, Map<String, String> inputs, Cookie cookie, Model model) {
-        boolean isExistCookie = Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Cookie.class).count() == 1;
-        boolean isExistModel = Arrays.stream(method.getParameterTypes()).filter(parameter -> parameter == Model.class).count() == 1;
-        // TODO 예외처리
-        try {
-            if (parameters.isEmpty() && !isExistCookie && !isExistModel) {
-                return method.invoke(controller);
-            }
-
-            List<Object> inputParameters = parameters.makeParameters(inputs);
-            if (isExistCookie) {
-                inputParameters.add(cookie);
-            }
-            if (isExistModel) {
-                inputParameters.add(model);
-            }
-            return method.invoke(controller, inputParameters.toArray());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            return "";
+    public Object invoke(Object controller, Map<String, String> inputs, ServletResponse response) throws InvocationTargetException, IllegalAccessException {
+        List<Object> parameters = makeParameters(inputs, response);
+        if (parameters.isEmpty()) {
+            return method.invoke(controller);
         }
+        return method.invoke(controller, parameters.toArray());
+    }
+
+    private List<Object> makeParameters(Map<String, String> inputs, ServletResponse response) {
+        List<Object> inputParameters = parameters.makeParameters(inputs);
+        if (isExist(Model.class)) {
+            inputParameters.add(response.getModel());
+        }
+        if (isExist(ServletResponse.class)) {
+            inputParameters.add(response);
+        }
+        return inputParameters;
+    }
+
+    private boolean isExist(Class<?> classType) {
+        return Arrays.stream(method.getParameterTypes())
+                .filter(parameter -> parameter == classType)
+                .count() == 1;
     }
 }

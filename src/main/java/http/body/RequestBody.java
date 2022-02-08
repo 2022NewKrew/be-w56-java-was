@@ -1,4 +1,6 @@
-package http;
+package http.body;
+
+import http.Parameters;
 
 import java.util.Optional;
 

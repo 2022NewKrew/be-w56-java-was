@@ -1,4 +1,4 @@
-package http;
+package http.header;
 
 import java.util.List;
 import java.util.Map;
@@ -38,11 +38,11 @@ public class Headers {
         return Optional.empty();
     }
 
-    public Cookie createCookie() {
+    public Cookies createCookies() {
         Optional<String> cookie = sendContainKeyValue("Cookie");
         if (cookie.isEmpty()) {
-            return Cookie.parse(null);
+            return Cookies.parse(null);
         }
-        return Cookie.parse(cookie.get());
+        return Cookies.parse(cookie.get());
     }
 }

@@ -1,4 +1,10 @@
-package http;
+package http.message;
+
+import http.body.ResponseBody;
+import http.header.Cookie;
+import http.header.Headers;
+import http.startline.HttpStatus;
+import http.startline.StatusLine;
 
 public class ResponseMessage {
     private final StatusLine statusLine;
@@ -16,6 +22,13 @@ public class ResponseMessage {
         ResponseBody responseBody = new ResponseBody(file);
         StatusLine statusLine = StatusLine.create(status);
         Headers responseHeaders = responseBody.createResponseHeader();
+        return new ResponseMessage(statusLine, responseHeaders, responseBody);
+    }
+
+    public static ResponseMessage create(HttpStatus status, String url) {
+        ResponseBody responseBody = new ResponseBody();
+        StatusLine statusLine = StatusLine.create(status);
+        Headers responseHeaders = responseBody.createResponseHeader(url);
         return new ResponseMessage(statusLine, responseHeaders, responseBody);
     }
 

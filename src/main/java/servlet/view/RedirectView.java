@@ -1,8 +1,8 @@
 package servlet.view;
 
-import http.Cookie;
-import http.HttpStatus;
-import http.ResponseMessage;
+import http.header.Cookie;
+import http.message.ResponseMessage;
+import http.startline.HttpStatus;
 
 public class RedirectView implements View {
     private final String url;
@@ -15,6 +15,9 @@ public class RedirectView implements View {
 
     @Override
     public ResponseMessage render() {
-        return ResponseMessage.create(HttpStatus.FOUND, url, cookie);
+        if (cookie != null) {
+            return ResponseMessage.create(HttpStatus.FOUND, url, cookie);
+        }
+        return ResponseMessage.create(HttpStatus.FOUND, url);
     }
 }

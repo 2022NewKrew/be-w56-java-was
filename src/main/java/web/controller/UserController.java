@@ -4,8 +4,9 @@ import annotation.Controller;
 import annotation.GetMapping;
 import annotation.PostMapping;
 import db.DataBase;
-import http.Cookie;
+import http.header.Cookie;
 import model.User;
+import servlet.ServletResponse;
 import servlet.view.Model;
 import web.dto.LoginDto;
 
@@ -27,21 +28,22 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-    public String login(LoginDto loginDto, Cookie cookie) {
+    public String login(LoginDto loginDto, ServletResponse response) {
         Optional<User> user = DataBase.findUserById(loginDto.getUserId());
         if (user.isPresent() && user.get().getPassword().equals(loginDto.getPassword())) {
-            cookie.setCookie("logined", true);
-            cookie.setCookie("Path", "/");
+            Cookie cookie = new Cookie("logined", "true");
+            cookie.setPath("/");
+            response.setCookie(cookie);
             return "redirect:/";
         }
-        cookie.setCookie("logined", false);
         return "redirect:/user/login.html";
     }
 
     @GetMapping("/user/logout")
-    public String logout(Cookie cookie) {
-        cookie.setCookie("logined", false);
-        cookie.setCookie("Path", "/");
+    public String logout(ServletResponse response) {
+        Cookie cookie = new Cookie("logined", "false");
+        cookie.setPath("/");
+        response.setCookie(cookie);
         return "redirect:/";
     }
 

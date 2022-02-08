@@ -1,6 +1,6 @@
 package servlet;
 
-import http.Cookie;
+import http.header.Cookie;
 import servlet.view.Model;
 
 public class ServletResponse {
@@ -16,6 +16,14 @@ public class ServletResponse {
 
     public ServletResponse(Object response, Cookie cookie) {
         this(response, new Model(), cookie);
+    }
+
+    public ServletResponse(Object response) {
+        this(response, new Model(), null);
+    }
+
+    public ServletResponse() {
+        this(null, new Model(), null);
     }
 
     public Model getModel() {
@@ -40,5 +48,17 @@ public class ServletResponse {
 
     public Cookie getCookie() {
         return cookie;
+    }
+
+    public void setCookie(Cookie cookie) {
+        this.cookie = cookie;
+    }
+
+    public boolean isEmpty() {
+        return response == null;
+    }
+
+    public void setResponse(Object response) {
+        this.response = response;
     }
 }

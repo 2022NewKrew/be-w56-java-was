@@ -1,5 +1,6 @@
 package http;
 
+import http.startline.RequestTarget;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

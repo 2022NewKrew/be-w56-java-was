@@ -11,17 +11,16 @@ public abstract class ServletFilter {
 
     public ServletFilter(List<String> urlPatterns) {
         this.urlPatterns = urlPatterns;
-        initialize();
     }
 
-    public ServletResponse process(ServletRequest request, Servlet servlet) {
+    public void process(ServletRequest request, ServletResponse response, Servlet servlet) {
         if (urlPatterns.contains(request.getPath())) {
-            return doFilter(request, servlet);
+            doFilter(request, response);
         }
-        return servlet.service(request);
+        if (response.isEmpty()) {
+            servlet.service(request, response);
+        }
     }
 
-    abstract void initialize();
-
-    abstract ServletResponse doFilter(ServletRequest request, Servlet servlet);
+    abstract void doFilter(ServletRequest request, ServletResponse response);
 }

@@ -1,6 +1,6 @@
 package servlet.container;
 
-import http.ResponseMessage;
+import http.message.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.ServletRequest;
@@ -43,9 +43,9 @@ public class ServletContainer {
         return new ServletContainer(container, LoginFilter.create(Arrays.asList("/user/list")));
     }
 
-    public ResponseMessage process(ServletRequest request) {
+    public ResponseMessage process(ServletRequest request, ServletResponse response) {
         Servlet servlet = container.get(request.createMappingKey());
-        ServletResponse response = filter.process(request, servlet);
+        filter.process(request, response, servlet);
         View view = ViewResolver.findView(response);
         return view.render();
     }

@@ -1,4 +1,8 @@
-package http;
+package http.message;
+
+import http.body.RequestBody;
+import http.header.Headers;
+import http.startline.RequestLine;
 
 import java.io.File;
 

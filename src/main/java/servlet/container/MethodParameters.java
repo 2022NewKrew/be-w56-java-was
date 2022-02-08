@@ -1,6 +1,6 @@
 package servlet.container;
 
-import http.Cookie;
+import servlet.ServletResponse;
 import servlet.view.Model;
 
 import java.lang.reflect.Method;
@@ -19,7 +19,7 @@ public class MethodParameters {
     public static MethodParameters create(Method method) {
         Map<ParameterConstructor, Fields> parameters = new LinkedHashMap<>();
         for (var parameter : method.getParameterTypes()) {
-            if (parameter != Cookie.class && parameter != Model.class) {
+            if (parameter != ServletResponse.class && parameter != Model.class) {
                 Fields fields = Fields.create(parameter.getDeclaredFields());
                 ParameterConstructor constructor = ParameterConstructor.create(parameter, fields);
                 parameters.put(constructor, fields);
