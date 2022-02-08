@@ -6,18 +6,22 @@ import adaptor.in.web.model.RequestPath;
 import application.exception.user.AlreadyExistingUserException;
 import application.exception.user.NonExistsUserIdException;
 import application.in.session.SetSessionUseCase;
+import application.in.user.FindUserUseCase;
 import application.in.user.LoginUseCase;
 import application.in.user.SignUpUserUseCase;
 import domain.user.User;
 import infrastructure.config.ServerConfig;
 import infrastructure.model.*;
+import infrastructure.util.HtmlTemplateUtils;
 import infrastructure.util.HttpRequestUtils;
 import infrastructure.util.HttpResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UserController {
 
@@ -25,11 +29,13 @@ public class UserController {
     private final SetSessionUseCase setSessionUseCase;
     private final SignUpUserUseCase signUpUserUseCase;
     private final LoginUseCase loginUseCase;
+    private final FindUserUseCase findUserUseCase;
 
-    public UserController(SetSessionUseCase setSessionUseCase, SignUpUserUseCase signUpUserUseCase, LoginUseCase loginUseCase) {
+    public UserController(SetSessionUseCase setSessionUseCase, SignUpUserUseCase signUpUserUseCase, LoginUseCase loginUseCase, FindUserUseCase findUserUseCase) {
         this.setSessionUseCase = setSessionUseCase;
         this.signUpUserUseCase = signUpUserUseCase;
         this.loginUseCase = loginUseCase;
+        this.findUserUseCase = findUserUseCase;
     }
 
     public HttpResponse handle(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {
@@ -43,6 +49,9 @@ public class UserController {
             }
             if (RequestPath.LOGIN.equalsValue(path) && method.equals(RequestMethod.POST)) {
                 return login(httpRequest);
+            }
+            if (RequestPath.USER_LIST.equalsValue(path) && method.equals(RequestMethod.GET)) {
+                return list(httpRequest);
             }
         } catch (IOException e) {
             throw new FileNotFoundException();
@@ -105,5 +114,21 @@ public class UserController {
                     .setHeader("Location", ServerConfig.getAuthority() + "/user/login_failed.html")
                     .build();
         }
+    }
+
+    public HttpResponse list(HttpRequest request) throws IOException {
+        List<User> users = findUserUseCase.findAll();
+        List<Model> models = users.stream().map(e -> Model.builder()
+                        .addAttribute("name", e.getName())
+                        .addAttribute("userId", e.getUserId())
+                        .addAttribute("email", e.getEmail())
+                        .build())
+                .collect(Collectors.toList());
+        byte[] bytes = HtmlTemplateUtils.getView("/user/list.html", "users", models);
+
+        return HttpResponse.builder()
+                .status(HttpStatus.OK)
+                .body(new HttpByteArrayBody(bytes))
+                .build();
     }
 }

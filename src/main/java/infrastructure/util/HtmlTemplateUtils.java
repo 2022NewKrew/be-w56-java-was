@@ -27,7 +27,7 @@ public class HtmlTemplateUtils {
         return contents.getBytes(StandardCharsets.UTF_8);
     }
 
-    static public String getView(String file, String listName, List<Model> list) throws IOException {
+    static public byte[] getView(String file, String listName, List<Model> list) throws IOException {
         String contents = Files.readString(new File(DEFAULT_RESOURCE_PATH + file).toPath());
         String listOpenRegex = new StringBuilder(LIST_OPEN).append(listName).append(LIST_OPEN).toString();
         String listCloseRegex = new StringBuilder(LIST_CLOSE).append(listName).append(LIST_CLOSE).toString();
@@ -46,9 +46,8 @@ public class HtmlTemplateUtils {
                     .collect(Collectors.joining(""));
 
             contents = contents.replaceAll(new StringBuilder(listOpenRegex).append(origin).append(listCloseRegex).toString(), converted);
-            startIndex += converted.length();
         }
 
-        return contents;
+        return contents.getBytes(StandardCharsets.UTF_8);
     }
 }

@@ -34,7 +34,7 @@ public class ControllerRouter {
         log.debug("Request Path: {}", path.getValue());
 
         if (notAuthenticated(httpRequest, path)) {
-            return HttpResponseUtils.badRequest();
+            return HttpResponseUtils.found("/user/login.html");
         }
 
         try {

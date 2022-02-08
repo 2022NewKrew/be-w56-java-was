@@ -19,6 +19,18 @@ public class User {
         return userId;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public boolean isPasswordSame(String password) {
         return this.password.equals(password);
     }
