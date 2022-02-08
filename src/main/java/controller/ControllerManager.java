@@ -7,29 +7,30 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import user.controller.UserController;
+import user.controller.UserCreate;
+import user.controller.UserLogin;
 import webserver.RequestHandler;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class ControllerManager {
-    private static Map<RequestType, Function<Request, String>> map = new HashMap<>();
+    private static Map<RequestType, AbstractController> map = new HashMap<>();
 
     //mapping path to method.
     static{
-        //@PostMapping(value = "/user/create") 를 UserController클래스 execute라는 static method를 매핑해줌.
-        map.put(new RequestType(HttpMethod.POST, "/user/create"), UserController::createUser);
-        map.put(new RequestType(HttpMethod.POST, "/user/login/check"), UserController::loginUser);
-
+        map.put(new RequestType(HttpMethod.POST, "/user/create"), new UserCreate());
+        map.put(new RequestType(HttpMethod.POST, "/user/login/check"), new UserLogin());
     }
 
 
     public static String matchController(Request request){
         RequestType key = new RequestType(request.getMethod(), request.getPath());
         if(map.get(key) != null){
-            return map.get(key).apply(request);
+            return map.get(key).controllerExecute(request);
         }
 
         return request.getPath();

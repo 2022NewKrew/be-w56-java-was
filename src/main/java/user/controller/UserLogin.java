@@ -1,38 +1,21 @@
 package user.controller;
 
-import controller.ControllerManager;
+import controller.AbstractController;
 import db.DataBase;
-import http.*;
+import http.CookieManager;
+import http.Request;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
-    //회원가입
-    public static String createUser(Request request) {
-        Map<String, String> elements = request.getElements();
-
-        User user = new User(elements.get("userId"),
-                            elements.get("password"),
-                            elements.get("name"),
-                            elements.get("email"));
-
-        if(DataBase.findUserById(user.getUserId()) != null){
-            return "redirect:/index.html";
-        }
-
-        DataBase.addUser(user);
-
-        log.debug(String.format("new user registered : %s", user.getUserId()));
-        return "redirect:/index.html";
-    }
+public class UserLogin extends AbstractController {
+    private static final Logger log = LoggerFactory.getLogger(UserLogin.class);
 
     //리팩토링때 UserService 생성하여 책임을 나누자, Autowired 어노테이션을 구현해보자.
-    public static String loginUser(Request request){
+    @Override
+    public String controllerExecute(Request request) {
         Map<String, String> elements = request.getElements();
 
         String userId = elements.get("userId");
