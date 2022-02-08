@@ -15,6 +15,8 @@ public enum HtmlResponseHeader {
                 dos.writeBytes("HTTP/1.1 200 OK \r\n");
                 dos.writeBytes("Content-Type: " + responseHeader.getAccept() + ";charset=utf-8\r\n");
                 dos.writeBytes("Content-Length: " + responseHeader.getLengthOfBodyContent() + "\r\n");
+                dos.writeBytes("Connection: keep-alive\r\n");
+                dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("\r\n");
             } catch (IOException e) {
                 log.error(e.getMessage());
@@ -30,6 +32,8 @@ public enum HtmlResponseHeader {
                 log.info("302: " + responseHeader.getUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
                 dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Connection: keep-alive\r\n");
+                dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("\r\n");
             } catch (IOException e) {
                 log.error(e.getMessage());
@@ -44,7 +48,26 @@ public enum HtmlResponseHeader {
                 log.info("Login 302: " + responseHeader.getUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
                 dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Connection: keep-alive\r\n");
+                dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
+                dos.writeBytes("\r\n");
+            } catch (IOException e) {
+                log.error(e.getMessage());
+            }
+        }
+    },
+
+    REDIRECT_302_WITH_LOGOUT_COOKIE() {
+        @Override
+        public void response(DataOutputStream dos, ResponseHeader responseHeader) {
+            try {
+                log.info("Login 302: " + responseHeader.getUri());
+                dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
+                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Connection: keep-alive\r\n");
+                dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
+                dos.writeBytes("Set-Cookie: logined=false; Path=/ \r\n");
                 dos.writeBytes("\r\n");
             } catch (IOException e) {
                 log.error(e.getMessage());

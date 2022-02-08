@@ -2,8 +2,9 @@ package controller;
 
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import model.ResponseHeaderBuilder;
 import model.ResponseHeader;
+import model.SignUpService;
+import model.builder.*;
 
 @Slf4j
 public class RequestController {
@@ -11,22 +12,29 @@ public class RequestController {
 
     }
 
-    public static ResponseHeader controlRequest(RequestHeader requestHeader) {
-        String uri = requestHeader.getHeaders("uri");
-        String method = requestHeader.getHeaders("method");
+    public static ResponseHeader controlRequest(RequestHeader requestHeader) throws Exception {
+        String uri = requestHeader.getHeader("uri");
+        String method = requestHeader.getHeader("method");
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 
-        ResponseHeaderBuilder responseHeaderBuilder = new ResponseHeaderBuilder(requestHeader);
-
         if (uri.equals("/user/create") && method.equals("POST")) {
-            return responseHeaderBuilder.postUserCreate();
+            SignUpService.signup(requestHeader);
+            return new PostUserCreateBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/login") && method.equals("POST")) {
-            return responseHeaderBuilder.postUserLogin();
+            return new PostUserLoginBuilder().build(requestHeader);
         }
 
-        return responseHeaderBuilder.normalRequest(uri);
+        if (uri.equals("/user/list") && method.equals("GET")) {
+            return new GetUserListBuilder().build(requestHeader);
+        }
+
+        if (uri.equals("/user/logout") && method.equals("GET")) {
+            return new GetUserLogoutBuilder().build(requestHeader);
+        }
+
+        return new NormalRequestBuilder().build(requestHeader);
     }
 }

@@ -42,7 +42,7 @@ public class HttpRequestUtils {
     public static void setHeader(RequestHeader requestHeader, String header) {
         String[] tokens = header.split(": ");
         if (tokens[0].equals("Cookie")) {
-            requestHeader.setCookies(parseCookies(tokens[1]));
+            requestHeader.setCookie(parseCookies(tokens[1]));
             return;
         }
         requestHeader.putHeader(tokens[0], tokens[1]);
