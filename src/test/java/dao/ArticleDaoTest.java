@@ -19,12 +19,12 @@ class ArticleDaoTest {
     @DisplayName("모든 Article의 목록을 반환한다.")
     @ParameterizedTest
     @ValueSource(ints = {0, 10, 100, 1000})
-    void testFind(int numberOfUser) {
+    void testFind(int numberOfArticle) {
         //give
         ArticleDao dao = ArticleDao.getInstance();
         int baseSize = dao.find().size();
 
-        for (int i = 0; i < numberOfUser; i++) {
+        for (int i = 0; i < numberOfArticle; i++) {
             ObjectId id = new ObjectId();
             String title = "title" + i;
             String author = "author" + i;
@@ -37,10 +37,10 @@ class ArticleDaoTest {
         List<Article> articles = dao.find();
 
         //then
-        assertThat(articles.size()).isEqualTo(numberOfUser + baseSize);
+        assertThat(articles.size()).isEqualTo(numberOfArticle + baseSize);
 
-        for (int i = 0; i < numberOfUser; i++) {
-            ObjectId id = new ObjectId();
+        for (int i = 0; i < numberOfArticle; i++) {
+            ObjectId id = articles.get(i).getId();
             String title = "title" + i;
             String author = "author" + i;
             String content = "content" + i;
