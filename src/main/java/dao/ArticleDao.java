@@ -32,13 +32,13 @@ public class ArticleDao implements CrudDao<Article, ObjectId> {
 
     public ArticleDao() {
         MongoClient client = MongoClients.create();
-        MongoDatabase database = client.getDatabase("was");
-        this.collection = database.getCollection("Article");
+        MongoDatabase database = client.getDatabase(DaoConstant.DATABASE_NAME);
+        this.collection = database.getCollection(DaoConstant.ARTICLE_COLLECTION_NAME);
     }
 
     @Override
     public Article find(ObjectId id) {
-        Document document = collection.find(eq("_id", id)).first();
+        Document document = collection.find(eq(ArticleAttribute.ID.getValue(), id)).first();
         System.out.println();
         return articlemapper.documentToArticle(document);
     }
@@ -53,20 +53,20 @@ public class ArticleDao implements CrudDao<Article, ObjectId> {
     public ObjectId save(Article entity) {
         Document document = articlemapper.articleToDocument(entity);
         collection.insertOne(document);
-        return document.getObjectId("_id");
+        return document.getObjectId(ArticleAttribute.ID.getValue());
     }
 
     @Override
     public void update(Article entity) {
-        Bson updatePassword = set("title", entity.getTitle());
-        Bson updateName = set("author", entity.getAuthor());
-        Bson updateEmail = set("content", entity.getContent());
+        Bson updatePassword = set(ArticleAttribute.TITLE.getValue(), entity.getTitle());
+        Bson updateName = set(ArticleAttribute.AUTHOR.getValue(), entity.getAuthor());
+        Bson updateEmail = set(ArticleAttribute.CONTENT.getValue(), entity.getContent());
         Bson combineBson = combine(updatePassword, updateName, updateEmail);
         collection.findOneAndUpdate(eq("_id", entity.getId()), combineBson);
     }
 
     @Override
     public void delete(Article entity) {
-        collection.deleteOne(eq("_id", entity.getId()));
+        collection.deleteOne(eq(ArticleAttribute.ID.getValue(), entity.getId()));
     }
 }

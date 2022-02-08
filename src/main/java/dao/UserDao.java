@@ -31,14 +31,14 @@ public class UserDao implements CrudDao<User, String> {
 
     public UserDao() {
         MongoClient client = MongoClients.create();
-        MongoDatabase database = client.getDatabase("was");
-        this.collection = database.getCollection("User");
+        MongoDatabase database = client.getDatabase(DaoConstant.DATABASE_NAME);
+        this.collection = database.getCollection(DaoConstant.USER_COLLECTION_NAME);
     }
 
     @Override
     public User find(String id) {
         Document document = collection
-                .find(eq("userId", id))
+                .find(eq(UserAttribute.USER_ID.getValue(), id))
                 .first();
         return userMapper.documentToUser(document);
     }
@@ -59,16 +59,16 @@ public class UserDao implements CrudDao<User, String> {
 
     @Override
     public void update(User entity) {
-        Bson updatePassword = set("password", entity.getPassword());
-        Bson updateName = set("name", entity.getName());
-        Bson updateEmail = set("email", entity.getEmail());
+        Bson updatePassword = set(UserAttribute.PASSWORD.getValue(), entity.getPassword());
+        Bson updateName = set(UserAttribute.NAME.getValue(), entity.getName());
+        Bson updateEmail = set(UserAttribute.EMAIL.getValue(), entity.getEmail());
         Bson combineBson = combine(updatePassword, updateName, updateEmail);
-        collection.findOneAndUpdate(eq("userId", entity.getUserId()), combineBson);
+        collection.findOneAndUpdate(eq(UserAttribute.USER_ID.getValue(), entity.getUserId()),
+                combineBson);
     }
 
     @Override
     public void delete(User entity) {
-        Document document = userMapper.userToDocument(entity);
-        collection.deleteOne(eq("userId", entity.getUserId()));
+        collection.deleteOne(eq(UserAttribute.USER_ID.getValue(), entity.getUserId()));
     }
 }
