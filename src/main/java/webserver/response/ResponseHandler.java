@@ -2,66 +2,34 @@ package webserver.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
-import webserver.header.ContentType;
+import webserver.http.Response;
+import webserver.http.response.HttpResponse;
+import webserver.response.maker.ResponseMaker;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 public class ResponseHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseHandler.class);
 
     private final DataOutputStream dos;
+    private final String httpVersion;
 
-    private static final String NEXT_LINE = "\r\n";
-
-    public ResponseHandler(DataOutputStream dos) {
+    public ResponseHandler(DataOutputStream dos, String httpVersion) {
         this.dos = dos;
+        this.httpVersion = httpVersion;
     }
 
-    public void response(String result) throws IOException {
-        String[] parsed = result.split(":");
-        if(parsed.length == 2) {
-            response302Header(parsed[1]);
-        }
-        else {
-            ContentType contentType = HttpRequestUtils.parseExtension(result);
-            byte[] body = Files.readAllBytes(new File("./webapp" + result).toPath());
-            response200Header(body.length, contentType);
-            responseBody(body);
-        }
+    public void response(Response result) throws IOException {
+        HttpResponse response = ResponseMaker.make(result, httpVersion);
+        responseOutput(response);
     }
 
-    private void response302Header(String location) {
+    private void responseOutput(HttpResponse response) {
         try {
-            dos.writeBytes("HTTP/1.1 302 FOUND "+NEXT_LINE);
-            dos.writeBytes("Location: " + location + NEXT_LINE);
-            dos.writeBytes(NEXT_LINE);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(int lengthOfBodyContent, ContentType contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK "+NEXT_LINE);
-            dos.writeBytes("Content-Type: "+contentType.getType()+";charset=utf-8"+NEXT_LINE);
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + NEXT_LINE);
-            dos.writeBytes(NEXT_LINE);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
+            dos.writeBytes(response.getHeader());
+            dos.write(response.getBody(), 0, response.bodyLength());
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();

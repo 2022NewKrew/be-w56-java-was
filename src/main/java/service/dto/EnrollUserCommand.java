@@ -1,6 +1,6 @@
 package service.dto;
 
-import model.User;
+import domain.User;
 
 public class EnrollUserCommand {
 

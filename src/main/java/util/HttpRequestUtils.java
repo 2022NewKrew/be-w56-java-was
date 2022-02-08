@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.header.ContentType;
-import webserver.header.RequestLine;
+import webserver.http.ContentType;
+import webserver.http.RequestLine;
 
 public final class HttpRequestUtils {
 

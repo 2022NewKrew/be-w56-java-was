@@ -1,26 +1,27 @@
 package controller;
 
-import annotation.GetMapping;
-import annotation.PostMapping;
-import annotation.RequestBody;
-import annotation.RequestParam;
+import annotation.*;
 import controller.dto.EnrollUserRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import controller.dto.LoginUserRequest;
+import model.Model;
 import service.UserService;
 import service.dto.EnrollUserCommand;
+import service.dto.GetAllUserInfoResult;
+import service.dto.LoginUserCommand;
+import service.dto.LoginUserResult;
+import webserver.http.Cookie;
+import webserver.http.Response;
+
 
 public class Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
-
     @GetMapping(path = "/")
-    public String getIndex() {
-        return "/index.html";
+    public Response getIndex() {
+        return new Response("/index.html", 200);
     }
 
     @GetMapping(path = "/user/create")
-    public String signUp(
+    public Response signUp(
             @RequestParam(name = "userId") String userId,
             @RequestParam(name = "password") String password,
             @RequestParam(name = "name") String name,
@@ -28,11 +29,11 @@ public class Controller {
 
         UserService.enroll(new EnrollUserCommand(userId, password, name, email));
 
-        return "redirect:/";
+        return new Response("/", 302);
     }
 
     @PostMapping(path = "/user/create")
-    public String signUp(@RequestBody(names = {"userId", "password", "name", "email"}) EnrollUserRequest enrollUserRequest) {
+    public Response signUp(@RequestBody(names = {"userId", "password", "name", "email"}) EnrollUserRequest enrollUserRequest) {
 
         UserService.enroll(
                 new EnrollUserCommand(
@@ -42,6 +43,42 @@ public class Controller {
                         enrollUserRequest.getEmail()
                 ));
 
-        return "redirect:/";
+        return new Response("/", 302);
+    }
+
+    @PostMapping(path = "/user/login")
+    public Response login(@RequestBody(names = {"userId", "password"}) LoginUserRequest loginUserRequest) {
+
+        LoginUserResult result = UserService.getUserInfo(
+                new LoginUserCommand(
+                        loginUserRequest.getUserId(),
+                        loginUserRequest.getPassword()));
+
+        if(!result.isSame()) {
+            Response failResponse = new Response("/user/login_failed.html", 200);
+            failResponse.addCookie(Cookie.create("logined", "false"));
+            return failResponse;
+        }
+
+        Cookie cookie = Cookie.create("logined", "true");
+        Response response = new Response("/", 302);
+        response.addCookie(cookie);
+        return response;
+    }
+
+    @GetMapping(path = "/user/list")
+    public Response userList(@HttpCookie(name = "logined") String login) {
+
+        GetAllUserInfoResult allUserInfo = UserService.getAllUserInfo();
+
+        if(login.equals("false") || login.equals("")) {
+            return new Response("/user/login.html", 200);
+        }
+
+        Model model = Model.create();
+        model.addAttribute("userList", allUserInfo.getUserInfos());
+        Response response = new Response("/userList", 200);
+        response.setModel(model);
+        return response;
     }
 }
