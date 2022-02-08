@@ -10,10 +10,10 @@ public class HttpRequest {
     private final String requestURI;
     private final String version;
     private final HttpHeader headers;
-    private final Map<String, HttpCookie> cookies;
+    private final HttpCookie cookies;
     private final String body;
 
-    public HttpRequest(HttpMethod method, String requestURI, String version, HttpHeader headers, Map<String, HttpCookie> cookies, String body) {
+    public HttpRequest(HttpMethod method, String requestURI, String version, HttpHeader headers, HttpCookie cookies, String body) {
         this.method = method;
         this.requestURI = requestURI;
         this.version = version;
@@ -44,7 +44,7 @@ public class HttpRequest {
         return headers;
     }
 
-    public Map<String, HttpCookie> cookies() {
+    public HttpCookie cookies() {
         return cookies;
     }
 

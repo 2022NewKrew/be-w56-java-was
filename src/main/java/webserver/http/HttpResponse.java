@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class HttpResponse {
@@ -20,7 +19,7 @@ public class HttpResponse {
     private final String version;
     private final HttpStatus status;
     private final HttpHeader headers;
-    private final List<HttpCookie> cookies;
+    private final HttpCookie cookies;
     private final String[] contentType;
     private final int contentLength;
     private final byte[] body;
@@ -71,7 +70,7 @@ public class HttpResponse {
     }
 
     private void writeBytesCookies() throws IOException {
-        for (HttpCookie cookie : cookies) {
+        for (Cookie cookie : cookies.iterator()) {
             dos.writeBytes(String.format("Set-Cookie: %s%s", cookie, CRLF));
         }
     }
@@ -91,7 +90,7 @@ public class HttpResponse {
 
         private final DataOutputStream dos;
         private final HttpHeader headers = new HttpHeader();
-        private final List<HttpCookie> cookies = new ArrayList<>();
+        private final HttpCookie cookies = new HttpCookie();
         private String version = DEFAULT_VERSION;
         private HttpStatus status = DEFAULT_STATUS;
         private String[] contentType = DEFAULT_CONTENT_TYPE;
@@ -116,8 +115,8 @@ public class HttpResponse {
             return this;
         }
 
-        public Builder cookie(HttpCookie cookie) {
-            cookies.add(cookie);
+        public Builder cookie(Cookie cookie) {
+            cookies.putCookie(cookie);
             return this;
         }
 
