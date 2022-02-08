@@ -20,6 +20,6 @@ public class GetController {
 
     public void handleGet(String path) throws IOException {
         Status status = Status.OK;
-        HttpResponse.handleHtmlResponse(path, outputStream, status);
+        HttpResponse.handleHtmlResponse(path, outputStream, status, false);
     }
 }

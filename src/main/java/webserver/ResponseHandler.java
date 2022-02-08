@@ -12,7 +12,7 @@ public class ResponseHandler {
     private GetController getController;
     private HttpRequest httpRequest;
 
-    public ResponseHandler(HttpRequest httpRequest, OutputStream outputStream){
+    public ResponseHandler(HttpRequest httpRequest, OutputStream outputStream) {
         this.httpRequest = httpRequest;
         this.postController = new PostController(httpRequest, outputStream);
         this.getController = new GetController(httpRequest, outputStream);
@@ -22,7 +22,7 @@ public class ResponseHandler {
         String path = httpRequest.getPath();
         Method method = httpRequest.getMethod();
 
-        switch (method){
+        switch (method) {
             case GET:
                 getController.handleGet(path);
                 break;
@@ -30,8 +30,5 @@ public class ResponseHandler {
                 postController.handlePost(path);
                 break;
         }
-
     }
-
-
 }
