@@ -16,7 +16,7 @@ public class User {
         this.email = email;
     }
 
-    public User(Builder builder) {
+    private User(Builder builder) {
         if (builder.userId == null || builder.password == null || builder.name == null || builder.email == null) {
             throw new IllegalArgumentException("IllegalArgumentException");
         }

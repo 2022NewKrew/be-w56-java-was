@@ -26,6 +26,8 @@ public class UserDAO {
             connection = DBUtils.getConnection();
         } catch (SQLException e) {
             throw new IllegalStateException("DB connection failed");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("DB driver not found");
         }
     }
 

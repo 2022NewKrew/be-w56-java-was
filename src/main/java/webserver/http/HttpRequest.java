@@ -49,13 +49,17 @@ public class HttpRequest {
     }
 
     private Map<String, String> generateCookiesFromHeaders() {
-        String[] cookies = headers.get("Cookie").split("; ");
-        Map<String, String> result = new HashMap<>();
-        Arrays.stream(cookies).forEach(cookie -> {
-            String key = cookie.split("=")[0];
-            String value = cookie.split("=")[1];
-            result.put(key, value);
-        });
-        return result;
+        try {
+            String[] cookies = headers.get("Cookie").split("; ");
+            Map<String, String> result = new HashMap<>();
+            Arrays.stream(cookies).forEach(cookie -> {
+                String key = cookie.split("=")[0];
+                String value = cookie.split("=")[1];
+                result.put(key, value);
+            });
+            return result;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }
