@@ -2,6 +2,8 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,7 +99,7 @@ public class HttpRequestUtils {
 
         Pair(String key, String value) {
             this.key = key.trim();
-            this.value = value.trim();
+            this.value = URLDecoder.decode(value.trim(), StandardCharsets.UTF_8);
         }
 
         public String getKey() {
