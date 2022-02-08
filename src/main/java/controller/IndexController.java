@@ -1,11 +1,11 @@
 package controller;
 
-import request.HttpRequest;
-import response.HttpResponse.HttpResponseBuilder;
-import response.HttpStatusCode;
-import response.ResHeader;
-import response.ResponseHeader;
-import response.ResponseHeader.ResponseHeaderBuilder;
+import http.request.HttpRequest;
+import http.response.HttpResponse.HttpResponseBuilder;
+import http.response.HttpStatusCode;
+import http.response.HttpResponseHeaderEnum;
+import http.response.HttpResponseHeader;
+import http.response.HttpResponseHeader.ResponseHeaderBuilder;
 import util.IOUtils;
 import webserver.UrlMapper;
 
@@ -20,12 +20,12 @@ public class IndexController {
             "GET",
             (HttpRequest httpRequest) -> {
                 byte[] body = IOUtils.readFile("./webapp/index.html");
-                ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
+                HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
+                        .set(HttpResponseHeaderEnum.CONTENT_LENGTH, "" + body.length)
                         .build();
 
                 return new HttpResponseBuilder(HttpStatusCode.OK)
-                        .setHeader(responseHeader)
+                        .setHeader(httpResponseHeader)
                         .setBody(body)
                         .build();
             }

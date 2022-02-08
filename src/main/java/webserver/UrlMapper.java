@@ -3,10 +3,10 @@ package webserver;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import request.HttpRequest;
-import response.HttpResponse;
-import response.HttpResponse.HttpResponseBuilder;
-import response.HttpStatusCode;
+import http.request.HttpRequest;
+import http.response.HttpResponse;
+import http.response.HttpResponse.HttpResponseBuilder;
+import http.response.HttpStatusCode;
 
 public class UrlMapper {
 

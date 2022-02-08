@@ -2,10 +2,10 @@ package webserver;
 
 import controller.IndexController;
 import controller.UserController;
-import request.HttpRequest;
-import response.HttpResponse;
-import response.HttpResponse.HttpResponseBuilder;
-import response.HttpStatusCode;
+import http.request.HttpRequest;
+import http.response.HttpResponse;
+import http.response.HttpResponse.HttpResponseBuilder;
+import http.response.HttpStatusCode;
 import util.UrlUtils;
 
 /**

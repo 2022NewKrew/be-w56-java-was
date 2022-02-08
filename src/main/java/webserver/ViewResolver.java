@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponse;
-import response.ResHeader;
-import response.ResponseHeader;
+import http.response.HttpResponse;
+import http.response.HttpResponseHeaderEnum;
+import http.response.HttpResponseHeader;
 
 public class ViewResolver {
 
@@ -31,8 +31,8 @@ public class ViewResolver {
         dosWrite(responseStatusLine + NEW_LINE);
     }
 
-    private void respondHeader(ResponseHeader responseHeader) {
-        Map<ResHeader, String> headerMap = responseHeader.getHeaderMap();
+    private void respondHeader(HttpResponseHeader httpResponseHeader) {
+        Map<HttpResponseHeaderEnum, String> headerMap = httpResponseHeader.getHeaderMap();
         headerMap.forEach((key, value) ->
                 dosWrite(String.format("%s: %s%s", key.getText(), value, NEW_LINE)));
         dosWrite(NEW_LINE);

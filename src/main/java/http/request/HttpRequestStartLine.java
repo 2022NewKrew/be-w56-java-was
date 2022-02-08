@@ -1,25 +1,25 @@
-package request;
+package http.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestStartLine {
+public class HttpRequestStartLine {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RequestStartLine.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestStartLine.class);
 
     private final String method;
     private final String url;
     private final String protocol;
 
-    private RequestStartLine(String method, String url, String protocol) {
+    private HttpRequestStartLine(String method, String url, String protocol) {
         this.method = method;
         this.url = url;
         this.protocol = protocol;
     }
 
-    public static RequestStartLine of(BufferedReader br) {
+    public static HttpRequestStartLine of(BufferedReader br) {
         String method = "";
         String url = "";
         String protocol = "";
@@ -38,7 +38,7 @@ public class RequestStartLine {
             LOG.error(e.getMessage());
         }
 
-        return new RequestStartLine(method, url, protocol);
+        return new HttpRequestStartLine(method, url, protocol);
     }
 
     public String getMethod() {

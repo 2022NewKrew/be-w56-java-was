@@ -1,4 +1,4 @@
-package response;
+package http.response;
 
 public enum HttpStatusCode {
     // thank you sun.flower !

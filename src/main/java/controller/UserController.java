@@ -6,13 +6,13 @@ import model.User;
 import model.UserLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.HttpRequest;
-import request.RequestBody;
-import response.HttpResponse.HttpResponseBuilder;
-import response.HttpStatusCode;
-import response.ResHeader;
-import response.ResponseHeader;
-import response.ResponseHeader.ResponseHeaderBuilder;
+import http.request.HttpRequest;
+import http.request.HttpRequestBody;
+import http.response.HttpResponse.HttpResponseBuilder;
+import http.response.HttpStatusCode;
+import http.response.HttpResponseHeaderEnum;
+import http.response.HttpResponseHeader;
+import http.response.HttpResponseHeader.ResponseHeaderBuilder;
 import util.IOUtils;
 import util.UrlUtils;
 import webserver.UrlMapper;
@@ -30,12 +30,12 @@ public class UserController {
             "GET",
             (HttpRequest httpRequest) -> {
                 byte[] body = IOUtils.readFile("./webapp/user/form.html");
-                ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
+                HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
+                        .set(HttpResponseHeaderEnum.CONTENT_LENGTH, "" + body.length)
                         .build();
 
                 return new HttpResponseBuilder(HttpStatusCode.OK)
-                        .setHeader(responseHeader)
+                        .setHeader(httpResponseHeader)
                         .setBody(body)
                         .build();
             }
@@ -45,8 +45,8 @@ public class UserController {
             "/user/create",
             "POST",
             (HttpRequest httpRequest) -> {
-                RequestBody requestBody = httpRequest.getRequestBody();
-                String body = new String(requestBody.getBody());
+                HttpRequestBody httpRequestBody = httpRequest.getRequestBody();
+                String body = String.valueOf(httpRequestBody.getBody());
                 body = UrlUtils.decode(body);
                 Map<String, String> data = IOUtils.getBodyData(body);
 
@@ -56,12 +56,12 @@ public class UserController {
                     DataBase.addUser(user);
 
                     LOG.info("SignIn Succeeded - {}", user);
-                    ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                            .set(ResHeader.LOCATION, "/")
+                    HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
+                            .set(HttpResponseHeaderEnum.LOCATION, "/")
                             .build();
 
                     return new HttpResponseBuilder(HttpStatusCode.FOUND)
-                            .setHeader(responseHeader)
+                            .setHeader(httpResponseHeader)
                             .build();
 
                 } catch (NullPointerException | IllegalArgumentException e) {
@@ -76,12 +76,12 @@ public class UserController {
             "GET",
             (HttpRequest httpRequest) -> {
                 byte[] body = IOUtils.readFile("./webapp/user/login.html");
-                ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
+                HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
+                        .set(HttpResponseHeaderEnum.CONTENT_LENGTH, "" + body.length)
                         .build();
 
                 return new HttpResponseBuilder(HttpStatusCode.OK)
-                        .setHeader(responseHeader)
+                        .setHeader(httpResponseHeader)
                         .setBody(body)
                         .build();
             }
@@ -91,8 +91,8 @@ public class UserController {
             "/user/login",
             "POST",
             (HttpRequest httpRequest) -> {
-                RequestBody requestBody = httpRequest.getRequestBody();
-                String body = new String(requestBody.getBody());
+                HttpRequestBody httpRequestBody = httpRequest.getRequestBody();
+                String body = String.valueOf(httpRequestBody.getBody());
                 body = UrlUtils.decode(body);
                 Map<String, String> data = IOUtils.getBodyData(body);
 
@@ -102,13 +102,13 @@ public class UserController {
                     String cookieValue = result ? "logined=true; Path=/" : "logined=false";
 
                     LOG.info(result ? "Login Failed" : "Login Succeeded - {}", user);
-                    ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                            .set(ResHeader.SET_COOKIE, cookieValue)
-                            .set(ResHeader.LOCATION, "/")
+                    HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
+                            .set(HttpResponseHeaderEnum.SET_COOKIE, cookieValue)
+                            .set(HttpResponseHeaderEnum.LOCATION, "/")
                             .build();
 
                     return new HttpResponseBuilder(HttpStatusCode.FOUND)
-                            .setHeader(responseHeader)
+                            .setHeader(httpResponseHeader)
                             .build();
 
                 } catch (NullPointerException | IllegalArgumentException e) {

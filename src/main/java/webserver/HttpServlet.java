@@ -9,8 +9,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.HttpRequest;
-import response.HttpResponse;
+import http.request.HttpRequest;
+import http.response.HttpResponse;
 
 /**
  * HTTP request 마다 생성되는 스레드 기반의 Servlet.
