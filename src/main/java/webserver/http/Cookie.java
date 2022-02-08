@@ -79,17 +79,14 @@ public class Cookie {
         stringBuilder
                 .append(name)
                 .append("=")
-                .append(value);
+                .append(value)
+                .append("; Max-Age=")
+                .append(maxAge);
 
         if (domain != null && !domain.isBlank()) {
             stringBuilder
                     .append("; Domain=")
                     .append(domain);
-        }
-        if (maxAge > 0) {
-            stringBuilder
-                    .append("; Max-Age=")
-                    .append(maxAge);
         }
         if (path != null && !path.isBlank()) {
             stringBuilder

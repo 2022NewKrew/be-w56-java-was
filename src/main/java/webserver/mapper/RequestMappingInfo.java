@@ -14,6 +14,7 @@ import webserver.repository.MemoRepository;
 import webserver.repository.UserRepository;
 
 import java.io.DataOutputStream;
+import java.time.Duration;
 import java.util.*;
 
 import static util.TemplateEngineUtils.renderDynamicTemplate;
@@ -61,6 +62,8 @@ public enum RequestMappingInfo {
 
             Cookie authCookie = new Cookie("auth", String.valueOf(user.getId()));
             authCookie.setPath("/");
+            int secondsInHour = (int) Duration.ofHours(1).toSeconds();
+            authCookie.setMaxAge(secondsInHour);
 
             return HttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
