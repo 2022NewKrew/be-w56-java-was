@@ -2,7 +2,6 @@ package webserver.http;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class HttpCookie {
@@ -17,9 +16,9 @@ public class HttpCookie {
         return cookieMap.containsKey(name);
     }
 
-    public <X extends Throwable> String orElseThrow(String name, Supplier<? extends X> exceptionSupplier) throws X {
+    public <X extends Throwable> Cookie orElseThrow(String name, Supplier<? extends X> exceptionSupplier) throws X {
         if (cookieMap.containsKey(name)) {
-            return cookieMap.get(name).getValue();
+            return cookieMap.get(name);
         } else {
             throw exceptionSupplier.get();
         }
@@ -27,14 +26,6 @@ public class HttpCookie {
 
     public void putCookie(Cookie cookie) {
         cookieMap.put(cookie.getName(), cookie);
-    }
-
-    public Optional<String> getValue(String name) {
-        Cookie cookie = cookieMap.get(name);
-        if (cookie == null) {
-            return Optional.empty();
-        }
-        return Optional.of(cookie.getValue());
     }
 
     public Iterable<Cookie> iterator() {

@@ -92,10 +92,10 @@ public enum RequestMappingInfo {
         @Override
         public HttpResponse handle(HttpRequest request) throws Exception {
             HttpCookie cookies = request.cookies();
-            String auth = cookies.orElseThrow("auth",
+            Cookie authCookie = cookies.orElseThrow("auth",
                     () -> new UserUnauthorizedException("에러: 접근할 수 없습니다."));
 
-            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), auth);
+            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), authCookie.getValue());
             Memo memo = memoRepository.save(memoCreateRequest.toEntity());
             log.info("New memo created : {}", memo);
 
