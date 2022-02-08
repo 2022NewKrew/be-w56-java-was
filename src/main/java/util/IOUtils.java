@@ -3,7 +3,7 @@ package util;
 import java.io.*;
 import java.nio.file.Files;
 
-import DTO.HeaderDTO;
+import DTO.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +28,12 @@ public class IOUtils {
     /**
      * @param BufferedReader : Request Header READER
      * @return*/
-    public static HeaderDTO readHeader(InputStream in) throws IOException  {
+    public static RequestHeader readHeader(InputStream in) throws IOException  {
         InputStreamReader reader = new InputStreamReader(in);
         BufferedReader bufferedReader = new BufferedReader(reader);
 
         String line = "init";
-        HeaderDTO headerDTO = new HeaderDTO();
+        RequestHeader headerDTO = new RequestHeader();
 
         while (!"".equals(line)) {
             line = readHeaderLine(bufferedReader, headerDTO);
@@ -44,7 +44,7 @@ public class IOUtils {
         return headerDTO;
     }
 
-    public static void readBody(BufferedReader bufferedReader, HeaderDTO headerDTO) throws IOException {
+    public static void readBody(BufferedReader bufferedReader, RequestHeader headerDTO) throws IOException {
         int contentLeng = headerDTO.getContentLength();
 
         if (contentLeng > 0){
@@ -60,7 +60,7 @@ public class IOUtils {
         return body;
     }
 
-    private static String readHeaderLine(BufferedReader bufferedReader, HeaderDTO headerDTO) throws IOException {
+    private static String readHeaderLine(BufferedReader bufferedReader, RequestHeader headerDTO) throws IOException {
         String line = bufferedReader.readLine();
 
         if("".equals(line)){return "";}

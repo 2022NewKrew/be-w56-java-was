@@ -1,6 +1,7 @@
 package DTO;
 
 import util.HttpRequestUtils.Pair;
+import util.RequestPathUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,11 +9,12 @@ import java.util.Map;
 import static util.HttpRequestUtils.parseHeader;
 import static util.HttpRequestUtils.parseQueryString;
 
-public class HeaderDTO {
+public class RequestHeader {
     final static private String CONTENT_LENG = "Content-Length";
     final static private String GET = "GET";
     final static private String POST = "POST";
 
+    private String protocolVersion;
     private String requestUrl;
     private String body;
     private boolean isGet; // if GET => true, POST => false
@@ -21,7 +23,7 @@ public class HeaderDTO {
     public void addBufferLine(String line){
         Pair pair= parseHeader(line);
         if(pair == null){
-            extractRequest(line);
+            extractRequestInfo(line);
             return;
         }
         headerList.put(pair.getKey(), pair.getValue());
@@ -49,11 +51,21 @@ public class HeaderDTO {
         return requestUrl;
     }
 
-    public void extractRequest(String line){
+    public void extractRequestInfo(String line){
         String[] tokens = line.split(" ");
         setMethod(tokens[0]);
         setRequestUrl(tokens[1]);
+        setProtocolVersion(tokens[2]);
 
+    }
+
+    private void setParamIfGet(){
+        body = RequestPathUtils.extractRequestParam(requestUrl);
+        requestUrl = RequestPathUtils.extractRequestUrlOnly(requestUrl);
+    }
+
+    private void setProtocolVersion(String token) {
+        protocolVersion = token;
     }
 
     private void setRequestUrl(String url) {
