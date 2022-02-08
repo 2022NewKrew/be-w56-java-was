@@ -43,7 +43,7 @@ public class UserController extends BaseController {
             log.info("로그인 성공");
             return "redirect:/index.html";
         }
-        builder.setCookie("logined=false");
+        builder.setCookie("logined=false; Path=/");
         log.info("로그인 실패");
         return "redirect:/user/login_failed.html";
     }
@@ -51,7 +51,7 @@ public class UserController extends BaseController {
     @GetMapping(url = "/user/list")
     public String showUserList(Request request, Model model) {
         if (!request.inquireHeaderData("Cookie").contains("logined=true")) {
-            return "redirect:/user/login";
+            return "redirect:/user/login.html";
         }
         List<User> users = userService.getAllUsers();
         model.addAllAttribute("users", users);

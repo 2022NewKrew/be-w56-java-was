@@ -37,7 +37,9 @@ public class View {
                     .build();
         }
         File file = new File(PREFIX + viewPath);
-        byte[] result = forward(file).getBytes(StandardCharsets.UTF_8);
+        byte[] result = Files.readAllBytes(file.toPath());
+        if (viewPath.contains(".html"))
+            result = forward(file).getBytes(StandardCharsets.UTF_8);
         return builder.setStatus(HttpStatus.OK)
                 .setResult(result)
                 .setContentLength(result.length)
