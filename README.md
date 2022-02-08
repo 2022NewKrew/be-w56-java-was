@@ -15,4 +15,4 @@
 - BufferedReader 를 이용하여 Request를 String 으로 입력받음.
 - split을 이용하여 첫 줄의 입력을 통해 url path를 얻음.
 - Response Body에 해당 path의 경로에 있는 파일을 byte 타입으로 가져와 flush.
- 
+- Junit 이용하여 Test 코드 생성.
