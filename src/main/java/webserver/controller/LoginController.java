@@ -1,6 +1,7 @@
 package webserver.controller;
 
 import db.DB;
+import http.cookie.Cookie;
 import http.exception.NotFound;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
@@ -33,14 +34,26 @@ public class LoginController extends BaseController {
             log.debug("로그인 성공, {} sessionId={}", user, sessionId);
 
             HttpResponse response = HttpResponse.found("/index.html");
-            response.getHeaders().add("set-cookie", "logined=true; Path=/");
-            response.getHeaders().add("set-cookie", String.format("sessionId=%d; Max-Age=600; Path=/", sessionId));
+            response.addCookie(Cookie.builder()
+                    .name("logined")
+                    .value("true")
+                    .path("/")
+                    .build());
+            response.addCookie(Cookie.builder()
+                    .name("sessionId")
+                    .value(sessionId.toString())
+                    .path("/")
+                    .build());
             return response;
         } catch (NotFound e) {
             log.debug("로그인 실패");
 
             HttpResponse response = HttpResponse.notFound();
-            response.getHeaders().add("set-cookie", "logined=false; Path=/");
+            response.addCookie(Cookie.builder()
+                    .name("logined")
+                    .value("false")
+                    .path("/")
+                    .build());
             return response;
         }
     }

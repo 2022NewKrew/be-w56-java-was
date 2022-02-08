@@ -1,6 +1,7 @@
 package http.request;
 
 import com.google.common.base.Strings;
+import http.cookie.Cookie;
 import http.header.HttpHeaderName;
 import http.header.HttpHeaders;
 import http.header.HttpProtocolVersion;
@@ -10,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link BufferedReader}에서 {@link HttpRequest} 디코딩해 반환하는 클래스
@@ -32,9 +35,11 @@ public class HttpRequestDecoder {
         HttpProtocolVersion protocolVersion = HttpProtocolVersion.parseProtocolVersion(tokens[2]);
 
         HttpHeaders headers = getHeaders(br);
+        List<Cookie> cookies = new ArrayList<>();
 
         if (headers.containsName("cookie")) {
-
+            cookies = HttpRequestUtils.parseCookies(headers.getValue("cookie"));
+            headers.getHeaders().remove("cookie");
         }
 
         // read body if "content-length" header exists
@@ -49,6 +54,7 @@ public class HttpRequestDecoder {
                 .method(method)
                 .uri(uri)
                 .protocolVersion(protocolVersion)
+                .cookies(cookies)
                 .headers(headers)
                 .body(body)
                 .build();

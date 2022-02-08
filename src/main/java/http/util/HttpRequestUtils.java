@@ -1,6 +1,7 @@
 package http.util;
 
 import com.google.common.base.Strings;
+import http.cookie.Cookie;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,10 +9,7 @@ import lombok.ToString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
@@ -24,12 +22,14 @@ public class HttpRequestUtils {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param cookies name1=value1; name2=value2 형식
-     * @return 파싱된 key-value 쌍 Map
-     */
-    public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, ";");
+    public static List<Cookie> parseCookies(String cookies) {
+        return parseValues(cookies, ";").entrySet()
+                .stream()
+                .map(entry -> Cookie.builder()
+                        .name(entry.getKey())
+                        .value(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public static String readData(BufferedReader br, int contentLength) throws IOException {
