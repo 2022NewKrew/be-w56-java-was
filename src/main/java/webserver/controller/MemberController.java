@@ -82,9 +82,7 @@ public class MemberController implements Controller {
         }
 
         private void loginFail(RequestHeader requestHeader, ResponseHeader responseHeader){
-
             log.info("User Login Failed");
-            responseHeader.setCookie("logined","false", cookieOptions);
         }
 
         @Override
