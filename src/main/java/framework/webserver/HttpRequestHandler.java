@@ -1,5 +1,6 @@
 package framework.webserver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import framework.util.Cookies;
 import framework.util.HttpSession;
 import framework.util.RequestAttributes;

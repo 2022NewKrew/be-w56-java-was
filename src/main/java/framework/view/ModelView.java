@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.tika.Tika;
@@ -47,6 +48,7 @@ public class ModelView {
     private ContentType contentType;
     private int contentLength;
     private byte[] content;
+    private boolean isResponseBody;
 
     public void setAttribute(String key, Object value) {
         modelViewAttributes.setAttribute(key, value);
@@ -72,6 +74,29 @@ public class ModelView {
         for (Map.Entry<String, Object> entry : session.entrySet()) {
             modelViewAttributes.setAttribute(entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * ResponseBody로 설정돼있는 경우, Response의 Body에 JSON 형식으로 Attribute들을 넣어주는 메소드
+     */
+    public void readAttributesToJson() {
+        if (!isResponseBody) {
+            return;
+        }
+
+        String parsedStr = parseAttributesToJson();
+
+        statusCode = HttpStatus.SC_OK;
+        content = StringUtils.getBytesUtf8(parsedStr);
+        contentLength = content.length;
+        isStatic = false;
+    }
+
+    /**
+     * 현재 Attributes 정보들을 JSON 형태의 String으로 파싱해주는 메소드
+     */
+    public String parseAttributesToJson() {
+        return modelViewAttributes.parseAttributesToJson();
     }
 
     /**
@@ -145,13 +170,6 @@ public class ModelView {
     }
 
     /**
-     * 현재 Attributes 정보들을 JSON 형태의 String으로 파싱해주는 메소드 (구현 예정)
-     */
-    public void readAttributes() {
-        String attributesStr = modelViewAttributes.parseAttributesToJson();
-    }
-
-    /**
      * 받은 ModelView의 내용을 현재 ModelView에 모두 복사해주는 메소드
      * @param forCopy 복사할 ModelView 객체
      */
@@ -163,5 +181,6 @@ public class ModelView {
         this.contentType = forCopy.getContentType();
         this.contentLength = forCopy.getContentLength();
         this.content = forCopy.getContent();
+        this.isResponseBody = forCopy.isResponseBody();
     }
 }

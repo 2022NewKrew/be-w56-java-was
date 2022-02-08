@@ -12,6 +12,9 @@ public class Constants {
     /** 현재 프로젝트의 static file들이 있는 경로 */
     public static final String CONTEXT_PATH = PROJECT_PATH.substring(0, PROJECT_PATH.length() - 1) + "webapp";
 
+    /** 현재 프로젝트의 Resource 파일 경로 */
+    public static final String CLASS_PATH = PROJECT_PATH.substring(0, PROJECT_PATH.length() - 1) + "src/main/resources/";
+
     /** 기본 에러 페이지 */
     public static final String DEFAULT_ERROR_PAGE = "/error/error.html";
 

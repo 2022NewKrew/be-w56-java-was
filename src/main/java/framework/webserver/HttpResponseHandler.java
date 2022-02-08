@@ -52,6 +52,7 @@ public class HttpResponseHandler {
             }
 
             dos.writeBytes("\r\n");
+
             dos.write(modelView.getContent(), 0, modelView.getContentLength());
             dos.flush();
         } catch (IOException e) {

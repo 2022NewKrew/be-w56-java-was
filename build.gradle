@@ -47,6 +47,14 @@ dependencies {
     // Reflections
     implementation 'org.reflections:reflections:0.10.2'
 
+    // MySQL Connector/J
+    implementation 'mysql:mysql-connector-java:8.0.27'
+
+    // MyBatis (ScriptRunner를 위함)
+    implementation 'org.mybatis:mybatis:3.5.9'
+
+    // Jackson (JSON ↔︎ Object)
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 }
 
 test {

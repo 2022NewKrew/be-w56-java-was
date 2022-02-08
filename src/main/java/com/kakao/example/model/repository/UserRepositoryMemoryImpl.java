@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static framework.util.annotation.Component.ComponentType.REPOSITORY;
 
-@Component(type = REPOSITORY)
+//@Component(type = REPOSITORY)
 public class UserRepositoryMemoryImpl implements UserRepository {
     private static final Map<String, User> USERS = new ConcurrentHashMap<>();
 

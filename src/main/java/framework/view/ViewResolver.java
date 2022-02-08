@@ -12,6 +12,11 @@ public class ViewResolver {
      * @throws Exception Static file을 찾지 못했을 때 발생
      */
     public static void resolve(ModelView modelView) {
+        if (modelView.isResponseBody()) {
+            modelView.readAttributesToJson();
+            return;
+        }
+
         // Static File
         if (modelView.isStatic()) {
             modelView.readStaticFile();
