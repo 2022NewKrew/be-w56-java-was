@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.ResponseHeader;
 import model.SignUpService;
-import model.builder.GetUserListBuilder;
-import model.builder.NormalRequestBuilder;
-import model.builder.PostUserCreateBuilder;
-import model.builder.PostUserLoginBuilder;
+import model.builder.*;
 
 @Slf4j
 public class RequestController {
@@ -32,6 +29,10 @@ public class RequestController {
 
         if (uri.equals("/user/list") && method.equals("GET")) {
             return new GetUserListBuilder().build(requestHeader);
+        }
+
+        if (uri.equals("/user/logout") && method.equals("GET")) {
+            return new GetUserLogoutBuilder().build(requestHeader);
         }
 
         return new NormalRequestBuilder().build(requestHeader);
