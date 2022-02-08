@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpHeaderUtils;
 import util.HttpRequestUtils;
+import util.HttpTemplateUtils;
 import util.IOUtils;
 
 public class RequestHandler extends Thread {
@@ -64,8 +65,39 @@ public class RequestHandler extends Thread {
         switch(requestUrlPath) {
             case "/user/create": return postUserCreate(requestBody);
             case "/user/login": return postUserLogin(requestUrlPath, requestBody);
+            case "/user/list": return getUserList(headers);
             default: return staticPageResponse(requestUrlPath);
         }
+    }
+
+    private byte[] getUserList(Map<String, String> requestHeaders) throws IOException {
+        if(requestHeaders.containsKey("Cookie") && requestHeaders.get("Cookie").contains("logined=true")) {
+            List<String> htmlLines = Files.readAllLines(new File("./webapp/user/list.html").toPath());
+            StringBuilder sb = new StringBuilder();
+            for (String line : htmlLines) {
+                if (line.contains("{{>userlist}}")) {
+                    sb.append(HttpTemplateUtils.createUserListView(DataBase.findAll()));
+                    continue;
+                }
+                sb.append(line);
+            }
+            byte[] responseBody = sb.toString().getBytes();
+
+            Map<String, String> responseHeaders = Map.of(
+                    "Content-Type", "text/html;charset=utf-8",
+                    "Content-Length", Integer.toString(responseBody.length)
+            );
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(getResponseHeader(200, responseHeaders));
+            baos.write(responseBody);
+            return baos.toByteArray();
+        }
+        Map<String, String> responseHeaders = new HashMap<>() {{
+            put("Content-Type", "text/html;charset=utf-8");
+            put("Content-Length", "0");
+            put("Location", "/user/login.html");
+        }};
+        return getResponseHeader(302, responseHeaders);
     }
 
     private byte[] postUserCreate(String requestBody) {
