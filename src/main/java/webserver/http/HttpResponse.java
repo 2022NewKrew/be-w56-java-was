@@ -4,9 +4,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 
 import webserver.util.Constant;
 
@@ -26,44 +30,45 @@ public class HttpResponse {
         responseBody(body);
     }
 
-    public void sendRedirect(String path) {
-        response302Header(path, false);
+    public void sendRedirect(String path) throws IOException {
+        response302Header(path, "");
     }
 
-    public void sendRedirectWithCookie(String path) {
-        response302Header(path, true);
+    public void sendRedirectWithCookie(String path, String cookie) throws IOException {
+        response302Header(path, cookie);
     }
 
-    private void response200Header(String contentType, int lengthOfBodyContent) {
-        try {
-            this.dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            this.dos.writeBytes("Content-Type: " + contentType + ";\r\n");
-            this.dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            this.dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    public void sendDynamicHtml(String path, Map<String, String> map) throws IOException {
+        File file = new File(Constant.ROOT_PATH + path);
+        String html = new String(Files.readAllBytes(file.toPath()));
+
+        for (String key : map.keySet()) {
+            html = html.replaceAll(key, map.get(key));
         }
+
+        byte[] body = html.getBytes(StandardCharsets.UTF_8);
+        response200Header(Constant.TEXT_HTML, body.length);
+        responseBody(body);
     }
 
-    private void response302Header(String path, boolean setCookie) {
-        try {
-            this.dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            this.dos.writeBytes("Location: " + path + " \r\n");
-            if (setCookie) {
-                this.dos.writeBytes("Set-Cookie: logined=true;/html; Path=/ \r\n");
-            }
-            this.dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private void response200Header(String contentType, int lengthOfBodyContent) throws IOException {
+        dos.writeBytes("HTTP/1.1 200 OK \r\n");
+        dos.writeBytes("Content-Type: " + contentType + ";\r\n");
+        dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+        dos.writeBytes("\r\n");
     }
 
-    private void responseBody(byte[] body) {
-        try {
-            this.dos.write(body, 0, body.length);
-            this.dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private void response302Header(String path, String cookie) throws IOException {
+        dos.writeBytes("HTTP/1.1 302 Found \r\n");
+        dos.writeBytes("Location: " + path + " \r\n");
+        if (StringUtils.isNotEmpty(cookie)) {
+            dos.writeBytes("Set-Cookie: " + cookie + "; Path=/ \r\n");
         }
+        dos.writeBytes("\r\n");
+    }
+
+    private void responseBody(byte[] body) throws IOException {
+        dos.write(body, 0, body.length);
+        dos.flush();
     }
 }

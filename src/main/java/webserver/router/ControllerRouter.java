@@ -35,7 +35,8 @@ public class ControllerRouter {
             if (findMethod.isPresent()) {
                 Method method = findMethod.get();
                 try {
-                    method.invoke(classAndInstance.getInstance(), httpRequest, httpResponse);
+                    Object invoke = method.invoke(classAndInstance.getInstance(), httpRequest, httpResponse);
+
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
