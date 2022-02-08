@@ -10,10 +10,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import webserver.exception.BadRequestException;
-import webserver.http.HttpCookie;
-import webserver.http.HttpHeader;
-import webserver.http.HttpMethod;
-import webserver.http.HttpRequest;
+import webserver.http.*;
 
 public class HttpRequestUtils {
 
@@ -33,7 +30,7 @@ public class HttpRequestUtils {
 
         // REQUEST HEADER
         HttpHeader headers = readRequestHeaderFromBuffer(br);
-        Map<String, HttpCookie> cookies = getCookieFromHeaders(headers);
+        HttpCookie cookies = getCookieFromHeaders(headers);
 
         // REQUEST BODY
         int contentLength = getContentLength(headers);
@@ -63,16 +60,15 @@ public class HttpRequestUtils {
         return new HttpHeader(headers);
     }
 
-    private static Map<String, HttpCookie> getCookieFromHeaders(HttpHeader headers) {
+    private static HttpCookie getCookieFromHeaders(HttpHeader headers) {
+        HttpCookie httpCookie = new HttpCookie();
         if (headers.containsKey("Cookie")) {
-            Map<String, HttpCookie> result = new HashMap<>();
             List<String> cookies = headers.getValues("Cookie");
             String joinedCookies = String.join(HEADER_VALUE_DELIMITER, cookies);
             Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(joinedCookies);
-            cookiesMap.forEach((k, v) -> result.put(k, new HttpCookie(k, v)));
-            return result;
+            cookiesMap.forEach((k, v) -> httpCookie.putCookie(new Cookie(k, v)));
         }
-        return Collections.emptyMap();
+        return httpCookie;
     }
 
     private static int getContentLength(HttpHeader headers) {

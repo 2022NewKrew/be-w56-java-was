@@ -31,4 +31,21 @@ public class HttpHeader {
     public Set<String> keySet() {
         return headers.keySet();
     }
+
+    @Override
+    public int hashCode() {
+        return headers.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof HttpHeader)) {
+            return false;
+        }
+        HttpHeader h = (HttpHeader) obj;
+        return this.headers.equals(h.headers);
+    }
 }

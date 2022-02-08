@@ -13,7 +13,7 @@ import dto.UserCreateRequest;
 import webserver.repository.MemoRepository;
 import webserver.repository.UserRepository;
 
-import java.io.DataOutputStream;
+import java.time.Duration;
 import java.util.*;
 
 import static util.TemplateEngineUtils.renderDynamicTemplate;
@@ -22,12 +22,12 @@ public enum RequestMappingInfo {
 
     ROOT("/", HttpMethod.GET) {
         @Override
-        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request) throws Exception {
             Iterable<Memo> memos = memoRepository.findAll();
 
             byte[] body = renderDynamicTemplate(memos, "/index.html").getBytes();
 
-            return HttpResponse.builder(dos)
+            return HttpResponse.builder()
                     .status(HttpStatus.OK)
                     .body(body)
                     .build();
@@ -35,12 +35,12 @@ public enum RequestMappingInfo {
     },
     SIGN_UP("/user/create", HttpMethod.POST) {
         @Override
-        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request) throws Exception {
             UserCreateRequest userCreateRequest = UserCreateRequest.from(request.body());
             User user = userRepository.save(userCreateRequest.toEntity());
             log.info("New user created : {}", user);
 
-            return HttpResponse.builder(dos)
+            return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
                     .build();
@@ -48,7 +48,7 @@ public enum RequestMappingInfo {
     },
     LOGIN("/user/login", HttpMethod.POST) {
         @Override
-        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
+        public HttpResponse handle(HttpRequest request) throws Exception {
             UserLoginRequest userLoginRequest = UserLoginRequest.from(request.body());
             User user = userRepository.findByUserId(userLoginRequest.getUserId())
                     .orElseThrow(() -> new UserUnauthorizedException("에러: 존재하지 않는 유저입니다."));
@@ -59,29 +59,30 @@ public enum RequestMappingInfo {
             log.info("user login: {}", user);
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            HttpCookie cookie = new HttpCookie("auth", String.valueOf(user.getId()));
-            cookie.setPath("/");
+            Cookie authCookie = new Cookie("auth", String.valueOf(user.getId()));
+            authCookie.setPath("/");
+            int secondsInHour = (int) Duration.ofHours(1).toSeconds();
+            authCookie.setMaxAge(secondsInHour);
 
-            return HttpResponse.builder(dos)
+            return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
-                    .cookie(cookie)
+                    .cookie(authCookie)
                     .body(body)
                     .build();
         }
     },
     USER_LIST("/user/list", HttpMethod.GET) {
         @Override
-        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
-            Map<String, HttpCookie> cookies = request.cookies();
-            HttpCookie auth = cookies.get("auth");
-            if (auth == null) {
+        public HttpResponse handle(HttpRequest request) throws Exception {
+            HttpCookie cookies = request.cookies();
+            if (!cookies.containsCookie("auth")) {
                 throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
             }
             Iterable<User> users = userRepository.findAll();
 
             byte[] body = renderDynamicTemplate(users, "/user/list.html").getBytes();
-            return HttpResponse.builder(dos)
+            return HttpResponse.builder()
                     .status(HttpStatus.OK)
                     .body(body)
                     .build();
@@ -89,17 +90,16 @@ public enum RequestMappingInfo {
     },
     NEW_MEMO("/memo/create", HttpMethod.POST) {
         @Override
-        public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
-            Map<String, HttpCookie> cookies = request.cookies();
-            HttpCookie auth = cookies.get("auth");
-            if (auth == null) {
-                throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
-            }
-            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), auth.getValue());
+        public HttpResponse handle(HttpRequest request) throws Exception {
+            HttpCookie cookies = request.cookies();
+            Cookie authCookie = cookies.orElseThrow("auth",
+                    () -> new UserUnauthorizedException("에러: 접근할 수 없습니다."));
+
+            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), authCookie.getValue());
             Memo memo = memoRepository.save(memoCreateRequest.toEntity());
             log.info("New memo created : {}", memo);
 
-            return HttpResponse.builder(dos)
+            return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
                     .build();
@@ -129,8 +129,8 @@ public enum RequestMappingInfo {
         this.method = method;
     }
 
-    public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, String method) {
-        String mappingMethod = requestMappingInfo.method.name();
+    public static boolean isNotValidMethod(RequestMappingInfo requestMappingInfo, HttpMethod method) {
+        HttpMethod mappingMethod = requestMappingInfo.method;
         return !mappingMethod.equals(method);
     }
 
@@ -142,5 +142,5 @@ public enum RequestMappingInfo {
         return requestMap.get(path);
     }
 
-    public abstract HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception;
+    public abstract HttpResponse handle(HttpRequest request) throws Exception;
 }
