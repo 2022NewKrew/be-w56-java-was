@@ -23,7 +23,7 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request) throws IOException {
         File file = new File("./webapp" + request.getUrl());
         if (!file.exists()) {
-            return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, "/errors/notFoundError.html");
+            return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, "/errors/notFound.html");
         }
         return HttpSuccessfulResponse.of(HttpStatus.OK, request.getUrl());
     }
