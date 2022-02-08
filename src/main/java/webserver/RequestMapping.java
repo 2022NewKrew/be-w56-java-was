@@ -26,7 +26,7 @@ public class RequestMapping {
         UserService userService = new UserService(new UserRepository(jdbcTemplate));
         MemoService memoService = new MemoService(new MemoRepository(jdbcTemplate));
         CONTROLLERS.put("/users/login", new LoginController(userService));
-        CONTROLLERS.put(FRONT, new FrontController());
+        CONTROLLERS.put(FRONT, new FrontController(memoService));
         CONTROLLERS.put("/users", new RegisterController(userService));
         CONTROLLERS.put("/users/list", new UsersController(userService));
         CONTROLLERS.put("/qna/form", new MemoController(memoService));

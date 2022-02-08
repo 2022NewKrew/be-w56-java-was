@@ -1,23 +1,23 @@
 package model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Memo {
 
     private final long id;
     private final String userId;
     private final String memo;
-    private final LocalDateTime createdAt;
+    private final LocalDate createdAt;
 
     public Memo(String userId, String memo) {
         this(0L, userId, memo);
     }
 
     public Memo(long id, String userId, String memo) {
-        this(id, userId, memo, LocalDateTime.now());
+        this(id, userId, memo, LocalDate.now());
     }
 
-    public Memo(long id, String userId, String memo, LocalDateTime createdAt) {
+    public Memo(long id, String userId, String memo, LocalDate createdAt) {
         this.id = id;
         this.userId = userId;
         this.memo = memo;
@@ -36,7 +36,7 @@ public class Memo {
         return memo;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 }

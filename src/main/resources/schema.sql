@@ -9,6 +9,6 @@ create table if not exists memos (
     id bigint primary key auto_increment,
     user_id varchar(255) not null,
     memo text not null,
-    created_at datetime not null,
+    created_at date not null,
     foreign key (user_id) references users (id)
 )

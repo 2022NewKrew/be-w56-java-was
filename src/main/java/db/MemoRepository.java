@@ -1,6 +1,7 @@
 package db;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import jdbc.JdbcTemplate;
 import jdbc.RowMapper;
@@ -8,6 +9,7 @@ import model.Memo;
 
 public class MemoRepository {
 
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final RowMapper<Memo> memoRowMapper = getMemoRowMapper();
     private final JdbcTemplate jdbcTemplate;
 
@@ -33,7 +35,7 @@ public class MemoRepository {
             resultSet.getLong(1),
             resultSet.getString(2),
             resultSet.getString(3),
-            LocalDateTime.parse(resultSet.getString(4))
+            LocalDate.parse(resultSet.getString(4), formatter)
         );
     }
 }

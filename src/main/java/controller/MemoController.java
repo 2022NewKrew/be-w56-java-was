@@ -6,7 +6,6 @@ import httpmodel.HttpSession;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64.Decoder;
 import java.util.Objects;
 import model.Memo;
 import model.User;
@@ -38,7 +37,8 @@ public class MemoController extends AbstractController {
     protected void doPost(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         HttpSession httpSession = httpRequest.getHttpSession();
         User user = (User) httpSession.getAttribute("user");
-        String inputMemo = URLDecoder.decode(httpRequest.getRequestBody("memo"), StandardCharsets.UTF_8);
+        String inputMemo = URLDecoder.decode(httpRequest.getRequestBody("memo"),
+            StandardCharsets.UTF_8);
         Memo memo = new Memo(user.getUserId(), inputMemo);
         memoService.save(memo);
         httpResponse.set302Found("/");

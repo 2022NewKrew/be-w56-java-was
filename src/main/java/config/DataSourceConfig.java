@@ -17,7 +17,8 @@ public class DataSourceConfig {
 
     private static DataSource createDataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;INIT=runscript from 'classpath:/schema.sql'");
+        config.setJdbcUrl(
+            "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;INIT=runscript from 'classpath:/schema.sql'");
         config.setUsername("sa");
         config.setPassword("");
         config.addDataSourceProperty("cachePrepStmts", "true");
