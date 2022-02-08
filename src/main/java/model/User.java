@@ -24,11 +24,7 @@ public class User {
         this.email = userMap.get("email");
     }
 
-    public static User join(Map<String, String> userMap){
-        User user = new User(userMap);
-        addUser(user);
-        return user;
-    }
+
 
     public String getUserId() {
         return userId;
