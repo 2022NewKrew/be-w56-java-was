@@ -7,7 +7,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
 
@@ -18,19 +22,21 @@ public final class RequestReader {
 
     public static Request read(InputStream in) throws Exception {
         try {
+            // br.close() 하면 Socket이 닫히는 exception 발생
+            // BufferedReader.close() 에서 타고 들어가 InputStream in도 close해서 문제가 생기는 것 같음 (잘 모르겠음)
             BufferedReader br = new BufferedReader(
                 new InputStreamReader(in, StandardCharsets.UTF_8));
             String requestLine = readLine(br);
             HttpMethod method = HttpRequestUtils.parseHttpMethod(requestLine);
             String uri = HttpRequestUtils.parseUri(requestLine);
-            Map<String, String> headers = readHeaderLines(br);
+            MultiValueMap<String, String> headers = readHeaderLines(br);
             Map<String, String> body = readBody(br,
-                Integer.parseInt(headers.getOrDefault("Content-Length", "0")));
+                Integer.parseInt(headers.getOrDefault("Content-Length", List.of("0")).get(0)));
 
             return Request.builder()
                 .method(method)
                 .uri(uri)
-                .headers(Collections.unmodifiableMap(headers))
+                .headers(CollectionUtils.unmodifiableMultiValueMap(headers))
                 .body(Collections.unmodifiableMap(body))
                 .build();
         } catch (Exception e) {
@@ -42,12 +48,13 @@ public final class RequestReader {
         return br.readLine();
     }
 
-    private static Map<String, String> readHeaderLines(BufferedReader br) throws Exception {
-        Map<String, String> headers = Maps.newHashMap();
+    private static MultiValueMap<String, String> readHeaderLines(BufferedReader br)
+        throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         String headerLine = readLine(br);
         while (!headerLine.equals("")) {
             Pair header = HttpRequestUtils.parseHeader(headerLine);
-            headers.put(header.getKey(), header.getValue());
+            headers.add(header.getKey(), header.getValue());
             headerLine = readLine(br);
         }
         return headers;

@@ -4,6 +4,7 @@ import java.util.Map;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
 
 @Builder
 public class Request {
@@ -12,7 +13,7 @@ public class Request {
 
     private final HttpMethod method;
     private final String uri;
-    private final Map<String, String> headers;
+    private final MultiValueMap<String, String> headers;
     private final Map<String, String> body;
 
     public HttpMethod getMethod() {
