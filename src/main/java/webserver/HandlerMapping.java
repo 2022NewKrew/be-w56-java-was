@@ -1,94 +1,70 @@
 package webserver;
 
-
-import com.google.common.reflect.ClassPath;
 import webserver.annotations.GetMapping;
 import webserver.annotations.PostMapping;
 import webserver.enums.HttpMethod;
 
-import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HandlerMapping {
+    private final Map<String, Pair> postMethods;
+    private final Map<String, Pair> getMethods;
+
+    public HandlerMapping(Map<String, Object> beans) {
+        postMethods = registerMethods(beans, PostMapping.class);
+        getMethods = registerMethods(beans, GetMapping.class);
+    }
+
+    private Map<String, Pair> registerMethods(Map<String, Object> beans, Class<? extends Annotation> annotation) {
+        Map<String, Pair> methods = new HashMap<>();
+
+        for (Object object : beans.values()) {
+            methods.putAll(Arrays.stream(object.getClass().getDeclaredMethods())
+                    .filter(m -> m.isAnnotationPresent(annotation))
+                    .collect(HashMap::new,
+                            (map, m) -> {
+                                Annotation annotation_ = m.getAnnotation(annotation);
+                                String[] urls = new String[]{};
+
+                                if (annotation_ instanceof PostMapping)
+                                    urls = ((PostMapping)m.getAnnotation(annotation)).value();
+                                else if (annotation_ instanceof GetMapping)
+                                    urls = ((GetMapping)m.getAnnotation(annotation)).value();
+
+                                for (String url: urls)
+                                    map.put(url, new Pair(object, m));
+                            },
+                            HashMap::putAll));
+        }
+
+        return methods;
+    }
+
+    public Pair findMethod(HttpRequest httpRequest) {
+        String uri = httpRequest.getUri();
+
+        if (httpRequest.getMethod() == HttpMethod.POST)
+            return postMethods.get(uri);
+        return getMethods.get(uri);
+    }
+
     public static class Pair {
-        Class<?> clazz;
+        Object object;
         Method method;
 
-        Pair(Class<?> clazz, Method method) {
-            this.clazz = clazz;
+        Pair(Object object, Method method) {
+            this.object = object;
             this.method = method;
         }
 
-        public Class<?> getClazz() {
-            return clazz;
+        public Object getObject() {
+            return object;
         }
 
         public Method getMethod() {
             return method;
         }
-    }
-
-    private static final Map<String, Pair> POST_METHODS = registerPostMethods();
-    private static final Map<String, Pair> GET_METHODS = registerGetMethods();
-
-    private static Map<String, Pair> registerPostMethods() {
-        Map<String, Pair> postMethods = new HashMap<>();
-        Set<Class<?>> classes = findAllClassesInPackage("controller");
-
-        for (Class<?> clazz : classes) {
-            postMethods.putAll(Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(m -> m.isAnnotationPresent(PostMapping.class))
-                    .collect(HashMap::new,
-                            (map, m) -> map.put(m.getAnnotation(PostMapping.class).value(), new Pair(clazz, m)),
-                            HashMap::putAll));
-        }
-
-        return postMethods;
-    }
-
-    private static Map<String, Pair> registerGetMethods() {
-        Map<String, Pair> getMethods = new HashMap<>();
-        Set<Class<?>> classes = findAllClassesInPackage("controller");
-
-        for (Class<?> clazz : classes) {
-            getMethods.putAll(Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(m -> m.isAnnotationPresent(GetMapping.class))
-                    .collect(HashMap::new,
-                            (map, m) -> {
-                                String[] urls = m.getAnnotation(GetMapping.class).value();
-                                for (String url: urls)
-                                    map.put(url, new Pair(clazz, m));
-                            },
-                            HashMap::putAll));
-        }
-
-        return getMethods;
-    }
-
-    /**
-     * Refer to <br>
-     * {@link <a href="https://github.dev/kakao-2022/be-w56-java-was/blob/ShinjoWang/src/main/java/webserver/RequestMapper.java">...</a>}
-     */
-    private static Set<Class<?>>findAllClassesInPackage(String packageName) {
-        try {
-            return ClassPath.from(ClassLoader.getSystemClassLoader())
-                    .getAllClasses()
-                    .stream()
-                    .filter(classInfo -> classInfo.getPackageName().equalsIgnoreCase(packageName))
-                    .map(ClassPath.ClassInfo::load)
-                    .collect(Collectors.toSet());
-        } catch (IOException e) {
-            return new HashSet<>();
-        }
-    }
-
-    public static Pair findMethod(HttpRequest httpRequest) {
-        String uri = httpRequest.getUri();
-
-        if (httpRequest.getMethod() == HttpMethod.POST)
-            return POST_METHODS.get(uri);
-        return GET_METHODS.get(uri);
     }
 }
