@@ -207,7 +207,7 @@ public class RequestHandler {
                                     Field field = clazz.getDeclaredField(variable);
                                     field.setAccessible(true);
                                     newLine += field.get(sections.peek().get(idx)).toString();
-                                } catch (NoSuchFieldException e) { //이게 발생하네
+                                } catch (NoSuchFieldException e) {
                                     throw new TemplateParsingException();
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();

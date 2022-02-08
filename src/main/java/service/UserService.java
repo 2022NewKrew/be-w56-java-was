@@ -40,8 +40,8 @@ public class UserService {
         return entityToAuthDto(user);
     }
 
-    public UserDto getUserById(UserDto dto) {
-        User user = userRepository.findById(dto.getUserId())
+    public UserDto getUserById(String userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(UserException::new);
         return entityToDto(user);
     }
