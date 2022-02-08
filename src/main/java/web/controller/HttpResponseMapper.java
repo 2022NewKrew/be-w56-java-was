@@ -15,6 +15,9 @@ public class HttpResponseMapper {
     public static void response200Header(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusString() +"\r\n");
+            for(Pair header: httpResponse.getHeadersList()){
+                dos.writeBytes(header.toString() + "\r\n");
+            }
             dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

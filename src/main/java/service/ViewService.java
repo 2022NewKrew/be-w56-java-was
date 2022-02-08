@@ -29,13 +29,15 @@ public class ViewService {
 
         HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.OK);
         HttpResponseHeaders headers = new HttpResponseHeaders();
+        headers.addHeader(new Pair("Content-type", httpRequest.getHeaders().getHeaderFirstValueByKey("Accept")));
+
         HttpResponseBody body = new HttpResponseBody(Files.readAllBytes(new File("./webapp" + requestLine.getUrl()).toPath()));
 
         return new HttpResponse(statusLine, headers, body);
     }
 
     public static HttpResponse loginPage(HttpRequest httpRequest) throws IOException {
-        HttpRequestHeaders requestHeaders = httpRequest.getHttpRequestHeaders();
+        HttpRequestHeaders requestHeaders = httpRequest.getHeaders();
 
         if (requestHeaders.isHeader("Cookie") && checkCookieLogin(requestHeaders)){
             return HttpResponseMaker.redirectIndexPage(httpRequest);
@@ -46,7 +48,7 @@ public class ViewService {
 
     public static HttpResponse userListPage(HttpRequest httpRequest) throws IOException {
         HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
-        HttpRequestHeaders requestHeaders = httpRequest.getHttpRequestHeaders();
+        HttpRequestHeaders requestHeaders = httpRequest.getHeaders();
 
         if (!requestHeaders.isHeader("Cookie") || !checkCookieLogin(requestHeaders)){
             return HttpResponseMaker.redirectLoginPage(httpRequest);

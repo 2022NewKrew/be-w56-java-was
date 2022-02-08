@@ -27,4 +27,15 @@ public class HttpResponseMaker {
         HttpResponseBody body = new HttpResponseBody();
         return new HttpResponse(statusLine, headers, body);
     }
+
+    public static HttpResponse redirectErrorPage(HttpRequest httpRequest){
+        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.REDIRECT);
+        HttpResponseHeaders headers = new HttpResponseHeaders();
+        headers.addHeader(new Pair("Location", "http://localhost:8080/error.html"));
+
+        HttpResponseBody body = new HttpResponseBody();
+        return new HttpResponse(statusLine, headers, body);
+    }
 }

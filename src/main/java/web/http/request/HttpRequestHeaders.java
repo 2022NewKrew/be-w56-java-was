@@ -2,6 +2,7 @@ package web.http.request;
 
 import util.Pair;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class HttpRequestHeaders {
@@ -24,5 +25,15 @@ public class HttpRequestHeaders {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Request 헤더에 해당 key 가 없습니다"))
                 .getValue();
+    }
+
+    public String getHeaderFirstValueByKey(String key){
+        return Arrays.stream(headers.stream().filter(pair -> pair.getKey().equals(key))
+                        .findAny()
+                        .orElseThrow(() -> new IllegalArgumentException("Request 헤더에 해당 key 가 없습니다"))
+                        .getValue()
+                        .split(","))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("value 값이 존재하지 않습니다."));
     }
 }

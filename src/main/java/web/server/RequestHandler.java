@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import util.HttpResponseMaker;
 import web.controller.HttpResponseMapper;
 import web.controller.RequestController;
 import web.http.request.HttpRequest;
@@ -31,7 +32,7 @@ public class RequestHandler extends Thread {
 
             sendResponse(dos, httpResponse);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
