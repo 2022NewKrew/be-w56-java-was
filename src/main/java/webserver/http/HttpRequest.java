@@ -1,4 +1,4 @@
-package webserver.model;
+package webserver.http;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,6 +27,7 @@ public class HttpRequest {
     private final Map<String, String> queryStrings;
     private final HttpHeaders headers;
     private final HttpRequestParams requestParams;
+    private final Cookies cookies;
 
     public HttpRequest(BufferedReader br) throws IOException {
         String[] requestLine = splitRequestLine(br.readLine());
@@ -38,6 +39,7 @@ public class HttpRequest {
 
         this.headers = parseHttpHeader(br);
         this.requestParams = parseHttpRequestParams(br);
+        this.cookies = parseCookies();
         log.info("request params : {}", requestParams);
     }
 
@@ -73,6 +75,13 @@ public class HttpRequest {
         return new HttpRequestParams(HttpRequestUtils.parseQueryString(URLDecoder.decode(requestParams, StandardCharsets.UTF_8)));
     }
 
+    public Cookies parseCookies() {
+        Cookies cookies = new Cookies();
+        HttpRequestUtils.parseCookies(headers.get("Cookie").orElse(""))
+                .forEach(cookies::addCookie);
+        return cookies;
+    }
+
     public HttpMethod getHttpMethod() {
         return httpMethod;
     }
@@ -89,4 +98,7 @@ public class HttpRequest {
         return requestParams;
     }
 
+    public Cookie getCookieByName(String name) {
+        return cookies.getCookieByName(name).orElse(null);
+    }
 }

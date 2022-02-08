@@ -1,11 +1,13 @@
-package webserver.model;
+package webserver.infra;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import controller.BaseController;
 import controller.StaticResourceController;
-import controller.user.LoginController;
-import controller.user.SignupController;
+import controller.auth.LoginController;
+import controller.auth.SignupController;
+import controller.user.UserListController;
+import webserver.http.HttpMethod;
 
 public class Routes {
 
@@ -21,6 +23,7 @@ public class Routes {
         // Request Mapping to Controller
         routes.put(HttpMethod.POST, "/users", new SignupController());
         routes.put(HttpMethod.POST, "/user/login", new LoginController());
+        routes.put(HttpMethod.GET, "/user/list.html", new UserListController());
     }
 
     public BaseController getController(HttpMethod httpMethod, String url) {

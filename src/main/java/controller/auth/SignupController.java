@@ -1,24 +1,22 @@
-package controller.user;
+package controller.auth;
 
 import controller.BaseController;
-import model.UserSignupRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import service.user.SignupService;
-import webserver.model.HttpRequest;
-import webserver.model.HttpResponse;
-import webserver.model.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import model.auth.SignupRequest;
+import service.auth.SignupService;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import webserver.model.ModelAndView;
 
+@Slf4j
 public class SignupController implements BaseController {
-
-    private static final Logger log = LoggerFactory.getLogger(SignupController.class);
 
     private final SignupService signupService = new SignupService();
 
     @Override
     public ModelAndView process(HttpRequest request, HttpResponse response) {
-        UserSignupRequest signupRequest = request.getRequestParams().mapModelObject(UserSignupRequest.class);
+        SignupRequest signupRequest = request.getRequestParams().mapModelObject(SignupRequest.class);
         log.info("Signup Request : {}", signupRequest);
 
         signupService.signup(signupRequest);

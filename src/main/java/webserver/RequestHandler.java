@@ -1,12 +1,12 @@
 package webserver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.exception.BaseException;
+import exception.BaseException;
+import lombok.extern.slf4j.Slf4j;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 import webserver.infra.Router;
 import webserver.infra.ViewResolver;
-import webserver.model.HttpRequest;
-import webserver.model.HttpResponse;
+import webserver.model.Model;
 import webserver.model.ModelAndView;
 import webserver.view.ErrorView;
 import webserver.view.View;
@@ -17,12 +17,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
+@Slf4j
 public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+
+    private static final Router router = new Router();
+    private static final ViewResolver viewResolver = new ViewResolver();
 
     private final Socket connection;
-    private final Router router = Router.getInstance();
-    private final ViewResolver viewResolver = ViewResolver.getInstance();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -48,10 +49,10 @@ public class RequestHandler extends Thread {
         try {
             ModelAndView modelAndView = router.route(request, response);
             View view = viewResolver.resolve(modelAndView);
-            view.render(response);
+            view.render(response, modelAndView.getModel());
         } catch (BaseException e) {
             ErrorView errorView = new ErrorView(e);
-            errorView.render(response);
+            errorView.render(response, new Model());
         }
     }
 

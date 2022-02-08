@@ -1,4 +1,4 @@
-package webserver.model;
+package webserver.http;
 
 import util.ObjectMappingUtils;
 

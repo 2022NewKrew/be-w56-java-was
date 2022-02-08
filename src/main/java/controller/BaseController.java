@@ -1,7 +1,7 @@
 package controller;
 
-import webserver.model.HttpRequest;
-import webserver.model.HttpResponse;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 import webserver.model.ModelAndView;
 
 public interface BaseController {

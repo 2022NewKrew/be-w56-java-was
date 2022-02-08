@@ -1,16 +1,15 @@
 package webserver.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.exception.BaseException;
-import webserver.model.HttpResponse;
+import exception.BaseException;
+import lombok.extern.slf4j.Slf4j;
+import webserver.http.HttpResponse;
+import webserver.model.Model;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Slf4j
 public class ErrorView implements View {
-
-    private static final Logger log = LoggerFactory.getLogger(ErrorView.class);
 
     private final BaseException exception;
     private HttpResponse response;
@@ -21,7 +20,7 @@ public class ErrorView implements View {
     }
 
     @Override
-    public void render(HttpResponse response) throws IOException {
+    public void render(HttpResponse response, Model model) throws IOException {
         this.response = response;
         this.out = response.getOutputStream();
 

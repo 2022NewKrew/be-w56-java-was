@@ -1,4 +1,4 @@
-package webserver.model;
+package webserver.http;
 
 public class Cookie {
     private final static String DEFAULT_PATH = "/";
@@ -20,4 +20,7 @@ public class Cookie {
         return String.format("%s=%s; Max-Age=%d; Path=%s", name, value, maxAge, path);
     }
 
+    public boolean equalsValue(String value) {
+        return this.value.equals(value);
+    }
 }

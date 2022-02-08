@@ -1,16 +1,15 @@
 package webserver.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.model.HttpResponse;
-import webserver.model.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
+import webserver.model.Model;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Slf4j
 public class RedirectView implements View {
-
-    private static final Logger log = LoggerFactory.getLogger(RedirectView.class);
 
     private final String path;
     private final HttpStatus status;
@@ -23,7 +22,7 @@ public class RedirectView implements View {
     }
 
     @Override
-    public void render(HttpResponse response) throws IOException {
+    public void render(HttpResponse response, Model model) throws IOException {
         this.response = response;
         this.os = response.getOutputStream();
 

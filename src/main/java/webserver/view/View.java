@@ -1,9 +1,10 @@
 package webserver.view;
 
-import webserver.model.HttpResponse;
+import webserver.http.HttpResponse;
+import webserver.model.Model;
 
 import java.io.IOException;
 
 public interface View {
-    void render(HttpResponse response) throws IOException;
+    void render(HttpResponse response, Model model) throws IOException;
 }

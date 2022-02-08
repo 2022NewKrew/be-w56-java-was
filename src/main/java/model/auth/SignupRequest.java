@@ -1,20 +1,20 @@
-package model;
+package model.auth;
 
+import domain.user.User;
+import exception.InvalidInputException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import webserver.exception.InvalidInputException;
 
-public class UserSignupRequest {
+@AllArgsConstructor
+@Getter
+@ToString
+public class SignupRequest {
     private final String userId;
     private final String password;
     private final String name;
     private final String email;
-
-    public UserSignupRequest(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-    }
 
     public void validate() {
         validateBlank(userId);
@@ -41,17 +41,4 @@ public class UserSignupRequest {
         return new User(userId, password, name, email);
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    @Override
-    public String toString() {
-        return "UserSignupRequest{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }
