@@ -1,5 +1,7 @@
 package model;
 
+import java.net.URLDecoder;
+
 public class Memo {
     private final String REGEX_WRITER = "^\\w+$";
     private final String REGEX_MEMO = "^[\\s\\S]+$";
@@ -9,11 +11,11 @@ public class Memo {
     private String writer;
     private String memo;
 
-    public Memo(int memoId, String date, String writer, String memo) {
+    public Memo(int memoId, String date, String writer, String memo) throws Exception {
         this.memoId = memoId;
         this.date = date;
         this.writer = writer;
-        this.memo = memo;
+        this.memo = URLDecoder.decode(memo, "UTF-8");
     }
 
     public Memo(String writer, String memo) throws Exception {
@@ -21,7 +23,7 @@ public class Memo {
 //            throw new Exception();
 //        }
         this.writer = writer;
-        this.memo = memo;
+        this.memo = URLDecoder.decode(memo, "UTF-8");
     }
 
     private boolean checkRegexOfMemo (String writer, String memo) {

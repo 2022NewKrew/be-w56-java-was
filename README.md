@@ -79,3 +79,7 @@
   - https://allg.tistory.com/20
   - https://www.tutorialspoint.com/h2_database/h2_database_jdbc_connection.htm
   - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
+- 깃 병합
+  - https://milooy.wordpress.com/2015/12/15/git-rebase-push-error/
+  - https://planbs.tistory.com/entry/Git-Pull-request%EC%97%90%EC%84%9C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-%EC%B6%A9%EB%8F%8C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
+
