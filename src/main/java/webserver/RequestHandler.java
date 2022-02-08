@@ -2,9 +2,9 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.request.Request;
-import util.response.HttpResponseUtils;
-import util.response.Response;
+import util.HttpResponseUtils;
+import webserver.request.Request;
+import webserver.response.Response;
 
 import java.io.*;
 import java.net.Socket;

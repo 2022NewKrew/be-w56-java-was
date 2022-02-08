@@ -1,0 +1,35 @@
+package webserver.request;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Map;
+
+import static util.HttpRequestUtils.parseRequestLine;
+import static util.HttpRequestUtils.readHeader;
+import static util.IOUtils.readData;
+
+public class Request {
+    private final RequestLine line;
+    private final Map<String, String> header;
+    private String body;
+
+    public Request(BufferedReader br) throws IOException {
+        line = parseRequestLine(br);
+        header = readHeader(br);
+        if (header.containsKey("Content-Length")) {
+            body = readData(br,Integer.parseInt(header.get("Content-Length")));
+        }
+    }
+
+    public RequestLine getLine() {
+        return line;
+    }
+
+    public String getHeader(String key) {
+        return header.get(key);
+    }
+
+    public String getBody() {
+        return body;
+    }
+}

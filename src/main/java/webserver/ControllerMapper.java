@@ -1,14 +1,11 @@
 package webserver;
 
-import controller.Controller;
-import controller.MainController;
-import controller.StaticController;
-import controller.UserController;
-import util.Url;
-import util.request.Request;
-import util.request.RequestLine;
-import util.response.Response;
-import util.response.ResponseException;
+import controller.*;
+import webserver.http.Url;
+import webserver.request.Request;
+import webserver.request.RequestLine;
+import webserver.response.Response;
+import webserver.response.ResponseException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,9 +17,10 @@ public class ControllerMapper {
     private final Map<String, Controller> controllerMap = new HashMap<>();
 
     private ControllerMapper() {
-        controllerMap.put("static",StaticController.getController());
-        controllerMap.put("user",UserController.getUserController());
-        controllerMap.put("", MainController.getMainController());
+        controllerMap.put("static", StaticController.getInstance());
+        controllerMap.put("user", UserController.getInstance());
+        controllerMap.put("", MainController.getInstance());
+        controllerMap.put("memo", MemoController.getInstance());
     }
 
     public Response mapping(Request request) throws IOException {
