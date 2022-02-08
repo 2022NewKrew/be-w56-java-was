@@ -1,6 +1,7 @@
 package db;
 
 import model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,8 @@ import webserver.PropertiesLoader;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,6 +27,11 @@ class JdbcTemplateTest {
     @BeforeEach
     void setUp() {
         subject = new JdbcTemplate();
+    }
+
+    @AfterEach
+    void tearDown() {
+        subject.update("DELETE FROM users", Collections.emptyList());
     }
 
     @Test
@@ -44,5 +52,28 @@ class JdbcTemplateTest {
 
     @Test
     void queryForStream() {
+        subject.update(
+                "INSERT INTO users (userId, password, name, email) VALUES (?, ?, ?, ?)",
+                List.of("user_id1", "password", "name", "email")
+        );
+        subject.update(
+                "INSERT INTO users (userId, password, name, email) VALUES (?, ?, ?, ?)",
+                List.of("user_id2", "password", "name", "email")
+        );
+        subject.update(
+                "INSERT INTO users (userId, password, name, email) VALUES (?, ?, ?, ?)",
+                List.of("user_id3", "password", "name", "email")
+        );
+
+        Stream<User> users = subject.queryForStream(
+                "SELECT * FROM users",
+                Collections.emptyList(),
+                new UserRowMapper()
+        );
+
+        assertEquals(
+                List.of("user_id1", "user_id2", "user_id3"),
+                users.map(User::getUserId).collect(Collectors.toList())
+        );
     }
 }

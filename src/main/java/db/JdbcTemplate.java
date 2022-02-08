@@ -37,6 +37,7 @@ public class JdbcTemplate {
     public <T> T queryForObject(String sql, List<?> params, RowMapper<T> mapper) {
         return withStatement(sql, params, (statement) -> {
            ResultSet rs = statement.executeQuery();
+           rs.next();
            return mapper.map(rs);
         });
     }
