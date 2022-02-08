@@ -9,8 +9,12 @@ import model.User;
 
 public class UserRepository {
 
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSourceConfig.getInstance());
+    private final JdbcTemplate jdbcTemplate;
     private final RowMapper<User> userRowMapper = getUserRowMapper();
+
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public void addUser(User user) {
         String sql = "insert into users (id, password, name, email) values (?, ?, ?, ?)";

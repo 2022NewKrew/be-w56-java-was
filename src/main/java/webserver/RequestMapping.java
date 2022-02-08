@@ -1,15 +1,19 @@
 package webserver;
 
+import config.DataSourceConfig;
 import controller.Controller;
 import controller.FrontController;
 import controller.LoginController;
 import controller.MemoController;
 import controller.RegisterController;
 import controller.UsersController;
+import db.MemoRepository;
 import db.UserRepository;
 import httpmodel.HttpRequest;
 import java.util.HashMap;
 import java.util.Map;
+import jdbc.JdbcTemplate;
+import service.MemoService;
 import service.UserService;
 
 public class RequestMapping {
@@ -18,12 +22,14 @@ public class RequestMapping {
     private static final String FRONT = "front";
 
     static {
-        UserService userService = new UserService(new UserRepository());
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSourceConfig.getInstance());
+        UserService userService = new UserService(new UserRepository(jdbcTemplate));
+        MemoService memoService = new MemoService(new MemoRepository(jdbcTemplate));
         CONTROLLERS.put("/users/login", new LoginController(userService));
         CONTROLLERS.put(FRONT, new FrontController());
         CONTROLLERS.put("/users", new RegisterController(userService));
         CONTROLLERS.put("/users/list", new UsersController(userService));
-        CONTROLLERS.put("/qna/form", new MemoController());
+        CONTROLLERS.put("/qna/form", new MemoController(memoService));
     }
 
     public Controller getController(HttpRequest httpRequest) {
