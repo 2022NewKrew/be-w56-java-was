@@ -1,11 +1,13 @@
 package webserver;
 
 import Controller.HttpController;
+import db.DataBase;
 import http.HttpRequest;
 import http.HttpRequestParser;
 import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.DynamicHtmlBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +40,8 @@ public class RequestHandler extends Thread {
             HttpResponse httpResponse = new HttpResponse(httpRequest);
             HttpController httpController = new HttpController(httpRequest, httpResponse, out);
             httpController.run();
+
+            DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
 
         } catch (IOException e) {
             log.error(e.getMessage());
