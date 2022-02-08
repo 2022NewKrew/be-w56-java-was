@@ -28,12 +28,12 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             RequestHeader requestHeader = readHeader(in);
-            ResponseHeader responseHeader = new ResponseHeader();
+            ResponseHeader responseHeader = new ResponseHeader(requestHeader);
 
             // do GET or POST
-            DispatcherServlet.handleRequest(requestHeader);
+            DispatcherServlet.handleRequest(requestHeader, responseHeader);
 
-            String requestUrl = requestHeader.getRequestUrl();
+            String requestUrl = responseHeader.getLocation();
             byte[] body = IOUtils.readHeaderPathFile(requestUrl);
             DataOutputStream dos = new DataOutputStream(out);
             ResponseViewer.response(dos, body);

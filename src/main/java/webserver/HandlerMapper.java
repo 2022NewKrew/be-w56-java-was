@@ -20,12 +20,18 @@ public class HandlerMapper {
         memberController.map(controllerList);
     }
 
-    public static Controller requestMapping(RequestHeader requestHeader){
+    public static Controller requestMapping(RequestHeader requestHeader) throws NullPointerException{
         String requestUrl = requestHeader.getRequestUrl();
 
         log.info("[HandlerMapper] request url: {}",requestUrl);
         log.info("[HandlerMapper] existing url list: {}",controllerList.keySet());
 
+        if (! controllerList.containsKey(requestUrl)) {
+            throw new NullPointerException("No controller exists! - url name:"+ requestUrl);
+        }
+
         return controllerList.get(requestUrl);
+
+
     }
 }

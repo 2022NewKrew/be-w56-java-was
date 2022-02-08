@@ -3,12 +3,6 @@ package webserver.controller;
 import DTO.RequestHeader;
 import DTO.ResponseHeader;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class MemberController implements Controller {
@@ -30,7 +24,7 @@ public class MemberController implements Controller {
             log.info("Create New User : {}", user);
             log.info("Url Changed: {}", requestUrl);
 
-            responseHeader.setRedirect("/");
+            responseHeader.setRedirect("/index.html");
             return responseHeader;
         }
 
