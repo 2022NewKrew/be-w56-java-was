@@ -26,7 +26,7 @@ public class MyCookie {
         for (String cookie : cookies) {
             String[] cookieSplit = cookie.split("=");
             String key = cookieSplit[KEY].trim();
-            String value = cookieSplit[VALUE].trim();
+            String value = cookieSplit.length == 1 ? "" : cookieSplit[VALUE].trim();
 
             info.put(key, value);
         }

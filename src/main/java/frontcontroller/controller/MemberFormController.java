@@ -11,7 +11,7 @@ import java.io.IOException;
 public class MemberFormController implements MyController {
 
     @Override
-    public ModelView process(MyHttpRequest request, MyHttpResponse response) throws IOException {
+    public ModelView process(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
 
         if (request.getMethod() == MyHttpStatus.GET) {
             return get(request, response);
