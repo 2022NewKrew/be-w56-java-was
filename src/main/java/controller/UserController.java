@@ -17,6 +17,7 @@ import webserver.session.Session;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -122,6 +123,14 @@ public class UserController implements Controller{
 
     private ResponseSendDataModel getList(HttpRequest httpRequest){
         ResponseSendDataModel result = new ResponseSendDataModel("/user/list.html", httpRequest);
+
+        if(Objects.isNull(result.get("sessionedId"))){
+            result = new ResponseSendDataModel("redirect:/", httpRequest);
+
+            log.info("로그인하지 않은 사용자가 유저 목록에 접근하였습니다");
+
+            return result;
+        }
 
         List<UserAccount> userAccountList = userService.findAll();
 
