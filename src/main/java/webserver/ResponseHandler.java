@@ -1,24 +1,21 @@
 package webserver;
 
 import network.HttpRequest;
-import network.HttpResponse;
 import network.Method;
-import network.Status;
-import webserver.service.UserService;
+import webserver.controller.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class ResponseHandler {
-    private UserService userService;
+    private PostController postController;
+    private GetController getController;
     private HttpRequest httpRequest;
-    private OutputStream outputStream;
-    private Status status;
 
     public ResponseHandler(HttpRequest httpRequest, OutputStream outputStream){
         this.httpRequest = httpRequest;
-        this.outputStream = outputStream;
-        this.userService = new UserService(httpRequest);
+        this.postController = new PostController(httpRequest, outputStream);
+        this.getController = new GetController(httpRequest, outputStream);
     }
 
     public void run() throws IOException {
@@ -27,27 +24,14 @@ public class ResponseHandler {
 
         switch (method){
             case GET:
-                getController(path);
+                getController.handleGet(path);
                 break;
             case POST:
-                postController(path);
-                break;
-        }
-
-        HttpResponse.handleHtmlResponse(path, outputStream, status);
-    }
-
-    private void getController(String path){
-        status = Status.OK;
-    }
-
-    private void postController(String path){
-
-        switch (path){
-            case "/user/create":
-                status = userService.signUp();
+                postController.handlePost(path);
                 break;
         }
 
     }
+
+
 }
