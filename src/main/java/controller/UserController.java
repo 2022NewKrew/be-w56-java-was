@@ -2,23 +2,24 @@ package controller;
 
 import java.util.Map;
 
+import http.Method;
 import http.Request;
 import http.Response;
 import service.UserService;
 
 public class UserController implements Controller {
-    private final String CREATE_USER_URI = "/users/create(.*)";
-    private final String LOGIN_USER_URI = "/users/login(.*)";
+    private static final String CREATE_USER_URI = "/users/create(.*)";
+    private static final String LOGIN_USER_URI = "/users/login(.*)";
+    private static final String USER_LIST_URI = "/users/list(.*)";
 
-    private final String INDEX_HTML = "/index.html";
-    private final String LOGIN_HTML = "/user/login.html";
-    private final String CREATE_HTML = "/user/form.html";
+    private static final String INDEX_HTML = "/index.html";
+    private static final String LOGIN_HTML = "/user/login.html";
+    private static final String CREATE_HTML = "/user/form.html";
+    private static final String LIST_HTML = "/user/list.html";
 
-    private final String LOGIN_SUCCESS_COOKIE = "logined=true; Path=/";
-    private final String LOGIN_FAIL_COOKIE = "logined=false; Path=/";
-
-    private final String GET_METHOD = "GET";
-    private final String POST_METHOD = "POST";
+    private static final String LOGIN_QUERY = "logined";
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
 
     private final UserService userService;
 
@@ -27,19 +28,19 @@ public class UserController implements Controller {
     }
 
     public String run(Request request, Response response) {
-        if (request.getRequestMethod().equals(POST_METHOD)) {
+        if (request.getMethod().equals(Method.POST.toString())) {
             return postHandler(request, response);
         }
 
-        if (request.getRequestMethod().equals(GET_METHOD)) {
-            return getHandler();
+        if (request.getMethod().equals(Method.GET.toString())) {
+            return getHandler(request, response);
         }
 
         return INDEX_HTML;
     }
 
     private String postHandler(Request request, Response response) {
-        String url = request.getRequestUrl();
+        String url = request.getUrl();
         Map<String, String> parameters = request.getParameters();
         if (url.matches(CREATE_USER_URI)) {
             return create(parameters);
@@ -52,17 +53,24 @@ public class UserController implements Controller {
         return INDEX_HTML;
     }
 
-    private String getHandler() {
+    private String getHandler(Request request, Response response) {
+        String url = request.getUrl();
+
+        if (url.matches(USER_LIST_URI)) {
+            return listUser(request, response);
+        }
+
         return INDEX_HTML;
     }
 
     private String login(Map<String, String> parameters, Response response) {
         if (!userService.login(parameters)) {
-            response.setCookie(LOGIN_FAIL_COOKIE);
+            response.setCookie(LOGIN_QUERY, FALSE);
             return LOGIN_HTML;
         }
 
-        response.setCookie(LOGIN_SUCCESS_COOKIE);
+        response.setCookie(LOGIN_QUERY, TRUE);
+        response.setRedirect();
 
         return INDEX_HTML;
     }
@@ -73,5 +81,14 @@ public class UserController implements Controller {
         }
 
         return INDEX_HTML;
+    }
+
+    private String listUser(Request request, Response response) {
+        if (!request.getCookie().get(LOGIN_QUERY).equals(TRUE)) {
+            return LOGIN_HTML;
+        }
+
+        response.addAttribute("Users", userService.listAll());
+        return LIST_HTML;
     }
 }

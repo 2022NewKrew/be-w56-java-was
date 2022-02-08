@@ -7,6 +7,6 @@ public class DefaultController implements Controller {
     public DefaultController() {}
 
     public String run(Request request, Response response) {
-        return request.getRequestUrl();
+        return request.getUrl();
     }
 }

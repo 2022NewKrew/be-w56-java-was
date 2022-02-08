@@ -1,7 +1,8 @@
 package webserver;
 
+import static util.IOUtils.*;
 import static util.RequestParser.*;
-import static util.ResponseGenerator.*;
+import static util.ResponseParser.*;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -14,11 +15,13 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import http.Method;
 import http.Request;
 import http.Response;
 
 public class RequestHandler extends Thread {
-    private final String ENCODING = "UTF-8";
+    private static final String NEW_LINE = "\r\n";
+    private static final String EMPTY = "";
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -34,17 +37,42 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dataOutputStream = new DataOutputStream(out);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, ENCODING));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 
-            Request request = getRequest(bufferedReader);
+            String requestHeader = getRequestHeader(bufferedReader);
+            String method = getMethod(requestHeader);
+            String requestBody = getRequestBody(bufferedReader, requestHeader, method);
+
+            Request request = getRequest(requestHeader, requestBody, method);
+
             Response response = new Response();
             String source = processRequest(request, response);
+
             byte[] responseBytes = responseToBytes(source, response);
 
             dataOutputStream.write(responseBytes, 0, responseBytes.length);
             dataOutputStream.flush();
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("hi", e);
         }
+    }
+
+    private static String getRequestHeader(BufferedReader bufferedReader) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+
+        while (!(line = bufferedReader.readLine()).equals(EMPTY)) {
+            stringBuilder.append(line);
+            stringBuilder.append(NEW_LINE);
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String getRequestBody(BufferedReader bufferedReader, String requestHeader, String method) throws IOException {
+        if (method.equals(Method.GET.toString())) {
+            return null;
+        }
+        Integer bodyLength = getRequestBodyLength(requestHeader);
+        return readData(bufferedReader, bodyLength);
     }
 }
