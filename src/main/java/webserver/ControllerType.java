@@ -3,6 +3,7 @@ package webserver;
 import controller.ArticleCreateController;
 import controller.ArticleListController;
 import controller.Controller;
+import controller.LogoutController;
 import controller.RootController;
 import controller.StaticFileController;
 import controller.UserCreateController;
@@ -20,7 +21,8 @@ public enum ControllerType {
     USER_LIST_CONTROLLER(HttpMethod.GET, "/user/list.html", UserListController.getInstance()),
     ROOT_CONTROLLER(HttpMethod.GET, "/", RootController.getInstance()),
     ARTICLE_LIST_CONTROLLER(HttpMethod.GET, "/index.html", ArticleListController.getInstance()),
-    ARTICLE_CREATE_CONTROLLER(HttpMethod.POST, "/qna/create", ArticleCreateController.getInstance());
+    ARTICLE_CREATE_CONTROLLER(HttpMethod.POST, "/qna/create", ArticleCreateController.getInstance()),
+    LOGOUT_CONTROLLER(HttpMethod.GET, "/user/logout", LogoutController.getInstance());
 
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
 
