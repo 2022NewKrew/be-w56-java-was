@@ -9,3 +9,9 @@
 - Connection 헤더 필드의 역할
 - 302 리다이렉션의 헤더 형식
 - Cookie 헤더, Set-Cookie 헤더
+- charset, UTF-8
+- ByteArrayOutputStream
+- StringBuilder
+- 한글 인코딩 방식
+- 인덱스, 쿼리 튜닝
+- grep 명령어
