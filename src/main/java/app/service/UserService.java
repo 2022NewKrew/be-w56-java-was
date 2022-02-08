@@ -1,8 +1,4 @@
-package app.service;
-
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.xml.crypto.Data;
 
 import app.db.DataBase;
 import app.model.User;
@@ -21,7 +17,7 @@ public class UserService {
         DataBase.addUser(user);
     }
 
-    public User getUser(String userId){
+    public User getUser(String userId) {
         return DataBase.findUserById(userId);
     }
 
