@@ -13,6 +13,7 @@ public class FrontController extends AbstractController {
     protected void doGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         try {
             byte[] responseBody = getResponseBody(httpRequest);
+            // 메모추가 로직
             httpResponse.set200OK(httpRequest, responseBody);
         } catch (NullPointerException exception) {
             throw new IllegalArgumentException("[ERROR] 해당파일은 존재하지 않습니다.");

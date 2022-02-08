@@ -3,6 +3,7 @@ package webserver;
 import controller.Controller;
 import controller.FrontController;
 import controller.LoginController;
+import controller.MemoController;
 import controller.RegisterController;
 import controller.UsersController;
 import db.UserRepository;
@@ -22,6 +23,7 @@ public class RequestMapping {
         CONTROLLERS.put(FRONT, new FrontController());
         CONTROLLERS.put("/users", new RegisterController(userService));
         CONTROLLERS.put("/users/list", new UsersController(userService));
+        CONTROLLERS.put("/qna/form", new MemoController());
     }
 
     public Controller getController(HttpRequest httpRequest) {
