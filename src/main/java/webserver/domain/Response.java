@@ -6,7 +6,8 @@ import lombok.Builder;
 
 public class Response {
 
-    private final static String RESPONSE_HEADER_FORMAT = "%s%s\r\n";
+    private static final String RESPONSE_HEADER_FORMAT = "%s%s\r\n";
+    private static final int LENGTH_OF_BODY_IS_NULL = 0;
 
     private final StatusLine statusLine;
     private final Headers headers;
@@ -21,7 +22,8 @@ public class Response {
 
     public static Response createResponse(HttpStatus httpStatus, byte[] body, String contentTypes) {
         StatusLine statusLine = StatusLine.createStatus(httpStatus);
-        Headers headers = Headers.createResponseHeader(body.length, contentTypes);
+        Headers headers = (body == null) ? Headers.createResponseHeader(LENGTH_OF_BODY_IS_NULL, contentTypes)
+            : Headers.createResponseHeader(body.length, contentTypes);
         return Response.builder()
             .statusLine(statusLine)
             .headers(headers)
