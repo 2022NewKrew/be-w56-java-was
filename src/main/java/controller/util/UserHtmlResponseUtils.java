@@ -17,7 +17,8 @@ public final class UserHtmlResponseUtils {
             .getResourceAsStream("templates/user/list.html"));
     }
 
-    private UserHtmlResponseUtils() {}
+    private UserHtmlResponseUtils() {
+    }
 
     private static String readFromInputStream(InputStream inputStream) {
         StringBuilder stringBuilder = new StringBuilder();
