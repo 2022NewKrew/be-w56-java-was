@@ -1,5 +1,6 @@
 package controller;
 
+import dto.HttpResponseStatus;
 import dto.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,8 @@ public class UserController implements Controller {
         Map<String, String> bodyParams = requestInfo.getBodyParams();
         try {
             USER_SERVICE.createUser(bodyParams);
-            POST_VIEW_RESOLVER.response(requestInfo, dos);
+            String redirectHeader = "Location: /index.html";
+            POST_VIEW_RESOLVER.response(dos, requestInfo, HttpResponseStatus.FOUND, redirectHeader);
         } catch(IllegalArgumentException e) {
             log.error("[ERROR] - {}", e.getMessage());
 
@@ -75,8 +77,9 @@ public class UserController implements Controller {
         Map<String, String> bodyParams = requestInfo.getBodyParams();
         try {
             USER_SERVICE.loginUser(bodyParams);
-            String cookieHeader = "Set-Cookie: loggedin=true; Path=/ \r\n";
-            POST_VIEW_RESOLVER.response(requestInfo, dos, cookieHeader);
+            String redirectHeader = "Location: /index.html";
+            String cookieHeader = "Set-Cookie: logged_in=true; Path=/";
+            POST_VIEW_RESOLVER.response(dos, requestInfo, HttpResponseStatus.FOUND, redirectHeader, cookieHeader);
         } catch(IllegalArgumentException e) {
             log.error("[ERROR] - {}", e.getMessage());
             GET_VIEW_RESOLVER.errorResponse("/user/login_failed.html", requestInfo.getVersion(), dos);

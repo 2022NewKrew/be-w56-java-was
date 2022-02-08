@@ -54,6 +54,7 @@ public class GetViewResolver {
 
             for(String h: addedHeaders) {
                 dos.writeBytes(h);
+                dos.writeBytes("\r\n");
             }
 
             dos.writeBytes("\r\n");

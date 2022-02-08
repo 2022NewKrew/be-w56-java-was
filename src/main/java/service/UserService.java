@@ -29,6 +29,7 @@ public class UserService {
                 .build();
 
         DataBase.addUser(newUser);
+        System.out.println(DataBase.findAll());
     }
 
     public void loginUser(Map<String, String> bodyParams) {
