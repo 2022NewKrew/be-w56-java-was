@@ -2,9 +2,14 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
+import util.IOUtils;
+
+import org.apache.tika.Tika;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -21,27 +26,28 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            while (true) {
-                String line = bufferedReader.readLine();
-                if(line==null || "".equals(line))
-                    break;
-                log.info("HTTP Request Header Lines : {}",line);
-            }
+            String httpRequestHeader = IOUtils.getHttpRequestHeader(bufferedReader);
+            log.info("HTTP Request Header Lines : {}", httpRequestHeader);
+
+            String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
+            log.info("url Path : {}", url);
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
+            File file = new File("./webapp" + url);
+            String contentType = new Tika().detect(file);
+            log.info("contentType : {}", contentType);
+            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+            response200Header(dos, contentType, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, String contentType, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
