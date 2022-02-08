@@ -1,23 +1,33 @@
-package webserver.response;
+package webserver.response.format;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+import webserver.response.ResponseCode;
+import webserver.response.ResponseFile;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class GetResponseFormat implements ResponseFormat {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class ForwardResponseFormat implements ResponseFormat {
+    private static final Logger log = LoggerFactory.getLogger(ForwardResponseFormat.class);
 
     private DataOutputStream dos;
     private String cookie;
     private ResponseFile responseFile;
+    private String htmlPage;
 
-    public GetResponseFormat(OutputStream os, String filePath) {
+    public ForwardResponseFormat(OutputStream os) {
+        this.dos = new DataOutputStream(os);
+    }
+
+    public ForwardResponseFormat(OutputStream os, String filePath) {
         this.dos = new DataOutputStream(os);
         this.responseFile = new ResponseFile(filePath);
+    }
+
+    public void setHtmlPage (String htmlPage) {
+        this.htmlPage = htmlPage;
     }
 
     public void setCookie (String key, String value) {
@@ -26,19 +36,14 @@ public class GetResponseFormat implements ResponseFormat {
 
     @Override
     public void sendResponse (ResponseCode status) {
-        byte[] body = responseFile.getFileBytes();
-        switch (status) {
-            case STATUS_200:
-                response200Header(body.length);
-                break;
-        }
+        byte[] body = htmlPage == null ? responseFile.getFileBytes() : htmlPage.getBytes();
+        responseHeader(status, body.length);
         responseBody(body);
     }
 
-    private void response200Header(int lengthOfBodyContent) {
+    private void responseHeader(ResponseCode status, int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: "+responseFile.getFileType()+";charset=utf-8\r\n");
+            dos.writeBytes("HTTP/1.1 "+status.getStatusCode()+" "+status.getStatusName()+"\r\n");
             dos.writeBytes("Content-Length: "+lengthOfBodyContent+"\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

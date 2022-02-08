@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import webserver.controller.GetController;
 import webserver.controller.MethodController;
 import webserver.controller.PostController;
+
 import webserver.manage.RequestParser;
 
 public class RequestHandler extends Thread {
@@ -26,7 +27,6 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             RequestParser rp = new RequestParser(in);
-
             requestMethodMapping(rp, out);
         } catch (IOException e) {
             log.error(e.getMessage());

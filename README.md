@@ -46,7 +46,16 @@
 - 깃허브 토근 만료 문제
   - 해당 토큰의 regenerate 를 통해서 해결
   - 비밀번호 대신, PAT 의 문자열을 입력
-    
+- ResponseFormat 의 명칭이 좀 불명확한 것 같아서 명칭 수정을 진행함
+  - Get/Post 기준이 아닌, Forward/Redirect 기준으로 분리
+- 요구기능을 추가하긴 했으나, 파일 접근과 관련하여 보호는 아직 명확히 진행하지 못함 (.html 형태로 접근하면 실패함)
+  - 확장자를 보거나, 요구 파일 타입으로 접근 여부를 허용해줘야할 것 같음
+  - 그냥 html 확장자를 포함한 경로에 대해서도 같이 처리하도록 수정해줬음 ( path/file 과 path/file.html 이 같은 출력 )
+- 동적 페이지 출력 기능 추가 ( StirngBuilder 로 문자열을 만들고 반환하는 형태 )
+  - 네트워크로 넘어오는 값들의 특수문자가 아스키코드값으로 들어와서, 출력에 영향을 받음
+  - 따라서 중간에 변환과정이 필요할 것 같음 ( 아스키 -> 특수문자 )
+  - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
+  
 # 참고 사이트
 - HTTP Header
   - https://dev-ezic.tistory.com/8?category=773711
@@ -66,4 +75,11 @@
 - github > personal access token
   - https://github.com/settings/tokens
   - https://miracleground.tistory.com/entry/GitHub-%ED%86%A0%ED%81%B0-%EC%9D%B8%EC%A6%9D-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%ED%95%98%EA%B8%B0-%EC%98%A4%EB%A5%98-%ED%95%B4%EA%B2%B0-remote-Support-for-password-authentication-was-removed-on-August-13-2021-Please-use-a-personal-access-token-instead
+- DB 연결
+  - https://allg.tistory.com/20
+  - https://www.tutorialspoint.com/h2_database/h2_database_jdbc_connection.htm
+  - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
+- 깃 병합
+  - https://milooy.wordpress.com/2015/12/15/git-rebase-push-error/
+  - https://planbs.tistory.com/entry/Git-Pull-request%EC%97%90%EC%84%9C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-%EC%B6%A9%EB%8F%8C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
 
