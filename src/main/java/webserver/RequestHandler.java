@@ -28,7 +28,7 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
             Request request = new Request(in);
-            String path = ControllerManager.matchController(request);
+            String path = ControllerManager.executeController(request);
             Response response = new Response(request, path, out);
             response.send();
         } catch (IOException e) {

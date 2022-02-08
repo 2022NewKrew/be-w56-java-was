@@ -14,7 +14,7 @@ public class UserCreate extends AbstractController {
 
     //회원가입
     @Override
-    public String controllerExecute(Request request) {
+    public String execute(Request request) {
         Map<String, String> elements = request.getElements();
 
         User user = new User(elements.get("userId"),

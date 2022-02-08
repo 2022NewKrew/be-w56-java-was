@@ -15,7 +15,7 @@ public class UserLogin extends AbstractController {
 
     //리팩토링때 UserService 생성하여 책임을 나누자, Autowired 어노테이션을 구현해보자.
     @Override
-    public String controllerExecute(Request request) {
+    public String execute(Request request) {
         Map<String, String> elements = request.getElements();
 
         String userId = elements.get("userId");
