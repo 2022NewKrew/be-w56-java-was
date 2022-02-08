@@ -13,6 +13,7 @@ public class HttpRequest {
     private final String method;
     private final String path;
     private final Map<String, String> headers;
+    private final Map<String, String> cookies;
     private final Map<String, String> parameters;
     private final String version;
 
@@ -20,6 +21,7 @@ public class HttpRequest {
         this.method = method;
         this.path = path;
         this.headers = headers;
+        this.cookies = generateCookiesFromHeaders();
         this.parameters = parameters;
         this.version = version;
     }
@@ -40,7 +42,13 @@ public class HttpRequest {
         return version;
     }
 
-    public Map<String, String> getCookies() {
+    public Map<String, String> getCookies() { return cookies; }
+
+    public boolean isLoggedIn() {
+        return Boolean.parseBoolean(cookies.get("logined"));
+    }
+
+    private Map<String, String> generateCookiesFromHeaders() {
         String[] cookies = headers.get("Cookie").split("; ");
         Map<String, String> result = new HashMap<>();
         Arrays.stream(cookies).forEach(cookie -> {
