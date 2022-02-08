@@ -1,7 +1,7 @@
 package http.request;
 
 import com.google.common.base.Strings;
-import http.header.HttpHeaderNames;
+import http.header.HttpHeaderName;
 import http.header.HttpHeaders;
 import http.util.HttpRequestUtils;
 
@@ -34,8 +34,8 @@ public class HttpRequestDecoder {
 
         // read body if "content-length" header exists
         String body = null;
-        if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.getValue())) {
-            int contentLength = Integer.parseInt(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.getValue()));
+        if (headers.containsName(HttpHeaderName.CONTENT_LENGTH.getValue())) {
+            int contentLength = Integer.parseInt(headers.getValue(HttpHeaderName.CONTENT_LENGTH.getValue()));
             body = HttpRequestUtils.readData(br, contentLength);
             body = URLDecoder.decode(body, StandardCharsets.UTF_8);
         }

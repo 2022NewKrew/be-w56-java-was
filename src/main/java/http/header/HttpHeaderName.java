@@ -1,6 +1,6 @@
 package http.header;
 
-public enum HttpHeaderNames {
+public enum HttpHeaderName {
     ACCEPT("accept"),
     CONTENT_LENGTH("content-length"),
     CONTENT_TYPE("content-type"),
@@ -8,7 +8,7 @@ public enum HttpHeaderNames {
 
     final String value;
 
-    HttpHeaderNames(String value) {
+    HttpHeaderName(String value) {
         this.value = value;
     }
 
