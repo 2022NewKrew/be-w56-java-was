@@ -21,12 +21,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/user/create", method = "GET")
+    @RequestMapping(value = "/user/create", method = "POST")
     public Response signUpUser(Request request) {
-        String userId = request.getQueryStringAttribute("userId");
-        String password = request.getQueryStringAttribute("password");
-        String name = request.getQueryStringAttribute("name");
-        String email = request.getQueryStringAttribute("email");
+        String userId = request.getBodyAttribute("userId");
+        String password = request.getBodyAttribute("password");
+        String name = request.getBodyAttribute("name");
+        String email = request.getBodyAttribute("email");
         SignUpRequest signUpRequest = new SignUpRequest(userId, password, name, email);
 
         User user = signUpRequest.toUser();

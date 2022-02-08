@@ -9,16 +9,19 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
+import util.IOUtils;
 import webserver.domain.Request;
 import webserver.domain.Response;
 
 public class RequestHandler extends Thread {
+
+    private static final String CONTENT_LENGTH = "Content-Length";
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -52,18 +55,29 @@ public class RequestHandler extends Thread {
     public Request createRequest(BufferedReader br) throws IOException {
         String line = br.readLine();
         log.debug("request: {}", line);
-        List<Pair> headerPairs = readHeader(br);
-        return Request.createRequest(line, headerPairs);
+        Map<String, String> headers = readHeader(br);
+        String bodyString = readBody(br, headers);
+        return Request.createRequest(line, headers, bodyString);
     }
 
-    private List<Pair> readHeader(BufferedReader br) throws IOException {
-        List<Pair> headerPairs = new ArrayList<>();
+    private Map<String, String> readHeader(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
         String header;
         while (!"".equals(header = br.readLine())) {
             log.debug("header: {}", header);
             Pair headerPair = HttpRequestUtils.parseHeader(header);
-            headerPairs.add(headerPair);
+            headers.put(headerPair.getKey(), headerPair.getValue());
         }
-        return headerPairs;
+        return headers;
+    }
+
+    private String readBody(BufferedReader br, Map<String, String> headers) throws IOException {
+        if (!headers.containsKey(CONTENT_LENGTH)) {
+            return null;
+        }
+        int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH));
+        String bodyString = IOUtils.readData(br, contentLength);
+        log.debug("body: {}", bodyString);
+        return bodyString;
     }
 }

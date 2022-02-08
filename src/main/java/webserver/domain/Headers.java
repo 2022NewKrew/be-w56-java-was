@@ -1,10 +1,8 @@
 package webserver.domain;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import util.HttpRequestUtils.Pair;
 
 public class Headers {
 
@@ -27,11 +25,7 @@ public class Headers {
         this(headers.headers);
     }
 
-    public static Headers createRequestHeader(List<Pair> headerPairs) {
-        Map<String, String> headers = new HashMap<>();
-        for (Pair headerPair : headerPairs) {
-            headers.put(headerPair.getKey(), headerPair.getValue());
-        }
+    public static Headers createRequestHeader(Map<String, String> headers) {
         return new Headers(headers);
     }
 
