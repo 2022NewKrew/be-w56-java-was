@@ -34,38 +34,42 @@ public class HandlerMapping {
     private static final Map<String, Pair> GET_METHODS = registerGetMethods();
 
     private static Map<String, Pair> registerPostMethods() {
-        Map<String, Pair> getMethods = new HashMap<>();
+        Map<String, Pair> postMethods = new HashMap<>();
         Set<Class<?>> classes = findAllClassesInPackage("controller");
 
         for (Class<?> clazz : classes) {
-            getMethods.putAll(Arrays.stream(clazz.getDeclaredMethods())
+            postMethods.putAll(Arrays.stream(clazz.getDeclaredMethods())
                     .filter(m -> m.isAnnotationPresent(PostMapping.class))
                     .collect(HashMap::new,
                             (map, m) -> map.put(m.getAnnotation(PostMapping.class).value(), new Pair(clazz, m)),
                             HashMap::putAll));
         }
 
-        return getMethods;
+        return postMethods;
     }
 
     private static Map<String, Pair> registerGetMethods() {
-        Map<String, Pair> postMethods = new HashMap<>();
+        Map<String, Pair> getMethods = new HashMap<>();
         Set<Class<?>> classes = findAllClassesInPackage("controller");
 
         for (Class<?> clazz : classes) {
-            postMethods.putAll(Arrays.stream(clazz.getDeclaredMethods())
+            getMethods.putAll(Arrays.stream(clazz.getDeclaredMethods())
                     .filter(m -> m.isAnnotationPresent(GetMapping.class))
                     .collect(HashMap::new,
-                            (map, m) -> map.put(m.getAnnotation(GetMapping.class).value(), new Pair(clazz, m)),
+                            (map, m) -> {
+                                String[] urls = m.getAnnotation(GetMapping.class).value();
+                                for (String url: urls)
+                                    map.put(url, new Pair(clazz, m));
+                            },
                             HashMap::putAll));
         }
 
-        return postMethods;
+        return getMethods;
     }
 
     /**
      * Refer to <br>
-     * {@link https://github.dev/kakao-2022/be-w56-java-was/blob/ShinjoWang/src/main/java/webserver/RequestMapper.java}
+     * {@link <a href="https://github.dev/kakao-2022/be-w56-java-was/blob/ShinjoWang/src/main/java/webserver/RequestMapper.java">...</a>}
      */
     private static Set<Class<?>>findAllClassesInPackage(String packageName) {
         try {

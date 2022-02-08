@@ -9,7 +9,7 @@ import webserver.annotations.PostMapping;
 import webserver.enums.HttpStatus;
 
 public class MemberController {
-    @GetMapping("/index.html")
+    @GetMapping(value = {"/index.html", "/"})
     public HttpResponse index() {
         return HttpResponse.httpStatus(HttpStatus.OK).setView("/index.html");
     }
