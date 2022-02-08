@@ -1,6 +1,6 @@
-package webserver.http;
+package framework.http;
 
-import util.HttpRequestUtils;
+import framework.util.HttpRequestUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,15 +30,15 @@ public class HttpRequest {
     private void requestParsingQueryParam(String url) {
         String[] parseUrl = url.split("[?]");
 
-        this.url = parseUrl[0];
+        this.url = parseUrl[HttpConst.URI_PATH];
         queryParameter = new HashMap<>();
-        if (parseUrl.length > 1) {
-            queryParameter = HttpRequestUtils.parseQueryString(parseUrl[1]);
+        if (parseUrl.length > HttpConst.URI_QUERY_PARAM) {
+            queryParameter = HttpRequestUtils.parseQueryString(parseUrl[HttpConst.URI_QUERY_PARAM]);
         }
     }
 
     private void requestParsingHeader(String reqHeader) {
-        headers = Arrays.stream(reqHeader.split("\r|\n"))
+        headers = Arrays.stream(reqHeader.split("[\r\n]"))
                 .map(HttpRequestUtils::parseHeader)
                 .collect(Collectors.toMap(
                         HttpRequestUtils.Pair::getKey,

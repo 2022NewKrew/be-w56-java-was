@@ -1,4 +1,4 @@
-package webserver.http;
+package framework.http;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,24 +7,9 @@ import java.util.Map;
 
 public class HttpResponse {
     private HttpStatus status;
-    private String url;
     private Map<String, String> headers = new HashMap<>();
     private Map<String, String> cookie = new HashMap<>();
     private byte[] body = new byte[0];
-
-    public HttpResponse(HttpStatus status) {
-        this.status = status;
-        this.url = "/";
-    }
-
-    public HttpResponse(HttpStatus status, String url) {
-        this.status = status;
-        this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
-    }
 
     public Map<String, String> getHeaders() {
         return headers;
@@ -34,9 +19,10 @@ public class HttpResponse {
         return status;
     }
 
-    public void setBody(byte[] body) {
-        this.body = body;
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
+
 
     public void setHeader(String key, String value) {
         headers.put(key, value);
@@ -46,8 +32,16 @@ public class HttpResponse {
         cookie.put(key, value);
     }
 
+    public byte[] getBody() {
+        return body;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
+    }
+
     public void send(DataOutputStream dos) throws IOException {
-        if (cookie.size() > 0) {
+        if (!cookie.isEmpty()) {
             responseSetCookie();
         }
         responseSetHeader(dos, body.length);
@@ -71,8 +65,6 @@ public class HttpResponse {
                     .append(cookie.get(key))
                     .append(";");
         }
-
-        sb.deleteCharAt(sb.length() - 1);
 
         headers.put("Set-Cookie", sb.toString());
     }

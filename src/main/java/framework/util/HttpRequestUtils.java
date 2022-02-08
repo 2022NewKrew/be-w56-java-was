@@ -1,8 +1,9 @@
-package util;
+package framework.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.http.HttpMethod;
+import framework.http.HttpConst;
+import framework.http.HttpMethod;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -11,12 +12,12 @@ import java.util.stream.Collectors;
 public class HttpRequestUtils {
     public static String parseUrl(String requestLine) {
         String[] requestLineTokens = requestLine.split(" ");
-        return requestLineTokens[1];
+        return requestLineTokens[HttpConst.REQUEST_URI];
     }
 
     public static HttpMethod parseMethod(String requestLine) {
         String[] requestLineTokens = requestLine.split(" ");
-        return HttpMethod.valueOf(requestLineTokens[0]);
+        return HttpMethod.valueOf(requestLineTokens[HttpConst.REQUEST_METHOD]);
     }
 
     /**
