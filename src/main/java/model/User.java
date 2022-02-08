@@ -36,6 +36,7 @@ public class User {
                 && checkRegexOfString(email, REGEX_EMAIL);
 
     }
+
     private boolean checkRegexOfString(String str, String regex) {
         return str != null && str.matches(regex);
     }

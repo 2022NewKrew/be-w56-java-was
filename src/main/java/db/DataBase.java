@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Memo;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,21 @@ public class DataBase {
             Class.forName(DRIVER);
             conn = DriverManager.getConnection(DB_URL, DB_ID, DB_PW);
 
-            String sql = "CREATE TABLE IF NOT EXISTS member (\n"
+            String memberSql = "CREATE TABLE IF NOT EXISTS member (\n"
                     + "userId varchar(30) PRIMARY KEY,\n"
                     + "password varchar(30) NOT NULL,\n"
                     + "name varchar(30) NOT NULL,\n"
                     + "email varchar(50) NOT NULL\n"
                     + ")\n";
-            conn.prepareStatement(sql).execute();
+            String memoSql = "CREATE TABLE IF NOT EXISTS memo (\n"
+                    + "memoId INT AUTO_INCREMENT PRIMARY KEY,\n"
+                    + "date TIMESTAMP DEFAULT NOW(),\n"
+                    + "writer varchar(30) NOT NULL,\n"
+                    + "memo varchar(100) NOT NULL,\n"
+                    + "FOREIGN KEY(writer) REFERENCES member(userId)\n"
+                    + ")\n";
+            conn.prepareStatement(memberSql).execute();
+            conn.prepareStatement(memoSql).execute();
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -77,7 +86,7 @@ public class DataBase {
         return resultUser;
     }
 
-    public static List<User> findAll() {
+    public static List<User> findUserAll() {
         List<User> resultUser = new ArrayList<>();
         String sql = "SELECT userId, password, name, email FROM member\n";
 
@@ -91,11 +100,50 @@ public class DataBase {
                 String email = rs.getString("email");
                 resultUser.add(new User(userId, name, email));
             }
-            log.info(">>>> Database findAll");
+            log.info(">>>> Database findUserAll");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return resultUser;
+    }
+
+    public static void addMemo (Memo memo) {
+        String sql = "INSERT INTO memo(writer, memo)\n" +
+                "VALUES (?,?)\n";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,memo.getWriter());
+            pstmt.setString(2,memo.getMemo());
+
+            pstmt.execute();
+            log.info(">>>> Database addMemo");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<Memo> findMemoAll () {
+        List<Memo> resultMemo = new ArrayList<>();
+        String sql = "SELECT memoId, SUBSTR(date, 1, 10) as date, writer, memo FROM memo\n";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                int memoId = rs.getInt("memoId");
+                String date = rs.getString("date");
+                String writer = rs.getString("writer");
+                String memoContent = rs.getString("memo");
+                resultMemo.add(new Memo(memoId,date,writer,memoContent));
+            }
+            log.info(">>>> Database findMemoAll");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultMemo;
     }
 }

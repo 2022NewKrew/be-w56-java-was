@@ -1,6 +1,7 @@
 package webserver.controller;
 
 import db.DataBase;
+import model.Memo;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,8 @@ import java.io.OutputStream;
 
 public class PostController implements MethodController {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+
+    private static final String ADD_MEMO = "/memo/add";
 
     private static final String SIGN_UP = "/user/create";
     private static final String SIGN_IN = "/user/login";
@@ -31,6 +34,9 @@ public class PostController implements MethodController {
         log.info(":: Post Service");
 
         switch (rp.getPath()) {
+            case ADD_MEMO:
+                methodAddMemo();
+                break;
             case SIGN_UP:
                 methodSignUp();
                 break;
@@ -42,6 +48,27 @@ public class PostController implements MethodController {
             default:
                 break;
         }
+    }
+
+    private void methodAddMemo () {
+        log.info("[run] methodAddMemo");
+
+        String writer = rp.getBody("writer");
+        String memo = rp.getBody("memo");
+
+        ResponseFormat rf = new RedirectResponseFormat(os, "/");
+        try {
+            Memo newMemo = new Memo(writer, memo);
+            log.info("new Memo :::" + newMemo);
+            DataBase.addMemo(newMemo);
+
+            rf.sendResponse(ResponseCode.STATUS_303);
+            return;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
+        rf.sendResponse(ResponseCode.STATUS_404);
     }
 
     private void methodSignUp() {

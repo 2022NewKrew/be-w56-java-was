@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 import webserver.manage.RequestParser;
+import webserver.page.PageOfMemoList;
 import webserver.page.PageOfUserList;
 import webserver.response.format.ForwardResponseFormat;
 import webserver.response.format.ResponseFormat;
@@ -19,9 +20,12 @@ public class GetController implements MethodController {
     OutputStream os;
 
     private final String LOGIN_KEY = "logined";
+
+    private final String MEMO_LIST = "/index";
     private final String USER_LIST = "/user/list";
     private final String LOGIN_PAGE = "/user/login.html";
 
+    private final String HTML_MEMO_LIST = "/index.html";
     private final String HTML_USER_LIST = "/user/list.html";
 
     public GetController(RequestParser rp, OutputStream os) {
@@ -33,6 +37,10 @@ public class GetController implements MethodController {
         log.info(":: GET Service");
 
         switch (rp.getPath()) {
+            case MEMO_LIST:
+            case HTML_MEMO_LIST:
+                methodMemoList();
+                break;
             case USER_LIST:
             case HTML_USER_LIST:
                 methodUserList();
@@ -43,6 +51,14 @@ public class GetController implements MethodController {
         }
     }
 
+    private void methodMemoList() {
+        String page = PageOfMemoList.draw(DataBase.findMemoAll());
+
+        ForwardResponseFormat rf = new ForwardResponseFormat(os);
+        rf.setHtmlPage(page);
+        rf.sendResponse(ResponseCode.STATUS_200);
+    }
+
     private void methodUserList() {
         String logined = rp.getCookie(LOGIN_KEY);
         if( logined == null || logined.equalsIgnoreCase("false") ) {
@@ -51,7 +67,7 @@ public class GetController implements MethodController {
             return;
         }
 
-        String page = PageOfUserList.draw(DataBase.findAll());
+        String page = PageOfUserList.draw(DataBase.findUserAll());
 
         ForwardResponseFormat rf = new ForwardResponseFormat(os);
         rf.setHtmlPage(page);
