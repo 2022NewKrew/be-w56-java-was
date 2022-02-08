@@ -54,10 +54,6 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static String getUrlPath(String httpRequestHeader) {
-        return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
-    }
-
     public static class Pair {
         String key;
         String value;
@@ -110,5 +106,9 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
+    }
+
+    public static String getUrlPath(String httpRequestHeader) {
+        return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
     }
 }
