@@ -3,18 +3,18 @@ package application.controller;
 import application.domain.User;
 import application.domain.UserService;
 import di.annotation.Bean;
-import was.domain.controller.annotation.Controller;
-import was.domain.controller.annotation.GetMapping;
-import was.domain.controller.annotation.PostMapping;
-import was.domain.http.Cookie;
-import was.domain.http.HttpRequest;
-import was.domain.http.HttpResponse;
-import was.meta.HttpHeaders;
-import was.meta.HttpStatus;
-import application.meta.UrlPath;
-import was.meta.MediaTypes;
+import was.http.annotation.Controller;
+import was.http.annotation.GetMapping;
+import was.http.annotation.PostMapping;
+import was.http.domain.request.Cookie;
+import was.http.domain.request.HttpRequest;
+import was.http.domain.response.HttpResponse;
+import was.http.domain.service.view.ModelAndView;
+import was.http.domain.service.view.ResponseEntity;
+import was.http.domain.service.view.ViewType;
+import was.http.meta.HttpHeaders;
+import was.http.meta.HttpStatus;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/signUp")
-    public void signUp(HttpRequest req, HttpResponse res) {
+    public User signUp(HttpRequest req) {
         final String id = req.getRequestParam("id");
         final String pwd = req.getRequestParam("password");
 
@@ -38,43 +38,46 @@ public class UserController {
 
         userService.create(user);
 
-        res.setStatus(HttpStatus.FOUND);
-        res.addHeader(HttpHeaders.LOCATION, UrlPath.LOGIN_FORM);
+        return user;
     }
 
     @GetMapping(path = "/login")
-    public void loginForm(HttpRequest req, HttpResponse res) {
+    public ModelAndView loginForm(HttpRequest req) {
         final Cookie cookie = req.getCookie();
         final String loginAttribute = cookie.get("isLogin");
 
         final boolean isLogin = loginAttribute != null && Objects.equals(loginAttribute, "True");
 
         if (isLogin) {
-            res.setStatus(HttpStatus.FOUND);
-            res.addHeader(HttpHeaders.LOCATION, UrlPath.HOME);
-            return;
+            return new ModelAndView(ViewType.REDIRECT, "/");
         }
 
-        res.setViewPath(UrlPath.LOGIN_FORM);
+        return new ModelAndView(ViewType.STATIC_RESOURCE, "/templates/login.html");
+    }
+
+    @GetMapping(path = "/users?type=json")
+    public ResponseEntity<List<User>> getAllJsonType() {
+        final List<User> users = userService.getAll();
+
+        return ResponseEntity.<List<User>>builder()
+                .status(HttpStatus.OK)
+                .body(users)
+                .build();
     }
 
     @GetMapping(path = "/users")
-    public void getAll(HttpRequest req, HttpResponse res) {
-        final StringBuilder sb = new StringBuilder();
+    public ModelAndView getAll() {
         final List<User> users = userService.getAll();
 
-        sb.append("<ul>");
-        users.forEach(user -> sb.append("<li>").append(user.getName()).append("</li>"));
-        sb.append("</ul>");
+        for (User user : users) {
+            users.get(0).addFriend(user);
+        }
 
-        final String body = sb.toString();
-
-        res.setStatus(HttpStatus.OK);
-        res.addHeader(HttpHeaders.CONTENT_TYPE, MediaTypes.TEXT_HTML.getValue());
-        res.setBody(body.getBytes(StandardCharsets.UTF_8));
+        return new ModelAndView(ViewType.STATIC_RESOURCE, "/templates/home.html")
+                .addModel("users", users);
     }
 
-    @PostMapping(path = "/login")
+    @PostMapping(path = "/users/login")
     public void login(HttpRequest req, HttpResponse res) {
         final String id = req.getRequestParam("id");
         final String pwd = req.getRequestParam("password");
@@ -85,7 +88,7 @@ public class UserController {
             cookie.put("path", "/");
 
             res.setStatus(HttpStatus.FOUND);
-            res.addHeader(HttpHeaders.LOCATION, UrlPath.LOGIN_FAIL);
+            res.addHeader(HttpHeaders.LOCATION, "/templates/login_fail.html");
             res.addCookie(cookie);
             return;
         }
@@ -95,7 +98,7 @@ public class UserController {
         cookie.put("path", "/");
 
         res.setStatus(HttpStatus.FOUND);
-        res.addHeader(HttpHeaders.LOCATION, UrlPath.HOME);
+        res.addHeader(HttpHeaders.LOCATION, "/");
         res.addCookie(cookie);
     }
 }

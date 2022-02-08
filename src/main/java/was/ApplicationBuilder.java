@@ -27,7 +27,7 @@ public class ApplicationBuilder {
         return this;
     }
 
-    public NioWebServer build() {
+    public NioWebApplicationServer build() {
         final BeanContext beanContext = BeanContext.getInstance();
 
         for (String packageName : packageNames) {
@@ -38,6 +38,6 @@ public class ApplicationBuilder {
             }
         }
 
-        return new NioWebServer(webConfig);
+        return new NioWebApplicationServer(webConfig);
     }
 }
