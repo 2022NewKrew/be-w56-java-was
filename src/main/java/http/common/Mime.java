@@ -14,7 +14,7 @@ public enum Mime {
     WOFF2(".woff2", "font/woff2"),
     EOT(".eot", "application/vnd.ms-fontobject"),
     JSON(".json", "application/json"),
-    X_URL_FORM_ENCODED(".*", "application/x-www-form-urlencoded"),
+    X_WWW_FORM_URLENCODED(".*", "application/x-www-form-urlencoded"),
     PLAIN_TEXT(".*", "text/plain");
 
     private final String extension;
