@@ -37,6 +37,7 @@ class ArticleMapperTest {
 
         for (int i = 0; i < 100; i++) {
             Document document = new Document();
+            document.put("_id", new ObjectId());
             document.put("title", "title" + i);
             document.put("author", "author" + i);
             document.put("content", "content" + i);
@@ -69,7 +70,7 @@ class ArticleMapperTest {
         String author = "author";
         String content = "content";
         Document document = new Document();
-        document.putAll(Map.of("title", title, "author", author, "content", content, "createTime",
+        document.putAll(Map.of("_id", new ObjectId(), "title", title, "author", author, "content", content, "createTime",
                 new Date(), "modifiedTime", new Date()));
         Article article = ArticleMapper.instance.documentToArticle(document);
 
