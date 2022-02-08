@@ -3,10 +3,7 @@ package webserver.controller.user;
 import lombok.RequiredArgsConstructor;
 import util.request.HttpRequest;
 import util.request.MethodType;
-import util.response.FileType;
-import util.response.HttpResponse;
-import util.response.HttpStatus;
-import util.response.ModelAndView;
+import util.response.*;
 import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
@@ -26,12 +23,17 @@ public class UserListController implements Controller {
     @Override
     public HttpResponse doHandle(HttpRequest httpRequest) {
         List<User> users = userRepository.getUsers();
-        ModelAndView mav = new ModelAndView("/user/list.html", FileType.STRING);
+        ModelAndView mav = new ModelAndView("/user/list.html");
         mav.addAttribute("users", users);
+
+        ResponseHeaders headers = ResponseHeaders.builder()
+                .contentType(ContentType.HTML)
+                .build();
 
         return HttpResponse.builder()
                 .status(HttpStatus.SUCCESS)
                 .modelAndView(mav)
+                .headers(headers)
                 .build();
     }
 }

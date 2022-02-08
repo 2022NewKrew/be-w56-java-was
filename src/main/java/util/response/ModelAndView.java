@@ -11,7 +11,6 @@ import java.util.Map;
 public class ModelAndView {
     private final Map<String, Object> model = new HashMap<>();
     private final String fileName;
-    private final FileType fileType;
 
     public void addAttribute(String key, Object value){
         model.put(key, value);
