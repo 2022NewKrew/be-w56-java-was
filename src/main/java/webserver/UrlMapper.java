@@ -1,5 +1,6 @@
 package webserver;
 
+import http.request.HttpRequestMethod;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -11,31 +12,31 @@ import http.response.HttpStatusCode;
 public class UrlMapper {
 
     private static final Map<String, Function<HttpRequest, HttpResponse>>
-            URLS = new ConcurrentHashMap<>();
+            urlMap = new ConcurrentHashMap<>();
 
     private UrlMapper() {
 
     }
 
-    public static Function<HttpRequest, HttpResponse> get(String url, String method) {
+    public static Function<HttpRequest, HttpResponse> get(String url, HttpRequestMethod method) {
         String key = getKey(url, method);
-        if (!URLS.containsKey(key)) {
+        if (!urlMap.containsKey(key)) {
             return httpRequest ->  new HttpResponseBuilder(HttpStatusCode.NOT_FOUND).build();
         }
-        return URLS.get(key);
+        return urlMap.get(key);
     }
 
-    public static void put(String url, String method, Function<HttpRequest, HttpResponse> func) {
+    public static void put(String url, HttpRequestMethod method, Function<HttpRequest, HttpResponse> func) {
         String key = getKey(url, method);
-        URLS.put(key, func);
+        urlMap.put(key, func);
     }
 
-    private static String getKey(String url, String method) {
-        return url + " " + method;
+    private static String getKey(String url, HttpRequestMethod method) {
+        return url + " " + method.toString();
     }
 
     @Override
     public String toString() {
-        return "UrlMapper{" + URLS + '}';
+        return "UrlMapper{" + urlMap + '}';
     }
 }

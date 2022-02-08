@@ -6,12 +6,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.response.HttpResponse;
-import http.response.HttpResponseHeaderEnum;
+import http.response.HttpResponseHeaderKey;
 import http.response.HttpResponseHeader;
 
 public class ViewResolver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ViewResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewResolver.class);
+
     private static final String NEW_LINE = System.lineSeparator();
     private static final Integer BLANK_OFFSET = 0;
 
@@ -32,7 +33,7 @@ public class ViewResolver {
     }
 
     private void respondHeader(HttpResponseHeader httpResponseHeader) {
-        Map<HttpResponseHeaderEnum, String> headerMap = httpResponseHeader.getHeaderMap();
+        Map<HttpResponseHeaderKey, String> headerMap = httpResponseHeader.getHeaderMap();
         headerMap.forEach((key, value) ->
                 dosWrite(String.format("%s: %s%s", key.getText(), value, NEW_LINE)));
         dosWrite(NEW_LINE);
@@ -47,7 +48,7 @@ public class ViewResolver {
         try {
             dos.writeBytes(msg);
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -55,7 +56,7 @@ public class ViewResolver {
         try {
             dos.write(msg, BLANK_OFFSET, msg.length);
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -63,7 +64,7 @@ public class ViewResolver {
         try {
             dos.flush();
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 }

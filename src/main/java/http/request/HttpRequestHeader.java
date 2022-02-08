@@ -39,7 +39,7 @@ public class HttpRequestHeader {
     }
 
     public Integer getContentLength() {
-        String contentLength = headerMap.get(HttpRequestHeaderEnum.CONTENT_LENGTH.getText());
+        String contentLength = headerMap.get(HttpRequestHeaderKey.CONTENT_LENGTH.getText());
         return contentLength == null ? 0 : Integer.parseInt(contentLength);
     }
 

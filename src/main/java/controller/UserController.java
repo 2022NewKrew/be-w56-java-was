@@ -1,6 +1,7 @@
 package controller;
 
 import db.DataBase;
+import http.request.HttpRequestMethod;
 import java.util.Map;
 import model.User;
 import model.UserLogin;
@@ -10,7 +11,7 @@ import http.request.HttpRequest;
 import http.request.HttpRequestBody;
 import http.response.HttpResponse.HttpResponseBuilder;
 import http.response.HttpStatusCode;
-import http.response.HttpResponseHeaderEnum;
+import http.response.HttpResponseHeaderKey;
 import http.response.HttpResponseHeader;
 import http.response.HttpResponseHeader.ResponseHeaderBuilder;
 import util.IOUtils;
@@ -19,7 +20,7 @@ import webserver.UrlMapper;
 
 public class UserController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private UserController() {}
 
@@ -27,11 +28,11 @@ public class UserController {
 
         UrlMapper.put(
             "/user/form.html",
-            "GET",
+            HttpRequestMethod.GET,
             (HttpRequest httpRequest) -> {
                 byte[] body = IOUtils.readFile("./webapp/user/form.html");
                 HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
-                        .set(HttpResponseHeaderEnum.CONTENT_LENGTH, "" + body.length)
+                        .set(HttpResponseHeaderKey.CONTENT_LENGTH, "" + body.length)
                         .build();
 
                 return new HttpResponseBuilder(HttpStatusCode.OK)
@@ -43,7 +44,7 @@ public class UserController {
 
         UrlMapper.put(
             "/user/create",
-            "POST",
+            HttpRequestMethod.POST,
             (HttpRequest httpRequest) -> {
                 HttpRequestBody httpRequestBody = httpRequest.getRequestBody();
                 String body = String.valueOf(httpRequestBody.getBody());
@@ -55,9 +56,9 @@ public class UserController {
                             data.get("name"), data.get("email"));
                     DataBase.addUser(user);
 
-                    LOG.info("SignIn Succeeded - {}", user);
+                    log.info("SignIn Succeeded - {}", user);
                     HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
-                            .set(HttpResponseHeaderEnum.LOCATION, "/")
+                            .set(HttpResponseHeaderKey.LOCATION, "/")
                             .build();
 
                     return new HttpResponseBuilder(HttpStatusCode.FOUND)
@@ -65,7 +66,7 @@ public class UserController {
                             .build();
 
                 } catch (NullPointerException | IllegalArgumentException e) {
-                    LOG.error(e.getMessage());
+                    log.error(e.getMessage());
                     return new HttpResponseBuilder(HttpStatusCode.NOT_ACCEPTABLE).build();
                 }
             }
@@ -73,11 +74,11 @@ public class UserController {
 
         UrlMapper.put(
             "/user/login.html",
-            "GET",
+            HttpRequestMethod.GET,
             (HttpRequest httpRequest) -> {
                 byte[] body = IOUtils.readFile("./webapp/user/login.html");
                 HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
-                        .set(HttpResponseHeaderEnum.CONTENT_LENGTH, "" + body.length)
+                        .set(HttpResponseHeaderKey.CONTENT_LENGTH, "" + body.length)
                         .build();
 
                 return new HttpResponseBuilder(HttpStatusCode.OK)
@@ -89,7 +90,7 @@ public class UserController {
 
         UrlMapper.put(
             "/user/login",
-            "POST",
+            HttpRequestMethod.POST,
             (HttpRequest httpRequest) -> {
                 HttpRequestBody httpRequestBody = httpRequest.getRequestBody();
                 String body = String.valueOf(httpRequestBody.getBody());
@@ -101,10 +102,10 @@ public class UserController {
                     boolean result = DataBase.login(user);
                     String cookieValue = result ? "logined=true; Path=/" : "logined=false";
 
-                    LOG.info(result ? "Login Failed" : "Login Succeeded - {}", user);
+                    log.info(result ? "Login Failed" : "Login Succeeded - {}", user);
                     HttpResponseHeader httpResponseHeader = new ResponseHeaderBuilder()
-                            .set(HttpResponseHeaderEnum.SET_COOKIE, cookieValue)
-                            .set(HttpResponseHeaderEnum.LOCATION, "/")
+                            .set(HttpResponseHeaderKey.SET_COOKIE, cookieValue)
+                            .set(HttpResponseHeaderKey.LOCATION, "/")
                             .build();
 
                     return new HttpResponseBuilder(HttpStatusCode.FOUND)
@@ -112,7 +113,7 @@ public class UserController {
                             .build();
 
                 } catch (NullPointerException | IllegalArgumentException e) {
-                    LOG.error(e.getMessage());
+                    log.error(e.getMessage());
                     return new HttpResponseBuilder(HttpStatusCode.NOT_ACCEPTABLE).build();
                 }
             }

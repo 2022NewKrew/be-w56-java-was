@@ -48,7 +48,7 @@ public class HttpRequest {
         return httpRequestBody;
     }
 
-    public String getMethod() {
+    public HttpRequestMethod getMethod() {
         return httpRequestStartLine.getMethod();
     }
 

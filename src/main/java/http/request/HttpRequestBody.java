@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class HttpRequestBody {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestBody.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestBody.class);
 
     private final char[] body;
 
@@ -20,7 +20,7 @@ public class HttpRequestBody {
         try {
             br.read(body, 0, contentLength);
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return new HttpRequestBody(body);
     }

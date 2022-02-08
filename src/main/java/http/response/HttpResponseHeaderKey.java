@@ -1,6 +1,6 @@
 package http.response;
 
-public enum HttpResponseHeaderEnum {
+public enum HttpResponseHeaderKey {
 
     CONTENT_LENGTH("Content-Length"),
     CONTENT_TYPE("Content-Type"),
@@ -10,7 +10,7 @@ public enum HttpResponseHeaderEnum {
 
     private final String text;
 
-    HttpResponseHeaderEnum(String text) {
+    HttpResponseHeaderKey(String text) {
         this.text = text;
     }
 

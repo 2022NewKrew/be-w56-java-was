@@ -7,20 +7,20 @@ import org.slf4j.LoggerFactory;
 
 public class HttpRequestStartLine {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestStartLine.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestStartLine.class);
 
-    private final String method;
+    private final HttpRequestMethod method;
     private final String url;
     private final String protocol;
 
-    private HttpRequestStartLine(String method, String url, String protocol) {
+    private HttpRequestStartLine(HttpRequestMethod method, String url, String protocol) {
         this.method = method;
         this.url = url;
         this.protocol = protocol;
     }
 
     public static HttpRequestStartLine of(BufferedReader br) {
-        String method = "";
+        HttpRequestMethod method = HttpRequestMethod.GET;
         String url = "";
         String protocol = "";
 
@@ -31,17 +31,17 @@ public class HttpRequestStartLine {
             }
 
             String[] startLineItems = startLine.split(" ");
-            method = startLineItems[0].toUpperCase();
+            method = HttpRequestMethod.valueOf(startLineItems[0].toUpperCase());
             url = startLineItems[1];
             protocol = startLineItems[2];
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return new HttpRequestStartLine(method, url, protocol);
     }
 
-    public String getMethod() {
+    public HttpRequestMethod getMethod() {
         return method;
     }
 
@@ -54,6 +54,6 @@ public class HttpRequestStartLine {
     }
 
     public boolean hasValue() {
-        return !(method.isEmpty() || url.isEmpty() || protocol.isEmpty());
+        return !(url.isEmpty() || protocol.isEmpty());
     }
 }

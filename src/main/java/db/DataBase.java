@@ -8,20 +8,20 @@ import model.UserLogin;
 
 public class DataBase {
 
-    private static final Map<String, User> USERS = new ConcurrentHashMap<>();
+    private static final Map<String, User> users = new ConcurrentHashMap<>();
 
     private DataBase() {}
 
     public static void addUser(User user) {
-        USERS.put(user.getUserId(), user);
+        users.put(user.getUserId(), user);
     }
 
     public static User findUserById(String userId) {
-        return USERS.get(userId);
+        return users.get(userId);
     }
 
     public static Collection<User> findAll() {
-        return USERS.values();
+        return users.values();
     }
 
     public static boolean login(UserLogin userLogin) {

@@ -3,6 +3,7 @@ package webserver;
 import controller.IndexController;
 import controller.UserController;
 import http.request.HttpRequest;
+import http.request.HttpRequestMethod;
 import http.response.HttpResponse;
 import http.response.HttpResponse.HttpResponseBuilder;
 import http.response.HttpStatusCode;
@@ -26,7 +27,7 @@ public class DispatcherServlet {
             return new HttpResponseBuilder(HttpStatusCode.NOT_FOUND).build();
         }
 
-        String method = httpRequest.getMethod();
+        HttpRequestMethod method = httpRequest.getMethod();
         String url = UrlUtils.decode(httpRequest.getUrl());
         String trimmedUrl = UrlUtils.trimParams(url);
 

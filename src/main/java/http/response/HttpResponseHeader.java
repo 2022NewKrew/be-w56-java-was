@@ -5,27 +5,27 @@ import java.util.Map;
 
 public class HttpResponseHeader {
 
-    private final Map<HttpResponseHeaderEnum, String> headerMap;
+    private final Map<HttpResponseHeaderKey, String> headerMap;
 
     private HttpResponseHeader(ResponseHeaderBuilder builder) {
         headerMap = builder.headerMap;
     }
 
-    public Map<HttpResponseHeaderEnum, String> getHeaderMap() {
+    public Map<HttpResponseHeaderKey, String> getHeaderMap() {
         return headerMap;
     }
 
     public static class ResponseHeaderBuilder {
 
-        private final Map<HttpResponseHeaderEnum, String> headerMap = new EnumMap<> (
-            HttpResponseHeaderEnum.class);
+        private final Map<HttpResponseHeaderKey, String> headerMap = new EnumMap<> (
+            HttpResponseHeaderKey.class);
 
         public ResponseHeaderBuilder() {
-            headerMap.put(HttpResponseHeaderEnum.CONTENT_TYPE, "text/html;charset=utf-8");
+            headerMap.put(HttpResponseHeaderKey.CONTENT_TYPE, "text/html;charset=utf-8");
         }
 
-        public ResponseHeaderBuilder set(HttpResponseHeaderEnum httpResponseHeaderEnum, String value) {
-            headerMap.put(httpResponseHeaderEnum, value);
+        public ResponseHeaderBuilder set(HttpResponseHeaderKey httpResponseHeaderKey, String value) {
+            headerMap.put(httpResponseHeaderKey, value);
             return this;
         }
 

@@ -1,6 +1,6 @@
 package http.request;
 
-public enum HttpRequestHeaderEnum {
+public enum HttpRequestHeaderKey {
 
     ACCEPT("Accept"),
     CONNECTION("Connection"),
@@ -11,7 +11,7 @@ public enum HttpRequestHeaderEnum {
 
     private final String text;
 
-    HttpRequestHeaderEnum(String text){
+    HttpRequestHeaderKey(String text){
         this.text = text;
     }
 

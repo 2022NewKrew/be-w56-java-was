@@ -1,6 +1,6 @@
 package http.request;
 
-public enum HttpRequestMethodEnum {
+public enum HttpRequestMethod {
 
     CONNECT,
     DELETE,

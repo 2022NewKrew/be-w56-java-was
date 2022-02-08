@@ -19,7 +19,7 @@ public class IOUtils {
      * @throws IOException
      */
 
-    private static final Logger LOG = LoggerFactory.getLogger(IOUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(IOUtils.class);
 
     private static final String PROP_SEPERATOR = "&";
     private static final String PROP_DEFINE = "=";
@@ -37,7 +37,7 @@ public class IOUtils {
         try {
             body = Files.readAllBytes(new File(filePath).toPath());
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return body;
     }
