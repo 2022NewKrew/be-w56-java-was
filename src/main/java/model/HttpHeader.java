@@ -1,6 +1,5 @@
 package model;
 
-import exceptions.BadRequestFormatException;
 import java.util.Arrays;
 
 public enum HttpHeader {
@@ -24,13 +23,14 @@ public enum HttpHeader {
     COOwKIE("Cookie"),
     Cache_Control("Cache-Control"),
     Upgrade_Insecure_Requests("Upgrade-Insecure-Requests"),
-    LOCATION("Location");
+    LOCATION("Location"),
+    DEFAULT("");
 
     public static HttpHeader of(String value) {
         return Arrays.stream(HttpHeader.values())
                 .filter(str -> str.getValue().equals(value))
                 .findAny()
-                .orElseThrow(() -> new BadRequestFormatException(""));
+                .orElse(DEFAULT);
     }
 
     private final String value;
