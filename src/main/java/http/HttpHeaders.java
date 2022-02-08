@@ -37,4 +37,8 @@ public class HttpHeaders {
     public void put(String key, String value) {
         headers.put(key, value);
     }
+
+    public String get(String key) {
+        return headers.get(key);
+    }
 }

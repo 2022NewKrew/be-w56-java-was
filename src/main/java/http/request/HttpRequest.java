@@ -5,11 +5,13 @@ import http.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
 public class HttpRequest {
 
+    private static final String COOKIE = "Cookie";
     private final RequestLine requestLine;
     private final HttpHeaders headers;
     private final RequestBody body;
@@ -45,5 +47,10 @@ public class HttpRequest {
 
     public RequestBody getBody() {
         return body;
+    }
+
+    public Map<String, String> getCookies() {
+        String cookies = headers.get(COOKIE);
+        return HttpRequestUtils.parseCookies(cookies);
     }
 }
