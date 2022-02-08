@@ -24,7 +24,8 @@ public class ResponseSendDataModel {
 
             Optional<Session> session = sessionService.findOne(httpRequest.getHeader().getCookie().get("id"));
 
-            dataModel.put("sessionedId", session);
+            if(session.isPresent())
+                dataModel.put("sessionedId", session);
         }
     }
 

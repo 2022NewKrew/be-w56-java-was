@@ -67,12 +67,6 @@ public class UserController implements Controller{
             log.info("아이디 {}로 중복으로 회원 가입을 신청했습니다", userId);
         }
 
-        if(userService.findOne(userId).isPresent()) {
-            Session session = new Session(userService.findOne(userId).get());
-
-            sessionService.join(session);
-        }
-
         return result;
     }
 
@@ -107,17 +101,15 @@ public class UserController implements Controller{
             return result;
         }
 
-        Optional<Session> one = sessionService.findOne(userId);
-
-        if(one.isEmpty()){
-            log.error("[UserController > login] {} 세션이 존재하지 않습니다.", userAccount.getUserId());
-            result.setLogin(Optional.empty());
-
-            return result;
-        }
-
         result = new ResponseSendDataModel("redirect:/", httpRequest);
-        result.setLogin(one);
+
+        if(userService.findOne(userId).isPresent()) {
+            Session session = new Session(userService.findOne(userId).get());
+
+            sessionService.join(session);
+
+            result.setLogin(sessionService.findOne(session.getSessionId()));
+        }
 
         return result;
     }
