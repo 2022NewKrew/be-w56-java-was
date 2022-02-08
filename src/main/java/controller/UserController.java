@@ -3,29 +3,31 @@ package controller;
 import dto.UserLoginRequest;
 import dto.UserSignupRequest;
 import exception.UserNotFoundException;
+import http.HttpHeader;
+import http.HttpResponse;
 import http.PostMapping;
-import repository.UserRepository;
 import service.UserService;
 
 @Controller
 public class UserController {
 
-    private final UserRepository userRepository = new UserRepository();
     private final UserService userService = new UserService();
 
     @PostMapping("/user")
-    public String signup(UserSignupRequest request) {
+    public void signup(UserSignupRequest request, HttpResponse httpResponse) {
         userService.signup(request);
-        return "redirect:/index.html";
+        httpResponse.sendRedirect("/index.html");
     }
 
     @PostMapping("/user/login")
-    public String login(UserLoginRequest request) {
+    public void login(UserLoginRequest request, HttpResponse httpResponse) {
         try {
             userService.login(request);
-            return "redirect:/index.html";
+            httpResponse.putHeader(HttpHeader.SET_COOKIE, "logined=true; Path=/");
+            httpResponse.sendRedirect("/index.html");
         } catch (UserNotFoundException e) {
-            return "redirect:/user/login_failed.html";
+            httpResponse.putHeader(HttpHeader.SET_COOKIE, "logined=false; Path=/");
+            httpResponse.sendRedirect("/user/login_failed.html");
         }
     }
 }

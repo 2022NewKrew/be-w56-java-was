@@ -2,6 +2,7 @@ package webserver.resolver;
 
 import com.google.common.collect.Lists;
 import http.HttpRequest;
+import http.HttpResponse;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -16,9 +17,14 @@ public class ArgumentResolvers {
     private ArgumentResolvers() {
     }
 
-    public static Object[] resolve(Method method, HttpRequest httpRequest) throws Exception {
+    public static Object[] resolve(Method method, HttpRequest httpRequest,
+        HttpResponse httpResponse) throws Exception {
         List<Object> args = Lists.newArrayList();
         for (Class<?> parameterType : method.getParameterTypes()) {
+            if (parameterType.equals(httpResponse.getClass())) {
+                args.add(httpResponse);
+                continue;
+            }
             args.add(getObject(parameterType, httpRequest));
         }
         return args.toArray();

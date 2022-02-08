@@ -17,10 +17,6 @@ public class HttpRequest {
         this.parameters = builder.parameters;
     }
 
-    public HttpResponse respond() {
-        return new HttpResponse(version, HttpStatus.OK, headers, null, null);
-    }
-
     public boolean hasAllParameters(List<String> parameters) {
         if (this.parameters.isEmpty()) {
             return false;

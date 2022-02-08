@@ -26,10 +26,9 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = HttpRequestFactory.newInstance(in);
+            HttpResponse httpResponse = new HttpResponse();
 
-            String view = MappingHandler.invoke(httpRequest);
-            HttpResponse httpResponse = httpRequest.respond();
-            httpResponse.changeView(view);
+            MappingHandler.invoke(httpRequest, httpResponse);
 
             ViewHandler.handle(out, httpResponse);
         } catch (Exception e) {

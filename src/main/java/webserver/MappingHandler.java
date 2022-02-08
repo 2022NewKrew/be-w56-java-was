@@ -5,6 +5,7 @@ import controller.Controller;
 import http.GetMapping;
 import http.HttpMethod;
 import http.HttpRequest;
+import http.HttpResponse;
 import http.PostMapping;
 import http.Url;
 import java.lang.reflect.Method;
@@ -43,13 +44,14 @@ public class MappingHandler {
             });
     }
 
-    public static String invoke(HttpRequest httpRequest) throws Exception {
+    public static void invoke(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
         Method method = mappings.get(httpRequest.getUrl());
         if (method == null) {
-            return httpRequest.getUrl().getPath();
+            httpResponse.ok(httpRequest.getUrl().getPath());
+            return;
         }
-        Object[] args = ArgumentResolvers.resolve(method, httpRequest);
+        Object[] args = ArgumentResolvers.resolve(method, httpRequest, httpResponse);
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        return (String) method.invoke(instance, args);
+        method.invoke(instance, args);
     }
 }
