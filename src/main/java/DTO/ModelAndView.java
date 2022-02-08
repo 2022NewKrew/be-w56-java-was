@@ -44,6 +44,7 @@ public class ModelAndView {
         if (checkAndRemoveRedirect()){ // if redirect
             responseHeader.setRedirect(view);
         }
+
         byte[] body = IOUtils.readHeaderPathFile(view, responseHeader);
 
         HttpResponseUtils.writeResponseHeader(responseHeader, dos);

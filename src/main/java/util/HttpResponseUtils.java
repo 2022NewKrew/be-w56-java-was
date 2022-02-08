@@ -21,7 +21,7 @@ public class HttpResponseUtils {
                 dos.writeBytes( getItemLine(item, headerItems.get(item)));
             }
 
-//            dos.writeBytes("Content-Type: text/html; charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: text/html; charset=utf-8\r\n");
 
             dos.writeBytes("\r\n");
 

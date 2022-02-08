@@ -16,6 +16,7 @@ public class RequestHeader {
     private String protocolVersion;
     private String requestUrl;
     private String body;
+    private boolean isGet;
 
     private final Map<String, String> headerList = new HashMap<>();
 
@@ -72,6 +73,10 @@ public class RequestHeader {
             return;
         }
         isGet = false;
+    }
+    public void setCookie(String name, String value){
+        String cookie = name+"="+value;
+        headerList.put("Cookie: ",cookie);
     }
 
 

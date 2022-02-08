@@ -7,7 +7,6 @@ public class ResponseHeader {
     private String protocolVersion;
 
     private int statusCode;
-    private String statusMsg;
     private String body;
     private final Map<String, String> headerList = new HashMap<>();
 
@@ -23,6 +22,14 @@ public class ResponseHeader {
     public void setRedirect(String url){
         headerList.put("Location",url);
         statusCode = 302;
+    }
+
+    public void setCookie(String name, String value, Map<String,String> options){
+        String cookie = name + "=" + value;
+        for ( String option : options.keySet() ){
+            cookie = cookie + "; " + option + "=" + options.get(option);
+        }
+        headerList.put("Set-Cookie", cookie);
     }
 
 
