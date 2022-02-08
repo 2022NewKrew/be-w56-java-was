@@ -92,8 +92,7 @@ public class MemoRepositoryJdbcImpl implements MemoRepository {
             conn = dataSource.getConnection();
 
             String sql = "SELECT MEMO_ID, WRITER_ID, CONTENT, CREATED_DATE \n"
-                    + "FROM MEMOS \n"
-                    + "ORDER BY CREATED_DATE DESC";
+                    + "FROM MEMOS";
             pstmt = conn.prepareStatement(sql);
 
             rs = pstmt.executeQuery();
