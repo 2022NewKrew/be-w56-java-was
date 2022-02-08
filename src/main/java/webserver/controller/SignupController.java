@@ -21,12 +21,7 @@ public class SignupController extends BaseController {
 
         if (!userProperties.stream().allMatch(urlEncodedParams::containsKey)) {
             log.debug("회원가입 실패: {}", urlEncodedParams);
-            return HttpResponse
-                    .builder()
-                    .protocolVersion(HttpProtocolVersion.HTTP_1_1)
-                    .headers(new HttpHeaders())
-                    .status("400 Bad Request")
-                    .build();
+            return HttpResponse.badRequest();
         }
 
         User user = User.builder()

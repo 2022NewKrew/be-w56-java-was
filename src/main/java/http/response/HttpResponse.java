@@ -65,4 +65,12 @@ public class HttpResponse extends HttpMessage {
                 .status("302 Found")
                 .build();
     }
+
+    public static HttpResponse badRequest() {
+        return HttpResponse.builder()
+                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
+                .headers(new HttpHeaders())
+                .status("400 Bad Request")
+                .build();
+    }
 }
