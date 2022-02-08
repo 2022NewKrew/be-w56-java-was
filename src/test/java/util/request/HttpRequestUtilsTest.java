@@ -1,7 +1,8 @@
 package util.request;
 
 import org.junit.jupiter.api.Test;
-import util.request.HttpRequestUtils.Pair;
+import util.HttpRequestUtils;
+import util.HttpRequestUtils.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
