@@ -1,9 +1,9 @@
 package webserver;
 
-import http.Headers;
-import http.RequestBody;
-import http.RequestLine;
-import http.RequestMessage;
+import http.body.RequestBody;
+import http.header.Headers;
+import http.message.RequestMessage;
+import http.startline.RequestLine;
 
 import java.io.BufferedReader;
 import java.io.IOException;

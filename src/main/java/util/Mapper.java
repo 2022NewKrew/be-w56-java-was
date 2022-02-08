@@ -1,7 +1,7 @@
 package util;
 
-import http.HttpMethod;
-import http.RequestMessage;
+import http.message.RequestMessage;
+import http.startline.HttpMethod;
 import servlet.ServletRequest;
 
 public class Mapper {
@@ -14,14 +14,16 @@ public class Mapper {
             return new ServletRequest(
                     request.getRequestLine().getMethod(),
                     request.getRequestLine().getRequestTarget().getPath().getValue(),
-                    request.getRequestBody().getQueryParameters().getParameters()
+                    request.getRequestBody().getQueryParameters().getParameters(),
+                    request.getHeader().createCookies()
             );
         }
 
         return new ServletRequest(
                 request.getRequestLine().getMethod(),
                 request.getRequestLine().getRequestTarget().getPath().getValue(),
-                request.getRequestLine().getRequestTarget().getQueryParameters().getParameters()
+                request.getRequestLine().getRequestTarget().getQueryParameters().getParameters(),
+                request.getHeader().createCookies()
         );
     }
 }

@@ -1,11 +1,11 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import servlet.container.ServletContainer;
+import webserver.ConnectionHandler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import servlet.ServletContainer;
-import webserver.ConnectionHandler;
 
 public class WebServer {
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);

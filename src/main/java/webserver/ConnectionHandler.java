@@ -1,18 +1,22 @@
 package webserver;
 
-import http.HttpStatus;
-import http.RequestMessage;
-import http.ResponseMessage;
+import http.message.RequestMessage;
+import http.message.ResponseMessage;
+import http.startline.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import servlet.ServletContainer;
 import servlet.ServletRequest;
+import servlet.ServletResponse;
+import servlet.container.ServletContainer;
 import util.Mapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ConnectionHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
@@ -40,12 +44,13 @@ public class ConnectionHandler extends Thread {
         }
     }
 
-    private ResponseMessage createResponseMessage(RequestMessage request) {
-        byte[] file = StaticResourceContainer.process(request);
-        if (file.length != 0) {
-            return ResponseMessage.create(HttpStatus.OK, file);
+    private ResponseMessage createResponseMessage(RequestMessage request) throws IOException {
+        File file = request.createStaticFile();
+        if (file.exists() && file.isFile()) {
+            return ResponseMessage.create(HttpStatus.OK, Files.readAllBytes(Path.of(file.getPath())));
         }
         ServletRequest servletRequest = Mapper.toServletRequest(request);
-        return servletContainer.process(servletRequest);
+        ServletResponse servletResponse = new ServletResponse();
+        return servletContainer.process(servletRequest, servletResponse);
     }
 }

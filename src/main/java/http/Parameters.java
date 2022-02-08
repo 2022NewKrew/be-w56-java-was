@@ -1,39 +1,30 @@
 package http;
 
-import util.Pair;
+import com.google.common.base.Strings;
 import util.ParsingUtils;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Parameters {
-    static final String DELIMITER = "&";
+    static final String PARAMETER_DELIMITER = "&";
+    static final String KEY_VALUE_DELIMITER = "=";
 
     Map<String, String> parameters;
 
-    public Parameters() {
-        this.parameters = new HashMap<>();
-    }
-
-    public Parameters(Map<String, String> parameters) {
+    private Parameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
-    public static Parameters create(Optional<String> parameters) {
-        if (parameters.isEmpty()) {
-            return new Parameters();
-        }
-        return Parameters.create(parameters.get());
-    }
-
     public static Parameters create(String parameters) {
-        String[] tokens = URLDecoder.decode(parameters, StandardCharsets.UTF_8).split(DELIMITER);
-        Map<String, String> result = Arrays.stream(tokens)
-                .map(token -> ParsingUtils.getKeyValue(token, "="))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        if (Strings.isNullOrEmpty(parameters)) {
+            return new Parameters(new HashMap<>());
+        }
+
+        String decode = URLDecoder.decode(parameters, StandardCharsets.UTF_8);
+        Map<String, String> result = ParsingUtils.parse(decode, PARAMETER_DELIMITER, KEY_VALUE_DELIMITER);
         return new Parameters(result);
     }
 

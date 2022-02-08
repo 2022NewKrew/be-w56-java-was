@@ -1,18 +1,23 @@
 package servlet;
 
-import http.HttpMethod;
+import http.header.Cookie;
+import http.header.Cookies;
+import http.startline.HttpMethod;
+import servlet.container.MappingKey;
 
 import java.util.Map;
 
 public class ServletRequest {
-    HttpMethod method;
-    String path;
-    Map<String, String> parameters;
+    private HttpMethod method;
+    private String path;
+    private Map<String, String> parameters;
+    private Cookies cookies;
 
-    public ServletRequest(HttpMethod method, String path, Map<String, String> parameters) {
+    public ServletRequest(HttpMethod method, String path, Map<String, String> parameters, Cookies cookies) {
         this.method = method;
         this.path = path;
         this.parameters = parameters;
+        this.cookies = cookies;
     }
 
     public MappingKey createMappingKey() {
@@ -21,5 +26,13 @@ public class ServletRequest {
 
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    public Cookie getCookie(String key) {
+        return cookies.getCookie(key);
+    }
+
+    public String getPath() {
+        return path;
     }
 }

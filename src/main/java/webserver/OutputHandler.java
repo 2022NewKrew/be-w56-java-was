@@ -1,6 +1,10 @@
 package webserver;
 
-import http.*;
+import http.body.ResponseBody;
+import http.header.Headers;
+import http.message.ResponseMessage;
+import http.startline.HttpStatus;
+import http.startline.StatusLine;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
