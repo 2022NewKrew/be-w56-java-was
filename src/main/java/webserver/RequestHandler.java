@@ -2,6 +2,8 @@ package webserver;
 
 import controller.Controller;
 import controller.ControllerType;
+import exceptions.InvalidHttpMethodException;
+import exceptions.exceptionHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,15 +24,23 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
-    public void run() {
-        log.debug("요청: IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
-
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();) {
+    private void runHttp(InputStream in, OutputStream out) throws IOException{
+        try {
             HttpRequest httpRequest = HttpRequest.of(in);
             Controller controller = ControllerType.getControllerType(httpRequest.getUrl());
 
             HttpResponse httpResponse = controller.run(httpRequest);
             View.sendResponse(out, httpResponse.message());
+        } catch (InvalidHttpMethodException invalidHttpMethodException) {
+            exceptionHandler.httpMethodNotFound(out, invalidHttpMethodException.getMessage());
+        }
+    }
+
+    public void run() {
+        log.debug("요청: IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();) {
+            runHttp(in, out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
