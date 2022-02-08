@@ -21,6 +21,7 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final HandlerMapping handlerMapping = HandlerMapping.getInstance();
     private static final HandlerExceptionResolver handlerExceptionResolver = HandlerExceptionResolver.getInstance();
+    private static final TemplateView templateView = MyTemplateView.getInstance();
 
     private Socket connection;
 
@@ -39,8 +40,7 @@ public class RequestHandler extends Thread {
                 HttpRequest httpRequest = HttpRequest.from(br);
                 HttpResponse httpResponse = new HttpResponse();
                 ModelAndView mv = handlerMapping.invokeHandlerMethod(httpRequest, httpResponse);
-
-                httpResponse.from(mv);
+                mv.render(httpResponse, templateView);
                 IOUtils.write(new DataOutputStream(out), httpResponse);
 
             } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
