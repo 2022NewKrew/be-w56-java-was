@@ -21,7 +21,9 @@ public class Controller {
             String path = header.getUri().equals("/") ? BASE_PATH+"/index.html" : BASE_PATH + header.getUri();
             File file = new File(path);
             body = Files.readAllBytes(file.toPath());
+            String s = header.getRequestInfo().getOrDefault("Accept", "0").split(",")[0];
             HttpResponseUtils.writeStatusCode(dos, 200);
+            HttpResponseUtils.writeContentType(dos, s);
             HttpResponseUtils.writeBody(dos, body);
         } catch (IOException e) {
             HttpResponseUtils.response404(dos);

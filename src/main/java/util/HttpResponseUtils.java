@@ -21,23 +21,8 @@ public class HttpResponseUtils {
     }
 
     public static void writeContentType(DataOutputStream dos, String contentType) {
-        String type;
-        switch (contentType) {
-            case "html":
-                type = "text/html";
-                break;
-            case "css":
-                type = "text/css";
-                break;
-            case "js":
-                type = "text/js";
-                break;
-            default:
-                type = "text/plain";
-                break;
-        }
-        String str = String.format("Content-type: %s;charset=utf-8\r\n", type);
         try {
+            String str = String.format("Content-Type: %s ;charset=utf-8\r\n", contentType);
             dos.writeBytes(str);
         } catch (IOException e) {
             log.error(e.getMessage());
