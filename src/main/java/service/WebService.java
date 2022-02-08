@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,7 +53,6 @@ public class WebService {
 
         if (method.equals("POST") & !contentLength.isEmpty()){
             String body = IOUtils.readData(bufferedReader, Integer.parseInt(contentLength));
-            log.debug("print body {}", body);
             requestParse.put("body", body);
         }
 
@@ -61,21 +61,45 @@ public class WebService {
 
     public static User createUser(String testURL){
 
-        String[] parameter = testURL.split("&");
-        HashMap<String, String> parameterMap = new HashMap<>();
-
-        Arrays.stream(parameter).forEach(s -> parameterMap.put(s.split("=")[0], s.split("=")[1]));
-        log.debug("createUser, parameter get {}", parameterMap.toString());
+        HashMap<String, String> parameterMap = parseURLBody(testURL);
 
         User createUser = new User(parameterMap.get("userId"), parameterMap.get("password"), parameterMap.get("name"), parameterMap.get("email"));
         DataBase.addUser(createUser);
 
         return createUser;
-
     }
+
+    public static Boolean loginUser(String urlBody){
+
+        HashMap<String, String> parameterMap = parseURLBody(urlBody);
+        User loadUser = DataBase.findUserById(parameterMap.get("userId"));
+
+        if (loadUser==null){
+            return false;
+        }
+        else if (parameterMap.get("password").equals(loadUser.getPassword())){
+            return true;
+        }
+        return false;
+    }
+
+    public static HashMap<String, String> parseURLBody(String body){
+        String[] parameter = body.split("&");
+        HashMap<String, String> parameterMap = new HashMap<>();
+
+        Arrays.stream(parameter).forEach(s -> parameterMap.put(s.split("=")[0], s.split("=")[1]));
+        log.debug("parseURLBody, parameter get {}", parameterMap.toString());
+
+        return parameterMap;
+    }
+
     public static String extractFunction(String ansURL){
         String[] list = ansURL.split("\\?")[0].split("/");
-        return list[list.length-1];
+
+        if (list.length > 0){
+            return list[list.length-1];
+        }
+        return "";
     }
 
     public static byte[] openUrl(String url){

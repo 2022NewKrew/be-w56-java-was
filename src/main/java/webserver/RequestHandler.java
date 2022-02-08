@@ -12,6 +12,7 @@ import service.WebService;
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private Boolean logined = false;
 
     private Socket connection;
 
@@ -34,6 +35,7 @@ public class RequestHandler extends Thread {
             String url = callFunction(parseRequest);
 
             byte[] body = WebService.openUrl(url);
+            log.debug("url compare {}, {}", url, parseRequest.get("URL"));
             if (url.equals(parseRequest.get("URL"))){
                 response200Header(dos, body.length);
             }
@@ -54,6 +56,7 @@ public class RequestHandler extends Thread {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("Set-Cookie: logined=" + logined.toString() +"; Path=/"+ "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -64,6 +67,7 @@ public class RequestHandler extends Thread {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + redirectURL + "\r\n");
+            dos.writeBytes("Set-Cookie: logined=" + logined.toString() +"; Path=/"+ "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -86,6 +90,18 @@ public class RequestHandler extends Thread {
         if (method.equals("create")) {
             User user = WebService.createUser(parameters.get("body"));
             redirectURL = "/index.html";
+        }
+        if (method.equals("login")) {
+            if (WebService.loginUser(parameters.get("body"))){
+                log.debug("login success");
+                redirectURL = "/index.html";
+                logined = true;
+            }
+            else{
+                log.debug("login failed");
+                redirectURL = "/user/login_failed.html";
+                logined = false;
+            }
         }
         log.debug("callFunction results, method : {}, redirectURL : {}", method , redirectURL);
         return redirectURL;
