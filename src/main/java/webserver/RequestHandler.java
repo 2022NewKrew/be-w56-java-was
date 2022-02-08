@@ -56,14 +56,13 @@ public class RequestHandler implements Callable<Void> {
 
             final HttpMethod method = httpRequest.getMethod();
             final String location = httpRequest.getHttpLocation().getLocation();
+            final boolean isLogin = getIsLogin(httpRequest);
 
-            log.debug("Port : {}, method: {}, location: {}",
-                    connection.getPort(),
-                    method,
-                    location);
+            log.debug("Port : {}, method: {}, location: {}, isLogin: {}",
+                    connection.getPort(), method, location, isLogin);
 
             if (method == HttpMethod.GET) {
-                processGet(out, location);
+                processGet(out, location, isLogin);
             }
             else if (method == HttpMethod.POST) {
                 processPost(out, location, httpRequest.getBody());
@@ -144,12 +143,41 @@ public class RequestHandler implements Callable<Void> {
         return new Body(new String(bodyBinary, StandardCharsets.UTF_8));
     }
 
+    private boolean getIsLogin(final HttpRequest request) {
+        final Pair cookie = request.getHeader().getPair(Headers.HEADER_COOKIE);
+        final String isLogin = HttpRequestUtils.parseQueryString(cookie.getValue())
+                .getOrDefault("logined", "false");
+        return Boolean.parseBoolean(isLogin);
+    }
+
     private void processGet(
             final OutputStream out,
-            final String location
+            final String location,
+            final boolean isLogin
     ) throws IOException
     {
+        if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
+            try {
+                final Body body = userController.processGet(location, isLogin);
+                if (body.isNotEmpty()) {
+                    responseWriter.writeBodyResponse(out, body);
+                    return;
+                }
+            } catch (IllegalStateException e) {
+                writeRedirectLogin(out);
+                return;
+            }
+        }
+
         responseWriter.writeFileResponse(out, location);
+    }
+
+    private void writeRedirectLogin(final OutputStream out) {
+        final Pair locationLogin = new Pair(
+                Headers.HEADER_LOCATION,
+                new HttpLocation("/user/login.html").getLocation()
+        );
+        responseWriter.writeRedirectResponse(out, new Headers(List.of(locationLogin)));
     }
 
     private void processPost(
@@ -159,7 +187,7 @@ public class RequestHandler implements Callable<Void> {
     ) throws IOException
     {
         if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
-            responseWriter.writeRedirectResponse(out, userController.process(location, body));
+            responseWriter.writeRedirectResponse(out, userController.processPost(location, body));
             return;
         }
 

@@ -3,11 +3,11 @@ package db;
 import model.User;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DataBase {
-    private final Map<String, User> users = new HashMap<>();
+    private final Map<String, User> users = new LinkedHashMap<>();
 
     public void addUser(User user) {
         users.put(user.getId(), user);
