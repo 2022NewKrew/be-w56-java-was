@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import app.exception.CustomException;
 import app.http.HttpRequest;
 import app.http.HttpResponse;
 import app.http.HttpStatus;
@@ -33,7 +34,7 @@ public class StaticHandlerAdapter implements HandlerAdapter{
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, HandlerMethod handlerMethod) {
+    public void handle(HttpRequest request, HttpResponse response, HandlerMethod handlerMethod) throws CustomException {
         setResponse(request, response, request.getUrl());
     }
 

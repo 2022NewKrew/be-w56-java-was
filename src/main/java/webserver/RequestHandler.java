@@ -29,6 +29,7 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
             HttpRequest httpRequest = HttpRequestUtils.parseInput(in);
+            if(httpRequest == null) return;
             HttpResponse httpResponse = HttpResponse.of();
             DispatcherServlet.getInstance().doService(httpRequest, httpResponse);
             if(httpResponse != null) {

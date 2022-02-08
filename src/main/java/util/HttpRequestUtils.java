@@ -89,6 +89,9 @@ public class HttpRequestUtils {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String requestLine = br.readLine();
         log.debug("request 내용: {}", requestLine);
+        if(requestLine == null) {
+            return null;
+        }
         String[] tokens = requestLine.split(BLANK);
         httpRequest.setMethod(HttpMethod.valueOf(tokens[0]));
         String[] targetTokens = parseTarget(tokens[1]);

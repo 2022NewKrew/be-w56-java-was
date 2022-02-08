@@ -29,6 +29,9 @@ public class HttpResponse {
     }
 
     public String getStatusLine() {
+        if(version == null || status == null) {
+            return "";
+        }
         return version.version() + BLANK + status.status();
     }
 
@@ -47,6 +50,9 @@ public class HttpResponse {
     }
 
     public int getBodyLength() {
+        if(body == null) {
+            return 0;
+        }
         return body.length;
     }
 

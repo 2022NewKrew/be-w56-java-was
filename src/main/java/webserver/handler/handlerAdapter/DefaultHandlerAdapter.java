@@ -25,6 +25,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import app.exception.CustomException;
 import app.http.HttpRequest;
 import app.http.HttpResponse;
 import app.http.HttpStatus;
@@ -53,7 +54,7 @@ public class DefaultHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, HandlerMethod handlerMethod) {
+    public void handle(HttpRequest request, HttpResponse response, HandlerMethod handlerMethod) throws CustomException {
         try {
             Method method = handlerMethod.getMethod();
             List<Object> arguments = getArgument(request, response, handlerMethod);
@@ -61,14 +62,16 @@ public class DefaultHandlerAdapter implements HandlerAdapter {
             if (arguments == null) {
                 path = (String) method.invoke(handlerMethod.getClazz().getConstructor().newInstance());
                 setResponse(request, response, path);
-                log.debug("arguments1: {}", path);
                 return;
             }
             path = (String) method.invoke(handlerMethod.getClazz().getConstructor().newInstance(), arguments.toArray());
-            log.debug("arguments2: {}", path);
             setResponse(request, response, path);
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException | NoSuchMethodException | InstantiationException e) {
-            log.error(e.getMessage());
+            log.error("error during handle: " + e.getClass().getName());
+            Throwable exception = e.getCause();
+            if(exception instanceof CustomException) {
+                throw (CustomException) exception;
+            }
         }
     }
 

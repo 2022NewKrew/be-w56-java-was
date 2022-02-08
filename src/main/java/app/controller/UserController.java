@@ -9,6 +9,7 @@ import app.annotation.Controller;
 import app.annotation.GetMapping;
 import app.annotation.PostMapping;
 import app.db.DataBase;
+import app.exception.UserNotFoundException;
 import app.http.HttpResponse;
 import app.model.user.User;
 
@@ -36,11 +37,13 @@ public class UserController {
 
     @PostMapping(value = "/user/login")
     public String login(Map<String, String> body, HttpResponse httpResponse) {
+        log.debug("UserController - login");
         String userId = body.get("userId");
         String password = body.get("password");
-        User user = DataBase.findUserById(userId);
-        if (user == null || !user.validatePassword(password)) {
-            log.debug("로그인 실패 {}", httpResponse.getCookie().cookieValue());
+        User user = DataBase.findUserById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        if (!user.validatePassword(password)) {
+            log.debug("로그인 실패, 비밀번호 불일치 {}", httpResponse.getCookie().cookieValue());
             return "redirect:/user/login_failed.html";
         }
         httpResponse.setCookie("logined", "true");
