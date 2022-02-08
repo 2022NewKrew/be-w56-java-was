@@ -2,7 +2,9 @@ package webserver.controller;
 
 import DTO.RequestHeader;
 import DTO.ResponseHeader;
+import db.DataBase;
 import model.User;
+
 import java.util.Map;
 
 public class MemberController implements Controller {
@@ -23,6 +25,7 @@ public class MemberController implements Controller {
             User user = User.join(requestParam);
             log.info("Create New User : {}", user);
             log.info("Url Changed: {}", requestUrl);
+            log.info("DB Changed: {}", DataBase.allIdsToString());
 
             responseHeader.setRedirect("/index.html");
             return responseHeader;

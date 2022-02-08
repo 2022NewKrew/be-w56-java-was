@@ -21,4 +21,13 @@ public class DataBase {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static String allIdsToString() {
+        final StringBuffer sb = new StringBuffer("DataBase{");
+        for(String uid : users.keySet()){
+            sb.append(uid+", ");
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 }

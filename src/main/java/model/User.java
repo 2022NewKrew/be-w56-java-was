@@ -2,6 +2,8 @@ package model;
 
 import java.util.Map;
 
+import static db.DataBase.addUser;
+
 public class User {
     private String userId;
     private String password;
@@ -24,6 +26,7 @@ public class User {
 
     public static User join(Map<String, String> userMap){
         User user = new User(userMap);
+        addUser(user);
         return user;
     }
 
