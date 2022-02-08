@@ -3,20 +3,18 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
+import util.RequestParser;
 
-import static util.HttpRequestUtils.parseQueryString;
 import static webserver.RequestMapper.requestMapping;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -29,26 +27,11 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader( new InputStreamReader(in));
-            String requestLine = br.readLine();
-            log.debug("REQ: {}", requestLine);
-
-            // Request Header 첫 번째 요소 추출
-            List<String> requestElement = List.of(requestLine.split(" "));
-            String requestMethod = requestElement.get(0);
-            String requestUrl = requestElement.get(1);
-            String clientHttpVersion = requestElement.get(2);
-            log.debug("requestMethod : {}", requestMethod);
-            log.debug("requestUrl : {}", requestUrl);
-            log.debug("clientHttpVersion : {}", clientHttpVersion);
+            RequestParser requestParser = new RequestParser(br);
+            Map<String, String> requestMap = requestParser.getRequestMap();
 
             // Request Method에 맞는 동작 & template 반환
-            String templatePath = requestMapping(requestMethod, requestUrl);
-
-            // 모든 Request Header 출력
-            String line;
-            while (!(line = br.readLine()).equals("")) {
-                log.debug("other: {}", line);
-            }
+            String templatePath = requestMapping(requestMap);
 
             // Response 메시지 구성
             DataOutputStream dos = new DataOutputStream(out);
