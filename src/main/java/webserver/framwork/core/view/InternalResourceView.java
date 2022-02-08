@@ -1,7 +1,7 @@
 package webserver.framwork.core.view;
 
 import webserver.framwork.core.Model;
-import webserver.framwork.core.TemplateEngine;
+import webserver.framwork.core.templateengine.TemplateEngine;
 import webserver.framwork.http.HttpClientErrorException;
 import webserver.framwork.http.response.HttpResponse;
 import webserver.framwork.http.response.HttpStatus;
@@ -9,6 +9,7 @@ import webserver.framwork.http.response.HttpStatus;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 public class InternalResourceView implements View {
     private static final String HTML_CONTENT_TYPE = "text/html";
@@ -28,7 +29,8 @@ public class InternalResourceView implements View {
     @Override
     public void render(HttpResponse response) {
         try {
-            byte[] viewBody = Files.readAllBytes(new File(this.location).toPath());
+            List<String> viewBody = Files.readAllLines(new File(this.location).toPath());
+
             response.setBody(TemplateEngine.render(viewBody, model));
             response.addHeaderValue("Content-Type", getContentType());
             response.setStatus(HttpStatus.Ok);

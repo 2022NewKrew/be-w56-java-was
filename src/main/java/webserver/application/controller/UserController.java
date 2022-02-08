@@ -9,6 +9,7 @@ import webserver.framwork.http.request.HttpRequest;
 import webserver.framwork.http.response.HttpResponse;
 import webserver.framwork.http.response.HttpStatus;
 
+import java.util.List;
 import java.util.Map;
 
 public class UserController {
@@ -16,7 +17,8 @@ public class UserController {
 
     private final UserService userService = UserService.getInstance();
 
-    private UserController(){}
+    private UserController() {
+    }
 
     public static UserController getInstance() {
         return instance;
@@ -53,5 +55,17 @@ public class UserController {
         response.setStatus(HttpStatus.Unauthorized);
         response.setCookie("logined", "false");
         return "user/login_failed";
+    }
+
+    @RequestMapping(value = "/user/list.html", method = HttpMethod.GET)
+    public String getUserList(HttpRequest request, HttpResponse response, Model model) {
+        String loginCookie = request.getCookie("logined");
+        if (!loginCookie.isEmpty() && loginCookie.equals("true")) {
+            List<User> users = userService.getAllUser();
+            model.addAttribute("users", users);
+            return "user/list";
+        }
+
+        return "user/login";
     }
 }

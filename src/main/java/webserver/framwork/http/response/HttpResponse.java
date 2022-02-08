@@ -2,6 +2,8 @@ package webserver.framwork.http.response;
 
 import webserver.framwork.http.Header;
 
+import java.nio.charset.StandardCharsets;
+
 public class HttpResponse {
     private final Header header = new Header();
     private HttpStatus status = HttpStatus.Ok;
@@ -19,7 +21,11 @@ public class HttpResponse {
         return body;
     }
 
-    public void setBody(byte[] body) {
+    public void setBody(String body) {
+        this.body = body.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public void setBody(byte[] body){
         this.body = body;
     }
 
