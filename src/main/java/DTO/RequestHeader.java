@@ -1,6 +1,7 @@
 package DTO;
 
 import util.HttpRequestUtils.Pair;
+import util.SessionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,15 +75,14 @@ public class RequestHeader {
         }
         isGet = false;
     }
-    public void setCookie(String name, String value){
-        String cookie = name+"="+value;
-        headerList.put("Cookie",cookie);
-    }
 
-
-    public void removeCookie(String name, String value){
-        String cookie = name + "=" + "removed" +"; Max-Age=0;";
-        headerList.put("Cookie", cookie);
+    public boolean isLogin(){
+        String cookie = headerList.get("Cookie");
+        String sid = SessionUtils.getSessionId(cookie);
+        if (sid != null){
+            return true;
+        }
+        return false;
     }
 
 

@@ -4,7 +4,7 @@ import db.SessionDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static util.RandomUtils.getRandomID;
+import static util.SessionUtils.getRandomID;
 
 public class Session {
     private static final Logger log = LoggerFactory.getLogger(Session.class);

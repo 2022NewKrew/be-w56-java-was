@@ -15,4 +15,8 @@ public class SessionDb {
         return sid;
     }
 
+    public static boolean isExist(){
+        return (session != null);
+    }
+
 }

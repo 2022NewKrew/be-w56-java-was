@@ -5,9 +5,7 @@ import DTO.RequestHeader;
 import DTO.ResponseHeader;
 import Service.UserService;
 import db.DataBase;
-import db.SessionDb;
 import model.User;
-import webserver.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,11 +91,6 @@ public class MemberController implements Controller {
 
     static class LogoutController implements Controller{
         final private String url = "/user/logout";
-        final static private Map<String, String> cookieOptions = new HashMap<>();
-        static {
-            cookieOptions.put("Path","/");
-        }
-
 
         @Override
         public ModelAndView getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){

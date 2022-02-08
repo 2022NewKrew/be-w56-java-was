@@ -1,5 +1,6 @@
 package Service;
 
+import DTO.RequestHeader;
 import db.DataBase;
 import db.SessionDb;
 import model.User;
@@ -24,12 +25,16 @@ public class UserService {
         if (! user.validateUser(userMap.get("password"))){
             throw new IllegalArgumentException("No matching PW !");
         }
-        String sessionId = Session.create(uid);
-        return sessionId;
+
+        return Session.create(uid);
 
     }
 
     public static String logout(){
         return SessionDb.removeSession();
+    }
+
+    public static boolean checkLogin(RequestHeader requestHeader){ // true: logined
+        return (SessionDb.isExist() && requestHeader.isLogin());
     }
 }

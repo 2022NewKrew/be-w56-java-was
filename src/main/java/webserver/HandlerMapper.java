@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import webserver.controller.Controller;
 import webserver.controller.MemberController;
 import webserver.controller.StaticController;
+import webserver.controller.UserListController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class HandlerMapper {
 
     static void initController(){
         Controller memberController = new MemberController();
+        Controller userListController = new UserListController();
         memberController.map(controllerList);
     }
 
