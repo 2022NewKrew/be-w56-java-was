@@ -7,14 +7,37 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Map;
+import java.util.*;
 
-public class RequestParser {
+public class RequestFactory {
     public static String DEFAULT_RESOURCE = "/index.html";
+    private static RequestFactory requestFactory;
 
-    private RequestParser() {}
+    private RequestFactory() {}
 
-    public static String inputStreamToString(InputStream in) throws IOException {
+    static{
+        requestFactory = new RequestFactory();
+    }
+
+    public static Request getRequest(InputStream in) throws IOException {
+        String[] requestString = requestFactory.inputStreamToString(in).split("START_BODY");
+
+        List<String> requestHeader = Arrays.asList(requestString[0].split("\n"));
+        List<String> requestBody = requestString.length > 1 ? new ArrayList<>(Arrays.asList(requestString[1])) : new ArrayList<>(Arrays.asList(""));
+        HttpCookie cookie = new HttpCookie(requestHeader);
+
+        return new Request.Builder().requestHeader(requestHeader)
+                .requestBody(requestBody)
+                .path(requestFactory.parsePath(requestHeader))
+                .method(requestFactory.parseMethod(requestHeader))
+                .elementsPutAll(requestFactory.parseElementsFromGet(requestHeader))
+                .elementsPutAll(requestFactory.parseElementsFromPost(requestBody))
+                .cookie(cookie)
+                .session(HttpSessions.getSession(cookie.getValue("sessionId")))
+                .build();
+    }
+
+    private String inputStreamToString(InputStream in) throws IOException {
         StringBuilder sb = new StringBuilder();
         String str;
 
@@ -35,8 +58,8 @@ public class RequestParser {
         return sb.toString();
     }
 
-    public static String parsePath(Request request){
-        String[] strArray = request.getRequestHeader().get(0).split(" "); //첫번째 줄을 가져옴.
+    private String parsePath(List<String> requestHeader){
+        String[] strArray = requestHeader.get(0).split(" "); //첫번째 줄을 가져옴.
         String path = strArray[1];
 
         //path에서 get방식의 elements들이 전달되는경우 '?' 까지 substring으로 만든다.
@@ -54,8 +77,8 @@ public class RequestParser {
         return path;
     }
 
-    public static HttpMethod parseMethod(Request request){
-        String[] strArray =  request.getRequestHeader().get(0).split(" ");
+    private HttpMethod parseMethod(List<String> requestHeader){
+        String[] strArray =  requestHeader.get(0).split(" ");
         String methodStr = strArray[0];
 
         switch (methodStr){
@@ -72,21 +95,21 @@ public class RequestParser {
         }
     }
 
-    public static Map<String, String> parseElementsFromGet(Request request){
-        String requestLine = request.getRequestHeader().get(0);
+    private Map<String, String> parseElementsFromGet(List<String> requestHeader){
+        String requestLine = requestHeader.get(0);
 
         //'?' 이후 파싱.
         String elementSubString = divideElementSubString(requestLine);
         return HttpRequestUtils.parseQueryString(elementSubString);
     }
 
-    public static Map<String, String> parseElementsFromPost(Request request){
-        String requestLine = request.getRequestBody().get(0);
+    private Map<String, String> parseElementsFromPost(List<String> requestBody){
+        String requestLine = requestBody.get(0);
         return HttpRequestUtils.parseQueryString(requestLine);
     }
 
 
-    private static String divideElementSubString(String lineStr){
+    private String divideElementSubString(String lineStr){
 
         //parse substring after the first question mark.
         for(int i = 0 ; i < lineStr.length() ; i++){

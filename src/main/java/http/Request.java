@@ -1,12 +1,7 @@
 package http;
 
-import util.HttpRequestUtils;
-import util.IOUtils;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class Request {
@@ -18,20 +13,14 @@ public class Request {
     private HttpCookie cookie;
     private HttpSession session;
 
-    public Request(InputStream in) throws IOException {
-        String[] requestString = RequestParser.inputStreamToString(in).split("START_BODY");
-
-        this.requestHeader = Arrays.asList(requestString[0].split("\n"));
-        this.requestBody = (requestString.length > 1 ? new ArrayList<>(Arrays.asList(requestString[1])) : new ArrayList<>(Arrays.asList("")));
-        this.elements = new HashMap<>();
-
-        this.path = RequestParser.parsePath(this);
-        this.method = RequestParser.parseMethod(this);
-        this.elements.putAll(RequestParser.parseElementsFromGet(this));
-        this.elements.putAll(RequestParser.parseElementsFromPost(this));
-
-        this.cookie = new HttpCookie(this.requestHeader);
-        this.session = HttpSessions.getSession(this.cookie.getValue("sessionId"));
+    private Request(Builder builder){
+        this.requestHeader = builder.requestHeader;
+        this.requestBody = builder.requestBody;
+        this.path = builder.path;
+        this.method = builder.method;
+        this.elements = builder.elements;
+        this.cookie = builder.cookie;
+        this.session = builder.session;
     }
 
     public List<String> getRequestHeader() {
@@ -77,5 +66,58 @@ public class Request {
             sb.append(line + "\n");
         }
         return sb.toString();
+    }
+
+    public static class Builder {
+        private List<String> requestHeader;
+        private List<String> requestBody;
+        private String path;
+        private HttpMethod method;
+        private Map<String, String> elements;
+        private HttpCookie cookie;
+        private HttpSession session;
+
+
+        public Builder requestHeader(List<String> requestHeader) {
+            this.requestHeader = requestHeader;
+            return this;
+        }
+
+        public Builder requestBody(List<String> requestBody) {
+            this.requestBody = requestBody;
+            return this;
+        }
+
+        public Builder path(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Builder method(HttpMethod method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder elementsPutAll(Map<String, String> elements) {
+            if(this.elements == null){
+                this.elements = new HashMap<>();
+            }
+            this.elements.putAll(elements);
+            return this;
+        }
+
+        public Builder cookie(HttpCookie cookie) {
+            this.cookie = cookie;
+            return this;
+        }
+
+        public Builder session(HttpSession session) {
+            this.session = session;
+            return this;
+        }
+
+        public Request build() {
+            return new Request(this);
+        }
     }
 }

@@ -6,6 +6,8 @@ import java.nio.file.Files;
 
 import controller.ControllerManager;
 import http.Request;
+import http.RequestFactory;
+import http.RequestType;
 import http.Response;
 import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
@@ -27,7 +29,8 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
-            Request request = new Request(in);
+            //Request request = new Request(in);
+            Request request = RequestFactory.getRequest(in);
             String path = ControllerManager.executeController(request);
             Response response = new Response(request, path, out);
             response.send();
