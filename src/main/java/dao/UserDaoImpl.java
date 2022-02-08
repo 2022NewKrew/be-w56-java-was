@@ -48,10 +48,10 @@ public class UserDaoImpl implements UserDao {
                 UserDBConstants.COLUMN_EMAIL);
 
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setString(1, user.getUserId());
-        preparedStatement.setString(2, user.getPassword());
-        preparedStatement.setString(3, user.getName());
-        preparedStatement.setString(4, user.getEmail());
+        preparedStatement.setString(UserDBConstants.COLUMN_INDEX_USER_ID, user.getUserId());
+        preparedStatement.setString(UserDBConstants.COLUMN_INDEX_PASSWORD, user.getPassword());
+        preparedStatement.setString(UserDBConstants.COLUMN_INDEX_EMAIL, user.getName());
+        preparedStatement.setString(UserDBConstants.COLUMN_INDEX_NAME, user.getEmail());
 
         int count = preparedStatement.executeUpdate();
 
@@ -73,10 +73,10 @@ public class UserDaoImpl implements UserDao {
 
         if (rs.next()) {
             return new User(
-                    rs.getString(2),
-                    rs.getString(3),
-                    rs.getString(4),
-                    rs.getString(5)
+                    rs.getString(UserDBConstants.COLUMN_USER_ID),
+                    rs.getString(UserDBConstants.COLUMN_PASSWORD),
+                    rs.getString(UserDBConstants.COLUMN_NAME),
+                    rs.getString(UserDBConstants.COLUMN_EMAIL)
             );
         } else {
             return null;
@@ -92,10 +92,10 @@ public class UserDaoImpl implements UserDao {
 
         while (rs.next()) {
             userList.add(new User(
-                    rs.getString(2),
-                    rs.getString(3),
-                    rs.getString(4),
-                    rs.getString(5)
+                    rs.getString(UserDBConstants.COLUMN_USER_ID),
+                    rs.getString(UserDBConstants.COLUMN_PASSWORD),
+                    rs.getString(UserDBConstants.COLUMN_NAME),
+                    rs.getString(UserDBConstants.COLUMN_EMAIL)
             ));
         }
 

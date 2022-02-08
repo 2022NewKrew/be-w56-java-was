@@ -2,7 +2,6 @@ package controller;
 
 import dao.UserDao;
 import dao.UserDaoImpl;
-import db.DataBase;
 import http.HttpStatus;
 import http.request.HttpRequest;
 import http.request.HttpRequestBody;
@@ -22,7 +21,6 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 /**
