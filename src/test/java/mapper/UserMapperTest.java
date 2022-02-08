@@ -3,6 +3,7 @@ package mapper;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import dao.UserDao;
 import dto.UserDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,34 @@ class UserMapperTest {
         assertThat(testDto.getUserId()).isEqualTo(user.getUserId());
         assertThat(testDto.getName()).isEqualTo(user.getName());
         assertThat(testDto.getEmail()).isEqualTo(user.getEmail());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getUsers")
+    void usersToDtos(List<User> users) {
+        UserMapper userMapper = UserMapper.instance;
+        List<UserDto> userDtos = userMapper.usersToDtos(users);
+
+        User firstUser = users.get(0);
+        UserDto firstDto = userDtos.get(0);
+
+        assertThat(firstUser.getUserId()).isEqualTo(firstDto.getUserId());
+        assertThat(users.size()).isEqualTo(userDtos.size());
+    }
+
+    private static Stream<List<User>> getUsers() {
+        List<User> users = new ArrayList<>();
+
+        for(int i = 0 ; i < 100; i++) {
+            users.add(
+                    new User(
+                            "userId" + i,
+                            "password" + i,
+                            "name" + i,
+                            "email" + i));
+        }
+
+        return Stream.of(users);
     }
 
     @ParameterizedTest

@@ -14,6 +14,8 @@ public interface UserMapper {
 
     UserDto userToDto(User user);
 
+    List<UserDto> usersToDtos(List<User> users);
+
     List<User> documentsToUsers(List<Document> documents);
 
     default Document userToDocument(User user) {
