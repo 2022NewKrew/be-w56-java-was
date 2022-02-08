@@ -5,14 +5,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class TemplateEngine {
+    private static final String OPEN_OBJECT = "{{#";
+    private static final String CLOSE_OBJECT = "{{/";
+    private static final String OPEN_FIELD = "{{";
+    private static final String CLOSE = "}}";
+
     public byte[] render(ModelAndView mv, byte[] body) throws IllegalAccessException {
         String bodyString = new String(body);
-        while(bodyString.contains("{{#")){
-            String key = bodyString.substring(bodyString.indexOf("{{#")+3, bodyString.indexOf("}}"));
-            int start = bodyString.indexOf("{{#"+key+"}}");
-            int end = bodyString.indexOf("{{/"+key+"}}");
-            String stringToReplace = bodyString.substring(start+key.length()+5, end);
-            bodyString = bodyString.substring(0, start) + findReplacedString(stringToReplace, mv.getAttribute(key)) + bodyString.substring(end+key.length()+5);
+        while(bodyString.contains(OPEN_OBJECT)){
+            String key = bodyString.substring(bodyString.indexOf(OPEN_OBJECT)+OPEN_OBJECT.length(), bodyString.indexOf(CLOSE));
+            int start = bodyString.indexOf(OPEN_OBJECT+key+CLOSE);
+            int end = bodyString.indexOf(CLOSE_OBJECT+key+CLOSE);
+            String stringToReplace = bodyString.substring(start+key.length()+OPEN_OBJECT.length()+CLOSE.length(), end);
+            bodyString = bodyString.substring(0, start) + findReplacedString(stringToReplace, mv.getAttribute(key)) + bodyString.substring(end+key.length()+CLOSE_OBJECT.length()+CLOSE.length());
         }
         return bodyString.getBytes(StandardCharsets.UTF_8);
     }
@@ -34,9 +39,9 @@ public class TemplateEngine {
         for(Object object : (List<?>)value){
             Map<String,Object> fieldMap = findFieldMap(object);
             String loopString = stringToReplace;
-            while(loopString.contains("{{")){
-                String key = loopString.substring(loopString.indexOf("{{")+2, loopString.indexOf("}}"));
-                loopString = loopString.substring(0, loopString.indexOf("{{")) + fieldMap.get(key) + loopString.substring(loopString.indexOf("}}")+2);
+            while(loopString.contains(OPEN_FIELD)){
+                String key = loopString.substring(loopString.indexOf(OPEN_FIELD)+OPEN_FIELD.length(), loopString.indexOf(CLOSE));
+                loopString = loopString.substring(0, loopString.indexOf(OPEN_FIELD)) + fieldMap.get(key) + loopString.substring(loopString.indexOf(CLOSE)+CLOSE.length());
             }
             replacedString.append(loopString);
         }
