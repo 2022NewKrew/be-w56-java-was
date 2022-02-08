@@ -6,26 +6,23 @@ import com.google.common.collect.Maps;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class HttpRequestUtils {
-    /**
-     * @param queryString URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
+    private final static String TEMPLATE_PATTERN = "\\{\\{.*}}";
+
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");
     }
 
-    /**
-     * @param cookies 값은 name1=value1; name2=value2 형식임
-     * @return
-     */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
     }
@@ -57,8 +54,9 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
-    public static Map<String, String> parseReponseLine(String requestLine) {
+    public static Map<String, String> parseRequestLine(String requestLine) {
         Map<String, String> ret = new HashMap<>();
+        System.out.println(requestLine);
         String[] parsed = requestLine.split(" ");
         String[] urlParsed = parsed[1].split("\\?");
         if (urlParsed.length == 2) {
@@ -84,62 +82,54 @@ public class HttpRequestUtils {
         return headers;
     }
 
-    public static byte[] matchURL(String requestURL) throws IOException {
+    public static byte[] getBodyData(String requestURL) throws IOException {
+
         File file = new File("./webapp" + requestURL);
         if (file.exists()) {
-            return Files.readAllBytes(file.toPath());
+            String fileString = Files.readString(file.toPath());
+            String fileName = file.getName();
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+            if (extension.equals("html")) {
+                Matcher m = Pattern.compile(TEMPLATE_PATTERN).matcher(fileString);
+                while (m.find()) {
+                    String convertedString = convert2Template(m.group());
+                    fileString = fileString.replaceFirst(TEMPLATE_PATTERN, convertedString);
+                }
+            }
+
+            return fileString.getBytes(StandardCharsets.UTF_8);
         }
+
         return Files.readAllBytes(new File("./webapp/404.html").toPath());
     }
 
-    public static class Pair {
-        String key;
-        String value;
-
-        Pair(String key, String value) {
-            this.key = key.trim();
-            this.value = value.trim();
+    public static String getStatusCode(String requestURL) {
+        File file = new File("./webapp" + requestURL);
+        if (file.exists()) {
+            return "200";
         }
 
-        public String getKey() {
-            return key;
+        return "404";
+    }
+
+    private static String convert2Template(String template) throws IOException {
+        String innerStr = template.substring(2, template.length() - 2).trim();
+
+        System.out.println("안의 문자 : " + innerStr);
+
+        if (innerStr.startsWith(">")) {
+            String fileName = innerStr.substring(1);
+            System.out.println("파일 이름 : " + fileName);
+            File file = new File("./webapp/" + fileName);
+            System.out.println("파일 생성");
+            String fileString = Files.readString(file.toPath());
+            System.out.println(fileString);
+            return fileString;
         }
 
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            Pair other = (Pair) obj;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            if (value == null) {
-                return other.value == null;
-            } else return value.equals(other.value);
-        }
-
-        @Override
-        public String toString() {
-            return "Pair [key=" + key + ", value=" + value + "]";
-        }
+        return "";
     }
 }
+
+
