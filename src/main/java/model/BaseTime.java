@@ -25,6 +25,17 @@ public class BaseTime {
         }
     }
 
+    private void checkCreateTime(LocalDateTime createTime) {
+        if(createTime == null) {
+            throw new IllegalArgumentException("illegal CreateTime");
+        }
+    }
+    private void checkModifiedTime(LocalDateTime modifiedTime) {
+        if(modifiedTime == null) {
+            throw new IllegalArgumentException("illegal ModifiedTime");
+        }
+    }
+
     public LocalDateTime getCreateTime() {
         return createTime;
     }
