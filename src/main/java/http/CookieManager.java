@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CookieManager {
     private static String KEY_VALUE_DELIMITER = "=";
     private static Map<String, List<String>> updateBuffer; //response header 에서 추가될 쿠키를 저장.
 
     static{
-        updateBuffer = new HashMap<>();
+        updateBuffer = new ConcurrentHashMap<>();
     }
 
     public static void addNewCookie(String sessionId, String key, String value){
