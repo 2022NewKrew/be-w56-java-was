@@ -14,6 +14,11 @@ public class MemberController {
         return HttpResponse.httpStatus(HttpStatus.OK).setView("/index.html");
     }
 
+    @GetMapping("/user/login.html")
+    public HttpResponse login() {
+        return HttpResponse.httpStatus(HttpStatus.OK).setView("/user/login.html");
+    }
+
     @GetMapping("/user/form.html")
     public HttpResponse form() {
         return HttpResponse.httpStatus(HttpStatus.OK).setView("/user/form.html");
