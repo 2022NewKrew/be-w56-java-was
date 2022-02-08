@@ -4,7 +4,16 @@ import context.Context;
 import webserver.request.Request;
 import webserver.response.Response;
 
-public class PostHandler implements Handler {
+class PostHandler implements Handler {
+
+    private static final PostHandler postHandler = new PostHandler();
+
+    private PostHandler() {
+    }
+
+    public static PostHandler getInstance() {
+        return postHandler;
+    }
 
     @Override
     public Response handle(Request request) throws Exception {

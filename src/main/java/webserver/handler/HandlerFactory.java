@@ -22,7 +22,7 @@ public final class HandlerFactory {
 
     private static Handler createGetHandler(Request request) throws Exception {
         if (existStaticFile(request.getUri())) {
-            return new GetStaticFileHandler();
+            return GetStaticFileHandler.getInstance();
         }
         throw new InvalidRequestException(request.getUri() + ": 잘못된 경로임");
     }
@@ -34,7 +34,7 @@ public final class HandlerFactory {
 
     private static Handler createPostHandler(Request request) throws Exception {
         if (Context.existsPostMappingUri(request.getUri())) {
-            return new PostHandler();
+            return PostHandler.getInstance();
         }
         throw new InvalidRequestException("uri가 유효하지 않음");
     }
