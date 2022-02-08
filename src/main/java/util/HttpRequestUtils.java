@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
+    private static final int REQUEST_HEADER_URL_PATH_INDEX = 1;
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -105,5 +106,9 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
+    }
+
+    public static String getUrlPath(String httpRequestHeader) {
+        return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
     }
 }
