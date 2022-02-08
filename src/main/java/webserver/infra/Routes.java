@@ -6,6 +6,7 @@ import controller.BaseController;
 import controller.StaticResourceController;
 import controller.auth.LoginController;
 import controller.auth.SignupController;
+import controller.user.UserListController;
 import webserver.http.HttpMethod;
 
 public class Routes {
@@ -22,6 +23,7 @@ public class Routes {
         // Request Mapping to Controller
         routes.put(HttpMethod.POST, "/users", new SignupController());
         routes.put(HttpMethod.POST, "/user/login", new LoginController());
+        routes.put(HttpMethod.GET, "/user/list.html", new UserListController());
     }
 
     public BaseController getController(HttpMethod httpMethod, String url) {
