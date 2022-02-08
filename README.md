@@ -17,3 +17,9 @@
 ### 추가 구현 사항
 - @Controller, @RequestMapping을 구현해 사용
 - 요청 url에 따라 적절한 메소드 호출 및 응답이 가능하도록 ControllerHandler 개발
+
+## 3단계
+### 요구사항
+- [X] POST로 회원 가입 구현
+  - [X] http://localhost:8080/user/form.html 파일의 form 태그 method를 get에서 post로 수정한 후 회원가입 기능이 정상적으로 동작하도록 구현한다.
+  - [X] 가입 후 페이지 이동을 위해 redirection 기능을 구현한다.
