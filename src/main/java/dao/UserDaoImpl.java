@@ -101,4 +101,14 @@ public class UserDaoImpl implements UserDao {
 
         return userList;
     }
+
+    public void delete(final String userId) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE %s = \"%s\"",
+                UserDBConstants.TABLE_NAME,
+                UserDBConstants.COLUMN_USER_ID,
+                userId);
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(sql);
+    }
 }
