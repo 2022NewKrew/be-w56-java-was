@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingFormatArgumentException;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -80,15 +79,19 @@ public class TemplateEngine {
     }
 
     private Object getItem(String name, Object context, Map<String, Object> values) {
+        if (name.contains(".")) {
+            List<String> split = List.of(name.split("\\."));
+            String newName = String.join("", split.subList(1, split.size()));
+            Object newContext = getItem(split.get(0), context, values);
+            return getItem(newName, newContext, values);
+        }
         boolean valueInMap = values.containsKey(name);
         boolean valueInContext = hasField(context, name);
         if (!valueInMap && !valueInContext) {
             throw new MissingFormatArgumentException(name);
         }
         if (valueInContext) {
-            return Optional.ofNullable(getField(context, name))
-                    .map(Object::toString)
-                    .orElse(null);
+            return getField(context, name);
         }
         return values.get(name);
     }

@@ -79,7 +79,7 @@ public class UserHandler {
         try {
             String content = Files.readString(file.toPath());
             Map<String, Object> values = Map.of(
-                    "users", database.findAll()
+                    "users", database.findAllUsers()
             );
             String filled = new TemplateEngine().render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);

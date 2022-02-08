@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -57,6 +58,16 @@ class TemplateEngineTest {
                                 "foo", "abc"
                         ),
                         "xyabcz4z5z6yabcz4z5z6yabcz4z5z6"
+                ),
+                Arguments.of(
+                        "{{#list}}{{foo}}{{bar}}{{/list}}",
+                        Map.of("list", Collections.emptyList()),
+                        ""
+                ),
+                Arguments.of(
+                        "{{#list}}{{x.foo}}{{/list}}",
+                        Map.of("list", List.of(new Wrapper<>(new FooContainer(1, "a")))),
+                        "1"
                 )
         );
     }
@@ -69,6 +80,15 @@ class TemplateEngineTest {
         public FooContainer(int foo, String bar) {
             this.foo = foo;
             this.bar = bar;
+        }
+    }
+
+    private static class Wrapper<T> {
+
+        private final T x;
+
+        public Wrapper(T x) {
+            this.x = x;
         }
     }
 }

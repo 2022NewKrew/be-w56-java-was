@@ -1,11 +1,12 @@
 package db;
 
+import model.Post;
 import model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webserver.PropertiesLoader;
+import util.PropertiesLoader;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -34,6 +35,7 @@ class DatabaseTest {
 
     @AfterEach
     void tearDown() {
+        template.update("DELETE FROM posts", Collections.emptyList());
         template.update("DELETE FROM users", Collections.emptyList());
     }
 
@@ -80,11 +82,67 @@ class DatabaseTest {
                 List.of("user_id3", "password", "name", "email")
         );
 
-        Collection<User> users = subject.findAll();
+        Collection<User> users = subject.findAllUsers();
 
         assertEquals(
                 List.of("user_id1", "user_id2", "user_id3"),
                 users.stream().map(User::getUserId).collect(Collectors.toList())
+        );
+    }
+
+    @Test
+    void addPost() {
+        UpdateResult result = template.update(
+                "INSERT INTO users (userId, password, name, email) VALUES (?, ?, ?, ?)",
+                List.of("user_id", "password", "name", "email")
+        );
+        template.update(
+                "INSERT INTO posts (authorId, title, content) VALUES (?, ?, ?)",
+                List.of(result.getKey(), "title", "content")
+        );
+
+        subject.addPost(
+                new Post.Builder()
+                        .author(new User(result.getKey(), "user_id", "password", "name", "email"))
+                        .title("title")
+                        .content("content")
+                        .build()
+        );
+
+        assertEquals(
+                "title",
+                template.queryForObject(
+                        "SELECT * FROM posts INNER JOIN users ON users.id = posts.authorId WHERE posts.authorId = ?",
+                        List.of(result.getKey()),
+                        new PostRowMapper()
+                ).getTitle()
+        );
+    }
+
+    @Test
+    void findAllPosts() {
+        UpdateResult result = template.update(
+                "INSERT INTO users (userId, password, name, email) VALUES (?, ?, ?, ?)",
+                List.of("user_id", "password", "name", "email")
+        );
+        template.update(
+                "INSERT INTO posts (authorId, title, content) VALUES (?, ?, ?)",
+                List.of(result.getKey(), "title1", "content")
+        );
+        template.update(
+                "INSERT INTO posts (authorId, title, content) VALUES (?, ?, ?)",
+                List.of(result.getKey(), "title2", "content")
+        );
+        template.update(
+                "INSERT INTO posts (authorId, title, content) VALUES (?, ?, ?)",
+                List.of(result.getKey(), "title3", "content")
+        );
+
+        List<Post> posts = subject.findAllPosts();
+
+        assertEquals(
+                List.of("title1", "title2", "title3"),
+                posts.stream().map(Post::getTitle).collect(Collectors.toList())
         );
     }
 }

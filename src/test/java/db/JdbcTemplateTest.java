@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webserver.PropertiesLoader;
+import util.PropertiesLoader;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -31,6 +31,7 @@ class JdbcTemplateTest {
 
     @AfterEach
     void tearDown() {
+        subject.update("DELETE FROM posts", Collections.emptyList());
         subject.update("DELETE FROM users", Collections.emptyList());
     }
 
