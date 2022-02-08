@@ -59,13 +59,13 @@ public enum RequestMappingInfo {
             log.info("user login: {}", user);
             byte[] body = StaticResourceProvider.getBytesFromPath("/index.html");
 
-            HttpCookie cookie = new HttpCookie("auth", String.valueOf(user.getId()));
-            cookie.setPath("/");
+            Cookie authCookie = new Cookie("auth", String.valueOf(user.getId()));
+            authCookie.setPath("/");
 
             return HttpResponse.builder(dos)
                     .status(HttpStatus.FOUND)
                     .header("Location", "/")
-                    .cookie(cookie)
+                    .cookie(authCookie)
                     .body(body)
                     .build();
         }
@@ -73,9 +73,8 @@ public enum RequestMappingInfo {
     USER_LIST("/user/list", HttpMethod.GET) {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
-            Map<String, HttpCookie> cookies = request.cookies();
-            HttpCookie auth = cookies.get("auth");
-            if (auth == null) {
+            HttpCookie cookies = request.cookies();
+            if (!cookies.containsCookie("auth")) {
                 throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
             }
             Iterable<User> users = userRepository.findAll();
@@ -90,12 +89,11 @@ public enum RequestMappingInfo {
     NEW_MEMO("/memo/create", HttpMethod.POST) {
         @Override
         public HttpResponse handle(HttpRequest request, DataOutputStream dos) throws Exception {
-            Map<String, HttpCookie> cookies = request.cookies();
-            HttpCookie auth = cookies.get("auth");
-            if (auth == null) {
-                throw new UserUnauthorizedException("에러: 접근할 수 없습니다.");
-            }
-            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), auth.getValue());
+            HttpCookie cookies = request.cookies();
+            String auth = cookies.orElseThrow("auth",
+                    () -> new UserUnauthorizedException("에러: 접근할 수 없습니다."));
+
+            MemoCreateRequest memoCreateRequest = MemoCreateRequest.from(request.body(), auth);
             Memo memo = memoRepository.save(memoCreateRequest.toEntity());
             log.info("New memo created : {}", memo);
 
