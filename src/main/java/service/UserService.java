@@ -4,8 +4,18 @@ import db.DataBase;
 import model.User;
 
 public class UserService {
+    private static UserService instance;
 
-    public static void create(User user) {
+    private UserService() {}
+
+    public static synchronized UserService getInstance() {
+        if(instance == null) {
+            instance = new UserService();
+        }
+        return instance;
+    }
+
+    public void create(User user) {
         DataBase.addUser(user);
     }
 }

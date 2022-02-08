@@ -11,25 +11,25 @@ public class RequestUri {
     private static final String PARAM_SEPARATOR = "=";
     private static final String PATH_SEPARATOR = "/";
 
-    private final String url;
+    private final String path;
     private final Map<String, String> params;
     private final List<String> pathVariables;
 
-    private RequestUri(String url) {
-        this(url, new HashMap<>(), new ArrayList<>());
+    private RequestUri(String path) {
+        this(path, new HashMap<>(), new ArrayList<>());
     }
 
-    public RequestUri(String url, Map<String, String> params, List<String> pathVariables) {
-        this.url = url;
+    public RequestUri(String path, Map<String, String> params, List<String> pathVariables) {
+        this.path = path;
         this.params = params;
         this.pathVariables = pathVariables;
     }
 
     public static RequestUri from(String uri) {
         List<String> urlAndQueries = List.of(uri.split(URI_SEPARATOR));
-        String url = urlAndQueries.get(0);
+        String path = urlAndQueries.get(0);
 
-        if (!isContainQueries(urlAndQueries)) return new RequestUri(url);
+        if (!isContainQueries(urlAndQueries)) return new RequestUri(path);
 
         Map<String, String> params = new HashMap<>();
         List<String> pathVariables = new ArrayList<>();
@@ -41,7 +41,7 @@ public class RequestUri {
                 params.put(keyAndValue.get(0), value);
             }
         }
-        return new RequestUri(url, params, pathVariables);
+        return new RequestUri(path, params, pathVariables);
 
     }
 
@@ -61,8 +61,8 @@ public class RequestUri {
         return urlAndQueries.size() > 1;
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
     public Map<String, String> getParams() {
@@ -73,10 +73,13 @@ public class RequestUri {
         return pathVariables;
     }
 
+    public String getParam(String key) {
+        return params.containsKey(key) ? params.get(key) : null;
+    }
     @Override
     public String toString() {
         return "RequestUri{" +
-                "url='" + url + '\'' +
+                "path='" + path + '\'' +
                 ", params=" + params +
                 ", pathVariables=" + pathVariables +
                 '}';

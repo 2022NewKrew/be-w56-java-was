@@ -1,16 +1,23 @@
 package webserver.response;
 
-import java.util.Map;
-
 public class ResponseHeader {
-    private final Map<String, String> headers;
+    private final String contentType;
+    private final int contentLength;
 
-    public ResponseHeader(Map<String, String> headers) {
-        this.headers = headers;
+    private ResponseHeader(String contentType, int contentLength) {
+        this.contentType = contentType;
+        this.contentLength = contentLength;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public String getContentType() {
+        return contentType;
     }
 
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    public static ResponseHeader of(String contentType, int contentLength) {
+        return new ResponseHeader(contentType, contentLength);
+    }
 }
