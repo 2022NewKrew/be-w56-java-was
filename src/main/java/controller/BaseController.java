@@ -4,28 +4,25 @@ import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequest;
 import util.HttpRequestUtils;
 import webserver.RequestHandler;
 
 import java.util.Map;
 import java.util.Optional;
 
-public class Controller {
+public class BaseController {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private static Controller instance;
     private final RouterService routerService;
 
-    private Controller() {
+    private BaseController() {
         routerService = new RouterService();
         init();
     }
 
-    public static Controller getInstance() {
-        if (instance == null) {
-            instance = new Controller();
-        }
-        return instance;
+    public static BaseController getInstance() {
+        return LazyHolder.INSTANCE;
     }
 
     private void init() {
@@ -46,21 +43,31 @@ public class Controller {
             Map<String, String> userInfo = HttpRequestUtils.parseQueryString(req.getBody());
             User user = DataBase.findUserById(userInfo.get("userId"));
             if (user.isSameUser(userInfo.get("password"))) {
-                res.setHeader("Set-Cookie", "logined=true; Path=/\r\n");
+                res.setHeader("Set-Cookie", "logined=true; Path=/");
                 res.redirect("/");
                 return;
             }
-            res.setHeader("Set-Cookie", "logined=false; Path=/\r\n");
+            res.setHeader("Set-Cookie", "logined=false; Path=/");
             res.redirect("/");
         });
 
         routerService.get("/", (req, res) -> {
             log.info("regitered /");
-            res.send("/index.html", req.getMIME());
+
+            System.out.println(res);
+            res.send("/index.html");
         });
+    }
+
+    public void route(HttpRequest request) {
+        routerService.returnUrl(request.getMethod(), request.getUrl());
     }
 
     public Optional<Router> getURL(String method, String url) {
         return routerService.returnUrl(method, url);
+    }
+
+    private static class LazyHolder {
+        private static final BaseController INSTANCE = new BaseController();
     }
 }
