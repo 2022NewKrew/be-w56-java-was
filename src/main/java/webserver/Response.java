@@ -15,9 +15,9 @@ public class Response {
         this.dos = new DataOutputStream(out);
     }
 
-    public void writeHeader(int lengthOfBodyContent, int status) throws IOException {
+    public void writeHeader(int lengthOfBodyContent, int status, String mimeType) throws IOException {
         dos.writeBytes("HTTP/1.1 "+Integer.toString(status)+" OK \r\n");
-        //dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+        dos.writeBytes("Content-Type: "+mimeType+";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
         writeCookies(cookies);
         dos.writeBytes("\r\n");
