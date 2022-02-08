@@ -8,23 +8,11 @@ import java.util.Collection;
 
 public class DynamicHtmlBuilder {
     public static void build(String path, Collection<User> collection) {
-        StringBuilder baseHtmlBuilder = new StringBuilder();
-        try {
-            BufferedReader in = new BufferedReader(new FileReader("./webapp/" + path));
-            String str;
-            while ((str = in.readLine()) != null) {
-                baseHtmlBuilder.append(str);
-                baseHtmlBuilder.append("\n");
-            }
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String baseHtml = baseHtmlBuilder.toString();
+        String baseHtml = IOUtils.readHtml(path);
         String startRegex = "<tbody>";
         String endRegex = "</tbody>";
-        int startIndex = baseHtmlBuilder.indexOf(startRegex) + startRegex.length();
-        int endIndex = baseHtmlBuilder.indexOf(endRegex);
+        int startIndex = baseHtml.indexOf(startRegex) + startRegex.length();
+        int endIndex = baseHtml.indexOf(endRegex);
 
         StringBuilder contentsBuilder = new StringBuilder();
         contentsBuilder.append(baseHtml, 0, startIndex);
