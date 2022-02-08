@@ -1,11 +1,15 @@
 package model.repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import model.User;
 
-public class UserRepositoryList implements UserRepository{
-    private final List<User> users = new ArrayList<User>();
+public class UserRepositoryMap implements UserRepository{
+    private final Map<Integer,User> idIndex = new HashMap<>();
+    private final Map<String,User> stringIdIndex = new HashMap<>();
     private int maxIndex = 1;
 
     @Override
@@ -20,31 +24,29 @@ public class UserRepositoryList implements UserRepository{
 
     @Override
     public User findById(int id){
-        return users.stream().filter(user -> user.getId()==id)
-                .findFirst()
-                .orElse(null);
+        return idIndex.getOrDefault(id, null);
     }
 
     @Override
     public User findByStringId(String stringId){
-        return users.stream().filter(user -> user.getStringId().equals(stringId))
-                .findFirst()
-                .orElse(null);
+        return stringIdIndex.getOrDefault(stringId, null);
     }
 
     @Override
     public List<User> findAll(){
-        return users;
+        return new ArrayList<>(idIndex.values());
     }
 
     private void insert(User user){
-        users.add(User.builder()
+        User userToInsert = User.builder()
                 .id(maxIndex)
                 .stringId(user.getStringId())
                 .name(user.getName())
                 .password(user.getPassword())
                 .email(user.getEmail())
-                .build());
+                .build();
+        idIndex.put(userToInsert.getId(), userToInsert);
+        stringIdIndex.put(userToInsert.getStringId(), userToInsert);
         maxIndex++;
     }
 

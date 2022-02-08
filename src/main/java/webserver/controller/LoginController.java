@@ -2,6 +2,7 @@ package webserver.controller;
 
 import service.UserService;
 import util.annotation.RequestMapping;
+import webserver.view.ModelAndView;
 import webserver.Request;
 import webserver.Response;
 
@@ -16,12 +17,15 @@ public class LoginController {
     }
 
     @RequestMapping(value="/login", method="POST")
-    public String login(Request request, Response response) {
+    public ModelAndView login(Request request, Response response) {
+        ModelAndView mv = new ModelAndView();
         if(userService.login(request.getParameter("stringId"), request.getParameter("password"))){
             response.setCookie("logined", "true; Path=/");
-            return "redirect:/index.html";
+            mv.setViewName("redirect:/index.html");
+            return mv;
         }
         response.setCookie("logined", "false; Path=/");
-        return "redirect:/user/login_failed.html";
+        mv.setViewName("redirect:/user/login_failed.html");
+        return mv;
     }
 }
