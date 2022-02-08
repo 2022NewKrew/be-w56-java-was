@@ -34,7 +34,7 @@ public class UserLoginController implements Controller {
         User user = userDao.find(userId);
 
         if (user != null && user.getPassword().equals(password)) {
-            return loginSuccess(dos);
+            return loginSuccess(dos, userId);
         }
 
         return loginFail(dos);
@@ -46,10 +46,10 @@ public class UserLoginController implements Controller {
         }
     }
 
-    private HttpResponse loginSuccess(DataOutputStream dos) {
+    private HttpResponse loginSuccess(DataOutputStream dos, String userId) {
         return HttpResponse.found(
                 "/index.html",
-                Map.of("logined", "true; Path=/"),
+                Map.of("logined", "true; Path=/", "userId", userId + "; Path=/"),
                 dos);
     }
 

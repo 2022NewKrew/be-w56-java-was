@@ -1,17 +1,52 @@
 package model;
 
-public class User {
+import java.time.LocalDateTime;
 
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+public class User extends BaseTime {
 
-    public User(String userId, String password, String name, String email) {
+    private final String userId;
+    private final String password;
+    private final String name;
+    private final String email;
+
+    public User(String userId, String password, String name, String email, LocalDateTime createTime,
+            LocalDateTime modifiedTime) {
+        super(createTime, modifiedTime);
+
+        checkUserId(userId);
+        checkPassword(password);
+        checkName(name);
+        checkEmail(email);
+
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User(String userId, String password, String name, String email) {
+        this(userId, password, name, email, LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    private void checkUserId(String userId) {
+        if(userId == null) {
+            throw new IllegalArgumentException("illegal UserId");
+        }
+    }
+    private void checkPassword(String password) {
+        if(password == null) {
+            throw new IllegalArgumentException("illegal Password");
+        }
+    }
+    private void checkName(String name) {
+        if(name == null) {
+            throw new IllegalArgumentException("illegal Name");
+        }
+    }
+    private void checkEmail(String email) {
+        if(email == null) {
+            throw new IllegalArgumentException("illegal Email");
+        }
     }
 
     public String getUserId() {

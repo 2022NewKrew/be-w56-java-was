@@ -2,11 +2,13 @@ package view;
 
 import java.util.HashMap;
 import java.util.Map;
+import view.template.ArticleListTemplate;
 import view.template.ListTemplate;
 import view.template.ViewTemplate;
 
 public enum ViewMatcher {
-    LIST_VIEW("/user/list.html", ListTemplate.getInstance());
+    LIST_VIEW("/user/list.html", ListTemplate.getInstance()),
+    ARTICLE_LIST_VIEW("/index.html", ArticleListTemplate.getInstance());
 
     private static final Map<String, ViewTemplate> viewMap;
 
