@@ -7,6 +7,8 @@ import http.request.URI;
 import http.request.Queries;
 import http.request.RequestBody;
 import http.request.RequestLine;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -109,7 +111,7 @@ public class HttpRequestUtils {
             return null;
         }
 
-        return new Pair(tokens[0], tokens[1]);
+        return new Pair(URLDecoder.decode(tokens[0], StandardCharsets.UTF_8), URLDecoder.decode(tokens[1], StandardCharsets.UTF_8));
     }
 
     public static HttpHeaders parseHeaders(List<String> headerStrings) {
