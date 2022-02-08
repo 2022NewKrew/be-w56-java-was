@@ -2,18 +2,16 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
-import model.Request;
-import model.RequestHeaders;
-import model.RequestLine;
+import controller.Controller;
+import model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
 
 public class RequestHandler extends Thread {
-    private static final String BASIC_FILE_PATH = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final RequestMapping REQUEST_MAPPING = new RequestMapping();
 
     private Socket connection;
 
@@ -27,43 +25,38 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             final RequestLine requestLine = RequestLine.from(IOUtils.readRequestLine(br));
             final RequestHeaders requestHeaders = RequestHeaders.from(IOUtils.readRequestHeaders(br));
-            Request request = Request.of(requestLine, requestHeaders);
+            final RequestBodies requestBodies = RequestBodies.of(br, requestHeaders);
 
-            final String path = BASIC_FILE_PATH + request.getRequestLine().getUrl();
-            log.debug("Request Line Path : {}", path);
+//            log.debug("RequestLine : {}", requestLine);
+//            log.debug("RequestHeaders : {}", requestHeaders);
+//            log.debug("RequestBody : {}", requestBodies);
 
-            DataOutputStream dos = new DataOutputStream(out);
+            Request request = Request.of(requestLine, requestHeaders, requestBodies);
 
-            byte[] body = Files.readAllBytes(new File(path).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            Response response = convertRequestToResponse(request);
+
+            out.write(response.getHeaderMessage().getBytes());
+
+            byte[] responseBody = response.getResponseBody();
+            if (responseBody != null) {
+                out.write(response.getResponseBody());
+            }
+
+            out.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
+    private Response convertRequestToResponse(Request request) throws IOException {
+        Response response = new Response();
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        Controller controller = REQUEST_MAPPING.getController(request);
+        controller.run(request, response);
+        return response;
     }
 }

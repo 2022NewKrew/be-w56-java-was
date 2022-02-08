@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class IOUtils {
     private final static String REQUEST_LINE_REGEX = " ";
@@ -35,8 +36,7 @@ public class IOUtils {
      */
     public static String[] readRequestLine(BufferedReader br) throws IOException {
         String requestLine = br.readLine();
-        String[] tokens = StringUtils.split(requestLine, REQUEST_LINE_REGEX);
-        log.debug("Request Line : {}, {}, {}" , tokens[0], tokens[1], tokens[2]);
+        String[] tokens = requestLine.split(REQUEST_LINE_REGEX);
 
         return tokens;
     }
@@ -49,16 +49,22 @@ public class IOUtils {
      * @throws IOException
      */
     public static List<HttpRequestUtils.Pair> readRequestHeaders(BufferedReader br) throws IOException {
-        String line = "";
-        List<HttpRequestUtils.Pair> requestHeaders = new ArrayList<>();
+        String line = br.readLine();
 
-        while (!(line = br.readLine()).equals("")) {
-            HttpRequestUtils.Pair header = HttpRequestUtils.parseHeader(line);
-
-            log.debug("Request Header : {}", header);
-            requestHeaders.add(header);
+        if (line == null) {
+            return null;
         }
 
-        return requestHeaders;
+        List<HttpRequestUtils.Pair> headerPairs = new ArrayList<>();
+
+        while (!line.equals("")) {
+            HttpRequestUtils.Pair header = HttpRequestUtils.parseHeader(line);
+
+            headerPairs.add(header);
+
+            line = br.readLine();
+        }
+
+        return headerPairs;
     }
 }
