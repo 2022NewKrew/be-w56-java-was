@@ -49,7 +49,7 @@ public class UserLoginController implements Controller {
     private HttpResponse loginSuccess(DataOutputStream dos, String userId) {
         return HttpResponse.found(
                 "/index.html",
-                Map.of("logined", "true; Path=/", "userId", userId),
+                Map.of("logined", "true; Path=/", "userId", userId + "; Path=/"),
                 dos);
     }
 

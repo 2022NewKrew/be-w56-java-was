@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.ArticleCreateController;
 import controller.ArticleListController;
 import controller.Controller;
 import controller.RootController;
@@ -18,7 +19,8 @@ public enum ControllerType {
     USER_LOGIN_CONTROLLER(HttpMethod.POST, "/user/login", UserLoginController.getInstance()),
     USER_LIST_CONTROLLER(HttpMethod.GET, "/user/list.html", UserListController.getInstance()),
     ROOT_CONTROLLER(HttpMethod.GET, "/", RootController.getInstance()),
-    ARTICLE_LIST_CONTROLLER(HttpMethod.GET, "/index.html", ArticleListController.getInstance());
+    ARTICLE_LIST_CONTROLLER(HttpMethod.GET, "/index.html", ArticleListController.getInstance()),
+    ARTICLE_CREATE_CONTROLLER(HttpMethod.POST, "/qna/create", ArticleCreateController.getInstance());
 
     public static final Map<HttpMethod, Map<String, Controller>> methodMap;
 
