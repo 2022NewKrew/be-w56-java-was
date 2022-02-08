@@ -1,17 +1,25 @@
 package model;
 
-public class User {
+import java.time.LocalDateTime;
 
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+public class User extends BaseTime {
 
-    public User(String userId, String password, String name, String email) {
+    private final String userId;
+    private final String password;
+    private final String name;
+    private final String email;
+
+    public User(String userId, String password, String name, String email, LocalDateTime createTime,
+            LocalDateTime modifiedTime) {
+        super(createTime, modifiedTime);
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public User(String userId, String password, String name, String email) {
+        this(userId, password, name, email, LocalDateTime.now(), LocalDateTime.now());
     }
 
     public String getUserId() {
