@@ -47,4 +47,21 @@ public class HttpCookie {
         cookieMap.forEach((k, v) -> stringBuilder.append(v));
         return stringBuilder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        return cookieMap.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof HttpCookie)) {
+            return false;
+        }
+        HttpCookie c = (HttpCookie) obj;
+        return this.cookieMap.equals(c.cookieMap);
+    }
 }

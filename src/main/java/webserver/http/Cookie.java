@@ -103,4 +103,28 @@ public class Cookie {
         }
         return stringBuilder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + value.hashCode();
+        result = 31 * result + domain.hashCode();
+        result = 31 * result + Integer.hashCode(maxAge);
+        result = 31 * result + path.hashCode();
+        result = 31 * result + Boolean.hashCode(secure);
+        result = 31 * result + Boolean.hashCode(isHttpOnly);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Cookie)) {
+            return false;
+        }
+        Cookie c = (Cookie) obj;
+        return name.equals(c.name) && value.equals(c.value);
+    }
 }
