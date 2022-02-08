@@ -1,4 +1,4 @@
-package webserver.header;
+package webserver.http;
 
 public enum RequestLine {
     METHOD,
