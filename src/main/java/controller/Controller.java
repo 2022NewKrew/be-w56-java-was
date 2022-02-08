@@ -2,15 +2,15 @@ package controller;
 
 import annotation.Auth;
 import annotation.RequestMapping;
-import util.Cookie;
-import util.HttpMethod;
-import util.HttpStatus;
-import util.Message;
+import webserver.http.Cookie;
+import webserver.http.HttpMethod;
+import webserver.http.HttpStatus;
+import webserver.html.Message;
 import exception.AuthorizationException;
-import util.request.HttpRequestUtils;
-import util.request.Request;
-import util.response.Response;
-import util.response.ResponseException;
+import util.HttpRequestUtils;
+import webserver.request.Request;
+import webserver.response.Response;
+import webserver.response.ResponseException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +32,7 @@ public class Controller {
         }
         String cookieString = request.getHeader("Cookie");
         Cookie cookie = new Cookie(cookieString);
+        parameters.put("cookie", cookie.getUserId());
         try {
             Method method = findMethod(httpMethod, url, cookie);
             return getResponse(method, parameters);
