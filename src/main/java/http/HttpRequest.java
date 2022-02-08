@@ -1,6 +1,7 @@
 package http;
 
 import lombok.Builder;
+import util.HttpRequestUtils;
 
 public class HttpRequest {
 
@@ -59,5 +60,10 @@ public class HttpRequest {
 
     public String getVersion() {
         return version;
+    }
+
+    public boolean isLogined() {
+        return Boolean.parseBoolean(
+            HttpRequestUtils.parseCookies(header.get("Cookie")).getOrDefault("logined", "false"));
     }
 }

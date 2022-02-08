@@ -39,10 +39,7 @@ public class UserController implements Controller {
             throw new ControllerMismatchException("Request Path :: " + request.getPath());
         }
 
-        Map<String, String> cookies = HttpRequestUtils.parseCookies(request.getHeader("Cookie"));
-        String authentication = cookies.getOrDefault("logined", "false");
-
-        if (!Boolean.parseBoolean(authentication)) {
+        if (!request.isLogined()) {
             HttpHeader httpHeader = HttpHeader.of(Map.of("Location", USER_LOGIN_URL));
 
             return HttpResponse.builder()
