@@ -8,7 +8,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
-    private static int REQUEST_HEADER_URL_PATH_INDEX = 1;
+    private static final int REQUEST_HEADER_URL_PATH_INDEX = 1;
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
