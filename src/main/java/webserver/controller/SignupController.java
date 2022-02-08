@@ -16,11 +16,11 @@ public class SignupController extends BaseController {
 
     @Override
     public HttpResponse post(HttpRequest request) {
-        Map<String, String> queryParams = request.parseUrlEncodedBody();
+        Map<String, String> urlEncodedParams = request.parseUrlEncodedBody();
         List<String> userProperties = List.of("userId", "password", "name", "email");
 
-        if (!userProperties.stream().allMatch(queryParams::containsKey)) {
-            log.debug("회원가입 실패: {}", queryParams);
+        if (!userProperties.stream().allMatch(urlEncodedParams::containsKey)) {
+            log.debug("회원가입 실패: {}", urlEncodedParams);
             return HttpResponse
                     .builder()
                     .protocolVersion(HttpProtocolVersion.HTTP_1_1)
@@ -30,10 +30,10 @@ public class SignupController extends BaseController {
         }
 
         User user = User.builder()
-                .userId(queryParams.get("userId"))
-                .password(queryParams.get("password"))
-                .name(queryParams.get("name"))
-                .email(queryParams.get("email"))
+                .userId(urlEncodedParams.get("userId"))
+                .password(urlEncodedParams.get("password"))
+                .name(urlEncodedParams.get("name"))
+                .email(urlEncodedParams.get("email"))
                 .build();
 
         DB.addUser(user);
