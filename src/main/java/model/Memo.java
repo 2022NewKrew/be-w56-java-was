@@ -14,6 +14,9 @@ public class Memo {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Memo() {
+    }
+
     public String getName() {
         return name;
     }
@@ -24,6 +27,18 @@ public class Memo {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
