@@ -1,16 +1,16 @@
 package servlet.container;
 
 import http.message.ResponseMessage;
+import http.startline.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.ServletRequest;
 import servlet.ServletResponse;
 import servlet.filter.LoginFilter;
 import servlet.filter.ServletFilter;
-import servlet.view.View;
-import servlet.view.ViewResolver;
 import web.controller.UserController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,10 +44,14 @@ public class ServletContainer {
     }
 
     public ResponseMessage process(ServletRequest request, ServletResponse response) {
-        Servlet servlet = container.get(request.createMappingKey());
-        filter.process(request, response, servlet);
-        View view = ViewResolver.findView(response);
-        return view.render();
+        try {
+            Servlet servlet = container.get(request.createMappingKey());
+            filter.process(request, response, servlet);
+            return response.createResponseMessage();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+            return ResponseMessage.create(HttpStatus.NOT_FOUND);
+        }
     }
 
     public void destroy() {

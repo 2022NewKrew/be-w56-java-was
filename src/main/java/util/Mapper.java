@@ -14,6 +14,7 @@ public class Mapper {
             return new ServletRequest(
                     request.getRequestLine().getMethod(),
                     request.getRequestLine().getRequestTarget().getPath().getValue(),
+                    null,
                     request.getRequestBody().getQueryParameters().getParameters(),
                     request.getHeader().createCookies()
             );
@@ -23,6 +24,7 @@ public class Mapper {
                 request.getRequestLine().getMethod(),
                 request.getRequestLine().getRequestTarget().getPath().getValue(),
                 request.getRequestLine().getRequestTarget().getQueryParameters().getParameters(),
+                null,
                 request.getHeader().createCookies()
         );
     }

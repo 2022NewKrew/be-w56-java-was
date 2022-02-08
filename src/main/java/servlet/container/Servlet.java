@@ -30,7 +30,7 @@ public class Servlet {
             logger.debug("Start Servlet Service : {}", request.createMappingKey());
             Map<String, String> inputs = request.getParameters();
             Object result = customMethod.invoke(controller, inputs, response);
-            response.setResponse(result);
+            response.setPath(result);
         } catch (InvocationTargetException | IllegalAccessException e) {
             logger.error("Service Servlet: {}", e.toString());
         }

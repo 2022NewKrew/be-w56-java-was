@@ -1,5 +1,7 @@
 package servlet.view;
 
+import http.header.Cookie;
+import http.header.MimeType;
 import http.message.ResponseMessage;
 import http.startline.HttpStatus;
 
@@ -11,16 +13,12 @@ public class StaticView implements View {
     private final String path;
 
     public StaticView(String path) {
-        this.path = path;
+        this.path = "./webapp" + path;
     }
 
     @Override
-    public ResponseMessage render() {
-        try {
-            byte[] bytes = Files.readAllBytes(new File(path).toPath());
-            return ResponseMessage.create(HttpStatus.OK, bytes);
-        } catch (IOException e) {
-            return ResponseMessage.create(HttpStatus.NOT_FOUND, new byte[]{});
-        }
+    public ResponseMessage render(Model model, Cookie cookie) throws IOException {
+        byte[] bytes = Files.readAllBytes(new File(path).toPath());
+        return ResponseMessage.create(HttpStatus.OK, MimeType.matchOf(path), bytes, cookie);
     }
 }

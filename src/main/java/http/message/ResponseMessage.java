@@ -3,6 +3,7 @@ package http.message;
 import http.body.ResponseBody;
 import http.header.Cookie;
 import http.header.Headers;
+import http.header.MimeType;
 import http.startline.HttpStatus;
 import http.startline.StatusLine;
 
@@ -18,17 +19,17 @@ public class ResponseMessage {
         this.responseBody = responseBody;
     }
 
-    public static ResponseMessage create(HttpStatus status, byte[] file) {
-        ResponseBody responseBody = new ResponseBody(file);
+    public static ResponseMessage create(HttpStatus status) {
+        ResponseBody responseBody = new ResponseBody();
         StatusLine statusLine = StatusLine.create(status);
         Headers responseHeaders = responseBody.createResponseHeader();
         return new ResponseMessage(statusLine, responseHeaders, responseBody);
     }
 
-    public static ResponseMessage create(HttpStatus status, String url) {
-        ResponseBody responseBody = new ResponseBody();
+    public static ResponseMessage create(HttpStatus status, MimeType mimeType, byte[] file, Cookie cookie) {
+        ResponseBody responseBody = new ResponseBody(file);
         StatusLine statusLine = StatusLine.create(status);
-        Headers responseHeaders = responseBody.createResponseHeader(url);
+        Headers responseHeaders = responseBody.createResponseHeader(mimeType, cookie);
         return new ResponseMessage(statusLine, responseHeaders, responseBody);
     }
 
