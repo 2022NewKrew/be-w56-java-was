@@ -1,5 +1,6 @@
 package util;
 
+import model.RequestData;
 import model.User;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class HttpHeaderUtils {
         return urlWithQuery.split("\\?")[0];
     }
 
-    public static List<String> parseRequestLine(String requestLine) {
+    public static RequestData parseRequestLine(String requestLine) {
         String[] token = requestLine.split(" ");
         String method = token[0];
         String url = token[1];
@@ -47,7 +48,7 @@ public class HttpHeaderUtils {
             urlQuery = urlToken[1];
         }
         String httpVersion = token[2];
-        return Arrays.asList(method, urlPath, urlQuery, httpVersion);
+        return new RequestData(method, urlPath, urlQuery, httpVersion);
     }
 
     public static User getUserInfoFromUrl(String query) {

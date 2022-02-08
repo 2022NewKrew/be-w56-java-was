@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import db.DataBase;
+import model.RequestData;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +37,12 @@ public class RequestHandler extends Thread {
 
             String requestLine = br.readLine();
             log.info("Request line = {}", requestLine);
-            List<String> request = HttpHeaderUtils.parseRequestLine(requestLine);
+            RequestData request = HttpHeaderUtils.parseRequestLine(requestLine);
             log.info("request = {}", request);
-            String method = request.get(0);
-            String urlPath = request.get(1);
-            String urlQuery = request.get(2);
-            String httpVersion = request.get(3);
+            String method = request.getMethod();
+            String urlPath = request.getUrlPath();
+            String urlQuery = request.getUrlQuery();
+            String httpVersion = request.getHttpVersion();
 
             Map<String, String> headers = getHeaders(br);
             String requestBody = "";
