@@ -7,6 +7,7 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepository {
 
@@ -35,5 +36,19 @@ public class UserRepository {
         }
 
         return users;
+    }
+
+    public Optional<User> findByUserId(String userId) {
+        Document document = collection.find(new Document("userId", userId)).first();
+        if (document == null) {
+            return Optional.empty();
+        }
+
+        String findUserId = document.get("userId", String.class);
+        String password = document.get("password", String.class);
+        String name = document.get("name", String.class);
+        String email = document.get("email", String.class);
+        User user = new User(findUserId, password, name, email);
+        return Optional.of(user);
     }
 }

@@ -8,12 +8,14 @@ import http.response.Model;
 import http.response.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
+import repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class RequestUrlController {
+
+    private final UserRepository userRepository = new UserRepository();
 
     @RequestMapping("/")
     public ModelAndView index(HttpRequest request, HttpResponse response) {
@@ -31,7 +33,7 @@ public class RequestUrlController {
         String name = request.getParam("name");
         String email = request.getParam("email");
         User user = new User(userId, password, name, email);
-        DataBase.addUser(user);
+        userRepository.save(user);
 
         log.info("user created = {}", user);
         return new ModelAndView("redirect:/");
@@ -41,7 +43,8 @@ public class RequestUrlController {
     public ModelAndView login(HttpRequest request, HttpResponse response) {
         String userId = request.getParam("userId");
         String password = request.getParam("password");
-        User user = DataBase.findUserById(userId);
+        User user = userRepository.findByUserId(userId).orElse(null);
+
         if (user == null || !user.getPassword().equals(password)) {
             response.addCookie("logined", "false");
             return new ModelAndView("redirect:/login-failed");
@@ -57,10 +60,9 @@ public class RequestUrlController {
 
     @RequestMapping("/users")
     public ModelAndView showUserList(HttpRequest request, HttpResponse response) {
+        List<User> users = userRepository.findAll();
         Model model = new Model();
-        model.addAttribute("userId", "carrot");
-        model.addAttribute("name", "당근");
-        model.addAttribute("email", "kain6245@gmail.com");
+        model.addAttribute("users", users);
         return new ModelAndView("/user/list", model);
     }
 }
