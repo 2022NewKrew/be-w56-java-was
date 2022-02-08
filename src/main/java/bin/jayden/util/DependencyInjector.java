@@ -17,11 +17,11 @@ public class DependencyInjector {
         initBeans();
     }
 
-    private static void initBeans() {
-        beans.put(MyJDBC.class, new MyJDBC());
+    private DependencyInjector() {//인스턴스의 생성을 방지
     }
 
-    private DependencyInjector() {//인스턴스의 생성을 방지
+    private static void initBeans() {
+        beans.put(MyJDBC.class, new MyJDBC());
     }
 
     public static Object getControllerInstance(Class<?> controller) {

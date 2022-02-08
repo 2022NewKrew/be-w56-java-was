@@ -6,12 +6,11 @@ import bin.jayden.util.AnnotationProcessor;
 import bin.jayden.util.Constants;
 import bin.jayden.util.ParameterProcessor;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.nio.file.Files;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
@@ -45,11 +44,9 @@ public class Router {
             routing(responseMethod, request, responseBuilder);
 
         } else { //라우팅 맵에 URL에 해당하는 리소스를 찾아본다.
-
-            File file = new File(Constants.RESOURCE_PATH + request.getPath());
-
-            if (file.isFile()) {
-                byte[] body = Files.readAllBytes(file.toPath());
+            URL fileURL = Router.class.getResource(Constants.RESOURCE_PATH + request.getPath());
+            if (fileURL != null) {
+                byte[] body = fileURL.openStream().readAllBytes();
                 responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_200).setMime(request.getMime()).setBody(body);
             } else {
                 responseBuilder.setStatusCode(HttpStatusCode.STATUS_CODE_404).setBody(NOT_FOUNT_MESSAGE);
