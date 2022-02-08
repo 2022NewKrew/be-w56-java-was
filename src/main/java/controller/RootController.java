@@ -18,7 +18,7 @@ public class RootController implements Controller{
     }
 
     private ResponseSendDataModel index(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("/index.html");
+        ResponseSendDataModel result = new ResponseSendDataModel("/index.html", httpRequest);
 
         return result;
     }

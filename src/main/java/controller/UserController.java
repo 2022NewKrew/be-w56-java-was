@@ -41,13 +41,13 @@ public class UserController implements Controller{
     }
 
     private ResponseSendDataModel getForm(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("/user/form.html");
+        ResponseSendDataModel result = new ResponseSendDataModel("/user/form.html", httpRequest);
 
         return result;
     }
 
     private ResponseSendDataModel postForm(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("redirect:/");
+        ResponseSendDataModel result = new ResponseSendDataModel("redirect:/", httpRequest);
         Map<String, String> model = httpRequest.getBody();
 
         String userId = model.get("userId");
@@ -77,13 +77,13 @@ public class UserController implements Controller{
     }
 
     private ResponseSendDataModel getLogin(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("/user/login.html");
+        ResponseSendDataModel result = new ResponseSendDataModel("/user/login.html", httpRequest);
 
         return result;
     }
 
     private ResponseSendDataModel postLogin(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("redirect:/users/login_failed");
+        ResponseSendDataModel result = new ResponseSendDataModel("redirect:/users/login_failed", httpRequest);
         Map<String, String> model = httpRequest.getBody();
 
         String userId = model.get("userId");
@@ -116,20 +116,20 @@ public class UserController implements Controller{
             return result;
         }
 
-        result = new ResponseSendDataModel("redirect:/");
+        result = new ResponseSendDataModel("redirect:/", httpRequest);
         result.setLogin(one);
 
         return result;
     }
 
     private ResponseSendDataModel getLoginFailed(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("/user/login_failed.html");
+        ResponseSendDataModel result = new ResponseSendDataModel("/user/login_failed.html", httpRequest);
 
         return result;
     }
 
     private ResponseSendDataModel getList(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("/user/list.html");
+        ResponseSendDataModel result = new ResponseSendDataModel("/user/list.html", httpRequest);
 
         List<UserAccount> userAccountList = userService.findAll();
 
@@ -139,7 +139,7 @@ public class UserController implements Controller{
     }
 
     private ResponseSendDataModel getLogout(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("redirect:/");
+        ResponseSendDataModel result = new ResponseSendDataModel("redirect:/", httpRequest);
 
         Optional<Session> session = sessionService.findOne(httpRequest.getHeader().getCookie().get("id"));
 

@@ -28,10 +28,7 @@ public class UrlMapper {
         errorController = new ErrorController();
         userController = new UserController();
 
-        controllerMap.put(JS, staticController);
-        controllerMap.put(CSS, staticController);
-        controllerMap.put(FONT, staticController);
-        controllerMap.put(IMAGE, staticController);
+        controllerMap.put(STATIC, staticController);
         controllerMap.put(ICON, staticController);
         controllerMap.put(ERROR, errorController);
         controllerMap.put(USER, userController);

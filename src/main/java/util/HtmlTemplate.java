@@ -1,5 +1,6 @@
 package util;
 
+import mapper.ResponseSendDataModel;
 import model.UserAccount;
 import model.UserAccountHtmlMapper;
 
@@ -10,18 +11,13 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class HtmlTemplate {
-    public static StringBuilder includeHtml(String fileName) throws IOException {
+    public static StringBuilder includeHtml(String fileName, ResponseSendDataModel model) throws IOException {
         List<String> fileData = Files.readAllLines(new File("./webapp/" + fileName + ".html").toPath());
-        StringBuilder body = new StringBuilder();
 
-        for(String line: fileData){
-            line = line.trim();
-
-            body.append(line);
-        }
-        return body;
+        return dynamicHtmlParsing(fileData, model);
     }
 
     public static StringBuilder iterHtmlTag(StringBuilder body, Object datas){
@@ -61,5 +57,83 @@ public class HtmlTemplate {
         }
 
         return addedBody;
+    }
+
+    public static StringBuilder dynamicHtmlParsing(List<String> fileData, ResponseSendDataModel model) throws IOException{
+        StringBuilder body = new StringBuilder();
+
+        StringBuilder tempSaveBody = null;
+        boolean isWrite = true;
+        for(String line: fileData){
+            line = line.trim();
+
+            if(line.matches("^\\{\\{>.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+                body.append(HtmlTemplate.includeHtml(subLine, model));
+
+                continue;
+            }
+
+            if(line.matches("^\\{\\{\\^.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+
+                if(!Objects.isNull(model.get(subLine))) {
+                    tempSaveBody = new StringBuilder(body);
+
+                    body = new StringBuilder();
+                    isWrite = false;
+                }
+
+                continue;
+            }
+
+            if(line.matches("^\\{\\{\\$.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+
+                if(Objects.isNull(model.get(subLine))) {
+                    tempSaveBody = new StringBuilder(body);
+
+                    body = new StringBuilder();
+                    isWrite = false;
+                }
+
+                continue;
+            }
+
+            if(line.matches("^\\{\\{#.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+
+                if(!Objects.isNull(model.get(subLine))) {
+                    tempSaveBody = new StringBuilder(body);
+
+                    body = new StringBuilder();
+                }
+
+                continue;
+            }
+
+            if(line.matches("^\\{\\{/.*\\}\\}$")){
+                String subLine = line.substring(3, line.length()-2).trim();
+
+                if(!Objects.isNull(tempSaveBody)) {
+                    if (!Objects.isNull(model.get(subLine)) && model.get(subLine) instanceof List) {
+                        tempSaveBody.append(HtmlTemplate.iterHtmlTag(body, model.get(subLine)));
+                    } else if (isWrite) {
+                        tempSaveBody.append(body);
+                    }
+
+                    body = new StringBuilder(tempSaveBody);
+                }
+
+                tempSaveBody = null;
+                isWrite = true;
+
+                continue;
+            }
+            if(isWrite)
+                body.append(line);
+        }
+
+        return body;
     }
 }

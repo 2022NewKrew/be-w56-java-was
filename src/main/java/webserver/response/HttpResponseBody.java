@@ -34,46 +34,7 @@ public class HttpResponseBody {
 
         List<String> fileData = Files.readAllLines(new File("./webapp" + fileName).toPath());
 
-        StringBuilder body = new StringBuilder();
-
-        StringBuilder tempSaveBody = null;
-        for(String line: fileData){
-            line = line.trim();
-
-            if(line.matches("^\\{\\{>.*\\}\\}$")){
-                String subLine = line.substring(3, line.length()-2).trim();
-                body.append(HtmlTemplate.includeHtml(subLine));
-
-                continue;
-            }
-
-            if(line.matches("^\\{\\{#.*\\}\\}$")){
-                String subLine = line.substring(3, line.length()-2).trim();
-
-                if(!Objects.isNull(model.get(subLine))) {
-                    tempSaveBody = new StringBuilder(body);
-
-                    body = new StringBuilder();
-                }
-
-                continue;
-            }
-
-            if(!Objects.isNull(tempSaveBody) && line.matches("^\\{\\{/.*\\}\\}$")){
-                String subLine = line.substring(3, line.length()-2).trim();
-
-                if(!Objects.isNull(model.get(subLine))) {
-                    tempSaveBody.append(HtmlTemplate.iterHtmlTag(body, model.get(subLine)));
-                }
-
-                body = new StringBuilder(tempSaveBody);
-                tempSaveBody = null;
-
-                continue;
-            }
-
-            body.append(line);
-        }
+        StringBuilder body = HtmlTemplate.dynamicHtmlParsing(fileData, model);
 
         return new HttpResponseBody(new String(body).getBytes(StandardCharsets.UTF_8));
     }

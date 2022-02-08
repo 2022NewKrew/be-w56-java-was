@@ -1,6 +1,8 @@
 package mapper;
 
 import model.UserAccount;
+import service.SessionService;
+import webserver.request.HttpRequest;
 import webserver.session.Session;
 
 import java.util.HashMap;
@@ -13,9 +15,17 @@ public class ResponseSendDataModel {
     private Optional<Session> login = Optional.empty();
     private final Map<String, Object> dataModel;
 
-    public ResponseSendDataModel(String name){
+    public ResponseSendDataModel(String name, HttpRequest httpRequest){
         this.name = name;
         this.dataModel = new HashMap<>();
+
+        if(httpRequest.getHeader().getCookie().containsKey("id")){
+            SessionService sessionService = SessionService.getInstance();
+
+            Optional<Session> session = sessionService.findOne(httpRequest.getHeader().getCookie().get("id"));
+
+            dataModel.put("sessionedId", session);
+        }
     }
 
     public String makeCookieString(){

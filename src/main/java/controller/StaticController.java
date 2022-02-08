@@ -18,7 +18,7 @@ public class StaticController implements Controller{
     }
 
     private ResponseSendDataModel staticFile(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel(httpRequest.getUrl());
+        ResponseSendDataModel result = new ResponseSendDataModel(httpRequest.getUrl(), httpRequest);
 
         return result;
     }

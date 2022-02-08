@@ -11,7 +11,7 @@ public interface Controller{
     default ResponseSendDataModel run(HttpRequest httpRequest){
         if(decideMethod(httpRequest.getMethod(), httpRequest.getUrl()) == null){
 
-            ResponseSendDataModel responseSendDataModel = new ResponseSendDataModel("/404_error.html");
+            ResponseSendDataModel responseSendDataModel = new ResponseSendDataModel("/404_error.html", httpRequest);
 
             return responseSendDataModel;
         }

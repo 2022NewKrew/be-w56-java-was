@@ -18,7 +18,7 @@ public class ErrorController implements Controller{
     }
 
     private ResponseSendDataModel notFoundError(HttpRequest httpRequest){
-        ResponseSendDataModel result = new ResponseSendDataModel("/404_error.html");
+        ResponseSendDataModel result = new ResponseSendDataModel("/404_error.html", httpRequest);
 
         return result;
     }
