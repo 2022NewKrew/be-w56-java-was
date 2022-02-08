@@ -1,4 +1,4 @@
-package model.user;
+package domain;
 
 import java.util.Objects;
 
@@ -11,7 +11,7 @@ public class Password {
     }
 
     private void valid(String password) {
-        if (password == null) {
+        if (password == null || password.equals("")) {
             throw new NullPointerException("비밀번호를 입력하세요.");
         }
     }

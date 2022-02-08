@@ -1,4 +1,4 @@
-package model.user;
+package domain;
 
 import java.util.Objects;
 
@@ -11,9 +11,13 @@ public class UserId {
     }
 
     private void valid(String userId) {
-        if (userId == null) {
+        if (userId == null || userId.equals("")) {
             throw new NullPointerException("아이디를 입력하세요");
         }
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     @Override

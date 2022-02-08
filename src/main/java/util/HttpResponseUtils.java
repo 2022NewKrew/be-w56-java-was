@@ -1,8 +1,9 @@
-package util.response;
+package util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
+import webserver.response.Response;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

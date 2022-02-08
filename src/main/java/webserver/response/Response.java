@@ -1,6 +1,6 @@
-package util.response;
+package webserver.response;
 
-import util.HttpStatus;
+import webserver.http.HttpStatus;
 
 import java.util.Map;
 

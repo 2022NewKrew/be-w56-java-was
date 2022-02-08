@@ -1,10 +1,11 @@
-package util.request;
+package webserver.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Map;
 
-import static util.request.HttpRequestUtils.*;
+import static util.HttpRequestUtils.parseRequestLine;
+import static util.HttpRequestUtils.readHeader;
 import static util.IOUtils.readData;
 
 public class Request {

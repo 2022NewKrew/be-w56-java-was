@@ -1,6 +1,6 @@
-package util.request;
+package webserver.request;
 
-import util.HttpMethod;
+import webserver.http.HttpMethod;
 
 public class RequestLine {
     private final HttpMethod method;

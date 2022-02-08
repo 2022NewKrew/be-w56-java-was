@@ -1,4 +1,4 @@
-package model.user;
+package domain;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +12,7 @@ public class Name {
     }
 
     private void valid(String name) {
-        if (name == null) {
+        if (name == null || name.equals("")) {
             throw new NullPointerException("이름을 입력하세요.");
         }
     }

@@ -1,4 +1,4 @@
-package util;
+package webserver.html;
 
 public class Message {
     private final String message;
