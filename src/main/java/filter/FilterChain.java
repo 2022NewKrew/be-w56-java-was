@@ -6,10 +6,18 @@ import http.request.RawHttpRequest;
 import java.util.Set;
 
 public class FilterChain {
+    private static FilterChain instance;
     private Set<Filter> filters;
 
-    public FilterChain() {
+    private FilterChain() {
         init();
+    }
+
+    public synchronized static FilterChain getInstance() {
+        if (instance == null) {
+            instance = new FilterChain();
+        }
+        return instance;
     }
 
     private void init() {

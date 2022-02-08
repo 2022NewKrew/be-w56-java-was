@@ -5,12 +5,16 @@ import annotation.RequestMapping;
 import app.dto.UserLoginInfo;
 import app.model.User;
 import app.service.UserService;
-import handler.HandlerResult;
+import handler.result.HandlerResult;
+import handler.result.ModelAndView;
+import handler.result.Redirection;
 import http.request.HttpMethod;
 import http.request.HttpRequest;
 import http.response.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -33,13 +37,13 @@ public class UserController {
         log.debug(user.toString());
         userService.signupUser(user);
 
-        return HandlerResult.Builder.ofRedirect()
-                .uri("/")
+        return Redirection.Builder
+                .of("/")
                 .build();
     }
 
     @RequestMapping(method = HttpMethod.POST, uri="/users/login")
-    public HandlerResult login(HttpRequest httpRequest) {
+    public HandlerResult requestLogin(HttpRequest httpRequest) {
         UserLoginInfo userLoginInfo = new UserLoginInfo(
                 httpRequest.getBody("userId"),
                 httpRequest.getBody("password"));
@@ -50,8 +54,8 @@ public class UserController {
                     .of("logined", "false")
                     .path("/")
                     .build();
-            return HandlerResult.Builder.ofRedirect()
-                    .uri("/user/login_failed.html")
+            return Redirection.Builder
+                    .of("/")
                     .addCookie(cookie)
                     .build();
         }
@@ -60,9 +64,20 @@ public class UserController {
                 .of("logined", "true")
                 .path("/")
                 .build();
-        return HandlerResult.Builder.ofRedirect()
-                .uri("/")
+
+        return Redirection.Builder
+                .of("/")
                 .addCookie(cookie)
+                .build();
+    }
+
+    @RequestMapping(method = HttpMethod.GET, uri = "/users")
+    public HandlerResult requestUserList(HttpRequest httpRequest) {
+        List<User> userList = userService.getUserList();
+
+        return ModelAndView.Builder
+                .of("/user/list.html")
+                .addModel("users", userList)
                 .build();
     }
 }
