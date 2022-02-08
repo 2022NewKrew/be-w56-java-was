@@ -21,6 +21,7 @@ public class Request {
     private final String uri;
     private final Map<String,String> header;
     private final Map<String,String> parameters = new HashMap<>();
+    private final Map<String,String> cookies;
 
     public Request(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
@@ -30,6 +31,7 @@ public class Request {
         this.parameters.putAll(findQueryString(requestLine));
         this.header = findHeaderParameters(br);
         this.parameters.putAll(findBodyParameters(method, br, Integer.parseInt(header.getOrDefault("Content-Length", "-1"))));
+        this.cookies = findCookies(header);
     }
 
     private Map<String,String> findHeaderParameters(BufferedReader br) throws IOException {
@@ -63,7 +65,18 @@ public class Request {
         return HttpRequestUtils.parseQueryString(URLDecoder.decode(IOUtils.readData(br, contentLength), "UTF-8"));
     }
 
+    private Map<String,String> findCookies(Map<String,String> header){
+        if(header.containsKey("Cookie")){
+            return HttpRequestUtils.parseCookies(header.get("Cookie"));
+        }
+        return new HashMap<>();
+    }
+
     public String getParameter(String key){
         return parameters.getOrDefault(key, null);
+    }
+
+    public String getCookie(String key){
+        return cookies.getOrDefault(key, null);
     }
 }

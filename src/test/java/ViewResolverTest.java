@@ -20,29 +20,15 @@ public class ViewResolverTest {
         mv.setViewName("/user/list.html");
         TemplateEngine templateEngine = new TemplateEngine();
         byte[] body = Files.readAllBytes(new File("./webapp" + mv.getViewName()).toPath());
+
         List<User> users = new ArrayList<>();
         users.add(User.builder().id(1).name("test1").email("asdf@asdf").build());
         users.add(User.builder().id(2).name("test2").email("asdf2@asdf").build());
         mv.addAttribute("users", users);
         String resultHtml = new String(templateEngine.render(mv, body));
-        System.out.println(resultHtml);
 
+        System.out.println(resultHtml);
         assertThat(resultHtml).contains("<th scope=\"row\"><a href=\"/users/1\" />1</a></th><td>null</td> <td>test1</td> <td>asdf@asdf</td><td><a href=\"/users/1/form\"");
         assertThat(resultHtml).contains("<th scope=\"row\"><a href=\"/users/2\" />2</a></th><td>null</td> <td>test2</td> <td>asdf2@asdf</td><td><a href=\"/users/2/form\"");
-    }
-
-    @Test
-    public void hashMapTemp(){
-        Map<Integer,User> temp1 = new HashMap<>();
-        Map<Integer,User> temp2 = new HashMap<>();
-
-        User user = User.builder().id(1).build();
-        temp1.put(2,user);
-        temp2.put(2,user);
-
-        temp1.get(2).changeName("park");
-
-        System.out.println(temp1.get(2));
-        System.out.println(temp2.get(2));
     }
 }

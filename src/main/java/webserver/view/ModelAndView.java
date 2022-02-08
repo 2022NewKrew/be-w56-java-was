@@ -3,15 +3,14 @@ package webserver.view;
 import lombok.Getter;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
 public class ModelAndView {
-    private final Map<String, List> attributes = new HashMap<String,List>();
+    private final Map<String, Object> attributes = new HashMap<>();
     private String viewName;
 
-    public void addAttribute(String key, List value){
+    public void addAttribute(String key, Object value){
         attributes.put(key, value);
     }
 
@@ -19,7 +18,7 @@ public class ModelAndView {
         this.viewName = viewName;
     }
 
-    public List getAttribute(String key){
+    public Object getAttribute(String key){
         return attributes.get(key);
     }
 }

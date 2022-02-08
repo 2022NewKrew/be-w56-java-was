@@ -1,6 +1,7 @@
 package webserver.controller;
 
 import dto.UserCreateDto;
+import org.apache.commons.lang3.StringUtils;
 import service.UserService;
 import util.annotation.RequestMapping;
 import webserver.view.ModelAndView;
@@ -47,8 +48,12 @@ public class UserController {
     @RequestMapping(value="/user/list", method="GET")
     public ModelAndView findAll(Request request, Response response) {
         ModelAndView mv = new ModelAndView();
-        mv.addAttribute("users", userService.findAll());
-        mv.setViewName("/user/list.html");
+        if(StringUtils.equals(request.getCookie("logined"), "true")){
+            mv.addAttribute("users", userService.findAll());
+            mv.setViewName("/user/list.html");
+            return mv;
+        }
+        mv.setViewName("/user/login.html");
         return mv;
     }
 }
