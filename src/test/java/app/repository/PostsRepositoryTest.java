@@ -18,7 +18,7 @@ class PostsRepositoryTest {
     private final PostsRepository postsRepository;
 
     public PostsRepositoryTest() throws SQLException {
-        postsRepository = new PostsRepository(new DbConfigure().getConnection());
+        postsRepository = new PostsRepository(new DbConfigure());
     }
 
     @Test
