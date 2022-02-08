@@ -2,7 +2,7 @@ package webserver.controller;
 
 import service.UserService;
 import util.annotation.RequestMapping;
-import webserver.ModelAndView;
+import webserver.view.ModelAndView;
 import webserver.Request;
 import webserver.Response;
 

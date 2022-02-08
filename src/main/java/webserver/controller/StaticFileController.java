@@ -1,6 +1,6 @@
 package webserver.controller;
 
-import webserver.ModelAndView;
+import webserver.view.ModelAndView;
 import webserver.Request;
 import webserver.Response;
 

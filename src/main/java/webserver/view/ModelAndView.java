@@ -1,4 +1,4 @@
-package webserver;
+package webserver.view;
 
 import lombok.Getter;
 

@@ -1,23 +1,13 @@
-package webserver;
+package webserver.view;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class ViewResolver {
-    public void resolve(Response response, ModelAndView mv) throws IOException, IllegalAccessException {
-        if(mv.getViewName().contains("redirect:")){
-            response.writeRedirectHeader(mv.getViewName().split("redirect:")[1]);
-            return;
-        }
-        byte[] body = render(mv, Files.readAllBytes(new File("./webapp" + mv.getViewName()).toPath()));
-        response.writeHeader(body.length, 200);
-        response.writeBody(body);
-    }
-
+public class TemplateEngine {
     public byte[] render(ModelAndView mv, byte[] body) throws IllegalAccessException {
         String bodyString = new String(body);
         while(bodyString.contains("{{#")){
@@ -25,7 +15,7 @@ public class ViewResolver {
             int start = bodyString.indexOf("{{#"+key+"}}")+key.length()+5;
             int end = bodyString.indexOf("{{/"+key+"}}");
             String stringToReplace = bodyString.substring(start, end);
-            bodyString = bodyString.substring(0, bodyString.indexOf("{{#"+key+"}}")) + findReplacedString(stringToReplace, mv.getAttribute(key)) + bodyString.substring(bodyString.indexOf("{{/"+key+"}}")+key.length()+5);
+            bodyString = bodyString.substring(0, bodyString.indexOf(start)) + findReplacedString(stringToReplace, mv.getAttribute(key)) + bodyString.substring(bodyString.indexOf(end)+key.length()+5);
         }
         return bodyString.getBytes(StandardCharsets.UTF_8);
     }
