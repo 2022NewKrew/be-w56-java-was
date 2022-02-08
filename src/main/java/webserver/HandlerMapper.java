@@ -1,5 +1,6 @@
 package webserver;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ReflectionUtils;
@@ -19,7 +20,7 @@ public class HandlerMapper {
         for(Class cls : ReflectionUtils.findAllClasses("webserver.controller")){
             for(Method method : cls.getDeclaredMethods()){
                 RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
-                if(annotation!=null && request.getUri().equals(annotation.value()) && request.getMethod().equals(annotation.method())){
+                if(annotation!=null && StringUtils.equals(request.getUri(),annotation.value()) && StringUtils.equals(request.getMethod(),annotation.method())){
                     return (ModelAndView)method.invoke(cls.getMethod("getInstance").invoke(null), request, response);
                 }
             }

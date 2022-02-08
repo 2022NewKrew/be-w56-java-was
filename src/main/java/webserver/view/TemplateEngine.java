@@ -2,10 +2,7 @@ package webserver.view;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TemplateEngine {
     public byte[] render(ModelAndView mv, byte[] body) throws IllegalAccessException {
@@ -21,7 +18,7 @@ public class TemplateEngine {
     }
 
     private Map<String,Object> findFieldMap(Object object) throws IllegalAccessException {
-        Map<String,Object> fieldMap = new HashMap<String,Object>();
+        Map<String,Object> fieldMap = new HashMap<>();
         for(Field field : object.getClass().getDeclaredFields()){
             field.setAccessible(true);
             fieldMap.put(field.getName(), field.get(object));
@@ -32,9 +29,9 @@ public class TemplateEngine {
     private String findReplacedString(String stringToReplace, Object value) throws IllegalAccessException {
         StringBuilder replacedString = new StringBuilder();
         if(!(value instanceof List)){
-            value = Arrays.asList(value);
+            value = List.of(value);
         }
-        for(Object object : (List)value){
+        for(Object object : (List<?>)value){
             Map<String,Object> fieldMap = findFieldMap(object);
             String loopString = stringToReplace;
             while(loopString.contains("{{")){
