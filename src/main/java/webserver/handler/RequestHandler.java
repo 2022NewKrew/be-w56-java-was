@@ -24,26 +24,29 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         HttpResponse response = null;
+        BufferedReader br;
+        DataOutputStream dos;
 
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            OutputStream out = connection.getOutputStream();
-
-            HttpRequest request = HttpRequestUtils.parseRequest(br);
-            response = RequestMapper.process(request, out);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            response = RequestExceptionHandler.handle(connection, e);
-        } finally {
-            sendResponse(response);
+             br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            dos = new DataOutputStream(connection.getOutputStream());
+        } catch (IOException e) {
+            log.error("에러: HTTP 응답을 생성하던 중 IOException 이 발생했습니다.");
+            e.printStackTrace();
             closeSocket(connection);
+            return;
         }
-    }
 
-    private void sendResponse(HttpResponse response) {
-        if (response != null) {
-            response.writeBytes();
-            response.flush();
+        try {
+            HttpRequest request = HttpRequestUtils.parseRequest(br);
+            response = RequestMapper.process(request);
+        } catch (Exception e) {
+            log.error(String.format("에러: %s", e.getMessage()));
+            e.printStackTrace();
+            response = RequestExceptionHandler.handle(e);
+        } finally {
+            ResponseHandler.sendResponse(response, dos);
+            closeSocket(connection);
         }
     }
 
