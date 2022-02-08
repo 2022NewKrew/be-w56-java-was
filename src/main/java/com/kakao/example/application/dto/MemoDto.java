@@ -15,6 +15,5 @@ public class MemoDto {
     private long memoId;
     private String writerId;
     private String content;
-    private LocalDateTime createdDate;
     private String formattedCreatedDate;
 }
