@@ -31,6 +31,23 @@ dependencies {
     implementation 'org.reflections:reflections:0.10.2'
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'bin.jayden.Main'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+sourceSets {
+    main {
+        resources {
+            srcDirs "webapp"
+        }
+    }
+}
+
 test {
     useJUnitPlatform()
 }

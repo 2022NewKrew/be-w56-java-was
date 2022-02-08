@@ -2,11 +2,8 @@ package bin.jayden.service;
 
 import bin.jayden.model.Article;
 import bin.jayden.repository.ArticleRepository;
-import bin.jayden.util.Constants;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 public class ArticleService {
@@ -17,8 +14,7 @@ public class ArticleService {
     }
 
     public String getArticleListHtml() throws IOException {
-        File file = new File(Constants.RESOURCE_PATH + "/index.html");
-        byte[] htmlBytes = Files.readAllBytes(file.toPath());
+        byte[] htmlBytes = getClass().getResourceAsStream("/index.html").readAllBytes();
         String htmlString = new String(htmlBytes);
         List<Article> articleList = repository.getArticleList();
         StringBuilder listHtml = new StringBuilder();
