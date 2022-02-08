@@ -19,8 +19,7 @@ public class SignupController extends BaseController {
         List<String> userProperties = List.of("userId", "password", "name", "email");
 
         if (!userProperties.stream().allMatch(queryParams::containsKey)) {
-            log.debug("회원가입 실패");
-            log.debug(queryParams.toString());
+            log.debug("회원가입 실패: {}", queryParams);
             return HttpResponse
                     .builder()
                     .protocolVersion("HTTP/1.1")
@@ -37,8 +36,7 @@ public class SignupController extends BaseController {
                 .build();
 
         DB.addUser(user);
-        log.debug("회원가입 성공");
-        log.debug(user.toString());
+        log.debug("회원가입 성공: {}", user);
 
         return HttpResponse.found("/index.html");
     }
