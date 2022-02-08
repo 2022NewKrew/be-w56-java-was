@@ -10,11 +10,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import db.DataBase;
+import model.RequestData;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpHeaderUtils;
 import util.HttpRequestUtils;
+import util.HttpTemplateUtils;
 import util.IOUtils;
 
 public class RequestHandler extends Thread {
@@ -36,12 +38,12 @@ public class RequestHandler extends Thread {
 
             String requestLine = br.readLine();
             log.info("Request line = {}", requestLine);
-            List<String> request = HttpHeaderUtils.parseRequestLine(requestLine);
+            RequestData request = HttpHeaderUtils.parseRequestLine(requestLine);
             log.info("request = {}", request);
-            String method = request.get(0);
-            String urlPath = request.get(1);
-            String urlQuery = request.get(2);
-            String httpVersion = request.get(3);
+            String method = request.getMethod();
+            String urlPath = request.getUrlPath();
+            String urlQuery = request.getUrlQuery();
+            String httpVersion = request.getHttpVersion();
 
             Map<String, String> headers = getHeaders(br);
             String requestBody = "";
@@ -63,8 +65,39 @@ public class RequestHandler extends Thread {
         switch(requestUrlPath) {
             case "/user/create": return postUserCreate(requestBody);
             case "/user/login": return postUserLogin(requestUrlPath, requestBody);
+            case "/user/list": return getUserList(headers);
             default: return staticPageResponse(requestUrlPath);
         }
+    }
+
+    private byte[] getUserList(Map<String, String> requestHeaders) throws IOException {
+        if(requestHeaders.containsKey("Cookie") && requestHeaders.get("Cookie").contains("logined=true")) {
+            List<String> htmlLines = Files.readAllLines(new File("./webapp/user/list.html").toPath());
+            StringBuilder sb = new StringBuilder();
+            for (String line : htmlLines) {
+                if (line.contains("{{>userlist}}")) {
+                    sb.append(HttpTemplateUtils.createUserListView(DataBase.findAll()));
+                    continue;
+                }
+                sb.append(line);
+            }
+            byte[] responseBody = sb.toString().getBytes();
+
+            Map<String, String> responseHeaders = Map.of(
+                    "Content-Type", "text/html;charset=utf-8",
+                    "Content-Length", Integer.toString(responseBody.length)
+            );
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(getResponseHeader(200, responseHeaders));
+            baos.write(responseBody);
+            return baos.toByteArray();
+        }
+        Map<String, String> responseHeaders = new HashMap<>() {{
+            put("Content-Type", "text/html;charset=utf-8");
+            put("Content-Length", "0");
+            put("Location", "/user/login.html");
+        }};
+        return getResponseHeader(302, responseHeaders);
     }
 
     private byte[] postUserCreate(String requestBody) {
@@ -75,7 +108,7 @@ public class RequestHandler extends Thread {
                 "Content-Length", "0",
                 "Location","/index.html"
         );
-        return getResponseHeader(302, headers).toString().getBytes();
+        return getResponseHeader(302, headers);
     }
 
     private byte[] postUserLogin(String requestUrlPath, String requestBody) {
@@ -89,11 +122,11 @@ public class RequestHandler extends Thread {
         if(user == null || !user.getPassword().equals(requestBodyMap.get("password"))) {
             responseHeaders.put("Set-Cookie", "logined=false; Path=/");
             responseHeaders.put("Location", "/user/login_failed.html");
-            return getResponseHeader(302, responseHeaders).toString().getBytes();
+            return getResponseHeader(302, responseHeaders);
         }
         responseHeaders.put("Set-Cookie", "logined=true; Path=/");
         responseHeaders.put("Location", "/index.html");
-        return getResponseHeader(302, responseHeaders).toString().getBytes();
+        return getResponseHeader(302, responseHeaders);
     }
 
     private byte[] staticPageResponse(String requestUrlPath) throws IOException {
@@ -105,7 +138,7 @@ public class RequestHandler extends Thread {
                     "Content-Length", Integer.toString(responseBody.length)
             );
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(getResponseHeader(200, headers).toString().getBytes());
+            baos.write(getResponseHeader(200, headers));
             baos.write(responseBody);
             return baos.toByteArray();
         }
@@ -114,7 +147,7 @@ public class RequestHandler extends Thread {
                 "Content-Length", "0",
                 "Location","/index.html"
         );
-        return getResponseHeader(302, headers).toString().getBytes();
+        return getResponseHeader(302, headers);
     }
 
     private Map<String, String> getHeaders(BufferedReader br) throws IOException {
@@ -129,7 +162,7 @@ public class RequestHandler extends Thread {
         return headers;
     }
 
-    private StringBuilder getResponseHeader(int httpCode, Map<String, String> headers) {
+    private byte[] getResponseHeader(int httpCode, Map<String, String> headers) {
         StringBuilder sb = new StringBuilder();
         switch(httpCode) {
             case(200): sb.append("HTTP/1.1 200 OK \n");
@@ -137,6 +170,6 @@ public class RequestHandler extends Thread {
         }
         sb.append(headers.entrySet().stream().map(x -> x.getKey() + ": " + x.getValue() + "\r\n").collect(Collectors.joining()));
         sb.append("\r\n");
-        return sb;
+        return sb.toString().getBytes();
     }
 }

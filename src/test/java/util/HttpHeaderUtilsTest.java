@@ -1,5 +1,6 @@
 package util;
 
+import model.RequestData;
 import model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,9 +8,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -57,17 +55,17 @@ class HttpHeaderUtilsTest {
         return Stream.of(
                 Arguments.of(
                         "GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1",
-                        Arrays.asList("GET", "/user/create", "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net", "HTTP/1.1")
+                        new RequestData("GET", "/user/create", "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net", "HTTP/1.1")
                 ),
-                Arguments.of("GET /index.html HTTP/1.1", Arrays.asList("GET", "/index.html", "", "HTTP/1.1")),
-                Arguments.of("POST /user/create HTTP/1.1", Arrays.asList("POST", "/user/create", "", "HTTP/1.1"))
+                Arguments.of("GET /index.html HTTP/1.1", new RequestData("GET", "/index.html", "", "HTTP/1.1")),
+                Arguments.of("POST /user/create HTTP/1.1", new RequestData("POST", "/user/create", "", "HTTP/1.1"))
         );
     }
 
     @ParameterizedTest
     @MethodSource("parseRequestLine")
-    void parseRequestLine(String input, List<String> expected) {
-        List<String> result = HttpHeaderUtils.parseRequestLine(input);
+    void parseRequestLine(String input, RequestData expected) {
+        RequestData result = HttpHeaderUtils.parseRequestLine(input);
         assertThat(result).isEqualTo(expected);
     }
 }
