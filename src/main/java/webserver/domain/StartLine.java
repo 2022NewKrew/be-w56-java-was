@@ -5,16 +5,18 @@ import util.HttpRequestUtils;
 
 public class StartLine {
 
+    private static final int SPLIT_STRING_SIZE_NOT_HAS_QUERY_STRING = 1;
+
     private final String httpMethod;
     private final String path;
-    private final QueryString queryString;
+    private final Data queryString;
     private final String httpVersion;
 
     @Builder
-    private StartLine(String httpMethod, String path, QueryString queryString, String httpVersion) {
+    private StartLine(String httpMethod, String path, Data queryString, String httpVersion) {
         this.httpMethod = httpMethod;
         this.path = path;
-        this.queryString = new QueryString(queryString);
+        this.queryString = new Data(queryString);
         this.httpVersion = httpVersion;
     }
 
@@ -26,8 +28,8 @@ public class StartLine {
     public static StartLine createStartLine(String line) {
         String[] splitedLine = HttpRequestUtils.parseStartLine(line);
         String[] splitedPath = HttpRequestUtils.parsePath(splitedLine[1]);
-        QueryString queryString = splitedPath.length > 1 ?
-            QueryString.createQueryString(splitedPath[1]) : QueryString.createQueryString(null);
+        Data queryString = splitedPath.length > SPLIT_STRING_SIZE_NOT_HAS_QUERY_STRING ?
+            Data.createData(splitedPath[1]) : Data.createData(null);
         return StartLine.builder()
             .httpMethod(splitedLine[0])
             .path(splitedPath[0])
@@ -41,7 +43,7 @@ public class StartLine {
     }
 
     public String getQueryStringAttribute(String key) {
-        return queryString.getQueryStringAttribute(key);
+        return queryString.getDataAttribute(key);
     }
 
     public boolean isFile() {
