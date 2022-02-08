@@ -1,15 +1,14 @@
 package util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Slf4j
 public class HttpResponseUtils {
-    private static final Logger log = LoggerFactory.getLogger(HttpResponseUtils.class);
 
     public static void writeStatusCode(DataOutputStream dos, int statusCode) {
         try {

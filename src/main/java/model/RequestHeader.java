@@ -1,5 +1,7 @@
 package model;
 
+import lombok.Getter;
+import lombok.ToString;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -10,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@ToString
 public class RequestHeader {
     private final String method;
     private final String uri;
@@ -34,29 +38,5 @@ public class RequestHeader {
         this.requestInfo = HttpRequestUtils.parseRequestInfo(requestHeaderInfo);
         rawBody = URLDecoder.decode(IOUtils.readData(requestHeaderInfo, Integer.parseInt(requestInfo.getOrDefault("Content-Length", "0"))), StandardCharsets.UTF_8);
         this.body = HttpRequestUtils.parseQueryString(rawBody);
-    }
-
-    public Map<String, String> getRequestInfo() {
-        return requestInfo;
-    }
-
-    public Map<String, String> getBody() {
-        return body;
-    }
-
-    public Map<String, String> getParams() {
-        return params;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public String getProtocol() {
-        return protocol;
     }
 }

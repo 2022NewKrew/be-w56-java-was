@@ -1,9 +1,8 @@
 package webserver.Controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import util.HttpResponseUtils;
 
 import java.io.DataOutputStream;
@@ -11,9 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Slf4j
 public class Controller {
     private static final String BASE_PATH = "./webapp";
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
 
     public void responseStaticFile(DataOutputStream dos, RequestHeader header) {
         byte[] body;

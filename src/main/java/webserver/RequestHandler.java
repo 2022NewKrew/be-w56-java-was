@@ -4,14 +4,13 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webserver.Controller.Controller;
 import webserver.Controller.UserController;
 
+@Slf4j
 public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final Controller controller = new Controller();
     private static final UserController userController = new UserController();
 

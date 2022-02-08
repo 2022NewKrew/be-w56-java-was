@@ -1,6 +1,7 @@
 package webserver.Controller;
 
 import db.DataBase;
+import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.User;
 import util.HttpRequestUtils;
@@ -13,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
 
-
+@Slf4j
 public class UserController {
     private byte[] outputBody = new byte[0];
     private final String INDEX_PATH = "/index.html";
