@@ -1,15 +1,10 @@
 package model;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.nio.charset.StandardCharsets;
 
 public class HttpResponse {
 
-    private final Logger log = LoggerFactory.getLogger(HttpResponse.class);
+    private static final String LINE_BREAK = "\r\n";
     private final StatusLine statusLine;
     private final Header header;
 
@@ -18,30 +13,17 @@ public class HttpResponse {
         this.header = header;
     }
 
-    public void sendResponse(Socket connection) {
-        try (OutputStream out = connection.getOutputStream();) {
-            DataOutputStream dos = new DataOutputStream(out);
-
-            responseHeader(dos);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+    protected byte[] headerMessage() {
+        StringBuilder message = new StringBuilder(statusLine.message());
+        message.append(LINE_BREAK);
+        for (String str : header.messageList()) {
+            message.append(str).append(LINE_BREAK);
         }
+        message.append(LINE_BREAK);
+        return message.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    protected void responseHeader(DataOutputStream dos) {
-        try {
-            dos.writeBytes(statusLine.message() + "\r\n");
-            header.messageList().forEach(str -> {
-                try {
-                    dos.writeBytes(str + "\r\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    public byte[] message() {
+        return headerMessage();
     }
 }
