@@ -1,7 +1,8 @@
 package util;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -26,14 +27,25 @@ public class HttpRequestUtils {
         return parseValues(cookies, ";");
     }
 
+    public static Map<String, String> parseRequestInfo(BufferedReader br) throws IOException {
+        Map<String, String> requestInfo;
+        List<Pair> pairs = new ArrayList<>();
+        String line;
+        while (!(line = br.readLine()).equals("")) {
+            pairs.add(parseHeader(line));
+        }
+        requestInfo = pairs.stream().collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        return requestInfo;
+    }
+
     private static Map<String, String> parseValues(String values, String separator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
