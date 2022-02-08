@@ -7,6 +7,8 @@ import http.util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * {@link BufferedReader}에서 {@link HttpRequest} 디코딩해 반환하는 클래스
@@ -35,6 +37,7 @@ public class HttpRequestDecoder {
         if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.toString())) {
             int contentLength = Integer.parseInt(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.toString()));
             body = HttpRequestUtils.readData(br, contentLength);
+            body = URLDecoder.decode(body, StandardCharsets.UTF_8);
         }
 
         return HttpRequest.builder()
