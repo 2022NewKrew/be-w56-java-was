@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
 import util.request.MethodType;
-import util.response.FileType;
-import util.response.HttpResponse;
-import util.response.HttpStatus;
-import util.response.ModelAndView;
+import util.response.*;
 import webserver.controller.Controller;
 
 public class StaticController implements Controller {
@@ -23,7 +20,7 @@ public class StaticController implements Controller {
             return true;
         }
 
-        return FileType.getFileType(httpRequest.getUrl()) != FileType.NONE;
+        return ContentType.getFileType(httpRequest.getUrl()).isPresent();
     }
 
     @Override
@@ -34,9 +31,14 @@ public class StaticController implements Controller {
 
         log.info("return file {}", fileName);
 
+        ResponseHeaders responseHeaders = ResponseHeaders.builder()
+                .contentType(ContentType.getFileType(fileName).orElseThrow())
+                .build();
+
         return HttpResponse.<String>builder()
                 .status(HttpStatus.SUCCESS)
-                .modelAndView(new ModelAndView(fileName, FileType.getFileType(fileName)))
+                .modelAndView(new ModelAndView(fileName))
+                .headers(responseHeaders)
                 .build();
     }
 

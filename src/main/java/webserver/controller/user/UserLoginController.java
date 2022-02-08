@@ -5,8 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.request.HttpRequest;
 import util.request.MethodType;
+import util.response.ContentType;
 import util.response.HttpResponse;
 import util.response.HttpStatus;
+import util.response.ResponseHeaders;
 import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
@@ -46,10 +48,15 @@ public class UserLoginController implements Controller {
 
         log.info("user {}가 로그인하였습니다", user);
 
+        ResponseHeaders responseHeaders = ResponseHeaders.builder()
+                .contentType(ContentType.HTML)
+                .others(Map.of("Set-Cookie", "logined=true",
+                        "Location", "/")
+                ).build();
+
         return HttpResponse.<String>builder()
                 .status(HttpStatus.REDIRECT)
-                .headers(Map.of("Set-Cookie", "logined=true",
-                        "Location", "/"))
+                .headers(responseHeaders)
                 .build();
     }
 

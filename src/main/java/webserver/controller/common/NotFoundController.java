@@ -1,10 +1,7 @@
 package webserver.controller.common;
 
 import util.request.HttpRequest;
-import util.response.FileType;
-import util.response.HttpResponse;
-import util.response.HttpStatus;
-import util.response.ModelAndView;
+import util.response.*;
 import webserver.controller.Controller;
 
 public class NotFoundController implements Controller {
@@ -15,12 +12,17 @@ public class NotFoundController implements Controller {
 
     @Override
     public HttpResponse doHandle(HttpRequest httpRequest){
-        ModelAndView modelAndView = new ModelAndView("error", FileType.STRING);
+        ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addAttribute("message", "Not Found Page");
+
+        ResponseHeaders responseHeaders = ResponseHeaders.builder()
+                .contentType(ContentType.PLANE_TEXT)
+                .build();
 
         return HttpResponse.<String>builder()
                 .status(HttpStatus.NOT_FOUND)
                 .modelAndView(modelAndView)
+                .headers(responseHeaders)
                 .build();
     }
 }
