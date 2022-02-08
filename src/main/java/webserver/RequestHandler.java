@@ -45,7 +45,7 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();) {
             runHttp(in, out);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("IO Exception Failed", e);
         }
     }
 }
