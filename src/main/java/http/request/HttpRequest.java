@@ -1,12 +1,15 @@
 package http.request;
 
+import http.cookie.Cookie;
 import http.HttpMessage;
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersion;
 import http.util.HttpRequestUtils;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -16,19 +19,23 @@ public class HttpRequest extends HttpMessage {
     private final String body;
 
     @Builder
-    public HttpRequest(String protocolVersion, HttpHeaders headers, String body,
-                       HttpRequestMethod method, String uri) {
-        super(protocolVersion, headers);
+    public HttpRequest(HttpProtocolVersion protocolVersion, HttpHeaders headers, List<Cookie> cookies,
+                       HttpRequestMethod method, String uri, String body) {
+        super(protocolVersion, headers, cookies);
         this.method = method;
         this.uri = uri;
         this.body = body;
     }
 
-    public Map<String, String> getQueryParams() {
+    public Map<String, String> parseQueryParams() {
         String[] tokens = uri.split("\\?", 2);
         if (tokens.length < 2) {
             return new HashMap<>();
         }
         return HttpRequestUtils.parseQueryString(tokens[1]);
+    }
+
+    public Map<String, String> parseUrlEncodedBody() {
+        return HttpRequestUtils.parseQueryString(body);
     }
 }

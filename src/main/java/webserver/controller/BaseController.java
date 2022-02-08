@@ -1,10 +1,18 @@
 package webserver.controller;
 
+import http.cookie.Cookie;
+import http.exception.NotFound;
 import http.exception.UnsupportedHttpMethod;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import lombok.extern.slf4j.Slf4j;
+import model.User;
+import webserver.RequestHandler;
 
-public class AbstractController implements Controller {
+import java.util.List;
+
+@Slf4j
+public class BaseController implements Controller {
 
     @Override
     public HttpResponse service(HttpRequest request) {

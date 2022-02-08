@@ -1,6 +1,7 @@
 package http.request;
 
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -44,7 +45,7 @@ class HttpRequestDecoderTest {
                         HttpRequest.builder()
                                 .method(HttpRequestMethod.GET)
                                 .uri("/")
-                                .protocolVersion("HTTP/1.1")
+                                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                                 .headers(headers1)
                                 .build()
                 ),
@@ -57,7 +58,7 @@ class HttpRequestDecoderTest {
                         HttpRequest.builder()
                                 .method(HttpRequestMethod.POST)
                                 .uri("/abc")
-                                .protocolVersion("HTTP/1.1")
+                                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
                                 .headers(headers2)
                                 .body("abcde")
                                 .build()

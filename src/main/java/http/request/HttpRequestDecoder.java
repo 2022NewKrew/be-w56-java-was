@@ -1,11 +1,18 @@
 package http.request;
 
 import com.google.common.base.Strings;
-import http.header.HttpHeaderNames;
+import http.cookie.Cookie;
+import http.header.HttpHeaderName;
 import http.header.HttpHeaders;
+import http.header.HttpProtocolVersion;
+import http.util.HttpRequestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link BufferedReader}에서 {@link HttpRequest} 디코딩해 반환하는 클래스
@@ -25,31 +32,31 @@ public class HttpRequestDecoder {
 
         HttpRequestMethod method = HttpRequestMethod.valueOf(tokens[0]);
         String uri = tokens[1];
-        String protocolVersion = tokens[2];
+        HttpProtocolVersion protocolVersion = HttpProtocolVersion.parseProtocolVersion(tokens[2]);
 
         HttpHeaders headers = getHeaders(br);
+        List<Cookie> cookies = new ArrayList<>();
+
+        if (headers.containsName("cookie")) {
+            cookies = HttpRequestUtils.parseCookies(headers.getValue("cookie"));
+            headers.getHeaders().remove("cookie");
+        }
 
         // read body if "content-length" header exists
-        StringBuilder sb = new StringBuilder();
-        if (headers.containsName(HttpHeaderNames.CONTENT_LENGTH.name())) {
-            long contentLength = Long.parseLong(headers.getValue(HttpHeaderNames.CONTENT_LENGTH.name()));
-
-            long cursor = 0;
-            while ((cursor < contentLength) && !Strings.isNullOrEmpty(line = br.readLine())) {
-                cursor += line.getBytes().length;
-                if (cursor > contentLength) {
-                    line = line.substring(0, (int) (line.length() - (cursor-contentLength)));
-                }
-                sb.append(line);
-            }
+        String body = null;
+        if (headers.containsName(HttpHeaderName.CONTENT_LENGTH.getValue())) {
+            int contentLength = Integer.parseInt(headers.getValue(HttpHeaderName.CONTENT_LENGTH.getValue()));
+            body = HttpRequestUtils.readData(br, contentLength);
+            body = URLDecoder.decode(body, StandardCharsets.UTF_8);
         }
 
         return HttpRequest.builder()
                 .method(method)
                 .uri(uri)
                 .protocolVersion(protocolVersion)
+                .cookies(cookies)
                 .headers(headers)
-                .body(sb.toString())
+                .body(body)
                 .build();
     }
 

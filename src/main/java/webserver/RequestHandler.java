@@ -4,14 +4,18 @@ import http.request.HttpRequest;
 import http.request.HttpRequestDecoder;
 import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
-import webserver.controller.AbstractController;
+import model.User;
+import webserver.controller.BaseController;
+import webserver.controller.LoginController;
 import webserver.controller.SignupController;
+import webserver.controller.UserListController;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Slf4j
 public class RequestHandler extends Thread {
@@ -22,30 +26,26 @@ public class RequestHandler extends Thread {
         this.connection = connectionSocket;
     }
 
-    private static final Map<String, AbstractController> controllerMap = new HashMap<>();
+    private static final Map<String, BaseController> controllerMap = new HashMap<>();
+    private static final Map<Long, User> sessionMap = new HashMap<>();
 
     static {
         controllerMap.put("/user/create", new SignupController());
-//        controllerMap.put("/user/login", new LoginController());
-//        controllerMap.put("/user/list", new UserListController());
+        controllerMap.put("/user/login", new LoginController());
+        controllerMap.put("/user/list", new UserListController());
     }
-
 
     // TODO: thread -> event loop
     // TODO: keep-alive
     @Override
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}",
-                connection.getInetAddress(),
-                connection.getPort());
-
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream();
              BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
              DataOutputStream dos = new DataOutputStream(out);
         ) {
             HttpRequest request = HttpRequestDecoder.decode(br);
-            AbstractController controller = getController(request.getUri());
+            BaseController controller = getController(request.getUri());
 
             HttpResponse response = controller.service(request);
             response.send(dos);
@@ -56,8 +56,24 @@ public class RequestHandler extends Thread {
 
     /* ---------------------------------------------------------------------- */
 
-    public static AbstractController getController(String path) {
+    public static BaseController getController(String path) {
         return controllerMap
-                .getOrDefault(path, new AbstractController());
+                .getOrDefault(path, new BaseController());
+    }
+
+    public static Long addSessionUser(User user) {
+        Long sessionId;
+        Random random = new Random();
+
+        do {
+            sessionId = random.nextLong();
+        } while (sessionMap.containsKey(sessionId));
+
+        sessionMap.put(sessionId, user);
+        return sessionId;
+    }
+
+    public static User getSessionUser(Long sessionId) {
+        return sessionMap.get(sessionId);
     }
 }
