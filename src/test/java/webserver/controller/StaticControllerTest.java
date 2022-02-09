@@ -78,7 +78,7 @@ class StaticControllerTest {
         HttpResponse httpResponse = (HttpResponse) controller.doHandle(httpRequest);
 
         //then
-        assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.SUCCESS);
+        assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.OK);
     }
 
     private static Stream<Arguments> getExistFileStream(){

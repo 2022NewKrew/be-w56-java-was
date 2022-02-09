@@ -32,7 +32,7 @@ public class StaticController implements Controller {
         log.info("return file {}", fileName);
 
         ContentType contentType = ContentType.getFileType(fileName).orElseThrow();
-        return HttpResponse.builder(HttpStatus.SUCCESS, contentType)
+        return HttpResponse.builder(HttpStatus.OK, contentType)
                 .modelAndView(new ModelAndView(fileName))
                 .build();
     }
