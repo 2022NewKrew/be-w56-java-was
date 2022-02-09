@@ -3,13 +3,12 @@ package cafe.service;
 import cafe.dto.QnaCreateDto;
 import cafe.repository.QnaRepository;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class QnaService {
-    private static final String WEBAPP_PATH = "./webapp";
+    private static final String WEBAPP_PATH = "/webapp";
 
     private final QnaRepository qnaRepository;
 
@@ -22,8 +21,8 @@ public class QnaService {
     }
 
     public String getQnaListHtml() throws IOException {
-        File file = new File(WEBAPP_PATH + "/index.html");
-        byte[] bytes = Files.readAllBytes(file.toPath());
+        InputStream resourceAsStream = this.getClass().getResourceAsStream(WEBAPP_PATH + "/index.html");
+        byte[] bytes = resourceAsStream.readAllBytes();
         String htmlString = new String(bytes);
 
         StringBuilder qnaListHtml = new StringBuilder();

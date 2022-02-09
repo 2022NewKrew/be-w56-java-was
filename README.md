@@ -82,3 +82,41 @@
   ```
 - css, js, favicon에 맞도록 framework에 Controller를 두어서 처리하도록 만듦
 
+## Step7
+- 요구사항
+  - H2 또는 MySQL 혹은 NoSQL 등 데이터베이스를 활용하여 회원정보를 DB에 저장한다. 
+  - index.html에 로그인한 사용자가 글을 쓸 수 있는 한 줄 메모장을 구현한다. 
+  - 로그인하지 않은 사용자도 게시글을 볼 수 있다.
+- 구현 기능
+  - Spring cafe에서 사용한 MySql을 사용하여 기능 구현
+
+## Step8
+- 요구사항
+  - 스트레스 테스트 프로그램 등을 이용해서 테스트를 진행한다. 
+  - 테스트를 기반으로 다양한 성능 분석을 해 본다. 
+  - 마크다운 문서로 간단한 보고서를 만들어 결과를 README.md 에 추가한다.
+- 서버 배포
+  - 서버에 배포할때 static 파일을 제대로 불러오지 못하는 상황이 발생
+    - file을 읽어오는 부분 변경하여 해결
+- 로그 수집 및 분석
+  - logback.xml 파일을 사용해 error, debug 로그를 분리해서 파일로 저장하도록 기능 추가
+- 스트레스 테스트
+  - ngrinder를 사용해 테스트 진행
+  - ![ngrinder result](https://user-images.githubusercontent.com/49807087/152948354-6ef62781-e94d-49ef-9ee0-87bb0a70f2a8.png)
+- GC 모니터링
+  - https://d2.naver.com/helloworld/6043
+  - CUI
+    - CUI는 각 칼럼이 의미하는 것을 잘 구분하지 못해서 보기에 어려웠다. 
+    - gc 관련 jstat 옵션
+      - ![image](https://user-images.githubusercontent.com/49807087/153108434-98c42094-fa2c-4d8c-82a0-490d1b3535ae.png)
+    - jstat의 옵션에 따른 칼럼 
+      - ![image](https://user-images.githubusercontent.com/49807087/153108473-ef8a48ab-dd53-4f0e-a39b-a69b07a65c61.png)
+
+  - gc monitoring
+    - ![gc monitoring](https://user-images.githubusercontent.com/49807087/152948464-cbfb24fe-85bc-4ef5-84d9-bbee718e28d4.png)
+    - 오후 5:07:30 에 ngrinder로 테스트를 진행했을때, 변화하는 것을 확인할 수 있었다. 
+  - visual gc 
+    - ![스크린샷 2022-02-09 오전 10 43 53](https://user-images.githubusercontent.com/49807087/153108068-71380bb4-0fbb-4453-a63c-a259e1d7261d.png)
+    - visual gc plugin을 설치하면 다음과 같은 정보를 확인할 수 있다. 
+- 슬로우 쿼리 분석 & 성능 개선
+  - 아직 스트레스 테스트 결과와 GC 모니터링의 상태를 보는 것이 잘 이해가 되지 않아서, 조금 더 공부한 후에 진행을 해봐야겠다.

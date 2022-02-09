@@ -1,11 +1,10 @@
 package framework.http.response;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 
 public class HttpResponse {
-    private static final String WEBAPP_PATH = "./webapp";
+    private static final String WEBAPP_PATH = "/webapp";
     private static final String DEFAULT_PROTOCOL = "HTTP/1.1";
 
     private StatusLine statusLine;
@@ -43,8 +42,8 @@ public class HttpResponse {
     }
 
     private byte[] readFileByBytes(String path) throws IOException {
-        File file = new File(WEBAPP_PATH + path);
-        byte[] bytes = Files.readAllBytes(file.toPath());
+        InputStream resourceAsStream = this.getClass().getResourceAsStream(WEBAPP_PATH + path);
+        byte[] bytes = resourceAsStream.readAllBytes();
 
         return bytes;
     }
