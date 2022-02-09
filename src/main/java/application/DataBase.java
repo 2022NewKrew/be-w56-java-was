@@ -1,7 +1,6 @@
 package application.db;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 import com.google.common.collect.Maps;
 
@@ -24,7 +23,7 @@ public class DataBase {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public static List<User> findAll() {
+        return new ArrayList<User>(users.values());
     }
 }

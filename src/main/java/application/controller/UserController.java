@@ -9,6 +9,7 @@ import util.HttpRequest;
 import util.HttpRequestUtils;
 import util.HttpResponse;
 
+import java.util.List;
 import java.util.Map;
 
 public class UserController implements Controller{
@@ -46,5 +47,16 @@ public class UserController implements Controller{
 
         res.addHeader("Set-Cookie", "logined=true; Path=/");
         return "redirect:/index.html";
+    }
+
+    @RequestMapping(path = "/user/list", method = "GET")
+    public String userList(ModelAndView mv, HttpRequest req, HttpResponse res) {
+        String cookie = req.getHeaderByKey("Cookie");
+        if (!cookie.contains("logined=true"))
+            return "/user/login.html";
+
+        List<User> users = userService.getUserList();
+        mv.getModel().addAttribute("users", users);
+        return "/user/list";
     }
 }

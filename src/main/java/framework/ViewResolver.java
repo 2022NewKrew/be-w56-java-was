@@ -39,12 +39,8 @@ public class ViewResolver {
     }
 
     public View resolveViewName(String viewName) {
-//        if (!viewMap.containsKey(viewName))
-//            return null;
-//        return viewMap.get(viewName);
-
         for (String supportView : viewMap.keySet()) {
-            if (viewName.startsWith(supportView)) {
+            if (viewName.matches(supportView)) {
                 return viewMap.get(supportView);
             }
         }

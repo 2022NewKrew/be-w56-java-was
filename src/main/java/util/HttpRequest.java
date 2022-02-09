@@ -86,4 +86,8 @@ public class HttpRequest {
     public Map<String, String> getHeaders() {
         return headers;
     }
+
+    public String getHeaderByKey(String key) {
+        return headers.get(key);
+    }
 }

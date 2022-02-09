@@ -3,6 +3,8 @@ package application.domain;
 import application.db.DataBase;
 import application.domain.dto.LoginDto;
 
+import java.util.List;
+
 public class UserService {
 
     public final DataBase dataBase;
@@ -21,5 +23,9 @@ public class UserService {
         if ( findUser == null || !findUser.getPassword().equals(loginUser.getPassword()) )
             return false;
         return true;
+    }
+
+    public List<User> getUserList() {
+        return dataBase.findAll();
     }
 }

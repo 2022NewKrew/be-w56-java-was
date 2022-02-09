@@ -22,9 +22,6 @@ public class StaticView extends View {
         prepareResponse(req, res);
         }
 
-    private void renderUserList(StringBuilder sb, Model model) {
-        return ;
-    }
 
     private void prepareResponse(HttpRequest req, HttpResponse res) {
         res.addHeader("Content-Type", "text/html");

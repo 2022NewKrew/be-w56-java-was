@@ -8,6 +8,7 @@ import framework.handler.HandlerMethod;
 import framework.handler.RequestMappingHandler;
 import framework.handler.ResourceRequestHandler;
 import framework.modelAndView.view.RedirectView;
+import framework.modelAndView.view.TemplateView;
 import framework.util.RequestMapping;
 import framework.modelAndView.view.StaticView;
 import framework.modelAndView.View;
@@ -39,8 +40,9 @@ public class ServerConfig {
     }
 
     static {
-        viewMap.put("redirect:/", new RedirectView());
-        viewMap.put("/", new StaticView());
+        viewMap.put("redirect:/.*", new RedirectView());
+        viewMap.put("/.+\\.html", new StaticView());
+        viewMap.put("/.+", new TemplateView());
         initializeViewResolver();
     }
 
