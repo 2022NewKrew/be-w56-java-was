@@ -1,7 +1,5 @@
 package model;
 
-import com.google.common.base.Strings;
-import exceptions.BadRequestFormatException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,47 +11,45 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.IOUtils;
 
 public class HttpRequest {
 
-    private static final String BODY_SEPARATOR = "";
-    private static final int VALID_REQUEST_LINE_SIZE = 2;
-
     private static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
-    private static int getBodyIndex(List<String> requestLineList) {
-        for (int i = 0; i < requestLineList.size(); i++) {
-            if (Objects.equals(requestLineList.get(i), BODY_SEPARATOR)) {
-                return i;
-            }
-        }
-        return requestLineList.size();
+    private static String readStartLine(BufferedReader bufferedReader) throws IOException {
+        return bufferedReader.readLine();
     }
 
-    public static List<String> convertToStringList(BufferedReader bufferedReader) throws IOException {
-        List<String> requestLineList = new ArrayList<>();
+    private static List<String> readHeader(BufferedReader bufferedReader) throws IOException {
+        List<String> headerLineList = new ArrayList<>();
         String line = bufferedReader.readLine();
-        while (!Strings.isNullOrEmpty(line)) {
-            log.debug("header: {}", line);
-
-            requestLineList.add(line);
+        while (!line.isEmpty()) {
+            headerLineList.add(line);
             line = bufferedReader.readLine();
         }
-        if (requestLineList.size() < VALID_REQUEST_LINE_SIZE) {
-            throw new BadRequestFormatException("request 형식이 맞지 않습니다");
+        return headerLineList;
+    }
+
+    private static String readBody(BufferedReader bufferedReader, int contentLength) throws IOException {
+        return IOUtils.readData(bufferedReader, contentLength);
+    }
+
+    private static int getContentLength(Header header) {
+        String contentLength = header.get(HttpHeader.CONTENT_LENGTH);
+
+        if (Objects.isNull(contentLength)) {
+            return 0;
         }
-        return requestLineList;
+        return Integer.parseInt(contentLength);
     }
 
     public static HttpRequest of(InputStream in) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        List<String> requestLineList = convertToStringList(bufferedReader);
-        StartLine startLine = StartLine.of(requestLineList.get(0));
 
-        int bodyIndex = getBodyIndex(requestLineList);
-        Header header = Header.of(requestLineList.subList(1, bodyIndex));
-        Body body = Body.of(requestLineList.subList(Math.min(bodyIndex + 1, requestLineList.size()),
-                requestLineList.size()));
+        StartLine startLine = StartLine.of(readStartLine(bufferedReader));
+        Header header = Header.of(readHeader(bufferedReader));
+        Body body = Body.of(readBody(bufferedReader, getContentLength(header)));
 
         return new HttpRequest(startLine, header, body);
     }

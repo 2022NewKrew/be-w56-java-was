@@ -18,7 +18,6 @@ public class Header {
             Pair parseHeaderResult = HttpRequestUtils.parseHeader(headerLine);
             header.put(HttpHeader.of(parseHeaderResult.getKey()), parseHeaderResult.getValue());
         }
-
         return new Header(header);
     }
 
@@ -28,7 +27,7 @@ public class Header {
         this.header = Collections.unmodifiableMap(header);
     }
 
-    public String get(String key) {
+    public String get(HttpHeader key) {
         return header.get(key);
     }
 
