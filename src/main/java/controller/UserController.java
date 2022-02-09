@@ -1,6 +1,8 @@
 package controller;
 
+import dto.HttpResponseStatus;
 import dto.RequestInfo;
+import exception.UnAuthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -47,15 +49,36 @@ public class UserController implements Controller {
     }
 
     @Override
+    public void doGet(RequestInfo requestInfo, DataOutputStream dos) {
+        String requestPath = requestInfo.getRequestPath();
+        switch(requestPath) {
+            case "/user/list":
+                this.showUserList(requestInfo, dos);
+                break;
+        }
+    }
+
+    @Override
     public void doPost(RequestInfo requestInfo, DataOutputStream dos) {
         String requestPath = requestInfo.getRequestPath();
         switch(requestPath) {
             case "/user/create":
-                registerUser(requestInfo, dos);
+                this.registerUser(requestInfo, dos);
                 break;
             case "/user/login":
-                loginUser(requestInfo, dos);
+                this.loginUser(requestInfo, dos);
                 break;
+        }
+    }
+
+    private void showUserList(RequestInfo requestInfo, DataOutputStream dos) {
+        try {
+            USER_SERVICE.checkAuthorization(requestInfo);
+            String userListTableTemplate = USER_SERVICE.getUserListTableTemplate();
+            GET_VIEW_RESOLVER.dynamicResponse(dos, requestInfo, userListTableTemplate);
+        } catch(UnAuthorizedException uae) {
+            log.error("[ERROR] - {}", uae.getMessage());
+            GET_VIEW_RESOLVER.errorResponse("/index.html", requestInfo.getVersion(), dos);
         }
     }
 
@@ -63,7 +86,8 @@ public class UserController implements Controller {
         Map<String, String> bodyParams = requestInfo.getBodyParams();
         try {
             USER_SERVICE.createUser(bodyParams);
-            POST_VIEW_RESOLVER.response(requestInfo, dos);
+            String redirectHeader = "Location: /index.html";
+            POST_VIEW_RESOLVER.response(dos, requestInfo, HttpResponseStatus.FOUND, redirectHeader);
         } catch(IllegalArgumentException e) {
             log.error("[ERROR] - {}", e.getMessage());
 
@@ -75,8 +99,9 @@ public class UserController implements Controller {
         Map<String, String> bodyParams = requestInfo.getBodyParams();
         try {
             USER_SERVICE.loginUser(bodyParams);
-            String cookieHeader = "Set-Cookie: loggedin=true; Path=/ \r\n";
-            POST_VIEW_RESOLVER.response(requestInfo, dos, cookieHeader);
+            String redirectHeader = "Location: /index.html";
+            String cookieHeader = "Set-Cookie: logged_in=true; Path=/";
+            POST_VIEW_RESOLVER.response(dos, requestInfo, HttpResponseStatus.FOUND, redirectHeader, cookieHeader);
         } catch(IllegalArgumentException e) {
             log.error("[ERROR] - {}", e.getMessage());
             GET_VIEW_RESOLVER.errorResponse("/user/login_failed.html", requestInfo.getVersion(), dos);

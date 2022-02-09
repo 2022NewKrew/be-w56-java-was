@@ -22,21 +22,20 @@ public class PostViewResolver {
         return INSTANCE;
     }
 
-    public void response(RequestInfo requestInfo, DataOutputStream dos, String... addedHeaders) {
+    public void response(DataOutputStream dos, RequestInfo requestInfo, HttpResponseStatus status, String... addedHeaders) {
         List<String> headers = new ArrayList<>();
         Collections.addAll(headers, addedHeaders);
-        String redirectHeader = "Location: /index.html";
-        headers.add(redirectHeader);
-        this.responseHeader(dos, requestInfo.getVersion(), HttpResponseStatus.FOUND, headers);
+        this.responseHeader(dos, requestInfo.getVersion(), HttpResponseStatus.FOUND, addedHeaders);
     }
 
-    private void responseHeader(DataOutputStream dos, String version, HttpResponseStatus status, List<String> addedHeaders) {
+    private void responseHeader(DataOutputStream dos, String version, HttpResponseStatus status, String[] addedHeaders) {
         try {
             dos.writeBytes(String.format("%s %d %s \r\n", version, status.getStatusCode(), status.getMessage()));
 //            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
 
             for(String h: addedHeaders) {
                 dos.writeBytes(h);
+                dos.writeBytes("\r\n");
             }
             dos.writeBytes("\r\n");
         } catch (IOException e) {

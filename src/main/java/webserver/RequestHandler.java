@@ -55,8 +55,8 @@ public class RequestHandler extends Thread {
         Map<String, String> queryParams = requestUrl.length == 2 ? HttpRequestUtils.parseQueryString(requestUrl[1]) : Maps.newHashMap();
         String version = firstLineTokens[2];
 
-
         Map<String, String> headers = this.parseHeader(httpRequestReader);
+        Map<String, String> cookies = headers.get("Cookie") != null ? this.parseCookie(headers.get("Cookie")) : Maps.newHashMap();
         Map<String, String> bodyParams = this.parseBody(httpRequestReader, Integer.parseInt(headers.getOrDefault("Content-Length", "0")));
 
         return RequestInfo.builder()
@@ -65,6 +65,7 @@ public class RequestHandler extends Thread {
                           .version(version)
                           .queryParams(queryParams)
                           .headers(headers)
+                          .cookies(cookies)
                           .bodyParams(bodyParams)
                           .build();
     }
@@ -78,6 +79,12 @@ public class RequestHandler extends Thread {
         }
 
         return headers;
+    }
+
+    private Map<String, String> parseCookie(String headerCookie) {
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(headerCookie);
+
+        return cookies;
     }
 
     private Map<String, String> parseBody(BufferedReader httpRequestReader, int contentLength) throws IOException {
