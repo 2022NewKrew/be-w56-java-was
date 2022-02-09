@@ -44,9 +44,9 @@ public class HttpRequestUtilsTest {
 
     @Test
     public void parseCookies() {
-        String cookies = "logined=true; JSessionId=1234";
+        String cookies = "loggedin=true; JSessionId=1234";
         Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
-        assertThat(parameters.get("logined")).isEqualTo("true");
+        assertThat(parameters.get("loggedin")).isEqualTo("true");
         assertThat(parameters.get("JSessionId")).isEqualTo("1234");
         assertThat(parameters.get("session")).isNull();
     }
