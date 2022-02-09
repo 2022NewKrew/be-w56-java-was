@@ -9,6 +9,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.time.LocalDateTime;
 import java.util.List;
 import mapper.UserMapper;
 import model.User;
@@ -59,7 +60,8 @@ public class UserDao implements CrudDao<User, ObjectId> {
         Bson updatePassword = set(UserAttribute.PASSWORD.getValue(), entity.getPassword());
         Bson updateName = set(UserAttribute.NAME.getValue(), entity.getName());
         Bson updateEmail = set(UserAttribute.EMAIL.getValue(), entity.getEmail());
-        Bson combineBson = combine(updatePassword, updateName, updateEmail);
+        Bson updateModifiedTime = set(UserAttribute.MODIFIED_TIME.getValue(), LocalDateTime.now());
+        Bson combineBson = combine(updatePassword, updateName, updateEmail, updateModifiedTime);
         collection.findOneAndUpdate(eq(UserAttribute.ID.getValue(), entity.getId()),
                 combineBson);
     }
