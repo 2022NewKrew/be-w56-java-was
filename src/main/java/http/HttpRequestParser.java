@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.Map;
 
 public class HttpRequestParser {
@@ -51,7 +52,7 @@ public class HttpRequestParser {
         }
         int contentLength = Integer.parseInt(httpRequest.getHeader().get("Content-Length"));
         String bodyString = IOUtils.readData(br, contentLength);
-        httpRequest.setBody(HttpRequestUtils.parseQueryString(bodyString));
+        httpRequest.setBody(HttpRequestUtils.parseQueryString(URLDecoder.decode(bodyString, "UTF-8")));
     }
 
     public HttpRequest getHttpRequest() {
