@@ -1,5 +1,6 @@
 package http.request;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Queries {
@@ -8,6 +9,10 @@ public class Queries {
 
     public Queries(Map<String, String> params) {
         this.params = params;
+    }
+
+    public static Queries empty() {
+        return new Queries(new HashMap<>());
     }
 
     public Map<String, String> getParams() {

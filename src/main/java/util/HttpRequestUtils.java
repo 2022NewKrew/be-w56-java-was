@@ -43,30 +43,21 @@ public class HttpRequestUtils {
             throw new InvalidRequestLineException(requestLine);
         }
 
-        HttpMethod method = parseHttpMethod(tokens[0]);
+        HttpMethod method = HttpMethod.valueOf(tokens[0]);
         String path = parsePath(tokens[1]);
         Queries queries = parseQueries(tokens[1]);
 
         return new RequestLine(method, new URI(path, queries));
     }
 
-    public static HttpMethod parseHttpMethod(String methodToken) {
-        return HttpMethod.valueOf(methodToken);
-    }
-
     public static String parsePath(String targetToken) {
         return targetToken.split(PATH_QUERY_STRING_DELIMITER)[0];
     }
 
-    /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
-     * @return
-     */
     public static Queries parseQueries(String targetToken) {
         String[] tokens = targetToken.split(PATH_QUERY_STRING_DELIMITER);
         if (tokens.length < 2) {
-            return new Queries(new HashMap<>());
+            return Queries.empty();
         }
 
         return new Queries(parseValues(tokens[1], PARAMETER_DELIMITER));
@@ -74,17 +65,12 @@ public class HttpRequestUtils {
 
     public static RequestBody parseRequestBody(MediaType contentType, String body) {
         if (Strings.isNullOrEmpty(body)) {
-            return new RequestBody(new HashMap<>());
+            return RequestBody.empty();
         }
 
         return new RequestBody(parseValues(body, PARAMETER_DELIMITER));
     }
 
-    /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
-     * @return
-     */
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, COOKIE_DELIMITER);
     }
