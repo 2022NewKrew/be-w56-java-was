@@ -32,9 +32,6 @@ public class View {
     }
 
     public static byte[] userList(List<User> userList) throws IOException {
-        System.out.println(convertFileToString("/user/list.html")
-                .replace("{{userList}}", userTable(userList)));
-
         return convertFileToString("/user/list.html")
                 .replace("{{userList}}", userTable(userList)).getBytes();
     }
