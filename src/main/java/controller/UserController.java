@@ -8,12 +8,12 @@ import java.util.Map;
 public class UserController implements Controller {
     UserService userService;
 
-    public UserController(){
+    public UserController() {
         this.userService = new UserService();
     }
 
     @Override
-    public String create(Map<String,String> userInfoMap) {
+    public String create(Map<String, String> userInfoMap) {
         userService.createUser(userInfoMap);
         return "/index.html";
     }
