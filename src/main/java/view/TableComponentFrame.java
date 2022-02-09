@@ -10,13 +10,13 @@ public class TableComponentFrame {
 
     private static final Logger log = LoggerFactory.getLogger(TableComponentFrame.class);
 
-    public static String thead(String ...header) {
+    public static String thead(String ...headers) {
         StringBuilder sb = new StringBuilder();
         sb.append("<thead>\n");
         sb.append("<tr>\n");
-        for (int i = 0; i < header.length; i++) {
+        for (String header : headers) {
             sb.append("<th>");
-            sb.append(header[i]);
+            sb.append(header);
             sb.append("</th>\n");
         }
         sb.append("</tr>\n");
@@ -25,9 +25,9 @@ public class TableComponentFrame {
     }
 
     public static String tbody(Object body, String ...columnName) {
-        List<Object> bodies;
+        List<?> bodies;
         if (body instanceof List) {
-            bodies = (List<Object>) body;
+            bodies = (List<?>) body;
         }
         else {
             throw new IllegalArgumentException("Object가 List 타입이 아닙니다");
