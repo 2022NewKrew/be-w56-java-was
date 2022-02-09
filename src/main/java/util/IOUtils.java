@@ -1,8 +1,7 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class IOUtils {
     /**
@@ -33,5 +32,17 @@ public class IOUtils {
             e.printStackTrace();
         }
         return stringBuilder.toString();
+    }
+
+    public static void writeFile(String targetPath, String contents) {
+        File file = new File(targetPath);
+        byte[] bytes = contents.getBytes(StandardCharsets.UTF_8);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(bytes);
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
