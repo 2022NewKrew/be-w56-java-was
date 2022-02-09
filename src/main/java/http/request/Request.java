@@ -30,6 +30,10 @@ public class Request {
         this.br = br;
     }
 
+    /**
+     * HTTP Request 메세지를 읽는 메서드
+     * @throws IOException
+     */
     public void read() throws IOException {
         String line = br.readLine();
         readRequestLine(line);
@@ -44,6 +48,10 @@ public class Request {
         }
     }
 
+    /**
+     * HttpRequest 메세지의 첫 번째 줄을 읽어오는 메서드
+     * @param line HttpRequest의 첫 번째 줄
+     */
     private void readRequestLine(String line){
         String[] requestConditions = HttpRequestUtils.parseRequestLine(line);
         method = HttpMethod.valueOf(requestConditions[METHOD_IDX]);
@@ -51,14 +59,23 @@ public class Request {
         separateQuery(uri);
     }
 
-    private void separateQuery(String requestLine){
-        String[] uriSplit = requestLine.split(QUERY_REGEX);
+    /**
+     * URI를 분석하는 메서드, GET 방식인 경우, URI에 Query가 붙어서 오는 경우를 확인하여 저장
+     * @param line URI
+     */
+    private void separateQuery(String line){
+        String[] uriSplit = line.split(QUERY_REGEX);
         url = uriSplit[URL_IDX];
         if(uriSplit.length != NO_QUERY){
             requestQueries = convertString(uriSplit[QUERY_IDX]);
         }
     }
 
+    /**
+     * URLDecode를 통해 읽은 데이터를 저장하는 메서드
+     * @param data raw data
+     * @return 저장된 쿼리
+     */
     public Queries convertString(String data){
         Queries queries = new Queries(HttpRequestUtils.parseQueryString(URLDecoder.decode(data, StandardCharsets.UTF_8)));
         queries.encode("password");
@@ -80,6 +97,10 @@ public class Request {
     public String getFirstUrl(){
         String[] urlSplit = url.split(URL_REGEX);
         return urlSplit.length > 0 ? URL_REGEX + urlSplit[CONTROLLER_MATCH_IDX] : URL_REGEX;
+    }
+
+    public boolean isLogin(){
+        return requestHeaders.isLogin();
     }
 
 }

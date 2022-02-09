@@ -110,17 +110,22 @@ public class TemplateEngine {
         loopLines.remove(LOOP_START_IDX);
         log.info(loopLines.toString());
         List<?> objects = (List<?>) attribute;
-        // 없는 경우 에러 발생
         if(objects.size() > 0){
             objClass = objects.get(LOOP_START_IDX).getClass();
-            // 유저의 경우 알파벳 순으로 나타남
-            for(Object object : objects){
-                for(String line : loopLines){
-                    readLine(line, object);
-                }
-            }
+            readObjects(objects);
         }
+    }
 
+    private void readObjects(List<?> objects){
+        for(Object model : objects){
+            readLines(model);
+        }
+    }
+
+    private void readLines(Object model){
+        for(String line : loopLines){
+            readLine(line, model);
+        }
     }
 
 

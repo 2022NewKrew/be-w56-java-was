@@ -3,6 +3,15 @@
 
 <br>
 
+## Step 5. 동적인 html 구현
+
+> Step5에서는 동적인 html을 표현할 수 있도록 TemplateEngine을 추가하였습니다. 기존 mustache template의 
+> 문법을 기반으로 Custom TemplateEngine을 추가하였고, 이를 사용자 목록을 출력하는 부분에 적용하였습니다.
+> 원활한 구현을 위해 View 객체를 새로 생성하고, 조건에 따른 생성 방식을 변경하여 나타날 수 있도록 하였습니다.
+
+
+<br>
+
 ## Step 4. Cookie를 이용한 로그인 구현
 
 > Step4에서는 쿠키를 이용하여 로그인 여부를 보여줄 수 있도록 설정했습니다.

@@ -57,6 +57,9 @@ public class UserController implements Controller {
     @RequestMapping(method = HttpMethod.GET, url = "/users")
     public ModelAndView showUsers(Request request){
         log.info("[UserController] : showUsers");
-        return new ModelAndView("/users", "users", userService.searchAllUsers());
+        if(request.isLogin()){
+            return new ModelAndView("/users", "users", userService.searchAllUsers());
+        }
+        return new ModelAndView("redirect:/users/login");
     }
 }
