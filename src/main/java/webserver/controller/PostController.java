@@ -1,20 +1,14 @@
 package webserver.controller;
 
-import db.DataBase;
-import model.Memo;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 import webserver.manage.RequestParser;
-import webserver.response.format.RedirectResponseFormat;
-import webserver.response.ResponseCode;
-import webserver.response.format.ResponseFormat;
+import webserver.service.PostService;
 
 import java.io.OutputStream;
 
 public class PostController implements MethodController {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
 
     private static final String ADD_MEMO = "/memo/add";
 
@@ -23,11 +17,11 @@ public class PostController implements MethodController {
     private static final String LOGOUT = "/user/logout";
 
     RequestParser rp;
-    OutputStream os;
+    PostService ps;
 
     public PostController(RequestParser rp, OutputStream os) {
         this.rp = rp;
-        this.os = os;
+        this.ps = new PostService(os);
     }
 
     public void service() {
@@ -35,89 +29,18 @@ public class PostController implements MethodController {
 
         switch (rp.getPath()) {
             case ADD_MEMO:
-                methodAddMemo();
+                ps.methodAddMemo(rp);
                 break;
             case SIGN_UP:
-                methodSignUp();
+                ps.methodSignUp(rp);
                 break;
             case SIGN_IN:
-                methodSignIn();
+                ps.methodSignIn(rp);
                 break;
             case LOGOUT:
-                methodLogout();
+                ps.methodLogout();
             default:
                 break;
         }
-    }
-
-    private void methodAddMemo () {
-        log.info("[run] methodAddMemo");
-
-        String writer = rp.getCookie("logined");
-        String memo = rp.getBody("memo");
-
-        ResponseFormat rf = new RedirectResponseFormat(os, "/");
-        try {
-            Memo newMemo = new Memo(writer, memo);
-            log.info("new Memo :::" + newMemo);
-            DataBase.addMemo(newMemo);
-
-            rf.sendResponse(ResponseCode.STATUS_303);
-            return;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-
-        rf.sendResponse(ResponseCode.STATUS_404);
-    }
-
-    private void methodSignUp() {
-        log.info("[run] methodSignUp");
-
-        String userId = rp.getBody("userId");
-        String password = rp.getBody("password");
-        String name = rp.getBody("name");
-        String email = rp.getBody("email");
-
-        ResponseFormat rf = new RedirectResponseFormat(os, "/");
-
-        try {
-            User user = new User(userId, password, name, email);
-            log.info(user.toString());
-            DataBase.addUser(user);
-            rf.sendResponse(ResponseCode.STATUS_303);
-            return;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-
-        rf.sendResponse(ResponseCode.STATUS_404);
-    }
-
-    private void methodSignIn() {
-        log.info("[run] methodSignIn");
-
-        String userId = rp.getBody("userId");
-        String password = rp.getBody("password");
-
-        User userData = DataBase.findUserById(userId);
-        if(userData != null && userData.getPassword().equals(password)) {
-            log.info("[login] success");
-
-            ResponseFormat rf = new RedirectResponseFormat(os, "/");
-            rf.setCookie("logined", userId);
-            rf.sendResponse(ResponseCode.STATUS_303);
-            return;
-        }
-        ResponseFormat rf = new RedirectResponseFormat(os, "/");
-        rf.setCookie("logined", "");
-        rf.sendResponse(ResponseCode.STATUS_404);
-    }
-
-    private void methodLogout() {
-        log.info("[run] methodLogout");
-        ResponseFormat rf = new RedirectResponseFormat(os, "/");
-        rf.setCookie("logined", "false");
-        rf.sendResponse(ResponseCode.STATUS_303);
     }
 }
