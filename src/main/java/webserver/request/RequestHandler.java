@@ -37,10 +37,7 @@ public class RequestHandler extends Thread {
             ResponseHandler responseHandler = new ResponseHandler(dos, httpRequest.getHeaderAttribute("VERSION"));
             responseHandler.response(result);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            for(StackTraceElement element : e.getStackTrace()) {
-                log.error(element.toString());
-            }
+            log.error(e.getMessage(), e);
         }
     }
 }

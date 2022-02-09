@@ -54,10 +54,7 @@ public class TableComponentFrame {
             sb.append("</tbody>\n");
             return sb.toString();
         } catch (Exception ex) {
-            log.error(ex.getMessage());
-            for(StackTraceElement element : ex.getStackTrace()) {
-                log.error(element.toString());
-            }
+            log.error(ex.getMessage(), ex);
             return "";
         }
     }

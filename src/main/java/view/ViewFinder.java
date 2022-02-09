@@ -22,17 +22,11 @@ public class ViewFinder {
             try {
                 return dynamicViewFind(path, model);
             }catch (Exception ex2) {
-                log.error(ex2.getMessage());
-                for(StackTraceElement element : ex2.getStackTrace()) {
-                    log.error(element.toString());
-                }
+                log.error(ex2.getMessage(), ex2);
                 return "".getBytes();
             }
         }catch (IOException ex) {
-            log.error(ex.getMessage());
-            for(StackTraceElement element : ex.getStackTrace()) {
-                log.error(element.toString());
-            }
+            log.error(ex.getMessage(), ex);
             return "".getBytes();
         }
     }

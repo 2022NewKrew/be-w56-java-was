@@ -20,18 +20,6 @@ public class Controller {
         return new Response("/index.html", 200);
     }
 
-    @GetMapping(path = "/user/create")
-    public Response signUp(
-            @RequestParam(name = "userId") String userId,
-            @RequestParam(name = "password") String password,
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "email") String email) {
-
-        UserService.enroll(new EnrollUserCommand(userId, password, name, email));
-
-        return new Response("/", 302);
-    }
-
     @PostMapping(path = "/user/create")
     public Response signUp(@RequestBody(names = {"userId", "password", "name", "email"}) EnrollUserRequest enrollUserRequest) {
 
