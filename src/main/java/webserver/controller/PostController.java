@@ -53,7 +53,7 @@ public class PostController implements MethodController {
     private void methodAddMemo () {
         log.info("[run] methodAddMemo");
 
-        String writer = rp.getBody("writer");
+        String writer = rp.getCookie("logined");
         String memo = rp.getBody("memo");
 
         ResponseFormat rf = new RedirectResponseFormat(os, "/");
@@ -105,12 +105,12 @@ public class PostController implements MethodController {
             log.info("[login] success");
 
             ResponseFormat rf = new RedirectResponseFormat(os, "/");
-            rf.setCookie("logined", "true");
+            rf.setCookie("logined", userId);
             rf.sendResponse(ResponseCode.STATUS_303);
             return;
         }
         ResponseFormat rf = new RedirectResponseFormat(os, "/");
-        rf.setCookie("logined", "false");
+        rf.setCookie("logined", "");
         rf.sendResponse(ResponseCode.STATUS_404);
     }
 

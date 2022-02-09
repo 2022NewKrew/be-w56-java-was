@@ -112,8 +112,7 @@ public class PageOfMemoList {
                 "    </div>\n" +
                 "    <div>" +
                 "        <form method=\"post\" action=\"/memo/add\" >" +
-                "            <input name=\"writer\" />" +
-                "            <input name=\"memo\" />" +
+                "            <textarea name=\"memo\"></textarea>" +
                 "            <input type=\"submit\" value=\"제출\"/>" +
                 "        </form>" +
                 "    </div>" +

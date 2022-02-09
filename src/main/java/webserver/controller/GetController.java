@@ -63,7 +63,7 @@ public class GetController implements MethodController {
 
     private void methodUserList() {
         String logined = rp.getCookie(LOGIN_KEY);
-        if( logined == null || logined.equalsIgnoreCase("false") ) {
+        if( logined == null || logined.equalsIgnoreCase("") ) {
             ResponseFormat rf = new ForwardResponseFormat(os, LOGIN_PAGE);
             rf.sendResponse(ResponseCode.STATUS_200);
             return;
