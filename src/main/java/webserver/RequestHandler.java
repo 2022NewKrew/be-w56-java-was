@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,11 @@ public class RequestHandler extends Thread {
             String methodName = HttpRequestUtils.getMethodName(httpRequestHeader);
             String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
 
-            Map<String, String> infoMap = HttpRequestUtils.getInfoMap(methodName, url);
+            Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(methodName, url);
             String methodPath = HttpRequestUtils.getMethodPath(url);
-            String responseUrl = HandlerMapping.getInstance().runMethod(methodPath, infoMap);
+            String responseUrl = url;
+            if (infoMap.isPresent())
+                responseUrl = HandlerMapping.getInstance().runMethod(methodPath, infoMap.get());
 
             log.info("HTTP Request Header Lines : {}", httpRequestHeader);
             log.info("url Path: {}", url);

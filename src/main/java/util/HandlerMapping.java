@@ -15,34 +15,36 @@ public class HandlerMapping {
 
     private static final HandlerMapping handlerMapping = new HandlerMapping();
 
-    private HandlerMapping(){
-        Map<String,Controller> tempMappings = new HashMap<>();
+    private HandlerMapping() {
+        Map<String, Controller> tempMappings = new HashMap<>();
         UserController userController = new UserController();
-        tempMappings.put("/user/create",userController);
+        tempMappings.put("/user/create", userController);
         mappings = Collections.unmodifiableMap(tempMappings);
     }
 
-    public static HandlerMapping getInstance(){
+    public static HandlerMapping getInstance() {
         return handlerMapping;
     }
 
-    public Optional<Controller> getController(String url){
+    public Optional<Controller> getController(String url) {
         Optional<Controller> controllerOptional;
-        if(mappings.containsKey(url))
+        if (mappings.containsKey(url))
             controllerOptional = Optional.of(mappings.get(url));
         else
             controllerOptional = Optional.empty();
         return controllerOptional;
     }
 
-    public String runMethod(String url,Map<String,String> infoMap){
+    public String runMethod(String url, Map<String, String> infoMap) {
         Optional<Controller> controllerOptional = getController(url);
 
-        if(controllerOptional.isPresent()){
-            String methodName = url.split("/")[PATH_METHOD_SPLIT_INDEX];
-            if(methodName.equals("create"))
-                return controllerOptional.get().create(infoMap);
-        }
+        if (controllerOptional.isEmpty())
+            return url;
+
+        String controllerMethodName = url.split("/")[PATH_METHOD_SPLIT_INDEX];
+        if (controllerMethodName.equals("create"))
+            return controllerOptional.get().create(infoMap);
+
         return url;
     }
 }

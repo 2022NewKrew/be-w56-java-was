@@ -2,6 +2,7 @@ package util;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
@@ -21,11 +22,11 @@ public class HttpRequestUtils {
         return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
     }
 
-    public static Map<String, String> getInfoMap(String methodName, String url) {
+    public static Optional<Map<String, String>> getInfoMap(String methodName, String url) {
         String[] urlSplitList = url.split("\\?");
         if (methodName.equals("GET") && urlSplitList.length > VALUE_INDEX)
-            return parseQueryString(urlSplitList[VALUE_INDEX]);
-        return null;
+            return Optional.of(parseQueryString(urlSplitList[VALUE_INDEX]));
+        return Optional.empty();
     }
 
     public static String getMethodPath(String url) {
