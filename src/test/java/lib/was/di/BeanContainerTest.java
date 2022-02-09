@@ -58,6 +58,16 @@ class BeanContainerTest {
     }
 
     @Test
+    void getFirst_interface() throws NoSuchMethodException {
+        subject.put(Foo.class, new ClassInstantiator(Foo.class.getDeclaredConstructor()));
+
+        Object result1 = subject.getFirst(Foo.class);
+        Object result2 = subject.getFirst(Bar.class);
+
+        assertSame(result1, result2);
+    }
+
+    @Test
     void getAll() {
         subject.put(String.class, new ConstantInstantiator("foo"));
         subject.put(int.class, new ConstantInstantiator(1));
@@ -88,5 +98,7 @@ class BeanContainerTest {
         }
     }
 
-    public static class Foo {}
+    public static class Foo implements Bar {}
+
+    public static interface Bar {}
 }
