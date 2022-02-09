@@ -34,5 +34,7 @@ public enum ContentType {
         return type;
     }
 
-    public String getExtension() { return extension; }
+    public String getExtension() {
+        return extension;
+    }
 }

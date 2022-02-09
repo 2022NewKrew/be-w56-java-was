@@ -16,7 +16,7 @@ public class HeaderParser {
     public static HttpHeader parse(BufferedReader br) throws IOException {
         Map<String, String> headerMap = HeaderLineParser.parse(br);
         String headerLine;
-        while(!(headerLine = br.readLine()).equals("")) {
+        while (!(headerLine = br.readLine()).equals("")) {
             HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(headerLine);
             headerMap.put(pair.getKey(), pair.getValue());
         }

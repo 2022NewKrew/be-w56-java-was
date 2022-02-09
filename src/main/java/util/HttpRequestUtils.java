@@ -1,18 +1,19 @@
 package util;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import webserver.http.ContentType;
 import webserver.http.RequestLine;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
+
 public final class HttpRequestUtils {
 
-    private HttpRequestUtils() { }
+    private HttpRequestUtils() {
+    }
 
     public static Map<String, String> parseQueryString(String queryString) {
         return parseValues(queryString, "&");

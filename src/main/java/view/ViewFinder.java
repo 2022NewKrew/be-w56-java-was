@@ -15,17 +15,17 @@ public class ViewFinder {
 
     private static final Logger log = LoggerFactory.getLogger(ViewFinder.class);
 
-    public static byte[] find(String path, Model model){
+    public static byte[] find(String path, Model model) {
         try {
             return staticViewFind(path);
-        }catch (NoSuchFileException ex) {
+        } catch (NoSuchFileException ex) {
             try {
                 return dynamicViewFind(path, model);
-            }catch (Exception ex2) {
+            } catch (Exception ex2) {
                 log.error(ex2.getMessage(), ex2);
                 return "".getBytes();
             }
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
             return "".getBytes();
         }

@@ -17,7 +17,7 @@ public class QueryParser {
     public static HttpUrlQuery parse(BufferedReader br, HttpHeader httpHeader) {
         Map<String, String> queryMap = new HashMap<>();
         String[] parsedPath = HttpRequestUtils.parseGetRequest(httpHeader.getHeaderAttribute("PATH"));
-        if(parsedPath.length == 2) {
+        if (parsedPath.length == 2) {
             queryMap = HttpRequestUtils.parseQueryString(parsedPath[1]);
             httpHeader.setPath(parsedPath[0]);
         }

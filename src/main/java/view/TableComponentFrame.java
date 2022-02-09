@@ -10,7 +10,7 @@ public class TableComponentFrame {
 
     private static final Logger log = LoggerFactory.getLogger(TableComponentFrame.class);
 
-    public static String thead(String ...headers) {
+    public static String thead(String... headers) {
         StringBuilder sb = new StringBuilder();
         sb.append("<thead>\n");
         sb.append("<tr>\n");
@@ -24,12 +24,11 @@ public class TableComponentFrame {
         return sb.toString();
     }
 
-    public static String tbody(Object body, String ...columnName) {
+    public static String tbody(Object body, String... columnName) {
         List<?> bodies;
         if (body instanceof List) {
             bodies = (List<?>) body;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Object가 List 타입이 아닙니다");
         }
 

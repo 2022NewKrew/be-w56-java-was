@@ -14,16 +14,16 @@ public class HeaderMaker {
         String headerLine = HeaderLineMaker.make(response.getStatusCode(), httpVersion);
         HttpStatus statusCode = response.getStatusCode();
         if (statusCode.equals(HttpStatus.FOUND)) {
-            return headerLine+locationHeader(response.getPath())+cookieHeader(response);
+            return headerLine + locationHeader(response.getPath()) + cookieHeader(response);
         }
         if (statusCode.equals(HttpStatus.OK)) {
-            return headerLine+contentTypeHeader(contentType, lengthOfContent)+cookieHeader(response);
+            return headerLine + contentTypeHeader(contentType, lengthOfContent) + cookieHeader(response);
         }
-        return headerLine+cookieHeader(response);
+        return headerLine + cookieHeader(response);
     }
 
     private static String cookieHeader(Response response) {
-        return response.getCookie()+NEXT_LINE;
+        return response.getCookie() + NEXT_LINE;
     }
 
     private static String locationHeader(String location) {
@@ -31,8 +31,8 @@ public class HeaderMaker {
     }
 
     private static String contentTypeHeader(ContentType contentType, int lengthOfContent) {
-        String type = "Content-Type: "+contentType.getType()+";charset=utf-8"+NEXT_LINE;
+        String type = "Content-Type: " + contentType.getType() + ";charset=utf-8" + NEXT_LINE;
         String length = "Content-Length: " + lengthOfContent + NEXT_LINE;
-        return type+length;
+        return type + length;
     }
 }

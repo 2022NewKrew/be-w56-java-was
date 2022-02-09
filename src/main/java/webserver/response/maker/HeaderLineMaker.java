@@ -7,6 +7,6 @@ public class HeaderLineMaker {
     private static final String NEXT_LINE = "\r\n";
 
     public static String make(HttpStatus statusCode, String httpVersion) {
-        return httpVersion+" "+statusCode.getDescription()+" "+NEXT_LINE;
+        return httpVersion + " " + statusCode.getDescription() + " " + NEXT_LINE;
     }
 }

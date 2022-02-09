@@ -1,6 +1,9 @@
 package controller;
 
-import annotation.*;
+import annotation.GetMapping;
+import annotation.HttpCookie;
+import annotation.PostMapping;
+import annotation.RequestBody;
 import controller.dto.EnrollUserRequest;
 import controller.dto.LoginUserRequest;
 import model.Model;
@@ -43,7 +46,7 @@ public class Controller {
                         loginUserRequest.getUserId(),
                         loginUserRequest.getPassword()));
 
-        if(!result.isSame()) {
+        if (!result.isSame()) {
             Response failResponse = new Response("/user/login_failed.html", HttpStatus.OK);
             failResponse.addCookie(Cookie.create("logined", "false"));
             return failResponse;
@@ -60,7 +63,7 @@ public class Controller {
 
         GetAllUserInfoResult allUserInfo = UserService.getAllUserInfo();
 
-        if(login.equals("false") || login.equals("")) {
+        if (login.equals("false") || login.equals("")) {
             return new Response("/user/login.html", HttpStatus.OK);
         }
 

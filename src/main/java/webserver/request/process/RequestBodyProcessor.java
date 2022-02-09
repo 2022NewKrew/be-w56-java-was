@@ -14,10 +14,10 @@ public class RequestBodyProcessor {
     public static Object process(HttpRequest httpRequest, Parameter parameter)
             throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        if(parameter.getAnnotation(RequestBody.class) == null) {
+        if (parameter.getAnnotation(RequestBody.class) == null) {
             return null;
         }
-        for(Constructor<?> constructor : parameter.getType().getDeclaredConstructors()) {
+        for (Constructor<?> constructor : parameter.getType().getDeclaredConstructors()) {
             return findConstructor(constructor, parameter, httpRequest);
         }
         return null;

@@ -7,9 +7,9 @@ public final class ViewFrame {
     }
 
     public static String createView(String mainBody) {
-        return header()+
-                navBar()+
-                mainBody+
+        return header() +
+                navBar() +
+                mainBody +
                 footer();
     }
 

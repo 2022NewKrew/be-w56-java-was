@@ -18,12 +18,12 @@ public class MethodProcessor {
         HttpMethod httpMethod = HttpMethod.match(httpRequest.getHeaderAttribute(RequestLine.METHOD.name()));
 
         PostMapping postMapping = method.getAnnotation(PostMapping.class);
-        if(postMapping != null && httpMethod.isSame(HttpMethod.POST) && postMapping.path().equals(path)) {
+        if (postMapping != null && httpMethod.isSame(HttpMethod.POST) && postMapping.path().equals(path)) {
             result = PostMethodProcessor.process(instance, method, httpRequest);
         }
 
         GetMapping getMapping = method.getAnnotation(GetMapping.class);
-        if(getMapping != null && httpMethod.isSame(HttpMethod.GET) && getMapping.path().equals(path)) {
+        if (getMapping != null && httpMethod.isSame(HttpMethod.GET) && getMapping.path().equals(path)) {
             result = GetMethodProcessor.process(instance, method, httpRequest);
         }
 

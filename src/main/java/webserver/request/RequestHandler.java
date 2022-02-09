@@ -29,7 +29,7 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
+             DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
             HttpRequest httpRequest = RequestParser.parse(br);
             Response result = ControllerMethodMatcher.match(Controller.class, httpRequest);
