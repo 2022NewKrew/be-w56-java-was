@@ -1,11 +1,11 @@
 package http.request;
 
-import com.google.common.base.Strings;
 import http.cookie.Cookie;
 import http.header.HttpHeaderName;
 import http.header.HttpHeaders;
 import http.header.HttpProtocolVersion;
 import http.util.HttpRequestUtils;
+import http.view.InputView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,12 +19,11 @@ import java.util.List;
  */
 public class HttpRequestDecoder {
 
-    public static HttpRequest decode(BufferedReader br) throws IOException {
-        String line;
-        String[] tokens;
+    private static final String START_LINE_DELIMITER = " ";
+    private static final String HEADER_DELIMITER = ": ";
 
-        line = br.readLine();
-        tokens = line.split(" ");
+    public static HttpRequest decode(BufferedReader br) throws IOException {
+        String[] tokens = InputView.readTokenizedLine(br, START_LINE_DELIMITER);
 
         if (tokens.length != 3) {
             throw new IOException();
@@ -65,17 +64,12 @@ public class HttpRequestDecoder {
     private static HttpHeaders getHeaders(BufferedReader br) throws IOException {
         HttpHeaders headers = new HttpHeaders();
 
-        String line;
-        String[] tokens;
         while (true) {
-            line = br.readLine();
-            if (Strings.isNullOrEmpty(line)) {
+            String[] tokens = InputView.readTokenizedLine(br, HEADER_DELIMITER);
+            if (tokens.length == 0) {
                 break;
-            }
-
-            tokens = line.split(": ");
-            if (tokens.length != 2) {
-                throw new IOException();
+            } else if (tokens.length != 2) {
+                throw new IOException("Header format error");
             }
 
             headers.add(tokens[0], tokens[1]);
