@@ -144,3 +144,18 @@ public enum ContentType {
   - 닫아주지 않아도 됨
   > 참고 : https://www.mongodb.com/community/forums/t/where-to-close-db-connection/1368
 - MongoDB 에서 Nested POJO 사용 방법: `@BsonProperty("user")`
+
+### 2022-02-09 (수)
+
+#### 구현 내용
+
+- MongoDB 적용한 한 줄 글쓰기 구현
+  - [ ] 로그인 유저 정보 저장
+    - 쿠키 여러 개 생성 시 `ResponseHeader`에 저장하도록 구현 변경 필요 
+  - [x] `userId`로 사용자 검색하는 기능 추가 
+  - [x] 게시글 저장 기능 추가
+  - [x] `index.html` 수정
+
+#### 구현 관련 고찰
+
+- 쿠키 여러 개 저장하는 효과적인 방법은?
