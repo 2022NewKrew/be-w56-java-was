@@ -1,20 +1,19 @@
 package app;
 
-import app.controller.AnonymousUserException;
 import app.controller.AnonymousUserExceptionResolver;
 import app.controller.UserController;
-import webserver.WebServer;
+import niowebserver.NioWebServer;
 import webserver.WebServerBuilder;
 
 public class Application {
 
     public static void main(String[] args) throws Exception {
-        WebServer server = new WebServerBuilder()
+        NioWebServer server = new WebServerBuilder()
                 .setWebServerPort(8080)
-                .setThreadPoolSize(10)
+                .setThreadPoolSize(8)
                 .addController(new UserController())
                 .addExceptionResolver(new AnonymousUserExceptionResolver())
-                .build();
+                .buildNio();
         server.start();
     }
 }

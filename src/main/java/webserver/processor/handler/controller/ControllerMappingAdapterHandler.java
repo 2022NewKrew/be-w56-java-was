@@ -5,7 +5,6 @@ import http.HttpHandler;
 import http.HttpRequest;
 import http.HttpResponse;
 import webserver.HttpFactory;
-import webserver.exception.InternalServerErrorException;
 import webserver.http.HttpEntityConverter;
 import webserver.http.RequestEntity;
 import webserver.http.ResponseEntity;

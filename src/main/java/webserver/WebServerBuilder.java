@@ -1,5 +1,6 @@
 package webserver;
 
+import niowebserver.NioWebServer;
 import webserver.http.exception.ExceptionResolver;
 import webserver.processor.handler.controller.Controller;
 
@@ -35,5 +36,9 @@ public class WebServerBuilder {
 
     public WebServer build() {
         return new WebServer(controllers, exceptionResolvers, threadPoolSize, port);
+    }
+
+    public NioWebServer buildNio() {
+        return new NioWebServer(controllers, exceptionResolvers, threadPoolSize, port);
     }
 }
