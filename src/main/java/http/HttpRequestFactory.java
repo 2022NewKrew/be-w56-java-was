@@ -26,7 +26,7 @@ public class HttpRequestFactory {
         Map<HttpHeader, String> headers = parseHeaders(br);
         Map<String, String> parameters = parseBody(br, headers);
 
-        return new HttpRequest.Builder()
+        return HttpRequest.builder()
             .url(url)
             .version(version)
             .headers(headers)

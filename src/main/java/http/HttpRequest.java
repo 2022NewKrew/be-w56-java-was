@@ -19,6 +19,10 @@ public class HttpRequest {
         this.session = builder.session;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public boolean hasAllParameters(List<String> parameters) {
         if (this.parameters.isEmpty()) {
             return false;

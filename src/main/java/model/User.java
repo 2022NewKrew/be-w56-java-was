@@ -17,12 +17,34 @@ public class User {
         this.email = builder.email;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public boolean matches(String password) {
         return this.password.equals(password);
     }
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "userId='" + userId + '\'' +
+            ", password='" + password + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 
     public static class Builder {
@@ -55,15 +77,5 @@ public class User {
         public User build() {
             return new User(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "userId='" + userId + '\'' +
-            ", password='" + password + '\'' +
-            ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
-            '}';
     }
 }

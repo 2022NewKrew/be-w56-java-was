@@ -16,7 +16,7 @@ class ControllerArgumentResolverTest {
         "password", "12345678",
         "name", "장우진",
         "email", "jin.jang@kakaocorp.com");
-    private final HttpRequest httpRequest = new HttpRequest.Builder()
+    private final HttpRequest httpRequest = HttpRequest.builder()
         .parameters(parameters)
         .build();
 
