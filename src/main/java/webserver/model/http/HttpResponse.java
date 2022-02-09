@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpResponse {
     private static final String DEFAULT_URI = "http://localhost:8080";
@@ -20,7 +22,7 @@ public class HttpResponse {
     private String location;
     private byte[] body;
     private MIME mime;
-    private Cookie cookie;
+    private List<Cookie> cookies = new ArrayList<>();
 
     public HttpResponse() {
     }
@@ -34,12 +36,12 @@ public class HttpResponse {
         statusLine = httpStatus.makeStatusLine(HTTP_VERSION);
     }
 
-    public Cookie getCookie() {
-        return cookie;
+    public List<Cookie> getCookies() {
+        return cookies;
     }
 
-    public HttpResponse setCookie(Cookie cookie) {
-        this.cookie = cookie;
+    public HttpResponse addCookie(Cookie cookie) {
+        cookies.add(cookie);
         return this;
     }
 
@@ -84,5 +86,14 @@ public class HttpResponse {
             setStatusLine(HttpStatus.NOT_FOUND);
         }
         return this;
+    }
+
+    public String cookiesToString() {
+        StringBuilder cookieHeader = new StringBuilder();
+        for (Cookie cookie : cookies) {
+            cookieHeader.append(cookie.toString());
+            cookieHeader.append("\r\n");
+        }
+        return cookieHeader.toString();
     }
 }

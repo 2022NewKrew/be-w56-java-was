@@ -1,8 +1,9 @@
 package service;
 
-import dto.UserCreateDto;
-import dto.UserItemDto;
-import dto.UserSignInDto;
+import dto.user.UserCreateDto;
+import dto.user.UserItemDto;
+import dto.user.UserSessionedDto;
+import dto.user.UserSignInDto;
 import model.User;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface MemberService {
     void create(UserCreateDto userCreateDto);
 
-    User signIn(UserSignInDto userSignInDto);
+    UserSessionedDto signIn(UserSignInDto userSignInDto);
 
     List<UserItemDto> getList();
 }

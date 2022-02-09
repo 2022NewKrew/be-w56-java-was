@@ -1,6 +1,6 @@
 package model;
 
-import dto.UserCreateDto;
+import dto.user.UserCreateDto;
 
 public class User {
     private final String userId;
