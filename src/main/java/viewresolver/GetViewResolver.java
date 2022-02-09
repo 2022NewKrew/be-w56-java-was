@@ -8,9 +8,12 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GetViewResolver {
     private static final Logger log = LoggerFactory.getLogger(GetViewResolver.class);
@@ -33,6 +36,32 @@ public class GetViewResolver {
         } catch(Exception e) {
             log.error("[ERROR] - {}", e.getMessage());
             this.errorResponse("/error.html", version, dos);
+        }
+    }
+
+    public void dynamicResponse(DataOutputStream dos, RequestInfo requestInfo, String userListTableTemplate) {
+        String requestPath = requestInfo.getRequestPath();
+        switch(requestPath) {
+            case "/user/list":
+                this.responseUserList(dos, requestInfo, userListTableTemplate);
+                break;
+        }
+    }
+
+    private void responseUserList(DataOutputStream dos, RequestInfo requestInfo, String userListTableTemplate) {
+        String version = requestInfo.getVersion();
+
+        try {
+            String template = Files.readString(new File(STATIC_FILE_BASE_DIRECTORY + "/user/list.html").toPath());
+            String[] tokens = template.split("<tbody>|</tbody>");
+            StringBuilder sb = new StringBuilder();
+            sb.append(tokens[0]).append(userListTableTemplate).append(tokens[2]);
+
+            byte[] body = sb.toString().getBytes(StandardCharsets.UTF_8);
+            this.responseHeader(dos, version, HttpResponseStatus.OK, body.length, new ArrayList<>());
+            this.responseBody(dos, body);
+        } catch (IOException e) {
+            log.error("[ERROR] - {}", e.getMessage());
         }
     }
 

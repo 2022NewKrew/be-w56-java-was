@@ -2,6 +2,7 @@ package controller;
 
 import dto.HttpResponseStatus;
 import dto.RequestInfo;
+import exception.UnAuthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -48,15 +49,36 @@ public class UserController implements Controller {
     }
 
     @Override
+    public void doGet(RequestInfo requestInfo, DataOutputStream dos) {
+        String requestPath = requestInfo.getRequestPath();
+        switch(requestPath) {
+            case "/user/list":
+                this.showUserList(requestInfo, dos);
+                break;
+        }
+    }
+
+    @Override
     public void doPost(RequestInfo requestInfo, DataOutputStream dos) {
         String requestPath = requestInfo.getRequestPath();
         switch(requestPath) {
             case "/user/create":
-                registerUser(requestInfo, dos);
+                this.registerUser(requestInfo, dos);
                 break;
             case "/user/login":
-                loginUser(requestInfo, dos);
+                this.loginUser(requestInfo, dos);
                 break;
+        }
+    }
+
+    private void showUserList(RequestInfo requestInfo, DataOutputStream dos) {
+        try {
+            USER_SERVICE.checkAuthorization(requestInfo);
+            String userListTableTemplate = USER_SERVICE.getUserListTableTemplate();
+            GET_VIEW_RESOLVER.dynamicResponse(dos, requestInfo, userListTableTemplate);
+        } catch(UnAuthorizedException uae) {
+            log.error("[ERROR] - {}", uae.getMessage());
+            GET_VIEW_RESOLVER.errorResponse("/index.html", requestInfo.getVersion(), dos);
         }
     }
 
