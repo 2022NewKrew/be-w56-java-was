@@ -63,7 +63,6 @@ public class HttpResponse {
     public String getTotalHeader() {
         StringBuilder header = new StringBuilder();
         for (String key : headers.keySet()) {
-            System.out.println(key + "  " + headers.get(key));
             header.append(key).append(": ").append(headers.get(key)).append("\r\n");
         }
         return header.toString();
