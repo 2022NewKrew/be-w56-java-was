@@ -35,12 +35,12 @@ window.onload = function () {
     if (memoBtn !== null) {
         document.getElementById("memoAddButton").onclick = function () {
             let content = document.getElementById("memoContent").value;
-
+          
             if (content.length === 0) {
                 alert("메모 내용이 비어있습니다.")
                 return;
             }
-
+          
             let data = {
                 content,
             };
@@ -49,7 +49,6 @@ window.onload = function () {
                 .then((response) => {
                     memoList.insertBefore(makeNewMemo(response.data.memo), memoList.firstChild);
                 });
-
         };
 
         document.getElementById("memoContent")
