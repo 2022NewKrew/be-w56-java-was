@@ -105,8 +105,18 @@
   - ![ngrinder result](https://user-images.githubusercontent.com/49807087/152948354-6ef62781-e94d-49ef-9ee0-87bb0a70f2a8.png)
 - GC 모니터링
   - https://d2.naver.com/helloworld/6043
-  - CUI는 각 칼럼이 의미하는 것을 잘 구분하지 못해서 보기에 어려웠다. 
-  - ![gc monitoring](https://user-images.githubusercontent.com/49807087/152948464-cbfb24fe-85bc-4ef5-84d9-bbee718e28d4.png)
+  - CUI
+    - CUI는 각 칼럼이 의미하는 것을 잘 구분하지 못해서 보기에 어려웠다. 
+    - gc 관련 jstat 옵션
+      - ![image](https://user-images.githubusercontent.com/49807087/153108434-98c42094-fa2c-4d8c-82a0-490d1b3535ae.png)
+    - jstat의 옵션에 따른 칼럼 
+      - ![image](https://user-images.githubusercontent.com/49807087/153108473-ef8a48ab-dd53-4f0e-a39b-a69b07a65c61.png)
+
+  - gc monitoring
+    - ![gc monitoring](https://user-images.githubusercontent.com/49807087/152948464-cbfb24fe-85bc-4ef5-84d9-bbee718e28d4.png)
     - 오후 5:07:30 에 ngrinder로 테스트를 진행했을때, 변화하는 것을 확인할 수 있었다. 
+  - visual gc 
+    - ![스크린샷 2022-02-09 오전 10 43 53](https://user-images.githubusercontent.com/49807087/153108068-71380bb4-0fbb-4453-a63c-a259e1d7261d.png)
+    - visual gc plugin을 설치하면 다음과 같은 정보를 확인할 수 있다. 
 - 슬로우 쿼리 분석 & 성능 개선
   - 아직 스트레스 테스트 결과와 GC 모니터링의 상태를 보는 것이 잘 이해가 되지 않아서, 조금 더 공부한 후에 진행을 해봐야겠다.
