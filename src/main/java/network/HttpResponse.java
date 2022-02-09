@@ -16,25 +16,21 @@ public class HttpResponse {
 
         DataOutputStream dos = new DataOutputStream(out);
 
-        switch (status) {
-            case OK:
-                byte[] body = getHtmlBytes(path);
-                response200Header(dos, body.length, cookie);
-                responseBody(dos, body);
-                break;
-            case FOUND:
-                response302Header(dos, path);
-                break;
+    public void setCookie(String key, String value){
+        this.cookie.put(key, value);
+    }
+
+    public void ok() {
+        try {
+            byte[] body = getHtmlBytes(path);
+            dos.writeBytes(Status.OK.getMessage());
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + body.length + "\r\n");
+            dos.writeBytes("\r\n");
+            responseBody(dos, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
-    }
-
-    public static void redirect(String path, OutputStream out){
-        DataOutputStream dos = new DataOutputStream(out);
-        response302Header(dos, path);
-    }
-
-    private static byte[] getHtmlBytes(String url) throws IOException {
-        return Files.readAllBytes(new File("./webapp" + url).toPath());
     }
 
     private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, boolean cookie) {
