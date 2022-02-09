@@ -38,6 +38,11 @@ public class RequestHandler implements Runnable {
             log.info("Unknown Exception");
             e.printStackTrace();
         } finally {
+            try {
+                connection.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             log.info("Connection Closed IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
         }
     }
