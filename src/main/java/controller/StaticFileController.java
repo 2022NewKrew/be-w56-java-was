@@ -7,6 +7,7 @@ import model.HttpRequest;
 import model.HttpResponse;
 import model.HttpStatus;
 import model.HttpSuccessfulResponse;
+import view.View;
 
 public class StaticFileController implements Controller {
 
@@ -23,8 +24,8 @@ public class StaticFileController implements Controller {
     public HttpResponse run(HttpRequest request) throws IOException {
         File file = new File("./webapp" + request.getUrl());
         if (!file.exists()) {
-            return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, "/errors/notFound.html");
+            return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, View.staticFile("/errors/notFound.html"));
         }
-        return HttpSuccessfulResponse.of(HttpStatus.OK, request.getUrl());
+        return HttpSuccessfulResponse.of(HttpStatus.OK, request.getUrl(), View.staticFile(request.getUrl()));
     }
 }

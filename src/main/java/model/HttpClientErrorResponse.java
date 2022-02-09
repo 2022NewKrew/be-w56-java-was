@@ -6,10 +6,9 @@ import view.View;
 
 public class HttpClientErrorResponse extends HttpResponse {
 
-    public static HttpClientErrorResponse of(HttpStatus httpStatus, String url) throws IOException {
+    public static HttpClientErrorResponse of(HttpStatus httpStatus, byte[] body) throws IOException {
         StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
                 httpStatus.getMessage());
-        byte[] body = View.get(url);
         Map<HttpHeader, String> headerKeyMap = Map.of(
                 HttpHeader.CONTENT_TYPE, Mime.HTML.getType(),
                 HttpHeader.CONTENT_LENGTH, Integer.toString(body.length)

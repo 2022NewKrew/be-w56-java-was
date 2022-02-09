@@ -7,10 +7,9 @@ import view.View;
 
 public class HttpSuccessfulResponse extends HttpResponse {
 
-    public static HttpSuccessfulResponse of(HttpStatus httpStatus, String url) throws IOException {
+    public static HttpSuccessfulResponse of(HttpStatus httpStatus, String url, byte[] body) throws IOException {
         StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
                 httpStatus.getMessage());
-        byte[] body = View.get(url);
         Map<HttpHeader, String> headerKeyMap = Map.of(
                 HttpHeader.CONTENT_TYPE, getContentType(url),
                 HttpHeader.CONTENT_LENGTH, Integer.toString(body.length)
