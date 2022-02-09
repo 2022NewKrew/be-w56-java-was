@@ -2,10 +2,9 @@ package util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.HttpResponse;
-import webserver.RequestHandler;
-import webserver.enums.HttpStatus;
-import webserver.enums.MIME;
+import webserver.http.HttpResponse;
+import webserver.http.enums.HttpStatus;
+import webserver.http.enums.MIME;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,7 +31,10 @@ public class HttpResponseUtils {
             dos.writeBytes("Content-Type: " + mime.getContentType() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + httpResponse.getBody().length + "\r\n");
             if (httpResponse.getStatus() == HttpStatus.FOUND)
-                dos.writeBytes("Location: " + httpResponse.getLocation());
+                dos.writeBytes("Location: " + httpResponse.getLocation() + "\r\n");
+
+            if (httpResponse.getCookie() != null)
+                dos.writeBytes("Set-Cookie: " + httpResponse.getCookie().toString() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

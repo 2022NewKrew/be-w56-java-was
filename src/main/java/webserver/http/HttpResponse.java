@@ -1,15 +1,10 @@
-package webserver;
+package webserver.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.enums.HttpMethod;
-import webserver.enums.HttpStatus;
-import webserver.enums.MIME;
+import webserver.http.enums.HttpStatus;
+import webserver.http.enums.MIME;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -24,6 +19,7 @@ public class HttpResponse {
     private String location;
     private byte[] body;
     private MIME mime;
+    private Cookie cookie;
 
     public HttpResponse() {
     }
@@ -35,6 +31,15 @@ public class HttpResponse {
     public void setStatusLine(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
         statusLine = httpStatus.makeStatusLine(HTTP_VERSION);
+    }
+
+    public Cookie getCookie() {
+        return cookie;
+    }
+
+    public HttpResponse setCookie(Cookie cookie) {
+        this.cookie = cookie;
+        return this;
     }
 
     public byte[] getBody() {

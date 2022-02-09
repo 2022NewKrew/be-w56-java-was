@@ -1,4 +1,4 @@
-package webserver.enums;
+package webserver.http.enums;
 
 import java.util.Arrays;
 

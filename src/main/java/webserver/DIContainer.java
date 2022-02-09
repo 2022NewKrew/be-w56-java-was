@@ -17,10 +17,6 @@ public class DIContainer {
         autowire();
     }
 
-    public Object getBeanName(String beanName) {
-        return beans.get(beanName);
-    }
-
     public Map<String, Object> getBeans() {
         return beans;
     }
@@ -106,9 +102,5 @@ public class DIContainer {
         } catch (IOException e) {
             return new HashSet<>();
         }
-    }
-
-    public Set<Class<?>> getClassSet() {
-        return classes;
     }
 }

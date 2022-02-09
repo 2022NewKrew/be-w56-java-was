@@ -1,8 +1,9 @@
 package webserver;
 
+import webserver.http.HttpRequest;
 import webserver.annotations.GetMapping;
 import webserver.annotations.PostMapping;
-import webserver.enums.HttpMethod;
+import webserver.http.enums.HttpMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
