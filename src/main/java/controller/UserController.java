@@ -49,7 +49,7 @@ public class UserController implements Controller{
                 }
             }
             return ResponseGenerator.generateResponse302(PathInfo.PATH_LOGIN_PAGE);
-        } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+        } else if (MIME.isSupportedExtension(path)) {
             return ResponseGenerator.generateStaticResponse(path);
         } else {
             log.debug("Page not found");

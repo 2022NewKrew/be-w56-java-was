@@ -19,7 +19,7 @@ public class ControllerMapper {
             return memoController;
         } else if (path.startsWith("/user")) {
             return userController;
-        } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+        } else if (MIME.isSupportedExtension(path)) {
             return staticController;
         } else {
             throw new IllegalArgumentException("Controller corresponding to path not found");

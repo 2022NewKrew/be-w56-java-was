@@ -16,7 +16,7 @@ public class StaticController implements Controller{
     public HttpResponse controlRequest(HttpRequest httpRequest){
         String path = httpRequest.getPath();
 
-        if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+        if (MIME.isSupportedExtension(path)) {
             return ResponseGenerator.generateStaticResponse(path);
         } else {
             log.debug("Page not found");

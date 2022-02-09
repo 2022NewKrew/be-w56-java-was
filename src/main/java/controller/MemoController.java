@@ -40,7 +40,7 @@ public class MemoController implements Controller{
             } catch (Exception e) {
                 return ResponseGenerator.generateResponse500();
             }
-        } else if (Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path))) {
+        } else if (MIME.isSupportedExtension(path)) {
             return ResponseGenerator.generateStaticResponse(path);
         } else {
             log.debug("Page not found");

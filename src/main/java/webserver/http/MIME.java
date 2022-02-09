@@ -33,6 +33,10 @@ public enum MIME {
         return path.endsWith(extension);
     }
 
+    public static boolean isSupportedExtension(String path) {
+        return Arrays.stream(MIME.values()).anyMatch(mime -> mime.isExtensionMatch(path));
+    }
+
     public String getExtension() {
         return extension;
     }
