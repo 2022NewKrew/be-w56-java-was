@@ -26,8 +26,6 @@ public class UserDAO {
             connection = DBUtils.getConnection();
         } catch (SQLException e) {
             throw new IllegalStateException("DB connection failed");
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("DB driver not found");
         }
     }
 
@@ -46,7 +44,6 @@ public class UserDAO {
 
         resultSet.close();
         statement.close();
-        connection.close();
         return target;
     }
 
@@ -61,7 +58,6 @@ public class UserDAO {
         statement.execute();
 
         statement.close();
-        connection.close();
     }
 
     public List<User> findAllUsers() throws SQLException {
@@ -81,7 +77,6 @@ public class UserDAO {
 
         resultSet.close();
         statement.close();
-        connection.close();
         return userList;
     }
 }

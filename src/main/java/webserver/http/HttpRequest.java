@@ -45,7 +45,11 @@ public class HttpRequest {
     public Map<String, String> getCookies() { return cookies; }
 
     public boolean isLoggedIn() {
-        return Boolean.parseBoolean(cookies.get("logined"));
+        try {
+            return Boolean.parseBoolean(cookies.get("logined"));
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     private Map<String, String> generateCookiesFromHeaders() {
