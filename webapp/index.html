@@ -98,6 +98,11 @@
               </tr>
               </thead>
               <tbody>
+              {{#memos}}
+                  <tr>
+                      <th scope="row">{{id}}</th> <td>{{createdAt}}</td> <td>{{author}}</td> <td>{{content}}</td>
+                  </tr>
+              {{/memos}}
               <tr>
                   <th scope="row">111</th> <td>2022-02-03</td> <td>patrick</td> <td>온보딩 1달만 더 합시다</td>
               </tr>

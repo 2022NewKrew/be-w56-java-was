@@ -1,5 +1,7 @@
 package webserver.http.response;
 
+import webserver.http.response.templateEngine.TemplateEngine;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,7 +58,7 @@ public class HttpResponse {
     }
 
     private void setBody() throws IOException {
-        TemplateEngine.createHtml(this);
+        TemplateEngine.run(this);
 
         if(Url.endsWith(".css")) {
             header.put("Content-Type", "text/css");
