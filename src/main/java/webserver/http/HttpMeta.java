@@ -24,7 +24,7 @@ public class HttpMeta {
     public static final String SEPARATOR_OF_STATUS_LINE = " ";
     public static final String SEPARATOR_OF_HEADER_LINE = ": ";
     public static final String SEPARATOR_OF_BETWEEN_HEADERS = "\r\n";
-    public static final String VIEW_BASIC_PAGE = "/index.html";
+    public static final String VIEW_BASIC_PAGE = "/";
     public static final String VIEW_LOGIN_PAGE = "/user/login.html";
     public static final String VIEW_LOGIN_FAIL_PAGE = "/user/login_failed.html";
 
