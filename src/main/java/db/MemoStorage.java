@@ -19,4 +19,8 @@ public class MemoStorage {
     public static Collection<Memo> findAll() {
         return memos.values();
     }
+
+    public static void clear() {
+        memos.clear();
+    }
 }
