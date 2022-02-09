@@ -9,7 +9,8 @@ public enum HttpVersion {
 
     public static HttpVersion fromString(String version) {
         for (HttpVersion hv : HttpVersion.values()) {
-            if (hv.name().equalsIgnoreCase(version)) {
+            if (hv.getVersion().equals(version)) {
+                System.out.println(version);
                 return hv;
             }
         }
