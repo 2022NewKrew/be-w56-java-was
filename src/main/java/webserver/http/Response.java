@@ -9,10 +9,10 @@ public class Response {
 
     private final String path;
     private final List<Cookie> cookies;
-    private final int statusCode;
+    private final HttpStatus statusCode;
     private Model model;
 
-    public Response(String path, int statusCode) {
+    public Response(String path, HttpStatus statusCode) {
         this.path = path;
         this.statusCode = statusCode;
         this.cookies = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Response {
         return path;
     }
 
-    public int getStatusCode() {
+    public HttpStatus getStatusCode() {
         return this.statusCode;
     }
 
@@ -40,8 +40,8 @@ public class Response {
 
     public String getCookie() {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < cookies.size(); i++) {
-            sb.append(cookies.get(i).toHeader());
+        for (Cookie cookie : cookies) {
+            sb.append(cookie.toHeader());
             sb.append("\r\n");
         }
         return sb.toString();

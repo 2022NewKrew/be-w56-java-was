@@ -10,6 +10,7 @@ import service.dto.GetAllUserInfoResult;
 import service.dto.LoginUserCommand;
 import service.dto.LoginUserResult;
 import webserver.http.Cookie;
+import webserver.http.HttpStatus;
 import webserver.http.Response;
 
 
@@ -17,7 +18,7 @@ public class Controller {
 
     @GetMapping(path = "/")
     public Response getIndex() {
-        return new Response("/index.html", 200);
+        return new Response("/index.html", HttpStatus.OK);
     }
 
     @PostMapping(path = "/user/create")
@@ -31,7 +32,7 @@ public class Controller {
                         enrollUserRequest.getEmail()
                 ));
 
-        return new Response("/", 302);
+        return new Response("/", HttpStatus.FOUND);
     }
 
     @PostMapping(path = "/user/login")
@@ -43,13 +44,13 @@ public class Controller {
                         loginUserRequest.getPassword()));
 
         if(!result.isSame()) {
-            Response failResponse = new Response("/user/login_failed.html", 200);
+            Response failResponse = new Response("/user/login_failed.html", HttpStatus.OK);
             failResponse.addCookie(Cookie.create("logined", "false"));
             return failResponse;
         }
 
         Cookie cookie = Cookie.create("logined", "true");
-        Response response = new Response("/", 302);
+        Response response = new Response("/", HttpStatus.FOUND);
         response.addCookie(cookie);
         return response;
     }
@@ -60,12 +61,12 @@ public class Controller {
         GetAllUserInfoResult allUserInfo = UserService.getAllUserInfo();
 
         if(login.equals("false") || login.equals("")) {
-            return new Response("/user/login.html", 200);
+            return new Response("/user/login.html", HttpStatus.OK);
         }
 
         Model model = Model.create();
         model.addAttribute("userList", allUserInfo.getUserInfos());
-        Response response = new Response("/userList", 200);
+        Response response = new Response("/userList", HttpStatus.OK);
         response.setModel(model);
         return response;
     }

@@ -1,5 +1,6 @@
 package webserver.request.process;
 
+import webserver.http.HttpStatus;
 import webserver.http.RequestLine;
 import webserver.http.Response;
 import webserver.http.request.HttpRequest;
@@ -24,7 +25,7 @@ public class ControllerMethodMatcher {
         }
 
         if(Objects.isNull(result)) {
-            return new Response(path, 200);
+            return new Response(path, HttpStatus.OK);
         }
         return result;
     }

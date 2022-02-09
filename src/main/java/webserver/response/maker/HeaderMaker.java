@@ -2,6 +2,7 @@ package webserver.response.maker;
 
 import util.HttpRequestUtils;
 import webserver.http.ContentType;
+import webserver.http.HttpStatus;
 import webserver.http.Response;
 
 public class HeaderMaker {
@@ -11,11 +12,11 @@ public class HeaderMaker {
     public static String make(Response response, String httpVersion, int lengthOfContent) {
         ContentType contentType = HttpRequestUtils.parseExtension(response.getPath());
         String headerLine = HeaderLineMaker.make(response.getStatusCode(), httpVersion);
-        int statusCode = response.getStatusCode();
-        if (statusCode == 302) {
+        HttpStatus statusCode = response.getStatusCode();
+        if (statusCode.equals(HttpStatus.FOUND)) {
             return headerLine+locationHeader(response.getPath())+cookieHeader(response);
         }
-        if (statusCode == 200) {
+        if (statusCode.equals(HttpStatus.OK)) {
             return headerLine+contentTypeHeader(contentType, lengthOfContent)+cookieHeader(response);
         }
         return headerLine+cookieHeader(response);
