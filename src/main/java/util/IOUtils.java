@@ -1,9 +1,17 @@
 package util;
 
+import http.HttpHeaders;
+import http.MediaType;
+import http.request.HttpRequest;
+import http.request.RequestBody;
+import http.request.RequestLine;
 import http.response.HttpResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -16,14 +24,27 @@ public class IOUtils {
     private IOUtils() {
     }
 
-    public static String readRequestLine(BufferedReader br) throws IOException {
+    public static HttpRequest readRequest(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        RequestLine requestLine = HttpRequestUtils.parseRequestLine(readRequestLine(br));
+        HttpHeaders headers = HttpRequestUtils.parseHeaders(readHttpHeaders(br));
+
+        MediaType contentType = headers.getContentType();
+        int contentLength = headers.getContentLength();
+        String bodyString = readData(br, contentLength);
+        RequestBody body = HttpRequestUtils.parseRequestBody(contentType, bodyString);
+
+        return new HttpRequest(requestLine, headers, body);
+    }
+
+    private static String readRequestLine(BufferedReader br) throws IOException {
         String requestLine = br.readLine();
         log.debug("request line: {}", requestLine);
 
         return requestLine;
     }
 
-    public static List<String> readHttpHeaders(BufferedReader br) throws IOException {
+    private static List<String> readHttpHeaders(BufferedReader br) throws IOException {
         List<String> httpHeaders = new ArrayList<>();
         String line = br.readLine();
 
@@ -44,9 +65,10 @@ public class IOUtils {
      * @return
      * @throws IOException
      */
-    public static String readData(BufferedReader br, int contentLength) throws IOException {
+    private static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
+        log.debug("body: {}", String.copyValueOf(body));
         return String.copyValueOf(body);
     }
 
