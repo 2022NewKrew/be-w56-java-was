@@ -75,3 +75,9 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 Set-Cookie: logined=true; Path=/
 ```
+
+### 요구사항 5: 동적인 html 구현
+
+> 접근하고 있는 사용자가 “로그인” 상태일 경우(Cookie 값이 logined=true) 경우 http://localhost:8080/user/list 에서 사용자 목록을 출력한다.
+>
+> 만약 로그인하지 않은 상태라면 로그인 페이지(login.html)로 이동한다.

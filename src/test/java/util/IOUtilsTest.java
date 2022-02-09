@@ -2,45 +2,36 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.BufferedReader;
+import http.HttpMethod;
+import http.request.HttpRequest;
+import http.request.RequestBody;
+import http.request.RequestLine;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IOUtilsTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(IOUtilsTest.class);
+    private static final String httpRequest = "POST /users/create HTTP/1.1\n"
+            + "Host: localhost:8080\n"
+            + "Connection: keep-alive\n"
+            + "Content-Length: 59\n"
+            + "Content-Type: application/x-www-form-urlencoded\n"
+            + "Accept: */*\n"
+            + "\n"
+            + "userId=javajigi&password=password&name=javajigi&email=javajigi@slipp.net";
 
     @Test
-    public void readRequestLine() throws IOException {
-        String httpRequestHeader = "GET /index.html HTTP/1.1\r\nHost: localhost:8080\r\nConnection: keep-alive\r\n";
-        StringReader sr = new StringReader(httpRequestHeader);
+    public void readRequest() throws IOException {
+        InputStream in = new ByteArrayInputStream(httpRequest.getBytes());
+        HttpRequest httpRequest = IOUtils.readRequest(in);
+        RequestLine requestLine = httpRequest.getRequestLine();
+        RequestBody requestBody = httpRequest.getBody();
 
-        String requestLine = IOUtils.readRequestLine(new BufferedReader(sr));
-
-        assertThat(requestLine).isEqualTo("GET /index.html HTTP/1.1");
-    }
-
-    @Test
-    public void readHttpHeaders() throws IOException {
-        String httpRequestHeader = "Host: localhost:8080\r\nConnection: keep-alive\r\n";
-        StringReader sr = new StringReader(httpRequestHeader);
-
-        List<String> httpHeaders = IOUtils.readHttpHeaders(new BufferedReader(sr));
-
-        assertThat(httpHeaders).contains("Host: localhost:8080").contains("Host: localhost:8080");
-    }
-
-    @Test
-    public void readData() throws Exception {
-        String data = "abcd123";
-        StringReader sr = new StringReader(data);
-        BufferedReader br = new BufferedReader(sr);
-
-        logger.debug("parse body : {}", IOUtils.readData(br, data.length()));
+        assertThat(requestLine.getMethod()).isEqualTo(HttpMethod.POST);
+        assertThat(requestLine.getUri().getPath()).isEqualTo("/users/create");
+        assertThat(requestBody.getValue("userId")).isEqualTo("javajigi");
     }
 }

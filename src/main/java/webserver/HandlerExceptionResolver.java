@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 public class HandlerExceptionResolver {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerExceptionResolver.class);
+    private static final TemplateView templateView = MyTemplateView.getInstance();
 
     public static HandlerExceptionResolver instance;
 
@@ -25,7 +26,8 @@ public class HandlerExceptionResolver {
     public HttpResponse resolveException(CustomException e) {
         HttpResponse httpResponse = new HttpResponse();
         try {
-            httpResponse.error(e.getStatus(), e.getMessage());
+            ModelAndView mv = ModelAndView.error(e.getStatus());
+            mv.render(httpResponse, templateView);
             return httpResponse;
         } catch (Exception handlerEx) {
             log.error("Failure while trying to resolve exception [" + e.getClass().getName() + "]", handlerEx);
