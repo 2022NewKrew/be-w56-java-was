@@ -12,11 +12,16 @@ import static java.util.stream.Collectors.toList;
 public class ConverterServiceForTest {
     private static final Converter<Object, Map<String, String>> objectToFieldMapConverter = new ObjectToFieldMapConverter();
 
-    public static List<Map<String, String>> convertToFieldMapList(List<?> from){
+    private static List<Map<String, String>> convertToFieldMapList(List<?> from){
         return from.stream()
                 .map(objectToFieldMapConverter::convert)
                 .collect(toList());
 
+    }
+
+    public static Stream<Arguments> convertToFieldMapListArgumentsStream(List<?> from){
+        List<Map<String, String>> fieldMapList = convertToFieldMapList(from);
+        return convertToArgumentsStream(fieldMapList);
     }
 
     public static Stream<Arguments> convertToArgumentsStream(List<?> from){
