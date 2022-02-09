@@ -10,6 +10,8 @@ import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import user.controller.UserCreate;
+import user.controller.UserLogin;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -18,7 +20,7 @@ import static util.HttpRequestUtils.parseRequestLine;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String PATH_INDEX = "index.html";
+    private static final String LOGIN_FAIL_PATH = "user/login_failed.html";
 
     private Socket connection;
 
@@ -33,20 +35,19 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            DataOutputStream dos = new DataOutputStream(out);
+             DataOutputStream dos = new DataOutputStream(out);
             String requestLine = br.readLine();
 
             HttpRequestUtils.Pair urlPair = parseRequestLine(requestLine);
             String method = urlPair.getKey();
             String url = urlPair.getValue();
             Map<String, String> headers = getHeaders(br, requestLine);
-
-            if (method.equals("POST") && url.startsWith("/user/create")) {
-                String requestBody = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
-                Map<String, String> params = HttpRequestUtils.parseQueryString(requestBody);
-                User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
-                DataBase.addUser(user);
-                response302Header(dos, PATH_INDEX);
+            if (method.equals("POST") && url.equals("/user/create")) {
+                String path = new UserCreate().execute(br, headers);
+                response302Header(dos, path);
+            } else if (method.equals("POST") && url.equals("/user/login")) {
+                Map<String, String> loginResult = new UserLogin().execute(br, headers);
+                reponse302HeaderWithCookie(dos, loginResult.get("path"), loginResult.get("cookie"));
             }
             else {
                 byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
@@ -62,6 +63,17 @@ public class RequestHandler extends Thread {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: /" + path + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void reponse302HeaderWithCookie(DataOutputStream dos, String path, String cookie) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: /" + path + "\r\n");
+            dos.writeBytes("Set-Cookie: " + cookie + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
