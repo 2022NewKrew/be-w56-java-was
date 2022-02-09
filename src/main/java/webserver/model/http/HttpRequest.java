@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpRequest {
@@ -48,7 +50,7 @@ public class HttpRequest {
         int contentLength = contentLengthString == null? 0: Integer.parseInt(contentLengthString);
 
         String body = IOUtils.readData(br, contentLength);
-        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], body);
+        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], URLDecoder.decode(body, StandardCharsets.UTF_8));
     }
 
     public HttpMethod getMethod() {

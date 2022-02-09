@@ -1,9 +1,11 @@
 package controller;
 
 import dto.UserCreateDto;
+import dto.UserItemDto;
 import dto.UserSignInDto;
 import exception.BusinessException;
 import exception.EntityNotFoundException;
+import org.h2.engine.Mode;
 import service.MemberService;
 import webserver.model.ModelAndView;
 import webserver.model.http.Cookie;
@@ -15,6 +17,7 @@ import webserver.annotations.PostMapping;
 import webserver.enums.HttpStatus;
 
 import java.lang.reflect.MalformedParameterizedTypeException;
+import java.util.List;
 
 @Component
 public class MemberController {
@@ -76,6 +79,15 @@ public class MemberController {
     public ModelAndView loginFailed() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/user/login_failed.html");
+        return modelAndView;
+    }
+
+    @GetMapping("/user/list.html")
+    public ModelAndView getUserList() {
+        List<UserItemDto> userItemDtoList = memberService.getList();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setModel("userList", userItemDtoList);
+        modelAndView.setViewName("/user/list.html");
         return modelAndView;
     }
 }
