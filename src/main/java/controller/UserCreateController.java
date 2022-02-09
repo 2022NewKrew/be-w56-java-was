@@ -2,10 +2,9 @@ package controller;
 
 import controller.request.Request;
 import controller.response.Response;
-import db.DataBase;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,13 +19,11 @@ public class UserCreateController implements WebController{
 
     @Override
     public Response process(Request request) {
-        User user = new User(request.getBody("userId"),
-                request.getBody("password"),
-                request.getBody("name"),
-                request.getBody("email"));
-        DataBase.addUser(user);
-
-        log.debug("user: {}", user);
+        String userId = request.getBody("userId");
+        String password = request.getBody("password");
+        String name = request.getBody("name");
+        String email = request.getBody("email");
+        UserService.addUser(userId, password, name, email);
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Location", "/index.html");

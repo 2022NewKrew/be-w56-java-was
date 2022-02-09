@@ -33,9 +33,9 @@ public class UserListController implements WebController{
         Map<String, String> headers = new HashMap<>();
         Response response = null;
 
-        String logined = cookies.get("logined");
+        String loggedIn = cookies.get("loggedIn");
 
-        if (logined == null || logined.equals("false")) {
+        if (loggedIn == null || loggedIn.equals("false")) {
             String redirectPath = "/user/login.html";
             headers.put("Location", redirectPath);
 

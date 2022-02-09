@@ -1,10 +1,11 @@
 package service;
 
-import db.DataBase;
+import dao.UserDao;
+import db.MongoDb;
 import model.User;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by melodist
@@ -14,6 +15,17 @@ import java.util.List;
 public class UserService {
 
     public static List<User> getUserList() {
-        return new ArrayList<>(DataBase.findAll());
+        return MongoDb.findAll().stream()
+                .map(UserDao::toEntity)
+                .collect(Collectors.toList());
+    }
+
+    public static User getUserByUserId(String userId) {
+        return MongoDb.findUserByUserId(userId).toEntity();
+    }
+
+    public static void addUser(String userId, String password, String name, String email) {
+        UserDao userDao = new UserDao(userId, password, name, email);
+        MongoDb.addUser(userDao);
     }
 }

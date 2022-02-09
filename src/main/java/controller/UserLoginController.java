@@ -2,8 +2,8 @@ package controller;
 
 import controller.request.Request;
 import controller.response.Response;
-import db.DataBase;
 import model.User;
+import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,14 +21,15 @@ public class UserLoginController implements WebController{
 
         User loginUser = login(request.getBody("userId"), request.getBody("password"));
         String redirectPath = "/user/login_failed.html";
-        String logined = "false";
+        String loggedIn = "false";
 
         if (loginUser != null) {
-            redirectPath = "/index.html";
-            logined = "true";
+            redirectPath = "/";
+            loggedIn = "true";
+            headers.put("Set-Cookie", "loggedInUser=" + loginUser.getUserId() + "; Path=/");
         }
 
-        headers.put("Set-Cookie", "logined=" + logined + "; Path=/");
+        headers.put("Set-Cookie", "loggedIn=" + loggedIn + "; Path=/");
         headers.put("Location", redirectPath);
 
         return new Response.Builder()
@@ -38,7 +39,7 @@ public class UserLoginController implements WebController{
     }
 
     private User login(String requestId, String requestPassword) {
-        User user = DataBase.findUserById(requestId);
+        User user = UserService.getUserByUserId(requestId);
         if (user == null) {
             return null;
         }

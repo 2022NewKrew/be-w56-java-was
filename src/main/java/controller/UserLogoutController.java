@@ -2,7 +2,6 @@ package controller;
 
 import controller.request.Request;
 import controller.response.Response;
-import model.User;
 import util.HttpRequestUtils;
 
 import java.util.HashMap;
@@ -22,9 +21,9 @@ public class UserLogoutController implements WebController{
         String redirectPath = "/index.html";
         String cookiesHeader = request.getHeader("Set-Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookiesHeader);
-        String logined = cookies.get("logined");
+        String loggedIn = cookies.get("loggedIn");
 
-        headers.put("Set-Cookie", "logined=false");
+        headers.put("Set-Cookie", "loggedIn=false");
         headers.put("Location", redirectPath);
 
         return new Response.Builder()
