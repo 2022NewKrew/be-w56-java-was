@@ -3,7 +3,6 @@ package webserver.controller;
 import network.HttpRequest;
 import network.HttpResponse;
 import webserver.service.UserService;
-
 import java.io.OutputStream;
 
 public class GetController {
