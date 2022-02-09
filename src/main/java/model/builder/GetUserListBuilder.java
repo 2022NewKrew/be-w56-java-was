@@ -6,24 +6,31 @@ import dynamic.DynamicModel;
 import model.RequestHeader;
 import model.ResponseHeader;
 import model.User;
+import service.UserService;
 import util.HtmlResponseHeader;
 import util.Links;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class GetUserListBuilder extends ResponseBuilder {
+    private final UserService userService;
+
+    public GetUserListBuilder() {
+        userService = UserService.getInstance();
+    }
 
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) throws IOException {
+    public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {
         if (requestHeader.existCookie("logined") && requestHeader.getCookie("logined").equals("true")) {
             return logined(requestHeader);
         }
         return notLogined(requestHeader);
     }
 
-    private ResponseHeader logined(RequestHeader requestHeader) throws IOException {
-        List<User> users = (List<User>) DataBase.findAll();
+    private ResponseHeader logined(RequestHeader requestHeader) throws IOException, SQLException {
+        List<User> users = userService.findAll();
         model.addAttribute("users", users);
 
         return ResponseHeader.builder()

@@ -7,11 +7,12 @@ import util.HtmlResponseHeader;
 import util.Links;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class GetUserLogoutBuilder extends ResponseBuilder {
 
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) throws IOException {
+    public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {
         return ResponseHeader.builder()
                 .uri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))

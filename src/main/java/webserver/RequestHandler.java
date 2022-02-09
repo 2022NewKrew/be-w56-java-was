@@ -57,7 +57,7 @@ public class RequestHandler extends Thread {
         responseHeader.responseBody(dos);
     }
 
-    private ResponseHeader getResponseHeader(RequestHeader requestHeader) throws IOException {
+    private ResponseHeader getResponseHeader(RequestHeader requestHeader) throws Exception {
         try {
             return RequestController.controlRequest(requestHeader);
         } catch (Exception exception) {

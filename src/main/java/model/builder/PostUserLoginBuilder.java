@@ -4,20 +4,25 @@ import db.DataBase;
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.ResponseHeader;
+import service.UserService;
 import util.HtmlResponseHeader;
 import util.Links;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class PostUserLoginBuilder extends ResponseBuilder {
+    private final UserService userService;
+
+    public PostUserLoginBuilder() {
+        userService = UserService.getInstance();
+    }
+
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) throws IOException {
-        String id = requestHeader.getParameter("userId");
+    public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {
+        String userId = requestHeader.getParameter("userId");
         String password = requestHeader.getParameter("password");
-        if (DataBase.isExistUserId(id) &&
-                DataBase.findUserById(id)
-                        .getPassword()
-                        .equals(password)) {
+        if (userService.login(userId, password)) {
             return buildSuccessLogin(requestHeader);
         }
         return buildFailLogin(requestHeader);

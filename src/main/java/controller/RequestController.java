@@ -3,13 +3,15 @@ package controller;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.ResponseHeader;
-import model.SignUpService;
+import service.UserService;
 import model.builder.*;
 
 @Slf4j
 public class RequestController {
-    private RequestController() {
+    private static final UserService userService = UserService.getInstance();
 
+    private RequestController() {
+        
     }
 
     public static ResponseHeader controlRequest(RequestHeader requestHeader) throws Exception {
@@ -19,7 +21,7 @@ public class RequestController {
         log.info("CONTROL METHOD: " + method);
 
         if (uri.equals("/user/create") && method.equals("POST")) {
-            SignUpService.signup(requestHeader);
+            userService.save(requestHeader);
             return new PostUserCreateBuilder().build(requestHeader);
         }
 
