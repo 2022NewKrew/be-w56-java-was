@@ -29,7 +29,7 @@ public class RequestHandler extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 
             String httpRequestHeader = IOUtils.getHttpRequestHeader(bufferedReader);
-            String httpMethod = HttpRequestUtils.getMethodName(httpRequestHeader);
+            String httpMethod = HttpRequestUtils.getHttpMethod(httpRequestHeader);
             String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
 
             Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(httpMethod, url);
