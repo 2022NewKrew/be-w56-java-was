@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import model.User;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,7 +46,7 @@ class UserMapperTest {
     private static Stream<List<User>> getUsers() {
         List<User> users = new ArrayList<>();
 
-        for(int i = 0 ; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             users.add(
                     new User(
                             "userId" + i,
@@ -78,6 +79,7 @@ class UserMapperTest {
 
         for (int i = 0; i < 100; i++) {
             Document document = new Document();
+            document.put("_id", new ObjectId());
             document.put("userId", "userId" + i);
             document.put("password", "password" + i);
             document.put("name", "name" + i);
@@ -106,6 +108,7 @@ class UserMapperTest {
     void documentToUser() {
         UserMapper userMapper = UserMapper.INSTANCE;
         Document document = new Document();
+        document.put("_id", new ObjectId());
         document.put("userId", "testUserId");
         document.put("password", "testPassword");
         document.put("name", "testName");

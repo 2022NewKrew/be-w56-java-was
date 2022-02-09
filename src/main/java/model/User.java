@@ -66,6 +66,10 @@ public class User extends BaseTime {
         }
     }
 
+    public ObjectId getId() {
+        return id;
+    }
+
     public String getUserId() {
         return userId;
     }

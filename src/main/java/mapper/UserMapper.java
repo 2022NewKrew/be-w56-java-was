@@ -6,7 +6,10 @@ import java.time.ZoneId;
 import java.util.List;
 import model.User;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -14,6 +17,7 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    @Mapping(target = "id", source = "id", qualifiedByName = "objectIdToString")
     UserDto userToDto(User user);
 
     List<UserDto> usersToDtos(List<User> users);
@@ -21,7 +25,7 @@ public interface UserMapper {
     List<User> documentsToUsers(List<Document> documents);
 
     default Document userToDocument(User user) {
-        if(user == null) {
+        if (user == null) {
             return null;
         }
         Document document = new Document();
@@ -35,10 +39,11 @@ public interface UserMapper {
     }
 
     default User documentToUser(Document document) {
-        if(document == null) {
+        if (document == null) {
             return null;
         }
         return new User(
+                document.getObjectId("_id"),
                 document.getString("userId"),
                 document.getString("password"),
                 document.getString("name"),
@@ -48,5 +53,10 @@ public interface UserMapper {
                 Instant.ofEpochMilli(document.getDate("modifiedTime").getTime())
                         .atZone(ZoneId.systemDefault()).toLocalDateTime()
         );
+    }
+
+    @Named("objectIdToString")
+    default String objectIdToString(ObjectId id) {
+        return id.toString();
     }
 }

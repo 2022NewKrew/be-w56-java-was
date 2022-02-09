@@ -1,17 +1,21 @@
 package dto;
 
-import model.User;
-
 public class UserDto {
 
+    private final String id;
     private final String userId;
     private final String name;
     private final String email;
 
-    public UserDto(String userId, String name, String email) {
+    public UserDto(String id, String userId, String name, String email) {
+        this.id = id;
         this.userId = userId;
         this.name = name;
         this.email = email;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getUserId() {
