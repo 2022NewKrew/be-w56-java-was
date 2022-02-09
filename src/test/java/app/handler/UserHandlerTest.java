@@ -48,7 +48,7 @@ class UserHandlerTest {
         Response result = subject.login(request);
 
         assertEquals(301, result.getStatusCode());
-        assertEquals("/index.html", result.getHeader("Location"));
+        assertEquals("/", result.getHeader("Location"));
         assertEquals("currentUserId=0; path=/", result.getHeader("Set-Cookie"));
     }
 
