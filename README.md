@@ -151,3 +151,41 @@ ___
 > 만약 `로그인` 상태가 아닌 경우, 로그인 페이지 (http://localhost:8080/user/login.html) 로 이동한다.
 
 동적인 HTML 생성을 위한 `UserHtmlResponseUtils` 클래스를 구현하고, 해당 Util 클래스를 `UserController` 에서 활용해 도메인에서 읽어온 사용자 목록을 가지고 동적인 HTML 을 생성하고 이를 Response 의 Body 로 전달한다.   
+
+___
+
+## 요구사항 7 : 데이터베이스 연동 및 한줄 메모장 구현
+
+H2 Database 사용을 위한 Jdbc 설정 방법
+
+1. `DriverManager.getConnection()` 을 호출해 Jdbc Connection 을 얻는다.
+2. `connection.createStatement()` 를 호출해 Statement 를 생성한다.
+3. SQL 문을 정의한 뒤 `statement.executeQuery()` / `statement.executeUpdate()` 를 호출해 해당 SQL 을 실행한다.
+
+#### Connection 설정 방법
+```java
+Connection connection = DriverManager.getConnection("jdbcUrl", "userName", "password");
+```
+
+#### Statement 생성 및 사용
+```java
+String sql = "Some SQL ...";
+Statement statement = connection.createStatement();
+statement.executeQuery(sql); // SELECT 쿼리를 위한 메소드
+statement.executeUpdate(sql); // CREATE, UPDATE 등 쿼리를 위한 메소드
+statement.close();
+```
+Statement 는 Closeable 한 객체이기 때문에, 사용 후 close() 의 호출을 명시적으로 하는 것을 추천한다. \
+혹은 다음과 같은 `try-with-resources` 문을 사용할 수 있다.
+```java
+try (Statement statement = connection.createStatement()) {
+    statement.execute(sql);
+} catch (SQLException e) {
+    e.printStackTrace();
+}
+```
+
+___
+#### 참고자료
+
+[H2 Database 연결 설정](https://zetcode.com/java/h2database/)
