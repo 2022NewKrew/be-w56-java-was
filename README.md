@@ -13,7 +13,7 @@
 - [x] HttpRequestUtils.java, RequestHeader의 역할이 더 맞아보임
 - [x] HttpResponseUtils.java, 만들어 놓은 Response class를 사용하면 좀 더 깔끔해질것 같음
 - [ ] Router.java, get의 경우에 한정된 라우팅, 응답을 내려주는 경우 어떻게 할 것인가 문제, 인터페이스 이용해서 처리에 대한 로직을 구현하는 메서드를 만들어 보면 좋을듯
-  - Router.java 역할 FrontController.java에서 수행되도록 했습니다(get에 한정된 처리, 응답을 내려주는 경우 처리 보완했습니다) 인터페이스 이용해서 처리하는건 좀 더 공부 해보겠습니다   
+  - Router.java (get에 한정된 처리, 응답을 내려주는 경우 처리 보완했습니다) 인터페이스 이용해서 처리하는건 좀 더 공부 해보겠습니다   
 
 ---
 ## HTTP 정리

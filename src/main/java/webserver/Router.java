@@ -1,5 +1,7 @@
-package controller;
+package webserver;
 
+import controller.StaticResourceController;
+import controller.UserController;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,23 +12,23 @@ import webserver.response.Response;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class FrontController {
-    private static final Logger log = LoggerFactory.getLogger(FrontController.class);
+public class Router {
+    private static final Logger log = LoggerFactory.getLogger(Router.class);
     private static final UserController userController = UserController.getInstance();
     private static final StaticResourceController staticResourceController = StaticResourceController.getInstance();
 
-    private static FrontController instance;
+    private static Router instance;
 
-    private FrontController() {}
+    private Router() {}
 
-    public static synchronized FrontController getInstance() {
+    public static synchronized Router getInstance() {
         if(instance == null) {
-            instance = new FrontController();
+            instance = new Router();
         }
         return instance;
     }
 
-    public void handle(DataOutputStream dos, Request request) throws ParseException, IOException {
+    public void routing(DataOutputStream dos, Request request) throws ParseException, IOException {
         String path = request.getRequestLine().getRequestUri().getPath();
         Response response = null;
 

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class RequestUri {
-    private static final String URI_SEPARATOR = "\\?";
-    private static final String QUERY_SEPARATOR = "&";
-    private static final String PARAM_SEPARATOR = "=";
-    private static final String PATH_SEPARATOR = "/";
+    protected static final String URI_SEPARATOR = "\\?";
+    protected static final String QUERY_SEPARATOR = "&";
+    protected static final String PARAM_SEPARATOR = "=";
+    protected static final String PATH_SEPARATOR = "/";
 
     private final String path;
     private final Map<String, String> params;
@@ -76,6 +76,7 @@ public class RequestUri {
     public String getParam(String key) {
         return params.containsKey(key) ? params.get(key) : null;
     }
+
     @Override
     public String toString() {
         return "RequestUri{" +
