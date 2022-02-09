@@ -1,7 +1,7 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
-#Step1
+# Step1
 ## 요구사항
 - Http를 학습한 후, 학습 내용을 기반으로 웹 서버 구현.
 - ![img.png](img.png)
@@ -16,3 +16,10 @@
 - split을 이용하여 첫 줄의 입력을 통해 url path를 얻음.
 - Response Body에 해당 path의 경로에 있는 파일을 byte 타입으로 가져와 flush.
 - Junit 이용하여 Test 코드 생성.
+
+# Step2
+## 요구사항
+- "회원가입" 메뉴를 클릭하여 회원가입 폼으로 이동.
+- 회원가입 폼에서 입력한 정보를 파싱하여 user 클래스에 저장.
+- GET 으로 회원가입 기능을 구현.
+- ![img_1.png](img_1.png)
