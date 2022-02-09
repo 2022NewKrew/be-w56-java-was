@@ -16,7 +16,7 @@ public class RequestParser {
 
     public static HttpRequest parse(BufferedReader br) throws IOException {
         HttpHeader header = HeaderParser.parse(br);
-        HttpUrlQuery query = QueryParser.parse(br, header);
+        HttpUrlQuery query = QueryParser.parse(header);
         HttpBody body = BodyParser.parse(br, header);
 
         return new HttpRequest(header, body, query);
