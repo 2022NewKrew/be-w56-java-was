@@ -20,7 +20,7 @@ class BeanInjectorTest {
         container.put(Integer.class, new ConstantInstantiator(2));
         container.put(int.class, new ConstantInstantiator(3));
         container.put(boolean.class, new ConstantInstantiator(true));
-        BeanInjector subject = new BeanInjector(mock(Logger.class));
+        BeanInjector subject = new BeanInjector();
 
         Foo foo = new Foo();
         subject.inject(container, foo);

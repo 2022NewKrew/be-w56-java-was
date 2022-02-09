@@ -2,6 +2,7 @@ package lib.was.di;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -21,9 +22,9 @@ class BeanContainerTest {
     void getFirst_noBeans() {
         subject.put(String.class, new ConstantInstantiator("foo"));
 
-        Object result = subject.getFirst(Integer.class);
+        Executable executable = () -> subject.getFirst(Integer.class);
 
-        assertNull(result);
+        assertThrows(RuntimeException.class, executable);
     }
 
     @Test
@@ -52,6 +53,16 @@ class BeanContainerTest {
 
         Object result1 = subject.getFirst(Foo.class);
         Object result2 = subject.getFirst(Foo.class);
+
+        assertSame(result1, result2);
+    }
+
+    @Test
+    void getFirst_interface() throws NoSuchMethodException {
+        subject.put(Foo.class, new ClassInstantiator(Foo.class.getDeclaredConstructor()));
+
+        Object result1 = subject.getFirst(Foo.class);
+        Object result2 = subject.getFirst(Bar.class);
 
         assertSame(result1, result2);
     }
@@ -87,5 +98,7 @@ class BeanContainerTest {
         }
     }
 
-    public static class Foo {}
+    public static class Foo implements Bar {}
+
+    public static interface Bar {}
 }

@@ -13,6 +13,9 @@ public class BeanContainer {
 
     public void put(Class<?> clazz, Instantiator instantiator) {
         Class<?> wrapped = Primitives.wrap(clazz);
+        for (Class<?> interfaze : clazz.getInterfaces()){
+            put(interfaze, instantiator);
+        }
         beans.putIfAbsent(wrapped, new ArrayList<>());
         beans.computeIfPresent(wrapped, (k, v) -> {
             v.add(instantiator);

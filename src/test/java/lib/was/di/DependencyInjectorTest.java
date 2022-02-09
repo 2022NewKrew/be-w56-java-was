@@ -1,7 +1,6 @@
 package lib.was.di;
 
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Set;
@@ -9,13 +8,12 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 class DependencyInjectorTest {
 
     @Test
     void inject() {
-        DependencyInjector di = new DependencyInjector(mock(Logger.class));
+        DependencyInjector di = new DependencyInjector();
         Stub stub = new Stub();
 
         di.inject("lib.was.di", stub);

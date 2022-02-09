@@ -1,12 +1,11 @@
 package lib.was;
 
 import lib.was.http.ContentType;
-import lib.was.http.Headers;
 import lib.was.http.Request;
 import lib.was.http.Response;
+import lib.was.router.RouterFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import lib.was.router.RouterFunction;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class RequestHandler extends Thread {
                 return response;
             }
         }
-        return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
+        return Response.notFound("Not Found").contentType(ContentType.TEXT);
     }
 
     private void sendResponse(OutputStream os, Response response) throws IOException {

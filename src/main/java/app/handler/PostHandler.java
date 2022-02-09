@@ -1,16 +1,16 @@
 package app.handler;
 
+import domain.model.Post;
+import domain.model.User;
+import lib.util.HttpRequestUtils;
 import lib.was.di.Bean;
 import lib.was.di.Inject;
-import app.db.Database;
 import lib.was.http.ContentType;
 import lib.was.http.Headers;
 import lib.was.http.Request;
 import lib.was.http.Response;
-import domain.model.Post;
-import domain.model.User;
 import lib.was.template.TemplateEngine;
-import lib.util.HttpRequestUtils;
+import service.PostService;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,40 +20,33 @@ import java.util.Map;
 @Bean
 public class PostHandler {
 
-    private final Database database;
+    private final PostService service;
+    private final TemplateEngine templateEngine;
 
     @Inject
-    public PostHandler(Database database) {
-        this.database = database;
+    public PostHandler(PostService service, TemplateEngine templateEngine) {
+        this.service = service;
+        this.templateEngine = templateEngine;
     }
 
     public Response create(Request request) {
-        String cookieHeader = request.getHeader("Cookie");
-        Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieHeader);
-        boolean loggedIn = Boolean.parseBoolean(cookies.get("loggedIn"));
-        if (!loggedIn) {
-            Map<String, String> headers = Map.of(
-                    "Content-Type", ContentType.TEXT.getContentType(),
-                    "Location", "/user/login.html"
-            );
-            return Response.of(302, new Headers(headers), "Not logged in");
+        Long currentUserId = request.getCookieLong("currentUserId");
+        if (currentUserId == null) {
+            return Response.found("Not logged in")
+                    .contentType(ContentType.HTML)
+                    .redirect("/user/login.html");
         }
-        String body = request.getBody();
-        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
-        String title = params.get("title");
-        String content = params.get("contents");
-        long author = Long.parseLong(params.get("writer"));
+        String title = request.getBodyParam("title");
+        String content = request.getBodyParam("contents");
         Post post = new Post.Builder()
                 .title(title)
                 .content(content)
-                .author(new User(author, "", "", "", ""))
+                .author(new User(currentUserId, "", "", "", ""))
                 .build();
-        database.addPost(post);
-        Map<String, String> headers = Map.of(
-                "Content-Type", "text/plain",
-                "Location", "/"
-        );
-        return Response.of(301, new Headers(headers), "");
+        service.addPost(post);
+        return Response.found("")
+                .contentType(ContentType.HTML)
+                .redirect("/");
     }
 
     public Response list(Request request) {
@@ -61,12 +54,12 @@ public class PostHandler {
         try {
             String content = Files.readString(file.toPath());
             Map<String, Object> values = Map.of(
-                    "posts", database.findAllPosts()
+                    "posts", service.findAllPosts()
             );
-            String filled = new TemplateEngine().render(content, values);
-            return Response.ok(Headers.contentType(ContentType.HTML), filled);
+            String filled = templateEngine.render(content, values);
+            return Response.ok(filled).contentType(ContentType.HTML);
         } catch (IOException e) {
-            return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
+            return Response.error(e.getMessage()).contentType(ContentType.HTML);
         }
     }
 }

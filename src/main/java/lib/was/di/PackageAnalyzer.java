@@ -1,7 +1,5 @@
 package lib.was.di;
 
-import org.slf4j.Logger;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -13,12 +11,6 @@ import java.util.List;
 // https://stackoverflow.com/a/520344
 public class PackageAnalyzer {
 
-    private final Logger logger;
-
-    public PackageAnalyzer(Logger logger) {
-        this.logger = logger;
-    }
-
     public Class<?>[] getClasses(String packageName) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String path = packageName.replace('.', '/');
@@ -26,8 +18,7 @@ public class PackageAnalyzer {
         try {
             resources = classLoader.getResources(path);
         } catch (IOException e) {
-            logger.error("Error loading classes from package {}", packageName, e);
-            return new Class<?>[0];
+            throw new RuntimeException("Error loading classes from package " + packageName, e);
         }
         List<File> dirs = new ArrayList<>();
         while (resources.hasMoreElements()) {
@@ -73,8 +64,7 @@ public class PackageAnalyzer {
         try {
             return List.of(Class.forName(qualifier));
         } catch (ClassNotFoundException e) {
-            logger.error("Error loading class {}", qualifier, e);
-            return Collections.emptyList();
+            throw new RuntimeException("Error loading class " + qualifier, e);
         }
     }
 }

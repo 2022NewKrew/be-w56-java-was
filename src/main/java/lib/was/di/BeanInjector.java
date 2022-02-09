@@ -1,17 +1,9 @@
 package lib.was.di;
 
-import org.slf4j.Logger;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
 public class BeanInjector {
-
-    private final Logger logger;
-
-    public BeanInjector(Logger logger) {
-        this.logger = logger;
-    }
 
     public void inject(BeanContainer container, Object target) {
         injectBeans(container, target);
@@ -41,8 +33,7 @@ public class BeanInjector {
         try {
             beanList = container.getAll(Class.forName(itemType));
         } catch (ClassNotFoundException e) {
-            logger.error("Error getting bean list for " + itemType, e);
-            return;
+            throw new RuntimeException("Error getting bean list for " + itemType, e);
         }
         injectBeans(container, beanList);
         setField(target, field, beanList);
@@ -52,7 +43,7 @@ public class BeanInjector {
         try {
             field.set(target, value);
         } catch (IllegalAccessException e) {
-            logger.error("Error setting field " + field.getName() + " on " + target.getClass().getName(), e);
+            throw new RuntimeException("Error setting field " + field.getName() + " on " + target.getClass().getName(), e);
         }
     }
 

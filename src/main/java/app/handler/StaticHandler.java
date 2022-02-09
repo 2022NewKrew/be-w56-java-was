@@ -2,7 +2,6 @@ package app.handler;
 
 import lib.was.di.Bean;
 import lib.was.http.ContentType;
-import lib.was.http.Headers;
 import lib.was.http.Request;
 import lib.was.http.Response;
 
@@ -20,16 +19,16 @@ public class StaticHandler {
         }
         File file = new File("./webapp" + filePath);
         if (!file.exists()) {
-            return Response.notFound(Headers.contentType(ContentType.TEXT), "Not Found");
+            return Response.notFound("Not Found").contentType(ContentType.TEXT);
         }
         String filename = file.getName();
         String extension = filename.substring(filename.lastIndexOf("."));
         ContentType contentType = ContentType.fromExtension(extension).orElse(ContentType.TEXT);
         try {
             byte[] content = Files.readAllBytes(file.toPath());
-            return new Response(200, Headers.contentType(contentType), content);
+            return Response.ok(content).contentType(contentType);
         } catch (IOException e) {
-            return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
+            return Response.error(e.getMessage()).contentType(ContentType.TEXT);
         }
     }
 }

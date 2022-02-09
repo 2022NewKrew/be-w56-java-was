@@ -15,7 +15,7 @@ class PackageAnalyzerTest {
     @Test
     void getClasses() {
         String packageName = "test.dummy";
-        PackageAnalyzer analyzer = new PackageAnalyzer(mock(Logger.class));
+        PackageAnalyzer analyzer = new PackageAnalyzer();
 
         Class<?>[] classes = analyzer.getClasses(packageName);
 
