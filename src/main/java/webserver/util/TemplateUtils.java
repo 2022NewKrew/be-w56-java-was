@@ -44,7 +44,7 @@ public class TemplateUtils {
             resultStringBuilder.append(processList(fileString.substring(nameEnd + 2, endContent), getAttribute(obj, name)));
             return endContent + name.length() + 5;
         }
-        
+
         resultStringBuilder.append(getAttribute(obj, name));
         return nameEnd + 2;
     }
