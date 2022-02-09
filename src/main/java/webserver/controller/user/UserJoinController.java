@@ -42,7 +42,7 @@ public class UserJoinController implements Controller {
         log.info("created user {}", user);
 
         return HttpResponse.builder(HttpStatus.REDIRECT, ContentType.HTML)
-                .headers(Map.of("Location", "/"))
+                .header("Location", "/")
                 .build();
     }
 

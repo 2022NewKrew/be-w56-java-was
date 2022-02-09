@@ -48,8 +48,8 @@ public class UserLoginController implements Controller {
         log.info("user {}가 로그인하였습니다", user);
 
         return HttpResponse.builder(HttpStatus.REDIRECT, ContentType.HTML)
-                .headers(Map.of("Set-Cookie", "logined=true",
-                        "Location", "/")
-                ).build();
+                .header("Set-Cookie", "logined=true")
+                .header("Location", "/")
+                .build();
     }
 }

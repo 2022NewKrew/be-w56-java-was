@@ -37,13 +37,13 @@ public class HttpResponse {
             this.headers = new ResponseHeaders(contentType);
         }
 
-        public Builder headers(Map<String, String> headers) {
-            this.headers = this.headers.with(headers);
+        public Builder modelAndView(ModelAndView modelAndView){
+            this.modelAndView = modelAndView;
             return this;
         }
 
-        public Builder modelAndView(ModelAndView modelAndView){
-            this.modelAndView = modelAndView;
+        public Builder header(String key, String val){
+            this.headers.addHeader(key, val);
             return this;
         }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -14,7 +15,7 @@ public class ResponseHeaders {
 
     private final ContentType contentType;
     private int contentLength = 0;
-    private Map<String, String> others = Collections.emptyMap();
+    private Map<String, String> others = new HashMap<>();
 
     @Override
     public String toString() {
@@ -38,5 +39,9 @@ public class ResponseHeaders {
     public ResponseHeaders with(Map<String, String> others){
         this.others = others;
         return this;
+    }
+
+    public void addHeader(String key, String val){
+        this.others.put(key, val);
     }
 }
