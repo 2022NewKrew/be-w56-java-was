@@ -60,7 +60,7 @@ public class UserHandler {
         }
         Map<String, String> headers = Map.of(
                 "Content-Type", ContentType.TEXT.getContentType(),
-                "Location", "/index.html",
+                "Location", "/",
                 "Set-Cookie", String.format("currentUserId=%d; path=/", user.get().getId())
         );
         return Response.of(301, new Headers(headers), "Login success");
