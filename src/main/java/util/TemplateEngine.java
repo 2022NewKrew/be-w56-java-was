@@ -38,6 +38,11 @@ public class TemplateEngine {
         this.mv = mv;
     }
 
+    /**
+     * 템플릿 엔진을 적용하여 파일을 읽는 메서드
+     * @return 읽은 파일의 문자열을 반환
+     * @throws IOException
+     */
     public String read() throws IOException {
         log.info("[TemplateEngine] -------------read------------");
         String line;
@@ -53,6 +58,10 @@ public class TemplateEngine {
         return sb.toString();
     }
 
+    /**
+     * 각 줄을 읽는 메서드, 루프 안에 들어가지 않는 경우
+     * @param line 각 줄
+     */
     private void readLine(String line){
         Matcher matcher = p.matcher(line);
         while(matcher.find()){
@@ -64,6 +73,11 @@ public class TemplateEngine {
         sb.append(line);
     }
 
+    /**
+     * 각 줄을 읽는 메서드, 루프 안에 들어간 경우
+     * @param line 각 줄
+     * @param model 템플릿에 적용할 모델
+     */
     private void readLine(String line, Object model) {
         Matcher matcher = p.matcher(line);
         while(matcher.find()){
@@ -75,10 +89,21 @@ public class TemplateEngine {
         sb.append(line);
     }
 
+    /**
+     * 모델에서 원하는 attribute를 가져오게 하는 메서드 이름을 찾는 메서드
+     * @param attr attribute 이름
+     * @return getter method 이름
+     */
     private String findGetterName(String attr){
         return "get" + attr.substring(0, 1).toUpperCase() + attr.substring(1);
     }
 
+    /**
+     * 모델에서 getter method를 통해 원하는 값을 찾는 메서드
+     * @param attr attribute 이름
+     * @param model 템플릿에 적용할 모델
+     * @return 원하는 attribute 값
+     */
     private String findValue(String attr, Object model){
         try{
             String getterName = findGetterName(attr);
@@ -89,6 +114,10 @@ public class TemplateEngine {
         }
     }
 
+    /**
+     * 루프에 진입했는지 판단하는 메서드
+     * @param attr 패턴에 일치하는 문자열
+     */
     private void checkLoopSign(String attr){
         attr = attr.trim();
         if(Pattern.matches(LOOP_PATTERN, attr)){
@@ -106,6 +135,9 @@ public class TemplateEngine {
         }
     }
 
+    /**
+     * 루프 구간을 읽는 메서드
+     */
     private void readLoopLines(){
         loopLines.remove(LOOP_START_IDX);
         log.info(loopLines.toString());
@@ -116,12 +148,20 @@ public class TemplateEngine {
         }
     }
 
+    /**
+     * 객체 수만큼 루프를 도는 메서드
+     * @param objects
+     */
     private void readObjects(List<?> objects){
         for(Object model : objects){
             readLines(model);
         }
     }
 
+    /**
+     * 객체인 모델을 기반으로 루프를 읽는 메서드
+     * @param model 템플릿에 적용할 모델
+     */
     private void readLines(Object model){
         for(String line : loopLines){
             readLine(line, model);

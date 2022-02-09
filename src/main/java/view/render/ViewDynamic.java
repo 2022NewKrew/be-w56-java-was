@@ -53,14 +53,4 @@ public class ViewDynamic implements ViewRender{
     public HttpStatusCode getStatusCode() {
         return this.statusCode;
     }
-
-//    private void readFile(BufferedReader br) throws IOException {
-//        log.info("[ViewDynamic] Readfile: " + url);
-////        String line;
-////        while((line = br.readLine()) != null){
-////            sb.append(String.format("%s\r\n", line));
-////        }
-//        TemplateEngine templateEngine = new TemplateEngine(br, mv);
-//        templateEngine.read();
-//    }
 }
