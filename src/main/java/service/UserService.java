@@ -40,7 +40,7 @@ public class UserService {
     }
 
     public boolean isLogin(HttpRequest request) {
-        Map<String, String> cookies = request.getCookies();
+        Map<String, String> cookies = request.getHeaders().getCookie();
         return cookies.containsKey(LOGINED) && cookies.get(LOGINED).equals("true");
     }
 

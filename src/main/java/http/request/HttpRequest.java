@@ -1,12 +1,9 @@
 package http.request;
 
 import http.HttpHeaders;
-import java.util.Map;
-import util.HttpRequestUtils;
 
 public class HttpRequest {
 
-    private static final String COOKIE = "Cookie";
     private final RequestLine requestLine;
     private final HttpHeaders headers;
     private final RequestBody body;
@@ -21,12 +18,11 @@ public class HttpRequest {
         return requestLine;
     }
 
-    public RequestBody getBody() {
-        return body;
+    public HttpHeaders getHeaders() {
+        return headers;
     }
 
-    public Map<String, String> getCookies() {
-        String cookies = headers.get(COOKIE);
-        return HttpRequestUtils.parseCookies(cookies);
+    public RequestBody getBody() {
+        return body;
     }
 }
