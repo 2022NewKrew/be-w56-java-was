@@ -6,7 +6,7 @@ public class Cookie {
     private final String value;
     private String path;
 
-    private Cookie (String name, String value) {
+    private Cookie(String name, String value) {
         this.name = name;
         this.value = value;
         this.path = "/";
@@ -21,14 +21,14 @@ public class Cookie {
     }
 
     public String toHeader() {
-        return "Set-Cookie: "+toNameValue()+"; "+toPath();
+        return "Set-Cookie: " + toNameValue() + "; " + toPath();
     }
 
     private String toNameValue() {
-        return name+"="+value;
+        return name + "=" + value;
     }
 
     private String toPath() {
-        return "Path="+path;
+        return "Path=" + path;
     }
 }

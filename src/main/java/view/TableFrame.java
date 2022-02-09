@@ -7,8 +7,8 @@ public final class TableFrame {
     }
 
     public static String create(String tableSource) {
-        return tableHeader()+
-                tableSource+
+        return tableHeader() +
+                tableSource +
                 tableFooter();
     }
 

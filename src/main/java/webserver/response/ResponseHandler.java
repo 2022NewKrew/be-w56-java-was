@@ -32,8 +32,7 @@ public class ResponseHandler {
             dos.write(response.getBody(), 0, response.bodyLength());
             dos.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 }

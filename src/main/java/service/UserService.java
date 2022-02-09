@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 
 public final class UserService {
 
-    private UserService () { }
+    private UserService() {
+    }
 
     public static void enroll(EnrollUserCommand command) {
         DataBase.addUser(command.toEntity());

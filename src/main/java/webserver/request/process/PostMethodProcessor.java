@@ -16,7 +16,7 @@ public class PostMethodProcessor {
     public static <T> Response process(T instance, Method method, HttpRequest httpRequest)
             throws InvocationTargetException, IllegalAccessException, InstantiationException {
         List<Object> objects = new ArrayList<>();
-        for(Parameter parameter : method.getParameters()) {
+        for (Parameter parameter : method.getParameters()) {
             objects.add(RequestBodyProcessor.process(httpRequest, parameter));
             objects.add(CookieProcessor.process(parameter, httpRequest));
         }

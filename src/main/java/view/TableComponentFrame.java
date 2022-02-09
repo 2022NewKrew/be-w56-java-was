@@ -10,13 +10,13 @@ public class TableComponentFrame {
 
     private static final Logger log = LoggerFactory.getLogger(TableComponentFrame.class);
 
-    public static String thead(String ...header) {
+    public static String thead(String... headers) {
         StringBuilder sb = new StringBuilder();
         sb.append("<thead>\n");
         sb.append("<tr>\n");
-        for (int i = 0; i < header.length; i++) {
+        for (String header : headers) {
             sb.append("<th>");
-            sb.append(header[i]);
+            sb.append(header);
             sb.append("</th>\n");
         }
         sb.append("</tr>\n");
@@ -24,12 +24,11 @@ public class TableComponentFrame {
         return sb.toString();
     }
 
-    public static String tbody(Object body, String ...columnName) {
-        List<Object> bodies;
+    public static String tbody(Object body, String... columnName) {
+        List<?> bodies;
         if (body instanceof List) {
-            bodies = (List<Object>) body;
-        }
-        else {
+            bodies = (List<?>) body;
+        } else {
             throw new IllegalArgumentException("Object가 List 타입이 아닙니다");
         }
 
@@ -54,10 +53,7 @@ public class TableComponentFrame {
             sb.append("</tbody>\n");
             return sb.toString();
         } catch (Exception ex) {
-            log.error(ex.getMessage());
-            for(StackTraceElement element : ex.getStackTrace()) {
-                log.error(element.toString());
-            }
+            log.error(ex.getMessage(), ex);
             return "";
         }
     }

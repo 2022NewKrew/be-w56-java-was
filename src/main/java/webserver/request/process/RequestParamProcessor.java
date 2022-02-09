@@ -13,7 +13,7 @@ public class RequestParamProcessor {
     public static List<Object> process(HttpRequest httpRequest, Parameter parameter) {
         List<Object> objects = new ArrayList<>();
         RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
-        if(Objects.isNull(requestParam)) {
+        if (Objects.isNull(requestParam)) {
             return objects;
         }
         String value = httpRequest.getQueryAttribute(requestParam.name());

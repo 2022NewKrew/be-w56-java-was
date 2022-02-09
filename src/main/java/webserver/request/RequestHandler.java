@@ -3,6 +3,7 @@ package webserver.request;
 import controller.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.RequestLine;
 import webserver.http.Response;
 import webserver.http.request.HttpRequest;
 import webserver.request.parser.RequestParser;
@@ -29,18 +30,18 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-              DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
+             DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
             HttpRequest httpRequest = RequestParser.parse(br);
             Response result = ControllerMethodMatcher.match(Controller.class, httpRequest);
 
-            ResponseHandler responseHandler = new ResponseHandler(dos, httpRequest.getHeaderAttribute("VERSION"));
+            ResponseHandler responseHandler = new ResponseHandler(
+                    dos,
+                    httpRequest.getHeaderAttribute(RequestLine.VERSION.name())
+            );
             responseHandler.response(result);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            for(StackTraceElement element : e.getStackTrace()) {
-                log.error(element.toString());
-            }
+            log.error(e.getMessage(), e);
         }
     }
 }

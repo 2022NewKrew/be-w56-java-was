@@ -10,7 +10,7 @@ public class CookieProcessor {
 
     public static Object process(Parameter parameter, HttpRequest httpRequest) {
         HttpCookie annotation = parameter.getAnnotation(HttpCookie.class);
-        if(!Objects.isNull(annotation)) {
+        if (!Objects.isNull(annotation)) {
             Object result = httpRequest.getCookie(annotation.name());
             return result != null ? result : "";
         }
