@@ -1,4 +1,4 @@
-package application;
+package application.constants;
 
 public class CookieKeys {
     private CookieKeys() {}

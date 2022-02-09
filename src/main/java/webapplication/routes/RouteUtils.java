@@ -1,4 +1,4 @@
-package webserver.routes;
+package webapplication.routes;
 
 public class RouteUtils {
 

@@ -1,5 +1,6 @@
 package http.request;
 
+import http.Cookies;
 import http.HttpBody;
 import http.HttpHeaders;
 import http.HttpMethod;
@@ -37,11 +38,12 @@ public class HttpRequest {
         return startLine.getHttpVersion();
     }
 
-    public HttpBody getBody() {
-        return body;
-    }
-
     public Object getParameter(String key) {
         return params.getValue(key);
     }
+
+    public Cookies getCookies() {
+        return Cookies.from(headers.getAll(HttpHeaders.COOKIE));
+    }
+
 }

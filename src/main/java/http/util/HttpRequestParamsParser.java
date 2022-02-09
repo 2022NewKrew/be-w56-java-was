@@ -19,7 +19,7 @@ public class HttpRequestParamsParser {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.putAll(parseQueryString(startLine.getUrl().getQueryString()));
 
-        if(httpHeaders.getHeader(HttpHeaders.CONTENT_TYPE).orElseGet(()->"").equals("application/x-www-form-urlencoded")) {
+        if(httpHeaders.getFirst(HttpHeaders.CONTENT_TYPE).orElseGet(()->"").equals("application/x-www-form-urlencoded")) {
             paramMap.putAll(parseQueryString(httpBody.toString(StandardCharsets.UTF_8)));
         }
 

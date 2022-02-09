@@ -1,8 +1,10 @@
 package http;
 
-import application.CookieKeys;
+import application.constants.CookieKeys;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -31,5 +33,14 @@ public class Cookies {
         builder.add(String.format("%s=%s", CookieKeys.LOGINED, attributes.get(CookieKeys.LOGINED)));
         builder.add(String.format("%s=%s", CookieKeys.AUTH_PATH, attributes.get(CookieKeys.AUTH_PATH)));
         return builder.toString();
+    }
+
+    public static Cookies from(List<String> values) {
+        Cookies cookies = new Cookies();
+        for(String value : values) {
+            String[] keyValue = value.split("=");
+            cookies.setAttribute(keyValue[0], keyValue[1]);
+        }
+        return cookies;
     }
 }

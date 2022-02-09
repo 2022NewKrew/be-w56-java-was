@@ -1,33 +1,62 @@
 package application.controller;
 
-import application.CookieKeys;
-import application.db.DataBase;
-import application.dto.SignUpRequest;
-import application.model.User;
+import application.constants.CookieKeys;
 import http.Cookies;
 import http.request.HttpRequest;
-import org.checkerframework.checker.units.qual.C;
+import webapplication.data.AttributeTypes;
+import webapplication.data.Model;
+import webapplication.annotations.RequestMapping;
+import application.db.DataBase;
+import application.model.User;
+import webapplication.annotations.data.RequestMethod;
+import webapplication.dto.ModelAndView;
+
+import java.util.List;
 
 public class UserController {
 
-    public static String create(SignUpRequest signUpRequest) {
-        User user = new User(signUpRequest.getUserId(),
-                signUpRequest.getPassword(),
-                signUpRequest.getName(),
-                signUpRequest.getEmail());
+    @RequestMapping(path = "/user/create", method = RequestMethod.POST)
+    public static ModelAndView create(HttpRequest request) {
+        String userId = (String) request.getParameter("userId");
+        String password = (String) request.getParameter("password");
+        String userName = (String) request.getParameter("name");
+        String email = (String) request.getParameter("email");
+        User user = new User(userId, password, userName, email);
         DataBase.addUser(user);
-        return "redirect:/index.html";
+        return new ModelAndView("redirect:/index.html");
     }
 
-    public static String login(String userId, String password, Cookies cookies) {
+    @RequestMapping(path = "/user/login", method = RequestMethod.POST)
+    public static ModelAndView login(HttpRequest request) {
+        String userId = (String) request.getParameter("userId");
+        String password = (String) request.getParameter("password");
+
         User user = DataBase.findUserById(userId).orElse(null);
         if(user == null || !user.getPassword().equals(password)) {
-            return "redirect:/user/login_failed.html";
+            return new ModelAndView("redirect:/user/login_failed.html");
         }
 
+        ModelAndView response = new ModelAndView("redirect:/index.html");
+        Cookies cookies = new Cookies();
         cookies.setAttribute(CookieKeys.LOGINED, true);
         cookies.setAttribute(CookieKeys.AUTH_PATH, "/");
-        return "redirect:/index.html";
+        response.addAttribute(AttributeTypes.COOKIES.getCode(), cookies);
+        return response;
+    }
+
+    @RequestMapping(path = "/user/list", method = RequestMethod.GET)
+    public static ModelAndView list(HttpRequest request) {
+        Cookies cookies = request.getCookies();
+        String isLogin = cookies.getAttribute(CookieKeys.LOGINED);
+        if (!isLogin.equals("true")) {
+            return new ModelAndView("redirect:/user/login.html");
+        }
+
+        List<User> users = DataBase.findAll();
+
+        ModelAndView response = new ModelAndView("/user/list.html");
+        response.addAttribute("users", users);
+        return response;
     }
 
 }

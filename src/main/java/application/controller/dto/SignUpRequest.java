@@ -1,4 +1,4 @@
-package application.dto;
+package application.controller.dto;
 
 public class SignUpRequest {
 

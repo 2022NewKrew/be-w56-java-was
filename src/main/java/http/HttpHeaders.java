@@ -1,5 +1,7 @@
 package http;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,21 +15,31 @@ public class HttpHeaders {
 
     public static final String SET_COOKIE = "Set-Cookie";
 
-    private final Map<String, String> headers;
+    public static final String COOKIE = "Cookie";
 
-    private HttpHeaders(Map<String, String> headers) {
+    private final MultiValueMap<String, String> headers;
+
+    private HttpHeaders(MultiValueMap<String, String> headers) {
         this.headers = headers;
     }
 
-    public static HttpHeaders of(Map<String, String> map) {
+    public static HttpHeaders of(MultiValueMap<String, String> map) {
         return new HttpHeaders(map);
     }
 
-    public Map<String, String> getHeaders() {
+    public MultiValueMap<String, String> getHeaders() {
         return headers;
     }
 
-    public Optional<String> getHeader(String key) {
-        return Optional.ofNullable(headers.get(key));
+    public List<String> getAll(String key) {
+        return headers.getAll(key);
+    }
+
+    public Optional<String> getFirst(String key) {
+        return headers.getFirst(key);
+    }
+
+    public Integer getContentLength() {
+        return Integer.valueOf(getFirst(HttpHeaders.CONTENT_LENGTH).orElse("0"));
     }
 }
