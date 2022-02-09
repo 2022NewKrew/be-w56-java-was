@@ -1,14 +1,7 @@
 package http;
 
-import enums.HttpMethod;
 import enums.HttpProtocol;
 import enums.HttpStatusCode;
-import util.HttpRequestUtils;
-import util.HttpResponseUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 public class HttpResponse {
 
@@ -17,6 +10,15 @@ public class HttpResponse {
     private byte[] body;
     private String responseContentType;
     private String responseDataPath;
+    private String redirectUrl;
+
+    public HttpProtocol getProtocol() {
+        return protocol;
+    }
+
+    public HttpStatusCode getStatusCode() {
+        return statusCode;
+    }
 
     public byte[] getBody() {
         return body;
@@ -26,19 +28,35 @@ public class HttpResponse {
         return responseContentType;
     }
 
-    public HttpResponse(HttpRequest httpRequest) throws IOException {
-        protocol = httpRequest.getProtocol();
-        setResponseDataPath(httpRequest);
-        responseContentType = HttpResponseUtils.contentTypeFromPath(responseDataPath);
-        if (httpRequest.getMethod().equals(HttpMethod.GET)) {
-            body = Files.readAllBytes(new File("./webapp" + responseDataPath).toPath());
-        }
+    public String getResponseDataPath() {
+        return responseDataPath;
     }
 
-    private void setResponseDataPath(HttpRequest httpRequest) {
-        String requestUrl = httpRequest.getUrl();
-        String url = HttpRequestUtils.parseUrl(requestUrl).get("url");
-        responseDataPath = url;
+    public String getRedirectUrl() {
+        return redirectUrl;
     }
 
+    public void setProtocol(HttpProtocol protocol) {
+        this.protocol = protocol;
+    }
+
+    public void setStatusCode(HttpStatusCode statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
+    }
+
+    public void setResponseContentType(String responseContentType) {
+        this.responseContentType = responseContentType;
+    }
+
+    public void setResponseDataPath(String responseDataPath) {
+        this.responseDataPath = responseDataPath;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
 }

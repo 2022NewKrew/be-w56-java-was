@@ -2,9 +2,7 @@ package webserver;
 
 import Controller.HttpController;
 import db.DataBase;
-import http.HttpRequest;
-import http.HttpRequestParser;
-import http.HttpResponse;
+import http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.DynamicHtmlBuilder;
@@ -30,16 +28,26 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            // Request 파싱
             HttpRequestParser httpRequestParser = new HttpRequestParser();
             httpRequestParser.parse(in);
             HttpRequest httpRequest = httpRequestParser.getHttpRequest();
             // Request 확인을 위한 logging
             log.debug(httpRequest.toString());
 
-            // Response 처리
-            HttpResponse httpResponse = new HttpResponse(httpRequest);
-            HttpController httpController = new HttpController(httpRequest, httpResponse, out);
-            httpController.run();
+            // Request 처리
+            HttpController httpController = new HttpController(httpRequest);
+            String path = httpController.runServiceAndReturnPath();
+
+            // Response 객체 build
+            HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder(httpRequest);
+            httpResponseBuilder.build(path);
+            HttpResponse httpResponse = httpResponseBuilder.getHttpResponse();
+
+            // Response 전송
+            HttpResponseSender httpResponseSender = new HttpResponseSender(httpResponse, out);
+            httpResponseSender.sendResponse();
+
 
             DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
 
