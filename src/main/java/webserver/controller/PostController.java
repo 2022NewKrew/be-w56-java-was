@@ -2,7 +2,6 @@ package webserver.controller;
 
 import network.HttpRequest;
 import network.HttpResponse;
-import network.Status;
 import webserver.service.UserService;
 
 import java.io.OutputStream;
@@ -10,26 +9,30 @@ import java.io.OutputStream;
 public class PostController {
 
     private UserService userService;
-    private OutputStream outputStream;
+    private HttpResponse httpResponse;
 
     public PostController(HttpRequest httpRequest, OutputStream outputStream) {
-        this.outputStream = outputStream;
+        this.httpResponse = new HttpResponse(outputStream);
         this.userService = new UserService(httpRequest);
     }
 
     public void handlePost(String path) {
+        httpResponse.setPath(path);
+
         switch (path) {
             case "/user/create":
                 userService.signUp();
-                HttpResponse.redirect("/index.html", outputStream);
+                httpResponse.redirect("/index.html");
                 break;
             case "/user/login":
-                Status status = userService.logIn();
-                if (status == Status.OK) {
-                    HttpResponse.redirect("/index.html", outputStream);
+                Boolean cookie = userService.logIn();
+                if (cookie) {
+                    httpResponse.setCookie("logined", "true");
+                    httpResponse.redirect("/index.html");
                     break;
                 }
-                HttpResponse.redirect("/user/login_failed.html", outputStream);
+                httpResponse.setCookie("logined", "false");
+                httpResponse.redirect("/user/login_failed.html");
                 break;
         }
     }
