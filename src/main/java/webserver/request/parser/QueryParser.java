@@ -1,10 +1,10 @@
 package webserver.request.parser;
 
 import util.HttpRequestUtils;
+import webserver.http.RequestLine;
 import webserver.http.request.HttpHeader;
 import webserver.http.request.HttpUrlQuery;
 
-import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,9 +14,9 @@ public class QueryParser {
 
     }
 
-    public static HttpUrlQuery parse(BufferedReader br, HttpHeader httpHeader) {
+    public static HttpUrlQuery parse(HttpHeader httpHeader) {
         Map<String, String> queryMap = new HashMap<>();
-        String[] parsedPath = HttpRequestUtils.parseGetRequest(httpHeader.getHeaderAttribute("PATH"));
+        String[] parsedPath = HttpRequestUtils.parseGetRequest(httpHeader.getHeaderAttribute(RequestLine.PATH.name()));
         if (parsedPath.length == 2) {
             queryMap = HttpRequestUtils.parseQueryString(parsedPath[1]);
             httpHeader.setPath(parsedPath[0]);
