@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class MapToPostConverter implements Converter<Map<String,String>, Post>{
+class MapToPostConverter implements Converter<Map<String,String>, Post>{
     @Override
     public boolean support(Class<?> fromType, Class<?> toType) {
         return TypeChecker.equals(fromType, Map.class)
