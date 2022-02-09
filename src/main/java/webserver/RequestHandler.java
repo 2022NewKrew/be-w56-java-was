@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,31 +32,22 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            DataOutputStream dos = new DataOutputStream(out);
             String requestLine = br.readLine();
 
             HttpRequestUtils.Pair urlPair = parseRequestLine(requestLine);
+            String method = urlPair.getKey();
             String url = urlPair.getValue();
-            Map<String, String> headers = new HashMap<String, String>();
-            while(!requestLine.equals("")) {
-                if (requestLine == null) {
-                    break;
-                }
-                requestLine = br.readLine();
-                String[] headerTokens = requestLine.split(": ");
-                if (headerTokens.length == 2) {
-                    headers.put(headerTokens[0], headerTokens[1]);
-                }
-            }
+            Map<String, String> headers = getHeaders(br, requestLine);
 
-            if (url.startsWith("/user/create")) {
+            if (method.equals("POST") && url.startsWith("/user/create")) {
                 String requestBody = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
                 Map<String, String> params = HttpRequestUtils.parseQueryString(requestBody);
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
-                DataOutputStream dos = new DataOutputStream(out);
+                DataBase.addUser(user);
                 response302Header(dos);
             }
             else {
-                DataOutputStream dos = new DataOutputStream(out);
                 byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
                 response200Header(dos, body.length);
                 responseBody(dos, body);
@@ -85,6 +77,23 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
+
+    private Map<String, String> getHeaders(BufferedReader br, String requestLine) throws IOException{
+        Map<String, String> headers = new HashMap<String, String>();
+        while(!requestLine.equals("")) {
+            if (requestLine == null) {
+                break;
+            }
+            requestLine = br.readLine();
+            String[] headerTokens = requestLine.split(": ");
+            if (headerTokens.length == 2) {
+                headers.put(headerTokens[0], headerTokens[1]);
+            }
+        }
+        return headers;
+    }
+
+
 
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
