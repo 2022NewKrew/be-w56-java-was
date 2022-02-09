@@ -1,23 +1,27 @@
 package model;
 
 import java.time.LocalDateTime;
+import org.bson.types.ObjectId;
 
 public class User extends BaseTime {
 
+    private final ObjectId id;
     private final String userId;
     private final String password;
     private final String name;
     private final String email;
 
-    public User(String userId, String password, String name, String email, LocalDateTime createTime,
-            LocalDateTime modifiedTime) {
+    public User(ObjectId id, String userId, String password, String name, String email,
+            LocalDateTime createTime, LocalDateTime modifiedTime) {
         super(createTime, modifiedTime);
 
+        checkId(id);
         checkUserId(userId);
         checkPassword(password);
         checkName(name);
         checkEmail(email);
 
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -25,11 +29,17 @@ public class User extends BaseTime {
     }
 
     public User(String userId, String password, String name, String email, LocalDateTime time) {
-        this(userId, password, name, email, time, time);
+        this(new ObjectId(), userId, password, name, email, time, time);
     }
 
     public User(String userId, String password, String name, String email) {
         this(userId, password, name, email, LocalDateTime.now());
+    }
+
+    private void checkId(ObjectId id) {
+        if (id == null) {
+            throw new IllegalArgumentException("illegal id");
+        }
     }
 
     private void checkUserId(String userId) {
