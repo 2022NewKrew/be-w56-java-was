@@ -8,10 +8,32 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
+    private static final int REQUEST_HEADER_METHOD_INDEX = 0;
     private static final int REQUEST_HEADER_URL_PATH_INDEX = 1;
+    private static final int METHOD_PATH_INDEX = 0;
+    private static final int VALUE_INDEX = 1;
+
+    public static String getMethodName(String httpRequestHeader) {
+        return httpRequestHeader.split(" ")[REQUEST_HEADER_METHOD_INDEX];
+    }
+
+    public static String getUrlPath(String httpRequestHeader) {
+        return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
+    }
+
+    public static Map<String, String> getInfoMap(String methodName, String url) {
+        String[] urlSplitList = url.split("\\?");
+        if (methodName.equals("GET") && urlSplitList.length > VALUE_INDEX)
+            return parseQueryString(urlSplitList[VALUE_INDEX]);
+        return null;
+    }
+
+    public static String getMethodPath(String url) {
+        return url.split("\\?")[METHOD_PATH_INDEX];
+    }
+
     /**
-     * @param queryString은
-     *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
+     * @param queryString은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      * @return
      */
     public static Map<String, String> parseQueryString(String queryString) {
@@ -19,8 +41,7 @@ public class HttpRequestUtils {
     }
 
     /**
-     * @param 쿠키
-     *            값은 name1=value1; name2=value2 형식임
+     * @param 쿠키 값은 name1=value1; name2=value2 형식임
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
@@ -106,9 +127,5 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
-    }
-
-    public static String getUrlPath(String httpRequestHeader) {
-        return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
     }
 }
