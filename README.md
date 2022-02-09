@@ -23,3 +23,10 @@
 - 회원가입 폼에서 입력한 정보를 파싱하여 user 클래스에 저장.
 - GET 으로 회원가입 기능을 구현.
 - ![img_1.png](img_1.png)
+
+## 구현내용
+- HandlerMapping 클래스를 만들어 각 URL에서 사용해야하는 클래스와 메소드를 확인하여 실행.
+- Request Method 가 GET 인 경우 url 을 파싱하여 HashMap 으로 만들도록 생성.
+- Controller interface 를 만들어 사용.
+- UserController 는 Controller interface 를 상속.
+- UserController, UserService, DataBase 클래스 생성.
