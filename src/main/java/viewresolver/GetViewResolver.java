@@ -1,5 +1,7 @@
 package viewresolver;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import dto.HttpResponseStatus;
 import dto.RequestInfo;
 import org.slf4j.Logger;
@@ -13,12 +15,18 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class GetViewResolver {
     private static final Logger log = LoggerFactory.getLogger(GetViewResolver.class);
     private static final GetViewResolver INSTANCE = new GetViewResolver();
     private static final String STATIC_FILE_BASE_DIRECTORY = "./webapp";
+    private static final Map<String, String> contentTypes;
+
+    static {
+        contentTypes = Map.of("text/css", "text/css", "text/javascript", "text/javascript");
+    }
 
     private GetViewResolver() {}
 
@@ -31,7 +39,11 @@ public class GetViewResolver {
         String version = requestInfo.getVersion();
         try {
             byte[] body = Files.readAllBytes(new File(STATIC_FILE_BASE_DIRECTORY + requestPath).toPath());
-            this.responseHeader(dos, version, HttpResponseStatus.OK, body.length, new ArrayList<>());
+            log.info("headers : {}", requestInfo.getHeaders());
+            String contentType = requestInfo.getHeaders().get("Accept");
+            String responseContentType = contentTypes.get(contentType);
+            List<String> addedHeaders = responseContentType == null ? Lists.newArrayList() : List.of("Content-Type: " + responseContentType);
+            this.responseHeader(dos, version, HttpResponseStatus.OK, body.length, addedHeaders);
             this.responseBody(dos, body);
         } catch(Exception e) {
             log.error("[ERROR] - {}", e.getMessage());
@@ -78,7 +90,6 @@ public class GetViewResolver {
     private void responseHeader(DataOutputStream dos, String version, HttpResponseStatus status, int lengthOfBodyContent, List<String> addedHeaders) {
         try {
             dos.writeBytes(String.format("%s %d %s \r\n", version, status.getStatusCode(), status.getMessage()));
-//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
 
             for(String h: addedHeaders) {
