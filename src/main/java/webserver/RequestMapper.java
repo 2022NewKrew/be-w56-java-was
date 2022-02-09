@@ -11,6 +11,10 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+<<<<<<< HEAD
+=======
+import java.net.http.HttpHeaders;
+>>>>>>> 9d507de1570f250694b2df80b22d2d005ea7a9ad
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
