@@ -84,7 +84,7 @@ public class UserController implements HttpController {
 
                         Path target = urlToFile(request.getUrl());
                         String[] tokens = target.toString().split(Constants.DOT);
-                        ContentType contentType = ContentType.getContentType(tokens[tokens.length - 1].toUpperCase());
+                        ContentType contentType = ContentType.of(tokens[tokens.length - 1].toUpperCase());
                         File file = target.toFile();
                         String fileData = new String(Files.readAllBytes(file.toPath()));
                         fileData = fileData.replace("%user_list%", URLDecoder.decode(sb.toString(), StandardCharsets.UTF_8));

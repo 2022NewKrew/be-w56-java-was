@@ -33,8 +33,10 @@ public class StaticController implements HttpController {
     @Override
     public HttpResponse handleRequest(HttpRequest request, OutputStream out) throws IOException {
         Path target = urlToFile(request.getUrl());
+        System.out.println("target " + target);
         String[] tokens = target.toString().split(Constants.DOT);
-        ContentType contentType = ContentType.getContentType(tokens[tokens.length - 1].toUpperCase());
+
+        ContentType contentType = ContentType.of(tokens[tokens.length - 1].toUpperCase());
         File file = target.toFile();
         byte[] body = Files.readAllBytes(file.toPath());
 
