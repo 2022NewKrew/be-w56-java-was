@@ -22,8 +22,12 @@ public class Article extends BaseTime {
         this.content = content;
     }
 
+    public Article(ObjectId id, String author, String content, LocalDateTime time) {
+        this(id, author, content, time, time);
+    }
+
     public Article(ObjectId id, String author, String content) {
-        this(id, author, content, LocalDateTime.now(), LocalDateTime.now());
+        this(id, author, content, LocalDateTime.now());
     }
 
     private void checkId(ObjectId id) {

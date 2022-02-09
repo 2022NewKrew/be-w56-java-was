@@ -24,27 +24,34 @@ public class User extends BaseTime {
         this.email = email;
     }
 
+    public User(String userId, String password, String name, String email, LocalDateTime time) {
+        this(userId, password, name, email, time, time);
+    }
+
     public User(String userId, String password, String name, String email) {
-        this(userId, password, name, email, LocalDateTime.now(), LocalDateTime.now());
+        this(userId, password, name, email, LocalDateTime.now());
     }
 
     private void checkUserId(String userId) {
-        if(userId == null) {
+        if (userId == null) {
             throw new IllegalArgumentException("illegal UserId");
         }
     }
+
     private void checkPassword(String password) {
-        if(password == null) {
+        if (password == null) {
             throw new IllegalArgumentException("illegal Password");
         }
     }
+
     private void checkName(String name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException("illegal Name");
         }
     }
+
     private void checkEmail(String email) {
-        if(email == null) {
+        if (email == null) {
             throw new IllegalArgumentException("illegal Email");
         }
     }
