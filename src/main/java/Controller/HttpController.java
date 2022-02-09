@@ -31,7 +31,7 @@ public class HttpController {
         }
         // GetMapping("/user/list") 와 동일
         else if (httpRequest.getMethod().equals(HttpMethod.GET) && httpRequest.getUrl().equals("/user/list")) {
-            return "/user/list.html";
+            return "/user/dynamicList.html";
         }
         // 이외 주소에 대한 GetMapping
         else if (httpRequest.getMethod().equals(HttpMethod.GET)) {
