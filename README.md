@@ -166,3 +166,14 @@ public class StringTest{
 > 관련 글   
 > [https://dzone.com/articles/jdk-9jep-280-string-concatenations-will-never-be-t](https://dzone.com/articles/jdk-9jep-280-string-concatenations-will-never-be-t)   
 > [https://medium.com/javarevisited/5-effective-string-practices-you-should-know-e9a75811b123](https://medium.com/javarevisited/5-effective-string-practices-you-should-know-e9a75811b123)   
+
+# 구현 7단계 리팩터링
+
+* 자바 Socket 으로부터 생성 된 InputStream, OutputStream을 close 하면 소켓도 함께 닫힌다.
+
+> * Socket.getInputStream()의 javadoc   
+> Closing the returned InputStream will close the associated socket.
+>    
+>    
+> * Socket.getOutputStream()의 javadoc   
+> Closing the returned OutputStream will close the associated socket.
