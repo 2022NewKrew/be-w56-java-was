@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Optional;
 
 @Bean
 public class UserHandler {
@@ -49,9 +50,9 @@ public class UserHandler {
         Map<String, String> params = HttpRequestUtils.parseQueryString(body);
         String userId = params.get("userId");
         String password = params.get("password");
-        User user = service.findUserById(userId);
-        if (user == null || !user.getPassword().equals(password)) {
-            var headers = Map.of(
+        Optional<User> user = service.login(userId, password);
+        if (user.isEmpty()) {
+            Map<String, String> headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
                     "Location", "/user/login_failed.html",
                     "Set-Cookie", "loggedIn=false; path=/"

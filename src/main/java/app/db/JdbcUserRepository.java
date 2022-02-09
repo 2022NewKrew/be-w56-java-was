@@ -1,6 +1,5 @@
 package app.db;
 
-import domain.model.Post;
 import domain.model.User;
 import domain.repository.UserRepository;
 import lib.was.db.JdbcTemplate;
@@ -9,6 +8,7 @@ import lib.was.di.Inject;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Bean
@@ -29,10 +29,14 @@ public class JdbcUserRepository implements UserRepository {
         template.update(sql, params);
     }
 
-    public User findUserById(String userId) {
+    public Optional<User> findUserById(String userId) {
         String sql = "SELECT * FROM users WHERE userId = ?";
         List<Object> params = Collections.singletonList(userId);
-        return template.queryForObject(sql, params, mapper);
+        try {
+            return Optional.of(template.queryForObject(sql, params, mapper));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     public List<User> findAllUsers() {

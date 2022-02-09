@@ -1,19 +1,18 @@
 package app.db;
 
-import domain.model.Post;
 import domain.model.User;
+import lib.util.PropertiesLoader;
 import lib.was.db.JdbcTemplate;
-import lib.was.db.UpdateResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import lib.util.PropertiesLoader;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,9 +63,9 @@ class JdbcUserRepositoryTest {
                 List.of("user_id", "password", "name", "email")
         );
 
-        User user = subject.findUserById("user_id");
+        Optional<User> user = subject.findUserById("user_id");
 
-        assertEquals("name", user.getName());
+        assertEquals("name", user.map(User::getName).orElse(""));
     }
 
     @Test
