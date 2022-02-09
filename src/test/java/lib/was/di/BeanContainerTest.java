@@ -2,6 +2,7 @@ package lib.was.di;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -21,9 +22,9 @@ class BeanContainerTest {
     void getFirst_noBeans() {
         subject.put(String.class, new ConstantInstantiator("foo"));
 
-        Object result = subject.getFirst(Integer.class);
+        Executable executable = () -> subject.getFirst(Integer.class);
 
-        assertNull(result);
+        assertThrows(RuntimeException.class, executable);
     }
 
     @Test

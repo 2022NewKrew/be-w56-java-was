@@ -1,17 +1,15 @@
 package lib.was.di;
 
-import org.slf4j.Logger;
-
 public class DependencyInjector {
 
     private final PackageAnalyzer analyzer;
     private final BeanParser parser;
     private final BeanInjector injector;
 
-    public DependencyInjector(Logger logger) {
-        analyzer = new PackageAnalyzer(logger);
+    public DependencyInjector() {
+        analyzer = new PackageAnalyzer();
         parser = new BeanParser();
-        injector = new BeanInjector(logger);
+        injector = new BeanInjector();
     }
 
     public void inject(String packageName, Object target) {

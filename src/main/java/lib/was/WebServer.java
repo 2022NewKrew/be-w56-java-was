@@ -29,7 +29,7 @@ public class WebServer {
     }
 
     public WebServer() {
-        DependencyInjector injector = new DependencyInjector(log);
+        DependencyInjector injector = new DependencyInjector();
         injector.inject("", this);
     }
 
