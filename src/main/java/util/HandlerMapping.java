@@ -41,8 +41,8 @@ public class HandlerMapping {
         if (controllerOptional.isEmpty())
             return url;
 
-        String controllerMethodName = url.split("/")[PATH_METHOD_SPLIT_INDEX];
-        if (controllerMethodName.equals("create"))
+        String methodName = url.split("/")[PATH_METHOD_SPLIT_INDEX];
+        if (methodName.equals("create"))
             return controllerOptional.get().create(infoMap);
 
         return url;
