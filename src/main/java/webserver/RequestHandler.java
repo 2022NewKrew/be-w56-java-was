@@ -18,6 +18,7 @@ import static util.HttpRequestUtils.parseRequestLine;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String PATH_INDEX = "index.html";
 
     private Socket connection;
 
@@ -45,7 +46,7 @@ public class RequestHandler extends Thread {
                 Map<String, String> params = HttpRequestUtils.parseQueryString(requestBody);
                 User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
                 DataBase.addUser(user);
-                response302Header(dos);
+                response302Header(dos, PATH_INDEX);
             }
             else {
                 byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
@@ -57,10 +58,10 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private void response302Header(DataOutputStream dos) {
+    private void response302Header(DataOutputStream dos, String path) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: /index.html \r\n");
+            dos.writeBytes("Location: /" + path + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
