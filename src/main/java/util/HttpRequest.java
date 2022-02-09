@@ -1,5 +1,9 @@
 package util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +19,8 @@ public class HttpRequest {
     private Map<String, String> headers;
     private String body;
     private Map<String, String> query;
+
+    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     public HttpRequest(InputStream in) throws IOException {
         parse(in);
@@ -37,6 +43,7 @@ public class HttpRequest {
         MIME = headers.get("Accept").split(",")[0];
         if (method.equals("POST")) {
             body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+            log.info("BODYVALUE " + body);
         }
     }
 

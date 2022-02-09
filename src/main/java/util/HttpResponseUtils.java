@@ -11,7 +11,6 @@ public class HttpResponseUtils {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     public static void responseHeader(DataOutputStream dos, HttpResponse response) {
-        System.out.println(response.getStatusCode());
         try {
             switch (response.getStatusCode()) {
                 case "200":

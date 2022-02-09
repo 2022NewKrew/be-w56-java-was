@@ -2,12 +2,17 @@ package controller;
 
 import db.DataBase;
 import model.User;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequest;
 import util.HttpRequestUtils;
 import webserver.RequestHandler;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,16 +34,40 @@ public class BaseController {
         routerService.post("/user/create", (req, res) -> {
             log.info("regitered /user/create");
 
-            Map<String, String> userInfo = HttpRequestUtils.parseQueryString(req.getBody());
-            User user = new User(userInfo.get("userId"), userInfo.get("password"), userInfo.get("name"), userInfo.get("email"));
-            DataBase.addUser(user);
-            log.info(user.toString());
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("user");
+            EntityManager em = emf.createEntityManager();
+            EntityTransaction tx = em.getTransaction();
+
+            tx.begin();
+            try{
+                Map<String, String> userInfo = HttpRequestUtils.parseQueryString(req.getBody());
+
+                log.info(req.getBody());
+
+                User user = new User();
+                user.setId(2L);
+                user.setUserId(userInfo.get("userId"));
+                user.setPassword(userInfo.get("password"));
+                user.setName(userInfo.get("name"));
+                user.setEmail(userInfo.get("email"));
+                log.info(userInfo.get("email"));
+
+                em.persist(user);
+
+                tx.commit();
+            }catch (Exception e){
+                tx.rollback();
+            }finally {
+                em.close();
+            }
+            emf.close();
 
             res.redirect("/");
         });
 
         routerService.post("/user/login", (req, res) -> {
             log.info("registerd /user/login");
+
 
             Map<String, String> userInfo = HttpRequestUtils.parseQueryString(req.getBody());
             User user = DataBase.findUserById(userInfo.get("userId"));
@@ -54,7 +83,6 @@ public class BaseController {
         routerService.get("/", (req, res) -> {
             log.info("regitered /");
 
-            System.out.println(res);
             res.send("/index.html");
         });
     }

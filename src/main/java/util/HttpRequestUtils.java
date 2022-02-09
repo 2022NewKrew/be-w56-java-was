@@ -56,7 +56,6 @@ public class HttpRequestUtils {
 
     public static Map<String, String> parseRequestLine(String requestLine) {
         Map<String, String> ret = new HashMap<>();
-        System.out.println(requestLine);
         String[] parsed = requestLine.split(" ");
         String[] urlParsed = parsed[1].split("\\?");
         if (urlParsed.length == 2) {
@@ -116,15 +115,10 @@ public class HttpRequestUtils {
     private static String convert2Template(String template) throws IOException {
         String innerStr = template.substring(2, template.length() - 2).trim();
 
-        System.out.println("안의 문자 : " + innerStr);
-
         if (innerStr.startsWith(">")) {
             String fileName = innerStr.substring(1);
-            System.out.println("파일 이름 : " + fileName);
             File file = new File("./webapp/" + fileName);
-            System.out.println("파일 생성");
             String fileString = Files.readString(file.toPath());
-            System.out.println(fileString);
             return fileString;
         }
 
