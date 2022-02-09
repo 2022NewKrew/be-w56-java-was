@@ -65,6 +65,10 @@ public class HttpRequest {
         this.body = body;
     }
 
+    public String getBody() {
+        return body.get();
+    }
+
     public String getUrl() {
         return startLine.getUrl();
     }

@@ -9,8 +9,11 @@ public class Body {
     private final String body;
 
     private Body(String body) {
-
         this.body = body;
+    }
+
+    public String get() {
+        return body;
     }
 
     @Override
