@@ -1,43 +1,61 @@
 package http.response;
 
 import http.HttpStatusCode;
-import model.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.View;
+import view.redirect.ViewRedirect;
+import view.render.ViewRender;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static util.ConstantValues.*;
 
 public class Response {
     private static final Logger log = LoggerFactory.getLogger(Response.class);
 
     private final DataOutputStream dos;
-    private final ModelAndView mv;
-    private HttpStatusCode statusCode = HttpStatusCode.NOT_FOUND;
+    private final View view;
+    private final HttpStatusCode statusCode;
 
-    public Response(DataOutputStream dos, ModelAndView mv){
+    public Response(DataOutputStream dos, View view){
         this.dos = dos;
-        this.mv = mv;
-    }
-
-    private void generateHttpStatus(){
-        if(mv.getViewName().indexOf(REDIRECT_COMMAND) == REDIRECT_IDX){
-            statusCode = HttpStatusCode.REDIRECT;
-        }
-        if(Files.isRegularFile(Path.of(ROOT_DIRECTORY + mv.getViewName()))){
-            statusCode = HttpStatusCode.SUCCESS;
-        }
+        this.view = view;
+        this.statusCode = view.getStatusCode();
     }
 
 
     public void write() throws IOException {
-        generateHttpStatus();
         log.info("HTTP STATUS : " + statusCode.getStatusCode() + ", " + statusCode.getMessage());
-        log.info(("View : " + mv.getViewName()));
-        statusCode.response(dos, mv);
+        writeStatus();
+    }
+
+    private void writeStatus() throws IOException {
+        dos.writeBytes("HTTP/1.1 "+ statusCode.getStatusCode() + " " + statusCode.getMessage() + "\r\n");
+        if(statusCode == HttpStatusCode.SUCCESS){
+            writeSuccess();
+        }
+        if(statusCode == HttpStatusCode.REDIRECT){
+            writeRedirect();
+        }
+        dos.flush();
+    }
+
+    private void writeSuccess() throws IOException {
+        ViewRender viewRender = (ViewRender) view;
+        byte[] body = viewRender.render();
+
+        dos.writeBytes("Content-Type: " + viewRender.getMimeType() +";charset=utf-8\r\n");
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+        dos.writeBytes("\r\n");
+
+        dos.write(body, 0, body.length);
+    }
+
+    private void writeRedirect() throws IOException {
+        ViewRedirect viewRedirect = (ViewRedirect) view;
+        dos.writeBytes("Location: "+ viewRedirect.getUrl() + "\r\n");
+        if(viewRedirect.login()){
+            dos.writeBytes("Set-Cookie: logined=" + viewRedirect.login() + "; Path=/\r\n");
+        }
     }
 }

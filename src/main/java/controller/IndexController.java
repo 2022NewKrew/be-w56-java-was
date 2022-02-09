@@ -1,5 +1,6 @@
 package controller;
 
+import http.HttpMethod;
 import model.ModelAndView;
 import http.request.Request;
 import util.RequestMapping;
@@ -14,7 +15,7 @@ public class IndexController implements Controller{
         return indexController;
     }
 
-    @RequestMapping(method = "GET", url = "/")
+    @RequestMapping(method = HttpMethod.GET, url = "/")
     public ModelAndView proceed(Request request) {
         return new ModelAndView("/");
     }

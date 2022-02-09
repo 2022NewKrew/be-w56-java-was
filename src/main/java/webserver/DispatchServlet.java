@@ -7,6 +7,7 @@ import controller.Controller;
 import model.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.View;
 import view.ViewResolver;
 import http.HandlerAdapter;
 import http.HandlerMapper;
@@ -39,7 +40,7 @@ public class DispatchServlet extends Thread {
             request.read();
 
             Controller controller = handlerMapper.get(request);
-            ModelAndView mv = viewResolver.getView(checkController(controller, request));
+            View mv = viewResolver.getView(checkController(controller, request));
 
             Response response = new Response(dos, mv);
             response.write();

@@ -3,6 +3,25 @@
 
 <br>
 
+## Step 5. 동적인 html 구현
+
+> Step5에서는 동적인 html을 표현할 수 있도록 TemplateEngine을 추가하였습니다. 기존 mustache template의 
+> 문법을 기반으로 Custom TemplateEngine을 추가하였고, 이를 사용자 목록을 출력하는 부분에 적용하였습니다.
+> 원활한 구현을 위해 View 객체를 새로 생성하고, 조건에 따른 생성 방식을 변경하여 나타날 수 있도록 하였습니다.
+- `HttpMethod` enum 추가
+  - `GET`, `POST` 나타내는 방식 변경
+- `View` 추가
+  - render, redirect 메세지에 따라 응답하고 보여지는 방식을 바꾸기 위한 `View` 객체 생성
+  - Static File인 경우와 그렇지 않은 경우를 분리하여 렌더링 될 수 있도록 설정
+- `TemplateEngine` 추가
+  - 동적인 html 구현을 위한 Custom Template Engine(html에서만 적용)
+  - Mustache 문법에서 필요한 부분을 활용
+- `UserController`에 사용자 목록을 보여주는 메서드 `showUsers` 추가
+  - 로그인이 되지 않은 경우, login 페이지로 이동(Redirect)
+  - 로그인 된 경우, 사용자 목록을 출력
+
+<br>
+
 ## Step 4. Cookie를 이용한 로그인 구현
 
 > Step4에서는 쿠키를 이용하여 로그인 여부를 보여줄 수 있도록 설정했습니다.

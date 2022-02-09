@@ -1,5 +1,6 @@
 package controller;
 
+import http.HttpMethod;
 import http.request.Request;
 import model.ModelAndView;
 import model.User;
@@ -22,26 +23,26 @@ public class UserController implements Controller {
     }
 
 
-    @RequestMapping(method = "GET", url = "/users/form")
+    @RequestMapping(method = HttpMethod.GET, url = "/users/form")
     public ModelAndView createUserForm(Request request) {
         log.info("[UserController] : createUser");
         return new ModelAndView("/users/form");
     }
 
-    @RequestMapping(method = "POST", url = "/users")
+    @RequestMapping(method = HttpMethod.POST, url = "/users")
     public ModelAndView signupUser(Request request){
         log.info("[UserController] : signupUser");
         User user = userService.createUser(request.getRequestBody());
         return new ModelAndView("redirect:/", "user", user);
     }
 
-    @RequestMapping(method = "GET", url = "/users/login")
+    @RequestMapping(method = HttpMethod.GET, url = "/users/login")
     public ModelAndView createLoginForm(Request request){
         log.info("[UserController] : createLoginForm");
         return new ModelAndView("/users/login");
     }
 
-    @RequestMapping(method = "POST", url = "/users/login")
+    @RequestMapping(method = HttpMethod.POST, url = "/users/login")
     public ModelAndView loginUser(Request request){
         log.info("[UserController] : loginUser");
         boolean login = userService.login(request.getRequestBody());
@@ -51,5 +52,14 @@ public class UserController implements Controller {
             mv.addObject("user", userService.searchUserById(request.getRequestBody()));
         }
         return mv;
+    }
+
+    @RequestMapping(method = HttpMethod.GET, url = "/users")
+    public ModelAndView showUsers(Request request){
+        log.info("[UserController] : showUsers");
+        if(request.isLogin()){
+            return new ModelAndView("/users", "users", userService.searchAllUsers());
+        }
+        return new ModelAndView("redirect:/users/login");
     }
 }

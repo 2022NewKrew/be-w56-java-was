@@ -2,6 +2,7 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -34,4 +35,5 @@ public class IOUtilsTest {
         assertThat(IOUtils.readMimeType(cssUrl)).isEqualTo("text/css");
         assertThat(IOUtils.readMimeType(htmlUrl)).isEqualTo("text/html");
     }
+
 }

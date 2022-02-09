@@ -1,5 +1,6 @@
 package controller;
 
+import http.HttpMethod;
 import model.ModelAndView;
 import http.request.Request;
 import util.RequestMapping;
@@ -8,8 +9,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public interface Controller {
-//    ModelAndView proceed(Request request);
-
     default ModelAndView proceed(Request request) {
         Class<?> currentClass = getClass();
 
@@ -23,7 +22,7 @@ public interface Controller {
         }
     }
 
-    default Method aliasMethod(String method, String url, Class<?> currentClass) throws NoSuchMethodException {
+    default Method aliasMethod(HttpMethod method, String url, Class<?> currentClass) throws NoSuchMethodException {
         return Arrays.stream(currentClass.getDeclaredMethods())
                 .filter(m -> {
                     RequestMapping rm = m.getAnnotation(RequestMapping.class);
