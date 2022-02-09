@@ -2,17 +2,17 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
 
 public class Header {
 
     public static Header of(List<String> headerLineList) {
-        Map<HttpHeader, String> header = new HashMap<>();
+        Map<HttpHeader, String> header = new TreeMap<>();
 
         for (String headerLine : headerLineList) {
             Pair parseHeaderResult = HttpRequestUtils.parseHeader(headerLine);
