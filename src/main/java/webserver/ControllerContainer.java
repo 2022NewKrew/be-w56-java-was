@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.ArticleController;
 import controller.Controller;
 import controller.MainController;
 import controller.UserController;
@@ -15,6 +16,7 @@ public class ControllerContainer {
 
     static {
         controllerMap.put("user", UserController.getInstance());
+        controllerMap.put("articles", ArticleController.getInstance());
     }
 
     /**

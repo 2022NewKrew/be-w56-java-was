@@ -7,4 +7,8 @@ public class ArticleDBConstants {
     public static final String COLUMN_DATETIME = "datetime";
     public static final String COLUMN_WRITER = "writer";
 
+    public static final int COLUMN_INDEX_ID = 0;
+    public static final int COLUMN_INDEX_TITLE = 1;
+    public static final int COLUMN_INDEX_DATETIME = 2;
+    public static final int COLUMN_INDEX_WRITER = 3;
 }
