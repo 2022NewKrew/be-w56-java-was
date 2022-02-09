@@ -25,9 +25,10 @@ public class HttpResponse {
             response200();
         else if(statusCode == 302)
             redirect();
-        else if(statusCode == 404)
-            //Todo
-            ;
+        else if(statusCode == 404) {
+            setUrl("/error.html");
+            response200();
+        }
     }
 
     private void response200() {
@@ -36,6 +37,8 @@ public class HttpResponse {
             responseHeader();
             responseBody();
         } catch (IOException e) {
+            setStatusCode(404, "Not Found")
+                    .forward();
             e.printStackTrace();
         }
     }
@@ -47,6 +50,8 @@ public class HttpResponse {
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             e.printStackTrace();
+            setUrl("/error.html");
+            response200();
         }
     }
 

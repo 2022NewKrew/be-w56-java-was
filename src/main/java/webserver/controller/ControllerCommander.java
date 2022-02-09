@@ -2,7 +2,6 @@ package webserver.controller;
 
 import webserver.http.request.HttpRequest;
 
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +11,10 @@ public class ControllerCommander {
     static {
         controllers.add(new UserController());
         controllers.add(new MainController());
+        controllers.add(new LoginController());
     }
 
-    public static Controller findController(HttpRequest req) throws NoSuchProviderException {
+    public static Controller findController(HttpRequest req) {
         return controllers.stream()
                 .filter(controller -> controller.isSupport(req)).findFirst().orElse(null);
     }

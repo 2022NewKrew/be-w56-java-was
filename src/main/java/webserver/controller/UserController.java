@@ -28,22 +28,6 @@ public class UserController extends Controller {
                     .forward();
         });
 
-        runner.put(new MethodAndUrl(HttpMethod.POST, "/user/login"), (req, res) -> {
-            boolean isLogin = loginService.login(req.getParams());
-
-            if(isLogin) {
-                res.addHeader("set-cookie", CookieConst.LOGIN_COOKIE + "=true; path=/; HttpOnly");
-
-                res.setStatusCode(302, "Found")
-                        .setUrl("/index.html")
-                        .forward();
-            } else {
-                res.setStatusCode(302, "Found")
-                        .setUrl("/user/login_failed.html")
-                        .forward();
-            }
-        });
-
         runner.put(new MethodAndUrl(HttpMethod.GET, "/user/list"), (req, res) -> {
             List<User> users = DataBase.findAll();
             Model model = res.getModel();

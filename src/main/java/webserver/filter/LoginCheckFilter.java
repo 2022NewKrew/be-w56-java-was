@@ -2,11 +2,11 @@ package webserver.filter;
 
 import webserver.http.domain.CookieConst;
 import webserver.http.request.HttpRequest;
+import webserver.http.response.HttpResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//Todo method도 넣어서 바꾸기.
 public class LoginCheckFilter extends Filter {
      public LoginCheckFilter() {
          blackList = new ArrayList<>() {{
@@ -20,6 +20,13 @@ public class LoginCheckFilter extends Filter {
             return check(req);
         }
         return true;
+    }
+
+    @Override
+    public void failResponse(HttpResponse res) {
+        res.setStatusCode(302, "Found")
+                .setUrl("/user/login.html")
+                .forward();
     }
 
     private boolean haveToCheck(HttpRequest req) {
