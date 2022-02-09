@@ -2,19 +2,17 @@ package db;
 
 import com.mongodb.client.*;
 import com.mongodb.client.result.InsertOneResult;
-import dao.FindUserDao;
+import dao.ArticleDao;
 import dao.UserDao;
-import model.User;
-import org.bson.Document;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
+import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -36,18 +34,33 @@ public class MongoDb {
         database = mongoClient.getDatabase(DB_NAME).withCodecRegistry(pojoCodecRegistry);
     }
 
-    public static InsertOneResult addUser(User user) {
-        MongoCollection userCollection = database.getCollection("User");
-        Document document = new Document("user", user);
-        return userCollection.insertOne(document);
+    public static InsertOneResult addUser(UserDao userDao) {
+        MongoCollection<UserDao> userCollection = database.getCollection("User", UserDao.class);
+        return userCollection.insertOne(userDao);
     }
 
-    public static List<User> findAll() {
-        MongoCollection<FindUserDao> userCollection = database.getCollection("User", FindUserDao.class);
-        List<FindUserDao> result = new ArrayList<>();
+    public static List<UserDao> findAll() {
+        MongoCollection<UserDao> userCollection = database.getCollection("User", UserDao.class);
+        List<UserDao> result = new ArrayList<>();
         userCollection.find().into(result);
-        return result.stream()
-                .map(u -> u.getUserDao().toEntity())
-                .collect(Collectors.toList());
+        return result;
+    }
+
+    public static UserDao findUserByUserId(String userId) {
+        MongoCollection<UserDao> userCollection = database.getCollection("User", UserDao.class);
+        FindIterable<UserDao> findIterable = userCollection.find(eq("userId", userId));
+        return findIterable.first();
+    }
+
+    public static InsertOneResult addArticle(ArticleDao articleDao) {
+        MongoCollection<ArticleDao> articleCollection = database.getCollection("Article", ArticleDao.class);
+        return articleCollection.insertOne(articleDao);
+    }
+
+    public static List<ArticleDao> findAllArticle() {
+        MongoCollection<ArticleDao> articleCollection = database.getCollection("Article", ArticleDao.class);
+        List<ArticleDao> result = new ArrayList<>();
+        articleCollection.find().into(result);
+        return result;
     }
 }
