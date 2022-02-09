@@ -1,7 +1,6 @@
 package controller;
 
 import dao.UserDao;
-import db.DataBase;
 import exception.BadRequestException;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
@@ -12,16 +11,12 @@ import util.MapUtil;
 
 public class UserLoginController implements Controller {
 
-    private static UserLoginController instance;
+    private static final UserLoginController INSTANCE = new UserLoginController();
+    private final UserDao userDao = UserDao.getInstance();
 
     public static synchronized UserLoginController getInstance() {
-        if (instance == null) {
-            instance = new UserLoginController();
-        }
-        return instance;
+        return INSTANCE;
     }
-
-    private final UserDao userDao = UserDao.getInstance();
 
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
@@ -31,7 +26,7 @@ public class UserLoginController implements Controller {
 
         String userId = bodyData.get("userId");
         String password = bodyData.get("password");
-        User user = userDao.find(userId);
+        User user = userDao.findByUserId(userId);
 
         if (user != null && user.getPassword().equals(password)) {
             return loginSuccess(dos, userId);

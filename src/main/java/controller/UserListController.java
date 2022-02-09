@@ -12,18 +12,13 @@ import util.MapUtil;
 
 public class UserListController implements Controller {
 
-    private static UserListController instance;
-    private static final UserMapper userMapper = UserMapper.instance;
+    private static final UserListController INSTANCE = new UserListController();
+    private static final UserDao userDao = UserDao.getInstance();
+    private static final UserMapper userMapper = UserMapper.INSTANCE;
 
     public static synchronized UserListController getInstance() {
-        if (instance == null) {
-            instance = new UserListController();
-        }
-
-        return instance;
+        return INSTANCE;
     }
-
-    private final UserDao userDao = UserDao.getInstance();
 
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {

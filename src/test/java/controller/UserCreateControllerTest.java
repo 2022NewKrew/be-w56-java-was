@@ -14,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +42,7 @@ class UserCreateControllerTest {
         //then
         assertThat(outputStream.toString()).contains("302", "Found", "HTTP/1.1", "Location");
 
-        UserDao.getInstance().delete(new User("userId", "password", "name", "email"));
+        UserDao.getInstance().delete(UserDao.getInstance().findByUserId("userId").getId());
     }
 
     @DisplayName("HttpRequest 의 body 가 올바르지 못한 경우 BadRequestException 을 던진다.")

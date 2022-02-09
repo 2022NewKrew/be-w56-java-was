@@ -1,14 +1,11 @@
 package dao;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import model.Article;
-import model.User;
 import org.bson.types.ObjectId;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,12 +21,13 @@ class ArticleDaoTest {
         ArticleDao dao = ArticleDao.getInstance();
         int baseSize = dao.find().size();
 
+        List<ObjectId> ids = new ArrayList<>();
         for (int i = 0; i < numberOfArticle; i++) {
             ObjectId id = new ObjectId();
             String author = "author" + i;
             String content = "content" + i;
             Article article = new Article(id, author, content);
-            dao.save(article);
+            ids.add(dao.save(article));
         }
 
         //when
@@ -38,12 +36,8 @@ class ArticleDaoTest {
         //then
         assertThat(articles.size()).isEqualTo(numberOfArticle + baseSize);
 
-        for (int i = 0; i < numberOfArticle; i++) {
-            ObjectId id = articles.get(i).getId();
-            String author = "author" + i;
-            String content = "content" + i;
-            Article article = new Article(id, author, content);
-            dao.delete(article);
+        for (ObjectId id : ids) {
+            dao.delete(id);
         }
     }
 
@@ -56,7 +50,6 @@ class ArticleDaoTest {
         String content = "content";
         Article article = new Article(new ObjectId(), author, content);
         ObjectId id = dao.save(article);
-        System.out.println(id.toString());
         //when
         Article newArticle = dao.find(id);
 
@@ -65,7 +58,7 @@ class ArticleDaoTest {
         assertThat(newArticle.getAuthor()).isEqualTo(author);
         assertThat(newArticle.getContent()).isEqualTo(content);
 
-        dao.delete(new Article(id, author, content));
+        dao.delete(id);
 
         Article nullArticle = dao.find(id);
         assertThat(nullArticle).isNull();
@@ -79,7 +72,7 @@ class ArticleDaoTest {
         String author = "testAuthor";
         String content = "testContent";
         Article article = new Article(new ObjectId(), author, content);
-        dao.save(article);
+        ObjectId id = dao.save(article);
 
         String newAuthor = "newAuthor";
         String newContent = "newContent";
@@ -92,6 +85,6 @@ class ArticleDaoTest {
         assertThat(updateArticle.getAuthor()).isEqualTo(newAuthor);
         assertThat(updateArticle.getContent()).isEqualTo(newContent);
 
-        dao.delete(article);
+        dao.delete(id);
     }
 }

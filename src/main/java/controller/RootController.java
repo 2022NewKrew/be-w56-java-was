@@ -7,13 +7,10 @@ import util.MapUtil;
 
 public class RootController implements Controller {
 
-    private static RootController instance;
+    private static final RootController INSTANCE = new RootController();
 
     public static synchronized RootController getInstance() {
-        if (instance == null) {
-            instance = new RootController();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

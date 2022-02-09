@@ -1,9 +1,7 @@
 package mapper;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import dao.UserDao;
 import dto.UserDto;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import model.User;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +21,7 @@ class UserMapperTest {
     @DisplayName("User to UserDto 테스트")
     @Test
     void userToDto() {
-        UserMapper userMapper = UserMapper.instance;
+        UserMapper userMapper = UserMapper.INSTANCE;
         User user = new User("userId", "password", "name", "email");
         UserDto testDto = userMapper.userToDto(user);
 
@@ -34,7 +33,7 @@ class UserMapperTest {
     @ParameterizedTest
     @MethodSource("getUsers")
     void usersToDtos(List<User> users) {
-        UserMapper userMapper = UserMapper.instance;
+        UserMapper userMapper = UserMapper.INSTANCE;
         List<UserDto> userDtos = userMapper.usersToDtos(users);
 
         User firstUser = users.get(0);
@@ -47,7 +46,7 @@ class UserMapperTest {
     private static Stream<List<User>> getUsers() {
         List<User> users = new ArrayList<>();
 
-        for(int i = 0 ; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             users.add(
                     new User(
                             "userId" + i,
@@ -62,7 +61,7 @@ class UserMapperTest {
     @ParameterizedTest
     @MethodSource("getDocuments")
     void documentsToUsers(List<Document> documents) {
-        UserMapper userMapper = UserMapper.instance;
+        UserMapper userMapper = UserMapper.INSTANCE;
         List<User> users = userMapper.documentsToUsers(documents);
 
         Document firstDocument = documents.get(0);
@@ -80,6 +79,7 @@ class UserMapperTest {
 
         for (int i = 0; i < 100; i++) {
             Document document = new Document();
+            document.put("_id", new ObjectId());
             document.put("userId", "userId" + i);
             document.put("password", "password" + i);
             document.put("name", "name" + i);
@@ -94,7 +94,7 @@ class UserMapperTest {
 
     @Test
     void userToDocument() {
-        UserMapper userMapper = UserMapper.instance;
+        UserMapper userMapper = UserMapper.INSTANCE;
         User user = new User("testUserId", "testPassword", "testName", "testEmail");
         Document document = userMapper.userToDocument(user);
 
@@ -106,8 +106,9 @@ class UserMapperTest {
 
     @Test
     void documentToUser() {
-        UserMapper userMapper = UserMapper.instance;
+        UserMapper userMapper = UserMapper.INSTANCE;
         Document document = new Document();
+        document.put("_id", new ObjectId());
         document.put("userId", "testUserId");
         document.put("password", "testPassword");
         document.put("name", "testName");

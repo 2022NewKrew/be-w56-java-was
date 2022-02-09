@@ -6,13 +6,10 @@ import java.util.Map;
 
 public class ListTemplate implements ViewTemplate {
 
-    private static ListTemplate instance;
+    private static final ListTemplate INSTANCE = new ListTemplate();
 
     public static synchronized ListTemplate getInstance() {
-        if (instance == null) {
-            instance = new ListTemplate();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     private static final String block =

@@ -7,13 +7,10 @@ import util.MapUtil;
 
 public class StaticFileController implements Controller {
 
-    private static StaticFileController instance;
+    private static final StaticFileController INSTANCE = new StaticFileController();
 
     public static synchronized StaticFileController getInstance() {
-        if (instance == null) {
-            instance = new StaticFileController();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

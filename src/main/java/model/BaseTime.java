@@ -2,7 +2,8 @@ package model;
 
 import java.time.LocalDateTime;
 
-public class BaseTime {
+public abstract class BaseTime {
+
     private final LocalDateTime createTime;
     private LocalDateTime modifiedTime;
 
@@ -14,13 +15,18 @@ public class BaseTime {
         this.modifiedTime = modifiedTime;
     }
 
+    public BaseTime(LocalDateTime time) {
+        this(time, time);
+    }
+
     private void checkCreateTime(LocalDateTime createTime) {
-        if(createTime == null) {
+        if (createTime == null) {
             throw new IllegalArgumentException("illegal CreateTime");
         }
     }
+
     private void checkModifiedTime(LocalDateTime modifiedTime) {
-        if(modifiedTime == null) {
+        if (modifiedTime == null) {
             throw new IllegalArgumentException("illegal ModifiedTime");
         }
     }

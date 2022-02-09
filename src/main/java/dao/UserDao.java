@@ -9,22 +9,21 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.time.LocalDateTime;
 import java.util.List;
 import mapper.UserMapper;
 import model.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
-public class UserDao implements CrudDao<User, String> {
+public class UserDao implements CrudDao<User, ObjectId> {
 
-    private static UserDao instance;
-    private static final UserMapper userMapper = UserMapper.instance;
+    private static final UserDao INSTANCE = new UserDao();
+    private static final UserMapper userMapper = UserMapper.INSTANCE;
 
     public static synchronized UserDao getInstance() {
-        if (instance == null) {
-            instance = new UserDao();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     private final MongoCollection<Document> collection;
@@ -36,9 +35,9 @@ public class UserDao implements CrudDao<User, String> {
     }
 
     @Override
-    public User find(String id) {
+    public User find(ObjectId id) {
         Document document = collection
-                .find(eq(UserAttribute.USER_ID.getValue(), id))
+                .find(eq(UserAttribute.ID.getValue(), id))
                 .first();
         return userMapper.documentToUser(document);
     }
@@ -50,11 +49,10 @@ public class UserDao implements CrudDao<User, String> {
     }
 
     @Override
-    public String save(User entity) {
-        String id = entity.getUserId();
-        collection.insertOne(userMapper.userToDocument(entity));
-
-        return id;
+    public ObjectId save(User entity) {
+        Document document = userMapper.userToDocument(entity);
+        collection.insertOne(document);
+        return document.getObjectId(UserAttribute.ID.getValue());
     }
 
     @Override
@@ -62,13 +60,20 @@ public class UserDao implements CrudDao<User, String> {
         Bson updatePassword = set(UserAttribute.PASSWORD.getValue(), entity.getPassword());
         Bson updateName = set(UserAttribute.NAME.getValue(), entity.getName());
         Bson updateEmail = set(UserAttribute.EMAIL.getValue(), entity.getEmail());
-        Bson combineBson = combine(updatePassword, updateName, updateEmail);
-        collection.findOneAndUpdate(eq(UserAttribute.USER_ID.getValue(), entity.getUserId()),
+        Bson updateModifiedTime = set(UserAttribute.MODIFIED_TIME.getValue(), LocalDateTime.now());
+        Bson combineBson = combine(updatePassword, updateName, updateEmail, updateModifiedTime);
+        collection.findOneAndUpdate(eq(UserAttribute.ID.getValue(), entity.getId()),
                 combineBson);
     }
 
-    @Override
-    public void delete(User entity) {
-        collection.deleteOne(eq(UserAttribute.USER_ID.getValue(), entity.getUserId()));
+    public void delete(ObjectId id) {
+        collection.deleteOne(eq(UserAttribute.ID.getValue(), id));
+    }
+
+    public User findByUserId(String userId) {
+        Document document = collection
+                .find(eq(UserAttribute.USER_ID.getValue(), userId))
+                .first();
+        return userMapper.documentToUser(document);
     }
 }

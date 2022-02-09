@@ -1,7 +1,6 @@
 package controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import http.request.HttpRequest;
 import http.request.RequestBody;

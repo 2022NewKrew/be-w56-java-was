@@ -1,8 +1,8 @@
 package mapper;
 
 import dto.ArticleDto;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.sql.Timestamp;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import model.Article;
 import org.bson.Document;
@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface ArticleMapper {
 
-    ArticleMapper instance = Mappers.getMapper(ArticleMapper.class);
+    ArticleMapper INSTANCE = Mappers.getMapper(ArticleMapper.class);
 
     List<Article> documentsToArticles(List<Document> documents);
 
@@ -35,14 +35,14 @@ public interface ArticleMapper {
         if (document == null) {
             return null;
         }
-
         return new Article(
                 document.getObjectId("_id"),
                 document.getString("author"),
                 document.getString("content"),
-                Instant.ofEpochMilli(document.getDate("createTime").getTime())
-                        .atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                Instant.ofEpochMilli(document.getDate("modifiedTime").getTime())
-                        .atZone(ZoneId.systemDefault()).toLocalDateTime());
+                new Timestamp(document.getDate("createTime").getTime()).toLocalDateTime()
+                        .minus(9, ChronoUnit.HOURS),
+                new Timestamp(document.getDate("modifiedTime").getTime()).toLocalDateTime()
+                        .minus(9, ChronoUnit.HOURS)
+        );
     }
 }

@@ -1,9 +1,9 @@
 package dto;
 
 import java.time.LocalDateTime;
-import org.bson.types.ObjectId;
 
 public class ArticleDto {
+
     private final LocalDateTime createTime;
     private final String author;
     private final String content;

@@ -7,13 +7,10 @@ import java.util.Map;
 
 public class LogoutController implements Controller {
 
-    private static LogoutController instance;
+    private static final LogoutController INSTANCE = new LogoutController();
 
     public static LogoutController getInstance() {
-        if(instance == null) {
-            instance = new LogoutController();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override
