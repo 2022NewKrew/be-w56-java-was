@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static webserver.http.Header.*;
 
 class HttpRequestTest {
 
@@ -30,9 +31,9 @@ class HttpRequestTest {
         assertThat(httpRequest.version()).isEqualTo(HttpVersion.HTTP_1_1);
         assertThat(httpRequest.headers())
                 .extracting(
-                        h -> h.getValues("Host"),
-                        h -> h.getValues("Connection"),
-                        h -> h.getValues("Accept"))
+                        h -> h.getValues(HOST),
+                        h -> h.getValues(CONNECTION),
+                        h -> h.getValues(ACCEPT))
                 .doesNotContainNull()
                 .containsExactly(
                         List.of("localhost:8080"),
@@ -67,11 +68,11 @@ class HttpRequestTest {
         assertThat(httpRequest.version()).isEqualTo(HttpVersion.HTTP_1_1);
         assertThat(httpRequest.headers())
                 .extracting(
-                        h -> h.getValues("Host"),
-                        h -> h.getValues("Connection"),
-                        h -> h.getValues("Content-Length"),
-                        h -> h.getValues("Content-Type"),
-                        h -> h.getValues("Accept"))
+                        h -> h.getValues(HOST),
+                        h -> h.getValues(CONNECTION),
+                        h -> h.getValues(CONTENT_LENGTH),
+                        h -> h.getValues(CONTENT_TYPE),
+                        h -> h.getValues(ACCEPT))
                 .doesNotContainNull()
                 .containsExactly(
                         List.of("localhost:8080"),

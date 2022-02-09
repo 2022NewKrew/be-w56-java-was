@@ -12,6 +12,9 @@ import com.google.common.collect.Maps;
 import webserver.exception.BadRequestException;
 import webserver.http.*;
 
+import static webserver.http.Header.CONTENT_LENGTH;
+import static webserver.http.Header.COOKIE;
+
 public class HttpRequestUtils {
 
     private static final String END_OF_REQUEST_LINE = "";
@@ -46,24 +49,25 @@ public class HttpRequestUtils {
     }
 
     private static HttpHeader readRequestHeaderFromBuffer(BufferedReader br) throws IOException {
-        Map<String, List<String>> headers = new HashMap<>();
+        Map<Header, List<String>> headers = new HashMap<>();
         String inputLine;
         while (!(inputLine = br.readLine()).equals(END_OF_REQUEST_LINE)) {
             String[] inputs = inputLine.split(HEADER_KEY_VALUE_DELIMITER);
 
+            Header key = Header.from(inputs[0]);
             List<String> values = Arrays.stream(inputs[1].split(HEADER_VALUE_DELIMITER))
                     .map(String::trim)
                     .collect(Collectors.toList());
 
-            headers.put(inputs[0], values);
+            headers.put(key, values);
         }
         return new HttpHeader(headers);
     }
 
     private static HttpCookie getCookieFromHeaders(HttpHeader headers) {
         HttpCookie httpCookie = new HttpCookie();
-        if (headers.containsKey("Cookie")) {
-            List<String> cookies = headers.getValues("Cookie");
+        if (headers.containsKey(COOKIE)) {
+            List<String> cookies = headers.getValues(COOKIE);
             String joinedCookies = String.join(HEADER_VALUE_DELIMITER, cookies);
             Map<String, String> cookiesMap = HttpRequestUtils.parseCookies(joinedCookies);
             cookiesMap.forEach((k, v) -> httpCookie.putCookie(new Cookie(k, v)));
@@ -72,8 +76,8 @@ public class HttpRequestUtils {
     }
 
     private static int getContentLength(HttpHeader headers) {
-        if (headers.containsKey("Content-Length")) {
-            List<String> values = headers.getValues("Content-Length");
+        if (headers.containsKey(CONTENT_LENGTH)) {
+            List<String> values = headers.getValues(CONTENT_LENGTH);
             return Integer.parseInt(values.get(0));
         }
         return 0;

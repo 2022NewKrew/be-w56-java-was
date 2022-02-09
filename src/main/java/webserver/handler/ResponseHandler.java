@@ -45,7 +45,7 @@ public class ResponseHandler {
     }
 
     private static void writeBytesHeaders(HttpHeader headers, DataOutputStream dos) throws IOException {
-        for (String key : headers.keySet()) {
+        for (Header key : headers.keySet()) {
             List<String> values = headers.getValues(key);
             String joinedValues = String.join(HEADER_VALUE_DELIMITER, values);
             dos.writeBytes(String.format("%s: %s%s", key, joinedValues, CRLF));

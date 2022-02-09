@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.*;
 
 import static util.TemplateEngineUtils.renderDynamicTemplate;
+import static webserver.http.Header.LOCATION;
 
 public enum RequestMappingInfo {
 
@@ -42,7 +43,7 @@ public enum RequestMappingInfo {
 
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
-                    .header("Location", "/")
+                    .header(LOCATION, "/")
                     .build();
         }
     },
@@ -66,7 +67,7 @@ public enum RequestMappingInfo {
 
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
-                    .header("Location", "/")
+                    .header(LOCATION, "/")
                     .cookie(authCookie)
                     .body(body)
                     .build();
@@ -101,7 +102,7 @@ public enum RequestMappingInfo {
 
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
-                    .header("Location", "/")
+                    .header(LOCATION, "/")
                     .build();
         }
     };
