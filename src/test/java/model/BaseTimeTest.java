@@ -11,6 +11,13 @@ import org.junit.jupiter.api.Test;
 @DisplayName("BaseTime 테스트")
 class BaseTimeTest {
 
+    class TestClassForBaseTime extends BaseTime {
+
+        public TestClassForBaseTime(LocalDateTime createTime, LocalDateTime modifiedTime) {
+            super(createTime, modifiedTime);
+        }
+    }
+
     @DisplayName("올바른 파라미터로 BaseTime을 생성했을 때 예외를 던지지 않는다.")
     @Test
     void constructor1() {
@@ -20,7 +27,8 @@ class BaseTimeTest {
 
         //when
         //then
-        assertThatCode(() -> new BaseTime(createTime, modifiedTime)).doesNotThrowAnyException();
+        assertThatCode(() -> new TestClassForBaseTime(createTime,
+                modifiedTime)).doesNotThrowAnyException();
     }
 
     @DisplayName("createTime이 null 일때 IllegalArgumentException을 던진다.")
@@ -32,7 +40,7 @@ class BaseTimeTest {
 
         //when
         //then
-        assertThatThrownBy(() -> new BaseTime(createTime, modifiedTime)).isInstanceOf(
+        assertThatThrownBy(() -> new TestClassForBaseTime(createTime, modifiedTime)).isInstanceOf(
                 IllegalArgumentException.class);
     }
 
@@ -45,7 +53,7 @@ class BaseTimeTest {
 
         //when
         //then
-        assertThatThrownBy(() -> new BaseTime(createTime, modifiedTime)).isInstanceOf(
+        assertThatThrownBy(() -> new TestClassForBaseTime(createTime, modifiedTime)).isInstanceOf(
                 IllegalArgumentException.class);
     }
 
@@ -54,7 +62,7 @@ class BaseTimeTest {
     void getCreateTime() {
         LocalDateTime now = LocalDateTime.now();
 
-        BaseTime baseTime = new BaseTime(now, now);
+        BaseTime baseTime = new TestClassForBaseTime(now, now);
 
         assertThat(baseTime.getModifiedTime()).isEqualTo(now);
 

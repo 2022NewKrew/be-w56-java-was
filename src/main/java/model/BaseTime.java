@@ -2,7 +2,7 @@ package model;
 
 import java.time.LocalDateTime;
 
-public class BaseTime {
+public abstract class BaseTime {
 
     private final LocalDateTime createTime;
     private LocalDateTime modifiedTime;
