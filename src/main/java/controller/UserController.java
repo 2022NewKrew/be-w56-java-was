@@ -12,7 +12,6 @@ import webserver.http.PathInfo;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Map;
 
 public class UserController implements Controller{
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
