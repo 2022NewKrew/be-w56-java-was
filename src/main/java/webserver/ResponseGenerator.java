@@ -59,7 +59,7 @@ public class ResponseGenerator {
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
                 .header("Location", PathInfo.PATH_INDEX)
-                .header("Set-Cookie", "logined=true; Path=/")
+                .header("Set-Cookie", "loggedin=true; Path=/")
                 .build();
     }
 
@@ -67,7 +67,7 @@ public class ResponseGenerator {
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
                 .header("Location", PathInfo.PATH_LOGIN_FAILED)
-                .header("Set-Cookie", "logined=false; Path=/")
+                .header("Set-Cookie", "loggedin=false; Path=/")
                 .build();
     }
 

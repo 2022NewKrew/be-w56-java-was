@@ -46,7 +46,7 @@ public class HttpRequest {
 
     public boolean isLoggedIn() {
         try {
-            return Boolean.parseBoolean(cookies.get("logined"));
+            return Boolean.parseBoolean(cookies.get("loggedin"));
         } catch (NullPointerException e) {
             return false;
         }

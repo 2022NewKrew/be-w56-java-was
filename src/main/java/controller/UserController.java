@@ -36,7 +36,7 @@ public class UserController implements Controller{
             log.debug("Login failed");
             return ResponseGenerator.generateLoginFailedResponse();
         } else if(path.equals(PathInfo.PATH_USER_LIST)) {
-            log.debug("logined: {}", httpRequest.isLoggedIn());
+            log.debug("loggedin: {}", httpRequest.isLoggedIn());
             if (httpRequest.isLoggedIn()) {
                 try {
                     return ResponseGenerator.generateUserListResponse(userService.findAll());
