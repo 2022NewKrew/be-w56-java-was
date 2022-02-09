@@ -30,32 +30,23 @@ public class PostHandler {
     }
 
     public Response create(Request request) {
-        String cookieHeader = request.getHeader("Cookie");
-        Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieHeader);
-        boolean loggedIn = cookies.containsKey("currentUserId");
-        if (!loggedIn) {
-            Map<String, String> headers = Map.of(
-                    "Content-Type", ContentType.TEXT.getContentType(),
-                    "Location", "/user/login.html"
-            );
-            return Response.of(302, new Headers(headers), "Not logged in");
+        Long currentUserId = request.getCookieLong("currentUserId");
+        if (currentUserId == null) {
+            return Response.found("Not logged in")
+                    .contentType(ContentType.HTML)
+                    .redirect("/user/login.html");
         }
-        String body = request.getBody();
-        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
-        String title = params.get("title");
-        String content = params.get("contents");
-        long authorId = Long.parseLong(cookies.get("currentUserId"));
+        String title = request.getBodyParam("title");
+        String content = request.getBodyParam("contents");
         Post post = new Post.Builder()
                 .title(title)
                 .content(content)
-                .author(new User(authorId, "", "", "", ""))
+                .author(new User(currentUserId, "", "", "", ""))
                 .build();
         service.addPost(post);
-        Map<String, String> headers = Map.of(
-                "Content-Type", "text/plain",
-                "Location", "/"
-        );
-        return Response.of(302, new Headers(headers), "");
+        return Response.found("")
+                .contentType(ContentType.HTML)
+                .redirect("/");
     }
 
     public Response list(Request request) {
@@ -66,9 +57,9 @@ public class PostHandler {
                     "posts", service.findAllPosts()
             );
             String filled = templateEngine.render(content, values);
-            return Response.ok(Headers.contentType(ContentType.HTML), filled);
+            return Response.ok(filled).contentType(ContentType.HTML);
         } catch (IOException e) {
-            return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
+            return Response.error(e.getMessage()).contentType(ContentType.HTML);
         }
     }
 }

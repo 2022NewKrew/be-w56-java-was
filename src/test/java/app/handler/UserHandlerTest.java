@@ -34,7 +34,7 @@ class UserHandlerTest {
 
         Response result = subject.create(request);
 
-        assertEquals(301, result.getStatusCode());
+        assertEquals(302, result.getStatusCode());
         assertEquals("/user/profile.html", result.getHeader("Location"));
     }
 
@@ -47,7 +47,7 @@ class UserHandlerTest {
 
         Response result = subject.login(request);
 
-        assertEquals(301, result.getStatusCode());
+        assertEquals(302, result.getStatusCode());
         assertEquals("/", result.getHeader("Location"));
         assertEquals("currentUserId=0; path=/", result.getHeader("Set-Cookie"));
     }
@@ -60,7 +60,7 @@ class UserHandlerTest {
 
         Response result = subject.login(request);
 
-        assertEquals(301, result.getStatusCode());
+        assertEquals(302, result.getStatusCode());
         assertEquals("/user/login_failed.html", result.getHeader("Location"));
     }
 }

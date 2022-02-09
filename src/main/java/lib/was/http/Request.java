@@ -1,15 +1,14 @@
 package lib.was.http;
 
+import lib.util.HttpRequestUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Request {
 
@@ -53,8 +52,20 @@ public class Request {
         return headers.get(key);
     }
 
+    public Long getCookieLong(String name) {
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(headers.get("Cookie"));
+        return Optional.ofNullable(cookies.get(name))
+                .map(Long::parseLong)
+                .orElse(null);
+    }
+
     public String getBody() {
         return body;
+    }
+
+    public String getBodyParam(String key) {
+        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
+        return params.get(key);
     }
 
     public static Request parse(InputStream is) throws IOException {

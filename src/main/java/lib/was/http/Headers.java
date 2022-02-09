@@ -1,11 +1,12 @@
 package lib.was.http;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Headers {
+
+    public static final Headers EMPTY = new Headers(Collections.emptyMap());
 
     private final Map<String, String> map;
 
@@ -21,6 +22,14 @@ public class Headers {
         return map.entrySet();
     }
 
+    public Headers plus(String key, String value) {
+        Map<String, String> map = Stream.concat(
+                this.map.entrySet().stream().filter(x -> !x.getKey().equals(key)),
+                Stream.of(new AbstractMap.SimpleEntry<>(key, value))
+        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new Headers(map);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -32,9 +41,5 @@ public class Headers {
     @Override
     public int hashCode() {
         return Objects.hash(map);
-    }
-
-    public static Headers contentType(ContentType contentType) {
-        return new Headers(Collections.singletonMap("Content-Type", contentType.getContentType()));
     }
 }

@@ -1,11 +1,9 @@
 package app.handler;
 
 import domain.model.User;
-import lib.util.HttpRequestUtils;
 import lib.was.di.Bean;
 import lib.was.di.Inject;
 import lib.was.http.ContentType;
-import lib.was.http.Headers;
 import lib.was.http.Request;
 import lib.was.http.Response;
 import lib.was.template.TemplateEngine;
@@ -30,52 +28,39 @@ public class UserHandler {
     }
 
     public Response create(Request request) {
-        String body = request.getBody();
-        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
-        String userId = params.get("userId");
-        String password = params.get("password");
-        String email = params.get("email");
-        String name = params.get("name");
+        String userId = request.getBodyParam("userId");
+        String password = request.getBodyParam("password");
+        String email = request.getBodyParam("email");
+        String name = request.getBodyParam("name");
         User user = new User(0, userId, password, name, email);
         service.addUser(user);
-        Map<String, String> headers = Map.of(
-                "Content-Type", "text/plain",
-                "Location", "/user/profile.html"
-        );
-        return Response.of(301, new Headers(headers), "");
+        return Response.found("")
+                .contentType(ContentType.TEXT)
+                .redirect("/user/profile.html");
     }
 
     public Response login(Request request) {
-        String body = request.getBody();
-        Map<String, String> params = HttpRequestUtils.parseQueryString(body);
-        String userId = params.get("userId");
-        String password = params.get("password");
+        String userId = request.getBodyParam("userId");
+        String password = request.getBodyParam("password");
         Optional<User> user = service.login(userId, password);
         if (user.isEmpty()) {
-            Map<String, String> headers = Map.of(
-                    "Content-Type", ContentType.TEXT.getContentType(),
-                    "Location", "/user/login_failed.html"
-            );
-            return Response.of(301, new Headers(headers), "Login failed");
+            return Response.found("Login failed")
+                    .contentType(ContentType.TEXT)
+                    .redirect("/user/login_failed.html");
         }
-        Map<String, String> headers = Map.of(
-                "Content-Type", ContentType.TEXT.getContentType(),
-                "Location", "/",
-                "Set-Cookie", String.format("currentUserId=%d; path=/", user.get().getId())
-        );
-        return Response.of(301, new Headers(headers), "Login success");
+        return Response.found("Login success")
+                .contentType(ContentType.TEXT)
+                .redirect("/")
+                .setCookie("currentUserId", String.valueOf(user.get().getId()))
+                .setCookie("path", "/");
     }
 
     public Response list(Request request) {
-        String cookieHeader = request.getHeader("Cookie");
-        Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieHeader);
-        boolean loggedIn = cookies.containsKey("currentUserId");
-        if (!loggedIn) {
-            Map<String, String> headers = Map.of(
-                    "Content-Type", ContentType.TEXT.getContentType(),
-                    "Location", "/user/login.html"
-            );
-            return Response.of(302, new Headers(headers), "Not logged in");
+        Long currentUserId = request.getCookieLong("currentUserId");
+        if (currentUserId == null) {
+            return Response.found("Not logged in")
+                    .contentType(ContentType.TEXT)
+                    .redirect("/user/login.html");
         }
         File file = new File("./webapp/user/list.html");
         try {
@@ -84,9 +69,9 @@ public class UserHandler {
                     "users", service.findAllUsers()
             );
             String filled = templateEngine.render(content, values);
-            return Response.ok(Headers.contentType(ContentType.HTML), filled);
+            return Response.ok(filled).contentType(ContentType.HTML);
         } catch (IOException e) {
-            return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());
+            return Response.error(e.getMessage()).contentType(ContentType.TEXT);
         }
     }
 }
