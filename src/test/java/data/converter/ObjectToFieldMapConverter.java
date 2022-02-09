@@ -3,6 +3,8 @@ package data.converter;
 import util.converter.Converter;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +19,10 @@ public class ObjectToFieldMapConverter implements Converter<Object, Map<String, 
         Map<String, String> returned = new HashMap<>();
 
         try {
-            for (Field field : from.getClass().getFields()) {
+            for (Field field : from.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
                 String fieldName = field.getName();
-                String value = field.get(from).toString();
+                String value = getValue(field, from);
                 returned.put(fieldName, value);
             }
         }catch (IllegalAccessException exception){
@@ -28,5 +30,15 @@ public class ObjectToFieldMapConverter implements Converter<Object, Map<String, 
         }
 
         return returned;
+    }
+
+    private static String getValue(Field field, Object obj) throws IllegalAccessException {
+        Object val = field.get(obj);
+
+        if(field.getAnnotatedType().getType().getTypeName().contains("LocalDateTime")){
+            return ((LocalDateTime)val).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
+
+        return field.get(obj).toString();
     }
 }
