@@ -56,6 +56,10 @@
   - 따라서 중간에 변환과정이 필요할 것 같음 ( 아스키 -> 특수문자 )
   - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
 - LogBack 을 사용하여 파일에 로그 기록
+  - 최상단 위치에 파일명을 기반으로 로그 파일이 하나씩 생성됨
+  - 만일 별도의 폴더경로를 포함하지 않는다면 해당 로그를 ignore 처리하기 위해서는 regex 형태의 값을 작성해야함
+    - https://unix.stackexchange.com/questions/31790/what-is-the-gitignore-pattern-equivalent-of-the-regex-bigsmallstatecity
+  - 하지만 이러한 작업은 굉장히 번거롭고, 프로젝트 폴더가 굉장히 복잡해질 수 있으므로 log 폴더에 파일이 생성되도록 수정
 
 # 참고 사이트
 - HTTP Header

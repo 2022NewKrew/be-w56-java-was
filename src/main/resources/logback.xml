@@ -14,7 +14,7 @@
 
 	<timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-		<file>log-${bySecond}.txt</file>
+		<file>log/log-${bySecond}.txt</file>
 		<encoder>
 			<Pattern>%logger{35} - %msg%n</Pattern>
 		</encoder>
