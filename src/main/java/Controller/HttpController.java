@@ -33,8 +33,11 @@ public class HttpController {
         }
         // GetMapping("/user/list") 와 동일
         else if (httpRequest.getMethod().equals(HttpMethod.GET) && httpRequest.getUrl().equals("/user/list")) {
-            DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
-            return "/user/dynamicList.html";
+            if (httpRequest.getCookie().containsKey("logined") && httpRequest.getCookie().get("logined").equals("true")) {
+                DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
+                return "/user/dynamicList.html";
+            }
+            return "/user/login.html";
         }
         // 이외 주소에 대한 GetMapping
         else if (httpRequest.getMethod().equals(HttpMethod.GET)) {
