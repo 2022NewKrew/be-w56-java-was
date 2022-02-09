@@ -48,9 +48,6 @@ public class RequestHandler extends Thread {
             HttpResponseSender httpResponseSender = new HttpResponseSender(httpResponse, out);
             httpResponseSender.sendResponse();
 
-
-            DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
-
         } catch (IOException e) {
             log.error(e.getMessage());
         }

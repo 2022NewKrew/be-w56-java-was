@@ -1,8 +1,10 @@
 package Controller;
 
 import Service.HttpService;
+import db.DataBase;
 import enums.HttpMethod;
 import http.HttpRequest;
+import util.DynamicHtmlBuilder;
 
 public class HttpController {
 
@@ -31,6 +33,7 @@ public class HttpController {
         }
         // GetMapping("/user/list") 와 동일
         else if (httpRequest.getMethod().equals(HttpMethod.GET) && httpRequest.getUrl().equals("/user/list")) {
+            DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
             return "/user/dynamicList.html";
         }
         // 이외 주소에 대한 GetMapping
