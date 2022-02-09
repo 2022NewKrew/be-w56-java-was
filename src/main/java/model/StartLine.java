@@ -55,6 +55,10 @@ public class StartLine {
         this.httpVersion = httpVersion;
     }
 
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
+    }
+
     public String getUrl() {
         return url;
     }

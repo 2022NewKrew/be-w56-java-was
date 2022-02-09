@@ -2,17 +2,24 @@ package controller;
 
 import db.DataBase;
 import exceptions.BadRequestFormatException;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import model.HttpClientErrorResponse;
+import model.HttpMethod;
 import model.HttpRedirectionResponse;
 import model.HttpRequest;
 import model.HttpResponse;
 import model.HttpStatus;
+import model.HttpSuccessfulResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.View;
 
 public class UserCreateController implements Controller {
 
@@ -45,14 +52,31 @@ public class UserCreateController implements Controller {
         return userElementMap;
     }
 
-    @Override
-    public HttpResponse run(HttpRequest request) {
-        Map<String, String> userElementMap = getUserElement(request.getBody());
+    private void saveUser(String body) {
+        Map<String, String> userElementMap = getUserElement(body);
         User user = new User(userElementMap.get("userId"), userElementMap.get("password"), userElementMap.get("name"),
                 userElementMap.get("email"));
         log.debug("User 생성 {}", user);
         DataBase.addUser(user);
         log.debug("User DB 저장 {}", user);
-        return HttpRedirectionResponse.of(HttpStatus.FOUND, request.getUrl());
+    }
+
+    private List<User> getUserList() {
+        log.debug("User 목록 조회");
+        List<User> userList = new ArrayList<>(DataBase.findAll());
+        log.debug("User 목록 조회 완료 {}", userList);
+        return userList;
+    }
+
+    @Override
+    public HttpResponse run(HttpRequest request) throws IOException {
+        if (request.getHttpMethod() == HttpMethod.POST) {
+            saveUser(request.getBody());
+            return HttpRedirectionResponse.of(HttpStatus.FOUND, request.getUrl());
+        } else if (request.getHttpMethod() == HttpMethod.GET) {
+            List<User> userList = getUserList();
+            return HttpSuccessfulResponse.of(HttpStatus.OK, request.getUrl(), View.userList(userList));
+        }
+        return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, View.staticFile("/errors/notFound.html"));
     }
 }
