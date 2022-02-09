@@ -2,8 +2,10 @@ package dao;
 
 import dao.connection.ConnectionMaker;
 import model.Article;
+import model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArticleDaoImpl implements ArticleDao {
@@ -44,7 +46,21 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public List<Article> findAll() throws SQLException {
-        return null;
+        List<Article> articleList = new ArrayList<>();
+        String sql = String.format("Select * from %s", ArticleDBConstants.TABLE_NAME);
+
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+
+        while (rs.next()) {
+            articleList.add(new Article(
+                    rs.getString(ArticleDBConstants.COLUMN_TITLE),
+                    rs.getString(ArticleDBConstants.COLUMN_DATETIME),
+                    rs.getString(ArticleDBConstants.COLUMN_WRITER)
+            ));
+        }
+
+        return articleList;
     }
 
     @Override
