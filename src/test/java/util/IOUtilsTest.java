@@ -1,4 +1,5 @@
 package util;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
@@ -24,9 +25,9 @@ public class IOUtilsTest {
     @Test
     public void getContentType() throws Exception {
         File file1 = new File("./webapp/index.html");
-        assertEquals(IOUtils.getContentType(file1),"text/html");
+        assertEquals("text/html", IOUtils.getContentType(file1));
 
         File file2 = new File("./webapp/css/styles.css");
-        assertEquals(IOUtils.getContentType(file2),"text/css");
+        assertEquals("text/css", IOUtils.getContentType(file2));
     }
 }

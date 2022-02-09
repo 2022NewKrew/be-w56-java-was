@@ -2,14 +2,59 @@ package util;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
-
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
 
 public class HttpRequestUtilsTest {
+
+    @Test
+    void getHttpMethod() {
+        String httpRequestHeader = "GET /index.html HTTP/1.1\n" +
+                "Host: localhost:8080\n" +
+                "Connection: keep-alive\n";
+        assertEquals("GET", HttpRequestUtils.getHttpMethod(httpRequestHeader));
+
+        httpRequestHeader = "POST /index.html HTTP/1.1\n" +
+                "Host: localhost:8080\n" +
+                "Connection: keep-alive\n";
+        assertEquals("POST", HttpRequestUtils.getHttpMethod(httpRequestHeader));
+    }
+
+    @Test
+    public void getUrlPath() {
+        String httpRequestHeader = "GET /index.html HTTP/1.1\n" +
+                "Host: localhost:8080\n" +
+                "Connection: keep-alive\n";
+        assertEquals("/index.html", HttpRequestUtils.getUrlPath(httpRequestHeader));
+    }
+
+    @Test
+    void getInfoMap() {
+        String httpMethod = "GET";
+        String url = "/user/create?userId=cih468&password=1234&name=%EC%B5%9C%EC%84%B1%ED%98%84&email=cih468%40naver.com";
+        Optional<Map<String, String>> infoMapOptional = HttpRequestUtils.getInfoMap(httpMethod, url);
+        assertTrue(infoMapOptional.isPresent());
+
+        Map<String, String> infoMap = infoMapOptional.get();
+        assertEquals("cih468", infoMap.get("userId"));
+        assertEquals("1234", infoMap.get("password"));
+    }
+
+    @Test
+    void getMethodPath() {
+        String url = "/index.html";
+        assertEquals(HttpRequestUtils.getMethodPath(url), "/index.html");
+
+        url = "/user/create?userId=cih468&password=1234&name=%EC%B5%9C%EC%84%B1%ED%98%84&email=cih468%40naver.com";
+        assertEquals("/user/create", HttpRequestUtils.getMethodPath(url));
+    }
+
+
     @Test
     public void parseQueryString() {
         String queryString = "userId=javajigi";
@@ -53,43 +98,21 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void getKeyValue() throws Exception {
+    public void getKeyValue() {
         Pair pair = HttpRequestUtils.getKeyValue("userId=javajigi", "=");
         assertThat(pair).isEqualTo(new Pair("userId", "javajigi"));
     }
 
     @Test
-    public void getKeyValue_invalid() throws Exception {
+    public void getKeyValue_invalid() {
         Pair pair = HttpRequestUtils.getKeyValue("userId", "=");
         assertThat(pair).isNull();
     }
 
     @Test
-    public void parseHeader() throws Exception {
+    public void parseHeader() {
         String header = "Content-Length: 59";
         Pair pair = HttpRequestUtils.parseHeader(header);
         assertThat(pair).isEqualTo(new Pair("Content-Length", "59"));
-    }
-
-    @Test
-    public void getUrlPath(){
-        String httpRequestHeader = "GET /index.html HTTP/1.1\n" +
-                "Host: localhost:8080\n" +
-                "Connection: keep-alive\n" +
-                "Cache-Control: max-age=0\n" +
-                "sec-ch-ua: \"Whale\";v=\"3\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"96\"\n" +
-                "sec-ch-ua-mobile: ?0\n" +
-                "sec-ch-ua-platform: \"macOS\"\n" +
-                "Upgrade-Insecure-Requests: 1\n" +
-                "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.52 Whale/3.12.129.29 Safari/537.36\n" +
-                "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\n" +
-                "Sec-Fetch-Site: none\n" +
-                "Sec-Fetch-Mode: navigate\n" +
-                "Sec-Fetch-User: ?1\n" +
-                "Sec-Fetch-Dest: document\n" +
-                "Accept-Encoding: gzip, deflate, br\n" +
-                "Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7\n" +
-                "Cookie: JSESSIONID=90741965B6E0819BF674A02915952626";
-        assertEquals(HttpRequestUtils.getUrlPath(httpRequestHeader),"/index.html");
     }
 }

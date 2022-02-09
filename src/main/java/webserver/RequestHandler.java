@@ -3,9 +3,12 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HandlerMapping;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -24,19 +27,28 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+
             String httpRequestHeader = IOUtils.getHttpRequestHeader(bufferedReader);
-            log.info("HTTP Request Header Lines : {}", httpRequestHeader);
-
+            String httpMethod = HttpRequestUtils.getHttpMethod(httpRequestHeader);
             String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
-            log.info("url Path : {}", url);
 
-            response200(new DataOutputStream(out),url);
+            Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(httpMethod, url);
+            String methodPath = HttpRequestUtils.getMethodPath(url);
+            String responseUrl = url;
+            if (infoMap.isPresent())
+                responseUrl = HandlerMapping.getInstance().runMethod(methodPath, infoMap.get());
+
+            log.info("HTTP Request Header Lines : {}", httpRequestHeader);
+            log.info("url Path: {}", url);
+            log.info("Response url Path : {}", responseUrl);
+
+            response200(new DataOutputStream(out), responseUrl);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200(DataOutputStream dos,String url) throws IOException{
+    private void response200(DataOutputStream dos, String url) throws IOException {
         String contentType = IOUtils.getContentType(new File("./webapp" + url));
         log.info("contentType : {}", contentType);
 
