@@ -9,12 +9,14 @@ public class HttpRequest {
     private final HttpVersion version;
     private final Map<HttpHeader, String> headers;
     private final Map<String, String> parameters;
+    private HttpSession session;
 
     private HttpRequest(Builder builder) {
         this.url = builder.url;
         this.version = builder.version;
         this.headers = builder.headers;
         this.parameters = builder.parameters;
+        this.session = builder.session;
     }
 
     public boolean hasAllParameters(List<String> parameters) {
@@ -28,12 +30,16 @@ public class HttpRequest {
         return url;
     }
 
+    public String getParameter(String parameter) {
+        return parameters.get(parameter);
+    }
+
     public String getHeader(HttpHeader header) {
         return headers.get(header);
     }
 
-    public String getParameter(String parameter) {
-        return parameters.get(parameter);
+    public void setSession(HttpSession session) {
+        this.session = session;
     }
 
     public static class Builder {
@@ -42,6 +48,7 @@ public class HttpRequest {
         private HttpVersion version;
         private Map<HttpHeader, String> headers;
         private Map<String, String> parameters;
+        private HttpSession session;
 
         public Builder url(Url url) {
             this.url = url;
@@ -60,6 +67,11 @@ public class HttpRequest {
 
         public Builder parameters(Map<String, String> parameters) {
             this.parameters = parameters;
+            return this;
+        }
+
+        public Builder session(HttpSession session) {
+            this.session = session;
             return this;
         }
 

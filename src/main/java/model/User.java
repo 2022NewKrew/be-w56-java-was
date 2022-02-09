@@ -2,10 +2,13 @@ package model;
 
 public class User {
 
-    private final String userId;
-    private final String password;
-    private final String name;
-    private final String email;
+    private String userId;
+    private String password;
+    private String name;
+    private String email;
+
+    private User() {
+    }
 
     private User(Builder builder) {
         this.userId = builder.userId;

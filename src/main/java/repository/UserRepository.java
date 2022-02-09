@@ -11,6 +11,12 @@ public class UserRepository {
 
     private static final Map<String, User> users = Maps.newConcurrentMap();
 
+    static {
+        users.put("woojin7124",
+            new User.Builder().userId("woojin7124").password("1234").email("woojin7124@naver.com")
+                .name("WOOJIN JANG").build());
+    }
+
     public void save(User user) {
         users.put(user.getUserId(), user);
     }
