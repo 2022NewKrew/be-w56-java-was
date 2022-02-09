@@ -1,4 +1,4 @@
-package adaptor.out.persistence.session;
+package adaptor.out.persistence.inmemory.session;
 
 import application.out.session.SessionDao;
 import domain.user.Session;

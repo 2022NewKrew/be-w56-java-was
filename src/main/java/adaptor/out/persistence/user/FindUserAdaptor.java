@@ -7,11 +7,11 @@ import domain.user.User;
 import java.util.List;
 import java.util.Optional;
 
-public class FindUserInMemoryAdaptor implements FindUserPort {
+public class FindUserAdaptor implements FindUserPort {
 
     private final UserDao userDao;
 
-    public FindUserInMemoryAdaptor(UserDao userDao) {
+    public FindUserAdaptor(UserDao userDao) {
         this.userDao = userDao;
     }
 
