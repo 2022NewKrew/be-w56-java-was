@@ -3,6 +3,9 @@ package http;
 import enums.HttpProtocol;
 import enums.HttpStatusCode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HttpResponse {
 
     private HttpProtocol protocol;
@@ -11,6 +14,7 @@ public class HttpResponse {
     private String responseContentType;
     private String responseDataPath;
     private String redirectUrl;
+    private Map cookie = new HashMap<>();
 
     public HttpProtocol getProtocol() {
         return protocol;
@@ -36,6 +40,10 @@ public class HttpResponse {
         return redirectUrl;
     }
 
+    public Map getCookie() {
+        return cookie;
+    }
+
     public void setProtocol(HttpProtocol protocol) {
         this.protocol = protocol;
     }
@@ -58,5 +66,9 @@ public class HttpResponse {
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
+    }
+
+    public void addCookie(String key, String value) {
+        cookie.put(key, value);
     }
 }
