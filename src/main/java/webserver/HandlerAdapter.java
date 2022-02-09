@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
-import webserver.http.HttpRequest;
-import webserver.http.HttpResponse;
-import webserver.http.enums.HttpStatus;
-import webserver.http.enums.MIME;
+import webserver.model.ModelAndView;
+import webserver.model.http.HttpRequest;
+import webserver.model.http.HttpResponse;
+import webserver.enums.HttpStatus;
+import webserver.enums.MIME;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class HandlerAdapter {
@@ -18,21 +22,17 @@ public class HandlerAdapter {
     private static final DIContainer diContainer = new DIContainer();
     private static final HandlerMapping handlerMapping = new HandlerMapping(diContainer.getBeans());
 
-    public static HttpResponse handle(HttpRequest httpRequest) {
-        MIME mime = MIME.parse(httpRequest.getUri());
-
+    public static ModelAndView handle(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
-            HttpResponse response = mime != MIME.HTML?
-                    HttpResponse.httpStatus(HttpStatus.OK).setView(httpRequest.getUri()) : executeController(httpRequest);
-            response.setMime(mime);
-            return response;
+            return httpResponse.getMime() != MIME.HTML?
+                    new ModelAndView(httpRequest.getUri()) : executeController(httpRequest, httpResponse);
         } catch (Exception e) {
             log.error(e.getMessage() + " " + e.getCause());
-            return HttpResponse.httpStatus(HttpStatus.NOT_FOUND).body("");
+            throw new RuntimeException();
         }
     }
 
-    private static HttpResponse executeController(HttpRequest httpRequest) throws InvocationTargetException, IllegalAccessException {
+    private static ModelAndView executeController(HttpRequest httpRequest, HttpResponse httpResponse) throws InvocationTargetException, IllegalAccessException {
         // find target method from http request
         HandlerMapping.Pair classAndMethod = handlerMapping.findMethod(httpRequest);
         Method targetMethod = classAndMethod.getMethod();
@@ -42,9 +42,17 @@ public class HandlerAdapter {
 
         Object object = classAndMethod.getObject();
 
+        List<Object> paramObjects = new ArrayList<>();
+        for (Class<?> clazz : targetMethod.getParameterTypes()) {
+            if (clazz.equals(HttpResponse.class))
+                paramObjects.add(httpResponse);
+            else
+                paramObjects.add(mapper.convertValue(params, clazz));
+        }
+
         if (targetMethod.getParameterCount() != 0)
-            return (HttpResponse) targetMethod
-                    .invoke(object, mapper.convertValue(params, targetMethod.getParameterTypes()[0]));
-        return (HttpResponse) targetMethod.invoke(object);
+            return (ModelAndView) targetMethod
+                    .invoke(object, paramObjects.toArray());
+        return (ModelAndView) targetMethod.invoke(object);
     }
 }

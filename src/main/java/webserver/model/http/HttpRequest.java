@@ -1,11 +1,11 @@
-package webserver.http;
+package webserver.model.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
 import webserver.DispatcherServlet;
-import webserver.http.enums.HttpMethod;
+import webserver.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;

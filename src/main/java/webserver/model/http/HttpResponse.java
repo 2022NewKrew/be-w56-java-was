@@ -1,7 +1,7 @@
-package webserver.http;
+package webserver.model.http;
 
-import webserver.http.enums.HttpStatus;
-import webserver.http.enums.MIME;
+import webserver.enums.HttpStatus;
+import webserver.enums.MIME;
 
 import java.io.File;
 import java.io.IOException;

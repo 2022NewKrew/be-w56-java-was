@@ -3,14 +3,18 @@ package controller;
 import dto.UserCreateDto;
 import dto.UserSignInDto;
 import exception.BusinessException;
+import exception.EntityNotFoundException;
 import service.MemberService;
-import webserver.http.Cookie;
-import webserver.http.HttpResponse;
+import webserver.model.ModelAndView;
+import webserver.model.http.Cookie;
+import webserver.model.http.HttpResponse;
 import webserver.annotations.Autowired;
 import webserver.annotations.Component;
 import webserver.annotations.GetMapping;
 import webserver.annotations.PostMapping;
-import webserver.http.enums.HttpStatus;
+import webserver.enums.HttpStatus;
+
+import java.lang.reflect.MalformedParameterizedTypeException;
 
 @Component
 public class MemberController {
@@ -22,45 +26,56 @@ public class MemberController {
     }
 
     @GetMapping(value = {"/index.html", "/"})
-    public HttpResponse index() {
-        return HttpResponse.httpStatus(HttpStatus.OK).setView("/index.html");
+    public ModelAndView index() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/index.html");
+        return modelAndView;
     }
 
     @GetMapping("/user/login.html")
-    public HttpResponse login() {
-        return HttpResponse.httpStatus(HttpStatus.OK).setView("/user/login.html");
+    public ModelAndView login() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/user/login.html");
+        return modelAndView;
     }
 
     @GetMapping("/user/form.html")
-    public HttpResponse form() {
-        return HttpResponse.httpStatus(HttpStatus.OK).setView("/user/form.html");
+    public ModelAndView form() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/user/form.html");
+        return modelAndView;
     }
 
     @PostMapping("/user/create")
-    public HttpResponse create(UserCreateDto userCreateDto) {
+    public ModelAndView create(UserCreateDto userCreateDto) {
         memberService.create(userCreateDto);
-        System.out.println(userCreateDto.getUserId());
-        System.out.println(userCreateDto.getPassword());
-        return HttpResponse.httpStatus(HttpStatus.FOUND).redirect("/index.html");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:/index.html");
+        return modelAndView;
     }
 
     @PostMapping("/user/login")
-    public HttpResponse signIn(UserSignInDto userSignInDto) {
+    public ModelAndView signIn(UserSignInDto userSignInDto, HttpResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
         try {
             memberService.signIn(userSignInDto);
-        } catch (BusinessException e) {
-            return HttpResponse.httpStatus(HttpStatus.FOUND).redirect("/user/login_failed.html");
+        } catch (EntityNotFoundException e) {
+            modelAndView.setViewName("redirect:/user/login_failed.html");
+            return modelAndView;
         }
 
-        Cookie cookie = new Cookie()
+        response.setCookie(new Cookie()
                 .add("login", "true")
-                .add("Path", "/");
+                .add("Path", "/"));
 
-        return HttpResponse.httpStatus(HttpStatus.FOUND).setCookie(cookie).redirect("/index.html");
+        modelAndView.setViewName("redirect:/index.html");
+        return modelAndView;
     }
 
     @GetMapping("/user/login_failed.html")
-    public HttpResponse loginFailed() {
-        return HttpResponse.httpStatus(HttpStatus.OK).setView("/user/login_failed.html");
+    public ModelAndView loginFailed() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/user/login_failed.html");
+        return modelAndView;
     }
 }
