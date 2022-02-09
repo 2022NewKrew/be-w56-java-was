@@ -1,7 +1,6 @@
 package controller;
 
-import controller.exception.ControllerMismatchException;
-import controller.util.UserHtmlResponseUtils;
+import controller.util.HtmlResponseUtils;
 import domain.user.dto.UserCreate;
 import domain.user.dto.UserInfo;
 import domain.user.service.UserService;
@@ -35,7 +34,7 @@ public class UserController implements Controller {
     public HttpResponse doGet(HttpRequest request) {
         String path = request.getPath();
         if (!path.equals(USER_LIST_PATH)) {
-            throw new ControllerMismatchException("Request Path :: " + request.getPath());
+            return Controller.super.doGet(request);
         }
 
         if (!request.isLogined()) {
@@ -49,7 +48,7 @@ public class UserController implements Controller {
 
         List<UserInfo> userInfos = userService.readAll();
 
-        String body = UserHtmlResponseUtils.generateUsersHtml(userInfos);
+        String body = HtmlResponseUtils.generateUsersHtml(userInfos);
 
         return HttpResponse.builder()
             .status(HttpStatus.OK)
@@ -61,7 +60,7 @@ public class UserController implements Controller {
     public HttpResponse doPost(HttpRequest request) {
         String path = request.getPath();
         if (!path.equals(USER_CREATE_PATH)) {
-            return badRequest();
+            return Controller.super.doPost(request);
         }
 
         userService.create(UserCreate.builder()
