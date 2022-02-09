@@ -105,7 +105,7 @@ public class TemplateParser3 {
             try {
                 Field field = modelAttribute.getClass().getDeclaredField(attributeName);
                 field.setAccessible(true);
-                attribute = (String) field.get(modelAttribute);
+                attribute = field.get(modelAttribute).toString();
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {

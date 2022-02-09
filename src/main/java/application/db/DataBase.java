@@ -15,6 +15,7 @@ public class DataBase {
     }
 
     static {
+
         User user = new User("testID", "1234", "김민수", "raon.su@kakaocorp.com");
         addUser(user);
     }

@@ -28,6 +28,7 @@ public class ServerConfig {
     // Controller 등록 - HandlerMethod 수집
     static {
         controllers.add(Beans.userController);
+        controllers.add(Beans.memoController);
         initializeHandlerMethod();
     }
 

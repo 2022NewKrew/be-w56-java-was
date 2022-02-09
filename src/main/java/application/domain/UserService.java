@@ -1,31 +1,32 @@
 package application.domain;
 
 import application.db.DataBase;
+import application.db.UserRepository;
 import application.domain.dto.LoginDto;
 
 import java.util.List;
 
 public class UserService {
 
-    public final DataBase dataBase;
+    public final UserRepository userRepository;
 
-    public UserService(DataBase dataBase) {
-        this.dataBase = dataBase;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void addUser(User user) {
-        dataBase.addUser(user);
+        userRepository.addUser(user);
     }
 
     public boolean login(LoginDto loginUser) {
         User findUser;
-        findUser = dataBase.findUserById(loginUser.getUserId());
+        findUser = userRepository.findUserById(loginUser.getUserId());
         if ( findUser == null || !findUser.getPassword().equals(loginUser.getPassword()) )
             return false;
         return true;
     }
 
     public List<User> getUserList() {
-        return dataBase.findAll();
+        return userRepository.findAll();
     }
 }
