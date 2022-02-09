@@ -9,7 +9,7 @@ public class UserService {
     private final DataBase dataBase;
 
     public UserService() {
-        dataBase = new DataBase();
+        dataBase = DataBase.getInstance();
     }
 
     public void createUser(Map<String, String> userInfoMap) {
@@ -22,6 +22,6 @@ public class UserService {
         String name = userInfoMap.get("name");
         String email = userInfoMap.get("email");
 
-        return new User(userId,password,name,email);
+        return new User(userId, password, name, email);
     }
 }
