@@ -46,7 +46,7 @@ public class MemoDAO {
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(TO_LIST_SQL);
 
-        while (resultSet.next()) {
+        while (resultSet.next() && memoList.size() < 20) {
             Memo memo = Memo.builder()
                     .memoId(resultSet.getLong(1))
                     .writer(resultSet.getString(2))
