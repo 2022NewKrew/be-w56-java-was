@@ -56,7 +56,6 @@ public class UserController {
         response.sendRedirectWithCookie(Constant.INDEX_PATH, Constant.LOGOUT_CACHE);
     }
 
-
     @RequestMapping(value = "/user/list", method = HttpRequestMethod.GET)
     public void userList(HttpRequest request, HttpResponse response) throws IOException {
         String cookie = request.getCookie();
