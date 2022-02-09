@@ -20,6 +20,7 @@ public class ViewResolver {
 
     private ViewResolver(){
         viewMap.put("/", "/index.html");
+        viewMap.put("/users", "/user/list.html");
         viewMap.put("/users/form", "/user/form.html");
         viewMap.put("/users/login", "/user/login.html");
     }

@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.request.Queries;
 
+import java.util.Collection;
+import java.util.List;
+
 public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
@@ -36,5 +39,9 @@ public class UserService {
         boolean result = user != null && user.getPassword().equals(queries.get("password"));
         log.info("LOGIN : " + result);
         return result;
+    }
+
+    public List<User> searchAllUsers(){
+        return DataBase.findAll();
     }
 }

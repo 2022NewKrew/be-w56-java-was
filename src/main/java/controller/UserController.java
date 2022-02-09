@@ -53,4 +53,10 @@ public class UserController implements Controller {
         }
         return mv;
     }
+
+    @RequestMapping(method = HttpMethod.GET, url = "/users")
+    public ModelAndView showUsers(Request request){
+        log.info("[UserController] : showUsers");
+        return new ModelAndView("/users", "users", userService.searchAllUsers());
+    }
 }

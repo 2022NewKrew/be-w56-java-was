@@ -5,6 +5,7 @@ import model.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
+import util.TemplateEngine;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +38,9 @@ public class ViewDynamic implements ViewRender{
     public byte[] render() throws IOException {
         File file = new File(url);
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
-        readFile(br);
+        log.info("[ViewDynamic] Render: " + url);
+        TemplateEngine templateEngine = new TemplateEngine(br, mv);
+        sb.append(templateEngine.read());
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
@@ -51,10 +54,13 @@ public class ViewDynamic implements ViewRender{
         return this.statusCode;
     }
 
-    private void readFile(BufferedReader br) throws IOException {
-        String line;
-        while((line = br.readLine()) != null){
-            sb.append(String.format("%s\r\n", line));
-        }
-    }
+//    private void readFile(BufferedReader br) throws IOException {
+//        log.info("[ViewDynamic] Readfile: " + url);
+////        String line;
+////        while((line = br.readLine()) != null){
+////            sb.append(String.format("%s\r\n", line));
+////        }
+//        TemplateEngine templateEngine = new TemplateEngine(br, mv);
+//        templateEngine.read();
+//    }
 }
