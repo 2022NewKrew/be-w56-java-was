@@ -12,7 +12,8 @@ public final class HttpRequestUtils {
     private static final String ACCEPT_TYPE_DELIMITER = ",";
     private static final String PATH_DELIMITER = "\\?";
 
-    private HttpRequestUtils() {}
+    private HttpRequestUtils() {
+    }
 
     public static String[] parsePath(String path) {
         return path.split(PATH_DELIMITER);
