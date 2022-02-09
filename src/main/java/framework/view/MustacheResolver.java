@@ -17,8 +17,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static framework.util.Constants.CONTEXT_PATH;
+import static framework.util.Constants.*;
 
 /**
  * Mustache ({{, }})를 변환해주는 메소드들을 담은 클래스
@@ -65,10 +67,11 @@ public class MustacheResolver {
      * @param line 현재 줄
      * @return Mustache 존재 여부
      */
-    private static boolean hasMustache(String line) {
+    public static boolean hasMustache(String line) {
         // {{, }}가 함께 있고 {{ 보다 }}가 더 먼저 있는 경우, Mustache가 있다고 판단
-        return line.contains("{{") && line.contains("}}") &&
-                line.indexOf("{{") < line.indexOf("}}");
+//        return line.contains("{{") && line.contains("}}") &&
+//                line.indexOf("{{") < line.indexOf("}}");
+        return line.matches(HAS_MUSTACHE_REGEX);
     }
 
     /**
@@ -77,15 +80,13 @@ public class MustacheResolver {
      * @throws IOException BufferedReader에서 파일 내용을 제대로 못읽을 때 발생하는 예외
      */
     private static void handleMustache(String line) throws IOException {
-        // 앞, 뒤 공백 제거 후 Mustache 내의 값만 가져옴 (현재 줄에 Mustache만 존재할 때)
-        String trimmedLine = line.trim();
-        String mustacheValue = trimmedLine.substring(3, trimmedLine.length() - 2);
-
         // Mustache로만 이뤄진 줄이며 해당 객체가 list형이거나 해당 객체가 존재하는지에 대한 if문 처리
-        if (trimmedLine.startsWith("{{#") && trimmedLine.endsWith("}}")) {
+        if (line.matches(LOOP_IF_MUSTACHE_REGEX)) {
+            String mustacheValue = extractMustacheValue(LOOP_IF_MUSTACHE_REGEX, line);
+
             // 만약 ModelView의 Attribute에 포함되지 않은 값이라면 현재 Scope를 넘김
             if (!attributes.contains(mustacheValue)) {
-                while (!br.readLine().trim().equals("{{/" + mustacheValue + "}}")) {}
+                while (isNotEndMustache(mustacheValue, br.readLine())) {}
                 return;
             }
 
@@ -104,10 +105,12 @@ public class MustacheResolver {
         }
 
         // Mustache로만 이뤄진 줄이며 해당 객체가 존재하는지에 대한 else문 처리
-        if (trimmedLine.startsWith("{{^") && trimmedLine.endsWith("}}")) {
+        if (line.matches(ELSE_MUSTACHE_REGEX)) {
+            String mustacheValue = extractMustacheValue(ELSE_MUSTACHE_REGEX, line);
+
             // 만약 ModelView의 Attribute에 포함된 값이라면 현재 Scope를 넘김
             if (attributes.contains(mustacheValue)) {
-                while (!br.readLine().trim().equals("{{/" + mustacheValue + "}}")) {}
+                while (isNotEndMustache(mustacheValue, br.readLine())) {}
                 return;
             }
 
@@ -117,13 +120,49 @@ public class MustacheResolver {
         }
 
         // Mustache로만 이뤄진 줄이며 해당 파일을 template으로 사용
-        if (trimmedLine.startsWith("{{>") && trimmedLine.endsWith("}}")) {
+        if (line.matches(TEMPLATE_MUSTACHE_REGEX)) {
+            String mustacheValue = extractMustacheValue(TEMPLATE_MUSTACHE_REGEX, line);
+
             handleTemplate(mustacheValue);
             return;
         }
 
         // Mustache만으로 이뤄진게 아닌 평문과 함께 들어가있는 경우
         convertMustacheOfCurrentLine(line, MustacheCategory.OTHER);
+    }
+
+    /**
+     * 현재 줄 내에 받은 정규 표현식을 활용하여 Mustache 내부의 값을 빼내주는 메솓
+     * @param regex 사용할 정규 표현식
+     * @param line 현재 줄
+     * @return Mustache 내부에서 빼낸 값
+     */
+    private static String extractMustacheValue(String regex, String line) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(line);
+
+        while (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return null;
+    }
+
+    /**
+     * 마지막을 나타내는 Mustache ({{/XXX}})가 아닌지 확인해주는 메소드
+     * @param mustacheValue 현재 Mustache 내부의 값
+     * @param line 현재 줄
+     * @return 마지막을 나타내는 Mustache 여부
+     */
+    private static boolean isNotEndMustache(String mustacheValue, String line) {
+        Pattern pattern = Pattern.compile(END_MUSTACHE_REGEX);
+        Matcher matcher = pattern.matcher(line);
+
+        if (matcher.find()) {
+            return !matcher.group(MUSTACHE_GROUP_INDEX).equals(mustacheValue);
+        }
+
+        return true;
     }
 
     /**
@@ -135,7 +174,7 @@ public class MustacheResolver {
     private static void handleList(String mustacheValue, List<?> attribute) throws IOException {
         // 빈 리스트일 때는 해당 Scope를 넘긴 후 돌아가야 함
         if (attribute.isEmpty()) {
-            while (!br.readLine().trim().equals("{{/" + mustacheValue + "}}")) {}
+            while (isNotEndMustache(mustacheValue, br.readLine())) {}
             return;
         }
 
@@ -143,7 +182,7 @@ public class MustacheResolver {
         String line;
 
         // Scope 안의 모든 line을 가져옴
-        while (!(line = br.readLine()).trim().equals("{{/" + mustacheValue + "}}")) {
+        while (isNotEndMustache(mustacheValue, line = br.readLine())) {
             stringsForLoop.add(line);
         }
 
@@ -170,7 +209,7 @@ public class MustacheResolver {
         String line;
 
         // Scope 안의 모든 line을 가져옴
-        while (!(line = br.readLine()).trim().equals("{{/" + mustacheValue + "}}")) {
+        while (isNotEndMustache(mustacheValue, line = br.readLine())) {
             if (hasMustache(line)) {
                 convertMustacheOfCurrentLine(line, MustacheCategory.THIS_OR_GETTER, attribute);
                 continue;
@@ -189,7 +228,7 @@ public class MustacheResolver {
         String line;
 
         // Scope 안의 모든 line을 가져옴
-        while (!(line = br.readLine()).trim().equals("{{/" + mustacheValue + "}}")) {
+        while (isNotEndMustache(mustacheValue, line = br.readLine())) {
             if (hasMustache(line)) {
                 convertMustacheOfCurrentLine(line, MustacheCategory.OTHER);
                 continue;
@@ -206,18 +245,28 @@ public class MustacheResolver {
      * @param objects Mustache 변환에 필요한 객체들, 가져온 Attribute 또는 List 내 원소 및 index (Attribute가 List의 경우)
      */
     private static void convertMustacheOfCurrentLine(String currLine, MustacheCategory mustacheCategory, Object... objects) {
-        // 현재 줄에서 확인해볼 부분의 시작 인덱스, Mustache 시작 인덱스, Mutache 끝 인덱스
+        // 정규 표현식을 활용하여 현재 줄의 Mustache를 모두 확인
+        Pattern pattern = Pattern.compile(EACH_MUSTACHE_REGEX);
+        Matcher matcher = pattern.matcher(currLine);
+
+        // 앞 String을 넣기 위한 인덱스
         int fromIdx = 0;
-        int mustacheStartIdx = currLine.indexOf("{{", fromIdx);
-        int mustacheEndIdx = currLine.indexOf("}}", mustacheStartIdx) + 2;
+
+        // 현재 Mustache의 시작, 종료 인덱스
+        int mustacheStartIdx, mustacheEndIdx;
+
+        // 현재 Mustache 안의 값
+        String mustacheValue;
 
         // 변환된 내용을 담을 StringBuilder형 객체
         StringBuilder sb = new StringBuilder();
 
-        // Mustache가 더 이상 발견되지 않을 때까지 확인
-        while (mustacheStartIdx != -1) {
-            // 현재 줄에서 찾은 Mustache 내부의 값
-            String mustacheValue = currLine.substring(mustacheStartIdx + 2, mustacheEndIdx - 2);
+        // Matcher를 사용하여 모든 Mustache를 확인
+        while (matcher.find()) {
+            // 인덱스 및 Mustache 내 값 초기화
+            mustacheStartIdx = matcher.start();
+            mustacheEndIdx = matcher.end();
+            mustacheValue = matcher.group(MUSTACHE_GROUP_INDEX);
 
             try {
                 // 변환하려는 부분이 List형을 활용할 때
@@ -242,10 +291,8 @@ public class MustacheResolver {
                 // 그 외의 상황
                 convertOther(sb, currLine, fromIdx, mustacheStartIdx, mustacheValue);
             } finally {
-                // 인덱스 이동
+                // 앞 String의 시작점 인덱스 이동
                 fromIdx = mustacheEndIdx;
-                mustacheStartIdx = currLine.indexOf("{{", fromIdx);
-                mustacheEndIdx = currLine.indexOf("}}", mustacheStartIdx) + 2;
             }
         }
 
@@ -254,6 +301,7 @@ public class MustacheResolver {
             sb.append(currLine, fromIdx, currLine.length());
         }
 
+        // 완성된 String을 넣음
         insertStringInContentList(sb.toString());
     }
 
@@ -270,7 +318,7 @@ public class MustacheResolver {
     private static void convertForList(StringBuilder sb, String currLine, int fromIdx, int mustacheStartIdx,
                                        String mustacheValue, Object element, int index) {
         // Mustache 안에 '#index'라고 돼있는 경우, loop의 index를 가져와서 넣음
-        if ("#index".equals(mustacheValue) && index >= 0) {
+        if ("_index".equals(mustacheValue) && index >= 0) {
             sb.append(currLine, fromIdx, mustacheStartIdx).append(index + 1);
             return;
         }

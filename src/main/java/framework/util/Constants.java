@@ -32,4 +32,25 @@ public class Constants {
 
     /** Cookie에 저장될 Session ID의 key 값 */
     public static final String SESSION_ID_KEY = "SESSIONID";
+
+    /** Mustache가 있는지 확인할 때 사용할 정규 표현식 */
+    public static final String HAS_MUSTACHE_REGEX = ".*\\{\\{(.+?)\\}\\}.*";
+
+    /** 현재 줄의 Mustache를 각각 가져올 때 사용할 정규 표현식 */
+    public static final String EACH_MUSTACHE_REGEX = "\\{\\{(.+?)\\}\\}";
+
+    /** 반복문 또는 if문의 Mustache를 인식하기 위한 정규 표현식 */
+    public static final String LOOP_IF_MUSTACHE_REGEX = "\\s*\\{\\{#(.+?)\\}\\}\\s*";
+
+    /** else문의 Mustache를 인식하기 위한 정규 표현식 */
+    public static final String ELSE_MUSTACHE_REGEX = "\\s*\\{\\{\\^(.+?)\\}\\}\\s*";
+
+    /** Scope의 끝을 나타내는 Mustache를 인식하기 위한 정규 표현식 */
+    public static final String END_MUSTACHE_REGEX = "\\s*\\{\\{/(.+?)\\}\\}\\s*";
+
+    /** Template를 나타내는 Mustache를 인식하기 위한 정규 표현식 */
+    public static final String TEMPLATE_MUSTACHE_REGEX = "\\s*\\{\\{>(.+?)\\}\\}\\s*";
+
+    /** Mustache 안의 값을 가져올 때 사용할 index */
+    public static final int MUSTACHE_GROUP_INDEX = 1;
 }
