@@ -1,7 +1,7 @@
 package dao;
 
 public enum UserAttribute {
-    USER_ID("userId"), PASSWORD("password"), NAME("name"), EMAIL("email"),
+    ID("_id"), USER_ID("userId"), PASSWORD("password"), NAME("name"), EMAIL("email"),
     CREATE_TIME("createTime"), MODIFIED_TIME("modifiedTime");
 
     private final String value;

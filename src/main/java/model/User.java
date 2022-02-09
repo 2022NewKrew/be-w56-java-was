@@ -28,12 +28,17 @@ public class User extends BaseTime {
         this.email = email;
     }
 
-    public User(String userId, String password, String name, String email, LocalDateTime time) {
-        this(new ObjectId(), userId, password, name, email, time, time);
+    public User(ObjectId id, String userId, String password, String name, String email,
+            LocalDateTime time) {
+        this(id, userId, password, name, email, time, time);
     }
 
     public User(String userId, String password, String name, String email) {
-        this(userId, password, name, email, LocalDateTime.now());
+        this(new ObjectId(), userId, password, name, email, LocalDateTime.now());
+    }
+
+    public User(ObjectId id, String userId, String password, String name, String email) {
+        this(id, userId, password, name, email, LocalDateTime.now());
     }
 
     private void checkId(ObjectId id) {

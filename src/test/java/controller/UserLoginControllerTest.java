@@ -32,7 +32,7 @@ class UserLoginControllerTest {
     @AfterAll
     private static void after() {
         UserDao dao = UserDao.getInstance();
-        dao.delete(new User("userId", "password", "name", "email"));
+        UserDao.getInstance().delete(UserDao.getInstance().findByUserId("userId").getId());
     }
 
     @DisplayName("올바른 파라미터를 받았을 때 올바른 HttpResponse 를 반환한다.")

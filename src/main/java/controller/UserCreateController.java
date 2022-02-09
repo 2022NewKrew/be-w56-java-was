@@ -27,7 +27,7 @@ public class UserCreateController implements Controller {
         User user = new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
                 bodyData.get("email"));
 
-        if (userDao.find(user.getUserId()) != null) {
+        if (userDao.findByUserId(user.getUserId()) != null) {
             throw new BadRequestException();
         }
 

@@ -10,5 +10,5 @@ public interface CrudDao<T, K> {
     K save(T entity);
 
     void update(T entity);
-    void delete(T entity);
+    void delete(K id);
 }

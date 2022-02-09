@@ -26,7 +26,7 @@ public class UserLoginController implements Controller {
 
         String userId = bodyData.get("userId");
         String password = bodyData.get("password");
-        User user = userDao.find(userId);
+        User user = userDao.findByUserId(userId);
 
         if (user != null && user.getPassword().equals(password)) {
             return loginSuccess(dos, userId);

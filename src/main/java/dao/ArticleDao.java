@@ -57,13 +57,14 @@ public class ArticleDao implements CrudDao<Article, ObjectId> {
     public void update(Article entity) {
         Bson updateAuthor = set(ArticleAttribute.AUTHOR.getValue(), entity.getAuthor());
         Bson updateContent = set(ArticleAttribute.CONTENT.getValue(), entity.getContent());
-        Bson updateModifiedDate = set(ArticleAttribute.MODIFIED_TIME.getValue(), LocalDateTime.now());
+        Bson updateModifiedDate = set(ArticleAttribute.MODIFIED_TIME.getValue(),
+                LocalDateTime.now());
         Bson combineBson = combine(updateAuthor, updateContent, updateModifiedDate);
         collection.findOneAndUpdate(eq("_id", entity.getId()), combineBson);
     }
 
     @Override
-    public void delete(Article entity) {
-        collection.deleteOne(eq(ArticleAttribute.ID.getValue(), entity.getId()));
+    public void delete(ObjectId id) {
+        collection.deleteOne(eq(ArticleAttribute.ID.getValue(), id));
     }
 }
