@@ -49,7 +49,7 @@ class UserHandlerTest {
 
         assertEquals(301, result.getStatusCode());
         assertEquals("/index.html", result.getHeader("Location"));
-        assertEquals("loggedIn=true; path=/", result.getHeader("Set-Cookie"));
+        assertEquals("currentUserId=0; path=/", result.getHeader("Set-Cookie"));
     }
 
     @Test
@@ -62,6 +62,5 @@ class UserHandlerTest {
 
         assertEquals(301, result.getStatusCode());
         assertEquals("/user/login_failed.html", result.getHeader("Location"));
-        assertEquals("loggedIn=false; path=/", result.getHeader("Set-Cookie"));
     }
 }

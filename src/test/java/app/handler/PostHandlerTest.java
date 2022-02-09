@@ -33,8 +33,8 @@ class PostHandlerTest {
 
     @Test
     void create() {
-        String body = "title=foo&contents=bar&writer=1\n";
-        Headers headers = new Headers(Collections.singletonMap("Cookie", "loggedIn=true"));
+        String body = "title=foo&contents=bar\n";
+        Headers headers = new Headers(Collections.singletonMap("Cookie", "currentUserId=1"));
         Request request = Request.newBuilder()
                 .headers(headers)
                 .body(body)

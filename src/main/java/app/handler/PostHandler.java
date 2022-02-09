@@ -32,7 +32,7 @@ public class PostHandler {
     public Response create(Request request) {
         String cookieHeader = request.getHeader("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieHeader);
-        boolean loggedIn = Boolean.parseBoolean(cookies.get("loggedIn"));
+        boolean loggedIn = cookies.containsKey("currentUserId");
         if (!loggedIn) {
             Map<String, String> headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
@@ -44,11 +44,11 @@ public class PostHandler {
         Map<String, String> params = HttpRequestUtils.parseQueryString(body);
         String title = params.get("title");
         String content = params.get("contents");
-        long author = Long.parseLong(params.get("writer"));
+        long authorId = Long.parseLong(cookies.get("currentUserId"));
         Post post = new Post.Builder()
                 .title(title)
                 .content(content)
-                .author(new User(author, "", "", "", ""))
+                .author(new User(authorId, "", "", "", ""))
                 .build();
         service.addPost(post);
         Map<String, String> headers = Map.of(

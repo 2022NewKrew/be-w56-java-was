@@ -54,15 +54,14 @@ public class UserHandler {
         if (user.isEmpty()) {
             Map<String, String> headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
-                    "Location", "/user/login_failed.html",
-                    "Set-Cookie", "loggedIn=false; path=/"
+                    "Location", "/user/login_failed.html"
             );
             return Response.of(301, new Headers(headers), "Login failed");
         }
         Map<String, String> headers = Map.of(
                 "Content-Type", ContentType.TEXT.getContentType(),
                 "Location", "/index.html",
-                "Set-Cookie", "loggedIn=true; path=/"
+                "Set-Cookie", String.format("currentUserId=%d; path=/", user.get().getId())
         );
         return Response.of(301, new Headers(headers), "Login success");
     }
@@ -70,7 +69,7 @@ public class UserHandler {
     public Response list(Request request) {
         String cookieHeader = request.getHeader("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieHeader);
-        boolean loggedIn = Boolean.parseBoolean(cookies.get("loggedIn"));
+        boolean loggedIn = cookies.containsKey("currentUserId");
         if (!loggedIn) {
             Map<String, String> headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
