@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Slf4j
-public class RequestHandler extends Thread {
+public class RequestHandler implements Runnable {
 
     private final Socket connection;
 
