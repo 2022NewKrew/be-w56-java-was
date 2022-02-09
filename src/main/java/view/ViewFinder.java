@@ -17,18 +17,19 @@ public class ViewFinder {
 
     public static byte[] find(String path, Model model) {
         try {
-            return staticViewFind(path);
-        } catch (NoSuchFileException ex) {
-            try {
-                return dynamicViewFind(path, model);
-            } catch (Exception ex2) {
-                log.error(ex2.getMessage(), ex2);
-                return "".getBytes();
+            if(isHtml(path)) {
+                return staticViewFind(path);
             }
-        } catch (IOException ex) {
+            return dynamicViewFind(path, model);
+        } catch (InvocationTargetException | IllegalAccessException | IOException ex) {
             log.error(ex.getMessage(), ex);
-            return "".getBytes();
         }
+        return "".getBytes();
+    }
+
+    private static boolean isHtml(String path) {
+        String[] paths = path.split("\\.");
+        return paths.length != 1;
     }
 
     private static byte[] staticViewFind(String path) throws IOException {
@@ -38,10 +39,11 @@ public class ViewFinder {
     private static byte[] dynamicViewFind(String path, Model model)
             throws InvocationTargetException, IllegalAccessException {
         for (Method method : ViewCreator.class.getMethods()) {
-            if (method.getName().startsWith(path.substring(1))) {
+            if (!path.substring(1).equals("") && method.getName().startsWith(path.substring(1))) {
                 method.invoke(ViewCreator.class, model, path);
+                return ViewMapper.getView(path).getBytes();
             }
         }
-        return ViewMapper.getView(path).getBytes();
+        return "".getBytes();
     }
 }
