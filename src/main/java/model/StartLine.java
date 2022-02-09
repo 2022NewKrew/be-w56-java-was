@@ -10,6 +10,8 @@ import java.util.Objects;
 
 public class StartLine {
 
+    private static int START_LINE_TOKEN_SIZE = 3;
+
     private static Map<String, String> parseQuery(String target) {
         if (!target.contains("?")) {
             return new HashMap<>();
@@ -34,18 +36,22 @@ public class StartLine {
         if (Strings.isNullOrEmpty(startLine)) {
             throw new BadRequestFormatException("start line이 존재하지 않습니다");
         }
-        String[] token = startLine.split(" ");
+        String[] token = startLine.trim().split(" ");
+        if (token.length != START_LINE_TOKEN_SIZE) {
+            throw new BadRequestFormatException("start line의 인자가 부족합니다");
+        }
 
-        return new StartLine(HttpMethod.fromString(token[0]), parseUrl(token[1]), parseQuery(token[1]), token[2]);
+        return new StartLine(HttpMethod.fromString(token[0]), parseUrl(token[1]), parseQuery(token[1]),
+                HttpVersion.fromString(token[2]));
     }
 
     private final HttpMethod httpMethod;
     private final String url;
     private final Map<String, String> query;
-    private final String httpVersion;
+    private final HttpVersion httpVersion;
 
-    private StartLine(HttpMethod httpMethod, String url, Map<String, String> query, String httpVersion) {
-        if (Objects.isNull(httpMethod) || Objects.isNull(url) || Objects.isNull(query) || Objects.isNull(httpVersion)) {
+    private StartLine(HttpMethod httpMethod, String url, Map<String, String> query, HttpVersion httpVersion) {
+        if (Objects.isNull(httpMethod) || Strings.isNullOrEmpty(url) || Objects.isNull(query) || Objects.isNull(httpVersion)) {
             throw new BadRequestFormatException(
                     String.format("start line의 인자가 부족합니다 %s %s %s %s", httpMethod, url, query, httpVersion));
         }
