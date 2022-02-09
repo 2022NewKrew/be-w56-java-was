@@ -10,16 +10,12 @@ import util.MapUtil;
 
 public class ArticleCreateController implements Controller {
 
-    private static ArticleCreateController instance;
+    private static final ArticleCreateController INSTANCE = new ArticleCreateController();
+    private static final ArticleDao articleDao = ArticleDao.getInstance();
 
     public static ArticleCreateController getInstance() {
-        if (instance == null) {
-            instance = new ArticleCreateController();
-        }
-        return instance;
+        return INSTANCE;
     }
-
-    ArticleDao articleDao = ArticleDao.getInstance();
 
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {

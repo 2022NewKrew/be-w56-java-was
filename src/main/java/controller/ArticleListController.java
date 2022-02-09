@@ -12,20 +12,17 @@ import util.MapUtil;
 
 public class ArticleListController implements Controller {
 
-    private static ArticleListController instance;
+    private static final ArticleListController INSTANCE = new ArticleListController();
 
     public static ArticleListController getInstance() {
-        if (instance == null) {
-            instance = new ArticleListController();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
 
         ArticleDao dao = ArticleDao.getInstance();
-        List<ArticleDto> articleDtos = ArticleMapper.instance.articlesToDtos(dao.find());
+        List<ArticleDto> articleDtos = ArticleMapper.INSTANCE.articlesToDtos(dao.find());
 
         return HttpResponse.ok(
                 request.getUrl(),

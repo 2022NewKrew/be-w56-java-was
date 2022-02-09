@@ -22,7 +22,7 @@ class ArticleMapperTest {
     @ParameterizedTest
     @MethodSource("getDocuments")
     void documentsToArticles(List<Document> documents) {
-        List<Article> articles = ArticleMapper.instance.documentsToArticles(documents);
+        List<Article> articles = ArticleMapper.INSTANCE.documentsToArticles(documents);
         Article firstArticle = articles.get(0);
         Document firstDocument = documents.get(0);
 
@@ -54,7 +54,7 @@ class ArticleMapperTest {
         String author = "author";
         String content = "content";
         Article article = new Article(new ObjectId(), author, content);
-        Document document = ArticleMapper.instance.articleToDocument(article);
+        Document document = ArticleMapper.INSTANCE.articleToDocument(article);
 
         assertThat(document.getString("author")).isEqualTo(article.getAuthor());
         assertThat(document.getString("content")).isEqualTo(article.getContent());
@@ -70,7 +70,7 @@ class ArticleMapperTest {
                 Map.of("_id", new ObjectId(), "author", author, "content", content,
                         "createTime",
                         new Date(), "modifiedTime", new Date()));
-        Article article = ArticleMapper.instance.documentToArticle(document);
+        Article article = ArticleMapper.INSTANCE.documentToArticle(document);
 
         assertThat(document.getString("author")).isEqualTo(article.getAuthor());
         assertThat(document.getString("content")).isEqualTo(article.getContent());
@@ -80,7 +80,7 @@ class ArticleMapperTest {
     @ParameterizedTest
     @MethodSource("getArticles")
     void articlesToDtos(List<Article> articles) {
-        List<ArticleDto> dtos = ArticleMapper.instance.articlesToDtos(articles);
+        List<ArticleDto> dtos = ArticleMapper.INSTANCE.articlesToDtos(articles);
 
         Article firstArticle = articles.get(0);
         ArticleDto firstDto = dtos.get(0);

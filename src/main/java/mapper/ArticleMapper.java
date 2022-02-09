@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface ArticleMapper {
 
-    ArticleMapper instance = Mappers.getMapper(ArticleMapper.class);
+    ArticleMapper INSTANCE = Mappers.getMapper(ArticleMapper.class);
 
     List<Article> documentsToArticles(List<Document> documents);
 

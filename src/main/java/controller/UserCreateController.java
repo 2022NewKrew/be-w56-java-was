@@ -11,16 +11,12 @@ import util.MapUtil;
 
 public class UserCreateController implements Controller {
 
-    private static UserCreateController instance;
+    private static final UserCreateController INSTANCE = new UserCreateController();
+    private final UserDao userDao = UserDao.getInstance();
 
     public static synchronized UserCreateController getInstance() {
-        if (instance == null) {
-            instance = new UserCreateController();
-        }
-        return instance;
+        return INSTANCE;
     }
-
-    private final UserDao userDao = UserDao.getInstance();
 
     @Override
     public HttpResponse run(HttpRequest request, DataOutputStream dos) {
@@ -31,7 +27,7 @@ public class UserCreateController implements Controller {
         User user = new User(bodyData.get("userId"), bodyData.get("password"), bodyData.get("name"),
                 bodyData.get("email"));
 
-        if(userDao.find(user.getUserId()) != null) {
+        if (userDao.find(user.getUserId()) != null) {
             throw new BadRequestException();
         }
 

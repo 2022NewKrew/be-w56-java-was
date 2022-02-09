@@ -56,7 +56,6 @@ class ArticleDaoTest {
         String content = "content";
         Article article = new Article(new ObjectId(), author, content);
         ObjectId id = dao.save(article);
-        System.out.println(id.toString());
         //when
         Article newArticle = dao.find(id);
 

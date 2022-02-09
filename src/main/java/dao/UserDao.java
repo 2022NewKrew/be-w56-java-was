@@ -17,14 +17,11 @@ import org.bson.conversions.Bson;
 
 public class UserDao implements CrudDao<User, String> {
 
-    private static UserDao instance;
-    private static final UserMapper userMapper = UserMapper.instance;
+    private static final UserDao INSTANCE = new UserDao();
+    private static final UserMapper userMapper = UserMapper.INSTANCE;
 
     public static synchronized UserDao getInstance() {
-        if (instance == null) {
-            instance = new UserDao();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     private final MongoCollection<Document> collection;

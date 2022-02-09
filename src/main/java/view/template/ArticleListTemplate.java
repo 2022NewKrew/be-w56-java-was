@@ -6,13 +6,10 @@ import java.util.Map;
 
 public class ArticleListTemplate implements ViewTemplate {
 
-    private static ArticleListTemplate instance;
+    private static final ArticleListTemplate INSTANCE = new ArticleListTemplate();
 
     public static ArticleListTemplate getInstance() {
-        if (instance == null) {
-            instance = new ArticleListTemplate();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -24,8 +21,6 @@ public class ArticleListTemplate implements ViewTemplate {
                 articles = (List<ArticleDto>) model.get("articles");
             }
         }
-
-        System.out.println(articles.toString());
 
         StringBuilder result = new StringBuilder();
         for (ArticleDto article : articles) {

@@ -19,14 +19,11 @@ import org.bson.types.ObjectId;
 
 public class ArticleDao implements CrudDao<Article, ObjectId> {
 
-    private static ArticleDao instance;
-    private static final ArticleMapper articlemapper = ArticleMapper.instance;
+    private static final ArticleDao INSTANCE = new ArticleDao();
+    private static final ArticleMapper articlemapper = ArticleMapper.INSTANCE;
 
     public static ArticleDao getInstance() {
-        if (instance == null) {
-            instance = new ArticleDao();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     private final MongoCollection<Document> collection;
@@ -40,7 +37,6 @@ public class ArticleDao implements CrudDao<Article, ObjectId> {
     @Override
     public Article find(ObjectId id) {
         Document document = collection.find(eq(ArticleAttribute.ID.getValue(), id)).first();
-        System.out.println();
         return articlemapper.documentToArticle(document);
     }
 
