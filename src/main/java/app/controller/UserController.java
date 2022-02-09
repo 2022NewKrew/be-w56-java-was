@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import app.model.User;
+import app.domain.User;
 import app.service.UserService;
 import webserver.annotation.RequestMapping;
 import webserver.http.HttpRequest;
@@ -30,10 +30,12 @@ public class UserController {
         Map<String, String> body = request.getBodyParams();
 
         UserService.getInstance().saveUser(
-                new User(body.get("userId"),
-                         body.get("password"),
-                         body.get("name"),
-                         body.get("email"))
+                User.builder()
+                    .userId(body.get("userId"))
+                    .password(body.get("password"))
+                    .name(body.get("name"))
+                    .email(body.get("email"))
+                    .build()
         );
 
         response.sendRedirect(Constant.INDEX_PATH);
