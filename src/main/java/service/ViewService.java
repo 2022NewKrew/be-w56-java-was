@@ -1,7 +1,8 @@
 package service;
 
-import db.DataBase;
 import model.User;
+import repository.InMemoryUserRepository;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ViewService {
 
+    private static final InMemoryUserRepository userRepository = InMemoryUserRepository.getInstance();
+
     public static byte[] getUserListBody(String url) throws IOException {
         String baseHtml = new String(Files.readAllBytes(new File("./webapp" + url).toPath()));
         String userListView = baseHtml.replace("{{userList}}", getUserListHtml());
@@ -20,7 +23,7 @@ public class ViewService {
     }
 
     private static String getUserListHtml() {
-        List<User> users = new ArrayList<>(DataBase.findAll());
+        List<User> users = new ArrayList<>(userRepository.findAll());
 
         AtomicInteger atomicInteger = new AtomicInteger();
         StringBuilder sb = new StringBuilder();
