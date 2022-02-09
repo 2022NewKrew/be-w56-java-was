@@ -3,7 +3,7 @@ package domain.memo.service;
 import domain.memo.dto.MemoCreate;
 import domain.memo.dto.MemoInfo;
 import domain.memo.model.Memo;
-import domain.memo.repository.InMemoryMemoRepository;
+import domain.memo.repository.H2MemoRepository;
 import domain.memo.repository.MemoRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +14,7 @@ public class MemoService {
     private final MemoRepository memoRepository;
 
     public static MemoService create() {
-        return new MemoService(InMemoryMemoRepository.get());
+        return new MemoService(H2MemoRepository.get());
     }
 
     private MemoService(MemoRepository memoRepository) {
