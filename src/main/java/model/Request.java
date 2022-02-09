@@ -20,6 +20,7 @@ public class Request extends HttpRequest {
     private String requestURI;
     private Map<String, List<String>> headers;
     private Map<String, String> params;
+    private Map<String, String> cookies;
     private String body;
 
     public Request(InputStream in) throws IOException {
@@ -58,10 +59,21 @@ public class Request extends HttpRequest {
             headers.put(header[0], Arrays.asList(header[1].split(",")));
         }
         this.headers = headers;
+        setCookies();
         if (method.equals("POST")) {
             this.body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length").get(0)));
         }
     }
+
+    private void setCookies() {
+        cookies = new HashMap<>();
+        String[] cookieString = this.headers().map().get("Cookie").get(0).split("; ");
+        for(String cookie : cookieString){
+            cookies.put(cookie.split("=")[0], cookie.split("=")[1]);
+        }
+    }
+
+    public Map<String, String> getCookies() { return cookies; }
 
     public String getContentType() {
         return this.headers().map().get("Accept").get(0);

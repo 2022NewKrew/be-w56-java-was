@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static webserver.WebServer.DEFAULT_PATH;
+
 public class RequestMapper {
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
     private static final Map<String, RequestMappingPath> requestMap;
@@ -53,7 +55,7 @@ public class RequestMapper {
     private static Response responseStaticFile(DataOutputStream dos, String path) {
         try{
             return new Response.Builder(dos)
-                    .body(Files.readAllBytes(new File("./webapp" + path).toPath()))
+                    .body(Files.readAllBytes(new File(DEFAULT_PATH + path).toPath()))
                     .status(HttpStatus.OK)
                     .contentType(MIME.parse(path))
                     .build();

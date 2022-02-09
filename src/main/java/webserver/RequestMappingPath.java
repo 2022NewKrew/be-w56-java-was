@@ -1,23 +1,31 @@
 package webserver;
 
+import db.DataBase;
 import model.Request;
 import model.Response;
+import model.User;
 import service.AuthService;
 import util.Cookie;
 import util.HttpStatus;
+import util.MIME;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static util.TemplateEngineUtils.renderDynamicTemplate;
+import static webserver.WebServer.DEFAULT_PATH;
 
 public enum RequestMappingPath {
     ROOT("/") {
         @Override
         public Response handle(Request request, DataOutputStream dos) throws Exception {
             return new Response.Builder(dos)
-                    .body(Files.readAllBytes(new File("./webapp" + "/index.html").toPath()))
+                    .body(Files.readAllBytes(new File(DEFAULT_PATH + "/index.html").toPath()))
                     .status(HttpStatus.OK)
                     .contentType(request.getContentType())
                     .build();
@@ -36,8 +44,16 @@ public enum RequestMappingPath {
     },
     LOG_IN("/user/login") {
         @Override
-        public Response handle(Request request, DataOutputStream dos) {
+        public Response handle(Request request, DataOutputStream dos) throws IOException {
+            if(request.method().equals("GET")){
+                return new Response.Builder(dos)
+                        .body(Files.readAllBytes(new File(DEFAULT_PATH + "/user/login.html").toPath()))
+                        .status(HttpStatus.OK)
+                        .contentType("text/html")
+                        .build();
+            }
             Cookie cookie = (AuthService.login(request))? new Cookie("logined", "true") : new Cookie("logined", "false");
+            System.out.println(cookie);
             return new Response.Builder(dos)
                     .status(HttpStatus.FOUND)
                     .headers("Set-Cookie", cookie.toString())
@@ -48,12 +64,18 @@ public enum RequestMappingPath {
     },
     USER_LIST("/user/list") {
         @Override
-        public Response handle(Request request, DataOutputStream dos){
-            // Request의 Cookie를 검사
-            // 로그인한 상태라면 사용자 목록 출력
-            // 아니라면 로그인 페이지로 리다이렉트
-            return new Response.Builder(dos)
-                    .build();
+        public Response handle(Request request, DataOutputStream dos) throws IOException {
+            Response.Builder result = new Response.Builder(dos)
+                    .contentType(request.getContentType());
+            if(request.getCookies().get("logined").equals("true")){
+                Collection<User> users = DataBase.findAll();
+                result.status(HttpStatus.OK)
+                        .body(renderDynamicTemplate(users, "/user/list.html").getBytes());
+            } else {
+                result.status(HttpStatus.FOUND)
+                        .headers("Location", "/user/login");
+            }
+            return result.build();
         }
     };
 

@@ -40,6 +40,7 @@ public class Response {
 
         public Builder body(byte[] body){
             this.body = body;
+            this.lengthOfBodyContent = body.length;
             return this;
         }
         public Builder version(String version){
@@ -56,10 +57,6 @@ public class Response {
         }
         public Builder contentType(String contentType){
             this.contentType = contentType;
-            return this;
-        }
-        public Builder lengthOfBodyContent(int lengthOfBodyContent){
-            this.lengthOfBodyContent = lengthOfBodyContent;
             return this;
         }
 

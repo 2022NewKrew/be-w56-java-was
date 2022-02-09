@@ -40,7 +40,7 @@ public class AuthService {
             String password = reqParam.get("password");
             User userRetrieved = DataBase.findUserById(userId);
             return userRetrieved.getUserId().equals(userId) && userRetrieved.getPassword().equals(password);
-        } catch (NoSuchElementException e) {
+        } catch (NullPointerException e) {
             logger.info(e.getMessage());
             return false;
         }
