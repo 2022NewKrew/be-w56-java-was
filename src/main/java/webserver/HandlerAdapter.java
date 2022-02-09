@@ -12,8 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-public class FrontController {
-    private static final Logger log = LoggerFactory.getLogger(FrontController.class);
+public class HandlerAdapter {
+    private static final Logger log = LoggerFactory.getLogger(HandlerAdapter.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final DIContainer diContainer = new DIContainer();
     private static final HandlerMapping handlerMapping = new HandlerMapping(diContainer.getBeans());

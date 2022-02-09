@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
-import webserver.RequestHandler;
+import webserver.DispatcherServlet;
 import webserver.http.enums.HttpMethod;
 
 import java.io.BufferedReader;
@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class HttpRequest {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HttpMethod method;
     private final String uri;
