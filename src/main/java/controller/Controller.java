@@ -6,6 +6,5 @@ import model.HttpResponse;
 
 public interface Controller {
 
-    HttpResponse run(HttpRequest request)
-            throws IOException;
+    HttpResponse run(HttpRequest request) throws IOException;
 }

@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.InvalidHttpMethodException;
+
 public enum HttpMethod {
     GET(false),
     POST(true);
@@ -16,6 +18,6 @@ public enum HttpMethod {
                 return m;
             }
         }
-        throw new Error();
+        throw new InvalidHttpMethodException("없는 http method입니다");
     }
 }

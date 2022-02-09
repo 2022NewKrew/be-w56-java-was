@@ -1,18 +1,19 @@
 package model;
 
-import java.util.List;
-
 public class Body {
 
-    public static Body of(List<String> body) {
-        return new Body(body);
+    public static Body of(String body) {
+        return new Body(body.trim());
     }
 
-    private final List<String> body;
+    private final String body;
 
-    private Body(List<String> body) {
-
+    private Body(String body) {
         this.body = body;
+    }
+
+    public String get() {
+        return body;
     }
 
     @Override

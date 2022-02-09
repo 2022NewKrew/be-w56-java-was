@@ -1,13 +1,18 @@
 package model;
 
+import exceptions.BadRequestFormatException;
+
 public class User {
 
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
+    private final String userId;
+    private final String password;
+    private final String name;
+    private final String email;
 
     public User(String userId, String password, String name, String email) {
+        if (userId == null || password == null || name == null || email == null) {
+            throw new BadRequestFormatException("User의 인자가 부족합니다");
+        }
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -16,10 +21,6 @@ public class User {
 
     public String getUserId() {
         return userId;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getName() {

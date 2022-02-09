@@ -1,40 +1,43 @@
 package model;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Map;
+import view.View;
 
 public class HttpSuccessfulResponse extends HttpResponse {
 
+    public static HttpSuccessfulResponse of(HttpStatus httpStatus, String url, byte[] body) throws IOException {
+        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
+                httpStatus.getMessage());
+        Map<HttpHeader, String> headerKeyMap = Map.of(
+                HttpHeader.CONTENT_TYPE, getContentType(url),
+                HttpHeader.CONTENT_LENGTH, Integer.toString(body.length)
+        );
+        return new HttpSuccessfulResponse(statusLine, new Header(headerKeyMap), body);
+    }
+
+    private static String getContentType(String path) {
+        List<String> splitResult = List.of(path.split("\\."));
+        int length = splitResult.size();
+        String extension = splitResult.get(length - 1);
+
+        return Mime.getMime(extension);
+    }
+
     private final byte[] body;
-    private static final Logger log = LoggerFactory.getLogger(HttpSuccessfulResponse.class);
 
     public HttpSuccessfulResponse(StatusLine statusLine, Header header, byte[] body) {
         super(statusLine, header);
         this.body = body;
     }
 
-    private void responseBody(DataOutputStream dos) {
-        try {
-            dos.write(body, 0, body.length);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
     @Override
-    public void sendResponse(Socket connection) {
-        try (OutputStream out = connection.getOutputStream();) {
-            DataOutputStream dos = new DataOutputStream(out);
-
-            responseHeader(dos);
-            responseBody(dos);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public byte[] message() {
+        byte[] header = headerMessage();
+        byte[] message = new byte[header.length + body.length];
+        System.arraycopy(header, 0, message, 0, header.length);
+        System.arraycopy(body, 0, message, header.length, body.length);
+        return message;
     }
 }
