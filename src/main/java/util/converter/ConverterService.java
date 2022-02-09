@@ -4,7 +4,8 @@ import java.util.List;
 
 public class ConverterService {
     private static final List<Converter<?,?>> converters = List.of(
-            new MapToUserConverter()
+            new MapToUserConverter(),
+            new MapToPostConverter()
     );
 
     public static <T, R> R convert(T from, Class<R> toType) {

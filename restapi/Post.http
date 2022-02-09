@@ -1,0 +1,5 @@
+### 게시글 생성
+POST http://localhost:8080/posts
+Content-Type: application/x-www-form-urlencoded
+
+writer=javajigi&content=hello&written=2021-01-29 13:10:00
