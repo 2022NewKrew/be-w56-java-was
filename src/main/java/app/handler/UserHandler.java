@@ -1,15 +1,15 @@
 package app.handler;
 
+import domain.model.User;
+import lib.util.HttpRequestUtils;
 import lib.was.di.Bean;
 import lib.was.di.Inject;
-import app.db.Database;
 import lib.was.http.ContentType;
 import lib.was.http.Headers;
 import lib.was.http.Request;
 import lib.was.http.Response;
-import domain.model.User;
 import lib.was.template.TemplateEngine;
-import lib.util.HttpRequestUtils;
+import service.UserService;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +19,12 @@ import java.util.Map;
 @Bean
 public class UserHandler {
 
-    private final Database database;
+    private final UserService service;
     private final TemplateEngine templateEngine;
 
     @Inject
-    public UserHandler(Database database, TemplateEngine templateEngine) {
-        this.database = database;
+    public UserHandler(UserService service, TemplateEngine templateEngine) {
+        this.service = service;
         this.templateEngine = templateEngine;
     }
 
@@ -36,7 +36,7 @@ public class UserHandler {
         String email = params.get("email");
         String name = params.get("name");
         User user = new User(0, userId, password, name, email);
-        database.addUser(user);
+        service.addUser(user);
         Map<String, String> headers = Map.of(
                 "Content-Type", "text/plain",
                 "Location", "/user/profile.html"
@@ -49,7 +49,7 @@ public class UserHandler {
         Map<String, String> params = HttpRequestUtils.parseQueryString(body);
         String userId = params.get("userId");
         String password = params.get("password");
-        User user = database.findUserById(userId);
+        User user = service.findUserById(userId);
         if (user == null || !user.getPassword().equals(password)) {
             var headers = Map.of(
                     "Content-Type", ContentType.TEXT.getContentType(),
@@ -81,7 +81,7 @@ public class UserHandler {
         try {
             String content = Files.readString(file.toPath());
             Map<String, Object> values = Map.of(
-                    "users", database.findAllUsers()
+                    "users", service.findAllUsers()
             );
             String filled = templateEngine.render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);
