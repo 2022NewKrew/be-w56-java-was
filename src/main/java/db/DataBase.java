@@ -13,6 +13,10 @@ public class DataBase {
     static {
         User user = new User("jaden.dev", "123", "허홍준", "jaden.dev@kakaocorp.com");
         users.put(user.getUserId(), user);
+        user = new User("brandon.jw", "123", "허진욱", "brandon.jw@kakaocorp.com");
+        users.put(user.getUserId(), user);
+        user = new User("shy.yi", "123", "이수호", "shy.yi@kakaocorp.com");
+        users.put(user.getUserId(), user);
     }
 
     public static void addUser(User user) {

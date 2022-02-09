@@ -1,6 +1,7 @@
 package http;
 
 import enums.HttpMethod;
+import enums.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +20,22 @@ public class HttpResponseSender {
         dos = new DataOutputStream(out);
     }
 
+    public void sendResponse() {
+        if (httpResponse.getStatusCode().equals(HttpStatusCode._200)) {
+            sendResponse200();
+        }
+        else if (httpResponse.getStatusCode().equals(HttpStatusCode._302)) {
+            sendResponse302();
+        }
+    }
+
     public void sendResponse200() {
         response200Header();
         responseBody();
     }
 
-    public void sendResponse302(String redirectUrl) {
-        response302Header(redirectUrl);
+    public void sendResponse302() {
+        response302Header(httpResponse.getRedirectUrl());
     }
 
     public void sendResponseLogin(boolean validLogin) {
@@ -34,7 +44,7 @@ public class HttpResponseSender {
 
     public void response200Header() {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes(httpResponse.getProtocol().getName() + " " + httpResponse.getStatusCode().getMessage() + " \r\n");
             dos.writeBytes("Content-Type: " + httpResponse.getResponseContentType() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + httpResponse.getBody().length + "\r\n");
             dos.writeBytes("\r\n");

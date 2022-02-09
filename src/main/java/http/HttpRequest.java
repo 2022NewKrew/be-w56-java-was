@@ -13,7 +13,9 @@ public class HttpRequest {
     private String queryString;
     private HttpProtocol protocol;
     private Map<String, String> header = new HashMap<>();
+    private Map<String, String> cookie = new HashMap<>();
     private Map<String, String> body = new HashMap<>();
+
 
     public HttpMethod getMethod() {
         return method;
@@ -29,6 +31,10 @@ public class HttpRequest {
 
     public Map<String, String> getHeader() {
         return header;
+    }
+
+    public Map<String, String> getCookie() {
+        return cookie;
     }
 
     public Map<String, String> getBody() {
@@ -61,6 +67,10 @@ public class HttpRequest {
         }
     }
 
+    public void setCookie(Map<String, String> cookie) {
+        this.cookie = cookie;
+    }
+
     public void setBody(Map<String, String> body) {
         this.body = body;
     }
@@ -72,6 +82,8 @@ public class HttpRequest {
                 ", url='" + url + '\'' +
                 ", queryString='" + queryString + '\'' +
                 ", protocol=" + protocol +
+                ", header=" + header +
+                ", cookie=" + cookie +
                 ", body=" + body +
                 '}';
     }

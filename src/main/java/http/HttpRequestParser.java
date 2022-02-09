@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.Map;
 
 public class HttpRequestParser {
@@ -18,6 +19,7 @@ public class HttpRequestParser {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         parseStartLine(br);
         parseHeader(br);
+        parseCookie();
         if (httpRequest.getMethod().equals(HttpMethod.POST)) {
             parseBody(br);
         }
@@ -45,13 +47,17 @@ public class HttpRequestParser {
         }
     }
 
+    private void parseCookie() {
+        httpRequest.setCookie(HttpRequestUtils.parseCookies(httpRequest.getHeader().get("Cookie")));
+    }
+
     private void parseBody(BufferedReader br) throws IOException {
         if (!httpRequest.getHeader().containsKey("Content-Length")) {
             return;
         }
         int contentLength = Integer.parseInt(httpRequest.getHeader().get("Content-Length"));
         String bodyString = IOUtils.readData(br, contentLength);
-        httpRequest.setBody(HttpRequestUtils.parseQueryString(bodyString));
+        httpRequest.setBody(HttpRequestUtils.parseQueryString(URLDecoder.decode(bodyString, "UTF-8")));
     }
 
     public HttpRequest getHttpRequest() {
