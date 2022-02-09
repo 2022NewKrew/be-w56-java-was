@@ -1,12 +1,5 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 import controller.*;
 import controller.request.Request;
@@ -21,6 +14,13 @@ import util.HttpResponseUtils;
 import util.HttpStatus;
 import util.IOUtils;
 
+import java.io.*;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -32,6 +32,8 @@ public class RequestHandler extends Thread {
         controllerMap.put("/user/create", new UserCreateController());
         controllerMap.put("/user/login", new UserLoginController());
         controllerMap.put("/user/list", new UserListController());
+        controllerMap.put("/article/create", new ArticleCreateController());
+        controllerMap.put("/", new IndexController());
     }
 
     public void run() {
