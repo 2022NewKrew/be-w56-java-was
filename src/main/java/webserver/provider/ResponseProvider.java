@@ -6,7 +6,6 @@ import webserver.http.HttpStatus;
 import webserver.http.MIME;
 import webserver.http.HttpResponse;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import static util.TemplateEngineUtils.renderDynamicTemplate;

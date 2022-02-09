@@ -5,8 +5,6 @@ import webserver.exception.WebServerException;
 import webserver.http.HttpStatus;
 import webserver.http.HttpResponse;
 
-import java.io.DataOutputStream;
-
 public class RequestExceptionHandler {
 
     public static HttpResponse handle(Exception e) {

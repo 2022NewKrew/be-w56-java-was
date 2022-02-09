@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static webserver.http.Header.*;
 
 class HttpResponseTest {
 
@@ -14,7 +15,7 @@ class HttpResponseTest {
     void testHttpResponse() {
         // given
         HttpHeader expectedHeaders = new HttpHeader();
-        expectedHeaders.put("myHeader", "headerValue");
+        expectedHeaders.put(HOST, "localhost");
 
         HttpCookie expectedCookies = new HttpCookie();
         Cookie expectedCookie = new Cookie("myCookie", "yummy");
@@ -27,7 +28,7 @@ class HttpResponseTest {
         // when
         HttpResponse httpResponse = HttpResponse.builder()
                 .status(HttpStatus.OK)
-                .header("myHeader", "headerValue")
+                .header(HOST, "localhost")
                 .cookie(expectedCookie)
                 .version(HttpVersion.HTTP_1_1)
                 .contentType(expectedContentType)
@@ -57,20 +58,23 @@ class HttpResponseTest {
     void testHttpResponseWithMultipleHeaders() {
         // given
         HttpHeader expectedHeaders = new HttpHeader();
-        expectedHeaders.put("key1", "value11");
-        expectedHeaders.put("key1", "value12");
-        expectedHeaders.put("key2", "value21");
-        expectedHeaders.put("key3", "value31");
+        expectedHeaders.put(SET_COOKIE, "cookie1");
+        expectedHeaders.put(SET_COOKIE, "cookie2");
+        expectedHeaders.put(CONNECTION, KEEP_ALIVE.toString());
+        expectedHeaders.put(KEEP_ALIVE, "timeout=5");
+        expectedHeaders.put(KEEP_ALIVE, "max=100");
 
         // when
         HttpResponse httpResponse = HttpResponse.builder()
                 .status(HttpStatus.OK)
-                .header("key1", "value11")
-                .header("key1", "value12")
-                .header("key2", "value21")
-                .header("key3", "value31")
+                .header(SET_COOKIE, "cookie1")
+                .header(SET_COOKIE, "cookie2")
+                .header(CONNECTION, KEEP_ALIVE.toString())
+                .header(KEEP_ALIVE, "timeout=5")
+                .header(KEEP_ALIVE, "max=100")
                 .build();
-        List<String> resultKey1 = httpResponse.getHeaders().getValues("key1");
+        List<String> cookies = httpResponse.getHeaders().getValues(SET_COOKIE);
+        List<String> keepAliveValues = httpResponse.getHeaders().getValues(KEEP_ALIVE);
 
         // then
         assertThat(httpResponse).extracting(
@@ -79,8 +83,9 @@ class HttpResponseTest {
                 .containsExactly(
                         HttpStatus.OK,
                         expectedHeaders);
-        assertThat(resultKey1.size()).isEqualTo(2);
-        assertThat(resultKey1).containsExactly("value11", "value12");
+        assertThat(cookies.size()).isEqualTo(2);
+        assertThat(cookies).containsExactly("cookie1", "cookie2");
+        assertThat(keepAliveValues).containsExactly("timeout=5", "max=100");
     }
 
     @Test

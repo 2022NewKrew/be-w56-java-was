@@ -4,31 +4,31 @@ import java.util.*;
 
 public class HttpHeader {
 
-    private final Map<String, List<String>> headers;
+    private final Map<Header, List<String>> headers;
 
     public HttpHeader() {
         this.headers = new HashMap<>();
     }
 
-    public HttpHeader(Map<String, List<String>> headers) {
+    public HttpHeader(Map<Header, List<String>> headers) {
         this.headers = headers;
     }
 
-    public boolean containsKey(String key) {
+    public boolean containsKey(Header key) {
         return headers.containsKey(key);
     }
 
-    public List<String> getValues(String key) {
+    public List<String> getValues(Header key) {
         return headers.get(key);
     }
 
-    public void put(String key, String value) {
+    public void put(Header key, String value) {
         List<String> values = headers.getOrDefault(key, new ArrayList<>());
         values.add(value);
         headers.put(key, values);
     }
 
-    public Set<String> keySet() {
+    public Set<Header> keySet() {
         return headers.keySet();
     }
 

@@ -3,16 +3,13 @@ package webserver.mapper;
 import webserver.exception.BadRequestException;
 import webserver.exception.InvalidMethodException;
 import webserver.exception.ResourceNotFoundException;
-import webserver.exception.WebServerException;
+import webserver.handler.RequestExceptionHandler;
 import webserver.provider.ResponseProvider;
 import webserver.http.MIME;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 
-import java.io.DataOutputStream;
 import java.net.URI;
-
-import static webserver.mapper.RequestMappingInfo.isNotValidMethod;
 
 public class RequestMapper {
 
@@ -30,22 +27,20 @@ public class RequestMapper {
 
     private static HttpResponse handleRequest(HttpRequest request, String path) {
         if (!RequestMappingInfo.hasPath(path)) {
-            throw new ResourceNotFoundException("에러: 존재하지 않은 리소스입니다.");
+            return RequestExceptionHandler.handle(new ResourceNotFoundException("에러: 존재하지 않은 리소스입니다."));
         }
         try {
             RequestMappingInfo requestMappingInfo = RequestMappingInfo.from(path);
             return handleIfValidMethod(requestMappingInfo, request);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new BadRequestException("에러: 부적절한 요청입니다.");
-        } catch (WebServerException e) {
-            throw e;
+        } catch (IllegalArgumentException e) {
+            return RequestExceptionHandler.handle(new BadRequestException(e.getMessage()));
         } catch (Exception e) {
-            throw new WebServerException();
+            return RequestExceptionHandler.handle(e);
         }
     }
 
     private static HttpResponse handleIfValidMethod(RequestMappingInfo requestMappingInfo, HttpRequest request) throws Exception {
-        if (isNotValidMethod(requestMappingInfo, request.method())) {
+        if (requestMappingInfo.isNotEqualMethod(request.method())) {
             throw new InvalidMethodException("에러: 부적절한 요청 메서드입니다.");
         }
         return requestMappingInfo.handle(request);

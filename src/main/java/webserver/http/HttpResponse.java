@@ -84,7 +84,7 @@ public class HttpResponse {
             return this;
         }
 
-        public Builder header(String key, String value) {
+        public Builder header(Header key, String value) {
             headers.put(key, value);
             return this;
         }
