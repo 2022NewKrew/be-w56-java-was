@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,7 +73,7 @@ public class ViewService {
     }
 
     private static String getUserListHtml(){
-        List<User> users = new ArrayList<>(DataBase.findAll());
+        List<User> users = DataBase.findAll();
 
         AtomicInteger atomicInteger = new AtomicInteger();
         StringBuilder sb = new StringBuilder();
