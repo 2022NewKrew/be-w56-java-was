@@ -10,6 +10,7 @@ import http.response.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.util.HttpResponseUtils;
+import webapplication.utils.PropertiesReader;
 import webserver.processor.HttpProcessor;
 import webserver.resource.StaticFile;
 
@@ -23,7 +24,7 @@ public class StaticFileHandler {
 
     private static final Logger log = LoggerFactory.getLogger(StaticFileHandler.class);
 
-    private static final String PAGE_ROOT = "./webapp";
+    private static final String PAGE_ROOT = PropertiesReader.getProperty("static.page.root");
 
     public static HttpResponse handle(HttpRequest httpRequest) {
 

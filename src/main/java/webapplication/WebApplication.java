@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import webapplication.data.AttributeTypes;
 import webapplication.dto.ModelAndView;
 import webapplication.dto.ViewRenderingResult;
+import webapplication.renderer.ViewRenderer;
 import webapplication.routes.Router;
 import webapplication.utils.HttpResponseUtils;
 

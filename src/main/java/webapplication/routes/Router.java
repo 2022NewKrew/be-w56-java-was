@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webapplication.annotations.util.AnnotationHelper;
 import webapplication.annotations.RequestMapping;
+import webapplication.utils.PropertiesReader;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -20,7 +21,7 @@ public class Router {
         Map<String, Method> routeMap = new HashMap<>();
 
         try {
-            String basePackage = "application";
+            String basePackage = PropertiesReader.getProperty("application.package");
             List<Method> requestHandlers = AnnotationHelper.getMethodsAnnotatedWith(basePackage, RequestMapping.class);
             for(Method requestHandler : requestHandlers) {
                 RequestMapping annotation = requestHandler.getAnnotation(RequestMapping.class);

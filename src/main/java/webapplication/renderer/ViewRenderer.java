@@ -1,8 +1,9 @@
-package webapplication;
+package webapplication.renderer;
 
 import webapplication.data.Model;
 import webapplication.dto.ModelAndView;
 import webapplication.dto.ViewRenderingResult;
+import webapplication.utils.PropertiesReader;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class ViewRenderer {
 
-    private static final String PAGE_ROOT = "./webapp";
+    private static final String PAGE_ROOT = PropertiesReader.getProperty("static.page.root");
 
     private static final Pattern REGEX_TEMPLATE_ITER = Pattern.compile("\\{\\{\\#(\\w+)\\}\\}([\\w\\W]*)\\{\\{\\/(\\w+)\\}\\}");
 
