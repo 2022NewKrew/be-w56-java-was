@@ -8,13 +8,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
+    DataOutputStream dos;
 
-    public static void handleHtmlResponse(String path, OutputStream out, Status status, boolean cookie) throws IOException {
+    public HttpResponse(OutputStream out) {
+        this.dos = new DataOutputStream(out);
+    }
 
-        DataOutputStream dos = new DataOutputStream(out);
+    private String path;
+    private Map<String, String> cookie = new HashMap<>();
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public void setCookie(String key, String value){
         this.cookie.put(key, value);
@@ -33,26 +43,31 @@ public class HttpResponse {
         }
     }
 
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, boolean cookie) {
+    public void redirect(String redirectPath) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("Set-Cookie: logined="+cookie+"; Path=/\r\n");
+            dos.writeBytes(Status.FOUND.getMessage());
+            dos.writeBytes("Location: " + redirectPath+"\r\n");
+            if(!cookie.isEmpty()){
+                dos.writeBytes(makeCookie());
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private static void response302Header(DataOutputStream dos, String url) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + url);
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    private String makeCookie(){
+        StringBuilder result = new StringBuilder();
+        result.append("Set-Cookie: ");
+        cookie.forEach((key,value)->{
+            result.append(key).append("=").append(value).append(";");
+        });
+        result.append("Path=/\r\n");
+        return result.toString();
+    }
+
+    private byte[] getHtmlBytes(String url) throws IOException {
+        return Files.readAllBytes(new File("./webapp" + url).toPath());
     }
 
     private static void responseBody(DataOutputStream dos, byte[] body) {
