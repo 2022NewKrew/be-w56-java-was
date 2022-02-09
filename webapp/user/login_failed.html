@@ -1,4 +1,19 @@
 {{>template/header}}
+        <div class="collapse navbar-collapse" id="navbar-collapse2">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/index.html">Posts</a></li>
+                {{#USER_ID}}
+                <li><a href="/user/logout" role="button">로그아웃</a></li>
+                <li><a href="#" role="button">개인정보수정</a></li>
+                {{/USER_ID}}
+                {{^USER_ID}}
+                <li class="active"><a href="/user/login.html" role="button">로그인</a></li>
+                <li><a href="/user/form.html" role="button">회원가입</a></li>
+                {{/USER_ID}}
+            </ul>
+        </div>
+    </div>
+</div>
 <div class="container" id="main">
    <div class="col-md-6 col-md-offset-3">
       <div class="panel panel-default content-main">
