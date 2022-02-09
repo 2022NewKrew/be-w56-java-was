@@ -17,10 +17,11 @@ public class RequestBodyProcessor {
         if (parameter.getAnnotation(RequestBody.class) == null) {
             return null;
         }
+        Object result = null;
         for (Constructor<?> constructor : parameter.getType().getDeclaredConstructors()) {
-            return findConstructor(constructor, parameter, httpRequest);
+            result = findConstructor(constructor, parameter, httpRequest);
         }
-        return null;
+        return result;
     }
 
     private static Object findConstructor(Constructor<?> constructor, Parameter parameter, HttpRequest httpRequest)
