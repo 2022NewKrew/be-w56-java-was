@@ -27,7 +27,7 @@ public class AuthController implements Controller {
     @Override
     public HttpResponse doPost(HttpRequest request) {
         if (!request.getPath().equals(USER_LOGIN_PATH)) {
-            return badRequest();
+            return Controller.super.doPost(request);
         }
 
         boolean authentication = authService.login(UserLogin.builder()
