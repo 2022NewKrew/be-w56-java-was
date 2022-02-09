@@ -1,13 +1,8 @@
 package webserver.http.response;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HttpResponse {
@@ -17,7 +12,7 @@ public class HttpResponse {
     private String Url;
     private byte[] body;
     private Map<String, String> header = new HashMap<>();
-    private List<String> cookieValues = new ArrayList<>();
+    private Model model = new Model();
 
     public HttpResponse(DataOutputStream dos) {
         this.dos = dos;
@@ -25,10 +20,19 @@ public class HttpResponse {
         statusMessage = "Ok";
     }
 
-
     public void forward() {
+        if(statusCode == 200)
+            response200();
+        else if(statusCode == 302)
+            redirect();
+        else if(statusCode == 404)
+            //Todo
+            ;
+    }
+
+    private void response200() {
         try{
-            handleBody();
+            setBody();
             responseHeader();
             responseBody();
         } catch (IOException e) {
@@ -36,8 +40,19 @@ public class HttpResponse {
         }
     }
 
-    private void handleBody() throws IOException {
-        body = Files.readAllBytes(new File("./webapp" + Url).toPath());
+    private void redirect() {
+        try{
+            responseHeader();
+            dos.writeBytes("Location: " + Url + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setBody() throws IOException {
+        TemplateEngine.createHtml(this);
+
         if(Url.endsWith(".css")) {
             header.put("Content-Type", "text/css");
         } else if(Url.endsWith(".js")) {
@@ -73,51 +88,38 @@ public class HttpResponse {
         }
     }
 
-    public void redirect() {
-        try{
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            responseHeader();
-            dos.writeBytes("Location: " + Url + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addCookie(String value) {
-        cookieValues.add(value);
-    }
-
     public void addHeader(String key, String value) {
         header.put(key, value);
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode, String message) {
+    public HttpResponse setStatusCode(int statusCode, String message) {
         this.statusCode = statusCode;
         this.statusMessage = message;
+        return this;
     }
 
     public String getUrl() {
         return Url;
     }
 
-    public void setUrl(String url) {
+    public HttpResponse setUrl(String url) {
         Url = url;
+        return this;
     }
 
     public byte[] getBody() {
         return body;
     }
 
-    public Map<String, String> getHeader() {
-        return header;
+    public Model getModel() {
+        return model;
     }
 
-    public void setHeader(Map<String, String> header) {
-        this.header = header;
+    public void setModel(Model model) {
+        this.model = model;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 }

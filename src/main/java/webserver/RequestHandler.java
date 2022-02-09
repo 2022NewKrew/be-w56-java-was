@@ -6,6 +6,7 @@ import java.security.NoSuchProviderException;
 
 import webserver.controller.Controller;
 import webserver.controller.ControllerCommander;
+import webserver.filter.LoginCheckFilter;
 import webserver.http.domain.Cookie;
 import webserver.http.domain.CookieConst;
 import webserver.http.request.HttpRequest;
@@ -31,13 +32,20 @@ public class RequestHandler extends Thread {
             HttpRequest httpRequest = HttpRequestParser.parse(in);
             HttpResponse httpResponse = new HttpResponse(dos);
 
-            Cookie cookie = httpRequest.getCookie();
-            System.out.println(cookie.getCookie(CookieConst.LOGIN_COOKIE.toString()));
-
-            handleRequest(httpRequest, httpResponse);
+            if(LoginCheckFilter.loginCheck(httpRequest)) {
+                handleRequest(httpRequest, httpResponse);
+            } else{
+                redirectToLoginPage(httpResponse);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private void redirectToLoginPage(HttpResponse httpResponse) {
+        httpResponse.setStatusCode(302, "Found")
+                .setUrl("/user/login.html")
+                .forward();
     }
 
     public void handleRequest(HttpRequest request, HttpResponse response) throws IOException {
@@ -45,16 +53,15 @@ public class RequestHandler extends Thread {
         try {
             Controller controller = ControllerCommander.findController(request);
             if(controller == null) {
-                response.setUrl(request.getRequestUri());
-                response.forward();
+                response.setUrl(request.getRequestUri())
+                        .forward();
                 return;
             }
 
             controller.execute(request, response);
-
         } catch (NoSuchProviderException e) {
-            response.setStatusCode(404, "Not Found");
-            System.out.println("handle Error");
+            response.setStatusCode(404, "Not Found")
+                            .forward();
             e.printStackTrace();
         }
     }
