@@ -1,20 +1,22 @@
-package webserver.http;
+package webserver.model.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
-import webserver.RequestHandler;
-import webserver.http.enums.HttpMethod;
+import webserver.DispatcherServlet;
+import webserver.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpRequest {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HttpMethod method;
     private final String uri;
@@ -48,7 +50,7 @@ public class HttpRequest {
         int contentLength = contentLengthString == null? 0: Integer.parseInt(contentLengthString);
 
         String body = IOUtils.readData(br, contentLength);
-        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], body);
+        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], URLDecoder.decode(body, StandardCharsets.UTF_8));
     }
 
     public HttpMethod getMethod() {

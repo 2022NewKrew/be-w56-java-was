@@ -1,4 +1,4 @@
-package webserver.http.enums;
+package webserver.enums;
 
 public enum HttpMethod {
     POST, GET, PUT, DELETE, PATCH

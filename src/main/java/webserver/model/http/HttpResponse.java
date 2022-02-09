@@ -1,7 +1,9 @@
-package webserver.http;
+package webserver.model.http;
 
-import webserver.http.enums.HttpStatus;
-import webserver.http.enums.MIME;
+import webserver.ViewRenderer;
+import webserver.enums.HttpStatus;
+import webserver.enums.MIME;
+import webserver.model.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class HttpResponse {
-    private static final String DEFAULT_PATH = "./webapp";
     private static final String DEFAULT_URI = "http://localhost:8080";
     private static final String HTTP_VERSION = "HTTP//1.1";
 
@@ -71,22 +72,17 @@ public class HttpResponse {
         return httpResponse;
     }
 
-    public HttpResponse setView(String path) {
+    public HttpResponse redirect(String location) {
+        this.location = DEFAULT_URI + location;
+        return this;
+    }
+
+    public HttpResponse setBody(ModelAndView modelAndView) {
         try {
-            body = Files.readAllBytes(new File(DEFAULT_PATH + path).toPath());
+            body = ViewRenderer.render(modelAndView);
         } catch (IOException e) {
             setStatusLine(HttpStatus.NOT_FOUND);
         }
-        return this;
-    }
-
-    public HttpResponse body(String body) {
-        this.body = body.getBytes(StandardCharsets.UTF_8);
-        return this;
-    }
-
-    public HttpResponse redirect(String location) {
-        this.location = DEFAULT_URI + location;
         return this;
     }
 }

@@ -2,9 +2,9 @@ package util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.HttpResponse;
-import webserver.http.enums.HttpStatus;
-import webserver.http.enums.MIME;
+import webserver.model.http.HttpResponse;
+import webserver.enums.HttpStatus;
+import webserver.enums.MIME;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
