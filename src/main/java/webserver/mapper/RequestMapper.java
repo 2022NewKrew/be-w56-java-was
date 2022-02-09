@@ -9,7 +9,6 @@ import webserver.http.MIME;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 
-import java.io.DataOutputStream;
 import java.net.URI;
 
 import static webserver.mapper.RequestMappingInfo.isNotValidMethod;
