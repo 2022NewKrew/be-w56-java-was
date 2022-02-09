@@ -64,12 +64,12 @@ public class PrintUserListController implements Controller {
     }
 
     private boolean isLogin(HttpRequest request) {
-        int session_id = request.getSessionId();
-        if (session_id == NO_SESSION) {
+        int sessionId = request.getSessionId();
+        if (sessionId == NO_SESSION) {
             return false;
         }
 
-        Session session = SessionStorage.findUserById(session_id);
+        Session session = SessionStorage.findSessionById(sessionId);
         return session != null && !session.isExpired();
     }
 }

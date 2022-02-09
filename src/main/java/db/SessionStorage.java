@@ -12,7 +12,7 @@ public class SessionStorage {
         sessions.put(session.getSessionId(), session);
     }
 
-    public static Session findUserById(int sessionId) {
+    public static Session findSessionById(int sessionId) {
         return sessions.get(sessionId);
     }
 }

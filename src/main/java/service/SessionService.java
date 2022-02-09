@@ -15,7 +15,13 @@ public class SessionService {
     public static int setSession(String userId) {
         int sessionId = userId.hashCode();
 
-        SessionStorage.addSession(new Session(sessionId, LocalDateTime.now().plusHours(SESSION_EXPIRES_TIME)));
+        SessionStorage.addSession(
+            new Session(
+                sessionId,
+                userId,
+                LocalDateTime.now().plusHours(SESSION_EXPIRES_TIME)
+            )
+        );
 
         log.debug("session {} is added", sessionId);
 

@@ -132,9 +132,13 @@
                       <li><a href="#">»</a></li>
                 </ul>
               </div>
-              <div class="col-md-3 qna-write">
-                  <a href="./qna/form.html" class="btn btn-primary pull-right" role="button">질문하기</a>
-              </div>
+              <form class="answer-form" method="post" action="/memo/create">
+                <div class="form-group" style="padding:14px;">
+                  <textarea class="form-control" placeholder="메모를 남기세요"></textarea>
+                </div>
+                <button class="btn btn-success pull-right" type="button">메모하기</button>
+                <div class="clearfix" />
+              </form>
           </div>
         </div>
     </div>

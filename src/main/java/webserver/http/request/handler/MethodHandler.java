@@ -1,6 +1,7 @@
 package webserver.http.request.handler;
 
 import Controller.Controller;
+import Controller.CreateMemoController;
 import Controller.LoginController;
 import Controller.PrintUserListController;
 import Controller.SignUpUserController;
@@ -24,6 +25,7 @@ public class MethodHandler {
         controllerMap.put(new Pair(Method.POST, "/user/create"), new SignUpUserController());
         controllerMap.put(new Pair(Method.POST, "/user/login"), new LoginController());
         controllerMap.put(new Pair(Method.GET, "/user/list"), new PrintUserListController());
+        controllerMap.put(new Pair(Method.POST, "/memo/create"), new CreateMemoController());
     }
 
     private final StaticFileController staticFileController = new StaticFileController();

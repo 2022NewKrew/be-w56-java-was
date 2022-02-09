@@ -12,6 +12,6 @@ class SessionServiceTest {
         String userId = "champ";
         int sessionId = SessionService.setSession(userId);
 
-        assertThat(SessionStorage.findUserById(sessionId)).isNotNull();
+        assertThat(SessionStorage.findSessionById(sessionId)).isNotNull();
     }
 }
