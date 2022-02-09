@@ -14,13 +14,17 @@ public class ResponseSender {
     public static void send(HttpResponse response, DataOutputStream dos)
             throws IOException, NoSuchFieldException, IllegalAccessException {
 
-        byte[] body = getBodyBytes(response.getModelAndView(), response.getHeaders().getContentType());
+        byte[] body = getBodyBytes(response.getStatus(), response.getModelAndView(), response.getHeaders().getContentType());
         responseHeader(dos, response.getStatus(), response.getHeaders().with(body.length));
         responseBody(dos, body);
     }
 
-    private static byte[] getBodyBytes(ModelAndView modelAndView, ContentType contentType) throws IOException, NoSuchFieldException, IllegalAccessException {
+    private static byte[] getBodyBytes(HttpStatus status, ModelAndView modelAndView, ContentType contentType) throws IOException, NoSuchFieldException, IllegalAccessException {
         if(modelAndView == null || modelAndView.getFileName() == null){
+            return new byte[0];
+        }
+
+        if(status == HttpStatus.REDIRECT){
             return new byte[0];
         }
 

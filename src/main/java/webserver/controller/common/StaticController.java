@@ -31,14 +31,9 @@ public class StaticController implements Controller {
 
         log.info("return file {}", fileName);
 
-        ResponseHeaders responseHeaders = ResponseHeaders.builder()
-                .contentType(ContentType.getFileType(fileName).orElseThrow())
-                .build();
-
-        return HttpResponse.<String>builder()
-                .status(HttpStatus.SUCCESS)
+        ContentType contentType = ContentType.getFileType(fileName).orElseThrow();
+        return HttpResponse.builder(HttpStatus.SUCCESS, contentType)
                 .modelAndView(new ModelAndView(fileName))
-                .headers(responseHeaders)
                 .build();
     }
 

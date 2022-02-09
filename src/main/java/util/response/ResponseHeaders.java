@@ -2,21 +2,18 @@ package util.response;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Collections;
 import java.util.Map;
 
-@Builder
 @Getter
+@RequiredArgsConstructor
 public class ResponseHeaders {
     private static final String LINE_CHANGE_STRING = "\r\n";
 
-    private ContentType contentType;
-
-    @Builder.Default
+    private final ContentType contentType;
     private int contentLength = 0;
-
-    @Builder.Default
     private Map<String, String> others = Collections.emptyMap();
 
     @Override
@@ -35,6 +32,11 @@ public class ResponseHeaders {
 
     public ResponseHeaders with(int contentLength){
         this.contentLength = contentLength;
+        return this;
+    }
+
+    public ResponseHeaders with(Map<String, String> others){
+        this.others = others;
         return this;
     }
 }

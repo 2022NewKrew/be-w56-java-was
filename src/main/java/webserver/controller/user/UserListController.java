@@ -26,14 +26,8 @@ public class UserListController implements Controller {
         ModelAndView mav = new ModelAndView("/user/list.html");
         mav.addAttribute("users", users);
 
-        ResponseHeaders headers = ResponseHeaders.builder()
-                .contentType(ContentType.HTML)
-                .build();
-
-        return HttpResponse.builder()
-                .status(HttpStatus.SUCCESS)
+        return HttpResponse.builder(HttpStatus.SUCCESS, ContentType.HTML)
                 .modelAndView(mav)
-                .headers(headers)
                 .build();
     }
 }
