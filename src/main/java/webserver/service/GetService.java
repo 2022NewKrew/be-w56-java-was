@@ -20,8 +20,10 @@ public class GetService {
         this.os = os;
     }
 
-    public void methodMemoList() {
-        String page = PageOfMemoList.draw(DataBase.findMemoAll());
+    public void methodMemoList(RequestParser rp) {
+        String logined = rp.getCookie(LOGIN_KEY);
+        boolean isLogin = logined != null && !logined.isEmpty();
+        String page = PageOfMemoList.draw(DataBase.findMemoAll(), isLogin);
 
         ForwardResponseFormat rf = new ForwardResponseFormat(os);
         rf.setHtmlPage(page);

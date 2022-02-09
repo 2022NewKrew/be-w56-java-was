@@ -33,7 +33,7 @@ public class GetController implements MethodController {
         switch (rp.getPath()) {
             case MEMO_LIST:
             case HTML_MEMO_LIST:
-                gs.methodMemoList();
+                gs.methodMemoList(rp);
                 break;
             case USER_LIST:
             case HTML_USER_LIST:
