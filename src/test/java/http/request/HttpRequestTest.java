@@ -1,6 +1,6 @@
 package http.request;
 
-import model.UserDBConstants;
+import dao.UserDBConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

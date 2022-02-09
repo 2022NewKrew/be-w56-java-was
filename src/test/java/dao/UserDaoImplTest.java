@@ -1,5 +1,6 @@
 package dao;
 
+import dao.connection.MysqlConnectionMaker;
 import model.User;
 import org.junit.jupiter.api.*;
 
@@ -8,17 +9,7 @@ import java.util.List;
 
 class UserDaoImplTest {
     private final String TEST_ID = "testid";
-    private static UserDao userDao = new UserDaoImpl();
-
-    @BeforeAll
-    static void setUp() throws SQLException, ClassNotFoundException {
-        userDao.openConnection();
-    }
-
-    @AfterAll
-    static void tearDown() throws SQLException {
-        userDao.closeConnection();
-    }
+    private static UserDao userDao = new UserDaoImpl(new MysqlConnectionMaker());
 
     @AfterEach
     void deleteTestUser() throws SQLException {

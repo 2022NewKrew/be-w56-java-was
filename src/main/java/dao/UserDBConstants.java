@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 public class UserDBConstants {
     public static final String TABLE_NAME = "USER";

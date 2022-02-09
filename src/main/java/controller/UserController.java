@@ -2,6 +2,7 @@ package controller;
 
 import dao.UserDao;
 import dao.UserDaoImpl;
+import dao.connection.MysqlConnectionMaker;
 import http.HttpStatus;
 import http.request.HttpRequest;
 import http.request.HttpRequestBody;
@@ -10,7 +11,7 @@ import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
 import model.User;
-import model.UserDBConstants;
+import dao.UserDBConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HtmlUtils;
@@ -18,7 +19,6 @@ import util.HttpRequestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,18 +41,11 @@ public class UserController implements Controller {
 
     private UserController(UserDao userDao) {
         this.userDao = userDao;
-        try {
-            userDao.openConnection();
-        } catch (ClassNotFoundException cnfe) {
-            log.error(cnfe.getMessage());
-        } catch (SQLException sqle) {
-            log.error(sqle.getMessage());
-        }
     }
 
     public static synchronized UserController getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new UserController(new UserDaoImpl());
+            INSTANCE = new UserController(new UserDaoImpl(new MysqlConnectionMaker()));
         return INSTANCE;
     }
 
