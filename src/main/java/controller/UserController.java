@@ -86,7 +86,7 @@ public class UserController {
     };
 
     public static Controller userListView = (httpRequest) -> {
-        if (!httpRequest.checkLoginCookie()) {
+        if (!HttpRequestUtils.checkLoginCookie(httpRequest)) {
             List<String> headers = HttpResponseUtils.response302(httpRequest, "/user/login");
             return new HttpResponse(headers);
         }
