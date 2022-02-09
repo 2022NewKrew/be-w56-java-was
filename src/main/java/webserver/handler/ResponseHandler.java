@@ -18,8 +18,8 @@ public class ResponseHandler {
     public static void sendResponse(HttpResponse response, DataOutputStream dos) {
         if (response != null) {
             writeBytes(response, dos);
-            flush(dos);
         }
+        flush(dos);
     }
 
     private static void writeBytes(HttpResponse response, DataOutputStream dos) {
