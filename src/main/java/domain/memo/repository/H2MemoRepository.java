@@ -1,5 +1,6 @@
 package domain.memo.repository;
 
+import config.JdbcConfig;
 import domain.memo.model.Memo;
 import java.sql.Connection;
 import java.sql.Date;
@@ -19,7 +20,7 @@ public class H2MemoRepository implements MemoRepository {
 
     public static H2MemoRepository get() {
         if (instance == null) {
-            instance = new H2MemoRepository(getConnection());
+            instance = new H2MemoRepository(JdbcConfig.getConnection());
             instance.createTable();
         }
         return instance;
@@ -29,18 +30,7 @@ public class H2MemoRepository implements MemoRepository {
         this.connection = connection;
     }
 
-    private static Connection getConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:h2:~/mem", "sa", "sa");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     private void createTable() {
-        String dropSql = "DROP TABLE IF EXISTS MEMO";
         String sql = "CREATE TABLE MEMO("
             + "id BIGINT PRIMARY KEY AUTO_INCREMENT,"
             + "created_at DATE NOT NULL,"
@@ -49,7 +39,6 @@ public class H2MemoRepository implements MemoRepository {
             + ");";
 
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(dropSql);
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();

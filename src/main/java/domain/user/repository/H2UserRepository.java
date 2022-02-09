@@ -1,5 +1,6 @@
 package domain.user.repository;
 
+import config.JdbcConfig;
 import domain.user.model.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,7 +20,7 @@ public class H2UserRepository implements UserRepository {
 
     public static H2UserRepository get() {
         if (instance == null) {
-            instance = new H2UserRepository(getConnection());
+            instance = new H2UserRepository(JdbcConfig.getConnection());
             instance.createTable();
         }
         return instance;
@@ -29,18 +30,7 @@ public class H2UserRepository implements UserRepository {
         this.connection = connection;
     }
 
-    private static Connection getConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:h2:~/mem", "sa", "sa");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     private void createTable() {
-        String dropSql = "DROP TABLE IF EXISTS CAFE_USER";
         String sql = "CREATE TABLE CAFE_USER("
             + "user_id VARCHAR(15) NOT NULL PRIMARY KEY,"
             + "password VARCHAR(15) NOT NULL,"
@@ -49,7 +39,6 @@ public class H2UserRepository implements UserRepository {
             + ");";
 
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(dropSql);
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
