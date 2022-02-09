@@ -20,10 +20,12 @@ import java.util.Map;
 public class UserHandler {
 
     private final Database database;
+    private final TemplateEngine templateEngine;
 
     @Inject
-    public UserHandler(Database database) {
+    public UserHandler(Database database, TemplateEngine templateEngine) {
         this.database = database;
+        this.templateEngine = templateEngine;
     }
 
     public Response create(Request request) {
@@ -81,7 +83,7 @@ public class UserHandler {
             Map<String, Object> values = Map.of(
                     "users", database.findAllUsers()
             );
-            String filled = new TemplateEngine().render(content, values);
+            String filled = templateEngine.render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);
         } catch (IOException e) {
             return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());

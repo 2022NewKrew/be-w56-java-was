@@ -21,10 +21,12 @@ import java.util.Map;
 public class PostHandler {
 
     private final Database database;
+    private final TemplateEngine templateEngine;
 
     @Inject
-    public PostHandler(Database database) {
+    public PostHandler(Database database, TemplateEngine templateEngine) {
         this.database = database;
+        this.templateEngine = templateEngine;
     }
 
     public Response create(Request request) {
@@ -63,7 +65,7 @@ public class PostHandler {
             Map<String, Object> values = Map.of(
                     "posts", database.findAllPosts()
             );
-            String filled = new TemplateEngine().render(content, values);
+            String filled = templateEngine.render(content, values);
             return Response.ok(Headers.contentType(ContentType.HTML), filled);
         } catch (IOException e) {
             return Response.error(Headers.contentType(ContentType.TEXT), e.getMessage());

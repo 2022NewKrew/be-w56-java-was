@@ -4,6 +4,7 @@ import app.db.Database;
 import lib.was.http.Request;
 import lib.was.http.Response;
 import domain.model.User;
+import lib.was.template.TemplateEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +16,14 @@ import static org.mockito.Mockito.when;
 class UserHandlerTest {
 
     private Database database;
+    private TemplateEngine templateEngine;
     private UserHandler subject;
 
     @BeforeEach
     void setUp() {
         database = mock(Database.class);
-        subject = new UserHandler(database);
+        templateEngine = new TemplateEngine();
+        subject = new UserHandler(database, templateEngine);
     }
 
     @Test
