@@ -19,6 +19,7 @@ public class HttpRequestParser {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         parseStartLine(br);
         parseHeader(br);
+        parseCookie();
         if (httpRequest.getMethod().equals(HttpMethod.POST)) {
             parseBody(br);
         }
@@ -44,6 +45,10 @@ public class HttpRequestParser {
             HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(headerSingleLine);
             httpRequest.getHeader().put(pair.getKey(), pair.getValue());
         }
+    }
+
+    private void parseCookie() {
+        httpRequest.setCookie(HttpRequestUtils.parseCookies(httpRequest.getHeader().get("Cookie")));
     }
 
     private void parseBody(BufferedReader br) throws IOException {
