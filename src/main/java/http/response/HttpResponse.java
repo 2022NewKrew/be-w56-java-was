@@ -70,7 +70,7 @@ public class HttpResponse extends HttpMessage {
                 .build();
     }
 
-    public static HttpResponse found(String redirectLocation) {
+    public static HttpResponse redirect(String redirectLocation) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", redirectLocation);
 

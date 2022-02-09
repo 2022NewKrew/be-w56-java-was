@@ -33,7 +33,7 @@ public class LoginController extends BaseController {
 
             log.debug("로그인 성공, {} sessionId={}", user, sessionId);
 
-            HttpResponse response = HttpResponse.found("/index.html");
+            HttpResponse response = HttpResponse.redirect("/index.html");
             response.addCookie(Cookie.builder()
                     .name("logined")
                     .value("true")

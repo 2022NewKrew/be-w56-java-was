@@ -30,7 +30,7 @@ public class UserListController extends BaseController {
             return HttpResponse.ok("/user/list.html");
         } catch (Exception e) {
             log.debug(e.getMessage());
-            return HttpResponse.found("/user/login.html");
+            return HttpResponse.redirect("/user/login.html");
         }
     }
 }
