@@ -39,7 +39,7 @@ public class HttpRequestDecoder {
 
         if (headers.containsName("cookie")) {
             cookies = HttpRequestUtils.parseCookies(headers.getValue("cookie"));
-            headers.getHeaders().remove("cookie");
+            headers.remove("cookie");
         }
 
         // read body if "content-length" header exists
