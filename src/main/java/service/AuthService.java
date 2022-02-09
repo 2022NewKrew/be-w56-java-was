@@ -14,24 +14,36 @@ import java.util.NoSuchElementException;
 public class AuthService {
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    public static void login(Request request) {
+    public static void createUser(Request request) {
         Map<String, String> reqParam;
         if (request.method().equals("GET")) {
             reqParam = request.getParams();
+        } else {
+            reqParam = HttpRequestUtils.parseQueryString(request.getBody());
         }
-        else {
+        String userId = reqParam.get("userId");
+        String password = reqParam.get("password");
+        String name = reqParam.get("name");
+        String email = reqParam.get("email");
+        User user = new User(userId, password, name, email);
+        DataBase.addUser(user);
+    }
+
+    public static boolean login(Request request) {
+        Map<String, String> reqParam;
+        if (request.method().equals("GET")) {
+            reqParam = request.getParams();
+        } else {
             reqParam = HttpRequestUtils.parseQueryString(request.getBody());
         }
         try {
-            String userid = reqParam.get("userId");
+            String userId = reqParam.get("userId");
             String password = reqParam.get("password");
-            String name = reqParam.get("name");
-            String email = reqParam.get("email");
-            User user = new User(userid, password, name, email);
-            DataBase.addUser(user);
-        }
-        catch (NoSuchElementException e) {
+            User userRetrieved = DataBase.findUserById(userId);
+            return userRetrieved.getUserId().equals(userId) && userRetrieved.getPassword().equals(password);
+        } catch (NullPointerException e) {
             logger.info(e.getMessage());
+            return false;
         }
     }
 }

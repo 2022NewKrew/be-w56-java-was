@@ -11,18 +11,23 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+<<<<<<< HEAD
+=======
 import java.net.http.HttpHeaders;
+>>>>>>> 9d507de1570f250694b2df80b22d2d005ea7a9ad
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static webserver.WebServer.DEFAULT_PATH;
 
 public class RequestMapper {
     private static final Logger log = LoggerFactory.getLogger(RequestMapper.class);
     private static final Map<String, RequestMappingPath> requestMap;
 
     static {
-        requestMap = new HashMap<String, RequestMappingPath>();
+        requestMap = new HashMap<>();
         for (RequestMappingPath value : RequestMappingPath.values()) {
             requestMap.put(value.getPath(), value);
         }
@@ -53,30 +58,33 @@ public class RequestMapper {
     }
     private static Response responseStaticFile(DataOutputStream dos, String path) {
         try{
-            byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
-            return new Response(dos, body, HttpStatus.OK, new HashMap<>(), MIME.parse(path));
+            return new Response.Builder(dos)
+                    .body(Files.readAllBytes(new File(DEFAULT_PATH + path).toPath()))
+                    .status(HttpStatus.OK)
+                    .contentType(MIME.parse(path))
+                    .build();
         } catch (IOException e) {
             e.printStackTrace();
             return response500InternalServerError(dos);
         }
-
     }
     private static Response response404NotFound(DataOutputStream dos) {
-        byte[] body = HttpStatus.NOT_FOUND.toString().getBytes();
-        HttpHeaders headers = HttpHeaders.of(new HashMap<>(), (s1, s2) -> true);
-        return new Response(dos, body, HttpStatus.NOT_FOUND, new HashMap<>(), "");
+        return new Response.Builder(dos)
+                .body(HttpStatus.NOT_FOUND.toString().getBytes())
+                .status(HttpStatus.NOT_FOUND)
+                .build();
     }
     private static Response response400BadRequest(DataOutputStream dos, Exception e) {
-        byte[] body = (HttpStatus.BAD_REQUEST + ":" + e.getMessage()).getBytes();
-        HttpHeaders headers = HttpHeaders.of(new HashMap<>(), (s1, s2) -> true);
-        return new Response(dos, body, HttpStatus.BAD_REQUEST, new HashMap<>(), "");
+        return new Response.Builder(dos)
+                .body((HttpStatus.BAD_REQUEST + ":" + e.getMessage()).getBytes())
+                .status(HttpStatus.BAD_REQUEST)
+                .build();
     }
     private static Response response500InternalServerError(DataOutputStream dos) {
         log.info("response500InternalServerError");
-        byte[] body = HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes();
-        HttpHeaders headers = HttpHeaders.of(new HashMap<>(), (s1, s2) -> true);
-        return new Response(dos, body, HttpStatus.INTERNAL_SERVER_ERROR, new HashMap<>(), "");
+        return new Response.Builder(dos)
+                .body(HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
     }
-
-
 }

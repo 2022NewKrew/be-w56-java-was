@@ -8,6 +8,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.http.HttpHeaders;
 import java.util.Arrays;
+<<<<<<< HEAD
+import java.util.HashMap;
+=======
+>>>>>>> 9d507de1570f250694b2df80b22d2d005ea7a9ad
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,15 +27,55 @@ public class Response {
     private final String contentType;
     private final int lengthOfBodyContent;
 
-    public Response(DataOutputStream dos, byte[] body, HttpStatus status,
-                    Map<String, String> headers, String contentType) {
-        this.dos = dos;
-        this.body = body;
-        this.version = "HTTP/1.1";
-        this.status = status;
-        this.headers = headers;
-        this.contentType = contentType;
-        this.lengthOfBodyContent = body.length;
+    public static class Builder {
+        private final DataOutputStream dos;
+        private final Map<String, String> headers = new HashMap<>();
+
+        private byte[] body = new byte[]{};
+        private String version = "HTTP/1.1";
+        private HttpStatus status = HttpStatus.OK;
+        private String contentType = "";
+        private int lengthOfBodyContent = 0;
+
+        public Builder(DataOutputStream dos) {
+            this.dos = dos;
+        }
+
+        public Builder body(byte[] body){
+            this.body = body;
+            this.lengthOfBodyContent = body.length;
+            return this;
+        }
+        public Builder version(String version){
+            this.version = version;
+            return this;
+        }
+        public Builder status(HttpStatus status){
+            this.status = status;
+            return this;
+        }
+        public Builder headers(String key, String value){
+            headers.put(key, value);
+            return this;
+        }
+        public Builder contentType(String contentType){
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Response build(){
+            return new Response(this);
+        }
+    }
+
+    private Response(Builder builder){
+        this.dos = builder.dos;
+        this.body = builder.body;
+        this.version = builder.version;
+        this.status = builder.status;
+        this.headers = builder.headers;
+        this.contentType = builder.contentType;
+        this.lengthOfBodyContent = builder.lengthOfBodyContent;
     }
 
     public void write() {
@@ -55,4 +99,13 @@ public class Response {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Response is : " + dos.toString()
+                + version
+                + status.toString()
+                + headers
+                + contentType
+                + lengthOfBodyContent;
+    }
 }
