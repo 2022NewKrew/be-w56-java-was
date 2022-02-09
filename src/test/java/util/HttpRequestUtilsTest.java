@@ -1,12 +1,11 @@
 package util;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import util.HttpRequestUtils.Pair;
 
 import java.util.Map;
 
-
-import org.junit.jupiter.api.Test;
-import util.HttpRequestUtils.Pair;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpRequestUtilsTest {
 
@@ -69,9 +68,9 @@ public class HttpRequestUtilsTest {
 
     @Test
     public void parseCookies() {
-        String cookies = "logined=true; JSessionId=1234";
+        String cookies = "loggedIn=true; JSessionId=1234";
         Map<String, String> parameters = HttpRequestUtils.parseCookies(cookies);
-        assertThat(parameters.get("logined")).isEqualTo("true");
+        assertThat(parameters.get("loggedIn")).isEqualTo("true");
         assertThat(parameters.get("JSessionId")).isEqualTo("1234");
         assertThat(parameters.get("session")).isNull();
     }
