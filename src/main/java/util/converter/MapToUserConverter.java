@@ -3,17 +3,17 @@ package util.converter;
 
 import webserver.domain.entity.User;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-public class BodyParamsToUserConverter implements Converter<Map<String, String>, User>{
+public class MapToUserConverter implements Converter<Map<String, String>, User>{
     @Override
     public boolean support(Class<?> fromType, Class<?> toType) {
-        return false;
+        return TypeChecker.equals(fromType, Map.class)
+                && TypeChecker.equals(toType, User.class);
     }
 
     @Override
-    public User convert(Map<String, String> from) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public User convert(Map<String, String> from)  {
         return new User(
                 from.get("userId"),
                 from.get("password"),

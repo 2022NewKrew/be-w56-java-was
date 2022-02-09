@@ -15,14 +15,8 @@ public class NotFoundController implements Controller {
         ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addAttribute("message", "Not Found Page");
 
-        ResponseHeaders responseHeaders = ResponseHeaders.builder()
-                .contentType(ContentType.PLANE_TEXT)
-                .build();
-
-        return HttpResponse.<String>builder()
-                .status(HttpStatus.NOT_FOUND)
+        return HttpResponse.builder(HttpStatus.NOT_FOUND, ContentType.PLANE_TEXT)
                 .modelAndView(modelAndView)
-                .headers(responseHeaders)
                 .build();
     }
 }

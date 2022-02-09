@@ -9,7 +9,6 @@ import util.request.MethodType;
 import util.response.ContentType;
 import util.response.HttpResponse;
 import util.response.HttpStatus;
-import util.response.ResponseHeaders;
 import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
@@ -42,14 +41,8 @@ public class UserJoinController implements Controller {
         userRepository.saveUser(user);
         log.info("created user {}", user);
 
-        ResponseHeaders responseHeaders = ResponseHeaders.builder()
-                .contentType(ContentType.HTML)
-                .others(Map.of("Location", "/"))
-                .build();
-
-        return HttpResponse.<String>builder()
-                .status(HttpStatus.REDIRECT)
-                .headers(responseHeaders)
+        return HttpResponse.builder(HttpStatus.REDIRECT, ContentType.HTML)
+                .header("Location", "/")
                 .build();
     }
 

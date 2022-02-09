@@ -1,9 +1,11 @@
 package util.response;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Builder
+import java.util.Map;
+
+@AllArgsConstructor
 @Getter
 public class HttpResponse {
     private HttpStatus status;
@@ -16,14 +18,37 @@ public class HttpResponse {
         ModelAndView modelAndView = new ModelAndView("error.html");
         modelAndView.addAttribute("message", e.getMessage());
 
-        ResponseHeaders responseHeaders = ResponseHeaders.builder()
-                .contentType(ContentType.HTML)
-                .build();
-
-        return HttpResponse.<String>builder()
-                .status(HttpStatus.INTERNAL_ERROR)
-                .headers(responseHeaders)
+        return HttpResponse.builder(HttpStatus.INTERNAL_ERROR, ContentType.HTML)
                 .modelAndView(modelAndView)
                 .build();
+    }
+
+    public static Builder builder(HttpStatus status, ContentType contentType){
+        return new Builder(status, contentType);
+    }
+
+    public static class Builder {
+        private HttpStatus status;
+        private ResponseHeaders headers;
+        private ModelAndView modelAndView = ModelAndView.emptyModelAndView();
+
+        Builder(HttpStatus status, ContentType contentType){
+            this.status = status;
+            this.headers = new ResponseHeaders(contentType);
+        }
+
+        public Builder modelAndView(ModelAndView modelAndView){
+            this.modelAndView = modelAndView;
+            return this;
+        }
+
+        public Builder header(String key, String val){
+            this.headers.addHeader(key, val);
+            return this;
+        }
+
+        public HttpResponse build(){
+            return new HttpResponse(status, headers, modelAndView);
+        }
     }
 }

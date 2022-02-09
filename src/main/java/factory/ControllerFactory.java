@@ -3,6 +3,7 @@ package factory;
 import webserver.controller.Controller;
 import webserver.controller.common.NotFoundController;
 import webserver.controller.common.StaticController;
+import webserver.controller.post.CreatePostController;
 import webserver.controller.user.UserJoinController;
 import webserver.controller.user.UserListController;
 import webserver.controller.user.UserLoginController;
@@ -15,7 +16,8 @@ public class ControllerFactory {
             new StaticController(),
             new UserListController(RepositoryFactory.getUserRepository()),
             new UserJoinController(RepositoryFactory.getUserRepository()),
-            new UserLoginController(RepositoryFactory.getUserRepository())
+            new UserLoginController(RepositoryFactory.getUserRepository()),
+            new CreatePostController(RepositoryFactory.getPostRepository())
     );
 
     public static Controller getNotFoundController(){
