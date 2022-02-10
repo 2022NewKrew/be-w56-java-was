@@ -1,9 +1,11 @@
 package DTO;
 
+import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
 import util.SessionUtils;
 
 import java.util.HashMap;
+import java.util.IllegalFormatFlagsException;
 import java.util.Map;
 
 import static util.HttpRequestUtils.parseHeader;
@@ -45,7 +47,7 @@ public class RequestHeader {
     }
 
     public String getContentType(){
-        return headerList.get("Content-Type");
+        return HttpRequestUtils.parseType(requestUrl);
     }
 
     public String getRequestUrl(){
@@ -79,10 +81,7 @@ public class RequestHeader {
     public boolean isLogin(){
         String cookie = headerList.get("Cookie");
         String sid = SessionUtils.getSessionId(cookie);
-        if (sid != null){
-            return true;
-        }
-        return false;
+        return sid != null;
     }
 
 

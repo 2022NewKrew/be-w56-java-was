@@ -64,7 +64,7 @@ public class ModelAndView {
         byte[] body = IOUtils.readHeaderPathFile(view, responseHeader);
         byte[] dynamicBody = DynamicHtmlParsingUtils.fillDynamicHtml(body, this);
 
-        HttpResponseUtils.writeResponseHeader(responseHeader, dos);
+        HttpResponseUtils.writeResponseHeader(requestHeader, responseHeader, dos);
         HttpResponseUtils.writeResponseBody(dos, dynamicBody);
 
     }

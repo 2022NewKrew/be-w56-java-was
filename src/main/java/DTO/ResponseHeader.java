@@ -1,5 +1,8 @@
 package DTO;
 
+import util.HttpRequestUtils;
+import util.HttpResponseUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +18,8 @@ public class ResponseHeader {
         setContentType(requestHeader.getContentType());
     }
 
-    public void setContentType(String type){
+    public void setContentType(String format){
+        String type = HttpResponseUtils.mapFileFormatToType(format);
         headerList.put("Content-Type", type);
     }
 
@@ -25,11 +29,11 @@ public class ResponseHeader {
     }
 
     public void setCookie(String name, String value, Map<String,String> options){
-        String cookie = name + "=" + value;
+        StringBuilder cookie = new StringBuilder(name + "=" + value);
         for ( String option : options.keySet() ){
-            cookie = cookie + "; " + option + "=" + options.get(option);
+            cookie.append("; ").append(option).append("=").append(options.get(option));
         }
-        headerList.put("Set-Cookie", cookie);
+        headerList.put("Set-Cookie", cookie.toString());
     }
 
     public void removeCookie(String name, String value){
