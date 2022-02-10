@@ -32,6 +32,7 @@ public class MemoDaoTest {
     }
 
     @Test
+    @Disabled
     void findOneById() {
         Memo memo = memoDao.findOneById(1);
         assertThat(1)
@@ -41,6 +42,7 @@ public class MemoDaoTest {
     }
 
     @Test
+    @Disabled
     void findAll() {
         List<Memo> all = memoDao.findAll();
 

@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface SessionPort {
     void set(Session session);
-    Optional<Session> get(Long sessionId);
+    Optional<Session> get(String sessionId);
+    void remove(String sessionId);
 }

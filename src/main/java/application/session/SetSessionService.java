@@ -1,32 +1,27 @@
 package application.session;
 
-import application.exception.session.NonExistsSessionException;
 import application.in.session.SetSessionUseCase;
-import application.out.session.SessionAttributesPort;
 import application.out.session.SessionPort;
 import domain.session.Session;
+import domain.session.SessionId;
+
+import java.time.Duration;
 
 public class SetSessionService implements SetSessionUseCase {
 
     private final static int EXPIRY_HOUR = 3;
     private final SessionPort sessionPort;
-    private final SessionAttributesPort sessionAttributesPort;
 
-    public SetSessionService(SessionPort sessionPort, SessionAttributesPort sessionAttributesPort) {
+    public SetSessionService(SessionPort sessionPort) {
         this.sessionPort = sessionPort;
-        this.sessionAttributesPort = sessionAttributesPort;
     }
 
     @Override
-    public Long setSession(String name, Object value) {
-        sessionAttributesPort.set(name, value);
-        Long sessionId = sessionAttributesPort.get(name)
-                .orElseThrow(NonExistsSessionException::new)
-                .getSessionId();
+    public String setSession(String name, String value) {
+        SessionId sessionId = SessionId.create();
+        Session<String> session = new Session(sessionId, name, value, Duration.ofHours(EXPIRY_HOUR));
 
-        Session session = Session.create(sessionId, EXPIRY_HOUR);
         sessionPort.set(session);
-
-        return sessionId;
+        return sessionId.getValue();
     }
 }

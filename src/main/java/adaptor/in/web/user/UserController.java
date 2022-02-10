@@ -93,7 +93,7 @@ public class UserController {
         try {
             boolean result = loginUseCase.login(userId, password);
             if (result) {
-                Long sessionId = setSessionUseCase.setSession("loginId", userId);
+                String sessionId = setSessionUseCase.setSession("loginId", userId);
 
                 return HttpResponse.builder()
                         .status(HttpStatus.FOUND)

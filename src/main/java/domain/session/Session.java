@@ -1,36 +1,30 @@
 package domain.session;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
 
-public class Session {
+public class Session<T> {
 
-    private final Long id;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime expiryTime;
+    private final SessionId id;
+    private final String attributeName;
+    private final T attributeValue;
+    private final Duration duration;
 
-    public Session(Long id, LocalDateTime createdAt, LocalDateTime expiryTime) {
+    public Session(SessionId id, String attributeName, T attributeValue, Duration duration) {
         this.id = id;
-        this.createdAt = createdAt;
-        this.expiryTime = expiryTime;
+        this.attributeName = attributeName;
+        this.attributeValue = attributeValue;
+        this.duration = duration;
     }
 
-    public static Session create(Long id, int expiryHour) {
-        return new Session(id, LocalDateTime.now(), LocalDateTime.now().plusHours(expiryHour));
+    public String getId() {
+        return id.getValue();
     }
 
-    public Long getId() {
-        return id;
+    public T getAttributeValue() {
+        return attributeValue;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getExpiryTime() {
-        return expiryTime;
-    }
-
-    public boolean isExpired(LocalDateTime localDateTime) {
-        return expiryTime.isBefore(localDateTime);
+    public boolean isExpired() {
+        return duration.isZero();
     }
 }

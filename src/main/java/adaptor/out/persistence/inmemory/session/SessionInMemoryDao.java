@@ -5,11 +5,10 @@ import domain.session.Session;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class SessionInMemoryDao implements SessionDao {
 
-    private final static Map<Long, Session> sessions = new HashMap<>();
+    private final static Map<String, Session> sessions = new HashMap<>();
 
     @Override
     public void save(Session session) {
@@ -17,7 +16,12 @@ public class SessionInMemoryDao implements SessionDao {
     }
 
     @Override
-    public Optional<Session> findBySessionId(Long sessionId) {
-        return Optional.ofNullable(sessions.get(sessionId));
+    public Session findBySessionId(String sessionId) {
+        return sessions.get(sessionId);
+    }
+
+    @Override
+    public void delete(String sessionId) {
+        sessions.remove(sessionId);
     }
 }
