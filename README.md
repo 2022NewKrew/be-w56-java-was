@@ -30,3 +30,10 @@
 - Controller interface 를 만들어 사용.
 - UserController 는 Controller interface 를 상속.
 - UserController, UserService, DataBase 클래스 생성.
+
+# Step3
+## 요구사항
+- POST 로 회원가입 기능을 구현.
+- redirect 구현.
+- ![img_2.png](img_2.png)
+- ![img_3.png](img_3.png)
