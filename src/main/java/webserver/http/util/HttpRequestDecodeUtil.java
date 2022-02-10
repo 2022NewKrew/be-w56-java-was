@@ -1,22 +1,51 @@
-package util;
+package webserver.http.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import webserver.HttpStartLine;
+import common.ObjectUtil;
+import webserver.http.message.HttpBody;
+import webserver.http.message.HttpStartLine;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HttpRequestUtils {
+public class HttpRequestDecodeUtil {
 
-    public static HttpStartLine parseStartLine(String request) {
-        final String[] tokens = request.split(" ");
+    private HttpRequestDecodeUtil() {
+
+    }
+
+    public static HttpStartLine parseStartLine(String startLine) {
+        ObjectUtil.checkNotNull(startLine, "startLine");
+
+        final String[] tokens = startLine.split(" ");
         if(tokens.length != 3) {
-            throw new RuntimeException("[ERROR] Http Request format invalid : " + request);
+            throw new RuntimeException("[ERROR] Http Request format invalid : " + startLine);
+        }
+
+        if(tokens[1].contains("\\?")) {
+            final String[] uriAndQueryStrings = tokens[1].split("\\?");
+            return new HttpStartLine(tokens[0], uriAndQueryStrings[0], uriAndQueryStrings[1], tokens[2]);
         }
 
         return new HttpStartLine(tokens[0], tokens[1], tokens[2]);
+    }
+
+    private static Map<String, String> parseUri(String uri) {
+        return parseValues(uri, "\\?");
+    }
+
+    public static String[] parseHeaderNames(String headerLine) {
+        ObjectUtil.checkNotNull(headerLine, "headerLine");
+        int idx = headerLine.indexOf(":");
+        String key = headerLine.substring(0, idx).trim();
+        String value = headerLine.substring(idx + 1).trim();
+        return new String[]{key, value};
+    }
+
+    public static HttpBody parseBody() {
+        return new HttpBody();
     }
 
     /**
@@ -58,10 +87,6 @@ public class HttpRequestUtils {
         }
 
         return new Pair(tokens[0], tokens[1]);
-    }
-
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
     }
 
     public static class Pair {
