@@ -45,4 +45,32 @@ public class ResponseBuildInfo {
     public void setBody(byte[] body) {
         this.body = body;
     }
+
+    public static class InfoBuilder {
+        private ResponseBuildInfo responseBuildInfo = new ResponseBuildInfo();
+
+        public InfoBuilder setPath(String path) {
+            responseBuildInfo.setPath(path);
+            return this;
+        }
+
+        public InfoBuilder setRedirect(boolean redirect) {
+            responseBuildInfo.setRedirect(redirect);
+            return this;
+        }
+
+        public InfoBuilder setCookie(Map<String, String> cookie) {
+            responseBuildInfo.setCookie(cookie);
+            return this;
+        }
+
+        public InfoBuilder setBody(byte[] body) {
+            responseBuildInfo.setBody(body);
+            return this;
+        }
+
+        public ResponseBuildInfo build() {
+            return responseBuildInfo;
+        }
+    }
 }
