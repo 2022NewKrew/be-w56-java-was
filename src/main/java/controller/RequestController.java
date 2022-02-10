@@ -3,12 +3,14 @@ package controller;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
 import model.HttpResponse;
+import service.MemoService;
 import service.UserService;
 import model.builder.*;
 
 @Slf4j
 public class RequestController {
     private static final UserService userService = UserService.getInstance();
+    private static final MemoService memoService = MemoService.getInstance();
 
     private RequestController() {
 
@@ -35,6 +37,16 @@ public class RequestController {
 
         if (uri.equals("/user/logout") && method.equals("GET")) {
             return new UserLogoutResponseBuilder().build(requestHeader);
+        }
+
+        if (uri.equals("/memo/write") && method.equals("POST")) {
+            memoService.writeMemo(requestHeader);
+            return new MemoWriteResponseBuilder().build(requestHeader);
+        }
+
+
+        if ((uri.equals("/") || uri.equals("/index.html")) && method.equals("GET")) {
+            return new IndexResponseBuilder().build(requestHeader);
         }
 
         return new NormalRequestResponseBuilder().build(requestHeader);

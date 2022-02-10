@@ -13,9 +13,6 @@ public class NormalRequestResponseBuilder extends ResponseBuilder {
     @Override
     public HttpResponse build(RequestHeader requestHeader) throws IOException, SQLException {
         String uri = requestHeader.getHeader("uri");
-        if (uri.equals("/")) {
-            uri = Links.MAIN;
-        }
 
         if (!uri.contains(".")) {
             uri += ".html";
