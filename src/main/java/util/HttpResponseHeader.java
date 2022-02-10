@@ -1,16 +1,16 @@
 package util;
 
 import lombok.extern.slf4j.Slf4j;
-import model.ResponseHeader;
+import model.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 @Slf4j
-public enum HtmlResponseHeader {
+public enum HttpResponseHeader {
     RESPONSE_200() {
         @Override
-        public void response(DataOutputStream dos, ResponseHeader responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
                 dos.writeBytes("HTTP/1.1 200 OK \r\n");
                 dos.writeBytes("Content-Type: " + responseHeader.getAccept() + ";charset=utf-8\r\n");
@@ -27,11 +27,11 @@ public enum HtmlResponseHeader {
 
     REDIRECT_302() {
         @Override
-        public void response(DataOutputStream dos, ResponseHeader responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
-                log.info("302: " + responseHeader.getUri());
+                log.info("302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Location: " + responseHeader.getLocationUri() + "\r\n");
                 dos.writeBytes("Connection: keep-alive\r\n");
                 dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("\r\n");
@@ -43,11 +43,11 @@ public enum HtmlResponseHeader {
 
     REDIRECT_302_WITH_LOGIN_COOKIE() {
         @Override
-        public void response(DataOutputStream dos, ResponseHeader responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
-                log.info("Login 302: " + responseHeader.getUri());
+                log.info("Login 302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Location: " + responseHeader.getLocationUri() + "\r\n");
                 dos.writeBytes("Connection: keep-alive\r\n");
                 dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
@@ -60,11 +60,11 @@ public enum HtmlResponseHeader {
 
     REDIRECT_302_WITH_LOGOUT_COOKIE() {
         @Override
-        public void response(DataOutputStream dos, ResponseHeader responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
-                log.info("Login 302: " + responseHeader.getUri());
+                log.info("Login 302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Location: " + responseHeader.getLocationUri() + "\r\n");
                 dos.writeBytes("Connection: keep-alive\r\n");
                 dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("Set-Cookie: logined=false; Path=/ \r\n");
@@ -75,9 +75,9 @@ public enum HtmlResponseHeader {
         }
     };
 
-    HtmlResponseHeader() {
+    HttpResponseHeader() {
 
     }
 
-    public abstract void response(DataOutputStream dos, ResponseHeader responseHeader);
+    public abstract void response(DataOutputStream dos, HttpResponse responseHeader);
 }

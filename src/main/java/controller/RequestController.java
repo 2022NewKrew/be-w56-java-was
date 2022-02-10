@@ -2,39 +2,53 @@ package controller;
 
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import model.ResponseHeader;
-import model.SignUpService;
+import model.HttpResponse;
+import service.MemoService;
+import service.UserService;
 import model.builder.*;
 
 @Slf4j
 public class RequestController {
+    private static final UserService userService = UserService.getInstance();
+    private static final MemoService memoService = MemoService.getInstance();
+
     private RequestController() {
 
     }
 
-    public static ResponseHeader controlRequest(RequestHeader requestHeader) throws Exception {
+    public static HttpResponse controlRequest(RequestHeader requestHeader) throws Exception {
         String uri = requestHeader.getHeader("uri");
         String method = requestHeader.getHeader("method");
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 
         if (uri.equals("/user/create") && method.equals("POST")) {
-            SignUpService.signup(requestHeader);
-            return new PostUserCreateBuilder().build(requestHeader);
+            userService.save(requestHeader);
+            return new UserCreateResponseBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/login") && method.equals("POST")) {
-            return new PostUserLoginBuilder().build(requestHeader);
+            return new UserLoginResponseBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/list") && method.equals("GET")) {
-            return new GetUserListBuilder().build(requestHeader);
+            return new UserListResponseBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/logout") && method.equals("GET")) {
-            return new GetUserLogoutBuilder().build(requestHeader);
+            return new UserLogoutResponseBuilder().build(requestHeader);
         }
 
-        return new NormalRequestBuilder().build(requestHeader);
+        if (uri.equals("/memo/write") && method.equals("POST")) {
+            memoService.writeMemo(requestHeader);
+            return new MemoWriteResponseBuilder().build(requestHeader);
+        }
+
+
+        if ((uri.equals("/") || uri.equals("/index.html")) && method.equals("GET")) {
+            return new IndexResponseBuilder().build(requestHeader);
+        }
+
+        return new NormalRequestResponseBuilder().build(requestHeader);
     }
 }

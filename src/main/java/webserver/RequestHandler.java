@@ -8,7 +8,7 @@ import controller.RequestController;
 import exception.ExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import model.ResponseHeader;
+import model.HttpResponse;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
@@ -51,13 +51,13 @@ public class RequestHandler extends Thread {
         return requestHeader;
     }
 
-    private void writeResponse(DataOutputStream dos, ResponseHeader responseHeader) throws IOException {
+    private void writeResponse(DataOutputStream dos, HttpResponse responseHeader) throws IOException {
         responseHeader.getHtmlResponseHeader()
                 .response(dos, responseHeader);
         responseHeader.responseBody(dos);
     }
 
-    private ResponseHeader getResponseHeader(RequestHeader requestHeader) throws IOException {
+    private HttpResponse getResponseHeader(RequestHeader requestHeader) throws Exception {
         try {
             return RequestController.controlRequest(requestHeader);
         } catch (Exception exception) {

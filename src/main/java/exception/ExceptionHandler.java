@@ -1,8 +1,8 @@
 package exception;
 
 import model.RequestHeader;
-import model.ResponseHeader;
-import model.builder.ExceptionRequestBuilder;
+import model.HttpResponse;
+import model.builder.ExceptionResponseBuilder;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class ExceptionHandler {
     private ExceptionHandler() {
     }
 
-    public static ResponseHeader handleException(Exception exception, RequestHeader requestHeader) throws IOException {
+    public static HttpResponse handleException(Exception exception, RequestHeader requestHeader) throws Exception {
         exception.printStackTrace();
         // TODO Error Case에 따른 분류
         if (exception instanceof IOException) {
@@ -23,6 +23,6 @@ public class ExceptionHandler {
         }
 
         // TODO Error page 동적 출력
-        return new ExceptionRequestBuilder().build(requestHeader);
+        return new ExceptionResponseBuilder().build(requestHeader);
     }
 }
