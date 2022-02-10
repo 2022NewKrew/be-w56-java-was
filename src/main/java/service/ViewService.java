@@ -57,6 +57,17 @@ public class ViewService {
         return new HttpResponse(statusLine, headers, body);
     }
 
+    public static HttpResponse indexPage(HttpRequest httpRequest, byte[] postListBody) {
+        HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
+
+        HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.OK);
+        HttpResponseHeaders headers = new HttpResponseHeaders();
+        HttpResponseBody body = new HttpResponseBody(postListBody);
+
+        return new HttpResponse(statusLine, headers, body);
+    }
+
+
     private static boolean checkCookieLogin(HttpRequestHeaders headers){
         String cookieValue = headers.getHeaderValueByKey("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieValue);

@@ -9,6 +9,8 @@ public enum HttpRequestLineInfo {
 
     POST_REQUEST("/post/create", "POST"),
 
+    INDEX("/index", "GET"),
+    
     OTHERS(null, "GET");
 
     private final String url;

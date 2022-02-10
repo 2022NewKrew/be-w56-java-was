@@ -33,6 +33,9 @@ public class RequestController {
                 return ViewService.userListPage(httpRequest, userListBody);
             case POST_REQUEST:
                 return PostService.addPostRequest(httpRequest);
+            case INDEX:
+                byte[] postListBody = PostService.getPostListBody();
+                return ViewService.indexPage(httpRequest, postListBody);
             default:
                 return ViewService.others(httpRequest);
         }
