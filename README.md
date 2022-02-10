@@ -37,3 +37,8 @@
 - redirect 구현.
 - ![img_2.png](img_2.png)
 - ![img_3.png](img_3.png)
+
+## 구현내용
+- HttpRequest의 parsing 함수들을 separator 와, keyValueSeparator 를 입력으로 받도록 변경.
+- 이를 통해 HttpRequestHeader 에서 Content-Length 값을 얻어오는 함수 생성. 
+- HTTP Method가 POST 인 경우 httpRequestBody 를 parsing 해서 HashMap으로 만들도록 생성. 
