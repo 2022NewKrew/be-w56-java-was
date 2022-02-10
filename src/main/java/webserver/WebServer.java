@@ -1,6 +1,7 @@
 package webserver;
 
 import db.DataBase;
+import model.Post;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,9 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
         DataBase.addUser(new User("worldbright", "asdf", "최세현", "worldbright0@gmail.com"));
+        DataBase.addUser(new User("chltpgus11", "asdf", "shyun", "shyun.cream@kakaocorp.com"));
+        DataBase.addPost(new Post("worldbright", "첫 글입니다.", "2016-01-15 18:47"));
+        DataBase.addPost(new Post("chltpgus11", "두번째 글입니다.", "2016-01-15 18:50"));
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             log.info("Web Application Server started {} port.", port);
