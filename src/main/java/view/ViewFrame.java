@@ -84,7 +84,7 @@ public final class ViewFrame {
                 "                <li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>\n" +
                 "                <li><a href=\"../user/form.html\" role=\"button\">회원가입</a></li>\n" +
                 "                <li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
-                "                <li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n" +
+                "                <li><a href=\"/user/list\" role=\"button\">유저리스트</a></li>\n" +
                 "            </ul>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
