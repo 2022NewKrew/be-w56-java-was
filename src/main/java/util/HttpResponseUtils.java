@@ -1,6 +1,16 @@
 package util;
 
+import java.util.Map;
+
 public class HttpResponseUtils {
+
+    public static String cookieString(Map<String, String> cookie) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String key : cookie.keySet()) {
+            stringBuilder.append(key + "=" + cookie.get(key) + "; ");
+        }
+        return stringBuilder.toString();
+    }
 
     public static String contentTypeFromPath(String responseDataPath) {
         String[] splitPath = responseDataPath.split("\\.");

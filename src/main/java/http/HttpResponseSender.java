@@ -4,6 +4,7 @@ import enums.HttpMethod;
 import enums.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpResponseUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -38,10 +39,6 @@ public class HttpResponseSender {
         response302Header(httpResponse.getRedirectUrl());
     }
 
-    public void sendResponseLogin(boolean validLogin) {
-        responseLoginHeader(validLogin);
-    }
-
     private void response200Header() {
         try {
             dos.writeBytes(httpResponse.getProtocol().getName() + " " + httpResponse.getStatusCode().getMessage() + " \r\n");
@@ -53,27 +50,14 @@ public class HttpResponseSender {
         }
     }
 
-    public void responseLoginHeader(boolean validLogin) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            if (validLogin) {
-                dos.writeBytes("Location: /index.html \r\n");
-                dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
-            }
-            else {
-                dos.writeBytes("Location: /user/login_failed.html \r\n");
-                dos.writeBytes("Set-Cookie: logined=false; Path=/ \r\n");
-            }
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
     private void response302Header(String redirectUrl) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + redirectUrl);
+            dos.writeBytes("Location: " + redirectUrl+ "\r\n");
+            if (httpResponse.getCookie() != null) {
+                System.out.println(HttpResponseUtils.cookieString(httpResponse.getCookie()));
+                dos.writeBytes("Set-Cookie: " + HttpResponseUtils.cookieString(httpResponse.getCookie()) + " \r\n");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
