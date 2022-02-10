@@ -1,21 +1,32 @@
 package springmvc.controller;
 
+import springmvc.ModelAndView;
 import webserver.HttpMethod;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
 public abstract class Controller {
 
-    public String doService(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public ModelAndView doService(HttpRequest httpRequest, HttpResponse httpResponse) {
         if (httpRequest.getMethod().equals(HttpMethod.GET)) {
-            doGet(httpRequest, httpResponse);
+            return doGet(httpRequest, httpResponse);
         } else if (httpRequest.getMethod().equals(HttpMethod.POST)) {
-            doPost(httpRequest, httpResponse);
+            return doPost(httpRequest, httpResponse);
+        } else if (httpRequest.getMethod().equals(HttpMethod.PUT)) {
+            return doPut(httpRequest, httpResponse);
         }
-        return "";
+        return new ModelAndView();
     }
 
-    protected abstract String doGet(HttpRequest httpRequest, HttpResponse httpResponse);
+    private ModelAndView doPut(HttpRequest httpRequest, HttpResponse httpResponse) {
+        return null;
+    }
 
-    protected abstract String doPost(HttpRequest httpRequest, HttpResponse httpResponse);
+    protected ModelAndView doGet(HttpRequest httpRequest, HttpResponse httpResponse) {
+        return null;
+    };
+
+    protected ModelAndView doPost(HttpRequest httpRequest, HttpResponse httpResponse) {
+        return null;
+    };
 }

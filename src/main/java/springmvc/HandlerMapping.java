@@ -1,8 +1,6 @@
 package springmvc;
 
-import springmvc.controller.Controller;
-import springmvc.controller.LoginController;
-import springmvc.controller.UserController;
+import springmvc.controller.*;
 import webserver.HttpRequest;
 
 import java.util.HashMap;
@@ -14,6 +12,9 @@ public class HandlerMapping {
 
     static {
         controllers = new HashMap<>();
+        controllers.put("/", new MemoController());
+        controllers.put("/create", new MemoCreateController());
+        controllers.put("/user/list", new UserListController());
         controllers.put("/user/create", new UserController());
         controllers.put("/user/login", new LoginController());
     }

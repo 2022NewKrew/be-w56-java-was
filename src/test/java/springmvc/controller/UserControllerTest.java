@@ -61,14 +61,14 @@ class UserControllerTest {
         HttpResponse httpResponse = new HttpResponse();
 
         // When
-        String viewName = userController.doPost(httpRequest, httpResponse);
+        String viewName = userController.doPost(httpRequest, httpResponse).getView();
 
         // Then
         User user = DataBase.findUserById(userId).get();
         assertThat(user.getPassword()).isEqualTo(password);
         assertThat(user.getName()).isEqualTo(name);
         assertThat(user.getEmail()).isEqualTo(email);
-        assertThat(viewName).isEqualTo("redirect:/index.html");
+        assertThat(viewName).isEqualTo("/index.html");
     }
 
     @Test
@@ -93,9 +93,9 @@ class UserControllerTest {
         HttpResponse httpResponse = new HttpResponse();
 
         //When
-        String viewName = userController.doPost(httpRequest, httpResponse);
+        String viewName = userController.doPost(httpRequest, httpResponse).getView();
 
         //Then
-        assertThat(viewName).isEqualTo("redirect:/user/form_failed.html");
+        assertThat(viewName).isEqualTo("/user/form_failed.html");
     }
 }

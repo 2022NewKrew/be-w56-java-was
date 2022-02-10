@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import springmvc.FrontController;
@@ -25,8 +26,8 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            DataOutputStream dos = new DataOutputStream(out)) {
+             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+             DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = createHttpRequest(br);
             log.debug(httpRequest.toMessage());

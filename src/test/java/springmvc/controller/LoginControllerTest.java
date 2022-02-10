@@ -45,11 +45,11 @@ class LoginControllerTest {
             HttpResponse httpResponse = new HttpResponse();
 
             //When
-            String viewName = loginController.doPost(httpRequest, httpResponse);
+            String viewName = loginController.doPost(httpRequest, httpResponse).getView();
 
             //Then
             assertThat(httpResponse.getCookies().get("logined")).isEqualTo("true");
-            assertThat(viewName).isEqualTo("redirect:/index.html");
+            assertThat(viewName).isEqualTo("/");
         }
 
         @Test
@@ -64,11 +64,11 @@ class LoginControllerTest {
             HttpResponse httpResponse = new HttpResponse();
 
             //When
-            String viewName = loginController.doPost(httpRequest, httpResponse);
+            String viewName = loginController.doPost(httpRequest, httpResponse).getView();
 
             //Then
             assertThat(httpResponse.getCookies().get("logined")).isEqualTo("false");
-            assertThat(viewName).isEqualTo("redirect:/user/login_failed.html");
+            assertThat(viewName).isEqualTo("/user/login_failed.html");
         }
 
         @Test
@@ -83,11 +83,11 @@ class LoginControllerTest {
             HttpResponse httpResponse = new HttpResponse();
 
             //When
-            String viewName = loginController.doPost(httpRequest, httpResponse);
+            String viewName = loginController.doPost(httpRequest, httpResponse).getView();
 
             //Then
             assertThat(httpResponse.getCookies().get("logined")).isEqualTo("false");
-            assertThat(viewName).isEqualTo("redirect:/user/login_failed.html");
+            assertThat(viewName).isEqualTo("/user/login_failed.html");
         }
     }
 
@@ -103,10 +103,10 @@ class LoginControllerTest {
         HttpResponse httpResponse = new HttpResponse();
 
         //When
-        String viewName = loginController.doGet(httpRequest, httpResponse);
+        String viewName = loginController.doGet(httpRequest, httpResponse).getView();
 
         //Then
-        assertThat(viewName).isEqualTo("redirect:/index.html");
+        assertThat(viewName).isEqualTo("/index.html");
     }
 
 }

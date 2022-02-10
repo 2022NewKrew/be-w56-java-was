@@ -9,10 +9,9 @@ import java.util.Map;
 
 public class HandlerAdapter {
 
-    public static String handle(HttpRequest httpRequest, HttpResponse httpResponse, Controller controller) {
+    public static ModelAndView handle(HttpRequest httpRequest, HttpResponse httpResponse, Controller controller) {
 
-        controller.doService(httpRequest, httpResponse);
-        return "redirect:/";
+        return controller.doService(httpRequest, httpResponse);
 
     }
 }

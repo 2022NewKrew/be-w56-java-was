@@ -1,6 +1,7 @@
 package webserver;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class HttpResponse {
@@ -14,7 +15,7 @@ public class HttpResponse {
     public HttpResponse() {
         this.version = "HTTP/1.1";
         this.headers = new HashMap<>();
-        this.cookies = new HashMap<>();
+        this.cookies = new LinkedHashMap<>();
     }
 
     public void addCookie(String key, String value) {
