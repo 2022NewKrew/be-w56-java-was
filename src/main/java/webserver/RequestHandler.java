@@ -3,14 +3,12 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HandlerMapping;
 import util.HttpRequestUtils;
 import util.IOUtils;
+import util.RedirectPair;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -22,41 +20,46 @@ public class RequestHandler extends Thread {
     }
 
     public void run() {
-        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
             String httpRequestHeader = IOUtils.getHttpRequestHeader(br);
-            int contentLength = IOUtils.getContentLength(httpRequestHeader);
-            String httpRequestBody = IOUtils.gttHttpRequestBody(br, contentLength);
-            String httpMethod = HttpRequestUtils.getHttpMethod(httpRequestHeader);
-            String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
-
-            Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(httpMethod, url, httpRequestBody);
-            String methodPath = HttpRequestUtils.getMethodPath(url);
-            String responseUrl = url;
-            if (infoMap.isPresent())
-                responseUrl = HandlerMapping.getInstance().runMethod(methodPath, infoMap.get());
+            RedirectPair responseUrlPair = HttpRequestUtils.runMethod(
+                    httpRequestHeader, IOUtils.gttHttpRequestBody(br, IOUtils.getContentLength(httpRequestHeader))
+            );
 
             log.info("HTTP Request Header Lines : {}", httpRequestHeader);
-            log.info("url Path: {}", url);
-            log.info("Response url Path : {}", responseUrl);
+            log.info("Response url Path : {}", responseUrlPair.getUrl());
 
-            response200(new DataOutputStream(out), responseUrl);
+            createResponse(new DataOutputStream(out),responseUrlPair.getUrl() ,responseUrlPair.isRedirect());
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response200(DataOutputStream dos, String url) throws IOException {
+    private void createResponse(DataOutputStream dos, String url,boolean isRedirect) throws IOException {
         String contentType = IOUtils.getContentType(new File("./webapp" + url));
         log.info("contentType : {}", contentType);
 
         byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-        response200Header(dos, contentType, body.length);
+        if(isRedirect)
+            response302Header(dos,contentType,url,body.length);
+        else
+            response200Header(dos, contentType, body.length);
         responseBody(dos, body);
+    }
+
+    private void response302Header(DataOutputStream dos, String contentType, String url, int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
+            dos.writeBytes("Location : " + url + "\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 
     private void response200Header(DataOutputStream dos, String contentType, int lengthOfBodyContent) {
