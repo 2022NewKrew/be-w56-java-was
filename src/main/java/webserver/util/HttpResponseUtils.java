@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import webserver.http.HttpResponse;
 
-public class HttpResponseUtil {
+public class HttpResponseUtils {
 
     public static String responseLineString(HttpResponse response) {
         StringJoiner joiner = new StringJoiner(" ", "", "\r\n");

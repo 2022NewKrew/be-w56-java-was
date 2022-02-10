@@ -9,7 +9,6 @@ public class HttpRequestParams {
 
     public HttpRequestParams(String queryString) {
         this.parameters = HttpRequestUtils.parseQueryString(queryString);
-
     }
 
     public Map<String, String> getParameters() {

@@ -2,6 +2,8 @@ package webserver.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +32,7 @@ public class HttpRequestUtils {
             return Maps.newHashMap();
         }
 
-        String[] tokens = values.split(separator);
+        String[] tokens = URLDecoder.decode(values, StandardCharsets.UTF_8).split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
