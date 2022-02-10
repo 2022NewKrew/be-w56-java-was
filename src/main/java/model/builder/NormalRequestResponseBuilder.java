@@ -9,7 +9,7 @@ import util.Links;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class NormalRequestBuilder extends ResponseBuilder {
+public class NormalRequestResponseBuilder extends ResponseBuilder {
     @Override
     public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {
         String uri = requestHeader.getHeader("uri");

@@ -1,6 +1,5 @@
 package model.builder;
 
-import db.DataBase;
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.ResponseHeader;
@@ -11,10 +10,10 @@ import util.Links;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class PostUserLoginBuilder extends ResponseBuilder {
+public class UserLoginResponseBuilder extends ResponseBuilder {
     private final UserService userService;
 
-    public PostUserLoginBuilder() {
+    public UserLoginResponseBuilder() {
         userService = UserService.getInstance();
     }
 

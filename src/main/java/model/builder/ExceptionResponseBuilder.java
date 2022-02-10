@@ -9,14 +9,14 @@ import util.Links;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class PostUserCreateBuilder extends ResponseBuilder {
+public class ExceptionResponseBuilder extends ResponseBuilder {
     @Override
     public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {
         return ResponseHeader.builder()
-                .uri(Links.MAIN)
-                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
+                .uri(Links.ERROR)
+                .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
-                .accept(requestHeader.getAccept())
+                .accept("text/html")
                 .build();
     }
 }

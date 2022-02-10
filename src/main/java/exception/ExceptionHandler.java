@@ -2,7 +2,7 @@ package exception;
 
 import model.RequestHeader;
 import model.ResponseHeader;
-import model.builder.ExceptionRequestBuilder;
+import model.builder.ExceptionResponseBuilder;
 
 import java.io.IOException;
 
@@ -23,6 +23,6 @@ public class ExceptionHandler {
         }
 
         // TODO Error page 동적 출력
-        return new ExceptionRequestBuilder().build(requestHeader);
+        return new ExceptionResponseBuilder().build(requestHeader);
     }
 }

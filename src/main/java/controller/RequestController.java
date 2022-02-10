@@ -11,7 +11,7 @@ public class RequestController {
     private static final UserService userService = UserService.getInstance();
 
     private RequestController() {
-        
+
     }
 
     public static ResponseHeader controlRequest(RequestHeader requestHeader) throws Exception {
@@ -22,21 +22,21 @@ public class RequestController {
 
         if (uri.equals("/user/create") && method.equals("POST")) {
             userService.save(requestHeader);
-            return new PostUserCreateBuilder().build(requestHeader);
+            return new UserCreateResponseBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/login") && method.equals("POST")) {
-            return new PostUserLoginBuilder().build(requestHeader);
+            return new UserLoginResponseBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/list") && method.equals("GET")) {
-            return new GetUserListBuilder().build(requestHeader);
+            return new UserListResponseBuilder().build(requestHeader);
         }
 
         if (uri.equals("/user/logout") && method.equals("GET")) {
-            return new GetUserLogoutBuilder().build(requestHeader);
+            return new UserLogoutResponseBuilder().build(requestHeader);
         }
 
-        return new NormalRequestBuilder().build(requestHeader);
+        return new NormalRequestResponseBuilder().build(requestHeader);
     }
 }

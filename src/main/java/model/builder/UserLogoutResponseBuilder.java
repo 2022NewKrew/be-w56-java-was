@@ -9,7 +9,7 @@ import util.Links;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class GetUserLogoutBuilder extends ResponseBuilder {
+public class UserLogoutResponseBuilder extends ResponseBuilder {
 
     @Override
     public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {

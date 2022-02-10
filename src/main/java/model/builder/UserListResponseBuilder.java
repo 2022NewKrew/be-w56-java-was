@@ -1,8 +1,6 @@
 package model.builder;
 
-import db.DataBase;
 import dynamic.DynamicHtmlBuilder;
-import dynamic.DynamicModel;
 import model.RequestHeader;
 import model.ResponseHeader;
 import model.User;
@@ -14,10 +12,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class GetUserListBuilder extends ResponseBuilder {
+public class UserListResponseBuilder extends ResponseBuilder {
     private final UserService userService;
 
-    public GetUserListBuilder() {
+    public UserListResponseBuilder() {
         userService = UserService.getInstance();
     }
 
