@@ -2,7 +2,7 @@ package controller;
 
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import model.HtmlResponse;
+import model.HttpResponse;
 import service.UserService;
 import model.builder.*;
 
@@ -14,7 +14,7 @@ public class RequestController {
 
     }
 
-    public static HtmlResponse controlRequest(RequestHeader requestHeader) throws Exception {
+    public static HttpResponse controlRequest(RequestHeader requestHeader) throws Exception {
         String uri = requestHeader.getHeader("uri");
         String method = requestHeader.getHeader("method");
         log.info("CONTROL URI: " + uri);

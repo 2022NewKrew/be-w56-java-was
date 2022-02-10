@@ -1,7 +1,7 @@
 package exception;
 
 import model.RequestHeader;
-import model.HtmlResponse;
+import model.HttpResponse;
 import model.builder.ExceptionResponseBuilder;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ public class ExceptionHandler {
     private ExceptionHandler() {
     }
 
-    public static HtmlResponse handleException(Exception exception, RequestHeader requestHeader) throws Exception {
+    public static HttpResponse handleException(Exception exception, RequestHeader requestHeader) throws Exception {
         exception.printStackTrace();
         // TODO Error Case에 따른 분류
         if (exception instanceof IOException) {

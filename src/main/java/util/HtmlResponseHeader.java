@@ -1,7 +1,7 @@
 package util;
 
 import lombok.extern.slf4j.Slf4j;
-import model.HtmlResponse;
+import model.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
 public enum HtmlResponseHeader {
     RESPONSE_200() {
         @Override
-        public void response(DataOutputStream dos, HtmlResponse responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
                 dos.writeBytes("HTTP/1.1 200 OK \r\n");
                 dos.writeBytes("Content-Type: " + responseHeader.getAccept() + ";charset=utf-8\r\n");
@@ -27,7 +27,7 @@ public enum HtmlResponseHeader {
 
     REDIRECT_302() {
         @Override
-        public void response(DataOutputStream dos, HtmlResponse responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
                 log.info("302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
@@ -43,7 +43,7 @@ public enum HtmlResponseHeader {
 
     REDIRECT_302_WITH_LOGIN_COOKIE() {
         @Override
-        public void response(DataOutputStream dos, HtmlResponse responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
                 log.info("Login 302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
@@ -60,7 +60,7 @@ public enum HtmlResponseHeader {
 
     REDIRECT_302_WITH_LOGOUT_COOKIE() {
         @Override
-        public void response(DataOutputStream dos, HtmlResponse responseHeader) {
+        public void response(DataOutputStream dos, HttpResponse responseHeader) {
             try {
                 log.info("Login 302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
@@ -79,5 +79,5 @@ public enum HtmlResponseHeader {
 
     }
 
-    public abstract void response(DataOutputStream dos, HtmlResponse responseHeader);
+    public abstract void response(DataOutputStream dos, HttpResponse responseHeader);
 }

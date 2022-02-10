@@ -2,7 +2,7 @@ package model.builder;
 
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
-import model.HtmlResponse;
+import model.HttpResponse;
 import util.HtmlResponseHeader;
 import util.Links;
 
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class NormalRequestResponseBuilder extends ResponseBuilder {
     @Override
-    public HtmlResponse build(RequestHeader requestHeader) throws IOException, SQLException {
+    public HttpResponse build(RequestHeader requestHeader) throws IOException, SQLException {
         String uri = requestHeader.getHeader("uri");
         if (uri.equals("/")) {
             uri = Links.MAIN;
@@ -26,7 +26,7 @@ public class NormalRequestResponseBuilder extends ResponseBuilder {
             body = DynamicHtmlBuilder.getDynamicHtml(body, model);
         }
 
-        return HtmlResponse.builder()
+        return HttpResponse.builder()
                 .locationUri(uri)
                 .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
                 .body(body)
