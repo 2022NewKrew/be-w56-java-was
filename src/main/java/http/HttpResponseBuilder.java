@@ -24,6 +24,9 @@ public class HttpResponseBuilder {
 
     public void build(ResponseBuildInfo responseBuildInfo) throws IOException {
         httpResponse.setProtocol(httpRequest.getProtocol());
+        for (String key : responseBuildInfo.getCookie().keySet()) {
+            httpResponse.addCookie(key, responseBuildInfo.getCookie().get(key));
+        }
         if (responseBuildInfo.isRedirect()) {
             httpResponse.setStatusCode(HttpStatusCode._302);
             httpResponse.setRedirectUrl(responseBuildInfo.getPath());

@@ -40,7 +40,7 @@ public class HttpResponse {
         return redirectUrl;
     }
 
-    public Map getCookie() {
+    public Map<String, String> getCookie() {
         return cookie;
     }
 
