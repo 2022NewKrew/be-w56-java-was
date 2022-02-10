@@ -8,10 +8,12 @@ import util.IOUtils;
 
 import javax.xml.crypto.Data;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class WebService {
@@ -27,7 +29,6 @@ public class WebService {
 
         while(true){
             String next = bufferedReader.readLine().trim();
-            log.debug(next);
             if(next.isEmpty()){
                 break;
             }
@@ -151,12 +152,11 @@ public class WebService {
         Path openURL = Paths.get(fullURL);
 
         try{
-            byte[] openFile = Files.readAllBytes(openURL);
-            return openFile;
+            return Files.readAllBytes(openURL);
         } catch(Exception e){
             log.debug("openURL exception {}", openURL);
-            byte[] openFile = {};
-            return openFile;
+            byte[] bytes = {};
+            return bytes;
         }
     }
 

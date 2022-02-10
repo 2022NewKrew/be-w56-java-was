@@ -2,12 +2,14 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.WebService;
+import util.Header;
 
 public class RequestHandler extends Thread {
 
@@ -25,52 +27,14 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // bufferedreader API 활용
-            // java inputstream bufferedreader 변환
-
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             HashMap<String, String> parseRequest =  WebService.parseRequest(br);
 
             DataOutputStream dos = new DataOutputStream(out);
-            String url = callFunction(parseRequest);
-
-            byte[] body = WebService.openUrl(url);
-            log.debug("url compare {}, {}", url, parseRequest.get("URL"));
-            if (url.equals(parseRequest.get("URL"))){
-                response200Header(dos, body.length);
-            }
-            else{
-                response302Header(dos, url);
-            }
-
+            byte[] body = callFunction(dos, parseRequest);
             responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("Set-Cookie: logined=" + logined.toString() +"; Path=/"+ "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String redirectURL) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + redirectURL + "\r\n");
-            dos.writeBytes("Set-Cookie: logined=" + logined.toString() +"; Path=/"+ "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
         }
     }
 
@@ -83,15 +47,18 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private String callFunction(HashMap<String, String> parameters){
+    private byte[] callFunction(DataOutputStream dos, HashMap<String, String> parameters){
 
-        String method = WebService.extractFunction(parameters.get("URL"));
+        String function = WebService.extractFunction(parameters.get("URL"));
         String redirectURL = parameters.get("URL");
-        if (method.equals("create")) {
+        byte[] body = WebService.openUrl(redirectURL);
+        if (function.equals("create")) {
             User user = WebService.createUser(parameters.get("body"));
             redirectURL = "/index.html";
+            body = WebService.openUrl(redirectURL);
+
         }
-        if (method.equals("login")) {
+        if (function.equals("login")) {
             if (WebService.loginUser(parameters.get("body"))){
                 log.debug("login success");
                 redirectURL = "/index.html";
@@ -102,10 +69,28 @@ public class RequestHandler extends Thread {
                 redirectURL = "/user/login_failed.html";
                 logined = false;
             }
+            body = WebService.openUrl(redirectURL);
         }
-        log.debug("callFunction results, method : {}, redirectURL : {}", method , redirectURL);
-        return redirectURL;
+        if (function.equals("list.html")){
+            body = WebService.userList().getBytes(StandardCharsets.UTF_8);
+        }
+
+        if (parameters.get("method").equals("GET")){
+
+            Header header = Header.HEADER200;
+            header.generate200Header(body.length, logined);
+            header.generateHeader(dos);
+        }
+        else{
+            Header header = Header.HEADER302;
+            header.generate302Header(redirectURL, logined);
+            header.generateHeader(dos);
+        }
+
+        log.debug("callFunction results, function : {}, redirectURL : {}", function, redirectURL);
+        return body;
     }
+
 
 
 }
