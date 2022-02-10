@@ -1,14 +1,23 @@
 package frontcontroller.controller;
 
-import db.DataBase;
+import config.AppConfig;
 import frontcontroller.ModelView;
 import frontcontroller.MyController;
-import model.User;
+import model.Member;
+import repository.MemberRepository;
 import util.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class MemberFormController implements MyController {
+
+    private final MemberRepository memberRepository;
+
+    public MemberFormController() {
+        AppConfig appConfig = new AppConfig();
+        this.memberRepository = appConfig.memberRepository();
+    }
 
     @Override
     public ModelView process(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
@@ -34,8 +43,13 @@ public class MemberFormController implements MyController {
         String name = request.getPathVariable("name");
         String email = request.getPathVariable("email");
 
-        User user = new User(userId, password, name, email);
-        DataBase.addUser(user);
+        Member member = new Member(userId, password, name, email);
+
+        try {
+            memberRepository.save(member);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         response.setStatus(MyHttpResponseStatus.FOUND);
         ModelView mv = new ModelView("redirect:/index");

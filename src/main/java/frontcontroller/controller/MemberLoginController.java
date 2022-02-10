@@ -1,17 +1,26 @@
 package frontcontroller.controller;
 
-import db.DataBase;
+import config.AppConfig;
 import frontcontroller.ModelView;
 import frontcontroller.MyController;
-import model.User;
+import model.Member;
+import repository.MemberRepository;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 import util.MyHttpStatus;
 import util.MySession;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class MemberLoginController implements MyController {
+
+    private final MemberRepository memberRepository;
+
+    public MemberLoginController() {
+        AppConfig appConfig = new AppConfig();
+        this.memberRepository = appConfig.memberRepository();
+    }
 
     @Override
     public ModelView process(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
@@ -31,9 +40,15 @@ public class MemberLoginController implements MyController {
     private ModelView post(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
         String userId = request.getPathVariable("userId");
         String password = request.getPathVariable("password");
-        User user = DataBase.findUserById(userId);
+        Member user = null;
+        try {
+            user = memberRepository.findByUserIdAndPassword(userId, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null) {
+            System.out.println(user.getEmail());
             session.setAttribute("loginUser", user);
             session.setAttribute("logined", true);
             response.getCookie().set("logined", true);

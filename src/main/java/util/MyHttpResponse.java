@@ -17,7 +17,9 @@ public class MyHttpResponse {
     private MyHttpResponseStatus status;
     private final MyCookie cookie = new MyCookie();
 
+    // 기본 생성자가 만들어지는 것을 막는다.
     private MyHttpResponse() {
+        throw new AssertionError();
     }
 
     public MyHttpResponse(final OutputStream out) {
