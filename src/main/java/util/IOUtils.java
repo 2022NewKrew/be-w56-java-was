@@ -20,14 +20,12 @@ public class IOUtils {
 
     public static String readHtml(String path) {
         StringBuilder stringBuilder = new StringBuilder();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("./webapp/" + path));
+        try (BufferedReader br = new BufferedReader(new FileReader("./webapp/" + path))) {
             String str;
             while ((str = br.readLine()) != null) {
                 stringBuilder.append(str);
                 stringBuilder.append("\n");
             }
-            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
