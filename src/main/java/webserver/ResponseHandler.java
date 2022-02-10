@@ -39,11 +39,13 @@ public class ResponseHandler {
         }
     }
 
-    public void response302Header(String location, String cookie) {
+    public void response302Header(String location, String... cookies) {
         try {
             dos.writeBytes("HTTP/1.1 " + HttpStatus.FOUND + Constants.LINE_DELIMITER);
             dos.writeBytes("Location: " + location + Constants.LINE_DELIMITER);
-            dos.writeBytes("Set-Cookie: " + cookie + Constants.LINE_DELIMITER);
+            for (String cookie : cookies) {
+                dos.writeBytes("Set-Cookie: " + cookie + Constants.LINE_DELIMITER);
+            }
             dos.writeBytes(Constants.LINE_DELIMITER);
         } catch (IOException e) {
             log.error(e.getMessage(), e);

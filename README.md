@@ -39,3 +39,15 @@
   * HttpRequestBody의 내용도 같은 방식으로 decode할 수 있는 것을 알게 됐다.
 * TemplateEngine이 reflection을 통해 구현된 것을 알게 됐다.
 * Interface의 default method에 대해서 알게 됐다.
+
+## Step 7
+
+### 요구사항
+* H2 또는 MySQL 혹은 NoSQL 등 데이터베이스를 활용하여 회원정보를 DB에 저장한다.
+* index.html에 로그인한 사용자가 글을 쓸 수 있는 한 줄 메모장을 구현한다.
+* 로그인하지 않은 사용자도 게시글을 볼 수 있다.
+
+### 새롭게 알게된 내용
+* Singleton 패턴에 대해서 더 알게 됐다.
+  * LazyHolder를 이용한 Singleton 패턴 구현에 대해 알게 됐다.
+  * reference : https://injae-kim.github.io/dev/2020/08/06/singleton-pattern-usage.html
