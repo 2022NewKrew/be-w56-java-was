@@ -2,6 +2,7 @@ package model;
 
 import com.google.common.base.Strings;
 import exceptions.BadRequestFormatException;
+import exceptions.InvalidQueryFormatException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Objects;
 public class StartLine {
 
     private static int START_LINE_TOKEN_SIZE = 3;
+    private static int QUERY_KEY_VALUE_SIZE = 2;
 
     private static Map<String, String> parseQuery(String target) {
         if (!target.contains("?")) {
@@ -23,6 +25,9 @@ public class StartLine {
         List<String> queries = List.of(parseString.split("&"));
         for (String query : queries) {
             List<String> splitQuery = List.of(query.split("="));
+            if (splitQuery.size() != QUERY_KEY_VALUE_SIZE) {
+                throw new InvalidQueryFormatException("query 형식이 맞지 않습니다");
+            }
             queryMap.put(splitQuery.get(0), splitQuery.get(1));
         }
         return queryMap;
@@ -51,7 +56,8 @@ public class StartLine {
     private final HttpVersion httpVersion;
 
     private StartLine(HttpMethod httpMethod, String url, Map<String, String> query, HttpVersion httpVersion) {
-        if (Objects.isNull(httpMethod) || Strings.isNullOrEmpty(url) || Objects.isNull(query) || Objects.isNull(httpVersion)) {
+        if (Objects.isNull(httpMethod) || Strings.isNullOrEmpty(url) || Objects.isNull(query) || Objects.isNull(
+                httpVersion)) {
             throw new BadRequestFormatException(
                     String.format("start line의 인자가 부족합니다 %s %s %s %s", httpMethod, url, query, httpVersion));
         }
