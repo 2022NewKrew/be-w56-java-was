@@ -14,7 +14,7 @@ public class HttpResponse {
     private String responseContentType;
     private String responseDataPath;
     private String redirectUrl;
-    private Map cookie = new HashMap<>();
+    private Map<String, String> cookie = new HashMap<>();
 
     public HttpProtocol getProtocol() {
         return protocol;
