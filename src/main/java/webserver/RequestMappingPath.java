@@ -1,22 +1,18 @@
 package webserver;
 
-import db.DataBase;
 import model.Request;
 import model.Response;
 import model.User;
+import repository.UserRepository;
 import service.AuthService;
 import util.Cookie;
 import util.HttpStatus;
-import util.MIME;
 
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static util.TemplateEngineUtils.renderDynamicTemplate;
 import static webserver.WebServer.DEFAULT_PATH;
@@ -65,11 +61,11 @@ public enum RequestMappingPath {
     },
     USER_LIST("/user/list") {
         @Override
-        public Response handle(Request request, DataOutputStream dos) throws IOException {
+        public Response handle(Request request, DataOutputStream dos) {
             Response.Builder result = new Response.Builder(dos)
                     .contentType(request.getContentType());
             if(request.getCookies().get("logined").equals("true")){
-                Collection<User> users = DataBase.findAll();
+                Collection<User> users = userRepository.findAll();
                 result.status(HttpStatus.OK)
                         .body(renderDynamicTemplate(users, "/user/list.html").getBytes());
             } else {
@@ -79,6 +75,12 @@ public enum RequestMappingPath {
             return result.build();
         }
     };
+
+    private static final UserRepository userRepository;
+
+    static {
+        userRepository = new UserRepository();
+    }
 
     private final String path;
 
