@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.MemoController;
 import controller.UserController;
 import model.HttpRequest;
 import model.Pair;
@@ -29,19 +30,23 @@ public class RequestHandler implements Callable<Void> {
     private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
 
     private static final String LOCATION_USER_PREFIX = "/user/";
+    private static final String LOCATION_MEMO_PREFIX = "/memo/";
 
     private final Socket connection;
     private final UserController userController;
+    private final MemoController memoController;
     private final ResponseWriter responseWriter;
 
     public RequestHandler(
             final Socket connectionSocket,
             final UserController userController,
+            final MemoController memoController,
             final ResponseWriter responseWriter
     )
     {
         this.connection = connectionSocket;
         this.userController = userController;
+        this.memoController = memoController;
         this.responseWriter = responseWriter;
     }
 
@@ -65,7 +70,7 @@ public class RequestHandler implements Callable<Void> {
                 processGet(out, location, userId);
             }
             else if (method == HttpMethod.POST) {
-                processPost(out, location, httpRequest.getBody());
+                processPost(out, location, userId, httpRequest.getBody());
             }
             else {
                 responseWriter.writeErrorResponse(out);
@@ -181,11 +186,16 @@ public class RequestHandler implements Callable<Void> {
     private void processPost(
             final OutputStream out,
             final String location,
+            final String userId,
             final Body body
     ) throws IOException
     {
-        if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
+        if (location.startsWith(LOCATION_USER_PREFIX)) {
             responseWriter.writeRedirectResponse(out, userController.processPost(location, body));
+            return;
+        }
+        if (location.startsWith(LOCATION_MEMO_PREFIX)) {
+            responseWriter.writeRedirectResponse(out, memoController.processPost(location, userId, body));
             return;
         }
 

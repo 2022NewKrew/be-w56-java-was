@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import util.Checker;
 
 import java.time.Instant;
@@ -9,6 +10,10 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Memo {
+    public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_USER_ID = "userId";
+    public static final String KEY_BODY = "body";
+
     public static final int BODY_MIN = 1;
     public static final int BODY_MAX = 255;
 
@@ -30,6 +35,17 @@ public class Memo {
         this.userId = userId;
         this.body = body.trim();
         this.createdAt = DT_FORMATTER.format(Instant.now());
+    }
+
+    public Memo(final JSONObject jsonUser) throws IllegalArgumentException
+    {
+        validate(
+                jsonUser.getString(KEY_USER_ID),
+                jsonUser.getString(KEY_BODY)
+        );
+        this.userId = jsonUser.getString(KEY_USER_ID);
+        this.body = jsonUser.getString(KEY_BODY);
+        this.createdAt = jsonUser.getString(KEY_CREATED_AT);
     }
 
     private void validate(
