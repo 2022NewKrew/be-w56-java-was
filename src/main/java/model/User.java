@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.bson.types.ObjectId;
 
 public class User extends BaseTime {
@@ -34,11 +35,11 @@ public class User extends BaseTime {
     }
 
     public User(String userId, String password, String name, String email) {
-        this(new ObjectId(), userId, password, name, email, LocalDateTime.now());
+        this(new ObjectId(), userId, password, name, email, LocalDateTime.now(ZoneOffset.UTC));
     }
 
     public User(ObjectId id, String userId, String password, String name, String email) {
-        this(id, userId, password, name, email, LocalDateTime.now());
+        this(id, userId, password, name, email, LocalDateTime.now(ZoneOffset.UTC));
     }
 
     private void checkId(ObjectId id) {
