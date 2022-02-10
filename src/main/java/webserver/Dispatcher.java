@@ -39,6 +39,6 @@ public class Dispatcher {
             // Try static handling
             modelAndView = new ModelAndView(httpRequest.getPath());
         }
-        modelAndView.render(httpRequest, httpResponse);
+        modelAndView.render(httpResponse);
     }
 }

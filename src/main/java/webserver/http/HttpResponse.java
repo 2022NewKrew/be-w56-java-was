@@ -34,6 +34,11 @@ public class HttpResponse {
         headers.put("Content-type", contentType + ";charset=" + ENCODING.name());
     }
 
+    public void setBody(String body) {
+        this.body = body.getBytes(ENCODING);
+        headers.put("Content-Length", String.valueOf(this.body.length));
+    }
+
     public void setBody(byte[] body) {
         this.body = body;
         headers.put("Content-Length", String.valueOf(body.length));
