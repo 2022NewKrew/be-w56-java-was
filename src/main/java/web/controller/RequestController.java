@@ -1,5 +1,6 @@
 package web.controller;
 
+import service.PostService;
 import service.ViewService;
 import web.http.request.HttpRequest;
 import web.http.request.HttpRequestLine;
@@ -28,7 +29,13 @@ public class RequestController {
             case LOGIN_REQUEST:
                 return UserService.login(httpRequest);
             case USER_LIST_PAGE:
-                return ViewService.userListPage(httpRequest);
+                byte[] userListBody = UserService.getUserListBody();
+                return ViewService.userListPage(httpRequest, userListBody);
+            case POST_REQUEST:
+                return PostService.addPostRequest(httpRequest);
+            case INDEX:
+                byte[] postListBody = PostService.getPostListBody();
+                return ViewService.indexPage(httpRequest, postListBody);
             default:
                 return ViewService.others(httpRequest);
         }
