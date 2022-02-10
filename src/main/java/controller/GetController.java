@@ -1,6 +1,6 @@
 package controller;
 
-import db.DataBase;
+import db.UserRepository;
 import domain.HttpController;
 import domain.HttpResponse;
 import domain.RequestLine;
@@ -13,6 +13,8 @@ import java.util.*;
 
 public class GetController implements Controller {
 
+    private static final UserRepository userRepository = UserRepository.getInstance();
+
     @Override
     public void control(DataOutputStream dos, BufferedReader bufferedReader, RequestLine requestLine) throws IOException {
         HttpController httpController = init(bufferedReader, requestLine);
@@ -20,7 +22,7 @@ public class GetController implements Controller {
 
         switch (httpController.getRequestPath()) {
             case "/user/list.html":
-                List<User> users = new ArrayList<>(DataBase.findAll());
+                List<User> users = userRepository.findAll();
 
                 String cookie = httpController.getCookie("logined");
 

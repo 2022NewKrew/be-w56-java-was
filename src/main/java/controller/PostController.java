@@ -1,6 +1,6 @@
 package controller;
 
-import db.DataBase;
+import db.UserRepository;
 import domain.*;
 import model.User;
 import org.slf4j.Logger;
@@ -13,6 +13,7 @@ import java.io.IOException;
 public class PostController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(PostController.class);
+    private static final UserRepository userRepository = UserRepository.getInstance();
 
     @Override
     public void control(DataOutputStream dos, BufferedReader bufferedReader, RequestLine requestLine) throws IOException {
@@ -22,14 +23,14 @@ public class PostController implements Controller {
         switch (httpController.getRequestPath()) {
             case "/user/create":
                 User user = new User(httpBody.get("userId"), httpBody.get("password"), httpBody.get("name"), httpBody.get("email"));
-                DataBase.addUser(user);
-                log.info("FindUser : {}", DataBase.findUserById(httpBody.get("userId")));
+                userRepository.addUser(user);
+                log.info("FindUser : {}", userRepository.findUserById(httpBody.get("userId")));
 
                 HttpResponse.response302(dos, "/index.html");
                 break;
 
             case "/user/login":
-                User findUser = DataBase.findUserById(httpBody.get("userId"));
+                User findUser = userRepository.findUserById(httpBody.get("userId"));
                 String redirectPath = selectLoginRedirectPath(httpBody.get("password"), findUser);
                 String cookie = selectLoginCookie(httpBody.get("password"), findUser);
 
