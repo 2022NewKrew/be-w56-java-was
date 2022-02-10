@@ -11,7 +11,7 @@ public class HeaderMaker {
 
     public static String make(Response response, String httpVersion, int lengthOfContent) {
         ContentType contentType = HttpRequestUtils.parseExtension(response.getPath());
-        String headerLine = HeaderLineMaker.make(response.getStatusCode(), httpVersion);
+        String headerLine = headerLine(response.getStatusCode(), httpVersion);
         HttpStatus statusCode = response.getStatusCode();
         if (statusCode.equals(HttpStatus.FOUND)) {
             return headerLine + locationHeader(response.getPath()) + cookieHeader(response);
@@ -20,6 +20,10 @@ public class HeaderMaker {
             return headerLine + contentTypeHeader(contentType, lengthOfContent) + cookieHeader(response);
         }
         return headerLine + cookieHeader(response);
+    }
+
+    private static String headerLine(HttpStatus statusCode, String httpVersion) {
+        return httpVersion + " " + statusCode.getDescription() + " " + NEXT_LINE;
     }
 
     private static String cookieHeader(Response response) {
