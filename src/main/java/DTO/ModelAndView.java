@@ -1,17 +1,20 @@
 package DTO;
 
-import util.HtmlParser;
+import model.Model;
+import util.DynamicHtmlParsingUtils;
 import util.HttpResponseUtils;
 import util.IOUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ModelAndView {
     final static private String PREFIX_REDIRECT = "redirect:";
-    Map<String, Object> model = new HashMap<>();
+    Map<String, Model> model = new HashMap<>();
+    Map<String, List<Model>> modelList = new HashMap<>();
     String view;
     // todo : model paramter 전달 시, 해당 내용 추가!
     public ModelAndView(String viewName){
@@ -25,9 +28,23 @@ public class ModelAndView {
 
     public String getViewName() { return view;}
 
-    public void addObject(String name, Object value){
+    public List<Model> getModelList(String param) { return modelList.get(param); }
+
+    public Model getModel(String param) { return model.get(param); }
+
+    private Map<String, Model> getModelMap() {return model;}
+
+    private Map<String, List<Model>> getModelListMap() {return modelList;}
+
+    public void addObject(String name, Model value){
         model.put(name, value);
     }
+
+    public void addObject(String name, List<Model> value){
+        modelList.put(name, value);
+    }
+
+
 
     private boolean checkAndRemoveRedirect(){
         if (view.startsWith(PREFIX_REDIRECT)){
@@ -46,7 +63,7 @@ public class ModelAndView {
         }
 
         byte[] body = IOUtils.readHeaderPathFile(view, responseHeader);
-        byte[] dynamicBody = HtmlParser.fillDynamicHtml(body);
+        byte[] dynamicBody = DynamicHtmlParsingUtils.fillDynamicHtml(body, this);
 
         HttpResponseUtils.writeResponseHeader(responseHeader, dos);
         HttpResponseUtils.writeResponseBody(dos, dynamicBody);
