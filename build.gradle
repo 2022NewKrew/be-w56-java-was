@@ -24,6 +24,10 @@ dependencies {
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
 
     implementation 'org.mongodb:mongodb-driver-sync:4.4.1'
+
+    // https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api
+    implementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+
 }
 
 test {
