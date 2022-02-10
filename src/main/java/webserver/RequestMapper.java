@@ -8,6 +8,7 @@ import network.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpResponseUtils;
+import util.annotation.AnnotationHandler;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -25,6 +26,10 @@ public class RequestMapper {
         switch (httpMethod.name()) {
             case "GET" : controller = getMapping(path); break;
             case "POST" : controller = postMapping(path); break;
+        }
+
+        if (controller != null) {
+            AnnotationHandler.handle(controller);
         }
         return controller == null ? defaultPath : controller;
     }

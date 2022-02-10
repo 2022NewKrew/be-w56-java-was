@@ -7,8 +7,17 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import network.HttpRequest;
 
 public class HttpRequestUtils {
+
+    public static boolean checkLoginCookie(HttpRequest httpRequest) {
+        Map<String, String> headers = httpRequest.getHeaders();
+        Map<String, String> cookies = HttpRequestUtils.parseCookies(headers.get("Cookie"));
+        String logined = cookies.get("logined");
+        if (logined == null) return false;
+        return Boolean.parseBoolean(logined);
+    }
 
     public static String contentNegotation (String accept) {
         String mime = accept.split(",")[0];
