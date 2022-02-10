@@ -9,6 +9,8 @@ import java.util.List;
 public class H2Repository<T extends H2Entity, ID> implements H2RepositoryIfs<T, ID> {
 
     private final Class<T> classType;
+    private static final String SELECT_QUERY = "select entity from %s entity";
+    private static final String SELECT_ORDER_BY_QUERY = "select entity from %s entity order by entity.%s %s";
 
     public H2Repository(Class<T> classType) {
         this.classType = classType;
@@ -26,7 +28,7 @@ public class H2Repository<T extends H2Entity, ID> implements H2RepositoryIfs<T, 
             e.printStackTrace();
             tx.rollback();
         } finally {
-            em.clear();
+            em.close();
         }
     }
 
@@ -41,7 +43,18 @@ public class H2Repository<T extends H2Entity, ID> implements H2RepositoryIfs<T, 
     @Override
     public List<T> findAll() {
         EntityManager em = H2EntityManagerFactory.emf.createEntityManager();
-        List<T> findAll = em.createQuery(String.format("select entity from %s entity", classType.getName()), classType)
+        List<T> findAll = em.createQuery(String.format(SELECT_QUERY, classType.getName()), classType)
+                .getResultList();
+        em.close();
+        return findAll;
+    }
+
+    @Override
+    public List<T> findAll(Sort sort) {
+        EntityManager em = H2EntityManagerFactory.emf.createEntityManager();
+        Sort.Direction direction = sort.getDirection();
+        String property = sort.getProperty();
+        List<T> findAll = em.createQuery(String.format(SELECT_ORDER_BY_QUERY, classType.getName(), property, direction), classType)
                 .getResultList();
         em.close();
         return findAll;

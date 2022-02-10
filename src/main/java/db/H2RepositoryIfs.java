@@ -9,4 +9,6 @@ public interface H2RepositoryIfs<T, ID> {
     T findById(ID id);
 
     List<T> findAll();
+
+    List<T> findAll(Sort sort);
 }

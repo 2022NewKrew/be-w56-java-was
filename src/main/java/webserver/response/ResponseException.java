@@ -25,9 +25,9 @@ public class ResponseException {
         Model model = new Model();
         List<Message> messageList = new ArrayList<>();
         messageList.add(message);
-        model.setAttribute("error",messageList);
+        model.setAttribute("alert", messageList);
         HtmlBuilder htmlBuilder = new HtmlBuilder();
-        String html = htmlBuilder.build("./webapp/error.html", model);
+        String html = htmlBuilder.build("./webapp/alert.html", model);
         byte[] body = html.getBytes();
         return new ResponseBuilder()
                 .setHttpStatus(httpStatus)

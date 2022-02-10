@@ -6,6 +6,8 @@ import webserver.RequestHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class IOUtils {
 
@@ -24,7 +26,7 @@ public class IOUtils {
         if (result == -1) {
             return null;
         }
-        String bodyString = String.copyValueOf(body);
+        String bodyString = URLDecoder.decode(String.copyValueOf(body), StandardCharsets.UTF_8);
         log.debug("request body : {}",bodyString);
         return bodyString;
     }
