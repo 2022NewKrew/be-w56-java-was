@@ -159,7 +159,7 @@ public class RequestHandler implements Callable<Void> {
             final String userId
     ) throws IOException
     {
-        if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
+        if (location.startsWith(LOCATION_USER_PREFIX)) {
             try {
                 final Body body = userController.processGet(location, userId);
                 if (body.isNotEmpty()) {
@@ -193,8 +193,7 @@ public class RequestHandler implements Callable<Void> {
         if (location.startsWith(LOCATION_USER_PREFIX)) {
             responseWriter.writeRedirectResponse(out, userController.processPost(location, body));
             return;
-        }
-        if (location.startsWith(LOCATION_MEMO_PREFIX)) {
+        } else if (location.startsWith(LOCATION_MEMO_PREFIX)) {
             responseWriter.writeRedirectResponse(out, memoController.processPost(location, userId, body));
             return;
         }
