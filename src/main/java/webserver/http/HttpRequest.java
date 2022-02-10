@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -49,13 +50,14 @@ public class HttpRequest {
         String requestLine = br.readLine();
 
         String[] splitRequestLine = requestLine.split(" ");
-        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(splitRequestLine[0]))
-                          .uri(splitRequestLine[1])
-                          .path(splitRequestLine[1].substring(0, splitRequestLine[1].contains(
-                                  "?") ? splitRequestLine[1].lastIndexOf("?") : splitRequestLine[1].length()))
-                          .queryStrings(parseQueryString(
-                                  splitRequestLine[1].substring(splitRequestLine[1].lastIndexOf("?") + 1)))
-                          .httpVersion(splitRequestLine[2]);
+        String method = splitRequestLine[0];
+        String uri = splitRequestLine[1];
+        String version = splitRequestLine[2];
+        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(method))
+                          .uri(uri)
+                          .path(uri.substring(0, uri.contains("?") ? uri.lastIndexOf("?") : uri.length()))
+                          .queryStrings(parseQueryString(uri.substring(uri.lastIndexOf("?") + 1)))
+                          .httpVersion(version);
     }
 
     private static void parseRequestHeaders(BufferedReader br,
@@ -88,8 +90,8 @@ public class HttpRequest {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                     .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                     .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {
