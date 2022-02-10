@@ -1,8 +1,7 @@
 package service;
 
-import db.DataBase;
-import db.UserRepository;
-import db.UserRepositoryImpl;
+import db.user.UserRepository;
+import db.user.UserRepositoryImpl;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -12,9 +12,8 @@ import util.RequestMapping;
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final UserService userService = UserService.getInstance();
-
     private static final UserController userController = new UserController();
+    private final UserService userService = UserService.getInstance();
 
     private UserController(){}
 

@@ -1,6 +1,7 @@
 package http;
 
 
+import controller.ArticleController;
 import controller.Controller;
 import controller.IndexController;
 import controller.UserController;
@@ -23,6 +24,7 @@ public class HandlerMapper {
     private HandlerMapper(){
         controllerMap.put("/", IndexController.getInstance());
         controllerMap.put("/users", UserController.getInstance());
+        controllerMap.put("/articles", ArticleController.getInstance());
     }
 
     public static HandlerMapper getInstance(){
