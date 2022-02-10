@@ -1,7 +1,7 @@
 package controller;
 
 import db.DataBase;
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public class UserCreateController implements Controller {
         for (String pair : splitUserBodyString) {
             String[] split = pair.split(KEY_VALUE_SPLIT_DELIMITER);
             if (split.length != KEY_VALUE_SPLIT_RESULT_SIZE) {
-                throw new BadRequestFormatException("user의 인자가 부족합니다");
+                throw new InvalidRequestFormatException("user의 인자가 부족합니다");
             }
             userElementMap.put(
                     URLDecoder.decode(split[0], StandardCharsets.UTF_8),

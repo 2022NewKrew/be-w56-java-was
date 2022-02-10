@@ -1,15 +1,11 @@
 package model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 import exceptions.InvalidHttpMethodException;
 import exceptions.InvalidHttpVersionException;
 import exceptions.InvalidQueryFormatException;
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +25,7 @@ class StartLineTest {
     @ParameterizedTest(name = "startLineMessage = {0}")
     @ValueSource(strings = {"/index.html HTTP/1.1", "GET POST /index.html HTTP/1.1", "GET"})
     void of_FailedBy_WrongNumberOfToken(String startLineMessage) {
-        Assertions.assertThrows(BadRequestFormatException.class,
+        Assertions.assertThrows(InvalidRequestFormatException.class,
                 () -> StartLine.of(startLineMessage));
     }
 
@@ -54,7 +50,7 @@ class StartLineTest {
     void of_FailedBy_EmptyString() {
         String startLineMessage = "";
 
-        Assertions.assertThrows(BadRequestFormatException.class,
+        Assertions.assertThrows(InvalidRequestFormatException.class,
                 () -> StartLine.of(startLineMessage));
     }
 

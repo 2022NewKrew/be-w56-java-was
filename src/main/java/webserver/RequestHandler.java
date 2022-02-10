@@ -2,7 +2,7 @@ package webserver;
 
 import controller.Controller;
 import controller.ControllerType;
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 import exceptions.InvalidHttpMethodException;
 import exceptions.exceptionHandler;
 import java.io.IOException;
@@ -34,8 +34,8 @@ public class RequestHandler extends Thread {
             View.sendResponse(out, httpResponse.message());
         } catch (InvalidHttpMethodException invalidHttpMethodException) {
             exceptionHandler.httpMethodNotFound(out, invalidHttpMethodException.getMessage());
-        } catch (BadRequestFormatException badRequestFormatException) {
-            exceptionHandler.badRequestFormat(out, badRequestFormatException.getMessage());
+        } catch (InvalidRequestFormatException invalidRequestFormatException) {
+            exceptionHandler.badRequestFormat(out, invalidRequestFormatException.getMessage());
         }
     }
 

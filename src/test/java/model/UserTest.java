@@ -1,6 +1,6 @@
 package model;
 
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class UserTest {
     @CsvSource(value = {"null, password, name, email@test", "userId, null, name, email@test",
             "userId, password, null, email@test", "userId, password, name, null"}, nullValues = {"null"})
     void User_Failed_By_Null(String userId, String password, String name, String email) {
-        Assertions.assertThrows(BadRequestFormatException.class,
+        Assertions.assertThrows(InvalidRequestFormatException.class,
                 () -> new User(userId, password, name, email));
     }
 }

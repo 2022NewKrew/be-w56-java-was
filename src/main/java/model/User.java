@@ -1,6 +1,6 @@
 package model;
 
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 
 public class User {
 
@@ -11,7 +11,7 @@ public class User {
 
     public User(String userId, String password, String name, String email) {
         if (userId == null || password == null || name == null || email == null) {
-            throw new BadRequestFormatException("User의 인자가 부족합니다");
+            throw new InvalidRequestFormatException("User의 인자가 부족합니다");
         }
         this.userId = userId;
         this.password = password;
