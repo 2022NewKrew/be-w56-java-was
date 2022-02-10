@@ -53,27 +53,44 @@ public class HtmlUtils {
     }
 
     /**
+     * {{#foo}} 태그로 시작하고 {{/foo}} 태그로 끝나는 코드에 전달받은 데이터를 삽입해줌.
+     * @param sectionBase
+     * @param model
+     * @return
+     */
+    private static StringBuilder renderSection(String sectionBase, Object model) {
+        if (model instanceof List) {
+            List<Object> models = (List<Object>) model;
+            return renderSection(sectionBase, models);
+        }
+
+        StringBuilder renderedSection = new StringBuilder();
+
+        try {
+            StringBuilder sb = new StringBuilder(sectionBase);
+            Field[] fields = model.getClass().getDeclaredFields();
+            for(Field field : fields) {
+                field.setAccessible(true);
+                replaceTagWithData(sb, field.getName(), field.get(model));
+            }
+            renderedSection.append(sb);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return renderedSection; 
+    }
+
+    /**
      * List 객체인 model 을 순회하면서, 데이터가 삽입된 section 코드를 반복 생성
      *
      * @param sectionBase section 코드 (html 내에서 {{#foo}} 로 시작하고 {{/foo}} 로 끝나는 부분)
-     * @param model 코드에 삽입할 데이터 List
+     * @param models 코드에 삽입할 데이터 List
      * @return 생성된 문자열
      */
-    private static StringBuilder renderSection(String sectionBase, Object model) {
+    private static StringBuilder renderSection(String sectionBase, List<Object> models) {
         StringBuilder renderedSection = new StringBuilder();
-        List<Object> models = (List<Object>) model;
         for (Object m : models) {
-            try {
-                StringBuilder sb = new StringBuilder(sectionBase);
-                Field[] fields = m.getClass().getDeclaredFields();
-                for(Field field : fields) {
-                    field.setAccessible(true);
-                    replaceTagWithData(sb, field.getName(), field.get(m));
-                }
-                renderedSection.append(sb);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            renderedSection.append(renderSection(sectionBase, m));
         }
         return renderedSection;
     }
