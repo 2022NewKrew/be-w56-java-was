@@ -12,7 +12,7 @@ import webserver.controller.PostController;
 import webserver.manage.RequestParser;
 
 public class RequestHandler extends Thread {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Socket connection;
 

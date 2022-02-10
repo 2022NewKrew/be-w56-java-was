@@ -55,7 +55,19 @@
   - 네트워크로 넘어오는 값들의 특수문자가 아스키코드값으로 들어와서, 출력에 영향을 받음
   - 따라서 중간에 변환과정이 필요할 것 같음 ( 아스키 -> 특수문자 )
   - https://stackoverflow.com/questions/9193078/converted-to-40-in-httppost-request
-  
+- LogBack 을 사용하여 파일에 로그 기록
+  - 최상단 위치에 파일명을 기반으로 로그 파일이 하나씩 생성됨
+  - 만일 별도의 폴더경로를 포함하지 않는다면 해당 로그를 ignore 처리하기 위해서는 regex 형태의 값을 작성해야함
+    - https://unix.stackexchange.com/questions/31790/what-is-the-gitignore-pattern-equivalent-of-the-regex-bigsmallstatecity
+  - 하지만 이러한 작업은 굉장히 번거롭고, 프로젝트 폴더가 굉장히 복잡해질 수 있으므로 log 폴더에 파일이 생성되도록 수정
+- LoggerFactory 의 파라미터를 this.getClass() 로 일괄 변경
+  - 이를 위해 static 변수를 멤버변수로 변경 ( this 를 사용하기 위함 )
+  - 다만, WebServer 클래스의 경우 static 함수에서 로그를 기록하므로 기존 상태를 유지
+- nGrinder 로 과부하 테스트를 진행 시도
+  - 근데 http://localhost:8080/ 에 대해서 자꾸만 정상적인 주소 포멧이 아니라는 에러가 발생
+  - 결국 대신에 네이버로 시도하도록 변경
+  - 아무래도 주소포멧의 기본형태가 [.] 을 포함함 도메인 형태를 갖추도록 되어있는 것으로 유추됨
+
 # 참고 사이트
 - HTTP Header
   - https://dev-ezic.tistory.com/8?category=773711
@@ -82,4 +94,10 @@
 - 깃 병합
   - https://milooy.wordpress.com/2015/12/15/git-rebase-push-error/
   - https://planbs.tistory.com/entry/Git-Pull-request%EC%97%90%EC%84%9C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-%EC%B6%A9%EB%8F%8C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
-
+- LogBack
+  - https://livenow14.tistory.com/64
+- GC 모니터링
+  - https://ktdsoss.tistory.com/436
+  - https://d2.naver.com/helloworld/6043
+- nGrinder
+  - https://blog.naver.com/wideeyed/222173944239

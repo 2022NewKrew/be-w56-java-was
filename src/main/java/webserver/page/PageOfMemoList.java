@@ -6,7 +6,7 @@ import java.util.List;
 
 public class PageOfMemoList {
 
-    public static String draw(List<Memo> memoList) {
+    public static String draw(List<Memo> memoList, boolean isLogin) {
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\n" +
                 "<html lang=\"kr\">\n" +
@@ -110,12 +110,17 @@ public class PageOfMemoList {
                 "          </table>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
-                "    <div>" +
-                "        <form method=\"post\" action=\"/memo/add\" >" +
-                "            <input name=\"writer\" />" +
-                "            <input name=\"memo\" />" +
-                "            <input type=\"submit\" value=\"제출\"/>" +
-                "        </form>" +
+                "    <div>");
+
+        if(isLogin) {
+            sb.append(
+                    "        <form method=\"post\" action=\"/memo/add\" >" +
+                            "            <textarea name=\"memo\"></textarea>" +
+                            "            <input type=\"submit\" value=\"제출\"/>" +
+                            "        </form>");
+        }
+
+        sb.append(
                 "    </div>" +
                 "</div>\n" +
                 "\n" +

@@ -1,83 +1,46 @@
 package webserver.controller;
 
-import db.DataBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 import webserver.manage.RequestParser;
-import webserver.page.PageOfMemoList;
-import webserver.page.PageOfUserList;
-import webserver.response.format.ForwardResponseFormat;
-import webserver.response.format.ResponseFormat;
-import webserver.response.ResponseCode;
+import webserver.service.GetService;
 
 import java.io.*;
 
 public class GetController implements MethodController {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     RequestParser rp;
-    OutputStream os;
+    GetService gs;
 
-    private final String LOGIN_KEY = "logined";
 
     private final String MEMO_LIST = "/index";
 
     private final String USER_LIST = "/user/list";
-    private final String LOGIN_PAGE = "/user/login.html";
 
     private final String HTML_MEMO_LIST = "/index.html";
     private final String HTML_USER_LIST = "/user/list.html";
 
     public GetController(RequestParser rp, OutputStream os) {
         this.rp = rp;
-        this.os = os;
+        this.gs = new GetService(os);
     }
 
     public void service() {
         log.info(":: GET Service");
 
         switch (rp.getPath()) {
-
             case MEMO_LIST:
             case HTML_MEMO_LIST:
-                methodMemoList();
+                gs.methodMemoList(rp);
                 break;
             case USER_LIST:
             case HTML_USER_LIST:
-                methodUserList();
+                gs.methodUserList(rp);
                 break;
             default:
-                methodDefault();
+                gs.methodDefault(rp);
                 break;
         }
-    }
-
-    private void methodMemoList() {
-        String page = PageOfMemoList.draw(DataBase.findMemoAll());
-
-        ForwardResponseFormat rf = new ForwardResponseFormat(os);
-        rf.setHtmlPage(page);
-        rf.sendResponse(ResponseCode.STATUS_200);
-    }
-
-    private void methodUserList() {
-        String logined = rp.getCookie(LOGIN_KEY);
-        if( logined == null || logined.equalsIgnoreCase("false") ) {
-            ResponseFormat rf = new ForwardResponseFormat(os, LOGIN_PAGE);
-            rf.sendResponse(ResponseCode.STATUS_200);
-            return;
-        }
-
-        String page = PageOfUserList.draw(DataBase.findUserAll());
-
-        ForwardResponseFormat rf = new ForwardResponseFormat(os);
-        rf.setHtmlPage(page);
-        rf.sendResponse(ResponseCode.STATUS_200);
-    }
-
-    private void methodDefault () {
-        ResponseFormat rf = new ForwardResponseFormat(os, rp.getPath());
-        rf.sendResponse(ResponseCode.STATUS_200);
     }
 }

@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class ForwardResponseFormat implements ResponseFormat {
-    private static final Logger log = LoggerFactory.getLogger(ForwardResponseFormat.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private DataOutputStream dos;
     private String cookie;
