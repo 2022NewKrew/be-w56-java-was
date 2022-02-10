@@ -38,7 +38,7 @@ public class HttpResponse {
 
     public void addCookie(HttpRequest httpRequest) {
         if (Objects.isNull(httpRequest.getCookie("JSESSIONID"))) {
-            addHeader("Set-Cookie", "JSESSIONID=" + httpRequest.getHttpSession().getId());
+            addHeader("Set-Cookie", "JSESSIONID=" + httpRequest.getHttpSession().getId() + "; Path=/");
         }
     }
 

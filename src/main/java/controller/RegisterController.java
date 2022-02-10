@@ -45,7 +45,7 @@ public class RegisterController extends AbstractController {
         userService.save(user);
 
         addSession(httpRequest, user);
-
+        httpResponse.addCookie(httpRequest);
         httpResponse.set302Found(INDEX_HTML);
     }
 

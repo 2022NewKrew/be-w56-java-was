@@ -49,17 +49,17 @@ public class RequestHandler implements Runnable {
     }
 
     private HttpResponse messageConvert(BufferedReader bufferedReader) throws IOException {
-        HttpResponse response = new HttpResponse();
+        HttpResponse httpResponse = new HttpResponse();
         try {
             final HttpRequest httpRequest = HttpRequestConverter.createdRequest(bufferedReader);
             logger.info("요청한 url : {}", httpRequest.getUri());
             Controller controller = REQUEST_MAPPING.getController(httpRequest);
-            controller.service(httpRequest, response);
-            return response;
+            controller.service(httpRequest, httpResponse);
+            return httpResponse;
         } catch (Exception exception) {
             logger.error("알수없는 에러가 발생", exception);
-            response.setErrorResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            return response;
+            httpResponse.setErrorResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return httpResponse;
         }
     }
 
