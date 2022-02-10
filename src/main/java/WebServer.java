@@ -72,7 +72,7 @@ public class WebServer {
         final GetSessionUseCase getSessionUseCase = new GetSessionService(sessionPort, sessionAttributesPort);
         final SetSessionUseCase setSessionUseCase = new SetSessionService(sessionPort, sessionAttributesPort);
         final UserController userController = new UserController(setSessionUseCase, signUpUserUseCase, loginUseCase, findUserUseCase);
-        final MemoController memoController = new MemoController(getSessionUseCase, writeMemoUseCase);
+        final MemoController memoController = new MemoController(getSessionUseCase, writeMemoUseCase, readMemoUseCase);
         final HomeController homeController = new HomeController(readMemoUseCase);
         final StaticResourceController staticResourceController = new StaticResourceController();
         final LoginFilter loginFilter = new LoginFilter(getSessionUseCase);

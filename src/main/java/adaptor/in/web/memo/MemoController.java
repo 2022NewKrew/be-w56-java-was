@@ -4,6 +4,7 @@ import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
 import adaptor.in.web.model.RequestPath;
 import application.exception.user.NonExistsUserIdException;
+import application.in.memo.ReadMemoUseCase;
 import application.in.memo.WriteMemoUseCase;
 import application.in.session.GetSessionUseCase;
 import domain.memo.Memo;
@@ -22,10 +23,12 @@ public class MemoController {
     private final Logger log = LoggerFactory.getLogger(MemoController.class);
     private final GetSessionUseCase getSessionUseCase;
     private final WriteMemoUseCase writeMemoUseCase;
+    private final ReadMemoUseCase readMemoUseCase;
 
-    public MemoController(GetSessionUseCase getSessionUseCase, WriteMemoUseCase writeMemoUseCase) {
+    public MemoController(GetSessionUseCase getSessionUseCase, WriteMemoUseCase writeMemoUseCase, ReadMemoUseCase readMemoUseCase) {
         this.getSessionUseCase = getSessionUseCase;
         this.writeMemoUseCase = writeMemoUseCase;
+        this.readMemoUseCase = readMemoUseCase;
     }
 
     public HttpResponse handle(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {
@@ -44,11 +47,9 @@ public class MemoController {
     }
 
     private HttpResponse write(HttpRequest request) throws IOException {
-        /*
-        * 로그인 한 사용자만 글을 쓸 수 있음
-        * 요청에서 쿠키 꺼내서 세션 아이디 유효한지 확인
-        * 글 저장하기
-        * */
+        String sessionId = HttpRequestUtils.parseCookies(request.getHeader("Cookie")).get("SESSION_ID");
+        String session = (String) getSessionUseCase.getSession(Long.valueOf(sessionId));
+
         Map<String, String> body = HttpRequestUtils.parseBody(((HttpStringBody) request.getRequestBody()).getValue());
 
         Memo memo = Memo.builder()

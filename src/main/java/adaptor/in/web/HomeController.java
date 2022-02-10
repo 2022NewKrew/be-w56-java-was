@@ -3,11 +3,16 @@ package adaptor.in.web;
 import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
 import application.in.memo.ReadMemoUseCase;
+import domain.memo.Memo;
 import infrastructure.model.*;
+import infrastructure.util.HtmlTemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeController {
 
@@ -32,10 +37,19 @@ public class HomeController {
     }
 
     public HttpResponse home() throws IOException {
-        return new HttpResponse(
-                ResponseLine.valueOf(HttpStatus.OK),
-                HttpHeader.of(Pair.of("Content-Type", ContentType.HTML.convertToResponse())),
-                HttpByteArrayBody.setFile("/index.html")
-        );
+        List<Memo> memos = readMemoUseCase.readAllMemo();
+        List<Model> models = memos.stream().map(e -> Model.builder()
+                .addAttribute("writer", e.getWriter())
+                .addAttribute("createdAt", e.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .addAttribute("content", e.getContent())
+                .build()
+        ).collect(Collectors.toList());
+        byte[] bytes = HtmlTemplateUtils.getView("/index.html", "memos", models);
+
+        return HttpResponse.builder()
+                .status(HttpStatus.OK)
+                .body(new HttpByteArrayBody(bytes))
+                .build();
+//        );
     }
 }

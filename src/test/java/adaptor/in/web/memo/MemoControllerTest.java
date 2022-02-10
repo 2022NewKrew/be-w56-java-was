@@ -1,5 +1,6 @@
 package adaptor.in.web.memo;
 
+import application.in.memo.ReadMemoUseCase;
 import application.in.memo.WriteMemoUseCase;
 import application.in.session.GetSessionUseCase;
 import domain.memo.Memo;
@@ -27,9 +28,12 @@ class MemoControllerTest {
     @Mock
     WriteMemoUseCase writeMemoUseCase;
 
+    @Mock
+    ReadMemoUseCase readMemoUseCase;
+
     @BeforeEach
     void injectMock() {
-        memoController = new MemoController(getSessionUseCase, writeMemoUseCase);
+        memoController = new MemoController(getSessionUseCase, writeMemoUseCase, readMemoUseCase);
     }
 
     @AfterEach

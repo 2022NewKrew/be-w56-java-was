@@ -17,11 +17,11 @@ public class ReadMemoAdaptor implements ReadMemoPort {
 
     @Override
     public Optional<Memo> findOneById(int id) {
-        return Optional.empty();
+        return Optional.ofNullable(memoDao.findOneById(id));
     }
 
     @Override
     public List<Memo> findAll() {
-        return null;
+        return memoDao.findAll();
     }
 }

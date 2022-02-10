@@ -75,6 +75,7 @@ public class MemoMysqlDao implements MemoDao {
             while (resultSet.next()) {
                 memos.add(Memo.builder()
                         .id(resultSet.getInt(COLUMN_ID))
+                        .writer(resultSet.getString(COLUMN_WRITER))
                         .content(resultSet.getString(COLUMN_CONTENT))
                         .createdAt(resultSet.getTimestamp(COLUMN_CREATED_AT).toLocalDateTime())
                         .build());

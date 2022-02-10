@@ -9,7 +9,7 @@ public enum RequestPath {
     LOGIN("/user/login"),
     LOGIN_FAILED("/user/login_failed.html"),
     USER_LIST("/user/list"),
-    WRITE_MEMO("/memo");
+    WRITE_MEMO("/memo/new");
 
     private final String value;
 

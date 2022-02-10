@@ -13,7 +13,7 @@ import java.util.Set;
 public class LoginFilter {
 
     private static final Logger log = LoggerFactory.getLogger(LoginFilter.class);
-    private static final Set<String> FILTERED_URL = Set.of("/user/list");
+    private static final Set<String> FILTERED_URL = Set.of("/user/list", "/memo/new");
     private final GetSessionUseCase getSessionUseCase;
 
     public LoginFilter(GetSessionUseCase getSessionUseCase) {
