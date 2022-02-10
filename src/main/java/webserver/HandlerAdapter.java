@@ -46,6 +46,8 @@ public class HandlerAdapter {
         for (Class<?> clazz : targetMethod.getParameterTypes()) {
             if (clazz.equals(HttpResponse.class))
                 paramObjects.add(httpResponse);
+            else if (clazz.equals(HttpRequest.class))
+                paramObjects.add(httpRequest);
             else
                 paramObjects.add(mapper.convertValue(params, clazz));
         }

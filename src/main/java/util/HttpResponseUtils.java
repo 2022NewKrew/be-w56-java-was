@@ -33,8 +33,8 @@ public class HttpResponseUtils {
             if (httpResponse.getStatus() == HttpStatus.FOUND)
                 dos.writeBytes("Location: " + httpResponse.getLocation() + "\r\n");
 
-            if (httpResponse.getCookie() != null)
-                dos.writeBytes("Set-Cookie: " + httpResponse.getCookie().toString() + "\r\n");
+            if (!httpResponse.getCookies().isEmpty())
+                dos.writeBytes(httpResponse.cookiesToString() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());

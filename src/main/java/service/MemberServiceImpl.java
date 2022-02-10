@@ -1,8 +1,9 @@
 package service;
 
-import dto.UserCreateDto;
-import dto.UserItemDto;
-import dto.UserSignInDto;
+import dto.user.UserCreateDto;
+import dto.user.UserItemDto;
+import dto.user.UserSessionedDto;
+import dto.user.UserSignInDto;
 import exception.EntityNotFoundException;
 import model.User;
 import repository.MemberRepository;
@@ -28,9 +29,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public User signIn(UserSignInDto userSignInDto) {
+    public UserSessionedDto signIn(UserSignInDto userSignInDto) {
         return memberRepository.findByUsername(userSignInDto.getUsername())
                 .filter(user_ -> user_.getPassword().equals(userSignInDto.getPassword()))
+                .map(UserSessionedDto::of)
                 .orElseThrow(() -> new EntityNotFoundException("member not found"));
     }
 

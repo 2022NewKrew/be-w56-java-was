@@ -26,6 +26,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public List<User> findAll() {
-        return (List<User>) DataBase.findAll();
+        return (List<User>) DataBase.findAllUser();
     }
 }
