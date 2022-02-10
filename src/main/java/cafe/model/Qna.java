@@ -8,14 +8,14 @@ public class Qna {
     private String title;
     private String contents;
     private Boolean deleted;
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     public Qna(String writer, String title, String contents) {
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.deleted = false;
-        this.created_at = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     public Qna(String writer, String title, String contents, LocalDateTime created_at) {
@@ -23,7 +23,7 @@ public class Qna {
         this.title = title;
         this.contents = contents;
         this.deleted = false;
-        this.created_at = created_at;
+        this.createdAt = created_at;
     }
 
     public String getId() {
@@ -46,7 +46,7 @@ public class Qna {
         return deleted;
     }
 
-    public LocalDateTime getCreated_at() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

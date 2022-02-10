@@ -40,7 +40,7 @@ public class QnaService {
 
                     qnaListHtml.append("<div class=\"auth-info\"");
                     qnaListHtml.append("<i class=\"icon-add-comment\">").append("</i>");
-                    qnaListHtml.append("<span class=\"time\">").append(qna.getCreated_at().toString()).append("</span>");
+                    qnaListHtml.append("<span class=\"time\">").append(qna.getCreatedAt().toString()).append("</span>");
                     qnaListHtml.append("<a href=\"./user/profile.html\" class=\"author\">").append(qna.getWriter()).append("</a>");
                     qnaListHtml.append("</div>");
 
