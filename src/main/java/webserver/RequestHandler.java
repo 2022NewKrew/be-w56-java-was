@@ -25,9 +25,11 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+    private final DataBase dataBase;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, DataBase dataBase) {
         this.connection = connectionSocket;
+        this.dataBase = dataBase;
     }
 
     public void run() {
@@ -82,7 +84,7 @@ public class RequestHandler extends Thread {
         } else if (url.equals("/logout")) {
             logout(dos, url, header, br);
         } else if (url.equals("/user/list")) {
-            if (header.get("Cookie").equals("logined=true")) {
+            if (header.get("Cookie").contains("logined=true")) {
                 showUserList(dos, "/user/list.html", header, br);
             } else {
                 redirect(dos, "/user/login.html", header, "");
@@ -105,6 +107,7 @@ public class RequestHandler extends Thread {
         User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
         System.out.println(user);
         DataBase.addUser(user);
+        dataBase.save(user);
         view(dos, "/index.html", header);
     }
 
@@ -114,6 +117,7 @@ public class RequestHandler extends Thread {
         User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
         System.out.println(user);
         DataBase.addUser(user);
+        dataBase.save(user);
         redirect(dos, "/index.html", header, "");
     }
 
