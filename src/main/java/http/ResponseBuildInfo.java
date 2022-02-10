@@ -8,6 +8,7 @@ public class ResponseBuildInfo {
     private String path;
     private boolean isRedirect;
     private Map<String, String> cookie = new HashMap<>();
+    private String cookiePath;
     private byte[] body;
 
     public ResponseBuildInfo() {
@@ -26,6 +27,10 @@ public class ResponseBuildInfo {
         return cookie;
     }
 
+    public String getCookiePath() {
+        return cookiePath;
+    }
+
     public byte[] getBody() {
         return body;
     }
@@ -40,6 +45,10 @@ public class ResponseBuildInfo {
 
     public void addCookie(String key, String value) {
         cookie.put(key, value);
+    }
+
+    public void setCookiePath(String cookiePath) {
+        this.cookiePath = cookiePath;
     }
 
     public void setBody(byte[] body) {
@@ -61,6 +70,11 @@ public class ResponseBuildInfo {
 
         public InfoBuilder addCookie(String key, String value) {
             responseBuildInfo.addCookie(key, value);
+            return this;
+        }
+
+        public InfoBuilder setCookiePath(String cookiePath) {
+            responseBuildInfo.setCookiePath(cookiePath);
             return this;
         }
 

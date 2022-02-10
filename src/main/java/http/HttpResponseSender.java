@@ -55,8 +55,8 @@ public class HttpResponseSender {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + redirectUrl+ "\r\n");
             if (httpResponse.getCookie() != null) {
-                System.out.println(HttpResponseUtils.cookieString(httpResponse.getCookie()));
-                dos.writeBytes("Set-Cookie: " + HttpResponseUtils.cookieString(httpResponse.getCookie()) + " \r\n");
+                System.out.println(HttpResponseUtils.cookieString(httpResponse.getCookie(), httpResponse.getCookiePath()));
+                dos.writeBytes("Set-Cookie: " + HttpResponseUtils.cookieString(httpResponse.getCookie(), httpResponse.getCookiePath()) + " \r\n");
             }
             dos.writeBytes("\r\n");
         } catch (IOException e) {

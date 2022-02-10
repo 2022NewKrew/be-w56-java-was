@@ -31,7 +31,7 @@ public class HttpController {
                         .setPath("/index.html")
                         .setRedirect(true)
                         .addCookie("logined", "true")
-                        .addCookie("Path", "/")
+                        .setCookiePath("/")
                         .build();
             }
             else {
@@ -39,7 +39,7 @@ public class HttpController {
                         .setPath("/user/login_failed.html")
                         .setRedirect(true)
                         .addCookie("logined", "false")
-                        .addCookie("Path", "/")
+                        .setCookiePath("/")
                         .build();
             }
         }

@@ -1,8 +1,6 @@
 package http;
 
-import enums.HttpMethod;
 import enums.HttpStatusCode;
-import util.HttpRequestUtils;
 import util.HttpResponseUtils;
 
 import java.io.File;
@@ -26,6 +24,9 @@ public class HttpResponseBuilder {
         httpResponse.setProtocol(httpRequest.getProtocol());
         for (String key : responseBuildInfo.getCookie().keySet()) {
             httpResponse.addCookie(key, responseBuildInfo.getCookie().get(key));
+        }
+        if (responseBuildInfo.getCookiePath() != null) {
+            httpResponse.setCookiePath(responseBuildInfo.getCookiePath());
         }
         if (responseBuildInfo.isRedirect()) {
             httpResponse.setStatusCode(HttpStatusCode._302);

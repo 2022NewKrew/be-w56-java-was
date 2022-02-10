@@ -4,11 +4,12 @@ import java.util.Map;
 
 public class HttpResponseUtils {
 
-    public static String cookieString(Map<String, String> cookie) {
+    public static String cookieString(Map<String, String> cookie, String cookiePath) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String key : cookie.keySet()) {
             stringBuilder.append(key + "=" + cookie.get(key) + "; ");
         }
+        stringBuilder.append("Path=" + cookiePath);
         return stringBuilder.toString();
     }
 
