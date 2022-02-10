@@ -1,5 +1,7 @@
 package controller;
 
+import dto.memo.MemoCreateDto;
+import exception.BusinessException;
 import service.MemberService;
 import service.MemoService;
 import webserver.annotations.Autowired;
@@ -32,7 +34,21 @@ public class MemoController {
     }
 
     @PostMapping("/qna/create")
-    public ModelAndView createMemo() {
-        return null;
+    public ModelAndView createMemo(MemoCreateDto memoCreateDto, HttpRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        String sessionedUserId = request.getCookie("sessionedUser");
+        if (sessionedUserId == null) {
+            modelAndView.setViewName("redirect:/user/login.html");
+            return modelAndView;
+        }
+
+        try {
+            memoService.create(memoCreateDto, sessionedUserId);
+            modelAndView.setViewName("redirect:/index.html");
+        } catch (BusinessException e) {
+            modelAndView.setViewName("redirect:/index.html");
+        }
+        return modelAndView;
     }
 }

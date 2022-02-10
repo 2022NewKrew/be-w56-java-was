@@ -16,6 +16,8 @@ import webserver.annotations.Component;
 import webserver.annotations.GetMapping;
 import webserver.annotations.PostMapping;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -35,6 +37,7 @@ public class MemberController {
         List<MemoItemDto> memoItemDtoList = memoService.findAll();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/index.html");
+        modelAndView.setModel("memoList", memoItemDtoList);
         return modelAndView;
     }
 
@@ -66,8 +69,12 @@ public class MemberController {
         try {
             UserSessionedDto userSessionedDto = memberService.signIn(userSignInDto);
 
-            response.addCookie(new Cookie().add("login", "true").add("Path", "/"))
-                    .addCookie(new Cookie().add("sessionedUser", userSessionedDto.getUsername()).add("Path", "/"));
+            response.addCookie(new Cookie().add("login", "true")
+                                            .add("Path", "/")
+                                            .add("Max-Age", "30 * 60"))
+                    .addCookie(new Cookie().add("sessionedUser", userSessionedDto.getUsername())
+                                            .add("Path", "/")
+                                            .add("Max-Age", "30 * 60"));
 
             modelAndView.setViewName("redirect:/index.html");
             return modelAndView;
