@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.IOUtils;
 
 public class HttpRequest {
 
@@ -32,7 +31,9 @@ public class HttpRequest {
     }
 
     private static String readBody(BufferedReader bufferedReader, int contentLength) throws IOException {
-        return IOUtils.readData(bufferedReader, contentLength);
+        char[] body = new char[contentLength];
+        bufferedReader.read(body, 0, contentLength);
+        return String.copyValueOf(body);
     }
 
     private static int getContentLength(Header header) {
