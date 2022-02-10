@@ -23,6 +23,8 @@ public class Constant {
     public static final String HEADER_FORMAT = "%s: %s";
     public static final String COOKIE_FORMAT = "%s=%s; Path=%s; maxAge=%s;";
     public static final String SET_COOKIE= "Set-Cookie";
+    public static final String DATABASE_NAME = "user";
+    public static final String DATABASE_URL = "mongodb://10.202.177.135:27017";
 
     public static final String MESSAGE_NOT_BLANK = "입력 값은 공백일 수 없습니다.";
     public static final String MESSAGE_USER_NOT_FOUND = "존재하지 않는 유저입니다.";

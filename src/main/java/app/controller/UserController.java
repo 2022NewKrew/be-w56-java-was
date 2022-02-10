@@ -9,15 +9,16 @@ import org.slf4j.LoggerFactory;
 import app.annotation.Controller;
 import app.annotation.GetMapping;
 import app.annotation.PostMapping;
-import app.db.DataBase;
 import app.exception.UserNotFoundException;
 import app.http.HttpResponse;
 import app.model.user.User;
+import app.repository.UserRepository;
 import webserver.template.Model;
 
 @Controller
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final UserRepository userRepository = new UserRepository();
 
     @GetMapping(value = "/")
     public String index() {
@@ -32,7 +33,7 @@ public class UserController {
                 body.get("name"),
                 body.get("email")
         );
-        DataBase.addUser(user);
+        userRepository.save(user);
         log.debug("add User: {} {} {} {}", user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
         return "redirect:/index";
     }
@@ -42,8 +43,8 @@ public class UserController {
         log.debug("UserController - login");
         String userId = body.get("userId");
         String password = body.get("password");
-        User user = DataBase.findUserById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByUserId(userId)
+                                  .orElseThrow(UserNotFoundException::new);
         if (!user.validatePassword(password)) {
             log.debug("로그인 실패, 비밀번호 불일치 {}", httpResponse.getCookie().cookieValue());
             return "redirect:/user/login_failed";
@@ -55,7 +56,7 @@ public class UserController {
 
     @GetMapping(value = "/user")
     public String users(HttpResponse response, Model model) {
-        Collection<User> users = DataBase.findAll();
+        Collection<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         model.addAttribute("test", new User("testman","1234","testy","test@gmail.com"));
         return "/user/list";
