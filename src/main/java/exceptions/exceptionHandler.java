@@ -22,7 +22,15 @@ public class exceptionHandler {
 
     public static void badRequestFormat(OutputStream out, String message) throws IOException {
         log.error(message);
-        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.BAD_REQUEST,  View.staticFile("/errors/badRequest.html"));
+        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.BAD_REQUEST,
+                View.staticFile("/errors/badRequest.html"));
+        View.sendResponse(out, httpResponse.message());
+    }
+
+    public static void loginFailed(OutputStream out, String message) throws IOException {
+        log.error(message);
+        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.UNAUTHORIZED,
+                View.staticFile("/errors/loginFailed.html"));
         View.sendResponse(out, httpResponse.message());
     }
 }

@@ -1,7 +1,7 @@
 package controller;
 
 import db.DataBase;
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +25,7 @@ public class UserCreateController implements Controller {
 
     private static final String PAIR_SPLIT_DELIMITER = "&";
     private static final String KEY_VALUE_SPLIT_DELIMITER = "=";
+    private static final String EMPTY_COOKIE = "";
     private static final int KEY_VALUE_SPLIT_RESULT_SIZE = 2;
     private static UserCreateController instance;
     private static final Logger log = LoggerFactory.getLogger(UserCreateController.class);
@@ -43,7 +44,7 @@ public class UserCreateController implements Controller {
         for (String pair : splitUserBodyString) {
             String[] split = pair.split(KEY_VALUE_SPLIT_DELIMITER);
             if (split.length != KEY_VALUE_SPLIT_RESULT_SIZE) {
-                throw new BadRequestFormatException("user의 인자가 부족합니다");
+                throw new InvalidRequestFormatException("user의 인자가 부족합니다");
             }
             userElementMap.put(
                     URLDecoder.decode(split[0], StandardCharsets.UTF_8),
@@ -72,7 +73,7 @@ public class UserCreateController implements Controller {
     public HttpResponse run(HttpRequest request) throws IOException {
         if (request.getHttpMethod() == HttpMethod.POST) {
             saveUser(request.getBody());
-            return HttpRedirectionResponse.of(HttpStatus.FOUND, request.getUrl());
+            return HttpRedirectionResponse.of(HttpStatus.FOUND, request.getUrl(), EMPTY_COOKIE);
         } else if (request.getHttpMethod() == HttpMethod.GET) {
             List<User> userList = getUserList();
             return HttpSuccessfulResponse.of(HttpStatus.OK, request.getUrl(), View.userList(userList));

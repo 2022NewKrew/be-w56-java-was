@@ -2,12 +2,11 @@ package model;
 
 import java.io.IOException;
 import java.util.Map;
-import view.View;
 
 public class HttpClientErrorResponse extends HttpResponse {
 
     public static HttpClientErrorResponse of(HttpStatus httpStatus, byte[] body) throws IOException {
-        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
+        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1, httpStatus.getCode(),
                 httpStatus.getMessage());
         Map<HttpHeader, String> headerKeyMap = Map.of(
                 HttpHeader.CONTENT_TYPE, Mime.HTML.getType(),

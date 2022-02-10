@@ -1,13 +1,11 @@
 package model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import exceptions.BadRequestFormatException;
+import exceptions.InvalidRequestFormatException;
 import exceptions.InvalidHttpMethodException;
 import exceptions.InvalidHttpVersionException;
-import java.util.List;
+import exceptions.InvalidQueryFormatException;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +25,7 @@ class StartLineTest {
     @ParameterizedTest(name = "startLineMessage = {0}")
     @ValueSource(strings = {"/index.html HTTP/1.1", "GET POST /index.html HTTP/1.1", "GET"})
     void of_FailedBy_WrongNumberOfToken(String startLineMessage) {
-        Assertions.assertThrows(BadRequestFormatException.class,
+        Assertions.assertThrows(InvalidRequestFormatException.class,
                 () -> StartLine.of(startLineMessage));
     }
 
@@ -52,23 +50,65 @@ class StartLineTest {
     void of_FailedBy_EmptyString() {
         String startLineMessage = "";
 
-        Assertions.assertThrows(BadRequestFormatException.class,
+        Assertions.assertThrows(InvalidRequestFormatException.class,
                 () -> StartLine.of(startLineMessage));
     }
 
-    // TODO - 아래 테스트 추후 구현
     @Test
-    @Disabled
+    @DisplayName("[성공] method를 잘 들고와야 한다")
     void getHttpMethod() {
+        String startLineMessage = HttpMethod.GET.name() + " /index.html HTTP/1.1";
+        StartLine startLine = StartLine.of(startLineMessage);
+
+        HttpMethod methodResult = startLine.getHttpMethod();
+
+        Assertions.assertEquals(methodResult.name(), HttpMethod.GET.name());
     }
 
     @Test
-    @Disabled
+    @DisplayName("[성공] url을 잘 들고와야 한다")
     void getUrl() {
+        String startLineMessage = "GET /index.html HTTP/1.1";
+        StartLine startLine = StartLine.of(startLineMessage);
+
+        String urlResult = startLine.getUrl();
+
+        Assertions.assertNotEquals(urlResult, "/index.htm");
+        Assertions.assertNotEquals(urlResult, "index.html");
+        Assertions.assertEquals(urlResult, "/index.html");
     }
 
     @Test
-    @Disabled
+    @DisplayName("[성공] url을 잘 들고와야 한다 - 쿼리가 있는 경우")
+    void getUrl_By_Query() {
+        String startLineMessage = "GET /user/create?aa=bb HTTP/1.1";
+        StartLine startLine = StartLine.of(startLineMessage);
+
+        String urlResult = startLine.getUrl();
+
+        Assertions.assertNotEquals(urlResult, "user/create");
+        Assertions.assertNotEquals(urlResult, "/user/create?");
+        Assertions.assertEquals(urlResult, "/user/create");
+    }
+
+    @Test
+    @DisplayName("[성공] 쿼리를 잘 들고 와야 한다")
     void getQuery() {
+        String startLineMessage = "GET /user/create?aa=bb&cc=dd HTTP/1.1";
+        Map<String, String> query = Map.of("aa", "bb", "cc", "dd");
+        StartLine startLine = StartLine.of(startLineMessage);
+
+        Map<String, String> queryResult = startLine.getQuery();
+
+        Assertions.assertEquals(queryResult, query);
+    }
+
+    @DisplayName("[실패] 쿼리 형식이 잘못 된 경우")
+    @ParameterizedTest(name = "query = {0}")
+    @ValueSource(strings = {"GET /user/create?aa HTTP/1.1", "GET /user/create?aa=bb&cc HTTP/1.1"})
+    void getQuery_FailedBy_Query(String startLineMessage) {
+
+        Assertions.assertThrows(InvalidQueryFormatException.class,
+                () -> StartLine.of(startLineMessage));
     }
 }

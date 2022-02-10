@@ -5,7 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum ControllerType {
     STATIC_FILE_CONTROLLER("", StaticFileController.getInstance()),
-    USER_CREATE_CONTROLLER("/users", UserCreateController.getInstance());
+    USER_CREATE_CONTROLLER("/users", UserCreateController.getInstance()),
+    LOGIN_CONTROLLER("/login", LoginController.getInstance());
+
     public static final Map<String, Controller> controllerMap = new ConcurrentHashMap<>();
 
     static {
