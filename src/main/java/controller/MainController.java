@@ -30,7 +30,7 @@ public class MainController extends Controller {
     private Response main(@Nullable Map<String, String> parameters) throws IOException {
         File file = new File("./webapp/index.html");
         Model model = new Model();
-        model.setAttribute("memos", memoService.findAll());
+        model.setAttribute("memos", memoService.findAllOrderByDate());
         String html = new HtmlBuilder().build("./webapp/index.html", model);
         byte[] body = html.getBytes();
         return new ResponseBuilder().setHttpStatus(HttpStatus.OK)

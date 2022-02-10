@@ -25,6 +25,8 @@ import webserver.response.ResponseException;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class UserController extends Controller {
@@ -99,6 +101,24 @@ public class UserController extends Controller {
         byte[] body = html.getBytes();
         return new ResponseBuilder().setHttpStatus(HttpStatus.OK)
                 .setContent("text/html", body)
+                .setBody(body)
+                .build();
+    }
+
+    @Auth
+    @RequestMapping(url = "/logout", method = HttpMethod.GET)
+    private Response logout(@Nullable Map<String, String> parameters) throws IOException {
+        Model model = new Model();
+        List<Message> messageList = new ArrayList<>();
+        messageList.add(new Message("로그아웃 되었습니다.", "/"));
+        model.setAttribute("alert", messageList);
+        HtmlBuilder htmlBuilder = new HtmlBuilder();
+        String html = htmlBuilder.build("./webapp/alert.html", model);
+        byte[] body = html.getBytes();
+        return new ResponseBuilder()
+                .setHttpStatus(HttpStatus.FOUND)
+                .setContent("text/html", body)
+                .addHeader("Set-Cookie", "userId= ; Path=/")
                 .setBody(body)
                 .build();
     }

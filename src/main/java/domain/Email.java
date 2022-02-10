@@ -1,14 +1,11 @@
 package domain;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 public class Email {
     private final String email;
 
     public Email(String email) {
         valid(email);
-        this.email = URLDecoder.decode(email, StandardCharsets.UTF_8);
+        this.email = email;
     }
 
     private void valid(String email) {

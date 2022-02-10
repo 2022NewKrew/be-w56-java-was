@@ -1,5 +1,6 @@
 package service;
 
+import db.Sort;
 import dto.MemoDto;
 import mapper.MemoMapper;
 import repository.MemoRepository;
@@ -23,8 +24,8 @@ public class MemoService {
         memoRepository.save(MemoMapper.toMemoEntity(memoDto));
     }
 
-    public List<MemoDto> findAll() {
-        return memoRepository.findAll().stream()
+    public List<MemoDto> findAllOrderByDate() {
+        return memoRepository.findAll(new Sort(Sort.Direction.DESC, "createdAt")).stream()
                 .map(MemoMapper::toMemoDto)
                 .collect(Collectors.toList());
     }

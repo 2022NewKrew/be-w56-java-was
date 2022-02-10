@@ -1,14 +1,11 @@
 package domain;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 public class Name {
     private final String name;
 
     public Name(String name) {
         valid(name);
-        this.name = URLDecoder.decode(name, StandardCharsets.UTF_8);
+        this.name = name;
     }
 
     private void valid(String name) {
