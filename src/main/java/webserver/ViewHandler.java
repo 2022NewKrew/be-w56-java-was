@@ -5,6 +5,7 @@ import http.HttpResponse;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,10 +21,17 @@ public class ViewHandler {
     private ViewHandler() {
     }
 
-    public static void handle(OutputStream out, HttpResponse httpResponse) throws IOException {
+    public static void handle(OutputStream out, HttpResponse httpResponse, Model model)
+        throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
         Path path = Paths.get(ROOT_RESOURCE_PATH + httpResponse.getPath());
-        httpResponse.writeBody(Files.readAllBytes(path));
+        byte[] body = Files.readAllBytes(path);
+
+        if (!model.isEmpty()) {
+            body = TemplateEngine.render(new String(body), model).getBytes(StandardCharsets.UTF_8);
+        }
+
+        httpResponse.writeBody(body);
         writeStatusLine(dos, httpResponse);
         writeHeader(dos, httpResponse);
         writeBody(dos, httpResponse);

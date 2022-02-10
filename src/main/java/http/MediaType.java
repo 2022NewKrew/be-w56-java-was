@@ -11,6 +11,7 @@ public enum MediaType {
     APPLICATION_JAVASCRIPT("application/javascript", "js"),
     APPLICATION_TTF("application/x-font-ttf", "ttf"),
     APPLICATION_WOFF("application/x-font-woff", "woff"),
+    APPLICATION_WOFF2("application/x-font-woff2", "woff2"),
 
     IMAGE_GIF("image/gif", "gif"),
     IMAGE_JPEG("image/jpeg", "jpeg"),

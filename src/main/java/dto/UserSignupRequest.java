@@ -20,7 +20,7 @@ public class UserSignupRequest {
     }
 
     public User toEntity() {
-        return new User.Builder()
+        return User.builder()
             .userId(userId)
             .password(password)
             .name(name)

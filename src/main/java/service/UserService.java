@@ -4,6 +4,7 @@ import dto.UserLoginRequest;
 import dto.UserSignupRequest;
 import exception.AlreadyExistsException;
 import exception.UserNotFoundException;
+import java.util.List;
 import model.User;
 import repository.UserRepository;
 
@@ -19,11 +20,16 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void login(UserLoginRequest request) throws UserNotFoundException {
+    public User login(UserLoginRequest request) throws UserNotFoundException {
         User user = userRepository.findById(request.getUserId())
             .orElseThrow(UserNotFoundException::new);
         if (!user.matches(request.getPassword())) {
             throw new UserNotFoundException();
         }
+        return user;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }
