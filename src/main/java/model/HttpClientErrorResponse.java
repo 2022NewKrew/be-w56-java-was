@@ -2,7 +2,6 @@ package model;
 
 import java.io.IOException;
 import java.util.Map;
-import view.View;
 
 public class HttpClientErrorResponse extends HttpResponse {
 

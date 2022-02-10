@@ -3,7 +3,6 @@ package model;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import view.View;
 
 public class HttpSuccessfulResponse extends HttpResponse {
 
@@ -27,7 +26,7 @@ public class HttpSuccessfulResponse extends HttpResponse {
 
     private final byte[] body;
 
-    public HttpSuccessfulResponse(StatusLine statusLine, Header header, byte[] body) {
+    private HttpSuccessfulResponse(StatusLine statusLine, Header header, byte[] body) {
         super(statusLine, header);
         this.body = body;
     }
