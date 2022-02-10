@@ -29,7 +29,7 @@ public class QnaRepository {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
              Statement statement = connection.createStatement();
         ) {
-            String query = "SELECT writer, title, contents, created_at FROM QNA WHERE deleted = false";
+            String query = "SELECT writer, title, contents, created_at FROM QNA WHERE deleted = false ORDER BY created_at desc ";
 
             ResultSet resultSet = statement.executeQuery(query);
             List<Qna> qnaList = new ArrayList<>();
