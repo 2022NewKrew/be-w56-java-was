@@ -44,4 +44,7 @@
 ## 구현내용
 - HttpRequest의 parsing 함수들을 separator 와, keyValueSeparator 를 입력으로 받도록 변경.
 - 이를 통해 HttpRequestHeader 에서 Content-Length 값을 얻어오는 함수 생성. 
-- HTTP Method가 POST 인 경우 httpRequestBody 를 parsing 해서 HashMap으로 만들도록 생성. 
+- HTTP Method가 POST 인 경우 httpRequestBody 를 parsing 해서 HashMap으로 만들도록 생성.
+- RedirectPair 클래스를 만들어서, Redirect 여부와 url을 같이 전달.
+- response302Header 를 생성하는 부분 추가.
+- 각 url 에 대해 redirect 여부를 redirectSet 에 넣어서 알 수 있도록 생성.
