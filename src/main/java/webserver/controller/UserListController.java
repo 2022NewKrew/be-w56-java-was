@@ -5,8 +5,6 @@ import DTO.RequestHeader;
 import DTO.ResponseHeader;
 import Service.UserService;
 import db.DataBase;
-import model.User;
-import java.util.Map;
 
 public class UserListController implements Controller {
 
@@ -20,10 +18,12 @@ public class UserListController implements Controller {
 
         @Override
         public ModelAndView getResponse(RequestHeader requestHeader, ResponseHeader responseHeader) {
-            log.info("DB : {}", DataBase.printUserIdPw());
-
+            log.info("userlist controller DB : {}", DataBase.printUserIdPw());
             if (UserService.checkLogin(requestHeader)) { // if user is in login status
-                return new ModelAndView("/user/list.html");
+
+                ModelAndView mav = new ModelAndView("/user/list.html");
+                mav.addObject("users", DataBase.getUserList());
+                return mav;
             }
 
             return new ModelAndView("redirect:/user/login.html");

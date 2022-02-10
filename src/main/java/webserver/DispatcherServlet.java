@@ -21,6 +21,7 @@ public class DispatcherServlet {
             Controller controller = HandlerMapper.requestMapping(requestHeader);
             log.error(" handle request : {}", controller);
             ModelAndView modelAndView = HandlerAdapter.request(controller, requestHeader, responseHeader);
+
             return modelAndView;
 
         } catch (NullPointerException e) {
