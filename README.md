@@ -1,6 +1,22 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
+### [step1, step2 피드백](https://github.com/kakao-2022/be-w56-java-was/pull/193) 반영
+- [x] 만드신 거 실제 실행을 해보았는데ㅠㅠ 안돌아가서.. 
+  - 실행 테스트를 포스트맨으로만 테스트 하고 올렸었네요ㅜ 죄송합니다 이번엔 직접 실행해서 테스트 해봤습니다
+  - 테스트 과정
+    - 서버 실행(WebServer.java)
+    - http://localhost:8080/index.html 검색
+    - 회원 가입 클릭 후 아이디, 비밀번호, 이름 이메일 입력해서 회원가입 버튼으로 제출
+    - (새로고침, 새로고침 안하면 user/login.html으로 안가고 user/user/login.html로 가서 원인을 찾아보고 있습니다..) 로그인 클릭 후 아이디, 비밀번호 입력
+- [x] RequestHeader.java, http에 사용되는 기본적인 헤더들은 메서드로 제공(매번 사용시마다 contains 및 파싱과정을 거쳐야 할테니)
+- [x] HttpRequestUtils.java, 사용하지 않는 메서드들 제거 or RequestUri 클래스에서 활용
+- [x] HttpRequestUtils.java, RequestHeader의 역할이 더 맞아보임
+- [x] HttpResponseUtils.java, 만들어 놓은 Response class를 사용하면 좀 더 깔끔해질것 같음
+- [ ] Router.java, get의 경우에 한정된 라우팅, 응답을 내려주는 경우 어떻게 할 것인가 문제, 인터페이스 이용해서 처리에 대한 로직을 구현하는 메서드를 만들어 보면 좋을듯
+  - Router.java (get에 한정된 처리, 응답을 내려주는 경우 처리 보완했습니다) 인터페이스 이용해서 처리하는건 좀 더 공부 해보겠습니다   
+
+---
 ## HTTP 정리
 - 인터넷에서 데이터를 주고 받을 수 있는 프로토콜
 - 특징
