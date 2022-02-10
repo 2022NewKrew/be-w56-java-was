@@ -3,7 +3,7 @@ package frontcontroller.controller;
 import db.DataBase;
 import frontcontroller.ModelView;
 import frontcontroller.MyController;
-import model.User;
+import model.Member;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 import util.MyHttpStatus;
@@ -31,7 +31,7 @@ public class MemberLoginController implements MyController {
     private ModelView post(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
         String userId = request.getPathVariable("userId");
         String password = request.getPathVariable("password");
-        User user = DataBase.findUserById(userId);
+        Member user = DataBase.findMemberById(userId);
 
         if (user != null && user.getPassword().equals(password)) {
             session.setAttribute("loginUser", user);

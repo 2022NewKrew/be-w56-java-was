@@ -3,7 +3,7 @@ package frontcontroller.controller;
 import db.DataBase;
 import frontcontroller.ModelView;
 import frontcontroller.MyController;
-import model.User;
+import model.Member;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 import util.MyHttpStatus;
@@ -25,7 +25,7 @@ public class UserListController implements MyController {
 
     private ModelView get(MyHttpRequest request, MyHttpResponse response) throws IOException {
         ModelView mv = new ModelView("/user/list");
-        List<User> userList = new ArrayList<>(DataBase.findAll());
+        List<Member> userList = new ArrayList<>(DataBase.findAll());
 
         mv.getModel().put("users", userList);
 

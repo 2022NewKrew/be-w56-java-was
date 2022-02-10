@@ -2,7 +2,7 @@ package frontcontroller.controller;
 
 import frontcontroller.ModelView;
 import frontcontroller.MyController;
-import model.User;
+import model.Member;
 import util.MyHttpRequest;
 import util.MyHttpResponse;
 import util.MySession;
@@ -19,7 +19,7 @@ public class BaseController implements MyController {
 
     @Override
     public ModelView process(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
-        User user = (User) session.getAttribute("loginUser");
+        Member user = (Member) session.getAttribute("loginUser");
         if(user != null) {
             System.out.println("loginUser="+user.getName());
         }

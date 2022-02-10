@@ -26,8 +26,10 @@ public class MyHttpRequest {
     private MyHttpStatus method;
     private String requestURI;
     private String httpVersion;
-
+    
+    // 기본 생성자가 만들어지는 것을 막는다.
     private MyHttpRequest() {
+        throw new AssertionError();
     }
 
     public MyHttpRequest(InputStream httpRequestInputStream) throws IOException {
