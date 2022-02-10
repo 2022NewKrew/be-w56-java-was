@@ -23,6 +23,7 @@ public class ViewResolver {
         viewMap.put("/users", "/user/list.html");
         viewMap.put("/users/form", "/user/form.html");
         viewMap.put("/users/login", "/user/login.html");
+        viewMap.put("/articles/form", "/qna/form.html");
     }
 
     public static ViewResolver getInstance(){
