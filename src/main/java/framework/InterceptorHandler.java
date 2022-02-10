@@ -42,14 +42,8 @@ public class InterceptorHandler {
                     if (!isIncludePath(annotation, path)) {
                         continue;
                     }
-                    Object routerObject = interceptor.getConstructor().newInstance();
-                    try {
-                        boolean resultOfInterceptor = (boolean) classMethod.invoke(routerObject, httpRequest, httpResponse);
-                        if (!resultOfInterceptor) {
-                            return false;
-                        }
-                    } catch (InvocationTargetException e) {
-                        log.error(e.getMessage());
+
+                    if (!isSuccessResultOfInterceptor(classMethod, interceptor, httpRequest, httpResponse)) {
                         return false;
                     }
                 }
@@ -57,6 +51,22 @@ public class InterceptorHandler {
         }
 
         return true;
+    }
+
+    private static boolean isSuccessResultOfInterceptor(Method classMethod, Class<?> interceptor, HttpRequest httpRequest, HttpResponse httpResponse) {
+
+        try {
+            Object routerObject = interceptor.getConstructor().newInstance();
+            boolean resultOfInterceptor = (boolean) classMethod.invoke(routerObject, httpRequest, httpResponse);
+            if (!resultOfInterceptor) {
+                return false;
+            }
+
+            return true;
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            log.error(e.getMessage());
+            return false;
+        }
     }
 
     private static boolean isIncludePath(PreHandle preHandleAnnotation, String path) {
