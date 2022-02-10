@@ -2,12 +2,10 @@ package controller;
 
 import controller.request.Request;
 import controller.response.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import service.UserService;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.ws.rs.core.AbstractMultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 
 /**
  * Created by melodist
@@ -15,8 +13,6 @@ import java.util.Map;
  * Time: 오후 4:22
  */
 public class UserCreateController implements WebController{
-    private static final Logger log = LoggerFactory.getLogger(UserCreateController.class);
-
     @Override
     public Response process(Request request) {
         String userId = request.getBody("userId");
@@ -25,8 +21,8 @@ public class UserCreateController implements WebController{
         String email = request.getBody("email");
         UserService.addUser(userId, password, name, email);
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Location", "/index.html");
+        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        headers.add("Location", "/index.html");
 
         return new Response.Builder()
                 .redirect()

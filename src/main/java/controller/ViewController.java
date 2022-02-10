@@ -4,13 +4,12 @@ import controller.request.Request;
 import controller.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpStatus;
 
+import javax.ws.rs.core.AbstractMultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by melodist
@@ -24,11 +23,11 @@ public class ViewController implements WebController {
     public Response process(Request request) {
         Response response = null;
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "text/" + request.getContentType() + ";charset=utf-8");
+        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        headers.add("Content-Type", "text/" + request.getContentType() + ";charset=utf-8");
         try {
             byte[] body = readBody(request.getPath());
-            headers.put("Content-Length", String.valueOf(body.length));
+            headers.add("Content-Length", String.valueOf(body.length));
 
             response = new Response.Builder()
                     .ok()

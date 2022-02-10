@@ -150,7 +150,7 @@ public enum ContentType {
 #### 구현 내용
 
 - MongoDB 적용한 한 줄 글쓰기 구현
-  - [ ] 로그인 유저 정보 저장
+  - [x] 로그인 유저 정보 저장
     - 쿠키 여러 개 생성 시 `ResponseHeader`에 저장하도록 구현 변경 필요 
   - [x] `userId`로 사용자 검색하는 기능 추가 
   - [x] 게시글 저장 기능 추가
@@ -159,3 +159,17 @@ public enum ContentType {
 #### 구현 관련 고찰
 
 - 쿠키 여러 개 저장하는 효과적인 방법은?
+
+### 2022-02-10 (목)
+
+#### 구현 내용
+
+- MongoDB 적용한 한 줄 글쓰기 구현
+  - [x] 로그인 유저 정보 저장
+  - [ ] Atlas 적용
+
+#### 구현 관련 고찰
+
+- `MultiValuedHashMap` 사용 시 컨트롤러 코드 변경 필요
+  - 코드의 변경을 최소화할 수 있는 설계 필요 
+- Atlas 연결 시 `extension (5) should not be presented in certificate_request` 오류 발생

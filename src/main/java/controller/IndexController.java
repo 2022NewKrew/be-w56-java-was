@@ -7,15 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ArticleService;
 
+import javax.ws.rs.core.AbstractMultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by melodist
@@ -29,17 +29,17 @@ public class IndexController implements WebController{
 
     @Override
     public Response process(Request request) {
-        Map<String, String> headers = new HashMap<>();
+        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
         Response response = null;
 
-        headers.put("Content-Type", "text/html;charset=utf-8");
+        headers.add("Content-Type", "text/html;charset=utf-8");
         try {
             String header = Files.readString(Paths.get(INDEX_HEADER));
             String footer = Files.readString(Paths.get(INDEX_FOOTER));
             String body = getBody(header, footer, ArticleService.getArticleList());
 
             byte[] byteBody = body.getBytes(StandardCharsets.UTF_8);
-            headers.put("Content-Length", String.valueOf(byteBody.length));
+            headers.add("Content-Length", String.valueOf(byteBody.length));
 
             response = new Response.Builder()
                     .ok()

@@ -4,9 +4,8 @@ import controller.response.Response;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.ws.rs.core.AbstractMultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 
 /**
  * Created by melodist
@@ -31,7 +30,8 @@ class HttpResponseUtilsTest {
     @Test
     public void createResponseStringWithHeader() {
         // given
-        Map<String, String> headers = Map.of("test-key", "test-value");
+        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        headers.add("test-key", "test-value");
         Response response = new Response.Builder().ok()
                 .headers(headers)
                 .build();
@@ -42,7 +42,4 @@ class HttpResponseUtilsTest {
         // then
         Assertions.assertThat(responseString).isEqualTo("HTTP/1.1 200 OK\r\n" + "test-key: test-value\r\n\r\n");
     }
-
-
-
 }
