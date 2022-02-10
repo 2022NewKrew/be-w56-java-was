@@ -3,6 +3,7 @@ package webserver;
 import http.request.HttpRequest;
 import http.request.HttpRequestDecoder;
 import http.response.HttpResponse;
+import http.view.OutputView;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import webserver.controller.BaseController;
@@ -48,7 +49,7 @@ public class RequestHandler implements Runnable {
             BaseController controller = getController(request.getUri());
 
             HttpResponse response = controller.service(request);
-            response.send(dos);
+            OutputView.sendResponse(response, dos);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

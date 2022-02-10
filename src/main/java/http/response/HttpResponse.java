@@ -8,11 +8,8 @@ import http.view.ViewResolver;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 public class HttpResponse extends HttpMessage {
@@ -25,28 +22,6 @@ public class HttpResponse extends HttpMessage {
         super(protocolVersion, headers, cookies);
         this.status = status;
         this.body = uri != null ? ViewResolver.getView(uri) : new byte[0];
-    }
-
-    public void send(DataOutputStream dos) throws IOException {
-        dos.writeBytes(String.format("%s %s\r\n", protocolVersion.getValue(), status));
-        for (Map.Entry<String, String> header: headers) {
-            dos.writeBytes(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
-        }
-        for (Cookie cookie: cookies) {
-            dos.writeBytes(String.format("Set-Cookie: %s\r\n", cookie));
-        }
-
-        if (body.length > 0) {
-            dos.writeBytes(String.format("Content-Length: %d\r\n", body.length));
-        }
-
-        dos.writeBytes("\r\n");
-
-        if (body.length > 0) {
-            dos.write(body, 0, body.length);
-        }
-
-        dos.flush();
     }
 
     public void addCookie(Cookie cookie) {
