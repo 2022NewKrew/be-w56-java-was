@@ -32,13 +32,13 @@ public class UserJdbc {
         jsonUser.put(User.KEY_EMAIL, user.getEmail());
         jedis.set(KEY_PREFIX + id, jsonUser.toString());
 
-        jedisPools.release(jedis);
+        jedis.close();
     }
 
     public User findUserById(final String id) {
         final Jedis jedis = jedisPools.get();
         final String strUser = jedis.get(KEY_PREFIX + id);
-        jedisPools.release(jedis);
+        jedis.close();
 
         if (strUser == null) {
             return null;
@@ -53,7 +53,7 @@ public class UserJdbc {
         for (String id : ids) {
             users.add(new User(new JSONObject(jedis.get(KEY_PREFIX + id))));
         }
-        jedisPools.release(jedis);
+        jedis.close();
 
         return Collections.unmodifiableList(users);
     }

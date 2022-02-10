@@ -4,8 +4,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.util.Objects;
-
 public class JedisPools {
     private final JedisPool pool;
 
@@ -15,13 +13,9 @@ public class JedisPools {
     }
 
     /**
-     * @return Jedis Instance. You must call release this after use.
+     * @return Jedis Instance. You must close it after use.
      */
     public Jedis get() {
         return pool.getResource();
-    }
-
-    public void release(final Jedis jedis) {
-        pool.returnResource(Objects.requireNonNull(jedis));
     }
 }
