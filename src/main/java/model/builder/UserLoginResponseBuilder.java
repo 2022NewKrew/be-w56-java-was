@@ -2,7 +2,7 @@ package model.builder;
 
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
-import model.ResponseHeader;
+import model.HtmlResponse;
 import service.UserService;
 import util.HtmlResponseHeader;
 import util.Links;
@@ -18,7 +18,7 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
     }
 
     @Override
-    public ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException {
+    public HtmlResponse build(RequestHeader requestHeader) throws IOException, SQLException {
         String userId = requestHeader.getParameter("userId");
         String password = requestHeader.getParameter("password");
         if (userService.login(userId, password)) {
@@ -27,8 +27,8 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
         return buildFailLogin(requestHeader);
     }
 
-    private ResponseHeader buildSuccessLogin(RequestHeader requestHeader) throws IOException {
-        return ResponseHeader.builder()
+    private HtmlResponse buildSuccessLogin(RequestHeader requestHeader) throws IOException {
+        return HtmlResponse.builder()
                 .uri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGIN_COOKIE)
@@ -36,8 +36,8 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
                 .build();
     }
 
-    private ResponseHeader buildFailLogin(RequestHeader requestHeader) throws IOException {
-        return ResponseHeader.builder()
+    private HtmlResponse buildFailLogin(RequestHeader requestHeader) throws IOException {
+        return HtmlResponse.builder()
                 .uri(Links.LOGIN_FAILED)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.LOGIN_FAILED), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)

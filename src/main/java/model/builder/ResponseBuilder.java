@@ -3,7 +3,7 @@ package model.builder;
 import dynamic.DynamicModel;
 import lombok.extern.slf4j.Slf4j;
 import model.RequestHeader;
-import model.ResponseHeader;
+import model.HtmlResponse;
 import util.Links;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public abstract class ResponseBuilder {
     protected DynamicModel model = new DynamicModel();
 
-    public abstract ResponseHeader build(RequestHeader requestHeader) throws IOException, SQLException;
+    public abstract HtmlResponse build(RequestHeader requestHeader) throws IOException, SQLException;
 
     public byte[] readBody(String uri) throws IOException {
         return Files.readAllBytes(new File(Links.RETURN_BASE + uri).toPath());

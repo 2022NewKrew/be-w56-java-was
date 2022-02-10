@@ -11,7 +11,7 @@ import java.io.IOException;
 @Slf4j
 @Data
 @Builder
-public class ResponseHeader {
+public class HtmlResponse {
     private String uri;
     private String accept;
     private byte[] body;
