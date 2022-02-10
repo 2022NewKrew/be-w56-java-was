@@ -14,6 +14,7 @@ public class Headers {
     private final static String CONTENT_LENGTH = "Content-Length";
     private final static String CHARSET_UTF8 = "; charset=utf-8";
     private final static String LOCATION = "Location";
+    private final static String SET_COOKIE = "Set-Cookie";
 
     private final Map<String, String> headers;
 
@@ -41,6 +42,10 @@ public class Headers {
         Map<String, String> headers = new HashMap<>();
         headers.put(LOCATION, redirect);
         return new Headers(headers);
+    }
+
+    public void setCookie(String cookie) {
+        headers.put(SET_COOKIE, cookie);
     }
 
     private static void createHeaders(int lengthOfBody, String contentTypes, Map<String, String> headers) {
