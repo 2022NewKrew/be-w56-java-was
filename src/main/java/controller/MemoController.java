@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repo.MemoJdbc;
 import repo.UserJdbc;
+import templates.TemplateAttribute;
+import templates.TemplateEngine;
 import util.HttpRequestUtils;
 
 import java.net.URLDecoder;
@@ -22,7 +24,10 @@ import java.util.Objects;
 public class MemoController {
     private static final Logger log = LoggerFactory.getLogger(MemoController.class);
 
+    private static final String LOCATION_HOME = "/";
+    private static final String LOCATION_HOME_INDEX = "/index.html";
     private static final String LOCATION_MEMO_LIST = "/index";
+    private static final String LOCATION_MEMO_CREATE_FORM = "/memo/form.html";
     private static final String LOCATION_MEMO_CREATE = "/memo/create";
 
     private final UserJdbc userJdbc;
@@ -33,23 +38,28 @@ public class MemoController {
         this.memoJdbc = new MemoJdbc(jedisPools);
     }
 
-//    public Body processGet(final String location) {
-//        if (LOCATION_MEMO_LIST.equals(location)) {
-//            return getUserList();
-//        }
-//
-//        return Body.EMPTY;
-//    }
-//
-//    static TemplateEngine userListTpl;
-//    private Body getUserList() {
-//        if (userListTpl == null) {
-//            userListTpl = new TemplateEngine(LOCATION_MEMO_LIST);
-//        }
-//        TemplateAttribute<User> tplAttr = new TemplateAttribute<>();
-//        tplAttr.set("memolist", userJdbc.findAll());
-//        return userListTpl.processTemplate(tplAttr);
-//    }
+    public Body processGet(final String location, final String userId) {
+        if (LOCATION_HOME.equals(location) ||
+                LOCATION_HOME_INDEX.equals(location)) {
+            return getMemoList();
+        } else if (LOCATION_MEMO_CREATE_FORM.equals(location)) {
+            if (userId == null || userId.isBlank()) {
+                throw new IllegalStateException("Login is required!");
+            }
+        }
+
+        return Body.EMPTY;
+    }
+
+    static TemplateEngine memoListTpl;
+    private Body getMemoList() {
+        if (memoListTpl == null) {
+            memoListTpl = new TemplateEngine(LOCATION_MEMO_LIST);
+        }
+        TemplateAttribute<Memo> tplAttr = new TemplateAttribute<>();
+        tplAttr.set("memolist", memoJdbc.getAllOrderByCreatedAtDesc());
+        return memoListTpl.processTemplate(tplAttr);
+    }
 
     public Headers processPost(final String location, final String userId, final Body body) {
         final List<Pair> list = new ArrayList<>();

@@ -29,6 +29,8 @@ public class RequestHandler implements Callable<Void> {
     private static final String TOP_HEADER_SEPARATOR = " ";
     private static final String LOCATION_AND_PARAMETER_SEPARATOR = "\\?";
 
+    private static final String LOCATION_HOME = "/";
+    private static final String LOCATION_HOME_INDEX = "/index.html";
     private static final String LOCATION_USER_PREFIX = "/user/";
     private static final String LOCATION_MEMO_PREFIX = "/memo/";
 
@@ -159,17 +161,28 @@ public class RequestHandler implements Callable<Void> {
             final String userId
     ) throws IOException
     {
+        Body body = Body.EMPTY;
         if (location.startsWith(LOCATION_USER_PREFIX)) {
             try {
-                final Body body = userController.processGet(location, userId);
-                if (body.isNotEmpty()) {
-                    responseWriter.writeBodyResponse(out, body);
-                    return;
-                }
+                body = userController.processGet(location, userId);
             } catch (IllegalStateException e) {
                 writeRedirectLogin(out);
                 return;
             }
+        } else if (location.startsWith(LOCATION_MEMO_PREFIX) ||
+                location.equals(LOCATION_HOME) ||
+                location.equals(LOCATION_HOME_INDEX)) {
+            try {
+                body = memoController.processGet(location, userId);
+            } catch (IllegalStateException e) {
+                writeRedirectLogin(out);
+                return;
+            }
+        }
+
+        if (body.isNotEmpty()) {
+            responseWriter.writeBodyResponse(out, body);
+            return;
         }
 
         responseWriter.writeFileResponse(out, location);
