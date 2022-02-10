@@ -16,13 +16,12 @@ public class HttpRequest {
     private final Map<String, String> headers;
     private final Map<String, String> queryString;
     private Map<String, String> cookies;
-    private String body;
+    private Map<String, String> body;
 
-    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> headers, String body) {
+    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> headers) {
         this.method = method;
         this.uri = uri;
         this.version = version;
-        this.body = body;
         this.headers = headers;
         this.cookies = new HashMap<>();
 
@@ -37,6 +36,11 @@ public class HttpRequest {
         if (headers.containsKey("Cookie")){
             this.cookies = HttpRequestUtils.parseCookies(headers.get("Cookie"));
         }
+    }
+
+    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> headers, Map<String, String> body) {
+        this(method, uri, version, headers);
+        this.body = body;
     }
 
     public HttpMethod getMethod() {
@@ -55,7 +59,7 @@ public class HttpRequest {
         return version;
     }
 
-    public String getBody() {
+    public Map<String, String> getBody() {
         return body;
     }
 
@@ -69,10 +73,6 @@ public class HttpRequest {
 
     public Map<String, String> getCookies() {
         return cookies;
-    }
-
-    public Map<String, String> getBodyMap() {
-        return HttpRequestUtils.parseQueryString(body);
     }
 
     public String toMessage() {

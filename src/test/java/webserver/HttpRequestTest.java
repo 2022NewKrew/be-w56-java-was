@@ -21,7 +21,7 @@ class HttpRequestTest {
         headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
         headers.put("Connection", "keep-alive");
 
-        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers, "");
+        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers);
 
         assertThat(httpRequest.getMethod()).isEqualTo(method);
         assertThat(httpRequest.getUri()).isEqualTo(uri);
@@ -43,7 +43,7 @@ class HttpRequestTest {
         headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
         headers.put("Connection", "keep-alive");
 
-        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers, "");
+        HttpRequest httpRequest = new HttpRequest(method, uri, version, headers);
 
         assertThat(httpRequest.getPath()).isEqualTo("/user/create");
         assertThat(httpRequest.getQueryString().get("userId")).isEqualTo("jjj");
@@ -58,14 +58,18 @@ class HttpRequestTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Length", "84");
         headers.put("Content-Type", "application/x-www-form-urlencoded");
-        String body = "userId=jjj&password=123&name=123&email=dhso%40nnnn.nnn";
+        Map<String, String> body = new HashMap<>();
+        body.put("userId", "jjj");
+        body.put("password", "123");
+        body.put("name", "jy");
+        body.put("email", "dhso%40nnnn.nnn");
 
         HttpRequest httpRequest = new HttpRequest(method, uri, version, headers, body);
 
-        assertThat(httpRequest.getBodyMap().get("userId")).isEqualTo("jjj");
-        assertThat(httpRequest.getBodyMap().get("password")).isEqualTo("123");
-        assertThat(httpRequest.getBodyMap().get("name")).isEqualTo("123");
-        assertThat(httpRequest.getBodyMap().get("email")).isEqualTo("dhso%40nnnn.nnn");
+        assertThat(httpRequest.getBody().get("userId")).isEqualTo("jjj");
+        assertThat(httpRequest.getBody().get("password")).isEqualTo("123");
+        assertThat(httpRequest.getBody().get("name")).isEqualTo("jy");
+        assertThat(httpRequest.getBody().get("email")).isEqualTo("dhso%40nnnn.nnn");
     }
 
 

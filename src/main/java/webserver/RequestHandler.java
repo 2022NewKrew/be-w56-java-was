@@ -2,11 +2,13 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import springmvc.FrontController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 import util.IOUtils;
 
 public class RequestHandler extends Thread {
@@ -24,8 +26,8 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            DataOutputStream dos = new DataOutputStream(out)) {
+             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+             DataOutputStream dos = new DataOutputStream(out)) {
 
             HttpRequest httpRequest = createHttpRequest(br);
             log.debug(httpRequest.toMessage());
@@ -44,9 +46,11 @@ public class RequestHandler extends Thread {
 
         String[] tokens = br.readLine().split(" ");
         Map<String, String> headers = IOUtils.readHeader(br);
-        String body = headers.containsKey("Content-Length") ?
-                IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length"))) : "";
-        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, body);
+        if (headers.containsKey("Content-Length")) {
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+            return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, HttpRequestUtils.parseQueryString(body));
+        }
+        return new HttpRequest(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers);
     }
 
     private static HttpResponse createEmptyHttpResponse(){

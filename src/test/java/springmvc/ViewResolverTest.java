@@ -14,10 +14,10 @@ class ViewResolverTest {
     void test302() {
         // Given
         HttpResponse httpResponse = new HttpResponse();
-        String viewName = "redirect:/index.html";
+        String viewName = "/index.html";
 
         // When
-        ViewResolver.resolve(viewName, httpResponse);
+        ViewResolver.resolve(new ModelAndView(viewName, HttpStatus.FOUND), httpResponse);
 
         // Then
         assertThat(httpResponse.getHttpStatus()).isEqualTo(HttpStatus.FOUND);
@@ -32,7 +32,7 @@ class ViewResolverTest {
         String viewName = "/index.html";
 
         // When
-        ViewResolver.resolve(viewName, httpResponse);
+        ViewResolver.resolve(new ModelAndView(viewName, HttpStatus.OK), httpResponse);
 
         // Then
         assertThat(httpResponse.getHttpStatus()).isEqualTo(HttpStatus.OK);
@@ -46,7 +46,7 @@ class ViewResolverTest {
         String viewName = "/wrong";
 
         // When
-        ViewResolver.resolve(viewName, httpResponse);
+        ViewResolver.resolve(new ModelAndView(viewName, HttpStatus.BAD_REQUEST), httpResponse);
 
         // Then
         assertThat(httpResponse.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);

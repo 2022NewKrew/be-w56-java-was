@@ -1,30 +1,39 @@
 package springmvc.controller;
 
+import springmvc.ModelAndView;
 import springmvc.db.DataBase;
 import model.User;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
+import webserver.HttpStatus;
 
 import java.util.Map;
 
-public class LoginController implements Controller {
+public class LoginController extends Controller {
 
     @Override
-    public String doGet(Map<String, String> param, Map<String, String> sessionCookie) {
-        if (sessionCookie.getOrDefault("logined", "false").equals("true")){
-            return "redirect:/index.html";
+    public ModelAndView doGet(HttpRequest httpRequest, HttpResponse httpResponse) {
+        if (httpRequest.getCookies().getOrDefault("logined", "false").equals("true")){
+            return new ModelAndView("/index.html", HttpStatus.FOUND);
         }
-        return "redirect:/user/login.html";
+        return new ModelAndView("/user/login.html", HttpStatus.FOUND);
     }
 
     @Override
-    public String doPost(Map<String, String> param, Map<String, String> body, Map<String, String> sessionCookie) {
+    public ModelAndView doPost(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
+            Map<String, String> body = httpRequest.getBody();
             User user = findUser(body.get("userId"));
             validatePassword(user, body.get("password"));
-            sessionCookie.put("logined", "true");
-            return "redirect:/index.html";
+            httpResponse.addCookie("logined", "true");
+            httpResponse.addCookie("Max-Age", "180"); // max-age 3분
+            httpResponse.addCookie("Path", "/");
+            return new ModelAndView("/", HttpStatus.FOUND);
         } catch (Exception e) {
-            sessionCookie.put("logined", "false");
-            return "redirect:/user/login_failed.html";
+            httpResponse.addCookie("logined", "false");
+            httpResponse.addCookie("Max-Age", "180"); // max-age 3분
+            httpResponse.addCookie("Path", "/");
+            return new ModelAndView("/user/login_failed.html", HttpStatus.FOUND);
         }
     }
 
