@@ -1,5 +1,6 @@
 package DTO;
 
+import util.HtmlParser;
 import util.HttpResponseUtils;
 import util.IOUtils;
 
@@ -10,9 +11,8 @@ import java.util.Map;
 
 public class ModelAndView {
     final static private String PREFIX_REDIRECT = "redirect:";
-    Map<String, String> model = new HashMap<>();
+    Map<String, Object> model = new HashMap<>();
     String view;
-
     // todo : model paramter 전달 시, 해당 내용 추가!
     public ModelAndView(String viewName){
         view = viewName;
@@ -25,7 +25,7 @@ public class ModelAndView {
 
     public String getViewName() { return view;}
 
-    public void addObject(String name, String value){
+    public void addObject(String name, Object value){
         model.put(name, value);
     }
 
@@ -46,9 +46,10 @@ public class ModelAndView {
         }
 
         byte[] body = IOUtils.readHeaderPathFile(view, responseHeader);
+        byte[] dynamicBody = HtmlParser.fillDynamicHtml(body);
 
         HttpResponseUtils.writeResponseHeader(responseHeader, dos);
-        HttpResponseUtils.writeResponseBody(dos, body);
+        HttpResponseUtils.writeResponseBody(dos, dynamicBody);
 
     }
 

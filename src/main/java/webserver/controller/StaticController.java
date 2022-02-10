@@ -10,6 +10,8 @@ import model.User;
 import java.util.Map;
 
 public class StaticController implements Controller{
+
+    @Override
     public ModelAndView getResponse(RequestHeader requestHeader, ResponseHeader responseHeader){
         Map<String, String> requestParam = requestHeader.getBody();
         String requestUrl= requestHeader.getRequestUrl();

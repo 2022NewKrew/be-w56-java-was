@@ -22,6 +22,7 @@ public class HandlerMapper {
         Controller memberController = new MemberController();
         Controller userListController = new UserListController();
         memberController.map(controllerList);
+        userListController.map(controllerList);
     }
 
     public static Controller requestMapping(RequestHeader requestHeader) throws NullPointerException{
