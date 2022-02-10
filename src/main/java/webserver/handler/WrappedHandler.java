@@ -1,6 +1,7 @@
 package webserver.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import webserver.exception.HandlerInvocationError;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.view.ModelAndView;
@@ -23,11 +24,11 @@ public class WrappedHandler {
 
     public ModelAndView handle(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
-            method.invoke(controller, rearrangeArgs(httpRequest, httpResponse));
+            return (ModelAndView) method.invoke(controller, rearrangeArgs(httpRequest, httpResponse));
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error(e.getMessage(), e);
+            throw new HandlerInvocationError();
         }
-        return null;
     }
 
     private Object[] rearrangeArgs(HttpRequest httpRequest, HttpResponse httpResponse) {
