@@ -10,7 +10,7 @@ public class StaticFileHandler {
         this.file = file;
     }
 
-    public Path getPath() {
-        return file.toPath();
+    public String getPath() {
+        return file.getPath();
     }
 }

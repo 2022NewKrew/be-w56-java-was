@@ -3,11 +3,11 @@ package webserver.method;
 import annotation.CookieValue;
 import annotation.RequestBody;
 import http.HttpRequest;
-import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import webserver.HandlerAdapter;
+import webserver.ModelAndView;
 import webserver.SingletonBeanRegistry;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,13 +24,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request, Object handler) {
+    public ModelAndView handle(HttpRequest request, Object handler) {
         RequestMappingHandler mappingHandler = (RequestMappingHandler) handler;
         Object controller = SingletonBeanRegistry.getBean(mappingHandler.getBeanName());
         Method method = mappingHandler.getMethod();
         Object[] args = getParameterValuesForMethod(request, method);
         try {
-            return (HttpResponse) method.invoke(controller, args);
+            return (ModelAndView) method.invoke(controller, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to invoke request mapping method of " + method.getName());
         }
