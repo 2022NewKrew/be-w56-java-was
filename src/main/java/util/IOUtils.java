@@ -2,6 +2,9 @@ package util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class IOUtils {
     /**
@@ -16,5 +19,9 @@ public class IOUtils {
         char[] body = new char[contentLength];
         br.read(body, 0, contentLength);
         return String.copyValueOf(body);
+    }
+
+    public static void decode(Map<String, String> data) {
+        data.entrySet().forEach(e -> e.setValue(URLDecoder.decode(e.getValue(), StandardCharsets.UTF_8)));
     }
 }
