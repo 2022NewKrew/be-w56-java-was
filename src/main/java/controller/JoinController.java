@@ -21,6 +21,6 @@ public class JoinController implements Controller{
 
         User user = new User(userId, password, name, email);
         UserService.join(user);
-        response.redirectResponse("/index.html");
+        response.redirectResponse("/");
     }
 }
