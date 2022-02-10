@@ -1,6 +1,6 @@
 package application.out.session;
 
-import domain.user.SessionAttributes;
+import domain.session.SessionAttributes;
 
 import java.util.Optional;
 

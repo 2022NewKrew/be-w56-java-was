@@ -58,6 +58,7 @@ cmake-build-*/
 out/
 !src/main/java/adaptor/out/
 !src/main/java/application/out/
+!src/test/java/application/out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

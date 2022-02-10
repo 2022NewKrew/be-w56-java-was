@@ -1,6 +1,6 @@
 package application.out.session;
 
-import domain.user.Session;
+import domain.session.Session;
 
 import java.util.Optional;
 

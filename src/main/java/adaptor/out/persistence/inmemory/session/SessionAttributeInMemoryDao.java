@@ -1,7 +1,7 @@
 package adaptor.out.persistence.inmemory.session;
 
 import application.out.session.SessionAttributesDao;
-import domain.user.SessionAttributes;
+import domain.session.SessionAttributes;
 
 import java.util.HashMap;
 import java.util.Map;

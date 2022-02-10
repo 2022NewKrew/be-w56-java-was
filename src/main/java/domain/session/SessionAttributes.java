@@ -1,4 +1,4 @@
-package domain.user;
+package domain.session;
 
 public class SessionAttributes {
 

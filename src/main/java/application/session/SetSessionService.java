@@ -4,7 +4,7 @@ import application.exception.session.NonExistsSessionException;
 import application.in.session.SetSessionUseCase;
 import application.out.session.SessionAttributesPort;
 import application.out.session.SessionPort;
-import domain.user.Session;
+import domain.session.Session;
 
 public class SetSessionService implements SetSessionUseCase {
 

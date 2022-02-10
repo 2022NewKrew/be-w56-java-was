@@ -73,9 +73,9 @@ class ReadMemoUseCaseTest {
     @Test
     void assertReadAllMemos() {
         List<Memo> memos = List.of(
-                new Memo(1, "Hello", LocalDateTime.now()),
-                new Memo(2, "World", LocalDateTime.now()),
-                new Memo(3, "!!!", LocalDateTime.now())
+                new Memo(1, "binary", "Hello", LocalDateTime.now()),
+                new Memo(2, "writer", "World", LocalDateTime.now()),
+                new Memo(3, "writer", "!!!", LocalDateTime.now())
         );
         given(readMemoPort.findAll())
                 .willReturn(memos);

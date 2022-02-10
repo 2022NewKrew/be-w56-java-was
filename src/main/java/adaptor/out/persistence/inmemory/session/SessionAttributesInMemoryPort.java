@@ -2,7 +2,7 @@ package adaptor.out.persistence.inmemory.session;
 
 import application.out.session.SessionAttributesDao;
 import application.out.session.SessionAttributesPort;
-import domain.user.SessionAttributes;
+import domain.session.SessionAttributes;
 
 import java.util.Optional;
 

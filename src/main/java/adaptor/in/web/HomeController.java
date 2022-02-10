@@ -2,6 +2,7 @@ package adaptor.in.web;
 
 import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
+import application.in.memo.ReadMemoUseCase;
 import infrastructure.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,10 @@ import java.io.IOException;
 public class HomeController {
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private final ReadMemoUseCase readMemoUseCase;
 
-    public HomeController() {
+    public HomeController(ReadMemoUseCase readMemoUseCase) {
+        this.readMemoUseCase = readMemoUseCase;
     }
 
     public HttpResponse handle(HttpRequest httpRequest) throws FileNotFoundException, UriNotFoundException {

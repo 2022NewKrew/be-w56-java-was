@@ -1,4 +1,4 @@
-package domain.user;
+package domain.session;
 
 import java.time.LocalDateTime;
 
