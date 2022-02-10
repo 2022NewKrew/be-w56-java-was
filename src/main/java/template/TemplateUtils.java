@@ -1,11 +1,15 @@
 package template;
 
+import app.user.exception.NonIterableException;
 import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemplateUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(TemplateUtils.class);
     private static final String START_REGEX = "\\{\\{#(.*)}}((.|\n)*)\\{\\{/(.*)}}";
     private static final int KEY_GROUP_INDEX = 1;
     private static final int INNER_CONTENT_INDEX = 2;
@@ -18,32 +22,28 @@ public class TemplateUtils {
         if (!matcher.find()) {
             return contents;
         }
+        Iterable<?> attributeValue = getAttributeValue(matcher, model);
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(contents, 0, matcher.start(0));
-        String key = matcher.group(KEY_GROUP_INDEX);
-
-        Object modelValues = model.getMap().get(key);
-        if (!(modelValues instanceof Iterable)) {
-            return contents;
-        }
-
+        String startContents = contents.substring(0, matcher.start());
         String subContents = contents.substring(
             matcher.start(INNER_CONTENT_INDEX),
             matcher.end(INNER_CONTENT_INDEX));
-        ((Iterable<?>) modelValues).forEach(value -> builder.append(mapping(subContents, value)));
-        builder.append(contents.substring(matcher.end()));
+        String endContents = contents.substring(matcher.end());
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(startContents);
+        attributeValue.forEach(value -> builder.append(mappingValue(subContents, value)));
+        builder.append(endContents);
         return builder.toString();
     }
 
-    private static String mapping(String content, Object value) {
+    private static String mappingValue(String content, Object value) {
         try {
             Pattern fieldPattern = Pattern.compile(CONTENT_REGEX);
             Matcher matcher = fieldPattern.matcher(content);
-
-            int startIndex = 0;
             StringBuilder builder = new StringBuilder();
 
+            int startIndex = 0;
             while (matcher.find()) {
                 String field = matcher.group(KEY_GROUP_INDEX);
                 Field declaredField = value.getClass().getDeclaredField(field);
@@ -54,10 +54,19 @@ public class TemplateUtils {
             }
             builder.append(content.substring(startIndex));
             return builder.toString();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error(e.getMessage());
         }
         return content;
+    }
+
+    private static Iterable<?> getAttributeValue(Matcher matcher, Model model) {
+        String key = matcher.group(KEY_GROUP_INDEX);
+        Object value = model.getMap().get(key);
+        if (!(value instanceof Iterable)) {
+            throw new NonIterableException();
+        }
+        return (Iterable<?>) value;
     }
 
 }
