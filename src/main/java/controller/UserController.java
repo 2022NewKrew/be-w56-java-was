@@ -1,121 +1,55 @@
 package controller;
 
+import annotation.RequestMapping;
 import db.DataBase;
+import http.request.HttpRequest;
+import http.request.HttpRequestMethod;
+import http.response.HttpResponseHeaderKey;
 import java.util.Map;
 import model.User;
 import model.UserLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.HttpRequest;
-import request.RequestBody;
-import response.HttpResponse.HttpResponseBuilder;
-import response.HttpStatusCode;
-import response.ResHeader;
-import response.ResponseHeader;
-import response.ResponseHeader.ResponseHeaderBuilder;
-import util.IOUtils;
-import util.UrlUtils;
-import webserver.UrlMapper;
 
-public class UserController {
+public class UserController extends Controller {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private UserController() {}
+    private static final String USER_ID = "userId";
+    private static final String PASSWORD = "password";
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
 
-    public static void register() {
+    @RequestMapping(value = "/user/signup", method = HttpRequestMethod.GET)
+    public String signupForm(HttpRequest httpRequest) {
+        return "user/form";
+    }
 
-        UrlMapper.put(
-            "/user/form.html",
-            "GET",
-            (HttpRequest httpRequest) -> {
-                byte[] body = IOUtils.readFile("./webapp/user/form.html");
-                ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
-                        .build();
+    @RequestMapping(value = "/user/signup", method = HttpRequestMethod.POST)
+    public String signup(HttpRequest httpRequest) {
+        Map<String, String> data = getData(httpRequest);
+        User user = new User(data.get(USER_ID), data.get(PASSWORD), data.get(NAME), data.get(EMAIL));
+        DataBase.addUser(user);
 
-                return new HttpResponseBuilder(HttpStatusCode.OK)
-                        .setHeader(responseHeader)
-                        .setBody(body)
-                        .build();
-            }
-        );
+        log.info("SignIn Succeeded - {}", user);
+        return "redirect:/";
+    }
 
-        UrlMapper.put(
-            "/user/create",
-            "POST",
-            (HttpRequest httpRequest) -> {
-                RequestBody requestBody = httpRequest.getRequestBody();
-                String body = new String(requestBody.getBody());
-                body = UrlUtils.decode(body);
-                Map<String, String> data = IOUtils.getBodyData(body);
+    @RequestMapping(value = "/user/login", method = HttpRequestMethod.GET)
+    public String loginForm(HttpRequest httpRequest) {
+        return "user/login";
+    }
 
-                try {
-                    User user = new User(data.get("userId"), data.get("password"),
-                            data.get("name"), data.get("email"));
-                    DataBase.addUser(user);
+    @RequestMapping(value = "/user/login", method = HttpRequestMethod.POST)
+    public String login(HttpRequest httpRequest, Map<HttpResponseHeaderKey, String> headerMap) {
+        Map<String, String> data = getData(httpRequest);
+        UserLogin user = new UserLogin(data.get(USER_ID), data.get(PASSWORD));
+        boolean loginSuccess = DataBase.login(user);
 
-                    LOG.info("SignIn Succeeded - {}", user);
-                    ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                            .set(ResHeader.LOCATION, "/")
-                            .build();
+        String cookieValue = loginSuccess ? "logined=true; Path=/" : "logined=false";
+        headerMap.put(HttpResponseHeaderKey.SET_COOKIE, cookieValue);
 
-                    return new HttpResponseBuilder(HttpStatusCode.FOUND)
-                            .setHeader(responseHeader)
-                            .build();
-
-                } catch (NullPointerException | IllegalArgumentException e) {
-                    LOG.error(e.getMessage());
-                    return new HttpResponseBuilder(HttpStatusCode.NOT_ACCEPTABLE).build();
-                }
-            }
-        );
-
-        UrlMapper.put(
-            "/user/login.html",
-            "GET",
-            (HttpRequest httpRequest) -> {
-                byte[] body = IOUtils.readFile("./webapp/user/login.html");
-                ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
-                        .build();
-
-                return new HttpResponseBuilder(HttpStatusCode.OK)
-                        .setHeader(responseHeader)
-                        .setBody(body)
-                        .build();
-            }
-        );
-
-        UrlMapper.put(
-            "/user/login",
-            "POST",
-            (HttpRequest httpRequest) -> {
-                RequestBody requestBody = httpRequest.getRequestBody();
-                String body = new String(requestBody.getBody());
-                body = UrlUtils.decode(body);
-                Map<String, String> data = IOUtils.getBodyData(body);
-
-                try {
-                    UserLogin user = new UserLogin(data.get("userId"), data.get("password"));
-                    boolean result = DataBase.login(user);
-                    String cookieValue = result ? "logined=true; Path=/" : "logined=false";
-
-                    LOG.info(result ? "Login Failed" : "Login Succeeded - {}", user);
-                    ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                            .set(ResHeader.SET_COOKIE, cookieValue)
-                            .set(ResHeader.LOCATION, "/")
-                            .build();
-
-                    return new HttpResponseBuilder(HttpStatusCode.FOUND)
-                            .setHeader(responseHeader)
-                            .build();
-
-                } catch (NullPointerException | IllegalArgumentException e) {
-                    LOG.error(e.getMessage());
-                    return new HttpResponseBuilder(HttpStatusCode.NOT_ACCEPTABLE).build();
-                }
-            }
-        );
+        log.info(loginSuccess ? "Login Failed" : "Login Succeeded - {}", user);
+        return "redirect:/";
     }
 }

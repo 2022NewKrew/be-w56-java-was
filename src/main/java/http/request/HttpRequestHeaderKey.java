@@ -1,16 +1,17 @@
-package response;
+package http.request;
 
-public enum ResHeader {
+public enum HttpRequestHeaderKey {
 
+    ACCEPT("Accept"),
+    CONNECTION("Connection"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_TYPE("Content-Type"),
-    LOCATION("Location"),
-    SET_COOKIE("Set-Cookie"),
+    COOKIE("Cookie"),
     ;
 
     private final String text;
 
-    ResHeader(String text) {
+    HttpRequestHeaderKey(String text){
         this.text = text;
     }
 

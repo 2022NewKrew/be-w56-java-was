@@ -1,34 +1,13 @@
 package controller;
 
-import request.HttpRequest;
-import response.HttpResponse.HttpResponseBuilder;
-import response.HttpStatusCode;
-import response.ResHeader;
-import response.ResponseHeader;
-import response.ResponseHeader.ResponseHeaderBuilder;
-import util.IOUtils;
-import webserver.UrlMapper;
+import annotation.RequestMapping;
+import http.request.HttpRequest;
+import http.request.HttpRequestMethod;
 
-public class IndexController {
+public class IndexController extends Controller {
 
-    private IndexController() {}
-
-    public static void register() {
-
-        UrlMapper.put(
-            "/",
-            "GET",
-            (HttpRequest httpRequest) -> {
-                byte[] body = IOUtils.readFile("./webapp/index.html");
-                ResponseHeader responseHeader = new ResponseHeaderBuilder()
-                        .set(ResHeader.CONTENT_LENGTH, "" + body.length)
-                        .build();
-
-                return new HttpResponseBuilder(HttpStatusCode.OK)
-                        .setHeader(responseHeader)
-                        .setBody(body)
-                        .build();
-            }
-        );
+    @RequestMapping(value = "/", method = HttpRequestMethod.GET)
+    public String index(HttpRequest httpRequest) {
+        return "index";
     }
 }

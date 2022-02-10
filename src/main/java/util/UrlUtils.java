@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 
 public class UrlUtils {
 
-    private static final String ENCODING = "UTF-8";
-    private static final Logger LOG = LoggerFactory.getLogger(UrlUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(UrlUtils.class);
 
-    private static final String PARAM_SEPERATOR = "&";
+    private static final String ENCODING = "UTF-8";
+    private static final String PARAM_SEPARATOR = "&";
     private static final String PARAM_DEFINE = "=";
     private static final String PARAM_INIT = "?";
     private static final String PARAM_INIT_REGEX = "\\?";
@@ -22,7 +22,7 @@ public class UrlUtils {
         try {
             return URLDecoder.decode(url, ENCODING);
         } catch (java.io.UnsupportedEncodingException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
             return url;
         }
     }
@@ -33,7 +33,7 @@ public class UrlUtils {
 
     public static Map<String, String> getParams(String url) {
         Map<String, String> params = new HashMap<>();
-        for (String param: getStringParams(url).split(PARAM_SEPERATOR)) {
+        for (String param: getStringParams(url).split(PARAM_SEPARATOR)) {
             putParam(params, param);
         }
         return params;

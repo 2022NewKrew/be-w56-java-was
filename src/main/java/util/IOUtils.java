@@ -10,16 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IOUtils {
-    /**
-     * @param BufferedReader는
-     *            Request Body를 시작하는 시점이어야
-     * @param contentLength는
-     *            Request Header의 Content-Length 값이다.
-     * @return
-     * @throws IOException
-     */
 
-    private static final Logger LOG = LoggerFactory.getLogger(IOUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(IOUtils.class);
 
     private static final String PROP_SEPERATOR = "&";
     private static final String PROP_DEFINE = "=";
@@ -37,7 +29,7 @@ public class IOUtils {
         try {
             body = Files.readAllBytes(new File(filePath).toPath());
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return body;
     }
