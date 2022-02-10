@@ -56,13 +56,13 @@ public class RequestHandler implements Callable<Void> {
 
             final HttpMethod method = httpRequest.getMethod();
             final String location = httpRequest.getHttpLocation().getLocation();
-            final boolean isLogin = getIsLogin(httpRequest);
+            final String userId = getLoginId(httpRequest);
 
-            log.debug("Port : {}, method: {}, location: {}, isLogin: {}",
-                    connection.getPort(), method, location, isLogin);
+            log.debug("Port : {}, method: {}, location: {}, userId: {}",
+                    connection.getPort(), method, location, userId);
 
             if (method == HttpMethod.GET) {
-                processGet(out, location, isLogin);
+                processGet(out, location, userId);
             }
             else if (method == HttpMethod.POST) {
                 processPost(out, location, httpRequest.getBody());
@@ -143,22 +143,20 @@ public class RequestHandler implements Callable<Void> {
         return new Body(new String(bodyBinary, StandardCharsets.UTF_8));
     }
 
-    private boolean getIsLogin(final HttpRequest request) {
+    private String getLoginId(final HttpRequest request) {
         final Pair cookie = request.getHeader().getPair(Headers.HEADER_COOKIE);
-        final String isLogin = HttpRequestUtils.parseQueryString(cookie.getValue())
-                .getOrDefault("logined", "false");
-        return Boolean.parseBoolean(isLogin);
+        return HttpRequestUtils.parseQueryString(cookie.getValue()).get(UserController.COOKIE_USER_ID);
     }
 
     private void processGet(
             final OutputStream out,
             final String location,
-            final boolean isLogin
+            final String userId
     ) throws IOException
     {
         if (Objects.requireNonNull(location).startsWith(LOCATION_USER_PREFIX)) {
             try {
-                final Body body = userController.processGet(location, isLogin);
+                final Body body = userController.processGet(location, userId);
                 if (body.isNotEmpty()) {
                     responseWriter.writeBodyResponse(out, body);
                     return;
