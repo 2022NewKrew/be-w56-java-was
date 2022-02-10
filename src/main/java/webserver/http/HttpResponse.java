@@ -44,6 +44,15 @@ public class HttpResponse {
         headers.put("Content-Length", String.valueOf(body.length));
     }
 
+    public void setCookie(String key, String value) {
+        String SET_COOKIE = "Set-Cookie";
+        if (headers.containsKey(SET_COOKIE)) {
+            headers.put(SET_COOKIE, headers.get(SET_COOKIE) + "; " + key + "=" + value);
+        } else {
+            headers.put(SET_COOKIE, key + "=" + value);
+        }
+    }
+
     public byte[] toByte() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

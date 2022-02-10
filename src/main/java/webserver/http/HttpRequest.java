@@ -22,17 +22,19 @@ public class HttpRequest {
     private final String path;
     private final String httpVersion;
     private final Map<String, String> queryStrings;
+    private final Map<String, String> cookies;
     @Setter
     private ParsedParams parsedParams;
 
     @Builder
     public HttpRequest(HttpMethod httpMethod, String uri, String path, String httpVersion,
-                       Map<String, String> queryStrings) {
+                       Map<String, String> queryStrings, Map<String, String> cookies) {
         this.httpMethod = httpMethod;
         this.uri = uri;
         this.path = path;
         this.httpVersion = httpVersion;
         this.queryStrings = queryStrings;
+        this.cookies = cookies;
     }
 
     public static HttpRequest parseFrom(BufferedReader br) throws IOException {
@@ -58,7 +60,10 @@ public class HttpRequest {
 
     private static void parseRequestHeaders(BufferedReader br,
                                             HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
-        // No support for any headers yet
+        httpRequestBuilder.cookies(parseCookies(br.lines().filter(line -> {
+            String lowercaseLine = line.toLowerCase();
+            return lowercaseLine.startsWith("cookie:");
+        }).map(line -> line.split(":", 2)[1]).findFirst().orElse("")));
     }
 
     /**

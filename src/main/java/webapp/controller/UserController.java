@@ -6,6 +6,7 @@ import webserver.handler.annotation.Param;
 import webserver.handler.annotation.RequestMapping;
 import webserver.http.HttpMethod;
 import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 import webserver.view.ModelAndView;
 
 @Slf4j
@@ -20,9 +21,19 @@ public class UserController {
         return new ModelAndView("/index.html");
     }
 
+    @RequestMapping(value = "/login")
+    public ModelAndView login(HttpResponse httpResponse) {
+        // Implement authentication here
+        httpResponse.setCookie("sessionId", "someRandomSessionValue");
+        return new ModelAndView("/index.html");
+    }
+
     @RequestMapping(value = "/user/list")
     public ModelAndView listUsers(HttpRequest httpRequest) {
-        // Assume logged in
+        // Example login test
+        String sessionId = httpRequest.getCookies().get("sessionId");
+        // Retrieve user information from session database by this sessionId;
+        log.debug("Session Id: {}", sessionId);
         ModelAndView mv = new ModelAndView("/user/list.html");
         mv.addAttribute("userId", "testUserId");
         mv.addAttribute("name", "testName");
