@@ -1,6 +1,6 @@
 package service;
 
-import db.DataBase;
+import db.JdbcUserRepository;
 import domain.User;
 import service.dto.*;
 
@@ -13,16 +13,17 @@ public final class UserService {
     }
 
     public static void enroll(EnrollUserCommand command) {
-        DataBase.addUser(command.toEntity());
+        JdbcUserRepository.addUser(command.toEntity());
     }
 
     public static LoginUserResult getUserInfo(LoginUserCommand command) {
-        User user = DataBase.findUserById(command.getUserId());
+        User user = JdbcUserRepository.findUserById(command.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("일치하지 않는 UserId 입니다"));
         return new LoginUserResult(user.passwordIsSame(command.getPassword()));
     }
 
     public static GetAllUserInfoResult getAllUserInfo() {
-        List<GetUserInfoResult> userInfos = DataBase.findAll().stream()
+        List<GetUserInfoResult> userInfos = JdbcUserRepository.findAll().stream()
                 .map(v -> new GetUserInfoResult(v.getUserId(), v.getEmail(), v.getName()))
                 .collect(Collectors.toList());
 
