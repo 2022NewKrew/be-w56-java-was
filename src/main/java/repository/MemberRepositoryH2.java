@@ -32,7 +32,7 @@ public class MemberRepositoryH2 implements MemberRepository {
             return ps;
         }, keyHolder);
 
-        if(rs == FAIL) {
+        if (rs == FAIL) {
             throw new SQLException("USER TABLE SAVE FAIL");
         }
 
@@ -45,5 +45,13 @@ public class MemberRepositoryH2 implements MemberRepository {
         String sql = "SELECT user_id, password, name, email FROM member";
 
         return jdbcTemplate.query(sql, new MemberRowMapper());
+    }
+
+    @Override
+    public Member findByUserIdAndPassword(String userId, String password) throws SQLException {
+
+        String sql = "SELECT user_id, password, name, email FROM member WHERE user_id='" + userId + "' AND password='" + password +"'";
+
+        return jdbcTemplate.queryGetObject(sql,new MemberRowMapper());
     }
 }

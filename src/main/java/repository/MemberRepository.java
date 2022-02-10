@@ -10,4 +10,6 @@ public interface MemberRepository {
     Long save(Member member) throws SQLException;
 
     List<Member> findAll() throws SQLException;
+
+    Member findByUserIdAndPassword(String userId, String password) throws SQLException;
 }

@@ -62,4 +62,18 @@ public class MyJdbcTemplate {
         close();
         return list;
     }
+
+    public <T> T queryGetObject(String sql, MyRowMapper<T> rowMapper) throws SQLException {
+        open();
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+        ResultSet rs = preparedStatement.executeQuery();
+
+        T ret = null;
+        if (rs.next()) {
+            ret = rowMapper.mapRow(rs, rs.getRow());
+        }
+
+        return ret;
+    }
 }

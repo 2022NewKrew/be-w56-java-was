@@ -12,6 +12,7 @@ import util.MyHttpResponseStatus;
 import util.MySession;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class FrontController {
         controllerMapping.put("/user/list", new UserListController());
     }
 
-    public void service(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException {
+    public void service(MyHttpRequest request, MyHttpResponse response, MySession session) throws IOException, SQLException {
 
         String requestURI = request.getRequestURI();
 
