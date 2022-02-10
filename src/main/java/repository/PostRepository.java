@@ -23,7 +23,7 @@ public class PostRepository {
 
     public static List<Post> findAll() {
         List<Post> postList = new ArrayList<>();
-        String sql = "SELECT * FROM POST";
+        String sql = "SELECT * FROM POST ORDER BY id DESC";
         try (Statement statement = DataBase.getConnection().createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 postList.add(new Post(

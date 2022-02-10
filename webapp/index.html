@@ -86,7 +86,7 @@
                   <div class="form-group" style="display: flex; margin: 10px; justify-content: space-around">
                       <span style="width: 15%">
                           <label for="author">사용자 아이디</label>
-                      <input class="form-control" id="author" name="author">
+                      <input class="form-control" id="author" name="author" placeholder="아이디">
                       </span>
                       <span style="width: 75%">
                           <label for="contents">내용</label>
@@ -107,12 +107,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr>
-                  <td class="memo-row date">2022-02-10</td>
-                  <td class="memo-row author">작성자</td>
-                  <td class="memo-row contents">내용</td>
-              </tr>
-              {{postList}}
+                {{postList}}
               </tbody>
           </table>
         </div>
