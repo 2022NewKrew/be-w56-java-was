@@ -19,16 +19,16 @@ public class MemoRepository {
             Statement stmt = conn.createStatement();
             stmt.execute("create table if not exists memo(id BIGINT PRIMARY KEY AUTO_INCREMENT, author varchar(20), content varchar(255), createdAt TIMESTAMP default current_timestamp)");
 
-            for (int i = 0; i < 1000000; i++) {
+            System.out.println("... insert");
+            for (int i = 0; i < 10; i++) {
                 String sql = "insert into memo (author, content) values(?,?)";
                 PreparedStatement psmt = conn.prepareStatement(sql);
 
                 psmt.setString(1, i + "번째 작성자");
                 psmt.setString(2, i + " 번글");
                 psmt.execute();
-                System.out.println(i + "insert");
             }
-
+            System.out.println("finish");
         } catch (SQLException e) {
             e.printStackTrace();
         }

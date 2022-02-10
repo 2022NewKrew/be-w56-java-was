@@ -58,7 +58,7 @@ public class HttpResponse {
     }
 
     private void setBody() throws IOException {
-        TemplateEngine.run(this);
+        this.body = TemplateEngine.run(this);
 
         if(Url.endsWith(".css")) {
             header.put("Content-Type", "text/css");
