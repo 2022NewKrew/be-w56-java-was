@@ -6,6 +6,7 @@ import http.HttpResponse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
+import webserver.Model;
 
 public class ArgumentResolvers {
 
@@ -20,11 +21,15 @@ public class ArgumentResolvers {
     }
 
     public static Object[] resolve(Method method, HttpRequest httpRequest,
-        HttpResponse httpResponse) throws Exception {
+        HttpResponse httpResponse, Model model) throws Exception {
         List<Object> args = Lists.newArrayList();
         for (Class<?> parameterType : method.getParameterTypes()) {
             if (parameterType.equals(httpResponse.getClass())) {
                 args.add(httpResponse);
+                continue;
+            }
+            if (parameterType.equals(model.getClass())) {
+                args.add(model);
                 continue;
             }
             args.add(getArgument(parameterType, httpRequest));

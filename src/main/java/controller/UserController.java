@@ -12,6 +12,7 @@ import http.PostMapping;
 import java.util.List;
 import model.User;
 import service.UserService;
+import webserver.Model;
 import webserver.SessionStore;
 
 @Controller
@@ -42,13 +43,15 @@ public class UserController {
     }
 
     @GetMapping("/user/list")
-    public void list(HttpSession httpSession, HttpResponse httpResponse) {
+    public void list(HttpSession httpSession, HttpResponse httpResponse, Model model) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
             httpResponse.sendRedirect("/user/login.html");
+            return;
         }
         List<User> users = userService.findAll();
-        users.forEach(System.out::println);
+        model.setAttribute("users", users);
+        httpResponse.ok("/user/list.html");
     }
 
     private void addSession(HttpSession httpSession, User user) {

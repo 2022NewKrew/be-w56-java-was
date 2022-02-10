@@ -27,10 +27,11 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = HttpRequestFactory.newInstance(in);
             HttpResponse httpResponse = new HttpResponse();
+            Model model = new Model();
 
-            MappingHandler.invoke(httpRequest, httpResponse);
+            MappingHandler.invoke(httpRequest, httpResponse, model);
 
-            ViewHandler.handle(out, httpResponse);
+            ViewHandler.handle(out, httpResponse, model);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());

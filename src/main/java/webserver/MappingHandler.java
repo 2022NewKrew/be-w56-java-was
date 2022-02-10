@@ -44,13 +44,14 @@ public class MappingHandler {
             });
     }
 
-    public static void invoke(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
+    public static void invoke(HttpRequest httpRequest, HttpResponse httpResponse, Model model)
+        throws Exception {
         Method method = mappings.get(httpRequest.getUrl());
         if (method == null) {
             httpResponse.ok(httpRequest.getUrl().getPath());
             return;
         }
-        Object[] args = ArgumentResolvers.resolve(method, httpRequest, httpResponse);
+        Object[] args = ArgumentResolvers.resolve(method, httpRequest, httpResponse, model);
         Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
         method.invoke(instance, args);
     }
