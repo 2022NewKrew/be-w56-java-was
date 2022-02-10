@@ -32,11 +32,19 @@ public class PostController implements Controller {
             case "/user/login":
                 User findUser = userRepository.findUserById(httpBody.get("userId"));
                 String redirectPath = selectLoginRedirectPath(httpBody.get("password"), findUser);
-                String cookie = selectLoginCookie(httpBody.get("password"), findUser);
+                String logined = selectLoginCookie(httpBody.get("password"), findUser);
+                String loginId = selectLoginId(httpBody.get("password"), findUser);
 
-                HttpResponse.response302(dos, redirectPath, cookie);
+                HttpResponse.response302(dos, redirectPath, logined, loginId);
                 break;
         }
+    }
+
+    private String selectLoginId(String loginPassword, User user) {
+        if (user != null && checkPassword(loginPassword, user.getPassword())) {
+            return "loginId=" + user.getUserId() + "; Path=/";
+        }
+        return "loginId=; Path=/";
     }
 
     private String selectLoginCookie(String loginPassword, User user) {

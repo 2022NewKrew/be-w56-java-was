@@ -9,6 +9,7 @@ import util.HttpRequestUtils;
 import view.TemplateEngine;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class GetController implements Controller {
@@ -33,6 +34,11 @@ public class GetController implements Controller {
                 }
 
                 HttpResponse.response302(dos, "/user/login.html");
+                break;
+
+            case "/user/logout":
+                System.out.println("hi");
+                HttpResponse.response302(dos, "/index.html", "logined=; Path=/; Max-Age=0", "loginId=; Path=/; Max-Age=0");
                 break;
 
             case "/":

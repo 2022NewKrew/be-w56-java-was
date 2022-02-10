@@ -17,8 +17,8 @@ public class HttpResponse {
         responseHandler.response302Header(location);
     }
 
-    public static void response302(DataOutputStream dos, String location, String cookie) {
+    public static void response302(DataOutputStream dos, String location, String... cookies) {
         ResponseHandler responseHandler = new ResponseHandler(dos);
-        responseHandler.response302Header(location, cookie);
+        responseHandler.response302Header(location, cookies);
     }
 }
