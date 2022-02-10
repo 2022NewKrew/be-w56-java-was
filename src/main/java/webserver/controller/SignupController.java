@@ -1,8 +1,6 @@
 package webserver.controller;
 
 import db.DB;
-import http.header.HttpHeaders;
-import http.header.HttpProtocolVersion;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +32,6 @@ public class SignupController extends BaseController {
         DB.addUser(user);
         log.debug("회원가입 성공: {}", user);
 
-        return HttpResponse.found("/index.html");
+        return HttpResponse.redirect("/index.html");
     }
 }

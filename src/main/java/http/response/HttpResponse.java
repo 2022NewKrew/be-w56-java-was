@@ -1,18 +1,18 @@
 package http.response;
 
-import http.cookie.Cookie;
 import http.HttpMessage;
+import http.cookie.Cookie;
 import http.header.HttpHeaders;
 import http.header.HttpProtocolVersion;
 import http.view.ViewResolver;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Getter
 public class HttpResponse extends HttpMessage {
@@ -21,32 +21,10 @@ public class HttpResponse extends HttpMessage {
 
     @Builder
     public HttpResponse(HttpProtocolVersion protocolVersion, HttpHeaders headers, List<Cookie> cookies,
-                        String status, String uri) {
+                        String status, String uri, Map<String, Object> model) {
         super(protocolVersion, headers, cookies);
         this.status = status;
-        this.body = uri != null ? ViewResolver.getView(uri) : new byte[0];
-    }
-
-    public void send(DataOutputStream dos) throws IOException {
-        dos.writeBytes(String.format("%s %s\r\n", protocolVersion.getValue(), status));
-        for (Map.Entry<String, String> header: headers) {
-            dos.writeBytes(String.format("%s: %s\r\n", header.getKey(), header.getValue()));
-        }
-        for (Cookie cookie: cookies) {
-            dos.writeBytes(String.format("Set-Cookie: %s\r\n", cookie));
-        }
-
-        if (body.length > 0) {
-            dos.writeBytes(String.format("Content-Length: %d\r\n", body.length));
-        }
-
-        dos.writeBytes("\r\n");
-
-        if (body.length > 0) {
-            dos.write(body, 0, body.length);
-        }
-
-        dos.flush();
+        this.body = (uri != null ? ViewResolver.getView(uri, model) : new byte[0]);
     }
 
     public void addCookie(Cookie cookie) {
@@ -70,7 +48,7 @@ public class HttpResponse extends HttpMessage {
                 .build();
     }
 
-    public static HttpResponse found(String redirectLocation) {
+    public static HttpResponse redirect(String redirectLocation) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", redirectLocation);
 
@@ -97,6 +75,21 @@ public class HttpResponse extends HttpMessage {
                 .headers(new HttpHeaders())
                 .cookies(new ArrayList<>())
                 .status("404 Not Found")
+                .build();
+    }
+
+    public static HttpResponse okTemplate(String path, Pattern pattern, String toReplaceWith) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("pattern", pattern);
+        model.put("toReplaceWith", toReplaceWith);
+
+        return HttpResponse.builder()
+                .protocolVersion(HttpProtocolVersion.HTTP_1_1)
+                .headers(new HttpHeaders())
+                .cookies(new ArrayList<>())
+                .status("200 OK")
+                .uri(path)
+                .model(model)
                 .build();
     }
 }

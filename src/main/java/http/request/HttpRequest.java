@@ -27,14 +27,6 @@ public class HttpRequest extends HttpMessage {
         this.body = body;
     }
 
-    public Map<String, String> parseQueryParams() {
-        String[] tokens = uri.split("\\?", 2);
-        if (tokens.length < 2) {
-            return new HashMap<>();
-        }
-        return HttpRequestUtils.parseQueryString(tokens[1]);
-    }
-
     public Map<String, String> parseUrlEncodedBody() {
         return HttpRequestUtils.parseQueryString(body);
     }

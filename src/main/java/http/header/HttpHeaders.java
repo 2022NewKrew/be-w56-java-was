@@ -23,6 +23,10 @@ public class HttpHeaders implements Iterable<Map.Entry<String, String>> {
         headers.put(name.toLowerCase(), value);
     }
 
+    public void remove(String name) {
+        headers.remove(name.toLowerCase());
+    }
+
     public boolean containsName(String name) {
         return headers.containsKey(name.toLowerCase());
     }

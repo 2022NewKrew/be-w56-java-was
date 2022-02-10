@@ -1,13 +1,13 @@
 package webserver.controller;
 
 import db.DB;
+import db.UserCache;
 import http.cookie.Cookie;
 import http.exception.NotFound;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import webserver.RequestHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -29,11 +29,11 @@ public class LoginController extends BaseController {
 
         try {
             User user = DB.findUserByIdAndPassword(userId, password);
-            Long sessionId = RequestHandler.addSessionUser(user);
+            Long sessionId = UserCache.addSessionUser(user);
 
             log.debug("로그인 성공, {} sessionId={}", user, sessionId);
 
-            HttpResponse response = HttpResponse.found("/index.html");
+            HttpResponse response = HttpResponse.redirect("/index.html");
             response.addCookie(Cookie.builder()
                     .name("logined")
                     .value("true")
