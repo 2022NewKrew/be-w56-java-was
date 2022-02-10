@@ -5,6 +5,7 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+
 repositories {
     mavenCentral()
 }
@@ -26,10 +27,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     // mongodb
-    implementation 'org.mongodb:mongo-java-driver:3.12.10';
-
-    implementation('org.slf4j:slf4j-api:1.7.35')
-    implementation('org.slf4j:slf4j-simple:1.7.35')
+    implementation 'org.mongodb:mongo-java-driver:3.12.10'
+    // logback
     implementation('ch.qos.logback:logback-classic:1.2.10')
 }
 
@@ -38,10 +37,11 @@ test {
 }
 
 jar {
-    doFirst {
-        manifest.attributes(
-                'Class-Path': configurations.compileClasspath.collect { it.toURI().toString() }.join(' '),
-                'Main-Class': 'webserver.WebServer'
-        )
+    manifest.attributes(
+            'Main-Class': 'webserver.WebServer'
+    )
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
