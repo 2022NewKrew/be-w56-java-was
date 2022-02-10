@@ -46,8 +46,8 @@ public class HttpController {
         // GetMapping("/user/list") 와 동일
         else if (httpRequest.getMethod().equals(HttpMethod.GET) && httpRequest.getUrl().equals("/user/list")) {
             if (httpRequest.getCookie().containsKey("logined") && httpRequest.getCookie().get("logined").equals("true")) {
-                DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
-                return new ResponseBuildInfo.InfoBuilder().setPath("/user/dynamicList.html").build();
+                byte[] body = DynamicHtmlBuilder.build("user/list.html", DataBase.findAll());
+                return new ResponseBuildInfo.InfoBuilder().setBody(body).build();
             }
             return new ResponseBuildInfo.InfoBuilder().setPath("/user/login.html").build();
         }

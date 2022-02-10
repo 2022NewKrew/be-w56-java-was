@@ -34,13 +34,12 @@ public class HttpResponseBuilder {
             return;
         }
         httpResponse.setStatusCode(HttpStatusCode._200);
-        httpResponse.setResponseDataPath(responseBuildInfo.getPath());
-        httpResponse.setResponseContentType(HttpResponseUtils.contentTypeFromPath(httpResponse.getResponseDataPath()));
-        buildBody();
+        if (responseBuildInfo.getPath() != null) {
+            httpResponse.setResponseDataPath(responseBuildInfo.getPath());
+            httpResponse.setResponseContentType(HttpResponseUtils.contentTypeFromPath(httpResponse.getResponseDataPath()));
+            httpResponse.setBody(Files.readAllBytes(new File("./webapp" + httpResponse.getResponseDataPath()).toPath()));
+            return;
+        }
+        httpResponse.setBody(responseBuildInfo.getBody());
     }
-
-    private void buildBody() throws IOException {
-        httpResponse.setBody(Files.readAllBytes(new File("./webapp" + httpResponse.getResponseDataPath()).toPath()));
-    }
-
 }
