@@ -19,10 +19,10 @@ public enum HttpHeader {
     ACCEPT_ENCODING("Accept-Encoding"),
     ACCEPT_LANGUAGE("Accept-Language"),
     COOKIE("Cookie"),
-    Sec_Fetch_User("Sec-Fetch-User"),
-    COOwKIE("Cookie"),
-    Cache_Control("Cache-Control"),
-    Upgrade_Insecure_Requests("Upgrade-Insecure-Requests"),
+    SET_COOKIE("Set-Cookie"),
+    SEC_FETCH_USER("Sec-Fetch-User"),
+    CACHE_CONTROL("Cache-Control"),
+    UPGRADE_INSECURE_REQUESTS("Upgrade-Insecure-Requests"),
     LOCATION("Location"),
     DEFAULT("");
 

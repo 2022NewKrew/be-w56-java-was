@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 
 class HttpRedirectionResponseTest {
 
+    String EMPTY_COOKIE = "";
+
     @Test
     @DisplayName("[성공] HttpRedirectionResponse 객체를 생성한다")
     void of() {
         HttpStatus httpStatus = HttpStatus.FOUND;
         String url = "TEST URL";
 
-        HttpRedirectionResponse.of(httpStatus, url);
+        HttpRedirectionResponse.of(httpStatus, url, EMPTY_COOKIE);
     }
 }
