@@ -3,6 +3,7 @@ package user.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import user.domain.User;
+import user.dto.request.LoginRequest;
 import user.dto.request.SignUpRequest;
 import user.service.UserService;
 import webserver.annotation.Controller;
@@ -13,6 +14,9 @@ import webserver.domain.Response;
 
 @Controller
 public class UserController {
+
+    private static final String LOGIN_SUCCESS_COOKIE = "logined=true; Path=/";
+    private static final String LOGIN_FAIL_COOKIE = "logined=false; Path=/";
 
     private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -33,6 +37,23 @@ public class UserController {
         userService.save(user);
 
         logger.info("회원 가입: {}", userId);
+
         return Response.createResponse(HttpStatus.FOUND, "/index.html");
+    }
+
+    @RequestMapping(value = "/user/login", method = "POST")
+    public Response login(Request request) {
+        String userId = request.getBodyAttribute("userId");
+        String password = request.getBodyAttribute("password");
+        LoginRequest loginRequest = new LoginRequest(userId, password);
+
+        User user = loginRequest.toUser();
+        boolean isLogin = userService.login(user);
+
+        logger.info("로그인: {}", userId);
+
+        String location = isLogin ? "/index.html" : "/user/login_failed.html";
+        String cookie = isLogin ? LOGIN_SUCCESS_COOKIE : LOGIN_FAIL_COOKIE;
+        return Response.createResponse(HttpStatus.FOUND, location).setCookie(cookie);
     }
 }

@@ -40,6 +40,11 @@ public class Response {
             .build();
     }
 
+    public Response setCookie(String cookie) {
+        headers.setCookie(cookie);
+        return this;
+    }
+
     public byte[] getBytes() throws IOException {
         String header = String.format(RESPONSE_HEADER_FORMAT, statusLine, headers);
 
