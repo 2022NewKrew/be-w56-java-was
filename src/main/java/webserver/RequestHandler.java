@@ -2,15 +2,16 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.security.NoSuchProviderException;
 
-import controller.Controller;
-import controller.ControllerCommander;
+import webserver.controller.Controller;
+import webserver.controller.ControllerCommander;
+import webserver.filter.FilterChain;
+import webserver.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.ViewResolver;
-import webserver.config.WebConst;
+import webserver.http.request.HttpRequestParser;
+import webserver.http.response.HttpResponse;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,57 +26,26 @@ public class RequestHandler extends Thread {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            HttpRequest httpRequest = HttpRequest.from(in);
-            createResponse(httpRequest, dos);
+            HttpRequest httpRequest = HttpRequestParser.parse(in);
+            HttpResponse httpResponse = new HttpResponse(dos);
+
+            if(FilterChain.filter(httpRequest, httpResponse)) {
+                handleRequest(httpRequest, httpResponse);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void createResponse(HttpRequest request, DataOutputStream dos) throws IOException {
+    public void handleRequest(HttpRequest request, HttpResponse response) throws IOException {
         log.info("[REQUEST URI] - " + request.getRequestUri());
-        String requestUri = request.getRequestUri();
-        try {
-            Controller controller = ControllerCommander.findController(requestUri);
-            String viewName = controller.execute(request, dos);
-
-            byte[] body = ViewResolver.render(viewName);
-
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
+        Controller controller = ControllerCommander.findController(request);
+        if(controller == null) {
+            response.setUrl(request.getRequestUri())
+                    .forward();
+            return;
         }
-    }
-
-    public void printReq(InputStream in) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-        String line = bufferedReader.readLine();
-        while(!"".equals(line)) {
-            System.out.println(line);
-            line = bufferedReader.readLine();
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        controller.execute(request, response);
     }
 }
