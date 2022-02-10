@@ -1,7 +1,7 @@
 package framework.modelAndView;
 
-import util.HttpRequest;
-import util.HttpResponse;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 
 import java.io.IOException;
 

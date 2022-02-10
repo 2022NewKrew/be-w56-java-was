@@ -1,6 +1,6 @@
 package framework.handler;
 
-import util.HttpRequest;
+import webserver.request.HttpRequest;
 
 import java.lang.reflect.Method;
 

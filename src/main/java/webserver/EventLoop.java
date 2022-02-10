@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -108,7 +110,7 @@ public class EventLoop {
         byte[] bytes = new byte[buffer.limit()];
         buffer.get(bytes);
         buffer.clear();
-        return new String(bytes);
+        return URLDecoder.decode(new String(bytes), StandardCharsets.UTF_8);
     }
 
     private void write(SelectionKey key) {}

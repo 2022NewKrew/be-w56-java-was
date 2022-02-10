@@ -15,7 +15,7 @@ public class MemoRepository {
         this.dataSource = dataSource;
 
         createMemoTable();
-        Memo memo = new Memo("testID2", "안녕하세요~!~!~", LocalDate.now());
+        Memo memo = new Memo("testID", "안녕하세요~!~!~", LocalDate.now());
         addMemo(memo);
     }
 

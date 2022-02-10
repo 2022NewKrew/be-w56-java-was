@@ -3,10 +3,9 @@ package framework.modelAndView.view;
 import framework.modelAndView.ModelAndView;
 import framework.modelAndView.View;
 import framework.template.TemplateParser3;
-import util.HttpRequest;
-import util.HttpResponse;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

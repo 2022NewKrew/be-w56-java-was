@@ -1,4 +1,4 @@
-package util;
+package webserver.response;
 
 import java.nio.charset.StandardCharsets;
 
@@ -10,8 +10,6 @@ public class HttpResponseBuilder {
         sb.append("Content-Length: " + res.getBody().length + "\r\n");
         res.getHeaders().entrySet().stream().forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\r\n"));
         sb.append("\r\n");
-//        log.info("Request Path: {}, Method: {}", httpRequest.getPath(), httpRequest.getMethod());
-//        log.info(sb.toString());
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 

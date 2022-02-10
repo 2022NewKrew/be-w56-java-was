@@ -5,9 +5,9 @@ import framework.util.RequestMapping;
 import application.domain.User;
 import application.domain.dto.LoginDto;
 import framework.modelAndView.ModelAndView;
-import util.HttpRequest;
-import util.HttpRequestUtils;
-import util.HttpResponse;
+import webserver.request.HttpRequest;
+import webserver.request.HttpRequestUtils;
+import webserver.response.HttpResponse;
 
 import java.util.List;
 import java.util.Map;

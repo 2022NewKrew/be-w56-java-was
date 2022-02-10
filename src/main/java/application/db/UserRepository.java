@@ -16,7 +16,7 @@ public class UserRepository {
         this.dataSource = dataSource;
 
         createUserTable();
-        User user = new User("testID2", "1234", "김민수", "raon.su@kakaocorp.com");
+        User user = new User("testID", "1234", "김민수", "raon.su@kakaocorp.com");
         addUser(user);
     }
 
@@ -59,7 +59,7 @@ public class UserRepository {
             pstmt.setString(1, userId);
 
             rs = pstmt.executeQuery();
-
+            rs.next();
             return userMapper(rs);
 
         } catch (SQLException e) {

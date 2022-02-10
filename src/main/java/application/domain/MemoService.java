@@ -17,4 +17,8 @@ public class MemoService {
         return memoRepository.findAll();
     }
 
+    public void save(Memo memo) {
+        memoRepository.addMemo(memo);
+    }
+
 }

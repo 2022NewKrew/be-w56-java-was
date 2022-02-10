@@ -1,9 +1,7 @@
 package framework;
 
 import framework.handler.Handler;
-import framework.handler.RequestMappingHandler;
-import framework.handler.ResourceRequestHandler;
-import util.HttpRequest;
+import webserver.request.HttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;

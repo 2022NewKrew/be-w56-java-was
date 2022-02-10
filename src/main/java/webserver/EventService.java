@@ -2,8 +2,8 @@ package webserver;
 
 import framework.FrontController;
 import framework.config.ServerConfig;
-import util.HttpRequest;
-import util.HttpResponse;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
