@@ -26,13 +26,15 @@ public class RequestHandler extends Thread {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            String httpRequestHeader = IOUtils.getHttpRequestHeader(bufferedReader);
+            String httpRequestHeader = IOUtils.getHttpRequestHeader(br);
+            int contentLength = IOUtils.getContentLength(httpRequestHeader);
+            String httpRequestBody = IOUtils.gttHttpRequestBody(br, contentLength);
             String httpMethod = HttpRequestUtils.getHttpMethod(httpRequestHeader);
             String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
 
-            Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(httpMethod, url);
+            Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(httpMethod, url, httpRequestBody);
             String methodPath = HttpRequestUtils.getMethodPath(url);
             String responseUrl = url;
             if (infoMap.isPresent())
