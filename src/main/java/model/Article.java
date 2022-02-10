@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.bson.types.ObjectId;
 
 public class Article extends BaseTime {
@@ -27,7 +28,7 @@ public class Article extends BaseTime {
     }
 
     public Article(ObjectId id, String author, String content) {
-        this(id, author, content, LocalDateTime.now());
+        this(id, author, content, LocalDateTime.now(ZoneOffset.UTC));
     }
 
     private void checkId(ObjectId id) {

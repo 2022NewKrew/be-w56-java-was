@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +23,8 @@ class BaseTimeTest {
     @Test
     void constructor1() {
         //give
-        LocalDateTime createTime = LocalDateTime.now();
-        LocalDateTime modifiedTime = LocalDateTime.now();
+        LocalDateTime createTime = LocalDateTime.now(ZoneOffset.UTC);
+        LocalDateTime modifiedTime = LocalDateTime.now(ZoneOffset.UTC);
 
         //when
         //then
@@ -36,7 +37,7 @@ class BaseTimeTest {
     void illegalConstructor1() {
         //give
         LocalDateTime createTime = null;
-        LocalDateTime modifiedTime = LocalDateTime.now();
+        LocalDateTime modifiedTime = LocalDateTime.now(ZoneOffset.UTC);
 
         //when
         //then
@@ -48,7 +49,7 @@ class BaseTimeTest {
     @Test
     void illegalConstructor2() {
         //give
-        LocalDateTime createTime = LocalDateTime.now();
+        LocalDateTime createTime = LocalDateTime.now(ZoneOffset.UTC);
         LocalDateTime modifiedTime = null;
 
         //when
@@ -60,7 +61,7 @@ class BaseTimeTest {
     @DisplayName("BaseTime modifiedTime setter 테스트")
     @Test
     void getCreateTime() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
         BaseTime baseTime = new TestClassForBaseTime(now, now);
 

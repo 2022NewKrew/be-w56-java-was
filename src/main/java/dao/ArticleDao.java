@@ -10,6 +10,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import mapper.ArticleMapper;
 import model.Article;
@@ -58,7 +59,7 @@ public class ArticleDao implements CrudDao<Article, ObjectId> {
         Bson updateAuthor = set(ArticleAttribute.AUTHOR.getValue(), entity.getAuthor());
         Bson updateContent = set(ArticleAttribute.CONTENT.getValue(), entity.getContent());
         Bson updateModifiedDate = set(ArticleAttribute.MODIFIED_TIME.getValue(),
-                LocalDateTime.now());
+                LocalDateTime.now(ZoneOffset.UTC));
         Bson combineBson = combine(updateAuthor, updateContent, updateModifiedDate);
         collection.findOneAndUpdate(eq("_id", entity.getId()), combineBson);
     }
