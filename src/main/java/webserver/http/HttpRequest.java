@@ -4,12 +4,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import webserver.handler.ParsedParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -20,15 +23,19 @@ public class HttpRequest {
     private final String path;
     private final String httpVersion;
     private final Map<String, String> queryStrings;
+    private final Map<String, String> cookies;
+    @Setter
+    private ParsedParams parsedParams;
 
     @Builder
     public HttpRequest(HttpMethod httpMethod, String uri, String path, String httpVersion,
-                       Map<String, String> queryStrings) {
+                       Map<String, String> queryStrings, Map<String, String> cookies) {
         this.httpMethod = httpMethod;
         this.uri = uri;
         this.path = path;
         this.httpVersion = httpVersion;
         this.queryStrings = queryStrings;
+        this.cookies = cookies;
     }
 
     public static HttpRequest parseFrom(BufferedReader br) throws IOException {
@@ -43,18 +50,22 @@ public class HttpRequest {
         String requestLine = br.readLine();
 
         String[] splitRequestLine = requestLine.split(" ");
-        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(splitRequestLine[0]))
-                          .uri(splitRequestLine[1])
-                          .path(splitRequestLine[1].substring(0, splitRequestLine[1].contains(
-                                  "?") ? splitRequestLine[1].lastIndexOf("?") : splitRequestLine[1].length()))
-                          .queryStrings(parseQueryString(
-                                  splitRequestLine[1].substring(splitRequestLine[1].lastIndexOf("?") + 1)))
-                          .httpVersion(splitRequestLine[2]);
+        String method = splitRequestLine[0];
+        String uri = splitRequestLine[1];
+        String version = splitRequestLine[2];
+        httpRequestBuilder.httpMethod(HttpMethod.getHttpMethod(method))
+                          .uri(uri)
+                          .path(uri.substring(0, uri.contains("?") ? uri.lastIndexOf("?") : uri.length()))
+                          .queryStrings(parseQueryString(uri.substring(uri.lastIndexOf("?") + 1)))
+                          .httpVersion(version);
     }
 
     private static void parseRequestHeaders(BufferedReader br,
                                             HttpRequest.HttpRequestBuilder httpRequestBuilder) throws IOException {
-        // No support for any headers yet
+        httpRequestBuilder.cookies(parseCookies(br.lines().filter(line -> {
+            String lowercaseLine = line.toLowerCase();
+            return lowercaseLine.startsWith("cookie:");
+        }).map(line -> line.split(":", 2)[1]).findFirst().orElse("")));
     }
 
     /**
@@ -79,8 +90,8 @@ public class HttpRequest {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                     .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+                     .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

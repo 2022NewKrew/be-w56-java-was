@@ -5,7 +5,6 @@ import webserver.handler.HandlerMapper;
 import webserver.handler.WrappedHandler;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.http.HttpStatus;
 import webserver.view.ModelAndView;
 
 /**
@@ -37,11 +36,9 @@ public class Dispatcher {
             WrappedHandler wrappedHandler = handlerMapper.findMatchingHandler(httpRequest);
             modelAndView = wrappedHandler.handle(httpRequest, httpResponse);
         } catch (NoMatchingHandler e) {
-            // Resolve view directly from request's uri, i.e. static handling
-            modelAndView = new ModelAndView(httpRequest);
+            // Try static handling
+            modelAndView = new ModelAndView(httpRequest.getPath());
         }
-        modelAndView.render(httpRequest, httpResponse);
-        httpResponse.setHttpStatus(HttpStatus.OK);
-        httpResponse.setContentTypeWithURI(httpRequest.getPath());
+        modelAndView.render(httpResponse);
     }
 }
