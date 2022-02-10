@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,8 @@ public class PrintBasicPageController implements Controller {
     private static final File memoListFile = new File("./webapp/index.html");
 
     @Override
-    public void process(HttpRequest request, HttpResponse response) throws IOException {
+    public void process(HttpRequest request, HttpResponse response)
+        throws IOException, SQLException, ClassNotFoundException {
         List<Memo> memoList = GetMemoListService.getMemoList();
         Collections.reverse(memoList);
         String body = getBody(memoList.subList(0, Math.min(memoList.size(), NUMBER__OF_DISPLAY_MEMO)));

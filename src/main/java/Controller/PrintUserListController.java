@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 import model.Session;
@@ -22,7 +23,8 @@ public class PrintUserListController implements Controller {
     private static final File userListFile = new File("./webapp/user/list.html");
 
     @Override
-    public void process(HttpRequest request, HttpResponse response) throws IOException {
+    public void process(HttpRequest request, HttpResponse response)
+        throws IOException, SQLException, ClassNotFoundException {
         if (!isLogin(request)) {
             response.redirectLoginPage();
             return;
@@ -63,7 +65,7 @@ public class PrintUserListController implements Controller {
         return sb.toString();
     }
 
-    private boolean isLogin(HttpRequest request) {
+    private boolean isLogin(HttpRequest request) throws SQLException, ClassNotFoundException {
         int sessionId = request.getSessionId();
         if (sessionId == NO_SESSION) {
             return false;

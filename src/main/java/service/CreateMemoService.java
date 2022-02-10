@@ -1,13 +1,14 @@
 package service;
 
 import db.MemoStorage;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import model.CreateMemoRequest;
 import model.Memo;
 
 public class CreateMemoService {
 
-    public static void createMemo(CreateMemoRequest createMemoRequest) {
+    public static void createMemo(CreateMemoRequest createMemoRequest) throws SQLException, ClassNotFoundException {
         String writer = createMemoRequest.getWriter();
         String content = createMemoRequest.getContent();
 

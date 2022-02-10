@@ -22,6 +22,10 @@ public class Session {
         return userId;
     }
 
+    public LocalDateTime getExpire() {
+        return expire;
+    }
+
     public boolean isExpired() {
         return expire.isBefore(LocalDateTime.now());
     }

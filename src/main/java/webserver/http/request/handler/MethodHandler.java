@@ -10,6 +10,7 @@ import Controller.StaticFileController;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class MethodHandler {
     private final StaticFileController staticFileController = new StaticFileController();
 
     public void handle(HttpRequest request, HttpResponse response)
-        throws IOException, PageNotFoundException {
+        throws IOException, PageNotFoundException, SQLException, ClassNotFoundException {
         if (!Method.contain(request.getMethod())) {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
             throw new PageNotFoundException();

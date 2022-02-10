@@ -1,27 +1,27 @@
 package Controller;
 
+import static service.LoginService.LOGIN_FAILED;
+
+import java.sql.SQLException;
 import java.util.Map;
 import model.LoginRequest;
 import service.LoginService;
-import service.SessionService;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 
 public class LoginController implements Controller {
 
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public void process(HttpRequest request, HttpResponse response) throws SQLException, ClassNotFoundException {
         Map<String, String> queryData = request.getQueryData();
         LoginRequest loginRequest = LoginRequest.from(queryData);
 
-        boolean loginResult = LoginService.login(loginRequest);
+        int sessionId = LoginService.login(loginRequest);
 
-        if (!loginResult) {
+        if (sessionId == LOGIN_FAILED) {
             response.redirectLoginFailPage();
             return;
         }
-
-        int sessionId = SessionService.setSession(loginRequest.getUserId());
 
         response.setCookie(sessionId);
         response.redirectBasicPage();
