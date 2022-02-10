@@ -10,10 +10,12 @@ import java.util.List;
 
 public class MainController extends Controller{
 
+    MemoRepository memoRepository = new MemoRepository();
+
     public MainController() {
         runner.put(new MethodAndUrl(HttpMethod.GET, "/"), (req, res) -> {
             Model model = res.getModel();
-            List<Memo> memos = MemoRepository.findAll();
+            List<Memo> memos = memoRepository.findAll();
             model.addAttribute("memos", memos);
 
             res.setUrl("/index.html")
@@ -22,7 +24,7 @@ public class MainController extends Controller{
 
         runner.put(new MethodAndUrl(HttpMethod.POST, "/memo"), (req, res) -> {
             Memo memo = Memo.of(req.getParams());
-            MemoRepository.create(memo);
+            memoRepository.create(memo);
 
             res.setStatusCode(302, "Found")
                     .setUrl("/")

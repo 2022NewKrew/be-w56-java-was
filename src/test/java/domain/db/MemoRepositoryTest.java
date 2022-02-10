@@ -15,7 +15,8 @@ class MemoRepositoryTest {
         memo.setAuthor("fsad");
 
         // when
-        MemoRepository.create(memo);
+
+        new MemoRepository().create(memo);
 
         // then
     }

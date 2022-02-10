@@ -13,20 +13,33 @@ public class MemoRepository {
 
     private static Connection conn;
 
-    static {
+    public static void init() {
         try {
             conn = DriverManager.getConnection("jdbc:h2:mem:testdb2");
             Statement stmt = conn.createStatement();
             stmt.execute("create table if not exists memo(id BIGINT PRIMARY KEY AUTO_INCREMENT, author varchar(20), content varchar(255), createdAt TIMESTAMP default current_timestamp)");
-            stmt.execute("insert into memo (author, content) values('bdf', '안녕')");
+
+            for (int i = 0; i < 1000000; i++) {
+                String sql = "insert into memo (author, content) values(?,?)";
+                PreparedStatement psmt = conn.prepareStatement(sql);
+
+                psmt.setString(1, i + "번째 작성자");
+                psmt.setString(2, i + " 번글");
+                psmt.execute();
+                System.out.println(i + "insert");
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static List<Memo> findAll() {
+    public MemoRepository() {
+    }
+
+    public List<Memo> findAll() {
         try (Statement stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery("select * from memo");
+            ResultSet rs = stmt.executeQuery("select * from memo order by id desc limit 80");
             List<Memo> memos = new ArrayList<>();
 
             while (rs.next()) {
@@ -44,7 +57,7 @@ public class MemoRepository {
         }
     }
 
-    public static void create(Memo memo) {
+    public void create(Memo memo) {
         try (Statement stmt = conn.createStatement()) {
             String sql = "insert into memo (author, content, createdAt) values(?,?,?)";
             PreparedStatement psmt = conn.prepareStatement(sql);

@@ -1,3 +1,4 @@
+import domain.db.MemoRepository;
 import webserver.WebServer;
 
 public class Main {
@@ -8,6 +9,8 @@ public class Main {
         int port = setPort(args);
 
         WebServer webServer = new WebServer();
+
+        MemoRepository.init();
 
         webServer.run(port);
     }
