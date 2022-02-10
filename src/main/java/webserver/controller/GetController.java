@@ -2,14 +2,13 @@ package webserver.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 import webserver.manage.RequestParser;
 import webserver.service.GetService;
 
 import java.io.*;
 
 public class GetController implements MethodController {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     RequestParser rp;
     GetService gs;

@@ -14,7 +14,7 @@ import java.io.OutputStream;
 
 public class PostService {
 
-    private static final Logger log = LoggerFactory.getLogger(PostService.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private OutputStream os;
 
     public PostService(OutputStream os) {

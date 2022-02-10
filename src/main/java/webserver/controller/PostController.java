@@ -8,7 +8,7 @@ import webserver.service.PostService;
 import java.io.OutputStream;
 
 public class PostController implements MethodController {
-    private static final Logger log = LoggerFactory.getLogger(PostController.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String ADD_MEMO = "/memo/add";
 

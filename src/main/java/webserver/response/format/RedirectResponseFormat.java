@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class RedirectResponseFormat implements ResponseFormat {
-    private static final Logger log = LoggerFactory.getLogger(RedirectResponseFormat.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String ERROR_PATH = "/error/error.html";
 

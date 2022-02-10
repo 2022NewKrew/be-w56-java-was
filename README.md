@@ -60,6 +60,9 @@
   - 만일 별도의 폴더경로를 포함하지 않는다면 해당 로그를 ignore 처리하기 위해서는 regex 형태의 값을 작성해야함
     - https://unix.stackexchange.com/questions/31790/what-is-the-gitignore-pattern-equivalent-of-the-regex-bigsmallstatecity
   - 하지만 이러한 작업은 굉장히 번거롭고, 프로젝트 폴더가 굉장히 복잡해질 수 있으므로 log 폴더에 파일이 생성되도록 수정
+- LoggerFactory 의 파라미터를 this.getClass() 로 일괄 변경
+  - 이를 위해 static 변수를 멤버변수로 변경 ( this 를 사용하기 위함 )
+  - 다만, WebServer 클래스의 경우 static 함수에서 로그를 기록하므로 기존 상태를 유지
 
 # 참고 사이트
 - HTTP Header
