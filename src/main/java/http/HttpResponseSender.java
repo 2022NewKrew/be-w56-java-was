@@ -29,12 +29,12 @@ public class HttpResponseSender {
         }
     }
 
-    public void sendResponse200() {
+    private void sendResponse200() {
         response200Header();
         responseBody();
     }
 
-    public void sendResponse302() {
+    private void sendResponse302() {
         response302Header(httpResponse.getRedirectUrl());
     }
 
@@ -42,7 +42,7 @@ public class HttpResponseSender {
         responseLoginHeader(validLogin);
     }
 
-    public void response200Header() {
+    private void response200Header() {
         try {
             dos.writeBytes(httpResponse.getProtocol().getName() + " " + httpResponse.getStatusCode().getMessage() + " \r\n");
             dos.writeBytes("Content-Type: " + httpResponse.getResponseContentType() + ";charset=utf-8\r\n");
@@ -70,7 +70,7 @@ public class HttpResponseSender {
         }
     }
 
-    public void response302Header(String redirectUrl) {
+    private void response302Header(String redirectUrl) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + redirectUrl);
@@ -80,7 +80,7 @@ public class HttpResponseSender {
         }
     }
 
-    public void responseBody() {
+    private void responseBody() {
         try {
             dos.write(httpResponse.getBody(), 0, httpResponse.getBody().length);
             dos.flush();
