@@ -16,35 +16,31 @@ public class HandlerMapping {
     private static final HandlerMapping handlerMapping = new HandlerMapping();
 
     private HandlerMapping() {
-        Map<String, Controller> tempMappings = new HashMap<>();
+        Map<String, Controller> tempControllerMap = new HashMap<>();
+        Set<String> tempRedirectSet = new HashSet<>();
+
         UserController userController = new UserController();
-        tempMappings.put("/user/create", userController);
-        mappings = Collections.unmodifiableMap(tempMappings);
+        tempControllerMap.put("/user/create", userController);
+        tempRedirectSet.add("/user/create");
+
+        controllerMap = Collections.unmodifiableMap(tempControllerMap);
+        redirectSet = Collections.unmodifiableSet(tempRedirectSet);
     }
 
     public static HandlerMapping getInstance() {
         return handlerMapping;
     }
 
-    public Optional<Controller> getController(String url) {
-        Optional<Controller> controllerOptional;
-        if (mappings.containsKey(url))
-            controllerOptional = Optional.of(mappings.get(url));
-        else
-            controllerOptional = Optional.empty();
-        return controllerOptional;
-    }
-
-    public String runMethod(String url, Map<String, String> infoMap) {
+    public RedirectPair runMethod(String url, Map<String, String> infoMap) {
         Optional<Controller> controllerOptional = getController(url);
 
         if (controllerOptional.isEmpty())
-            return url;
+            return new RedirectPair(url,false);
 
         String methodName = url.split("/")[PATH_METHOD_SPLIT_INDEX];
         if (methodName.equals("create"))
-            return controllerOptional.get().create(infoMap);
+            return new RedirectPair(controllerOptional.get().create(infoMap),getIsRedirect(url));
 
-        return url;
+        return new RedirectPair(url,false);
     }
 }

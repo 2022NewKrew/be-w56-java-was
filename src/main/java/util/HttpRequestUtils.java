@@ -78,6 +78,18 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
+    public static RedirectPair runMethod(String httpRequestHeader, String httpRequestBody) {
+        String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
+        String methodPath = HttpRequestUtils.getMethodPath(url);
+
+        Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(
+                HttpRequestUtils.getHttpMethod(httpRequestHeader), url, httpRequestBody
+        );
+        if (infoMap.isPresent())
+            return HandlerMapping.getInstance().runMethod(methodPath, infoMap.get());
+        return new RedirectPair(url,false);
+    }
+
     public static class Pair {
         String key;
         String value;
