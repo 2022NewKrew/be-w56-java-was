@@ -9,19 +9,16 @@ import service.ViewService;
 
 import java.io.IOException;
 
-public class UserListController implements Controller{
-    private static final Logger log = LoggerFactory.getLogger(UserListController.class);
+public class IndexController implements Controller {
+    private static final Logger log = LoggerFactory.getLogger(IndexController.class);
 
     @Override
     public void makeResponse(Request request, Response response) throws IOException {
         boolean checkLogin = UserService.checkLogin(request);
         log.debug("checkLogin: {}", checkLogin);
 
-        if (checkLogin) {
-            byte[] body = ViewService.getView("/user/list.html");
-            response.staticResponse(body);
-        } else {
-            response.redirectResponse("/user/login.html");
-        }
+        byte[] body = ViewService.getView("/index.html");
+        response.staticResponse(body);
+
     }
 }

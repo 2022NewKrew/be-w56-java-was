@@ -12,6 +12,8 @@ public class RequestMapper {
         requestMap.put("/user/create", new JoinController());
         requestMap.put("/user/login", new LoginController());
         requestMap.put("/user/list", new UserListController());
+        requestMap.put("/memo/create", new MemoController());
+        requestMap.put("/", new IndexController());
     }
 
     public static Controller mapping(String url) {

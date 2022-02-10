@@ -17,7 +17,7 @@ public class LoginController implements Controller{
         boolean isLogin = UserService.login(loginInfo.get("userId"), loginInfo.get("password"));
         log.debug("isLogin: {}", isLogin);
         if (isLogin) {
-            response.redirectResponse("/index.html", "logined=true;");
+            response.redirectResponse("/", "logined=true;");
         } else {
             response.redirectResponse("/user/login_failed.html", "logined=false;");
         }
