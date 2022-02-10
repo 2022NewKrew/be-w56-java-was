@@ -8,7 +8,6 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import webserver.RequestHandler;
 
 import java.util.List;
 import java.util.Map;

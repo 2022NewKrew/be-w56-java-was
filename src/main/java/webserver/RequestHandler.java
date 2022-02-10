@@ -5,7 +5,6 @@ import http.request.HttpRequestDecoder;
 import http.response.HttpResponse;
 import http.view.OutputView;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
 import webserver.controller.BaseController;
 import webserver.controller.LoginController;
 import webserver.controller.SignupController;
@@ -16,7 +15,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 public class RequestHandler implements Runnable {
@@ -28,7 +26,6 @@ public class RequestHandler implements Runnable {
     }
 
     private static final Map<String, BaseController> controllerMap = new HashMap<>();
-    private static final Map<Long, User> sessionMap = new HashMap<>();
 
     static {
         controllerMap.put("/user/create", new SignupController());
