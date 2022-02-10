@@ -1,11 +1,11 @@
 package controller;
 
-import collections.RequestBody;
 import collections.RequestHeaders;
 import collections.RequestStartLine;
-import dto.Response;
+import http.HttpResponse;
 import collections.ResponseHeaders;
 import dto.ResponseBodyDto;
+import http.HttpRequest;
 import model.Memo;
 import model.User;
 import org.apache.tika.Tika;
@@ -30,40 +30,43 @@ public class GetController implements Controller {
     }
 
     @Override
-    public void doResponse(String methodName, DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void doResponse(String methodName, DataOutputStream dos, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // HttpRequest 구조 분해
+        RequestStartLine requestStartLine = httpRequest.getRequestStartLine();
+        RequestHeaders requestHeaders = httpRequest.getRequestHeaders();
+
         // 메서드 실행
         Class<GetController> targetClass = GetController.class;
         Method method = targetClass.getMethod(methodName, RequestStartLine.class, RequestHeaders.class);
-        Response response = (Response) method.invoke(this, requestStartLine, requestHeaders);
+        HttpResponse httpResponse = (HttpResponse) method.invoke(this, requestStartLine, requestHeaders);
 
         // 전송
-        responseStatusLine(dos, response.getStatusLine());
-        responseHeader(dos, response.getHeaders());
-        responseBody(dos, response.getBody());
+        responseStatusLine(dos, httpResponse.getStatusLine());
+        responseHeader(dos, httpResponse.getHeaders());
+        responseBody(dos, httpResponse.getBody());
     }
 
-    public Response userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        var temp = new HashMap<String, String>();
-        temp.put("Location", "/");
-        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+    public HttpResponse userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+        var headers = new HashMap<String, String>();
+        headers.put("Location", "/");
 
         userService.signUp(requestStartLine.getParameters());
 
-        return response;
+        return HttpResponse.create302RedirectHttpResponse(headers);
     }
 
-    public Response staticResource(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+    public HttpResponse staticResource(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView(requestStartLine.getPath());
         byte[] body = responseBodyDto.getBody();
 
-        var temp = new HashMap<String, String>();
-        temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", responseBodyDto.getContentType());
+        var headers = new HashMap<String, String>();
+        headers.put("Content-Length", String.valueOf(body.length));
+        headers.put("Content-Type", responseBodyDto.getContentType());
 
-        return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
+        return HttpResponse.create200ForwordHttpResponse(headers, body);
     }
 
-    public Response userList(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+    public HttpResponse userList(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         String cookieString = requestHeaders.getHeader("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieString);
         String logined = cookies.get("logined");
@@ -73,54 +76,58 @@ public class GetController implements Controller {
             Collection<User> users = userService.userList();
             byte[] body = HTML_VIEW.userListView(users);
 
-            var temp = new HashMap<String, String>();
-            temp.put("Content-Length", String.valueOf(body.length));
-            temp.put("Content-Type", "text/html; charset=utf-8");
-            return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
+            var headers = new HashMap<String, String>();
+            headers.put("Content-Length", String.valueOf(body.length));
+            headers.put("Content-Type", "text/html; charset=utf-8");
+
+            return HttpResponse.create200ForwordHttpResponse(headers, body);
         }
 
         // 로그인 화면으로 redirect
-        var temp = new HashMap<String, String>();
-        temp.put("Location", "/user/login.html");
-        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+        var headers = new HashMap<String, String>();
+        headers.put("Location", "/user/login.html");
+
+        return HttpResponse.create302RedirectHttpResponse(headers);
     }
 
-    public Response index(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+    public HttpResponse index(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         List<Memo> memos = userService.postList();
         byte[] body = HTML_VIEW.indexView(memos);
 
-        var temp = new HashMap<String, String>();
-        temp.put("Content-Length", String.valueOf(body.length));
-        temp.put("Content-Type", "text/html; charset=utf-8");
-        return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
+        var headers = new HashMap<String, String>();
+        headers.put("Content-Length", String.valueOf(body.length));
+        headers.put("Content-Type", "text/html; charset=utf-8");
+
+        return HttpResponse.create200ForwordHttpResponse(headers, body);
     }
 
-    public Response userLogout(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+    public HttpResponse userLogout(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         var temp = new HashMap<String, String>();
         temp.put("Set-Cookie", "logined=false; Path=/");
         temp.put("Location", "/");
-        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+        return new HttpResponse("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
     }
 
-    public Response post(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
+    public HttpResponse post(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
         String cookieString = requestHeaders.getHeader("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieString);
         String logined = cookies.get("logined");
 
+        var headers = new HashMap<String, String>();
         if (logined.equals("true")) {
             ResponseBodyDto responseBodyDto = HTML_VIEW.staticResourceView("/qna/form.html");
             byte[] body = responseBodyDto.getBody();
 
-            var temp = new HashMap<String, String>();
-            temp.put("Content-Length", String.valueOf(body.length));
-            temp.put("Content-Type", "text/html; charset=utf-8");
-            return new Response("HTTP/1.1 200 OK", new ResponseHeaders(temp), body);
+            headers.put("Content-Length", String.valueOf(body.length));
+            headers.put("Content-Type", "text/html; charset=utf-8");
+
+            return HttpResponse.create200ForwordHttpResponse(headers, body);
         }
 
         // 로그인 화면으로 redirect
-        var temp = new HashMap<String, String>();
-        temp.put("Location", "/user/login.html");
-        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+        headers.put("Location", "/user/login.html");
+
+        return HttpResponse.create302RedirectHttpResponse(headers);
     }
 
 }

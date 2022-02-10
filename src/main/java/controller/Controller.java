@@ -1,9 +1,7 @@
 package controller;
 
-import collections.RequestBody;
-import collections.RequestHeaders;
-import collections.RequestStartLine;
 import collections.ResponseHeaders;
+import http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.HtmlView;
@@ -18,7 +16,7 @@ public interface Controller {
     Logger log = LoggerFactory.getLogger(Controller.class);
     HtmlView HTML_VIEW = new HtmlView();
 
-    void doResponse(String methodName, DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+    void doResponse(String methodName, DataOutputStream dos, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
     default void responseStatusLine(DataOutputStream dos, String statusLine) {
         try {
