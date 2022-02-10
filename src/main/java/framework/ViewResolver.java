@@ -23,21 +23,6 @@ public class ViewResolver {
         return viewMap;
     }
 
-    public void render(ModelAndView mv, HttpRequest req, HttpResponse res) throws IOException {
-
-        // 임시
-        String viewName = mv.getViewName();
-        int period = viewName.lastIndexOf(':');
-
-        viewName = viewName.substring(period + 1);
-
-        res.addHeader("Location", viewName);
-
-        byte[] body = Files.readAllBytes(new File("./webapp" + viewName).toPath());
-        res.addHeader("Content-Type", MIME.getMediaType(viewName));
-        res.setBody(body);
-    }
-
     public View resolveViewName(String viewName) {
         for (String supportView : viewMap.keySet()) {
             if (viewName.matches(supportView)) {
