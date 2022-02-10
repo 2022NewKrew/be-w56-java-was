@@ -7,35 +7,42 @@ import webserver.view.ModelAndView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 @Slf4j
 public class WrappedHandler {
     private final Object controller;
-    private final HandlerParamParser handlerParamParser;
     private final Method method;
+    private final Map<Integer, String> paramIndexToName;
 
-    public WrappedHandler(Object controller, Method method, HandlerParamParser handlerParamParser) {
+    public WrappedHandler(Object controller, Method method, Map<Integer, String> paramIndexToName) {
         this.controller = controller;
         this.method = method;
-        this.handlerParamParser = handlerParamParser;
+        this.paramIndexToName = paramIndexToName;
     }
 
     public ModelAndView handle(HttpRequest httpRequest, HttpResponse httpResponse) {
-        log.debug("Handling request in wrapped handler");
         try {
-
-            method.invoke(controller,
-                          methodToArrange(method, httpRequest, httpResponse, handlerParamParser.parse(httpRequest)));
+            method.invoke(controller, rearrangeArgs(httpRequest, httpResponse));
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error(e.getMessage(), e);
         }
         return null;
     }
 
-    private Object[] methodToArrange(Method method, HttpRequest httpRequest, HttpResponse httpResponse,
-                                     Object[] params) {
-        // Inspect method signature
-        // Arrange arguments accordingly
-        return null;
+    private Object[] rearrangeArgs(HttpRequest httpRequest, HttpResponse httpResponse) {
+        Object[] args = new Object[method.getParameterTypes().length];
+        for (int nthParam = 0; nthParam < method.getParameterTypes().length; nthParam++) {
+            if (method.getParameterTypes()[nthParam] == HttpRequest.class) {
+                args[nthParam] = httpRequest;
+            }
+            if (method.getParameterTypes()[nthParam] == HttpResponse.class) {
+                args[nthParam] = httpResponse;
+            }
+            if (ParsedParams.SUPPORTED_TYPE.contains(method.getParameterTypes()[nthParam])) {
+                args[nthParam] = httpRequest.getParsedParams().get(paramIndexToName.get(nthParam));
+            }
+        }
+        return args;
     }
 }

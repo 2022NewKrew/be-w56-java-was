@@ -4,7 +4,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import webserver.handler.ParsedParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +22,8 @@ public class HttpRequest {
     private final String path;
     private final String httpVersion;
     private final Map<String, String> queryStrings;
+    @Setter
+    private ParsedParams parsedParams;
 
     @Builder
     public HttpRequest(HttpMethod httpMethod, String uri, String path, String httpVersion,

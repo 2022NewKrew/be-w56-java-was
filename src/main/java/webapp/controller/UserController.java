@@ -14,10 +14,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/create", method = HttpMethod.GET)
     public String createUser(@Param("ts") String ts, HttpRequest request, HttpResponse response, @Param("hi") int hi) {
-        log.info("In createUser");
-        log.info(ts);
-        log.info(String.valueOf(request));
-        log.info(String.valueOf(response));
+        log.debug("In createUser, ts: {}, hi: {}", ts, hi);
         return "/";
     }
 
@@ -25,7 +22,6 @@ public class UserController {
     public String createUser(HttpRequest request, HttpResponse response) {
         log.info("In index");
         log.info(String.valueOf(request));
-        log.info(String.valueOf(response));
         return "/";
     }
 }

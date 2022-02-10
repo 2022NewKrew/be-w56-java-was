@@ -5,30 +5,34 @@ import webserver.http.HttpRequest;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 @Slf4j
 public class HandlerMatcher {
     private final String path;
-    private final Map<String, Class<?>> requiredParams;
+    private final HandlerParamParser handlerParamParser;
 
-    public HandlerMatcher(String path, Map<String, Class<?>> requiredParams) {
+    public HandlerMatcher(String path, HandlerParamParser handlerParamParser) {
         this.path = path;
-        this.requiredParams = requiredParams;
+        this.handlerParamParser = handlerParamParser;
     }
 
     /**
-     * Check query string type and path matching
+     * Check path matching and query string type matching
      *
      * @param httpRequest
      * @return
      */
     public boolean match(HttpRequest httpRequest) {
-        return httpRequest.getPath().equals(path)
-                && httpRequest.getQueryStrings().size() == requiredParams.size()
-                && (httpRequest.getQueryStrings().isEmpty() || httpRequest.getQueryStrings().entrySet().stream().anyMatch(
-                entry -> isStringValueOfType(entry.getValue(),
-                                             requiredParams.getOrDefault(entry.getKey(), NoSuchElement.class))));
+        if (httpRequest.getPath().equals(path)) {
+            httpRequest.setParsedParams(handlerParamParser.parse(httpRequest));
+            return httpRequest.getParsedParams().isValid();
+        }
+        return false;
+        // return httpRequest.getPath().equals(path)
+        //         && httpRequest.getQueryStrings().size() == requiredParams.size()
+        //         && (httpRequest.getQueryStrings().isEmpty() || httpRequest.getQueryStrings().entrySet().stream().anyMatch(
+        //         entry -> isStringValueOfType(entry.getValue(),
+        //                                      requiredParams.getOrDefault(entry.getKey(), NoSuchElement.class))));
     }
 
     private boolean isStringValueOfType(String value, Class<?> targetTypeToParseAs) {

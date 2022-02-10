@@ -82,14 +82,14 @@ public class WebServer {
 
     private static void registerHandler(String prefixUrl, Method method) {
         HandlerMatcher matcher = generateHandlerMatcher(prefixUrl, method);
-        WrappedHandler wrappedHandler = generateWrappedHandler(prefixUrl, method);
+        WrappedHandler wrappedHandler = generateWrappedHandler(method);
         handlers.put(matcher, wrappedHandler);
     }
 
     private static HandlerMatcher generateHandlerMatcher(String prefixUrl, Method method) {
         String path = prefixUrl + method.getAnnotation(RequestMapping.class).value();
 
-        Map<String, Class<?>> requiredParams = new HashMap<>();
+        Map<String, Class<?>> requiredParamsType = new HashMap<>();
         Annotation[][] annotations = method.getParameterAnnotations();
         for (int nthParam = 0; nthParam < annotations.length; nthParam++) {
             // Among annotations on each parameter,
@@ -98,17 +98,30 @@ public class WebServer {
             Annotation[] annotationsOnParam = annotations[nthParam];
             OptionalInt indexOfFirstParamAnnotation = IntStream.range(0, annotationsOnParam.length).filter(
                     nthAnnotation -> annotationsOnParam[nthAnnotation] instanceof Param).findFirst();
-            indexOfFirstParamAnnotation.ifPresent(parameter -> requiredParams.put(
+            indexOfFirstParamAnnotation.ifPresent(parameter -> requiredParamsType.put(
                     ((Param) annotationsOnParam[indexOfFirstParamAnnotation.getAsInt()]).value(),
                     paramType));
         }
 
-        return new HandlerMatcher(path, requiredParams);
+        return new HandlerMatcher(path, new HandlerParamParser(requiredParamsType));
     }
 
-    private static WrappedHandler generateWrappedHandler(String prefixUrl, Method method) {
+    private static WrappedHandler generateWrappedHandler(Method method) {
         // Generate a wrapped handler properly calls the method defined in controller.
         // That will require some extra preprocessing on the request. e.g. Extracting querystring, parsing them and passing them as arguments.
-        return new WrappedHandler(new UserController(), method, new HandlerParamParser());
+
+        Map<Integer, String> paramIndex = new HashMap<>();
+        Annotation[][] annotations = method.getParameterAnnotations();
+        for (int nthParam = 0; nthParam < annotations.length; nthParam++) {
+            Annotation[] annotationsOnParam = annotations[nthParam];
+            OptionalInt indexOfFirstParamAnnotation = IntStream.range(0, annotationsOnParam.length).filter(
+                    nthAnnotation -> annotationsOnParam[nthAnnotation] instanceof Param).findFirst();
+            int finalNthParam = nthParam;
+            indexOfFirstParamAnnotation.ifPresent(parameter -> paramIndex.put(finalNthParam,
+                                                                              ((Param) annotationsOnParam[indexOfFirstParamAnnotation.getAsInt()]).value()
+            ));
+        }
+
+        return new WrappedHandler(new UserController(), method, paramIndex);
     }
 }
