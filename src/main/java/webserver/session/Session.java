@@ -1,6 +1,6 @@
 package webserver.session;
 
-import model.UserAccount;
+import model.user_account.UserAccount;
 
 import java.time.LocalDateTime;
 

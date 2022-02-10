@@ -1,15 +1,16 @@
 package util;
 
 import mapper.ResponseSendDataModel;
-import model.UserAccount;
-import model.UserAccountHtmlMapper;
+import model.Mapper;
+import model.memo.Memo;
+import model.memo.MemoDTO;
+import model.memo.MemoHtmlMapper;
+import model.user_account.UserAccount;
+import model.user_account.UserAccountHtmlMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,32 +32,40 @@ public class HtmlTemplate {
         for(Object data: dataList){
             if(data instanceof UserAccount){
                 UserAccount userAccount = (UserAccount) data;
+                UserAccountHtmlMapper userAccountHtmlMapper = new UserAccountHtmlMapper(userAccount);
 
-                String[] bodySplit = new String(body).split("\\{\\{");
-                StringBuilder changeString = new StringBuilder(bodySplit[0]);
+                addedBody.append(replaceString(userAccountHtmlMapper, body));
+            } else if(data instanceof Memo){
+                Memo memo = (Memo) data;
+                MemoHtmlMapper memoHtmlMapper = new MemoHtmlMapper(memo);
 
-                if(bodySplit.length == 1)
-                    return changeString;
-
-                for(String splitString: bodySplit){
-                    String[] querySplit = splitString.split("\\}\\}");
-
-                    if(querySplit.length == 2) {
-                        String param = querySplit[0];
-                        String content = querySplit[1];
-
-                        UserAccountHtmlMapper userAccountHtmlMapper = new UserAccountHtmlMapper(userAccount);
-
-                        changeString.append(userAccountHtmlMapper.getMap().get(param).get());
-
-                        changeString.append(content);
-                    }
-                }
-                addedBody.append(changeString);
+                addedBody.append(replaceString(memoHtmlMapper, body));
             }
         }
 
         return addedBody;
+    }
+
+    private static <T> StringBuilder replaceString(Mapper mapper, StringBuilder body){
+        String[] bodySplit = new String(body).split("\\{\\{");
+        StringBuilder changeString = new StringBuilder(bodySplit[0]);
+
+        if(bodySplit.length == 1)
+            return changeString;
+
+        for(String splitString: bodySplit){
+            String[] querySplit = splitString.split("\\}\\}");
+
+            if(querySplit.length == 2) {
+                String param = querySplit[0];
+                String content = querySplit[1];
+
+                changeString.append(mapper.getMap().get(param).get());
+
+                changeString.append(content);
+            }
+        }
+        return  changeString;
     }
 
     public static StringBuilder dynamicHtmlParsing(List<String> fileData, ResponseSendDataModel model) throws IOException{

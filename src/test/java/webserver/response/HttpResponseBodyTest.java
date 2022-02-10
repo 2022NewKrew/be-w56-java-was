@@ -1,20 +1,16 @@
 package webserver.response;
 
 import mapper.ResponseSendDataModel;
-import model.UserAccount;
-import model.UserAccountDTO;
+import model.user_account.UserAccount;
+import model.user_account.UserAccountDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import util.HtmlTemplate;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class HttpResponseBodyTest {
     @DisplayName("response body 생성 테스트")

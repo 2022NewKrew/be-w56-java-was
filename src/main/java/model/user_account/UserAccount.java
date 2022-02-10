@@ -1,4 +1,4 @@
-package model;
+package model.user_account;
 
 public class UserAccount {
     private final int id;

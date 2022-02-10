@@ -1,13 +1,11 @@
 package mapper;
 
-import model.UserAccount;
 import service.SessionService;
 import webserver.request.HttpRequest;
 import webserver.session.Session;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class ResponseSendDataModel {

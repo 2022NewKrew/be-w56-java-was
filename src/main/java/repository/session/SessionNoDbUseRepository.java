@@ -1,7 +1,5 @@
 package repository.session;
 
-import model.UserAccount;
-import model.UserAccountDTO;
 import repository.Repository;
 import webserver.session.Session;
 

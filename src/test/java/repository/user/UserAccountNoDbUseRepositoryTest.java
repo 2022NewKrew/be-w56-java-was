@@ -1,7 +1,7 @@
 package repository.user;
 
-import model.UserAccount;
-import model.UserAccountDTO;
+import model.user_account.UserAccount;
+import model.user_account.UserAccountDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserAccountNoDbUseRepositoryTest {
     UserAccountNoDbUseRepository repository = new UserAccountNoDbUseRepository();

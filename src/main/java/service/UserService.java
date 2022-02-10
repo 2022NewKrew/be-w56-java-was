@@ -1,7 +1,7 @@
 package service;
 
-import model.UserAccount;
-import model.UserAccountDTO;
+import model.user_account.UserAccount;
+import model.user_account.UserAccountDTO;
 import repository.Repository;
 import repository.user.UserAccountNoDbUseRepository;
 

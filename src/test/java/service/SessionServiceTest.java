@@ -1,16 +1,14 @@
 package service;
 
-import model.UserAccount;
-import model.UserAccountDTO;
+import model.user_account.UserAccount;
+import model.user_account.UserAccountDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import repository.session.SessionNoDbUseRepository;
-import repository.user.UserAccountNoDbUseRepository;
 import webserver.session.Session;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class SessionServiceTest {
     SessionNoDbUseRepository repository = new SessionNoDbUseRepository();

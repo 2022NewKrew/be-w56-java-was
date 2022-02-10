@@ -1,4 +1,4 @@
-package model;
+package model.user_account;
 
 public class UserAccountDTO {
     private final String userId;

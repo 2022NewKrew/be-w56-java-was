@@ -1,9 +1,8 @@
 package util;
 
 import mapper.ResponseSendDataModel;
-import model.UserAccount;
-import model.UserAccountDTO;
-import org.h2.engine.User;
+import model.user_account.UserAccount;
+import model.user_account.UserAccountDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HtmlTemplateTest {
