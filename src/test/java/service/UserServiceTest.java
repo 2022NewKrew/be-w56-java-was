@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import repository.UserRepository;
 import util.HttpRequestUtils;
 import web.controller.RequestController;
 import web.http.request.HttpRequest;
@@ -26,7 +27,7 @@ class UserServiceTest {
 
     @BeforeAll
     public static void beforeAll(){
-        dummyUsers().forEach(DataBase::addUser);
+        dummyUsers().forEach(UserRepository::addUser);
     }
 
     private static List<User> dummyUsers(){
@@ -51,7 +52,7 @@ class UserServiceTest {
         HttpResponse httpResponse = RequestController.getResponse(httpRequest);
 
         // then
-        assertThat(DataBase.findUserById(userId)).isInstanceOf(User.class);
+        assertThat(UserRepository.findUserById(userId)).isInstanceOf(User.class);
         assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.REDIRECT);
         assertThat(httpResponse.getHeaders().getHeaderByKey("Location"))
                 .isEqualTo("Location: http://localhost:8080/index.html");

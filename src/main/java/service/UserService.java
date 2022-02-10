@@ -4,6 +4,7 @@ import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repository.UserRepository;
 import util.HttpRequestUtils;
 import util.HttpResponseMaker;
 import util.Pair;
@@ -26,7 +27,7 @@ public class UserService {
 
         User user = new User(userId, password, name, email);
         log.info("Insert User : {} ", user);
-        DataBase.addUser(user);
+        UserRepository.addUser(user);
     }
 
     public static HttpResponse signUp(HttpRequest httpRequest) {
@@ -58,7 +59,7 @@ public class UserService {
 
     private static boolean canUserLogin(String body){
         Map<String, String> userInfo = HttpRequestUtils.parseBody(body);
-        User user = DataBase.findUserById(userInfo.get("userId"));
+        User user = UserRepository.findUserById(userInfo.get("userId"));
         return user.getPassword().equals(userInfo.get("password"));
     }
 }

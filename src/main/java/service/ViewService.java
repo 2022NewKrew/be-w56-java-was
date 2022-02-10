@@ -1,9 +1,9 @@
 package service;
 
-import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repository.UserRepository;
 import util.HttpRequestUtils;
 import util.HttpResponseMaker;
 import util.Pair;
@@ -73,7 +73,7 @@ public class ViewService {
     }
 
     private static String getUserListHtml(){
-        List<User> users = DataBase.findAll();
+        List<User> users = UserRepository.findAll();
 
         AtomicInteger atomicInteger = new AtomicInteger();
         StringBuilder sb = new StringBuilder();
