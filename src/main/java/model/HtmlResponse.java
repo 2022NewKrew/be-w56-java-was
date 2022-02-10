@@ -12,7 +12,7 @@ import java.io.IOException;
 @Data
 @Builder
 public class HtmlResponse {
-    private String uri;
+    private String locationUri;
     private String accept;
     private byte[] body;
     private HtmlResponseHeader htmlResponseHeader;

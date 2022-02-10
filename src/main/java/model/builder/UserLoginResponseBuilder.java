@@ -29,7 +29,7 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
 
     private HtmlResponse buildSuccessLogin(RequestHeader requestHeader) throws IOException {
         return HtmlResponse.builder()
-                .uri(Links.MAIN)
+                .locationUri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGIN_COOKIE)
                 .accept(requestHeader.getAccept())
@@ -38,7 +38,7 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
 
     private HtmlResponse buildFailLogin(RequestHeader requestHeader) throws IOException {
         return HtmlResponse.builder()
-                .uri(Links.LOGIN_FAILED)
+                .locationUri(Links.LOGIN_FAILED)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.LOGIN_FAILED), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())

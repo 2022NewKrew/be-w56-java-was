@@ -27,7 +27,7 @@ public class NormalRequestResponseBuilder extends ResponseBuilder {
         }
 
         return HtmlResponse.builder()
-                .uri(uri)
+                .locationUri(uri)
                 .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
                 .body(body)
                 .accept(requestHeader.getAccept())

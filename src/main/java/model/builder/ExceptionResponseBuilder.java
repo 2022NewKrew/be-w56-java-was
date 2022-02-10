@@ -13,7 +13,7 @@ public class ExceptionResponseBuilder extends ResponseBuilder {
     @Override
     public HtmlResponse build(RequestHeader requestHeader) throws IOException, SQLException {
         return HtmlResponse.builder()
-                .uri(Links.ERROR)
+                .locationUri(Links.ERROR)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept("text/html")

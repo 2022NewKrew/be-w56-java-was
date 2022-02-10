@@ -29,9 +29,9 @@ public enum HtmlResponseHeader {
         @Override
         public void response(DataOutputStream dos, HtmlResponse responseHeader) {
             try {
-                log.info("302: " + responseHeader.getUri());
+                log.info("302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Location: " + responseHeader.getLocationUri() + "\r\n");
                 dos.writeBytes("Connection: keep-alive\r\n");
                 dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("\r\n");
@@ -45,9 +45,9 @@ public enum HtmlResponseHeader {
         @Override
         public void response(DataOutputStream dos, HtmlResponse responseHeader) {
             try {
-                log.info("Login 302: " + responseHeader.getUri());
+                log.info("Login 302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Location: " + responseHeader.getLocationUri() + "\r\n");
                 dos.writeBytes("Connection: keep-alive\r\n");
                 dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
@@ -62,9 +62,9 @@ public enum HtmlResponseHeader {
         @Override
         public void response(DataOutputStream dos, HtmlResponse responseHeader) {
             try {
-                log.info("Login 302: " + responseHeader.getUri());
+                log.info("Login 302: " + responseHeader.getLocationUri());
                 dos.writeBytes("HTTP/1.1 302 Redirect \r\n");
-                dos.writeBytes("Location: " + responseHeader.getUri() + "\r\n");
+                dos.writeBytes("Location: " + responseHeader.getLocationUri() + "\r\n");
                 dos.writeBytes("Connection: keep-alive\r\n");
                 dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
                 dos.writeBytes("Set-Cookie: logined=false; Path=/ \r\n");

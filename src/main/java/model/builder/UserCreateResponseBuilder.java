@@ -13,7 +13,7 @@ public class UserCreateResponseBuilder extends ResponseBuilder {
     @Override
     public HtmlResponse build(RequestHeader requestHeader) throws IOException, SQLException {
         return HtmlResponse.builder()
-                .uri(Links.MAIN)
+                .locationUri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())

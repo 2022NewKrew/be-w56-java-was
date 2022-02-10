@@ -14,7 +14,7 @@ public class UserLogoutResponseBuilder extends ResponseBuilder {
     @Override
     public HtmlResponse build(RequestHeader requestHeader) throws IOException, SQLException {
         return HtmlResponse.builder()
-                .uri(Links.MAIN)
+                .locationUri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
                 .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGOUT_COOKIE)
                 .accept(requestHeader.getAccept())
