@@ -22,7 +22,7 @@ public class HttpResponseBuilder {
         return httpResponse;
     }
 
-    public void build(String path) throws IOException {
+    public void build(ResponseBuildInfo responseBuildInfo) throws IOException {
         httpResponse.setProtocol(httpRequest.getProtocol());
         if (path.contains("redirect:")) {
             httpResponse.setStatusCode(HttpStatusCode._302);
