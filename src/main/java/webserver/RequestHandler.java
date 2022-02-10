@@ -37,11 +37,11 @@ public class RequestHandler extends Thread {
 
             // Request 처리
             HttpController httpController = new HttpController(httpRequest);
-            String path = httpController.runServiceAndReturnPath();
+            ResponseBuildInfo responseBuildInfo = httpController.runServiceAndReturnInfo();
 
             // Response 객체 build
             HttpResponseBuilder httpResponseBuilder = new HttpResponseBuilder(httpRequest);
-            httpResponseBuilder.build(path);
+            httpResponseBuilder.build(responseBuildInfo);
             HttpResponse httpResponse = httpResponseBuilder.getHttpResponse();
 
             // Response 전송

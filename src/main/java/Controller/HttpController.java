@@ -16,7 +16,7 @@ public class HttpController {
         this.httpRequest = httpRequest;
     }
 
-    public ResponseBuildInfo runServiceAndReturnPath() {
+    public ResponseBuildInfo runServiceAndReturnInfo() {
         ResponseBuildInfo responseBuildInfo = new ResponseBuildInfo();
 
         // PostMapping("/user/create") 와 동일
