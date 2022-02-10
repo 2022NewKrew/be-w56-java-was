@@ -1,5 +1,6 @@
 package app.model;
 
+@Deprecated
 public class User {
     private String userId;
     private String password;

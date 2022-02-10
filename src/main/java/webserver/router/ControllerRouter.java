@@ -1,43 +1,51 @@
 package webserver.router;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
 
-import app.controller.UserController;
+import webserver.annotation.Controller;
 import webserver.annotation.RequestMapping;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.util.ClassAndInstance;
+import webserver.util.ModelAndView;
 
+@Deprecated
 public class ControllerRouter {
-    private static final List<ClassAndInstance> CONTROLLER_CLASS;
+    private static final Set<Class<?>> CONTROLLER_CLASS;
 
     static {
-        CONTROLLER_CLASS = Arrays.asList(new ClassAndInstance(UserController.class, UserController.getInstance()));
+        CONTROLLER_CLASS = new Reflections("").getTypesAnnotatedWith(Controller.class);
     }
 
-    public static boolean routing(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public static boolean routing(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         Optional<Method> findMethod = Optional.empty();
 
-        for (ClassAndInstance classAndInstance : CONTROLLER_CLASS) {
-            Class aClass = classAndInstance.getaClass();
-
-            findMethod = Arrays.stream(aClass.getDeclaredMethods())
+        for (Class controllerClass : CONTROLLER_CLASS) {
+            findMethod = Arrays.stream(controllerClass.getDeclaredMethods())
                                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                                .filter(method -> isRequestMapping(method, httpRequest))
                                .findFirst();
 
             if (findMethod.isPresent()) {
                 Method method = findMethod.get();
-                try {
-                    Object invoke = method.invoke(classAndInstance.getInstance(), httpRequest, httpResponse);
 
-                } catch (IllegalAccessException | InvocationTargetException e) {
+                try {
+                    Method getInstanceMethod = controllerClass.getMethod("getInstance");
+                    Object instance = getInstanceMethod.invoke(null);
+
+                    ModelAndView modelAndView = (ModelAndView) method.invoke(
+                            instance, httpRequest, httpResponse
+                    );
+
+                    httpResponse.send(modelAndView);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
 
