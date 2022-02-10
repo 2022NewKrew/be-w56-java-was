@@ -2,6 +2,7 @@ package webserver.response;
 
 import exception.CustomException;
 import exception.InvalidRequestException;
+import exception.TemplateProcessingException;
 import java.io.File;
 import org.apache.tika.Tika;
 
@@ -14,6 +15,10 @@ public final class ResponseFactory {
             throw new InvalidRequestException("file " + file + ": 지원하지 않는 타입");
         }
         return new StaticFileResponse(mimeType, file);
+    }
+
+    public static TemplateResponse template(String path) throws TemplateProcessingException {
+        return new TemplateResponse(path);
     }
 
     public static RedirectResponse redirect(String uri) {

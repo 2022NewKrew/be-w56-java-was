@@ -1,5 +1,6 @@
 package webserver.response;
 
+import java.util.List;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ public class Response {
     }
 
     protected void setContents(String contentType, byte[] content) {
-        headers.add("Content-Length", String.valueOf(content.length));
-        headers.add("Content-Type", contentType);
+        headers.put("Content-Length", List.of(String.valueOf(content.length)));
+        headers.put("Content-Type", List.of(contentType));
         body = content;
     }
 

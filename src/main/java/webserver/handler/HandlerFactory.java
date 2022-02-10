@@ -21,6 +21,9 @@ public final class HandlerFactory {
     }
 
     private static Handler createGetHandler(Request request) throws Exception {
+        if (Context.existsGetMappingUri(request.getUri())) {
+            return GetHandler.getInstance();
+        }
         if (existStaticFile(request.getUri())) {
             return GetStaticFileHandler.getInstance();
         }
