@@ -1,18 +1,20 @@
 package service;
 
 import db.DataBase;
+import db.UserRepository;
+import db.UserRepositoryImpl;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.request.Queries;
 
-import java.util.Collection;
 import java.util.List;
 
 public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private static final UserService userService = new UserService();
+    private static final UserRepository userRepository = UserRepositoryImpl.getInstance();
 
     private UserService(){}
 
@@ -25,7 +27,7 @@ public class UserService {
         User user = new User(
                 queries.get("userId"), queries.get("password"), queries.get("name"), queries.get("email")
         );
-        DataBase.addUser(user);
+        userRepository.addUser(user);
         log.info("[USER_SERVICE] : " + user);
         return user;
     }
