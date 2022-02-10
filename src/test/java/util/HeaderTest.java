@@ -16,7 +16,6 @@ public class HeaderTest {
     public void Header200Test() {
 
         Header header = Header.HEADER200;
-        header.generate200Header(100, false);
     }
 
 }

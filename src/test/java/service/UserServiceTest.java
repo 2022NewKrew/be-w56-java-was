@@ -5,19 +5,18 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceTest {
+public class UserServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(WebService.class);
-
+    private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
 
     @Test
     public void UserCreate(){
-        WebService webService = new WebService();
+        UserService webService = new UserService();
 
         String testURL = "userId=aa&password=bb&name=cc&email=dd%40gg";
         User user = new User("aa", "bb", "cc", "dd%40gg");
 
-        User createdUser = webService.createUser(testURL);
+        User createdUser = UserService.createUser(testURL);
 
         log.debug("createdUser {}", createdUser.toString());
 
@@ -41,8 +40,8 @@ public class WebServiceTest {
         String line = "userId=aa&password=bb";
         String signupLine = "userId=aa&password=bb&name=cc&email=dd%40gg";
 
-        User createdUser = WebService.createUser(signupLine);
-        Boolean loginResult = WebService.loginUser(line);
+        User createdUser = UserService.createUser(signupLine);
+        Boolean loginResult = UserService.loginUser(line);
 
         assert (loginResult.equals(true));
     }
@@ -52,9 +51,9 @@ public class WebServiceTest {
         String line = "userId=kk&password=dd";
         String signupLine = "userId=aa&password=bb&name=cc&email=dd%40gg";
 
-        User createdUser = WebService.createUser(signupLine);
+        User createdUser = UserService.createUser(signupLine);
         log.debug("createdUser {}", createdUser.toString());
-        Boolean loginResult = WebService.loginUser(line);
+        Boolean loginResult = UserService.loginUser(line);
 
         assert (loginResult.equals(false));
     }
@@ -67,10 +66,10 @@ public class WebServiceTest {
                 "                <tr>\n" +
                 "                    <th scope=\"row\">1</th> <td>aa</td> <td>cc</td> <td>dd%40gg</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n" +
                 "                </tr>\n";
-        WebService.createUser(signupLine);
-        Boolean loginResult = WebService.loginUser(loginLine);
+        UserService.createUser(signupLine);
+        Boolean loginResult = UserService.loginUser(loginLine);
 
-        String resultLine = WebService.userList();
+        String resultLine = UserService.userList();
         log.debug("userList results {}", resultLine);
 
         assert (resultLine.equals(compareList));

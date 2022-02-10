@@ -8,6 +8,7 @@ import java.util.HashMap;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 import service.WebService;
 import util.Header;
 
@@ -53,13 +54,13 @@ public class RequestHandler extends Thread {
         String redirectURL = parameters.get("URL");
         byte[] body = WebService.openUrl(redirectURL);
         if (function.equals("create")) {
-            User user = WebService.createUser(parameters.get("body"));
+            User user = UserService.createUser(parameters.get("body"));
             redirectURL = "/index.html";
             body = WebService.openUrl(redirectURL);
 
         }
         if (function.equals("login")) {
-            if (WebService.loginUser(parameters.get("body"))){
+            if (UserService.loginUser(parameters.get("body"))){
                 log.debug("login success");
                 redirectURL = "/index.html";
                 logined = true;
@@ -72,19 +73,21 @@ public class RequestHandler extends Thread {
             body = WebService.openUrl(redirectURL);
         }
         if (function.equals("list.html")){
-            body = WebService.userList().getBytes(StandardCharsets.UTF_8);
+            body = UserService.userList().getBytes(StandardCharsets.UTF_8);
         }
 
         if (parameters.get("method").equals("GET")){
-
             Header header = Header.HEADER200;
-            header.generate200Header(body.length, logined);
-            header.generateHeader(dos);
+            header.addParameter("Content-Type", "text/"+parameters.get("type")+";charset=utf-8");
+            header.addParameter("Content-Length", String.valueOf(body.length));
+            header.setCookie(logined);
+            header.generateStream(dos);
         }
         else{
             Header header = Header.HEADER302;
-            header.generate302Header(redirectURL, logined);
-            header.generateHeader(dos);
+            header.addParameter("Location", redirectURL);
+            header.setCookie(logined);
+            header.generateStream(dos);
         }
 
         log.debug("callFunction results, function : {}, redirectURL : {}", function, redirectURL);
