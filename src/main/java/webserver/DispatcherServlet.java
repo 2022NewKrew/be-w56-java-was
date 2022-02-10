@@ -1,7 +1,6 @@
 package webserver;
 
 import http.HttpRequest;
-import http.HttpResponse;
 import http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +8,8 @@ import webserver.method.RequestMappingHandlerAdapter;
 import webserver.method.RequestMappingHandlerMapping;
 import webserver.method.StaticFileHandlerAdapter;
 import webserver.method.StaticFileHandlerMapping;
+import webserver.view.TemplateView;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,16 +44,16 @@ public class DispatcherServlet {
     }
 
     public void doDispatch(HttpRequest request, OutputStream out) {
-        HttpResponse response = null;
+        ModelAndView mv = null;
         Exception exception = null;
         try {
             Object handler = getHandler(request);
             HandlerAdapter adapter = getHandlerAdapter(handler);
-            response = adapter.handle(request, handler);
+            mv = adapter.handle(request, handler);
         } catch (Exception e) {
             exception = e;
         }
-        processDispatchResult(response, out, exception);
+        processDispatchResult(mv, out, exception);
     }
 
     private Object getHandler(HttpRequest request) {
@@ -72,14 +71,16 @@ public class DispatcherServlet {
                 .orElseThrow(() -> new RuntimeException("No adapter for handler [" + handler + "]"));
     }
 
-    private void processDispatchResult(HttpResponse response, OutputStream out, Exception exception) {
-        if (response == null) {
-            response = new HttpResponse(HttpStatus.InternalServerError);
+    private void processDispatchResult(ModelAndView mv, OutputStream out, Exception exception) {
+        if (exception != null || mv == null) {
+            mv = new ModelAndView();
+            mv.setStatus(HttpStatus.InternalServerError);
         }
-        try {
-            response.render(out);
-        } catch (IOException e) {
-            log.error("Failed to render output");
-        }
+        render(mv, out);
+    }
+
+    private void render(ModelAndView mv, OutputStream out) {
+        View view = new TemplateView();
+        view.render(mv, out);
     }
 }
