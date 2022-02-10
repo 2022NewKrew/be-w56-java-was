@@ -13,6 +13,11 @@ public class DbConfigure {
 
     private final Connection connection;
 
+    public DbConfigure(String host) throws SQLException {
+        String curUrl = String.format("jdbc:mysql://%s:3306/JAVA_WAS", host);
+        this.connection = DriverManager.getConnection(curUrl, USER, PASSWORD);
+    }
+
     public DbConfigure() throws SQLException {
         this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
     }

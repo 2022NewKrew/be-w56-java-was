@@ -1,5 +1,7 @@
 version: "3.3"
 
+# run $ docker-compose -f docker-compose.yml -f extensions/filebeat/filebeat-compose.yml up
+
 services:
   db:
     build: ./db/.

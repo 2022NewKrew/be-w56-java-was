@@ -33,6 +33,7 @@ public class MyHttpServlet implements HttpServlet {
         return LazyHolder.INSTANCE;
     }
 
+    // Todo 시작하고 바로 접속하면 DB 연결이 안되서 떨어지는 문제가 일어나고 있음...
     private static class LazyHolder {
         private static MyHttpServlet INSTANCE = null;
 

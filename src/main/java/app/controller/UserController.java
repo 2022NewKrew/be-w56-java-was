@@ -1,10 +1,11 @@
 package app.controller;
 
+import app.core.annotation.Autowired;
 import app.core.annotation.components.Controller;
 import app.core.annotation.mapping.GetMapping;
 import app.core.annotation.mapping.PostMapping;
-import app.db.DataBase;
 import app.model.User;
+import app.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.http.HttpRequest;
@@ -12,7 +13,7 @@ import util.http.HttpRequestUtils;
 import util.http.HttpResponse;
 import util.ui.Model;
 
-import java.util.Arrays;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -21,26 +22,20 @@ import java.util.Map;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @GetMapping(url = "/")
     public String index() {
         return "/index.html";
     }
 
-    @GetMapping(url = "/user/create")
-    public String signInByGet(Map<String, String> params) {
-        User user = new User(
-                params.get("userId"),
-                params.get("password"),
-                params.get("name"),
-                params.get("email")
-        );
-        DataBase.addUser(user);
-        return "/index.html";
-    }
-
-    @PostMapping(url="/user/create")
-    public String signInByPost(Map<String, String> body) {
+    @PostMapping(url = "/user/create")
+    public String signInByPost(Map<String, String> body) throws SQLException {
         if (body.get("userId").equals("error"))
             throw new IllegalArgumentException("NO");
 
@@ -50,16 +45,16 @@ public class UserController {
                 body.get("name"),
                 body.get("email")
         );
-        DataBase.addUser(user);
+        userRepository.addUser(user);
         return "redirect:/index.html";
     }
 
     @PostMapping(url = "/user/create/v2")
-    public String signInByPostV2(User user) {
+    public String signInByPostV2(User user) throws SQLException {
         if (user.getUserId().equals("error"))
             throw new IllegalArgumentException("NO");
 
-        DataBase.addUser(user);
+        userRepository.addUser(user);
         return "redirect:/index.html";
     }
 
@@ -69,10 +64,10 @@ public class UserController {
     }
 
     @PostMapping(url = "/user/login")
-    public String login(Map<String, String> body, HttpResponse httpResponse) {
+    public String login(Map<String, String> body, HttpResponse httpResponse) throws SQLException {
         String userId = body.get("userId");
         String password = body.get("password");
-        User user = DataBase.findUserById(userId);
+        User user = userRepository.findUserById(userId);
         if (user == null || !user.passwordIs(password))
             return "redirect:/user/login_failed.html";
         httpResponse.setCookie("logined", true);
@@ -92,16 +87,22 @@ public class UserController {
     }
 
     @GetMapping(url = "/user/list")
-    public String userList(HttpRequest httpRequest, Model model){
+    public String userList(HttpRequest httpRequest, Model model) throws SQLException {
         Map<String, String> cookie = HttpRequestUtils.parseCookies(httpRequest.getHeader("Cookie"));
         log.debug("userList.cookie : {} ", cookie);
-        if(cookie.get("logined") == null)
+        if (cookie.get("logined") == null)
             return "redirect:/user/login";
 
-        List<User> users = Arrays.asList(DataBase.findAll().toArray(new User[0]));
+        List<User> users = (List<User>) userRepository.findAll();
         model.addAttribute("users", users);
 
         return "/user/list.html";
+    }
+
+    @GetMapping(url = "/user/deleteAll")
+    public String delete() throws SQLException {
+        userRepository.deleteAll();
+        return "redirect:/index.html";
     }
 
 }
