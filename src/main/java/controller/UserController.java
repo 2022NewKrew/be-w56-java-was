@@ -1,6 +1,6 @@
 package controller;
 
-import db.DataBase;
+import jdbc.JedisPools;
 import model.Pair;
 import model.User;
 import model.request.Body;
@@ -8,6 +8,7 @@ import model.request.Headers;
 import model.request.HttpLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repo.UserJdbc;
 import templates.TemplateAttribute;
 import templates.TemplateEngine;
 import util.HttpRequestUtils;
@@ -27,7 +28,11 @@ public class UserController {
     private static final String LOCATION_USER_CREATE = "/user/create";
     private static final String LOCATION_USER_LOGIN = "/user/login";
 
-    private final DataBase dataBase = new DataBase();
+    private final UserJdbc userJdbc;
+
+    public UserController(final JedisPools jedisPools) {
+        this.userJdbc = new UserJdbc(jedisPools);
+    }
 
     public Body processGet(final String location, final boolean isLogin) {
         if (LOCATION_USER_LIST.equals(location)) {
@@ -46,7 +51,7 @@ public class UserController {
             userListTpl = new TemplateEngine(LOCATION_USER_LIST);
         }
         TemplateAttribute<User> tplAttr = new TemplateAttribute<>();
-        tplAttr.set("userlist", dataBase.findAll());
+        tplAttr.set("userlist", userJdbc.findAll());
         return userListTpl.processTemplate(tplAttr);
     }
 
@@ -82,7 +87,7 @@ public class UserController {
         final String decodedParameters = URLDecoder.decode(body.get(), StandardCharsets.UTF_8);
         final Map<String, String> map = HttpRequestUtils.parseQueryString(decodedParameters);
 
-        final User user = dataBase.findUserById(map.get("id"));
+        final User user = userJdbc.findUserById(map.get("id"));
         if (user != null && SecurePassword.verify(user.getPassword(), map.getOrDefault("password", ""))) {
             list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/index.html").getLocation()));
             list.add(new Pair(Headers.HEADER_SET_COOKIE, "logined=true; Path=/"));
@@ -96,7 +101,7 @@ public class UserController {
     private void add(final Map<String, String> parameterMap) {
         final String id = parameterMap.get("id");
 
-        if (Objects.nonNull(dataBase.findUserById(id))) {
+        if (Objects.nonNull(userJdbc.findUserById(id))) {
             throw new IllegalStateException("User with id(" + id + ") already exist!");
         }
 
@@ -106,7 +111,7 @@ public class UserController {
                 parameterMap.get("name"),
                 parameterMap.get("email"));
 
-        dataBase.addUser(user);
+        userJdbc.addUser(user);
         log.info("New user added! - " + id);
     }
 }
