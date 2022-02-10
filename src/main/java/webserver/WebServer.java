@@ -9,7 +9,7 @@ public class WebServer {
 
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         try (ServerSocket serverSocket = new ServerSocket(WebServerConfig.PORT)) {
             log.info("Web Application Server started {} port.", WebServerConfig.PORT);

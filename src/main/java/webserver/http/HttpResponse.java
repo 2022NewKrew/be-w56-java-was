@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.WebServerConfig;
-import webserver.util.HttpResponseUtil;
+import webserver.util.HttpResponseUtils;
 
 public class HttpResponse {
 
@@ -34,10 +34,10 @@ public class HttpResponse {
     public void send() {
         try {
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes(HttpResponseUtil.responseLineString(this));
-            dos.writeBytes(HttpResponseUtil.headerString(this));
+            dos.writeBytes(HttpResponseUtils.responseLineString(this));
+            dos.writeBytes(HttpResponseUtils.headerString(this));
             if (body != null && body.length > 0) {
-                dos.write(HttpResponseUtil.bodyString(this).getBytes(StandardCharsets.UTF_8));
+                dos.write(HttpResponseUtils.bodyString(this).getBytes(StandardCharsets.UTF_8));
             }
             dos.flush();
         } catch (IOException e) {
@@ -53,7 +53,7 @@ public class HttpResponse {
     }
 
     public void setCookie(String cookieValue) {
-        headers().set(HttpHeaders.COOKIE, cookieValue);
+        headers().set(HttpHeaders.SET_COOKIE, cookieValue);
     }
 
     public HttpVersion getVersion() {
@@ -68,9 +68,8 @@ public class HttpResponse {
         return status;
     }
 
-    public HttpResponse setStatus(HttpResponseStatus status) {
+    public void setStatus(HttpResponseStatus status) {
         this.status = status;
-        return this;
     }
 
     public byte[] getBody() {

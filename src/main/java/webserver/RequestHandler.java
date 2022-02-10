@@ -11,13 +11,12 @@ import org.slf4j.LoggerFactory;
 import webserver.http.DefaultHttpRequestBuilder;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.servlet.HttpHandleable;
-import webserver.servlet.HttpHandler;
+import webserver.servlet.DispatcherServlet;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final HttpHandleable httpRequestServlet = HttpHandler.getInstance();
+    private final DispatcherServlet dispatcherServlet = DispatcherServlet.getInstance();
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -34,7 +33,8 @@ public class RequestHandler extends Thread {
             HttpRequest request = new DefaultHttpRequestBuilder(reader).build();
             HttpResponse response = new HttpResponse(out);
 
-            httpRequestServlet.handle(request, response);
+            dispatcherServlet.handle(request, response);
+            response.send();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

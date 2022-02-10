@@ -2,13 +2,13 @@ package app.user.domain;
 
 public class User {
 
-    private final UserId userId;
+    private final String userId;
     private final String password;
     private final String name;
     private final String email;
 
-    public User(UserId userId, String password, String name, String email) {
-        this.userId = userId;
+    public User(String id, String password, String name, String email) {
+        this.userId = id;
         this.password = password;
         this.name = name;
         this.email = email;
@@ -18,7 +18,7 @@ public class User {
         return this.password.equals(tryPassword);
     }
 
-    public UserId getUserId() {
+    public String getUserId() {
         return userId;
     }
 

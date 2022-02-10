@@ -1,18 +1,16 @@
 package app.user.application.port.in;
 
-import app.user.domain.UserId;
-
 public class LoginUserDto {
 
-    private final UserId userId;
+    private final String userId;
     private final String password;
 
-    public LoginUserDto(UserId userId, String password) {
+    public LoginUserDto(String userId, String password) {
         this.userId = userId;
         this.password = password;
     }
 
-    public UserId getUserId() {
+    public String getUserId() {
         return userId;
     }
 

@@ -4,6 +4,11 @@ import java.io.File;
 
 public class FileUtils {
 
+    public static boolean hasExtension(String path) {
+        String[] split = path.split("\\.");
+        return split.length > 1;
+    }
+
     public static String parseExtension(File file) {
         String fileName = file.getName();
         int lastIndex = fileName.lastIndexOf(".");

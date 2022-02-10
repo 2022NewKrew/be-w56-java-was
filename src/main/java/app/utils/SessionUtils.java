@@ -8,6 +8,9 @@ public class SessionUtils {
 
     public static boolean hasSession(HttpRequest request) {
         String cookieContent = request.getTrailingHeaders().get(HttpHeaders.COOKIE);
+        if (cookieContent == null) {
+            return false;
+        }
         return cookieContent.equals(WebServerConfig.LOGIN_SUCCESS_COOKIE);
     }
 
