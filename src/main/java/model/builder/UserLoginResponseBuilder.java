@@ -4,7 +4,7 @@ import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.HttpResponse;
 import service.UserService;
-import util.HtmlResponseHeader;
+import util.HttpResponseHeader;
 import util.Links;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
         return HttpResponse.builder()
                 .locationUri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
-                .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGIN_COOKIE)
+                .htmlResponseHeader(HttpResponseHeader.REDIRECT_302_WITH_LOGIN_COOKIE)
                 .accept(requestHeader.getAccept())
                 .build();
     }
@@ -40,7 +40,7 @@ public class UserLoginResponseBuilder extends ResponseBuilder {
         return HttpResponse.builder()
                 .locationUri(Links.LOGIN_FAILED)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.LOGIN_FAILED), model))
-                .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
+                .htmlResponseHeader(HttpResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
                 .build();
     }

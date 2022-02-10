@@ -3,7 +3,7 @@ package model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import util.HtmlResponseHeader;
+import util.HttpResponseHeader;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class HttpResponse {
     private String locationUri;
     private String accept;
     private byte[] body;
-    private HtmlResponseHeader htmlResponseHeader;
+    private HttpResponseHeader htmlResponseHeader;
 
     public int getLengthOfBodyContent() {
         return body.length;

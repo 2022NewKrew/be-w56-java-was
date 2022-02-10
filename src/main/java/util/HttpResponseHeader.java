@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 @Slf4j
-public enum HtmlResponseHeader {
+public enum HttpResponseHeader {
     RESPONSE_200() {
         @Override
         public void response(DataOutputStream dos, HttpResponse responseHeader) {
@@ -75,7 +75,7 @@ public enum HtmlResponseHeader {
         }
     };
 
-    HtmlResponseHeader() {
+    HttpResponseHeader() {
 
     }
 

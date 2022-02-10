@@ -3,7 +3,7 @@ package model.builder;
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.HttpResponse;
-import util.HtmlResponseHeader;
+import util.HttpResponseHeader;
 import util.Links;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class ExceptionResponseBuilder extends ResponseBuilder {
         return HttpResponse.builder()
                 .locationUri(Links.ERROR)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR), model))
-                .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
+                .htmlResponseHeader(HttpResponseHeader.REDIRECT_302)
                 .accept("text/html")
                 .build();
     }

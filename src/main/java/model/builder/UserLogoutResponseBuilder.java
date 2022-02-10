@@ -3,7 +3,7 @@ package model.builder;
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.HttpResponse;
-import util.HtmlResponseHeader;
+import util.HttpResponseHeader;
 import util.Links;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class UserLogoutResponseBuilder extends ResponseBuilder {
         return HttpResponse.builder()
                 .locationUri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
-                .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302_WITH_LOGOUT_COOKIE)
+                .htmlResponseHeader(HttpResponseHeader.REDIRECT_302_WITH_LOGOUT_COOKIE)
                 .accept(requestHeader.getAccept())
                 .build();
     }

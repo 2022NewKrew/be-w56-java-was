@@ -3,7 +3,7 @@ package model.builder;
 import dynamic.DynamicHtmlBuilder;
 import model.RequestHeader;
 import model.HttpResponse;
-import util.HtmlResponseHeader;
+import util.HttpResponseHeader;
 import util.Links;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class NormalRequestResponseBuilder extends ResponseBuilder {
 
         return HttpResponse.builder()
                 .locationUri(uri)
-                .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
+                .htmlResponseHeader(HttpResponseHeader.RESPONSE_200)
                 .body(body)
                 .accept(requestHeader.getAccept())
                 .build();

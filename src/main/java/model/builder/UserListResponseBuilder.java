@@ -5,7 +5,7 @@ import model.RequestHeader;
 import model.HttpResponse;
 import model.User;
 import service.UserService;
-import util.HtmlResponseHeader;
+import util.HttpResponseHeader;
 import util.Links;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class UserListResponseBuilder extends ResponseBuilder {
         return HttpResponse.builder()
                 .locationUri(Links.USER_LIST)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.USER_LIST), model))
-                .htmlResponseHeader(HtmlResponseHeader.RESPONSE_200)
+                .htmlResponseHeader(HttpResponseHeader.RESPONSE_200)
                 .accept(requestHeader.getAccept())
                 .build();
     }
@@ -43,7 +43,7 @@ public class UserListResponseBuilder extends ResponseBuilder {
         return HttpResponse.builder()
                 .locationUri(Links.MAIN)
                 .body(DynamicHtmlBuilder.getDynamicHtml(readBody(Links.MAIN), model))
-                .htmlResponseHeader(HtmlResponseHeader.REDIRECT_302)
+                .htmlResponseHeader(HttpResponseHeader.REDIRECT_302)
                 .accept(requestHeader.getAccept())
                 .build();
     }
