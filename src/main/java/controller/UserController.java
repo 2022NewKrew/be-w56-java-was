@@ -77,16 +77,12 @@ public class UserController implements Controller {
                 queryString.get(UserDBConstants.COLUMN_NAME),
                 queryString.get(UserDBConstants.COLUMN_EMAIL));
 
-        try {
-            if (userDao.findByUserId(newUser.getUserId()) != null) {
-                log.debug("POST /user/create failed. duplicate user id {}", newUser.getUserId());
-                return redirect("/user/form_failed.html");
-            }
-            userDao.save(newUser);
-        } catch (SQLException sqle) {
-            log.error("POST /user/create failed. user_id = {}. error_code = {}", newUser.getUserId(), sqle.getErrorCode());
-            return redirect("/user/form_failed.html");
-        }
+//        if (userDao.findByUserId(newUser.getUserId()) != null) {
+//            log.debug("POST /user/create failed. duplicate user id {}", newUser.getUserId());
+//            return redirect("/user/form_failed.html");
+//        }
+        userDao.save(newUser);
+
         return redirect("/index.html");
     }
 
@@ -101,11 +97,7 @@ public class UserController implements Controller {
         String userId = queryString.get(UserDBConstants.COLUMN_USER_ID);
         User user = null;
 
-        try {
-            user = userDao.findByUserId(userId);
-        } catch (SQLException e) {
-            log.error("POST /user/login failed. user id = {}, error_code = {}", userId, e.getErrorCode());
-        }
+        user = userDao.findByUserId(userId);
 
         if (user == null || !user.getPassword().equals(queryString.get(UserDBConstants.COLUMN_PASSWORD)))
             return redirect("/user/login_failed.html");
@@ -127,19 +119,11 @@ public class UserController implements Controller {
 
         File file = new File(HttpResponseBody.STATIC_ROOT + "/user/list.html");
 
-        try {
-            StringBuilder sb = HtmlUtils.renderTemplate(file, userDao.findAll());
+        StringBuilder sb = HtmlUtils.renderTemplate(file, userDao.findAll());
 
-            HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
-            HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
+        HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
+        HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
 
-            return new HttpResponse(responseHeader, responseBody);
-        } catch (IOException ioe) {
-            log.error("GET /user/list failed. {}", ioe.getMessage());
-        } catch (SQLException sqle) {
-            log.error("GET /user/list failed. error_code = {}", sqle.getErrorCode());
-        }
-
-        return errorPage(); // Exception 발생한 경우
+        return new HttpResponse(responseHeader, responseBody);
     }
 }

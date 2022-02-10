@@ -18,7 +18,7 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public static HttpRequest readWithBufferedReader(BufferedReader br) throws IOException{
+    public static HttpRequest readWithBufferedReader(BufferedReader br) {
         HttpRequestLine requestLine;
         HttpRequestHeader requestHeader;
         HttpRequestBody requestBody;
@@ -44,7 +44,7 @@ public class HttpRequest {
             }
 
         } catch (IOException e) {
-            throw new IOException("failed to read HttpRequest");
+            throw new RuntimeException("failed to read HttpRequest");
         }
         return new HttpRequest(requestLine, requestHeader, requestBody);
     }

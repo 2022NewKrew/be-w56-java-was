@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ArticleDao {
-    public void save(Article article) throws SQLException;
-    public Article findById(final int id) throws SQLException;
-    public List<Article> findAll() throws SQLException;
-    public void delete(final int id) throws SQLException;
+    public void save(Article article);
+    public Article findById(final int id);
+    public List<Article> findAll();
+    public void delete(final int id);
 }

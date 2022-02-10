@@ -12,12 +12,12 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public void writeToDataOutputStream(DataOutputStream dos) throws IOException {
+    public void writeToDataOutputStream(DataOutputStream dos) {
         try {
             header.writeToDataOutputStream(dos);
             body.writeToDataOutputStream(dos);
         } catch (IOException e) {
-            throw new IOException("Failed to write HttpResponse to dos");
+            throw new RuntimeException("Failed to write HttpResponse to dos");
         }
     }
 

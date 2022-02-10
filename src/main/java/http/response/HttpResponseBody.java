@@ -20,9 +20,13 @@ public class HttpResponseBody {
         return new HttpResponseBody(emptyBody);
     }
 
-    public static HttpResponseBody createFromUrl(final String url) throws IOException {
+    public static HttpResponseBody createFromUrl(final String url) {
         File file = new File(STATIC_ROOT + url);
-        return new HttpResponseBody(Files.readAllBytes(file.toPath()));
+        try {
+            return new HttpResponseBody(Files.readAllBytes(file.toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static HttpResponseBody createFromStringBuilder(final StringBuilder sb) {

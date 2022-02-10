@@ -61,20 +61,11 @@ public class MainController implements Controller {
 
         File file = new File(HttpResponseBody.STATIC_ROOT + "/index.html");
 
-        try {
-            StringBuilder sb = HtmlUtils.renderTemplate(file, articleDao.findAll());
+        StringBuilder sb = HtmlUtils.renderTemplate(file, articleDao.findAll());
 
-            HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
-            HttpResponseHeader responseHeader = new HttpResponseHeader("/index.html", HttpStatus.OK, responseBody.length());
+        HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
+        HttpResponseHeader responseHeader = new HttpResponseHeader("/index.html", HttpStatus.OK, responseBody.length());
 
-            return new HttpResponse(responseHeader, responseBody);
-        } catch (SQLException sqle) {
-            log.error("GET / failed. sql error_code = {}", sqle.getErrorCode());
-        } catch (IOException ioe) {
-            log.error("GET / failed. {}", ioe.getMessage());
-        }
-
-        log.debug("{}, redirect to index", request.line().path());
-        return redirect("index.html");
+        return new HttpResponse(responseHeader, responseBody);
     }
 }

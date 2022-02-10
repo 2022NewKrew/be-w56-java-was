@@ -17,7 +17,7 @@ import java.nio.file.Path;
 public interface Controller {
     HttpResponse processDynamic(HttpRequest request);
 
-    default HttpResponse process(HttpRequest request) throws IOException {
+    default HttpResponse process(HttpRequest request) {
         if (isStaticFileRequest(request))
             return readStaticFile(request.line().path());
 
@@ -30,7 +30,7 @@ public interface Controller {
         return path.toFile().isFile();
     }
 
-    default HttpResponse readStaticFile(String url) throws IOException {
+    default HttpResponse readStaticFile(String url) {
         HttpResponseBody responseBody = HttpResponseBody.createFromUrl(url);
         HttpResponseHeader responseHeader = new HttpResponseHeader(url, HttpStatus.OK, responseBody.length());
 
@@ -46,11 +46,7 @@ public interface Controller {
 
     default HttpResponse errorPage() {
         HttpResponseBody responseBody;
-        try {
-            responseBody = HttpResponseBody.createFromUrl("/error.html");
-        } catch (IOException e) {
-            responseBody = HttpResponseBody.empty();
-        }
+        responseBody = HttpResponseBody.createFromUrl("/error.html");
 
         HttpResponseHeader responseHeader = new HttpResponseHeader("/error.html", HttpStatus.NOT_FOUND, responseBody.length());
 

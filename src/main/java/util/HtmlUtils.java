@@ -17,10 +17,15 @@ public class HtmlUtils {
      * @param templateFile 기본 html 파일
      * @param model 삽입할 데이터
      * @return 변환 후 StringBuilder 객체
-     * @throws IOException templateFile readAllBytes 실패 시
      */
-    public static StringBuilder renderTemplate(File templateFile, Object model) throws IOException {
-        byte[] bytes = Files.readAllBytes(templateFile.toPath());
+    public static StringBuilder renderTemplate(File templateFile, Object model) {
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(templateFile.toPath());
+        } catch (IOException ioe) {
+            throw new RuntimeException("Files.readAllBytes failed");
+        }
+
         String templateStr = new String(bytes);
         StringBuilder sb = new StringBuilder(templateStr);
 
@@ -77,7 +82,7 @@ public class HtmlUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return renderedSection; 
+        return renderedSection;
     }
 
     /**

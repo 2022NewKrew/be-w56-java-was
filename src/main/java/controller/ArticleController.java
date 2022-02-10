@@ -69,11 +69,7 @@ public class ArticleController implements Controller {
                 LocalDateTime.now().toString(),
                 queryString.get(ArticleDBConstants.COLUMN_WRITER));
 
-        try {
-            articleDao.save(newArticle);
-        } catch (SQLException e) {
-            log.error("POST /articles/create failed. SQL error_code = {}", e.getErrorCode());
-        }
+        articleDao.save(newArticle);
 
         return redirect("/index.html");
     }
