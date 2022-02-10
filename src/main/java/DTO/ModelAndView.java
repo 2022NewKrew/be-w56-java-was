@@ -56,7 +56,6 @@ public class ModelAndView {
     }
 
     // todo: path 복잡해질 경우 view object 따로 생성 후 render() 옮겨야함
-    // todo: model 값 있을 경우 body 수정해야함 !
     public void render(RequestHeader requestHeader, ResponseHeader responseHeader, DataOutputStream dos) throws IOException {
         if (checkAndRemoveRedirect()){ // if redirect
             responseHeader.setRedirect(view);
