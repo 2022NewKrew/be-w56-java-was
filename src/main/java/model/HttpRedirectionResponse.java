@@ -5,7 +5,7 @@ import java.util.Map;
 public class HttpRedirectionResponse extends HttpResponse {
 
     public static HttpRedirectionResponse of(HttpStatus httpStatus, String url) {
-        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1.getVersion(), httpStatus.getCode(),
+        StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1, httpStatus.getCode(),
                 httpStatus.getMessage());
         Map<HttpHeader, String> headerKeyMap = Map.of(HttpHeader.LOCATION, url);
         return new HttpRedirectionResponse(statusLine, new Header(headerKeyMap));
