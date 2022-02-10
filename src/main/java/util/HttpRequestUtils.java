@@ -23,10 +23,13 @@ public class HttpRequestUtils {
         return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
     }
 
-    public static Optional<Map<String, String>> getInfoMap(String httpMethod, String url) {
+    public static Optional<Map<String, String>> getInfoMap(String httpMethod, String url, String httpRequestBody) {
         String[] urlSplitList = url.split("\\?");
         if (httpMethod.equals("GET") && urlSplitList.length > VALUE_INDEX)
-            return Optional.of(parseQueryString(urlSplitList[VALUE_INDEX]));
+            return Optional.of(parseQueryString(urlSplitList[VALUE_INDEX], "&", "="));
+        if (httpMethod.equals("POST")) {
+            return Optional.of(parseQueryString(httpRequestBody, "&", "="));
+        }
         return Optional.empty();
     }
 
