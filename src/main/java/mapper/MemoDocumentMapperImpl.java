@@ -3,8 +3,10 @@ package mapper;
 import model.Memo;
 import org.bson.Document;
 
+import javax.annotation.processing.Generated;
 import java.time.ZoneId;
 
+@Generated(value = "org.mapstruct.ap.MappingProcessor")
 public class MemoDocumentMapperImpl implements MemoDocumentMapper {
 
     @Override

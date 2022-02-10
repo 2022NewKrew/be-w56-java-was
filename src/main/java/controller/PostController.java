@@ -4,7 +4,8 @@ import collections.RequestBody;
 import collections.RequestHeaders;
 import collections.RequestStartLine;
 import collections.ResponseHeaders;
-import dto.Response;
+import http.HttpResponse;
+import http.HttpRequest;
 import service.UserService;
 
 import java.io.DataOutputStream;
@@ -22,49 +23,54 @@ public class PostController implements Controller {
     }
 
     @Override
-    public void doResponse(String methodName, DataOutputStream dos, RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void doResponse(String methodName, DataOutputStream dos, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // HttpRequest 구조 분해
+        RequestStartLine requestStartLine = httpRequest.getRequestStartLine();
+        RequestHeaders requestHeaders = httpRequest.getRequestHeaders();
+        RequestBody requestBody = httpRequest.getRequestBody();
+
         // 메서드 실행
         Class<PostController> targetClass = PostController.class;
         Method method = targetClass.getMethod(methodName, RequestStartLine.class, RequestHeaders.class, RequestBody.class);
-        Response response = (Response) method.invoke(this, requestStartLine, requestHeaders, requestBody);
+        HttpResponse httpResponse = (HttpResponse) method.invoke(this, requestStartLine, requestHeaders, requestBody);
 
         // 전송
-        responseStatusLine(dos, response.getStatusLine());
-        responseHeader(dos, response.getHeaders());
-        responseBody(dos, response.getBody());
+        responseStatusLine(dos, httpResponse.getStatusLine());
+        responseHeader(dos, httpResponse.getHeaders());
+        responseBody(dos, httpResponse.getBody());
     }
 
-    public Response userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
-        var temp = new HashMap<String, String>();
-        temp.put("Location", "/");
-        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+    public HttpResponse userCreate(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
+        var headers = new HashMap<String, String>();
+        headers.put("Location", "/");
 
         userService.signUp(requestBody.getBodies());
 
-        return response;
+        return HttpResponse.create302RedirectHttpResponse(headers);
     }
 
-    public Response userLogin(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
-        var temp = new HashMap<String, String>();
+    public HttpResponse userLogin(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) throws IOException {
+        var headers = new HashMap<String, String>();
         if (userService.signIn(requestBody.getBodies())) {
-            temp.put("Location", "/");
-            temp.put("Set-Cookie", "logined=true; Path=/");
-            return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+            headers.put("Set-Cookie", "logined=true; Path=/");
+            headers.put("Location", "/");
+
+            return HttpResponse.create302RedirectHttpResponse(headers);
         }
 
-        temp.put("Set-Cookie", "logined=false; Path=/");
-        temp.put("Location", "/user/login_failed.html");
-        return new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+        headers.put("Set-Cookie", "logined=false; Path=/");
+        headers.put("Location", "/user/login_failed.html");
+
+        return HttpResponse.create302RedirectHttpResponse(headers);
     }
 
-    public Response post(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) {
-        var temp = new HashMap<String, String>();
-        temp.put("Location", "/");
-        Response response = new Response("HTTP/1.1 302 Found", new ResponseHeaders(temp), null);
+    public HttpResponse post(RequestStartLine requestStartLine, RequestHeaders requestHeaders, RequestBody requestBody) {
+        var headers = new HashMap<String, String>();
+        headers.put("Location", "/");
 
         userService.post(requestBody.getBodies());
 
-        return response;
+        return HttpResponse.create302RedirectHttpResponse(headers);
     }
 
 }
