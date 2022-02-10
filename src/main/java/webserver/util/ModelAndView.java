@@ -2,6 +2,9 @@ package webserver.util;
 
 import java.util.Map;
 
+import lombok.Getter;
+
+@Getter
 public class ModelAndView {
     private String view;
     private Map<String, String> model;

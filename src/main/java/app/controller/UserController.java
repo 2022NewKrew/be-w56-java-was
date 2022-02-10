@@ -1,6 +1,5 @@
 package app.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,16 +8,22 @@ import org.apache.commons.lang3.StringUtils;
 
 import app.domain.User;
 import app.service.UserService;
+import webserver.annotation.Controller;
 import webserver.annotation.RequestMapping;
 import webserver.http.HttpRequest;
 import webserver.http.HttpRequestMethod;
 import webserver.http.HttpResponse;
 import webserver.util.Constant;
+import webserver.util.ModelAndView;
 
+@Controller
 public class UserController {
     private static UserController instance = new UserController();
 
+    private final UserService userService;
+
     private UserController() {
+        userService = UserService.getInstance();
     }
 
     public static UserController getInstance() {
@@ -26,10 +31,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/create", method = HttpRequestMethod.POST)
-    public void userCreate(HttpRequest request, HttpResponse response) throws IOException {
+    public ModelAndView userCreate(HttpRequest request, HttpResponse response) {
         Map<String, String> body = request.getBodyParams();
-
-        UserService.getInstance().saveUser(
+        userService.registerUser(
                 User.builder()
                     .userId(body.get("userId"))
                     .password(body.get("password"))
@@ -38,37 +42,41 @@ public class UserController {
                     .build()
         );
 
-        response.sendRedirect(Constant.INDEX_PATH);
+        return new ModelAndView("redirect:" + Constant.INDEX_PATH);
     }
 
     @RequestMapping(value = "/user/login", method = HttpRequestMethod.POST)
-    public void login(HttpRequest request, HttpResponse response) throws IOException {
+    public ModelAndView login(HttpRequest request, HttpResponse response) {
         Map<String, String> body = request.getBodyParams();
-        User user = UserService.getInstance().getUser(body.get("userId"));
+        User user = userService.getUser(body.get("userId"));
 
         if (ObjectUtils.isNotEmpty(user) && StringUtils.equals(user.getPassword(), body.get("password"))) {
-            response.sendRedirectWithCookie(Constant.INDEX_PATH, Constant.LOGIN_CACHE);
-        } else {
-            response.sendRedirect(Constant.LOGIN_FAILED_PATH);
+            response.setCookie(Constant.LOGIN_CACHE);
+
+            return new ModelAndView("redirect:" + Constant.INDEX_PATH);
         }
+
+        return new ModelAndView("redirect:" + Constant.LOGIN_FAILED_PATH);
     }
 
     @RequestMapping(value = "/user/logout", method = HttpRequestMethod.GET)
-    public void logout(HttpRequest request, HttpResponse response) throws IOException {
-        response.sendRedirectWithCookie(Constant.INDEX_PATH, Constant.LOGOUT_CACHE);
+    public ModelAndView logout(HttpRequest request, HttpResponse response) {
+        response.setCookie(Constant.LOGOUT_CACHE);
+
+        return new ModelAndView("redirect:" + Constant.INDEX_PATH);
     }
 
     @RequestMapping(value = "/user/list", method = HttpRequestMethod.GET)
-    public void userList(HttpRequest request, HttpResponse response) throws IOException {
+    public ModelAndView userList(HttpRequest request, HttpResponse response) {
         String cookie = request.getCookie();
 
         if (StringUtils.contains(cookie, Constant.LOGIN_CACHE)) {
             Map<String, String> map = new HashMap<>();
-            map.put("\\{\\{userList\\}\\}", UserService.getInstance().getUserListHtml());
+            map.put("\\{\\{userList\\}\\}", userService.getUserListHtml());
 
-            response.sendDynamicHtml(Constant.USER_LIST_PATH, map);
-        } else {
-            response.sendRedirect(Constant.LOGIN_PATH);
+            return new ModelAndView(Constant.USER_LIST_PATH, map);
         }
+
+        return new ModelAndView("redirect:" + Constant.LOGIN_PATH);
     }
 }

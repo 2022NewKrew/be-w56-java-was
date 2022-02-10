@@ -25,10 +25,11 @@ public class RequestHandler extends Thread {
                   connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = new HttpRequest(in);
-            HttpResponse httpResponse = new HttpResponse(out);
+            HttpRequest request = new HttpRequest(in);
+            HttpResponse response = new HttpResponse(out);
 
-            MainRouter.routing(httpRequest, httpResponse);
+//            MainRouter.routing(httpRequest, httpResponse);
+            MainRouter.route(request, response);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

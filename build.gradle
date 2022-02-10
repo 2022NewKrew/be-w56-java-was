@@ -33,6 +33,9 @@ dependencies {
     implementation 'org.hibernate:hibernate-entitymanager:5.3.7.Final'
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     implementation 'mysql:mysql-connector-java:8.0.28'
+    // https://mvnrepository.com/artifact/org.reflections/reflections
+    implementation 'org.reflections:reflections:0.9.11'
+
 }
 
 test {
