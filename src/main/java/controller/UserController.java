@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import util.DataBaseUtils;
 import util.HttpRequestUtils;
 import util.HttpResponseUtils;
+import util.IOUtils;
 
 import javax.swing.text.html.HTML;
 import java.io.*;
@@ -40,13 +41,9 @@ public class UserController {
     public static Controller signup = (httpRequest) -> {
         String requestBody = httpRequest.getBody();
         Map<String, String> data = HttpRequestUtils.parseQueryString(requestBody);
+        IOUtils.decode(data);
 
-        String userId = URLDecoder.decode(data.get("userId"), StandardCharsets.UTF_8);
-        String password = URLDecoder.decode(data.get("password"), StandardCharsets.UTF_8);
-        String name = URLDecoder.decode(data.get("name"), StandardCharsets.UTF_8);
-        String email = URLDecoder.decode(data.get("email"), StandardCharsets.UTF_8);
-        User user = new User(userId, password, name, email);
-
+        User user = new User(data.get("userId"), data.get("password"), data.get("name"), data.get("email"));
         DataBase.addUser(user);
 
         List<String> headers = HttpResponseUtils.response302(httpRequest, "/");
@@ -68,17 +65,11 @@ public class UserController {
     public static Controller login = (httpRequest) -> {
         String requestBody = httpRequest.getBody();
         Map<String, String> data = HttpRequestUtils.parseQueryString(requestBody);
+        IOUtils.decode(data);
 
-        String userId = URLDecoder.decode(data.get("userId"), StandardCharsets.UTF_8);
-        String password = URLDecoder.decode(data.get("password"), StandardCharsets.UTF_8);
-
-        User loginUser = DataBase.findUserById(userId);
-        boolean logined = true;
-        String location = "/";
-        if (loginUser == null || !loginUser.getPassword().equals(password)) {
-            logined = false;
-            location = "/user/login_failed";
-        }
+        User loginUser = DataBase.findUserById(data.get("userId"));
+        boolean logined = loginUser != null && loginUser.getPassword().equals(data.get("password"));
+        String location = logined ? "/" : "/user/login_failed";
 
         List<String> headers = HttpResponseUtils.response302(httpRequest, location);
         headers.add(1, String.format("Set-Cookie: logined=%b; Path=/\r\n", logined));
