@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import util.Checker;
 import util.SecurePassword;
 
@@ -7,6 +8,12 @@ import java.util.Objects;
 
 public class User {
     public static final User NONE = new User();
+
+    public static final String KEY_ID = "id";
+    public static final String KEY_PASSWORD = "password";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_EMAIL = "email";
+
     public static final String ID_REGEX = "[0-9a-z]+";
     public static final int ID_MIN = 6;
     public static final int ID_MAX = 12;
@@ -39,6 +46,20 @@ public class User {
         this.email = email.trim();
     }
 
+    public User(final JSONObject jsonUser) throws IllegalArgumentException
+    {
+        validate(
+                jsonUser.getString(KEY_ID),
+                "dummyPassword",
+                jsonUser.getString(KEY_NAME),
+                jsonUser.getString(KEY_EMAIL)
+        );
+        this.id = jsonUser.getString(KEY_ID);
+        this.password = jsonUser.getString(KEY_PASSWORD);
+        this.name = jsonUser.getString(KEY_NAME);
+        this.email = jsonUser.getString(KEY_EMAIL);
+    }
+
     private User() {
         this.id = "none";
         this.password = "";
@@ -53,10 +74,10 @@ public class User {
             final String email
     )
     {
-        Checker.checkString("id", id, ID_REGEX, ID_MIN, ID_MAX);
-        Checker.checkString("password", password, PW_REGEX, PW_MIN, PW_MAX);
-        Checker.checkString("name", name, NAME_REGEX, NAME_MIN, NAME_MAX);
-        Checker.checkString("email", email, EMAIL_REGEX, EMAIL_MIN, EMAIL_MAX);
+        Checker.checkString(KEY_ID, id, ID_REGEX, ID_MIN, ID_MAX);
+        Checker.checkString(KEY_PASSWORD, password, PW_REGEX, PW_MIN, PW_MAX);
+        Checker.checkString(KEY_NAME, name, NAME_REGEX, NAME_MIN, NAME_MAX);
+        Checker.checkString(KEY_EMAIL, email, EMAIL_REGEX, EMAIL_MIN, EMAIL_MAX);
     }
 
     public String getId() {

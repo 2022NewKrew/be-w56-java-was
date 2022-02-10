@@ -1,6 +1,6 @@
 package controller;
 
-import db.DataBase;
+import jdbc.JedisPools;
 import model.Pair;
 import model.User;
 import model.request.Body;
@@ -8,6 +8,7 @@ import model.request.Headers;
 import model.request.HttpLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repo.UserJdbc;
 import templates.TemplateAttribute;
 import templates.TemplateEngine;
 import util.HttpRequestUtils;
@@ -23,15 +24,21 @@ import java.util.Objects;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    public static final String COOKIE_USER_ID = "user-id";
+
     private static final String LOCATION_USER_LIST = "/user/list";
     private static final String LOCATION_USER_CREATE = "/user/create";
     private static final String LOCATION_USER_LOGIN = "/user/login";
 
-    private final DataBase dataBase = new DataBase();
+    private final UserJdbc userJdbc;
 
-    public Body processGet(final String location, final boolean isLogin) {
+    public UserController(final JedisPools jedisPools) {
+        this.userJdbc = new UserJdbc(jedisPools);
+    }
+
+    public Body processGet(final String location, final String userId) {
         if (LOCATION_USER_LIST.equals(location)) {
-            if (isLogin) {
+            if (userId != null && !userId.isBlank()) {
                 return getUserList();
             }
             throw new IllegalStateException("Login is required!");
@@ -46,7 +53,7 @@ public class UserController {
             userListTpl = new TemplateEngine(LOCATION_USER_LIST);
         }
         TemplateAttribute<User> tplAttr = new TemplateAttribute<>();
-        tplAttr.set("userlist", dataBase.findAll());
+        tplAttr.set("userlist", userJdbc.findAll());
         return userListTpl.processTemplate(tplAttr);
     }
 
@@ -82,21 +89,21 @@ public class UserController {
         final String decodedParameters = URLDecoder.decode(body.get(), StandardCharsets.UTF_8);
         final Map<String, String> map = HttpRequestUtils.parseQueryString(decodedParameters);
 
-        final User user = dataBase.findUserById(map.get("id"));
+        final User user = userJdbc.findUserById(map.get("id"));
         if (user != null && SecurePassword.verify(user.getPassword(), map.getOrDefault("password", ""))) {
             list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/index.html").getLocation()));
-            list.add(new Pair(Headers.HEADER_SET_COOKIE, "logined=true; Path=/"));
+            list.add(new Pair(Headers.HEADER_SET_COOKIE, COOKIE_USER_ID + "=" + user.getId() + "; Path=/"));
             return;
         }
 
         list.add(new Pair(Headers.HEADER_LOCATION, new HttpLocation("/user/login_failed.html").getLocation()));
-        list.add(new Pair(Headers.HEADER_SET_COOKIE, "logined=false; Path=/"));
+        list.add(new Pair(Headers.HEADER_SET_COOKIE, COOKIE_USER_ID + "=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"));
     }
 
     private void add(final Map<String, String> parameterMap) {
         final String id = parameterMap.get("id");
 
-        if (Objects.nonNull(dataBase.findUserById(id))) {
+        if (Objects.nonNull(userJdbc.findUserById(id))) {
             throw new IllegalStateException("User with id(" + id + ") already exist!");
         }
 
@@ -106,7 +113,7 @@ public class UserController {
                 parameterMap.get("name"),
                 parameterMap.get("email"));
 
-        dataBase.addUser(user);
+        userJdbc.addUser(user);
         log.info("New user added! - " + id);
     }
 }

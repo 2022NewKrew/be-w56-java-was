@@ -7,6 +7,7 @@ let validPassword = true;
 let validNewPassword = true;
 let validName = true;
 let validEmail = true;
+let validMemo = true;
 
 function checkValidInput() {
     if (validTitle &&
@@ -15,7 +16,8 @@ function checkValidInput() {
         validPassword &&
         validNewPassword &&
         validName &&
-        validEmail) {
+        validEmail &&
+        validMemo) {
         return true;
     }
     alert("올바른 값이 입력되지 않은 칸이 있습니다. 수정 후 다시 시도해주세요.");
@@ -112,4 +114,17 @@ if (INPUT_EMAIL !== null && INPUT_EMAIL.readOnly === false) {
 
 function checkEmail() {
     validEmail = checkBoundAndRegex(INPUT_EMAIL, EMAIL_MIN, EMAIL_MAX, EMAIL_REGEX);
+}
+
+const INPUT_MEMO = document.getElementById('memo');
+const MEMO_MIN = 1;
+const MEMO_MAX = 255;
+
+if (INPUT_MEMO !== null && INPUT_MEMO.readOnly === false) {
+    INPUT_MEMO.onchange = checkMemo;
+    checkMemo();
+}
+
+function checkMemo() {
+    validBody = checkBound(INPUT_MEMO, MEMO_MIN, MEMO_MAX);
 }
