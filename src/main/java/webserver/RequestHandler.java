@@ -4,6 +4,7 @@ import controller.Controller;
 import controller.ControllerType;
 import exceptions.InvalidRequestFormatException;
 import exceptions.InvalidHttpMethodException;
+import exceptions.LoginFailedException;
 import exceptions.exceptionHandler;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,8 @@ public class RequestHandler extends Thread {
             exceptionHandler.httpMethodNotFound(out, invalidHttpMethodException.getMessage());
         } catch (InvalidRequestFormatException invalidRequestFormatException) {
             exceptionHandler.badRequestFormat(out, invalidRequestFormatException.getMessage());
+        } catch (LoginFailedException loginFailedException) {
+            exceptionHandler.loginFailed(out, loginFailedException.getMessage());
         }
     }
 
