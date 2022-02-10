@@ -2,8 +2,9 @@ package webserver.http.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Constants;
 import util.IOUtils;
+import util.constant.Http;
+import util.constant.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,14 +40,14 @@ public class HttpRequest {
     private HttpRequestLine parseRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
         Map<String, String> request = parseRequest(line);
-        return new HttpRequestLine(request.get(Constants.HTTP_METHOD), request.get(Constants.HTTP_URL), request.get(Constants.HTTP_VERSION));
+        return new HttpRequestLine(request.get(Http.METHOD), request.get(Http.URL), request.get(Http.VERSION));
     }
 
     private HttpRequestHeader parseRequestHeader(BufferedReader br) throws IOException {
         String line = br.readLine();
         HashMap<String, String> pairs = new HashMap<>();
 
-        while (!(line = br.readLine()).equals(Constants.EMPTY)) {
+        while (!(line = br.readLine()).equals(Parser.EMPTY)) {
             Pair pair = parseHeader(line);
             pairs.put(pair.getKey(), pair.getValue());
         }

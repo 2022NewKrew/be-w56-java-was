@@ -6,8 +6,8 @@
 			<Pattern>%d{HH:mm:ss.SSS} [%-5level] [%thread] [%logger{36}] - %m%n</Pattern>
 		</layout>
 	</appender>
-	
+
 	<root level="DEBUG">
-		<appender-ref ref="STDOUT" />
+		<appender-ref ref="STDOUT"/>
 	</root>
 </configuration>

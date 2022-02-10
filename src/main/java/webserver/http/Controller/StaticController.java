@@ -2,7 +2,8 @@ package webserver.http.Controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Constants;
+import util.constant.Parser;
+import util.constant.Route;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
 import webserver.http.response.ContentType;
@@ -33,8 +34,7 @@ public class StaticController implements HttpController {
     @Override
     public HttpResponse handleRequest(HttpRequest request, OutputStream out) throws IOException {
         Path target = urlToFile(request.getUrl());
-        System.out.println("target " + target);
-        String[] tokens = target.toString().split(Constants.DOT);
+        String[] tokens = target.toString().split(Parser.DOT);
 
         ContentType contentType = ContentType.of(tokens[tokens.length - 1].toUpperCase());
         File file = target.toFile();
@@ -46,7 +46,7 @@ public class StaticController implements HttpController {
                 .setHttpStatus(HttpStatus._200)
                 .setContentType(contentType.getExtension())
                 .setContentLength(body.length)
-                .setRedirect("./webapp/index.html")
+                .setRedirect(Route.BASE + Route.INDEX)
                 .build();
     }
 }

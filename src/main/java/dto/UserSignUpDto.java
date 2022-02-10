@@ -1,5 +1,7 @@
 package dto;
 
+import entity.User;
+
 public class UserSignUpDto {
 
     private final String userId;
@@ -14,19 +16,20 @@ public class UserSignUpDto {
         this.email = email;
     }
 
+    public User toEntity() {
+        return User.builder()
+                .userId(this.userId)
+                .password(this.password)
+                .name(this.name)
+                .email(this.email)
+                .build();
+    }
+
     public String getUserId() {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }

@@ -4,8 +4,9 @@ import dto.UserSignUpDto;
 import entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Constants;
 import util.HttpRequestUtils;
+import util.constant.Http;
+import util.constant.Parser;
 import webserver.http.Controller.HttpController;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.ContentType;
@@ -41,7 +42,7 @@ public class UserController implements HttpController {
         if (request.getUrl().contains("user/create")) {
             switch (request.getMethod()) {
                 case GET:
-                    String queries = request.getUrl().split(Constants.QUESTION)[1];
+                    String queries = request.getUrl().split(Parser.QUESTION)[1];
                     Map<String, String> queriesMap = HttpRequestUtils.parseQueryString(queries);
                     userService.join(new UserSignUpDto(queriesMap.get("userId"), queriesMap.get("password"), queriesMap.get("name"), queriesMap.get("email")));
                     log.debug("UserController handleRequest User joined by GET");
@@ -71,7 +72,7 @@ public class UserController implements HttpController {
                     log.debug("UserController handleRequest list by GET");
                     String cookies = request.getHttpRequestHeader().getHeaders().get("Cookie");
                     Map<String, String> parsedCookies = HttpRequestUtils.parseCookies(cookies);
-                    if (Objects.equals(parsedCookies.get(Constants.HTTP_COOKIE_LOGINED_KEY), "true")) {
+                    if (Objects.equals(parsedCookies.get(Http.COOKIE_LOGINED_KEY), "true")) {
                         Collection<User> users = userService.findUsers();
                         StringBuilder sb = new StringBuilder();
                         int index = 3;
@@ -83,7 +84,7 @@ public class UserController implements HttpController {
                         }
 
                         Path target = urlToFile(request.getUrl());
-                        String[] tokens = target.toString().split(Constants.DOT);
+                        String[] tokens = target.toString().split(Parser.DOT);
                         ContentType contentType = ContentType.of(tokens[tokens.length - 1].toUpperCase());
                         File file = target.toFile();
                         String fileData = new String(Files.readAllBytes(file.toPath()));

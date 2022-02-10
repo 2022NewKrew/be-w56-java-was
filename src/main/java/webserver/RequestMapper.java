@@ -19,17 +19,17 @@ public class RequestMapper {
     private final List<HttpController> controllers = new ArrayList<>();
     private static RequestMapper INSTANCE;
 
-    public static RequestMapper getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new RequestMapper();
-        }
-        return INSTANCE;
-    }
-
     private RequestMapper() {
         controllers.add(new StaticController());
         controllers.add(new UserController());
         controllers.add(new AuthController());
+    }
+
+    public static synchronized RequestMapper getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new RequestMapper();
+        }
+        return INSTANCE;
     }
 
     public Optional<HttpController> getController(HttpRequest request) {

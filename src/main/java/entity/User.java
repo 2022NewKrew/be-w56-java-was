@@ -1,6 +1,10 @@
 package entity;
 
+import java.util.Objects;
+
 public class User {
+    private static final String FORMATTER = "User{%s, %s, %s, %s}";
+
     private final Long id;
     private final String userId;
     private final String password;
@@ -68,5 +72,23 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, password, name, email);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(FORMATTER, id, userId, password, name);
     }
 }

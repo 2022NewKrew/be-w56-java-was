@@ -11,13 +11,7 @@ import java.util.List;
 public class UserService {
 
     public void join(UserSignUpDto userSignUpDto) {
-        User user = User.builder()
-                .userId(userSignUpDto.getUserId())
-                .password(userSignUpDto.getPassword())
-                .name(userSignUpDto.getName())
-                .email(userSignUpDto.getEmail())
-                .build();
-
+        User user = userSignUpDto.toEntity();
         DataBase.addUser(user);
     }
 
