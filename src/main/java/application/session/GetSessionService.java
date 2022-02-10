@@ -3,30 +3,27 @@ package application.session;
 import application.exception.session.NonExistsSessionException;
 import application.exception.session.SessionExpiredException;
 import application.in.session.GetSessionUseCase;
-import application.out.session.SessionAttributesPort;
 import application.out.session.SessionPort;
-
-import java.time.LocalDateTime;
+import domain.session.Session;
 
 public class GetSessionService implements GetSessionUseCase {
 
     private final SessionPort sessionPort;
-    private final SessionAttributesPort sessionAttributesPort;
 
-    public GetSessionService(SessionPort sessionPort, SessionAttributesPort sessionAttributesPort) {
+    public GetSessionService(SessionPort sessionPort) {
         this.sessionPort = sessionPort;
-        this.sessionAttributesPort = sessionAttributesPort;
     }
 
     @Override
-    public Object getSession(Long sessionId) {
-        if (sessionPort.get(sessionId)
-                .orElseThrow(NonExistsSessionException::new)
-                .isExpired(LocalDateTime.now())) {
+    public Session getSession(String sessionId) {
+        Session session = sessionPort.get(sessionId)
+                .orElseThrow(NonExistsSessionException::new);
+
+        if (session.isExpired()) {
+            sessionPort.remove(sessionId);
             throw new SessionExpiredException();
         }
 
-        return sessionAttributesPort.get(sessionId).orElseThrow(NonExistsSessionException::new)
-                .getAttributeValue();
+        return session;
     }
 }

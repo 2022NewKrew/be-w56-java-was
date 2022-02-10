@@ -1,8 +1,8 @@
 package infrastructure.model;
 
-import com.google.common.collect.Maps;
 import infrastructure.validation.PathValidator;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ public class Path {
     public Path(ContentType contentType, String value) {
         this.contentType = contentType;
         this.value = value;
-        this.variables = Maps.newHashMap();
+        this.variables = new HashMap<>();
     }
 
     public Path(Map<String, String> variables, ContentType contentType, String value) {

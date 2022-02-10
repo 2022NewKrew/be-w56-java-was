@@ -1,8 +1,8 @@
-package adaptor.out.persistence.session;
+package adaptor.out.persistence.inmemory.session;
 
 import application.out.session.SessionDao;
 import application.out.session.SessionPort;
-import domain.user.Session;
+import domain.session.Session;
 
 import java.util.Optional;
 
@@ -20,7 +20,12 @@ public class SessionInMemoryPort implements SessionPort {
     }
 
     @Override
-    public Optional<Session> get(Long sessionId) {
-        return sessionDao.findBySessionId(sessionId);
+    public Optional<Session> get(String sessionId) {
+        return Optional.ofNullable(sessionDao.findBySessionId(sessionId));
+    }
+
+    @Override
+    public void remove(String sessionId) {
+        sessionDao.delete(sessionId);
     }
 }

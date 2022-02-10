@@ -1,5 +1,7 @@
 package application.in.session;
 
+import domain.session.Session;
+
 public interface GetSessionUseCase {
-    Object getSession(Long sessionId);
+    Session getSession(String sessionId);
 }

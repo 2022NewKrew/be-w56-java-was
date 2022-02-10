@@ -27,6 +27,8 @@ public class HttpRequest {
         return httpHeader.getHeader(key);
     }
 
+    public void setHeader(String key, String value) { httpHeader.addHeader(Pair.of(key, value)); }
+
     public Path getRequestPath() {
         return requestLine.getPath();
     }

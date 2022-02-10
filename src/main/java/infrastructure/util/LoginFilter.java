@@ -3,6 +3,7 @@ package infrastructure.util;
 import application.exception.session.NonExistsSessionException;
 import application.exception.session.SessionExpiredException;
 import application.in.session.GetSessionUseCase;
+import domain.session.Session;
 import infrastructure.exception.AuthenticationException;
 import infrastructure.model.HttpRequest;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import java.util.Set;
 public class LoginFilter {
 
     private static final Logger log = LoggerFactory.getLogger(LoginFilter.class);
-    private static final Set<String> FILTERED_URL = Set.of("/user/list");
+    private static final Set<String> FILTERED_URL = Set.of("/user/list", "/memo/new");
     private final GetSessionUseCase getSessionUseCase;
 
     public LoginFilter(GetSessionUseCase getSessionUseCase) {
@@ -28,7 +29,8 @@ public class LoginFilter {
         String sessionId = HttpRequestUtils.parseCookies(httpRequest.getHeader("Cookie")).get("SESSION_ID");
 
         try {
-            getSessionUseCase.getSession(Long.valueOf(sessionId));
+            Session<String> session = getSessionUseCase.getSession(sessionId);
+            httpRequest.setHeader("loginId", session.getAttributeValue());
         } catch (NonExistsSessionException e) {
             log.debug(e.getMessage());
             throw new AuthenticationException();

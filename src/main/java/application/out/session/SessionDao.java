@@ -1,10 +1,9 @@
 package application.out.session;
 
-import domain.user.Session;
-
-import java.util.Optional;
+import domain.session.Session;
 
 public interface SessionDao {
     void save(Session session);
-    Optional<Session> findBySessionId(Long sessionId);
+    Session findBySessionId(String sessionId);
+    void delete(String sessionId);
 }

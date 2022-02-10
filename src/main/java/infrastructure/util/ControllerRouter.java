@@ -4,6 +4,7 @@ import adaptor.in.web.HomeController;
 import adaptor.in.web.StaticResourceController;
 import adaptor.in.web.exception.FileNotFoundException;
 import adaptor.in.web.exception.UriNotFoundException;
+import adaptor.in.web.memo.MemoController;
 import adaptor.in.web.user.UserController;
 import infrastructure.exception.AuthenticationException;
 import infrastructure.model.HttpRequest;
@@ -21,18 +22,21 @@ public class ControllerRouter {
     private final StaticResourceController staticResourceController;
     private final HomeController homeController;
     private final UserController userController;
+    private final MemoController memoController;
 
-    public ControllerRouter(LoginFilter loginFilter, StaticResourceController staticResourceController, HomeController homeController, UserController userController) {
+    public ControllerRouter(LoginFilter loginFilter, StaticResourceController staticResourceController, HomeController homeController, UserController userController, MemoController memoController) {
         this.loginFilter = loginFilter;
         this.staticResourceController = staticResourceController;
         this.homeController = homeController;
         this.userController = userController;
+        this.memoController = memoController;
     }
 
     public HttpResponse handle(HttpRequest httpRequest) throws IOException {
         Path path = httpRequest.getRequestPath();
         log.debug("Request Path: {}", path.getValue());
 
+//        Session session = new Session();
         if (notAuthenticated(httpRequest, path)) {
             return HttpResponseUtils.found("/user/login.html");
         }
@@ -46,6 +50,9 @@ public class ControllerRouter {
             }
             if (path.matchHandler("/user")) {
                 return userController.handle(httpRequest);
+            }
+            if (path.matchHandler("/memo")) {
+                return memoController.handle(httpRequest);
             }
         } catch (FileNotFoundException e) {
             return HttpResponseUtils.notFound();
