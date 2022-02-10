@@ -24,13 +24,13 @@ public class HttpResponseBuilder {
 
     public void build(ResponseBuildInfo responseBuildInfo) throws IOException {
         httpResponse.setProtocol(httpRequest.getProtocol());
-        if (path.contains("redirect:")) {
+        if (responseBuildInfo.isRedirect()) {
             httpResponse.setStatusCode(HttpStatusCode._302);
-            httpResponse.setRedirectUrl(path.substring(9));
+            httpResponse.setRedirectUrl(responseBuildInfo.getPath());
             return;
         }
         httpResponse.setStatusCode(HttpStatusCode._200);
-        httpResponse.setResponseDataPath(path);
+        httpResponse.setResponseDataPath(responseBuildInfo.getPath());
         httpResponse.setResponseContentType(HttpResponseUtils.contentTypeFromPath(httpResponse.getResponseDataPath()));
         buildBody();
     }
