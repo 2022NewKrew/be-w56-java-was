@@ -1,6 +1,5 @@
 package webserver;
 
-import app.core.MyHttpServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.http.HttpRequest;
@@ -16,16 +15,17 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
+    private final HttpServlet httpServlet;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, HttpServlet httpServlet) {
         this.connection = connectionSocket;
+        this.httpServlet = httpServlet;
     }
 
     @Override
     public void run() {
         log.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-        HttpServlet httpServlet = MyHttpServlet.getInstance();
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
