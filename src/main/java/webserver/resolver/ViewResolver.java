@@ -31,6 +31,7 @@ public class ViewResolver {
     }
 
     public Response resolveResponse(String returnFromController, Cookie cookie, Model model) throws IOException, NoSuchFieldException, IllegalAccessException {
+
         if (returnFromController.startsWith("redirect:"))
             return makeResponse(getRedirectResponseHeader(returnFromController.substring("redirect:".length())),
                     cookie,
@@ -71,11 +72,13 @@ public class ViewResolver {
     }
 
     private byte[] getFileResponseBody(String url, Model model) throws IOException, NoSuchFieldException, IllegalAccessException {
+
         if (model.isEmpty())
             return Files.readAllBytes(new File("./webapp" + url).toPath());
 
         String fileString = Files.readString(new File("./webapp" + url).toPath());
 
         return TemplateUtils.convertTemplate(fileString, model).getBytes();
+
     }
 }
