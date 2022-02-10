@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.request.HttpRequest;
@@ -61,7 +62,7 @@ public class RequestHandler extends Thread {
                                         .build();
     }
 
-    private HttpResponse handle(HttpRequest request) throws IOException {
+    private HttpResponse handle(HttpRequest request) throws IOException, SQLException, ClassNotFoundException {
         HttpResponse response = new HttpResponse(request.getHttpVersion(), new HttpResponseHeaders());
         try {
             request.checkRequestValidation();

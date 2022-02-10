@@ -1,13 +1,16 @@
 package webserver.http.request.handler;
 
 import Controller.Controller;
+import Controller.CreateMemoController;
 import Controller.LoginController;
+import Controller.PrintBasicPageController;
 import Controller.PrintUserListController;
 import Controller.SignUpUserController;
 import Controller.StaticFileController;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,12 +27,14 @@ public class MethodHandler {
         controllerMap.put(new Pair(Method.POST, "/user/create"), new SignUpUserController());
         controllerMap.put(new Pair(Method.POST, "/user/login"), new LoginController());
         controllerMap.put(new Pair(Method.GET, "/user/list"), new PrintUserListController());
+        controllerMap.put(new Pair(Method.POST, "/memo/create"), new CreateMemoController());
+        controllerMap.put(new Pair(Method.GET, "/"), new PrintBasicPageController());
     }
 
     private final StaticFileController staticFileController = new StaticFileController();
 
     public void handle(HttpRequest request, HttpResponse response)
-        throws IOException, PageNotFoundException {
+        throws IOException, PageNotFoundException, SQLException, ClassNotFoundException {
         if (!Method.contain(request.getMethod())) {
             response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
             throw new PageNotFoundException();

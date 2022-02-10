@@ -4,9 +4,11 @@ import static webserver.http.HttpMeta.HTTP_STATUS_NOT_OK;
 import static webserver.http.HttpMeta.HTTP_STATUS_OK;
 import static webserver.http.HttpMeta.MIME_TYPE_OF_CSS;
 import static webserver.http.HttpMeta.MIME_TYPE_OF_JAVASCRIPT;
+import static webserver.http.HttpMeta.SESSION_ID_IN_COOKIE;
 import static webserver.http.HttpMeta.SUFFIX_OF_CSS_FILE;
 import static webserver.http.HttpMeta.SUFFIX_OF_JS_FILE;
 import static webserver.http.HttpMeta.VIEW_BASIC_PAGE;
+import static webserver.http.HttpMeta.VIEW_LOGIN_FAIL_PAGE;
 import static webserver.http.HttpMeta.VIEW_LOGIN_PAGE;
 
 import java.io.IOException;
@@ -103,8 +105,8 @@ public class HttpResponse {
         setHeader(HttpResponseHeader.Location, redirectPath);
     }
 
-    public void setCookie(boolean loginResult) {
-        setHeader(HttpResponseHeader.Set_Cookie, "logined=" + loginResult + "; Path=/");
+    public void setCookie(int sessionId) {
+        setHeader(HttpResponseHeader.Set_Cookie, SESSION_ID_IN_COOKIE + "=" + sessionId + "; Path=/");
     }
 
     public void redirectBasicPage() {
@@ -115,5 +117,10 @@ public class HttpResponse {
     public void redirectLoginPage() {
         setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
         setLocation(VIEW_LOGIN_PAGE);
+    }
+
+    public void redirectLoginFailPage() {
+        setStatusCode(HttpURLConnection.HTTP_MOVED_TEMP);
+        setLocation(VIEW_LOGIN_FAIL_PAGE);
     }
 }
