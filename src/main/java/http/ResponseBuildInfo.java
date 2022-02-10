@@ -38,8 +38,8 @@ public class ResponseBuildInfo {
         isRedirect = redirect;
     }
 
-    public void setCookie(Map<String, String> cookie) {
-        this.cookie = cookie;
+    public void addCookie(String key, String value) {
+        cookie.put(key, value);
     }
 
     public void setBody(byte[] body) {
@@ -59,8 +59,8 @@ public class ResponseBuildInfo {
             return this;
         }
 
-        public InfoBuilder setCookie(Map<String, String> cookie) {
-            responseBuildInfo.setCookie(cookie);
+        public InfoBuilder addCookie(String key, String value) {
+            responseBuildInfo.addCookie(key, value);
             return this;
         }
 

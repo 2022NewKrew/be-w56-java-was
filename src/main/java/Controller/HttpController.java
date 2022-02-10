@@ -17,7 +17,6 @@ public class HttpController {
     }
 
     public ResponseBuildInfo runServiceAndReturnInfo() {
-        ResponseBuildInfo responseBuildInfo = new ResponseBuildInfo();
 
         // PostMapping("/user/create") 와 동일
         if (httpRequest.getMethod().equals(HttpMethod.POST) && httpRequest.getUrl().equals("/user/create")) {
@@ -28,10 +27,20 @@ public class HttpController {
         else if (httpRequest.getMethod().equals(HttpMethod.POST) && httpRequest.getUrl().equals("/user/login")) {
             boolean validLogin = httpService.validLogin(httpRequest.getBody().get("userId"), httpRequest.getBody().get("password"));
             if (validLogin) {
-                return new ResponseBuildInfo.InfoBuilder().setPath("/index.html").setRedirect(true).build();
+                return new ResponseBuildInfo.InfoBuilder()
+                        .setPath("/index.html")
+                        .setRedirect(true)
+                        .addCookie("logined", "true")
+                        .addCookie("Path", "/")
+                        .build();
             }
             else {
-                return new ResponseBuildInfo.InfoBuilder().setPath("/user/login_failed.html").setRedirect(true).build();
+                return new ResponseBuildInfo.InfoBuilder()
+                        .setPath("/user/login_failed.html")
+                        .setRedirect(true)
+                        .addCookie("logined", "false")
+                        .addCookie("Path", "/")
+                        .build();
             }
         }
         // GetMapping("/user/list") 와 동일
