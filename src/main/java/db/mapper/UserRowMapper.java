@@ -1,6 +1,5 @@
 package db.mapper;
 
-import db.RowMapper;
 import webserver.domain.entity.User;
 
 import java.sql.ResultSet;

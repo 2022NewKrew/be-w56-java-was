@@ -13,18 +13,33 @@ public class UserRepositoryImpl implements UserRepository{
     private final List<User> userList = Collections.synchronizedList(new ArrayList<>());
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return Collections.unmodifiableList(userList);
     }
 
     @Override
-    public Optional<User> getUser(String id) {
+    public Optional<User> getBy(String id) {
         return Optional.ofNullable(idToUser.get(id));
     }
 
     @Override
-    public void saveUser(User user) {
+    public void save(User user) {
         idToUser.put(user.getUserId(), user);
         userList.add(user);
+    }
+
+    @Override
+    public void saveAll(List<User> users) {
+
+    }
+
+    @Override
+    public void delete(String userId) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
     }
 }

@@ -22,7 +22,7 @@ public class UserListController implements Controller {
 
     @Override
     public HttpResponse doHandle(HttpRequest httpRequest) {
-        List<User> users = userRepository.getUsers();
+        List<User> users = userRepository.getAll();
         ModelAndView mav = new ModelAndView("/user/list.html");
         mav.addAttribute("users", users);
 

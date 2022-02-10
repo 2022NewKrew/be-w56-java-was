@@ -1,6 +1,7 @@
-package db;
+package db.util;
 
 import db.mapper.UserRowMapper;
+import db.util.MyJdbcTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.domain.entity.User;

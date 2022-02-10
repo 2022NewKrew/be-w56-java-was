@@ -9,8 +9,11 @@ import java.util.stream.Stream;
 
 public class MockUserData {
     public static Stream<Arguments> getFieldMapStream(){
-        List<User> users = MockUserData.getAll();
-        return ConverterServiceForTest.convertToFieldMapListArgumentsStream(users);
+        return ConverterServiceForTest.convertToFieldMapListArgumentsStream(getAll());
+    }
+
+    public static Stream<Arguments> getUsersStream(){
+        return ConverterServiceForTest.convertToArgumentsStream(getAll());
     }
 
     public static List<User> getAll() {

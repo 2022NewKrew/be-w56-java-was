@@ -1,5 +1,6 @@
-package db;
+package db.util;
 
+import db.mapper.RowMapper;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.*;

@@ -1,7 +1,6 @@
 package db.mapper;
 
 
-import db.RowMapper;
 import webserver.domain.entity.Post;
 
 import java.sql.ResultSet;

@@ -12,8 +12,6 @@ import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
 
-import java.util.Map;
-
 @RequiredArgsConstructor
 public class UserLoginController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserLoginController.class);
@@ -40,7 +38,7 @@ public class UserLoginController implements Controller {
         String id = httpRequest.getBodyParams().get("userId");
         String password = httpRequest.getBodyParams().get("password");
 
-        User user =userRepository.getUser(id).orElseThrow();
+        User user =userRepository.getBy(id).orElseThrow();
         if(!user.matchedBy(password)){
             throw new IllegalArgumentException("패스워드가 맞지 않습니다.");
         }
