@@ -8,6 +8,7 @@
     - 서버 실행(WebServer.java)
     - http://localhost:8080/index.html 검색
     - 회원 가입 클릭 후 아이디, 비밀번호, 이름 이메일 입력해서 회원가입 버튼으로 제출
+    - (새로고침, 새로고침 안하면 user/login.html으로 안가고 user/user/login.html로 가서 원인을 찾아보고 있습니다..) 로그인 클릭 후 아이디, 비밀번호 입력
 - [x] RequestHeader.java, http에 사용되는 기본적인 헤더들은 메서드로 제공(매번 사용시마다 contains 및 파싱과정을 거쳐야 할테니)
 - [x] HttpRequestUtils.java, 사용하지 않는 메서드들 제거 or RequestUri 클래스에서 활용
 - [x] HttpRequestUtils.java, RequestHeader의 역할이 더 맞아보임

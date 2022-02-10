@@ -18,4 +18,11 @@ public class UserService {
     public void create(User user) {
         DataBase.addUser(user);
     }
+
+    public Boolean login(User user) {
+        User dbUser = DataBase.findUserById(user.getUserId());
+        if(dbUser == null) return false;
+        if(dbUser.getPassword().equals(user.getPassword())) return true;
+        return false;
+    }
 }

@@ -20,4 +20,12 @@ public class StatusLine {
     public HttpStatusCode getHttpStatusCode() {
         return httpStatusCode;
     }
+
+    @Override
+    public String toString() {
+        return "StatusLine{" +
+                "httpVersion='" + httpVersion + '\'' +
+                ", httpStatusCode=" + httpStatusCode +
+                '}';
+    }
 }

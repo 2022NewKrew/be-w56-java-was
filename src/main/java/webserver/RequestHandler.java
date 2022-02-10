@@ -14,7 +14,7 @@ import java.net.Socket;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
-    private final Router frontController = Router.getInstance();
+    private final Router router = Router.getInstance();
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -29,7 +29,7 @@ public class RequestHandler extends Thread {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             Request request = HttpRequestUtils.createRequest(in);
             DataOutputStream dos = new DataOutputStream(out);
-            frontController.routing(dos, request);
+            router.routing(dos, request);
 
         } catch (IOException e) {
             log.error(e.getMessage());

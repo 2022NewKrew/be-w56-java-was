@@ -13,9 +13,10 @@ import webserver.response.HttpStatusCode;
 import webserver.response.Response;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class UserController {
+    private static final Boolean SUCCESS = true;
+    private static final Boolean FAIL = false;
     private static final String REQUEST_MAPPING = "/user";
     private static final UserService userService = UserService.getInstance();
 
@@ -39,6 +40,9 @@ public class UserController {
         if (method == HttpRequestMethod.POST && path.equals(REQUEST_MAPPING + "/create")) {
             return createByPost(request);
         }
+        if(method == HttpRequestMethod.POST && path.equals(REQUEST_MAPPING + "/login")){
+            return login(request);
+        }
         return null;
     }
 
@@ -55,14 +59,24 @@ public class UserController {
     }
 
     private Response createByPost(Request request) throws IOException {
-        RequestBody requestBody = request.getRequestBody().parseBody();
-        User user = new User(
-            requestBody.getBody("userId"),
-            requestBody.getBody("password"),
-            requestBody.getBody("name"),
-            requestBody.getBody("email")
-        );
+        User user = getUser(request);
         userService.create(user);
         return HttpResponseUtils.createResponse(request, HttpStatusCode.FOUND, ContentType.TEXT_HTML, HttpResponseUtils.getRedirection("./webapp/index.html"));
+    }
+
+    private Response login(Request request) throws IOException {
+        Boolean login = userService.login(getUser(request));
+        if(login == SUCCESS) return HttpResponseUtils.createResponse(request, HttpStatusCode.FOUND, ContentType.TEXT_HTML, HttpResponseUtils.getRedirection("./webapp/index.html"), SUCCESS);
+        return HttpResponseUtils.createResponse(request, HttpStatusCode.FOUND, ContentType.TEXT_HTML, HttpResponseUtils.getRedirection("./webapp/user/login_failed.html"), FAIL);
+    }
+
+    private User getUser(Request request) {
+        RequestBody requestBody = request.getRequestBody().parseBody();
+        return new User(
+                requestBody.getBody("userId"),
+                requestBody.getBody("password"),
+                requestBody.getBody("name"),
+                requestBody.getBody("email")
+        );
     }
 }

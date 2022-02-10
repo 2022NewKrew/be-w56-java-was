@@ -37,7 +37,7 @@ public class Router {
         }
 
         if (response != null) {
-            log.info("Url Matching");
+            log.info("Url Matching! response: {}", response);
             HttpResponseUtils.setDataOutputStream(dos, response);
             return;
         }

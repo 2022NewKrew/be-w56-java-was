@@ -15,6 +15,7 @@ public class DataBase {
     }
 
     public static User findUserById(String userId) {
+        if(!users.containsKey(userId)) return null;
         return users.get(userId);
     }
 
