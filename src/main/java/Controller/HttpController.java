@@ -22,16 +22,16 @@ public class HttpController {
         // PostMapping("/user/create") 와 동일
         if (httpRequest.getMethod().equals(HttpMethod.POST) && httpRequest.getUrl().equals("/user/create")) {
             httpService.signup(httpRequest.getBody());
-            return new ResponseBuildInfo.InfoBuilder().setPath("redirect:/index.html").build();
+            return new ResponseBuildInfo.InfoBuilder().setPath("/index.html").setRedirect(true).build();
         }
         // PostMapping("/user/login") 와 동일
         else if (httpRequest.getMethod().equals(HttpMethod.POST) && httpRequest.getUrl().equals("/user/login")) {
             boolean validLogin = httpService.validLogin(httpRequest.getBody().get("userId"), httpRequest.getBody().get("password"));
             if (validLogin) {
-                return new ResponseBuildInfo.InfoBuilder().setPath("redirect:/index.html").build();
+                return new ResponseBuildInfo.InfoBuilder().setPath("/index.html").setRedirect(true).build();
             }
             else {
-                return new ResponseBuildInfo.InfoBuilder().setPath("redirect:/user/login_failed.html").build();
+                return new ResponseBuildInfo.InfoBuilder().setPath("/user/login_failed.html").setRedirect(true).build();
             }
         }
         // GetMapping("/user/list") 와 동일
