@@ -14,11 +14,8 @@ import web.http.response.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ViewService {
     private static final Logger log = LoggerFactory.getLogger(ViewService.class);
@@ -45,7 +42,7 @@ public class ViewService {
         return others(httpRequest);
     }
 
-    public static HttpResponse userListPage(HttpRequest httpRequest) throws IOException {
+    public static HttpResponse userListPage(HttpRequest httpRequest, byte[] userListBody) {
         HttpRequestLine requestLine = httpRequest.getHttpRequestLine();
         HttpRequestHeaders requestHeaders = httpRequest.getHeaders();
 
@@ -55,7 +52,7 @@ public class ViewService {
 
         HttpResponseStatusLine statusLine = new HttpResponseStatusLine(requestLine.getVersion(), HttpStatus.OK);
         HttpResponseHeaders headers = new HttpResponseHeaders();
-        HttpResponseBody body = new HttpResponseBody(getUserListBody());
+        HttpResponseBody body = new HttpResponseBody(userListBody);
 
         return new HttpResponse(statusLine, headers, body);
     }
@@ -64,27 +61,5 @@ public class ViewService {
         String cookieValue = headers.getHeaderValueByKey("Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookieValue);
         return cookies.get("logined").equals("true");
-    }
-
-    private static byte[] getUserListBody() throws IOException {
-        String baseHtml = new String(Files.readAllBytes(new File("./webapp/user/list.html").toPath()));
-        String changeHtml = baseHtml.replace("{{userList}}", getUserListHtml());
-        return changeHtml.getBytes(StandardCharsets.UTF_8);
-    }
-
-    private static String getUserListHtml(){
-        List<User> users = UserRepository.findAll();
-
-        AtomicInteger atomicInteger = new AtomicInteger();
-        StringBuilder sb = new StringBuilder();
-        users.forEach(user -> {
-            sb.append("<tr>\n").append("<th scope=\"row\">").append(atomicInteger.incrementAndGet()).append("</th>\n");
-            sb.append("<td>").append(user.getUserId()).append("</td>\n");
-            sb.append("<td>").append(user.getName()).append("</td>\n");
-            sb.append("<td>").append(user.getEmail()).append("</td>\n");
-            sb.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n").append("</tr>\n");
-        });
-
-        return sb.toString();
     }
 }

@@ -29,7 +29,8 @@ public class RequestController {
             case LOGIN_REQUEST:
                 return UserService.login(httpRequest);
             case USER_LIST_PAGE:
-                return ViewService.userListPage(httpRequest);
+                byte[] userListBody = UserService.getUserListBody();
+                return ViewService.userListPage(httpRequest, userListBody);
             case POST_REQUEST:
                 return PostService.addPostRequest(httpRequest);
             default:
