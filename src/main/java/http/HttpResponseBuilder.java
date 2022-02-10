@@ -1,8 +1,6 @@
 package http;
 
-import enums.HttpMethod;
 import enums.HttpStatusCode;
-import util.HttpRequestUtils;
 import util.HttpResponseUtils;
 
 import java.io.File;
@@ -22,21 +20,26 @@ public class HttpResponseBuilder {
         return httpResponse;
     }
 
-    public void build(String path) throws IOException {
+    public void build(ResponseBuildInfo responseBuildInfo) throws IOException {
         httpResponse.setProtocol(httpRequest.getProtocol());
-        if (path.contains("redirect:")) {
+        for (String key : responseBuildInfo.getCookie().keySet()) {
+            httpResponse.addCookie(key, responseBuildInfo.getCookie().get(key));
+        }
+        if (responseBuildInfo.getCookiePath() != null) {
+            httpResponse.setCookiePath(responseBuildInfo.getCookiePath());
+        }
+        if (responseBuildInfo.isRedirect()) {
             httpResponse.setStatusCode(HttpStatusCode._302);
-            httpResponse.setRedirectUrl(path.substring(9));
+            httpResponse.setRedirectUrl(responseBuildInfo.getPath());
             return;
         }
         httpResponse.setStatusCode(HttpStatusCode._200);
-        httpResponse.setResponseDataPath(path);
-        httpResponse.setResponseContentType(HttpResponseUtils.contentTypeFromPath(httpResponse.getResponseDataPath()));
-        buildBody();
+        if (responseBuildInfo.getPath() != null) {
+            httpResponse.setResponseDataPath(responseBuildInfo.getPath());
+            httpResponse.setResponseContentType(HttpResponseUtils.contentTypeFromPath(httpResponse.getResponseDataPath()));
+            httpResponse.setBody(Files.readAllBytes(new File("./webapp" + httpResponse.getResponseDataPath()).toPath()));
+            return;
+        }
+        httpResponse.setBody(responseBuildInfo.getBody());
     }
-
-    private void buildBody() throws IOException {
-        httpResponse.setBody(Files.readAllBytes(new File("./webapp" + httpResponse.getResponseDataPath()).toPath()));
-    }
-
 }

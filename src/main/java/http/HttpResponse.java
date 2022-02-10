@@ -14,7 +14,8 @@ public class HttpResponse {
     private String responseContentType;
     private String responseDataPath;
     private String redirectUrl;
-    private Map cookie = new HashMap<>();
+    private Map<String, String> cookie = new HashMap<>();
+    private String cookiePath;
 
     public HttpProtocol getProtocol() {
         return protocol;
@@ -40,8 +41,12 @@ public class HttpResponse {
         return redirectUrl;
     }
 
-    public Map getCookie() {
+    public Map<String, String> getCookie() {
         return cookie;
+    }
+
+    public String getCookiePath() {
+        return cookiePath;
     }
 
     public void setProtocol(HttpProtocol protocol) {
@@ -70,5 +75,9 @@ public class HttpResponse {
 
     public void addCookie(String key, String value) {
         cookie.put(key, value);
+    }
+
+    public void setCookiePath(String cookiePath) {
+        this.cookiePath = cookiePath;
     }
 }

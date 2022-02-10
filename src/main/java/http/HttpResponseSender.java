@@ -4,6 +4,7 @@ import enums.HttpMethod;
 import enums.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpResponseUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -29,20 +30,16 @@ public class HttpResponseSender {
         }
     }
 
-    public void sendResponse200() {
+    private void sendResponse200() {
         response200Header();
         responseBody();
     }
 
-    public void sendResponse302() {
+    private void sendResponse302() {
         response302Header(httpResponse.getRedirectUrl());
     }
 
-    public void sendResponseLogin(boolean validLogin) {
-        responseLoginHeader(validLogin);
-    }
-
-    public void response200Header() {
+    private void response200Header() {
         try {
             dos.writeBytes(httpResponse.getProtocol().getName() + " " + httpResponse.getStatusCode().getMessage() + " \r\n");
             dos.writeBytes("Content-Type: " + httpResponse.getResponseContentType() + ";charset=utf-8\r\n");
@@ -53,16 +50,12 @@ public class HttpResponseSender {
         }
     }
 
-    public void responseLoginHeader(boolean validLogin) {
+    private void response302Header(String redirectUrl) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            if (validLogin) {
-                dos.writeBytes("Location: /index.html \r\n");
-                dos.writeBytes("Set-Cookie: logined=true; Path=/ \r\n");
-            }
-            else {
-                dos.writeBytes("Location: /user/login_failed.html \r\n");
-                dos.writeBytes("Set-Cookie: logined=false; Path=/ \r\n");
+            dos.writeBytes("Location: " + redirectUrl+ "\r\n");
+            if (httpResponse.getCookie() != null) {
+                dos.writeBytes("Set-Cookie: " + HttpResponseUtils.cookieString(httpResponse.getCookie(), httpResponse.getCookiePath()) + " \r\n");
             }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -70,17 +63,7 @@ public class HttpResponseSender {
         }
     }
 
-    public void response302Header(String redirectUrl) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + redirectUrl);
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    public void responseBody() {
+    private void responseBody() {
         try {
             dos.write(httpResponse.getBody(), 0, httpResponse.getBody().length);
             dos.flush();

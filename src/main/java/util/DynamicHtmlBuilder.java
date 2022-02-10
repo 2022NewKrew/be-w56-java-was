@@ -2,10 +2,11 @@ package util;
 
 import model.User;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 public class DynamicHtmlBuilder {
-    public static void build(String path, Collection collection) {
+    public static byte[] build(String path, Collection collection) {
         String baseHtml = IOUtils.readHtml(path);
         String startRegex = "<tbody>";
         String endRegex = "</tbody>";
@@ -19,7 +20,7 @@ public class DynamicHtmlBuilder {
 
         contentsBuilder.append(baseHtml.substring(endIndex));
 
-        IOUtils.writeFile("./webapp/user/dynamicList.html", contentsBuilder.toString());
+        return contentsBuilder.toString().getBytes(StandardCharsets.UTF_8);
 
     }
 
