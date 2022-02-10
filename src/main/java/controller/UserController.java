@@ -44,7 +44,7 @@ public class UserController {
         if(logined == null || logined.equals("false")) {
             return "redirect:/user/login.html";
         }
-        model.addAttribute("users", DataBase.findAll().stream().collect(Collectors.toList()));
+        model.addAttribute("users", DataBase.findAllUsers().stream().collect(Collectors.toList()));
         return "/user/list";
     }
 }
