@@ -89,3 +89,6 @@
   - https://planbs.tistory.com/entry/Git-Pull-request%EC%97%90%EC%84%9C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-%EC%B6%A9%EB%8F%8C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
 - LogBack
   - https://livenow14.tistory.com/64
+- GC 모니터링
+  - https://ktdsoss.tistory.com/436
+  - https://d2.naver.com/helloworld/6043
