@@ -23,7 +23,7 @@ public class UserListController extends BaseController {
                     .findAny()
                     .map(x -> Long.parseLong(x.getValue()))
                     .orElseThrow(NotFound::new);
-            User user = RequestHandler.getSessionUser(sessionId);
+            User user = UserCache.getSessionUser(sessionId);
 
             log.debug("세션 유저: {}", user);
 

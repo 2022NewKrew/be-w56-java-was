@@ -61,20 +61,4 @@ public class RequestHandler implements Runnable {
         return controllerMap
                 .getOrDefault(path, new BaseController());
     }
-
-    public static Long addSessionUser(User user) {
-        Long sessionId;
-        Random random = new Random();
-
-        do {
-            sessionId = random.nextLong();
-        } while (sessionMap.containsKey(sessionId));
-
-        sessionMap.put(sessionId, user);
-        return sessionId;
-    }
-
-    public static User getSessionUser(Long sessionId) {
-        return sessionMap.get(sessionId);
-    }
 }

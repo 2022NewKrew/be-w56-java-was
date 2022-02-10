@@ -1,6 +1,7 @@
 package webserver.controller;
 
 import db.DB;
+import db.UserCache;
 import http.cookie.Cookie;
 import http.exception.NotFound;
 import http.request.HttpRequest;
@@ -29,7 +30,7 @@ public class LoginController extends BaseController {
 
         try {
             User user = DB.findUserByIdAndPassword(userId, password);
-            Long sessionId = RequestHandler.addSessionUser(user);
+            Long sessionId = UserCache.addSessionUser(user);
 
             log.debug("로그인 성공, {} sessionId={}", user, sessionId);
 
