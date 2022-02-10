@@ -83,6 +83,49 @@ public class WebService {
         return false;
     }
 
+    public static String userList(){
+        Path path = Path.of(URL_PREFIX + "/user/list.html");
+        Collection<User> userCollection = DataBase.findAll();
+        try {
+            StringBuilder htmlFile = new StringBuilder(Files.readString(path));
+            StringBuilder sb = new StringBuilder();
+
+            userCollection.forEach(user ->
+                    sb.append("                <tr>\n" + "                    <th scope=\"row\">1</th> <td>")
+                            .append(user.getUserId())
+                            .append("</td> <td>")
+                            .append(user.getName())
+                            .append("</td> <td>")
+                            .append(user.getEmail())
+                            .append("</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n")
+                            .append("                </tr>\n"));
+
+            htmlFile.append(sb);
+            htmlFile.append(
+                    "              </tbody>\n" +
+                            "          </table>\n" +
+                            "        </div>\n" +
+                            "    </div>\n" +
+                            "</div>\n" +
+                            "\n" +
+                            "<!-- script references -->\n" +
+                            "<script src=\"../js/jquery-2.2.0.min.js\"></script>\n" +
+                            "<script src=\"../js/bootstrap.min.js\"></script>\n" +
+                            "<script src=\"../js/scripts.js\"></script>\n" +
+                            "\t</body>\n" +
+                            "</html>\n"
+            );
+
+            log.debug(htmlFile.toString());
+            return htmlFile.toString();
+
+        } catch (Exception e){
+            log.debug(e.getMessage());
+        }
+
+        return "";
+    }
+
     public static HashMap<String, String> parseURLBody(String body){
         String[] parameter = body.split("&");
         HashMap<String, String> parameterMap = new HashMap<>();

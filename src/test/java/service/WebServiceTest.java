@@ -59,5 +59,20 @@ public class WebServiceTest {
         assert (loginResult.equals(false));
     }
 
+    @Test
+    public void userList() {
+        String signupLine = "userId=aa&password=bb&name=cc&email=dd%40gg";
+        String loginLine = "userId=aa&password=bb";
+        String compareList =
+                "                <tr>\n" +
+                "                    <th scope=\"row\">1</th> <td>aa</td> <td>cc</td> <td>dd%40gg</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n" +
+                "                </tr>\n";
+        WebService.createUser(signupLine);
+        Boolean loginResult = WebService.loginUser(loginLine);
 
+        String resultLine = WebService.userList();
+        log.debug("userList results {}", resultLine);
+
+        assert (resultLine.equals(compareList));
+    }
 }
