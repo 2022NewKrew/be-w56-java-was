@@ -63,6 +63,10 @@
 - LoggerFactory 의 파라미터를 this.getClass() 로 일괄 변경
   - 이를 위해 static 변수를 멤버변수로 변경 ( this 를 사용하기 위함 )
   - 다만, WebServer 클래스의 경우 static 함수에서 로그를 기록하므로 기존 상태를 유지
+- nGrinder 로 과부하 테스트를 진행 시도
+  - 근데 http://localhost:8080/ 에 대해서 자꾸만 정상적인 주소 포멧이 아니라는 에러가 발생
+  - 결국 대신에 네이버로 시도하도록 변경
+  - 아무래도 주소포멧의 기본형태가 [.] 을 포함함 도메인 형태를 갖추도록 되어있는 것으로 유추됨
 
 # 참고 사이트
 - HTTP Header
@@ -95,3 +99,5 @@
 - GC 모니터링
   - https://ktdsoss.tistory.com/436
   - https://d2.naver.com/helloworld/6043
+- nGrinder
+  - https://blog.naver.com/wideeyed/222173944239
