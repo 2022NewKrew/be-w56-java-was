@@ -12,6 +12,7 @@ import util.DataBaseUtils;
 import util.HttpRequestUtils;
 import util.HttpResponseUtils;
 import util.IOUtils;
+import util.annotation.Auth;
 
 import javax.swing.text.html.HTML;
 import java.io.*;
@@ -26,6 +27,7 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    @Auth
     public static Controller indexView = (httpRequest) -> {
         byte[] body = Files.readAllBytes(new File("./webapp/index.html").toPath());
         List<String> headers = HttpResponseUtils.response200(httpRequest, body);
