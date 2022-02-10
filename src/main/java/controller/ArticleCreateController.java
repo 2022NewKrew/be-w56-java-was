@@ -5,7 +5,8 @@ import controller.response.Response;
 import service.ArticleService;
 import util.HttpRequestUtils;
 
-import java.util.HashMap;
+import javax.ws.rs.core.AbstractMultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.util.Map;
 
 /**
@@ -17,14 +18,14 @@ public class ArticleCreateController implements WebController {
     @Override
     public Response process(Request request) {
         Map<String, String> cookies = HttpRequestUtils.parseCookies(request.getHeader("Cookie"));
-        Map<String, String> headers = new HashMap<>();
+        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
 
         String loggedIn = cookies.get("loggedIn");
         String loggedInUser = cookies.get("loggedInUser");
                 
         if (loggedIn == null || loggedIn.equals("false")) {
             String redirectPath = "/user/login.html";
-            headers.put("Location", redirectPath);
+            headers.add("Location", redirectPath);
 
             return new Response.Builder()
                     .redirect()
@@ -34,7 +35,7 @@ public class ArticleCreateController implements WebController {
 
         String content = request.getBody("content");
         ArticleService.createArticle(loggedInUser, content);
-        headers.put("Location", "/index.html");
+        headers.add("Location", "/");
         
         return new Response.Builder()
                 .redirect()

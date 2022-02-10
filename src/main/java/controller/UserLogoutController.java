@@ -4,7 +4,6 @@ import controller.request.Request;
 import controller.response.Response;
 import util.HttpRequestUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,19 +15,14 @@ public class UserLogoutController implements WebController{
 
     @Override
     public Response process(Request request) {
-        Map<String, String> headers = new HashMap<>();
-
         String redirectPath = "/index.html";
         String cookiesHeader = request.getHeader("Set-Cookie");
         Map<String, String> cookies = HttpRequestUtils.parseCookies(cookiesHeader);
-        String loggedIn = cookies.get("loggedIn");
-
-        headers.put("Set-Cookie", "loggedIn=false");
-        headers.put("Location", redirectPath);
 
         return new Response.Builder()
                 .redirect()
-                .headers(headers)
+                .header("Set-Cookie", "loggedIn=false")
+                .header("Location", redirectPath)
                 .build();
     }
 }
