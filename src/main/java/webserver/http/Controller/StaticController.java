@@ -2,19 +2,14 @@ package webserver.http.Controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.constant.Parser;
-import util.constant.Route;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.Method;
-import webserver.http.response.ContentType;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpStatus;
+import webserver.http.response.HttpResponseUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Objects;
 
 import static util.HttpRequestUtils.urlToFile;
 
@@ -25,7 +20,7 @@ public class StaticController implements HttpController {
     public boolean isValidRequest(HttpRequest request) {
         Method method = request.getMethod();
         String url = request.getUrl();
-        if (url.contains("user/list")) {
+        if (Objects.equals(url, "/user/list.html")) {
             return false;
         }
         return (method == Method.GET && urlToFile(url).toFile().exists());
@@ -33,20 +28,7 @@ public class StaticController implements HttpController {
 
     @Override
     public HttpResponse handleRequest(HttpRequest request, OutputStream out) throws IOException {
-        Path target = urlToFile(request.getUrl());
-        String[] tokens = target.toString().split(Parser.DOT);
-
-        ContentType contentType = ContentType.of(tokens[tokens.length - 1].toUpperCase());
-        File file = target.toFile();
-        byte[] body = Files.readAllBytes(file.toPath());
-
-        log.debug("staticController handle request ContentType : {}, ContentLength : {}", contentType.getExtension(), body.length);
-        return new HttpResponse.Builder(out)
-                .setBody(body)
-                .setHttpStatus(HttpStatus._200)
-                .setContentType(contentType.getExtension())
-                .setContentLength(body.length)
-                .setRedirect(Route.BASE + Route.INDEX)
-                .build();
+        log.debug("staticController handle request");
+        return HttpResponseUtils.ok(out, request);
     }
 }

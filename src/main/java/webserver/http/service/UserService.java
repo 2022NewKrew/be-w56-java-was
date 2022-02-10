@@ -6,7 +6,6 @@ import dto.UserSignUpDto;
 import entity.User;
 
 import java.util.Collection;
-import java.util.List;
 
 public class UserService {
 

@@ -99,7 +99,7 @@ public class HttpResponse {
     private void responseHeader() {
         try {
             log.debug("responseHeader write start!");
-            dos.writeBytes(Http.VERSION_CURRENT + Parser.SPACE + httpStatus.valueOf() + "\r\n");
+            dos.writeBytes(Http.VERSION_CURRENT + Parser.SPACE + httpStatus.getStatus() + "\r\n");
             dos.writeBytes(Http.CONTENT_TYPE + Parser.SEMICOLON + Parser.SPACE + contentType + "; charset=utf-8\r\n");
             dos.writeBytes(Http.CONTENT_LENGTH + Parser.SEMICOLON + Parser.SPACE + contentLength + "\r\n");
             dos.writeBytes(Http.LOCATION + Parser.SEMICOLON + redirect + "\r\n");

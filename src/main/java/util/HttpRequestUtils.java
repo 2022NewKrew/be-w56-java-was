@@ -10,6 +10,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import util.constant.Http;
 import util.constant.Parser;
+import util.constant.Route;
 
 public class HttpRequestUtils {
     /**
@@ -67,9 +68,9 @@ public class HttpRequestUtils {
 
     public static Path urlToFile(String url) {
         if (url.equals("/")) {
-            return Path.of("./webapp/index.html");
+            return Path.of(Route.BASE.getPath() + Route.INDEX.getPath());
         }
-        return Path.of("./webapp", url);
+        return Path.of(Route.BASE.getPath(), url);
     }
 
     public static Pair parseHeader(String header) {
