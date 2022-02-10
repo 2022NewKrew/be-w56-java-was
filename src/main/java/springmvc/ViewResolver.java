@@ -1,5 +1,6 @@
 package springmvc;
 
+import util.HtmlUtils;
 import webserver.HttpResponse;
 import webserver.HttpStatus;
 
@@ -18,15 +19,18 @@ public class ViewResolver {
             if (mav.getStatus().equals(HttpStatus.FOUND)) {
                 httpResponse.setHeader("Location", mav.getView());
             } else {
-                httpResponse.setStatus(HttpStatus.OK);
-                httpResponse.setBody(mav.isBody() ? mav.getView().getBytes() : getBytes(mav.getView()));
+                render(mav, httpResponse);
             }
         } catch (Exception e) {
             httpResponse.setStatus(HttpStatus.BAD_REQUEST);
         }
     }
 
-    private static byte[] getBytes(String url) throws IOException {
-        return Files.readAllBytes(new File(PREFIX + url).toPath());
+    private static void render(ModelAndView mav, HttpResponse httpResponse) throws IOException, NoSuchFieldException, IllegalAccessException {
+        if (mav.getModel().isEmpty()) {
+            httpResponse.setBody(Files.readAllBytes(new File(PREFIX + mav.getView()).toPath()));
+        } else {
+            httpResponse.setBody(HtmlUtils.getBytes(mav.getModel(), PREFIX + mav.getView()));
+        }
     }
 }

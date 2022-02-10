@@ -12,7 +12,7 @@ public class MemoDataBase {
     private static PreparedStatement pstmt;
 
     public static void save(Memo memo) throws SQLException {
-        con = DriverManager.getConnection(H2JdbcConstant.DB_URL, H2JdbcConstant.USER, H2JdbcConstant.PASS);
+        con = DriverManager.getConnection(JdbcConstant.DB_URL, JdbcConstant.USER, JdbcConstant.PASS);
         pstmt = con.prepareStatement("insert into memo(name, content, date) values (?, ?, ?)");
         pstmt.setString(1, memo.getName());
         pstmt.setString(2, memo.getContent());
@@ -24,7 +24,7 @@ public class MemoDataBase {
 
     public static List<Memo> findAll() throws SQLException {
         List<Memo> list = new ArrayList<>();
-        con = DriverManager.getConnection(H2JdbcConstant.DB_URL, H2JdbcConstant.USER, H2JdbcConstant.PASS);
+        con = DriverManager.getConnection(JdbcConstant.DB_URL, JdbcConstant.USER, JdbcConstant.PASS);
         pstmt = con.prepareStatement("select * from memo order by date desc");
 
         ResultSet rs = pstmt.executeQuery();
