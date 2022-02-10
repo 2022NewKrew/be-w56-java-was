@@ -18,24 +18,22 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public static HttpRequest readWithBufferedReader(BufferedReader br) throws IOException{
+    public static HttpRequest readWithBufferedReader(BufferedReader br) {
         HttpRequestLine requestLine;
         HttpRequestHeader requestHeader;
         HttpRequestBody requestBody;
-
         try {
             // Read request line
             String line = br.readLine();
             requestLine = HttpRequestLine.parseRequestLine(line);
-
             // Read request header
             List<String> headerArr = new ArrayList<>();
-            while (!"".equals(line)) {
-                line = br.readLine();
+            line = br.readLine();
+            while (line != null && !"".equals(line)) {
                 headerArr.add(line);
+                line = br.readLine();
             }
             requestHeader = HttpRequestHeader.parseHeader(headerArr);
-
             // Read request body
             int contentLength;
             try {
@@ -46,9 +44,8 @@ public class HttpRequest {
             }
 
         } catch (IOException e) {
-            throw new IOException("failed to read HttpRequest");
+            throw new RuntimeException("failed to read HttpRequest");
         }
-
         return new HttpRequest(requestLine, requestHeader, requestBody);
     }
 

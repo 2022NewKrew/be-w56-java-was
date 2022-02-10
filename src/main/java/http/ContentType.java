@@ -27,6 +27,9 @@ public enum ContentType {
     public String value() { return value; }
 
     public static ContentType getTypeFromUrl(String url) {
+        if (url == null) {
+            return ContentType.DEFAULT;
+        }
         String[] tokens = url.split("\\.");
         String extension = tokens[tokens.length - 1];
 

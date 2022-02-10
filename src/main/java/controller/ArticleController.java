@@ -1,42 +1,48 @@
 package controller;
 
+import dao.ArticleDBConstants;
 import dao.ArticleDao;
 import dao.ArticleDaoImpl;
 import dao.connection.MysqlConnectionMaker;
 import http.HttpStatus;
 import http.request.HttpRequest;
+import http.request.HttpRequestBody;
 import http.request.HttpRequestLine;
 import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
+import model.Article;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HtmlUtils;
+import util.HttpRequestUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class MainController implements Controller {
-    private static final Logger log = LoggerFactory.getLogger(MainController.class);
-    private static MainController INSTANCE;
+public class ArticleController implements Controller {
+    private static final Logger log = LoggerFactory.getLogger(ArticleController.class);
+    private static ArticleController INSTANCE;
     private final ArticleDao articleDao;
     private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
 
     {
-        methodMap.put("GET /", this::index);
+        methodMap.put("POST /articles/create", this::create);
     }
 
-    private MainController(ArticleDao articleDao) {
+    private ArticleController(ArticleDao articleDao) {
         this.articleDao = articleDao;
     }
 
-    public static synchronized MainController getInstance() {
+    public static synchronized ArticleController getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new MainController(new ArticleDaoImpl(new MysqlConnectionMaker()));
+            INSTANCE = new ArticleController(new ArticleDaoImpl(new MysqlConnectionMaker()));
         return INSTANCE;
     }
 
@@ -44,7 +50,6 @@ public class MainController implements Controller {
     public HttpResponse processDynamic(HttpRequest request) {
         final HttpRequestLine requestLine = request.line();
 
-        log.debug("{} {}", requestLine.method(), requestLine.path());
         if (methodMap.containsKey(requestLine.methodAndPath())) {
             log.debug("{} called", requestLine.methodAndPath());
             return methodMap.get(requestLine.methodAndPath()).apply(request);
@@ -54,18 +59,18 @@ public class MainController implements Controller {
         }
     }
 
-    private HttpResponse index(HttpRequest request) {
-        if ("true".equals(request.header().getCookie("logined"))) {
-            log.debug("logined user"); // TODO
-        }
+    private HttpResponse create(HttpRequest request) {
+        HttpRequestBody requestBody = request.body();
+        Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
 
-        File file = new File(HttpResponseBody.STATIC_ROOT + "/index.html");
+        System.out.println(new Timestamp(System.currentTimeMillis()));
+        Article newArticle = new Article(
+                queryString.get(ArticleDBConstants.COLUMN_TITLE),
+                LocalDateTime.now().toString(),
+                queryString.get(ArticleDBConstants.COLUMN_WRITER));
 
-        StringBuilder sb = HtmlUtils.renderTemplate(file, articleDao.findAll());
+        articleDao.save(newArticle);
 
-        HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
-        HttpResponseHeader responseHeader = new HttpResponseHeader("/index.html", HttpStatus.OK, responseBody.length());
-
-        return new HttpResponse(responseHeader, responseBody);
+        return redirect("/index.html");
     }
 }

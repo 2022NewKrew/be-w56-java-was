@@ -1,6 +1,8 @@
 package controller;
 
-import db.DataBase;
+import dao.UserDao;
+import dao.UserDaoImpl;
+import dao.connection.MysqlConnectionMaker;
 import http.HttpStatus;
 import http.request.HttpRequest;
 import http.request.HttpRequestBody;
@@ -9,14 +11,15 @@ import http.response.HttpResponse;
 import http.response.HttpResponseBody;
 import http.response.HttpResponseHeader;
 import model.User;
-import model.UserDBConstants;
+import dao.UserDBConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HtmlUtils;
 import util.HttpRequestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,6 +30,7 @@ import java.util.function.Function;
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private static UserController INSTANCE;
+    private final UserDao userDao;
     private final Map<String, Function<HttpRequest, HttpResponse>> methodMap = new HashMap<>();
 
     {
@@ -35,12 +39,13 @@ public class UserController implements Controller {
         methodMap.put("GET /user/list", this::list);
     }
 
-    private UserController() {
+    private UserController(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public static synchronized UserController getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new UserController();
+            INSTANCE = new UserController(new UserDaoImpl(new MysqlConnectionMaker()));
         return INSTANCE;
     }
 
@@ -72,10 +77,12 @@ public class UserController implements Controller {
                 queryString.get(UserDBConstants.COLUMN_NAME),
                 queryString.get(UserDBConstants.COLUMN_EMAIL));
 
-        if (DataBase.findUserById(newUser.getUserId()) != null)
-            return redirect("/user/form_failed.html");
+//        if (userDao.findByUserId(newUser.getUserId()) != null) {
+//            log.debug("POST /user/create failed. duplicate user id {}", newUser.getUserId());
+//            return redirect("/user/form_failed.html");
+//        }
+        userDao.save(newUser);
 
-        DataBase.addUser(newUser);
         return redirect("/index.html");
     }
 
@@ -87,8 +94,10 @@ public class UserController implements Controller {
     private HttpResponse login(HttpRequest request) {
         HttpRequestBody requestBody = request.body();
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(requestBody.content());
+        String userId = queryString.get(UserDBConstants.COLUMN_USER_ID);
+        User user = null;
 
-        User user = DataBase.findUserById(queryString.get(UserDBConstants.COLUMN_USER_ID));
+        user = userDao.findByUserId(userId);
 
         if (user == null || !user.getPassword().equals(queryString.get(UserDBConstants.COLUMN_PASSWORD)))
             return redirect("/user/login_failed.html");
@@ -110,27 +119,11 @@ public class UserController implements Controller {
 
         File file = new File(HttpResponseBody.STATIC_ROOT + "/user/list.html");
 
-        try {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            StringBuilder sb = new StringBuilder(new String(bytes));
-            StringBuilder newsb = new StringBuilder();
-            int row = 0;
+        StringBuilder sb = HtmlUtils.renderTemplate(file, userDao.findAll());
 
-            for (User user : DataBase.findAll()) {
-                newsb.append("<tr>");
-                newsb.append(String.format("<th scope=\"row\">%d</th> <td>%s</td> <td>%s</td> <td>%s</td>",
-                        ++row, user.getUserId(), user.getName(), user.getEmail()));
-                newsb.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
-            }
-            sb.insert(sb.lastIndexOf("<tbody>"), newsb);
+        HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
+        HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
 
-            HttpResponseBody responseBody = HttpResponseBody.createFromStringBuilder(sb);
-            HttpResponseHeader responseHeader = new HttpResponseHeader("/user/list.html", HttpStatus.OK, responseBody.length());
-
-            return new HttpResponse(responseHeader, responseBody);
-        } catch (IOException e) {
-            log.error("GET /user/list error");
-            return errorPage();
-        }
+        return new HttpResponse(responseHeader, responseBody);
     }
 }
