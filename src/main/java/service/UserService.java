@@ -7,6 +7,7 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.request.Queries;
+import util.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -33,17 +34,19 @@ public class UserService {
     }
 
     public User searchUserById(Queries queries){
-        return DataBase.findUserById(queries.get("userId"));
+        return userRepository.findUserById(queries.get("userId"))
+                .orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
     public boolean login(Queries queries){
-        User user = DataBase.findUserById(queries.get("userId"));
+        User user = userRepository.findUserById(queries.get("userId"))
+                .orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
         boolean result = user != null && user.getPassword().equals(queries.get("password"));
         log.info("LOGIN : " + result);
         return result;
     }
 
     public List<User> searchAllUsers(){
-        return DataBase.findAll();
+        return userRepository.findAll();
     }
 }

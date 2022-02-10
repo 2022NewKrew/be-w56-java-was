@@ -140,7 +140,6 @@ public class TemplateEngine {
      */
     private void readLoopLines(){
         loopLines.remove(LOOP_START_IDX);
-        log.info(loopLines.toString());
         List<?> objects = (List<?>) attribute;
         if(objects.size() > 0){
             objClass = objects.get(LOOP_START_IDX).getClass();

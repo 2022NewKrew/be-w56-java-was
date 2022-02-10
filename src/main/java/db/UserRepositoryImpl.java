@@ -4,8 +4,8 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,11 +46,63 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public Optional<User> findUserById(String userId) {
-        return Optional.empty();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        User user = null;
+        try{
+            con = dbConnection.getConnection();
+            String sql = "SELECT userId, password, name, email FROM users WHERE userId = ?";
+            pstmt = con.prepareStatement(sql);
+
+            pstmt.setString(1, userId);
+
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                user = new User(
+                        rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)
+                );
+            }
+
+            log.info("[UserRepositoryImpl]: search User by UserId Complete");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            dbConnection.close(rs, pstmt, con);
+        }
+        return Optional.ofNullable(user);
     }
 
     @Override
     public List<User> findAll() {
-        return null;
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<User> users = new ArrayList<>();
+
+        try {
+            con = dbConnection.getConnection();
+            String sql = "SELECT userId, password, name, email FROM users";
+            pstmt = con.prepareStatement(sql);
+
+            rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                users.add(
+                        new User(
+                                rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)
+                        )
+                );
+            }
+
+            log.info("[UserRepositoryImpl]: search All User Complete");
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            dbConnection.close(rs, pstmt, con);
+        }
+
+        return users;
     }
 }
