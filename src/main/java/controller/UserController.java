@@ -1,6 +1,5 @@
 package controller;
 
-import model.User;
 import service.UserService;
 
 import java.util.Map;
