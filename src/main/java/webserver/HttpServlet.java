@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
+import util.DOSUtils;
 
 /**
  * HTTP request 마다 생성되는 스레드 기반의 Servlet.
@@ -42,12 +43,13 @@ public class HttpServlet extends Thread {
             HttpRequest httpRequest = HttpRequest.of(br);
 
             // make a response from BUSINESS LOGIC
-            HttpResponse httpResponse = DispatcherServlet.dispatch(httpRequest);
+            DispatcherServlet dispatcherServlet = DispatcherServlet.getInstance();
+            HttpResponse httpResponse = dispatcherServlet.dispatch(httpRequest);
             log.debug("{} {} -> {}", httpRequest.getMethod(), httpRequest.getUrl(), httpResponse.getResponseStatusLine());
 
             // transport a response to OUTPUT stream
-            ViewResolver viewResolver = new ViewResolver(dos);
-            viewResolver.render(httpResponse);
+            DOSUtils viewResolverRENAME = new DOSUtils(dos);
+            viewResolverRENAME.write(httpResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

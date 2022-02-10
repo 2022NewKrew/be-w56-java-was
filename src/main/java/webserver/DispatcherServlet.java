@@ -10,19 +10,27 @@ import http.response.HttpStatusCode;
 import util.UrlUtils;
 
 /**
- * HttpRequest 의 method 와 url 을 확인해
+ * HttpRequest 의 method 와 value 을 확인해
  * <p>올바른 Controller 메서드를 실행시키고 HttpResponse 를 반환한다.
  */
 public class DispatcherServlet {
 
-    static {
-        UserController.register();
-        IndexController.register();
+    private static final DispatcherServlet INSTANCE = new DispatcherServlet();
+
+    private DispatcherServlet() {
+        registerController();
     }
 
-    private DispatcherServlet() {}
+    public static DispatcherServlet getInstance() {
+        return INSTANCE;
+    }
 
-    public static HttpResponse dispatch(HttpRequest httpRequest) {
+    private void registerController() {
+        new IndexController();
+        new UserController();
+    }
+
+    public HttpResponse dispatch(HttpRequest httpRequest) {
         if (!httpRequest.validate()) {
             return new HttpResponseBuilder(HttpStatusCode.NOT_FOUND).build();
         }

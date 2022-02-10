@@ -14,9 +14,7 @@ public class UrlMapper {
     private static final Map<String, Function<HttpRequest, HttpResponse>>
             urlMap = new ConcurrentHashMap<>();
 
-    private UrlMapper() {
-
-    }
+    private UrlMapper() {}
 
     public static Function<HttpRequest, HttpResponse> get(String url, HttpRequestMethod method) {
         String key = getKey(url, method);
