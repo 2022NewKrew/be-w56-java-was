@@ -41,7 +41,23 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public Article findById(int id) throws SQLException {
-        return null;
+        String sql = String.format("SELECT * from %s where %s = \"%d\"",
+                ArticleDBConstants.TABLE_NAME,
+                ArticleDBConstants.COLUMN_ID,
+                id);
+
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+
+        if (rs.next()) {
+            return new Article(
+                    rs.getString(ArticleDBConstants.COLUMN_TITLE),
+                    rs.getString(ArticleDBConstants.COLUMN_DATETIME),
+                    rs.getString(ArticleDBConstants.COLUMN_WRITER)
+            );
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -65,6 +81,12 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public void delete(int id) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE %s = \"%d\"",
+                ArticleDBConstants.TABLE_NAME,
+                ArticleDBConstants.COLUMN_ID,
+                id);
 
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(sql);
     }
 }

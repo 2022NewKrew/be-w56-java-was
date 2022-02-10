@@ -18,7 +18,9 @@ public class MysqlConnectionMaker implements ConnectionMaker {
                         "Ed1q2w3e4r!"
                 );
             } catch (SQLException e) {
+                // TODO
             } catch (ClassNotFoundException e) {
+                // TODO
             }
         }
         return connection;

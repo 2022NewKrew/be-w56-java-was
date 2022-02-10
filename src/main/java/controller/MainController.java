@@ -68,10 +68,10 @@ public class MainController implements Controller {
             HttpResponseHeader responseHeader = new HttpResponseHeader("/index.html", HttpStatus.OK, responseBody.length());
 
             return new HttpResponse(responseHeader, responseBody);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SQLException sqle) {
+            log.error("GET / failed. sql error_code = {}", sqle.getErrorCode());
+        } catch (IOException ioe) {
+            log.error("GET / failed. {}", ioe.getMessage());
         }
 
         log.debug("{}, redirect to index", request.line().path());
