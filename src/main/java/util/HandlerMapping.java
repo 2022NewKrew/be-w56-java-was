@@ -3,15 +3,13 @@ package util;
 import controller.Controller;
 import controller.UserController;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class HandlerMapping {
     private static final int PATH_METHOD_SPLIT_INDEX = 2;
 
-    private final Map<String, Controller> mappings;
+    private final Map<String, Controller> controllerMap;
+    private final Set<String> redirectSet;
 
     private static final HandlerMapping handlerMapping = new HandlerMapping();
 
@@ -42,5 +40,18 @@ public class HandlerMapping {
             return new RedirectPair(controllerOptional.get().create(infoMap),getIsRedirect(url));
 
         return new RedirectPair(url,false);
+    }
+
+    public Optional<Controller> getController(String url) {
+        Optional<Controller> controllerOptional;
+        if (controllerMap.containsKey(url))
+            controllerOptional = Optional.of(controllerMap.get(url));
+        else
+            controllerOptional = Optional.empty();
+        return controllerOptional;
+    }
+
+    public boolean getIsRedirect(String url){
+        return redirectSet.contains(url);
     }
 }
