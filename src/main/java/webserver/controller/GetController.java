@@ -10,7 +10,7 @@ public class GetController {
     private HttpResponse httpResponse;
     private UserService userService;
 
-    public GetController(HttpRequest httpRequest, OutputStream outputStream){
+    public GetController(HttpRequest httpRequest, OutputStream outputStream) {
         this.httpResponse = new HttpResponse(outputStream);
         this.userService = new UserService(httpRequest);
     }
@@ -18,6 +18,10 @@ public class GetController {
     public void handleGet(String path) {
         httpResponse.setPath(path);
 
-        httpResponse.ok();
+        if (path.contains("css")) {
+            httpResponse.ok("css");
+            return;
+        }
+        httpResponse.ok("html");
     }
 }

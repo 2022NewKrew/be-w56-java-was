@@ -30,7 +30,7 @@ public class HttpRequest {
         String[] firstLineToken = bufferedReader.readLine().split(" ");
         this.method = Method.valueOf(firstLineToken[0]);
         this.path = firstLineToken[1];
-        if (this.path.equals("/")||this.path.equals("")) {
+        if (this.path.equals("/") || this.path.equals("")) {
             this.path = "/index.html";
         }
         this.protocol = firstLineToken[2];
@@ -72,9 +72,9 @@ public class HttpRequest {
         this.body = HttpRequestUtils.parseQueryString(line);
     }
 
-    private String makeStringToArray(char[] array){
+    private String makeStringToArray(char[] array) {
         StringBuilder result = new StringBuilder();
-        for(char word : array){
+        for (char word : array) {
             result.append(word);
         }
         return result.toString();
