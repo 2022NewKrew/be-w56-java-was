@@ -1,5 +1,6 @@
 package app.controller;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import app.db.DataBase;
 import app.exception.UserNotFoundException;
 import app.http.HttpResponse;
 import app.model.user.User;
+import webserver.template.Model;
 
 @Controller
 public class UserController {
@@ -19,7 +21,7 @@ public class UserController {
 
     @GetMapping(value = "/")
     public String index() {
-        return "/index.html";
+        return "/index";
     }
 
     @PostMapping(value = "/user")
@@ -32,7 +34,7 @@ public class UserController {
         );
         DataBase.addUser(user);
         log.debug("add User: {} {} {} {}", user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
-        return "redirect:/index.html";
+        return "redirect:/index";
     }
 
     @PostMapping(value = "/user/login")
@@ -44,10 +46,18 @@ public class UserController {
                 .orElseThrow(UserNotFoundException::new);
         if (!user.validatePassword(password)) {
             log.debug("로그인 실패, 비밀번호 불일치 {}", httpResponse.getCookie().cookieValue());
-            return "redirect:/user/login_failed.html";
+            return "redirect:/user/login_failed";
         }
         httpResponse.setCookie("logined", "true");
         log.debug("로그인 성공 {}", httpResponse.getCookie().cookieValue());
-        return "redirect:/index.html";
+        return "redirect:/index";
+    }
+
+    @GetMapping(value = "/user")
+    public String users(HttpResponse response, Model model) {
+        Collection<User> users = DataBase.findAll();
+        model.addAttribute("users", users);
+        model.addAttribute("test", new User("testman","1234","testy","test@gmail.com"));
+        return "/user/list";
     }
 }
