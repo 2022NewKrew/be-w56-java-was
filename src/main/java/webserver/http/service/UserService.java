@@ -6,6 +6,7 @@ import dto.UserSignUpDto;
 import entity.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class UserService {
 
@@ -14,7 +15,7 @@ public class UserService {
         DataBase.addUser(user);
     }
 
-    public User findUser(UserLoginDto userLoginDto) {
+    public Optional<User> findUser(UserLoginDto userLoginDto) {
         return DataBase.findUserById(userLoginDto.getUserId());
     }
 

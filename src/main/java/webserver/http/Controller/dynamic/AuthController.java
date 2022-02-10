@@ -17,13 +17,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class AuthController implements HttpController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+    private static final String WRONG_USERID = "아이디를 잘못 입력했습니다";
     private static final String WRONG_PASSWORD = "비밀번호를 잘못 입력했습니다";
 
     private final UserService userService = new UserService();
-
 
     @Override
     public boolean isValidRequest(HttpRequest request) {
@@ -33,8 +34,12 @@ public class AuthController implements HttpController {
     @Override
     public HttpResponse handleRequest(HttpRequest request, OutputStream out) throws IOException {
         Map<String, String> queries = HttpRequestUtils.parseQueryString(request.getHttpRequestBody());
-        User findUser = userService.findUser(new UserLoginDto(queries.get("userId"), queries.get("password")));
-        if (!Objects.equals(findUser.getPassword(), queries.get("password"))) {
+        Optional<User> findUser = userService.findUser(new UserLoginDto(queries.get("userId"), queries.get("password")));
+        if (findUser.isEmpty()) {
+            log.trace("invalid input: {}", findUser + WRONG_USERID);
+            return HttpResponseUtils.redirectTo(out, Route.LOGIN_FAILED.getPath(), "false");
+        }
+        if (!Objects.equals(findUser.get().getPassword(), queries.get("password"))) {
             log.trace("invalid input: {}", findUser + WRONG_PASSWORD);
             return HttpResponseUtils.redirectTo(out, Route.LOGIN_FAILED.getPath(), "false");
         }
