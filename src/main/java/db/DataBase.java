@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import model.User;
 
 /*
-UserRepository
+deprecated
  */
 public class DataBase {
     private static Map<String, User> users = new ConcurrentHashMap<>();

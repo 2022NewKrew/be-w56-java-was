@@ -3,6 +3,34 @@
 
 <br>
 
+## Step 7. 데이터베이스 연동 및 한줄 메모장 구현
+
+> Step7에서는 DataBase를 로컬에 있는 HashMap에서 Mysql DB로 전환하고, 
+> index.html에 로그인한 사용자가 글을 쓸 수 있는 한 줄 메모장을 구현하였습니다. 
+- DataBase MySql로 변경
+  - JDBC Api를 활용하여 krane에 있는 Mysql DataBase 사용
+  - 데이터베이스를 변경함에 따라, 각 Model에 맞는 Repository를 생성하고, 해당 Repository에서 쿼리문을 실행
+  - Intellij의 기능을 활용하여 Database 내부에 table 생성
+- Model `Article` 추가
+  - `index.html`에 나타나는 한줄 메모장을 보여주기 위한 도메인
+  - 새로운 모델이 추가됨에 따라, 부수적인 기능 추가
+    - `ArticleController`
+    - `ArticleService`
+    - `ArticleRepository`
+    - `HandlerMapper`, `ViewResolver`에 해당 url과 관련된 값 put
+- 인덱스 페이지 변경
+  - `Article`이 인덱스 페이지에서 나타나도록 변경
+  - `질문하기`버튼의 경우, 로그인한 사용자만 해당 버튼을 통해 메모장 생성 페이지로 이동
+
+<br>
+
+## Step 6. Content-Type 처리
+
+> Step6의 경우, 이미 이전 Step을 진행하는 과정에서 처리하였습니다.
+
+
+<br>
+
 ## Step 5. 동적인 html 구현
 
 > Step5에서는 동적인 html을 표현할 수 있도록 TemplateEngine을 추가하였습니다. 기존 mustache template의 
