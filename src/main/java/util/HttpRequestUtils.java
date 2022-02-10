@@ -40,24 +40,24 @@ public class HttpRequestUtils {
     /**
      * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      */
-    public static Map<String, String> parseQueryString(String queryString) {
-        return parseValues(queryString, "&");
+    public static Map<String, String> parseQueryString(String queryString, String separator, String keyValueSeparator) {
+        return parseValues(queryString, separator, keyValueSeparator);
     }
 
     /**
      * @param cookies 값은 name1=value1; name2=value2 형식임
      */
     public static Map<String, String> parseCookies(String cookies) {
-        return parseValues(cookies, ";");
+        return parseValues(cookies, ";", "=");
     }
 
-    private static Map<String, String> parseValues(String values, String separator) {
+    private static Map<String, String> parseValues(String values, String separator, String keyValueSeparator) {
         if (Strings.isNullOrEmpty(values)) {
             return Maps.newHashMap();
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(Objects::nonNull)
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, keyValueSeparator)).filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
