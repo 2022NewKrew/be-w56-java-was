@@ -21,7 +21,7 @@ public class UserService {
 
         if (expectedUser.checkPassword(user.getPassword())) {
             LOG.info("{} login success", user.getUserId());
-            return user;
+            return expectedUser;
         }
         throw new IllegalArgumentException("[ERROR] 로그인 실패");
     }

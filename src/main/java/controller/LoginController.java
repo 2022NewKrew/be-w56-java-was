@@ -42,8 +42,9 @@ public class LoginController extends AbstractController {
 
         addSession(httpRequest, user);
 
-        httpResponse.set302Found(INDEX_HTML);
         httpResponse.addHeader("Location", INDEX_HTML);
+        httpResponse.addCookie(httpRequest);
+        httpResponse.set302Found(INDEX_HTML);
     }
 
     private void addSession(HttpRequest request, User user) {
