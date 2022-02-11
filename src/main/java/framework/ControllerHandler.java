@@ -6,6 +6,7 @@ import framework.annotation.*;
 import framework.controller.FaviconController;
 import framework.controller.css.CssController;
 import framework.controller.view.ViewController;
+import framework.factory.ObjectMapperFactory;
 import framework.http.request.HttpRequest;
 import framework.http.response.HttpResponse;
 import framework.http.response.HttpResponseHeader;
@@ -60,7 +61,7 @@ public class ControllerHandler {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
 
         List<Object> params = new ArrayList<>();
         for (int i = 0; i < parameterTypes.length; i++) {
