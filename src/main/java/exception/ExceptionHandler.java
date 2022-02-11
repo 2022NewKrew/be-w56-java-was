@@ -15,7 +15,8 @@ public class ExceptionHandler {
         exception.printStackTrace();
         // TODO Error Case에 따른 분류
         if (exception instanceof IOException) {
-
+            // 발생 가능 경우 = readBody 도중 발생
+            // 존재하지 않는 페이지, 404
         }
 
         if (exception instanceof NullPointerException) {
