@@ -3,15 +3,21 @@ package webserver.http.message;
 import webserver.http.message.values.HttpContentType;
 import webserver.http.message.values.HttpResponseStatus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HttpResponse {
 
     private final HttpRequest request;
     private HttpResponseStatus status;
     private byte[] responseBody;
     private HttpContentType contentType;
+    private String cookie;
+    private Map<String, Object> model;
 
     public HttpResponse(HttpRequest request) {
         this.request = request;
+        this.model = new HashMap<>();
     }
 
     public HttpRequest getRequest() {
@@ -30,6 +36,14 @@ public class HttpResponse {
         return contentType;
     }
 
+    public String getCookie() {
+        return cookie;
+    }
+
+    public Map<String, Object> getModel() {
+        return model;
+    }
+
     public void setResponseBody(byte[] responseBody) {
         this.responseBody = responseBody;
     }
@@ -40,5 +54,9 @@ public class HttpResponse {
 
     public void setContentType(HttpContentType contentType) {
         this.contentType = contentType;
+    }
+
+    public void setCookieDefault() {
+        this.cookie = "logined=true; Path=/";
     }
 }

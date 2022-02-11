@@ -11,6 +11,7 @@ public enum HttpHeaderNames {
     COOKIE("Cookie"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_TYPE("Content-Type"),
+    SET_COOKIE("Set-Cookie"),
     ;
 
     private final String name;

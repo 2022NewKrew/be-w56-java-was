@@ -1,14 +1,15 @@
 package webserver.http.message;
 
+import java.util.Map;
+
 public class HttpHeader {
 
     private final String accept;
-    private final String cookie;
+    private final Map<String, String> cookie;
     private final int contentLength;
     private final String contentType;
 
-    //TODO:프로퍼티 많아지면 빌더패턴으로 변경
-    public HttpHeader(String accept, String cookie, int contentLength, String contentType) {
+    public HttpHeader(String accept, Map<String, String> cookie, int contentLength, String contentType) {
         this.accept = accept;
         this.cookie = cookie;
         this.contentLength = contentLength;
@@ -19,7 +20,7 @@ public class HttpHeader {
         return accept;
     }
 
-    public String getCookie() {
+    public Map<String, String> getCookie() {
         return cookie;
     }
 

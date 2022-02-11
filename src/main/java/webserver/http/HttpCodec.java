@@ -1,5 +1,6 @@
 package webserver.http;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.connection.ConnectionIO;
@@ -11,6 +12,9 @@ import webserver.http.message.values.HttpContentType;
 import webserver.http.message.values.HttpHeaderNames;
 import webserver.http.util.HttpRequestDecodeUtil;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.net.HttpHeaders.*;
@@ -55,7 +59,7 @@ public class HttpCodec {
 
     private HttpHeader getHttpHeader() {
         String accept = null;
-        String cookie = null;
+        Map<String,String> cookie = null;
         int contentLength = 0;
         String contentType = null;
 
@@ -68,7 +72,7 @@ public class HttpCodec {
                     accept = headerLine[1];
                     break;
                 case COOKIE:
-                    cookie = headerLine[1];
+                    cookie = HttpRequestDecodeUtil.parseCookies(headerLine[1]);
                     break;
                 case CONTENT_LENGTH:
                     contentLength = Integer.parseInt(headerLine[1]);
@@ -106,6 +110,7 @@ public class HttpCodec {
     public void encode(HttpResponse response) {
         StringBuilder sb = new StringBuilder();
         HttpRequest request = response.getRequest();
+        byte[] body = setModelsToBody(response.getModel(), response.getResponseBody());
 
         sb.append(request.getVersion()).append(SPACE)
                 .append(response.getStatus().getStatusCode()).append(SPACE)
@@ -119,14 +124,51 @@ public class HttpCodec {
 
         sb.append(HttpHeaderNames.CONTENT_LENGTH.getName())
                 .append(COLON).append(SPACE)
-                .append(response.getResponseBody().length)
+                .append(body.length)
+                .append(NEWLINE);
+
+        sb.append(HttpHeaderNames.SET_COOKIE.getName())
+                .append(COLON).append(SPACE)
+                .append(response.getCookie())
                 .append(NEWLINE);
 
         sb.append(NEWLINE);
         socket.writeBytes(sb.toString());
 
-        socket.write(response.getResponseBody(), 0, response.getResponseBody().length);
+        socket.write(body, 0, body.length);
+
         socket.writeBytes(NEWLINE);
         socket.flush();
+    }
+
+    private byte[] setModelsToBody(Map<String, Object> models, byte[] bytes) {
+        String body = new String(bytes, StandardCharsets.UTF_8);
+
+        for(Map.Entry<String, Object> model : models.entrySet()) {
+            if(model.getKey().equals("users")) {
+                StringBuilder sb = setUsersToBody(((List<User>) model.getValue()));
+
+                body = body.replace("{{users}}", sb.toString());
+            }
+        }
+
+        return body.getBytes(StandardCharsets.UTF_8);
+    }
+
+    private StringBuilder setUsersToBody(List<User> users) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<User> it = users.iterator();
+        int cnt = 1;
+
+        while(it.hasNext()) {
+            User user = it.next();
+            sb.append("<th scope=\"row\">").append(cnt).append("</th>");
+            sb.append("<td>").append(user.getUserId()).append("</td>");
+            sb.append("<td>").append(user.getName()).append("</td>");
+            sb.append("<td>").append(user.getPassword()).append("</td>");
+            cnt++;
+        }
+
+        return sb;
     }
 }
