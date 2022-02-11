@@ -8,12 +8,6 @@ public class Memo {
     private String content;
     private LocalDateTime createdAt;
 
-    public Memo(String name, String content) {
-        this.name = name;
-        this.content = content;
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Memo() {
     }
 

@@ -3,9 +3,12 @@ package controller;
 import collections.RequestBody;
 import collections.RequestHeaders;
 import collections.RequestStartLine;
-import collections.ResponseHeaders;
+import dto.PostMemoRequestParameterDto;
 import http.HttpResponse;
 import http.HttpRequest;
+import mapper.RequestBodyPostMemoRequestParameterDtoImpl;
+import mapper.RequestBodyPostMemoRequestParameterDtoMapper;
+import service.MemoService;
 import service.UserService;
 
 import java.io.DataOutputStream;
@@ -17,9 +20,12 @@ import java.util.HashMap;
 public class PostController implements Controller {
 
     private final UserService userService;
+    private final MemoService memoService;
+    private final RequestBodyPostMemoRequestParameterDtoMapper requestBodyPostMemoRequestParameterDtoMapper = new RequestBodyPostMemoRequestParameterDtoImpl();
 
-    public PostController(UserService userService) {
+    public PostController(UserService userService, MemoService memoService) {
         this.userService = userService;
+        this.memoService = memoService;
     }
 
     @Override
@@ -68,7 +74,9 @@ public class PostController implements Controller {
         var headers = new HashMap<String, String>();
         headers.put("Location", "/");
 
-        userService.post(requestBody.getBodies());
+        PostMemoRequestParameterDto postMemoRequestParameterDto = requestBodyPostMemoRequestParameterDtoMapper.toRightObject(requestBody);
+
+        memoService.post(postMemoRequestParameterDto);
 
         return HttpResponse.create302RedirectHttpResponse(headers);
     }

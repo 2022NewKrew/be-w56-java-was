@@ -13,15 +13,17 @@ import controller.PostController;
 import http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.MemoService;
 import service.UserService;
 
 public class RequestHandler extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final UserService USER_SERVICE = new UserService();
+    private static final MemoService MEMO_SERVICE = new MemoService();
 
-    private static final GetController GET_CONTROLLER = new GetController(USER_SERVICE);
-    private static final PostController POST_CONTROLLER = new PostController(USER_SERVICE);
+    private static final GetController GET_CONTROLLER = new GetController(USER_SERVICE, MEMO_SERVICE);
+    private static final PostController POST_CONTROLLER = new PostController(USER_SERVICE, MEMO_SERVICE);
 
     private static final Map<String, Controller> CONTROLLER_MAP = new HashMap<>(){{
         put("GET", GET_CONTROLLER);

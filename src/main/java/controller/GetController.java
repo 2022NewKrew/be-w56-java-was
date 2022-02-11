@@ -9,6 +9,7 @@ import http.HttpRequest;
 import model.Memo;
 import model.User;
 import org.apache.tika.Tika;
+import service.MemoService;
 import service.UserService;
 import util.HttpRequestUtils;
 
@@ -23,10 +24,12 @@ import java.util.Map;
 public class GetController implements Controller {
 
     private final UserService userService;
+    private final MemoService memoService;
     private static final Tika tika = new Tika();
 
-    public GetController(UserService userService) {
+    public GetController(UserService userService, MemoService memoService) {
         this.userService = userService;
+        this.memoService = memoService;
     }
 
     @Override
@@ -91,7 +94,7 @@ public class GetController implements Controller {
     }
 
     public HttpResponse index(RequestStartLine requestStartLine, RequestHeaders requestHeaders) throws IOException {
-        List<Memo> memos = userService.postList();
+        List<Memo> memos = memoService.postList();
         byte[] body = HTML_VIEW.indexView(memos);
 
         var headers = new HashMap<String, String>();
