@@ -2,9 +2,10 @@ package webserver;
 
 import controller.Controller;
 import controller.ControllerType;
-import exceptions.InvalidRequestFormatException;
 import exceptions.InvalidHttpMethodException;
+import exceptions.InvalidRequestFormatException;
 import exceptions.LoginFailedException;
+import exceptions.LogoutFailedException;
 import exceptions.exceptionHandler;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,8 @@ public class RequestHandler extends Thread {
             exceptionHandler.badRequestFormat(out, invalidRequestFormatException.getMessage());
         } catch (LoginFailedException loginFailedException) {
             exceptionHandler.loginFailed(out, loginFailedException.getMessage());
+        } catch (LogoutFailedException logoutFailedException) {
+            exceptionHandler.logoutFailed(out, logoutFailedException.getMessage());
         }
     }
 
