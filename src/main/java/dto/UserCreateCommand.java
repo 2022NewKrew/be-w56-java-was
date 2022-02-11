@@ -1,12 +1,12 @@
-package model;
+package dto;
 
-public class User {
+public class UserCreateCommand {
     private final String userId;
     private final String password;
     private final String name;
     private final String email;
 
-    private User(Builder builder) {
+    private UserCreateCommand(Builder builder) {
         if (builder.userId == null || builder.password == null || builder.name == null || builder.email == null) {
             throw new IllegalArgumentException("IllegalArgumentException");
         }
@@ -67,6 +67,6 @@ public class User {
             return this;
         }
 
-        public User build() { return new User(this); }
+        public UserCreateCommand build() { return new UserCreateCommand(this); }
     }
 }

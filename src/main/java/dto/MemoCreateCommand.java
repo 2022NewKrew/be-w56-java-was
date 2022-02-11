@@ -1,45 +1,25 @@
-package model;
+package dto;
 
-public class Memo {
-    private final long memoId;
-    private final String time;
+public class MemoCreateCommand {
     private final String writer;
     private final String contents;
 
-    private Memo(Builder builder) {
-        this.memoId = builder.memoId;
+    private MemoCreateCommand(Builder builder) {
         this.writer = builder.writer;
         this.contents = builder.contents;
-        this.time = builder.time;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public long getMemoId() { return memoId; }
-
     public String getWriter() { return writer; }
-
-    public String getTime() { return time; }
 
     public String getContents() { return contents; }
 
     public static class Builder {
-        private long memoId;
-        private String time;
         private String writer;
         private String contents;
-
-        public Builder memoId(long memoId) {
-            this.memoId = memoId;
-            return this;
-        }
-
-        public Builder time(String time) {
-            this.time = time;
-            return this;
-        }
 
         public Builder writer(String writer) {
             this.writer = writer;
@@ -51,8 +31,8 @@ public class Memo {
             return this;
         }
 
-        public Memo build() {
-            return new Memo(this);
+        public MemoCreateCommand build() {
+            return new MemoCreateCommand(this);
         }
     }
 }

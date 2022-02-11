@@ -1,5 +1,6 @@
 package dao;
 
+import dto.MemoCreateCommand;
 import model.Memo;
 import util.DBUtils;
 import util.TimeStringParser;
@@ -29,12 +30,10 @@ public class MemoDAO {
         }
     }
 
-    public void storeMemo(HttpRequest httpRequest) throws SQLException {
-        Map<String, String> params = httpRequest.getParameters();
-
+    public void storeMemo(MemoCreateCommand mcc) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(STORE_SQL);
-        statement.setString(1, URLDecoder.decode(params.get("writer"), StandardCharsets.UTF_8));
-        statement.setString(2, URLDecoder.decode(params.get("contents"), StandardCharsets.UTF_8));
+        statement.setString(1, URLDecoder.decode(mcc.getWriter(), StandardCharsets.UTF_8));
+        statement.setString(2, URLDecoder.decode(mcc.getContents(), StandardCharsets.UTF_8));
         statement.setString(3, TimeStringParser.parseTimeToString(LocalDateTime.now()));
         statement.execute();
 

@@ -1,5 +1,6 @@
 package dao;
 
+import dto.UserCreateCommand;
 import model.User;
 import util.DBUtils;
 import webserver.http.HttpRequest;
@@ -47,14 +48,12 @@ public class UserDAO {
         return target;
     }
 
-    public void storeUser(HttpRequest httpRequest) throws SQLException {
-        Map<String, String> params = httpRequest.getParameters();
-
+    public void storeUser(UserCreateCommand ucc) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(STORE_SQL);
-        statement.setString(1, params.get("userId"));
-        statement.setString(2, params.get("password"));
-        statement.setString(3, params.get("name"));
-        statement.setString(4, URLDecoder.decode(params.get("email"), StandardCharsets.UTF_8));
+        statement.setString(1, ucc.getUserId());
+        statement.setString(2, ucc.getPassword());
+        statement.setString(3, ucc.getName());
+        statement.setString(4, URLDecoder.decode(ucc.getEmail(), StandardCharsets.UTF_8));
         statement.execute();
 
         statement.close();
