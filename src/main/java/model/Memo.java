@@ -6,13 +6,6 @@ public class Memo {
     private final String writer;
     private final String contents;
 
-    public Memo(long memoId, String writer, String contents, String time) {
-        this.memoId = memoId;
-        this.writer = writer;
-        this.contents = contents;
-        this.time = time;
-    }
-
     private Memo(Builder builder) {
         this.memoId = builder.memoId;
         this.writer = builder.writer;

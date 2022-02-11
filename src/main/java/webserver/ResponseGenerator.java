@@ -184,6 +184,15 @@ public class ResponseGenerator {
                 .build();
     }
 
+    public static HttpResponse generateResponse405() {
+        byte[] body = HttpStatus.METHOD_NOT_ALLOWED.toString().getBytes();
+
+        return HttpResponse.builder()
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(body)
+                .build();
+    }
+
     public static HttpResponse generateResponse500() {
         byte[] body = HttpStatus.INTERNAL_SERVER_ERROR.toString().getBytes();
 

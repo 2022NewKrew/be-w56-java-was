@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import controller.Controller;
 import webserver.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ public class RequestHandler extends Thread {
     private static final String CRLF = "\r\n";
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -31,11 +30,10 @@ public class RequestHandler extends Thread {
             log.debug("params: {}", httpRequest.getParameters());
 
             DataOutputStream dos = new DataOutputStream(out);
-            Controller controller = ControllerMapper.mapController(httpRequest.getPath());
-            HttpResponse httpResponse = controller.controlRequest(httpRequest);
+            HttpResponse httpResponse = Router.route(httpRequest);
             writeBytes(httpResponse, dos);
             flush(dos);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }

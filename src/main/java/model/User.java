@@ -6,16 +6,6 @@ public class User {
     private final String name;
     private final String email;
 
-    public User(String userId, String password, String name, String email) {
-        if (userId == null || password == null || name == null || email == null) {
-            throw new IllegalArgumentException("IllegalArgumentException");
-        }
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-    }
-
     private User(Builder builder) {
         if (builder.userId == null || builder.password == null || builder.name == null || builder.email == null) {
             throw new IllegalArgumentException("IllegalArgumentException");

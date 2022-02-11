@@ -1,15 +1,10 @@
 package webserver.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
-    Logger log = LoggerFactory.getLogger(HttpRequest.class);
-
     private final String method;
     private final String path;
     private final Map<String, String> headers;
