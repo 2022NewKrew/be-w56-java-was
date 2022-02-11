@@ -2,12 +2,15 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import db.DataBase;
+import model.Post;
 import model.User;
 import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
@@ -53,9 +56,9 @@ public class RequestHandler extends Thread {
                 String requestBody = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
                 log.debug("Request Body : {}", HttpRequestUtils.parseQueryString(requestBody));
                 Map<String,String> params = HttpRequestUtils.parseQueryString(requestBody);
-                User user = new User(params.get("userId"),params.get("password"),params.get("name"),params.get("email"));
+                User user = new User(params.get("userId"),params.get("password"),params.get("name"), URLDecoder.decode(params.get("email")));
                 log.debug("User : {}", user);
-                DataBase.addUser(user);
+                DataBase.createUser(user);
 
                 DataOutputStream dos = new DataOutputStream(out);
                 response302Header(dos);
@@ -64,7 +67,7 @@ public class RequestHandler extends Thread {
                 log.debug("Request Body : {}", HttpRequestUtils.parseQueryString(requestBody));
                 Map<String,String> params = HttpRequestUtils.parseQueryString(requestBody);
                 log.debug("userId : {}, password : {}", params.get("userId"), params.get("password"));
-                User user = DataBase.getUser(params.get("userId"));
+                User user = DataBase.findUserById(params.get("userId"));
                 if(user==null){
                     log.debug("User Not Found!");
                     DataOutputStream dos = new DataOutputStream(out);
@@ -81,7 +84,7 @@ public class RequestHandler extends Thread {
             } else if(path.startsWith("/user/list")){
                 log.debug("user/list");
                 StringBuilder sb = new StringBuilder();
-                ArrayList<User> users = new ArrayList<>(DataBase.findAll());
+                List<User> users = DataBase.findUsers();
 
                 sb.append("<!DOCTYPE html>\n"+
                     "<html lang=\"kr\">\n"+
@@ -190,6 +193,140 @@ public class RequestHandler extends Thread {
                     bw.close();
                     DataOutputStream dos = new DataOutputStream(out);
                     byte[] body = Files.readAllBytes(new File("./webapp/user/list.html").toPath());
+                    response200Header(dos, body.length);
+                    responseBody(dos, body);
+                }catch(Exception e){
+                    log.debug(e.getMessage());
+                }
+            }else if(path.startsWith("/qna/show")){
+                log.debug("qna/show");
+                StringBuilder sb = new StringBuilder();
+                List<Post> posts = DataBase.findPosts();
+
+                sb.append("<!DOCTYPE html>\n" +
+                        "<html lang=\"kr\">\n" +
+                        "<head>\n" +
+                        "    <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n" +
+                        "    <meta charset=\"utf-8\">\n" +
+                        "    <title>SLiPP Java Web Programming</title>\n" +
+                        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">\n" +
+                        "    <link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+                        "    <!--[if lt IE 9]>\n" +
+                        "    <script src=\"//html5shim.googlecode.com/svn/trunk/html5.js\"></script>\n" +
+                        "    <![endif]-->\n" +
+                        "    <link href=\"/css/styles.css\" rel=\"stylesheet\">\n" +
+                        "</head>\n" +
+                        "<body>\n" +
+                        "<nav class=\"navbar navbar-fixed-top header\">\n" +
+                        "    <div class=\"col-md-12\">\n" +
+                        "        <div class=\"navbar-header\">\n" +
+                        "\n" +
+                        "            <a href=\"/index.html\" class=\"navbar-brand\">SLiPP</a>\n" +
+                        "            <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#navbar-collapse1\">\n" +
+                        "                <i class=\"glyphicon glyphicon-search\"></i>\n" +
+                        "            </button>\n" +
+                        "\n" +
+                        "        </div>\n" +
+                        "        <div class=\"collapse navbar-collapse\" id=\"navbar-collapse1\">\n" +
+                        "            <form class=\"navbar-form pull-left\">\n" +
+                        "                <div class=\"input-group\" style=\"max-width:470px;\">\n" +
+                        "                    <input type=\"text\" class=\"form-control\" placeholder=\"Search\" name=\"srch-term\" id=\"srch-term\">\n" +
+                        "                    <div class=\"input-group-btn\">\n" +
+                        "                        <button class=\"btn btn-default btn-primary\" type=\"submit\"><i class=\"glyphicon glyphicon-search\"></i></button>\n" +
+                        "                    </div>\n" +
+                        "                </div>\n" +
+                        "            </form>\n" +
+                        "            <ul class=\"nav navbar-nav navbar-right\">\n" +
+                        "                <li>\n" +
+                        "                    <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"glyphicon glyphicon-bell\"></i></a>\n" +
+                        "                    <ul class=\"dropdown-menu\">\n" +
+                        "                        <li><a href=\"https://slipp.net\" target=\"_blank\">SLiPP</a></li>\n" +
+                        "                        <li><a href=\"https://facebook.com\" target=\"_blank\">Facebook</a></li>\n" +
+                        "                    </ul>\n" +
+                        "                </li>\n" +
+                        "                <li><a href=\"/user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>\n" +
+                        "            </ul>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "</nav>\n" +
+                        "<div class=\"navbar navbar-default\" id=\"subnav\">\n" +
+                        "    <div class=\"col-md-12\">\n" +
+                        "        <div class=\"navbar-header\">\n" +
+                        "            <a href=\"#\" style=\"margin-left:15px;\" class=\"navbar-btn btn btn-default btn-plus dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"glyphicon glyphicon-home\" style=\"color:#dd1111;\"></i> Home <small><i class=\"glyphicon glyphicon-chevron-down\"></i></small></a>\n" +
+                        "            <ul class=\"nav dropdown-menu\">\n" +
+                        "                <li><a href=\"/user/profile.html\"><i class=\"glyphicon glyphicon-user\" style=\"color:#1111dd;\"></i> Profile</a></li>\n" +
+                        "                <li class=\"nav-divider\"></li>\n" +
+                        "                <li><a href=\"#\"><i class=\"glyphicon glyphicon-cog\" style=\"color:#dd1111;\"></i> Settings</a></li>\n" +
+                        "            </ul>\n" +
+                        "            \n" +
+                        "            <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#navbar-collapse2\">\n" +
+                        "            \t<span class=\"sr-only\">Toggle navigation</span>\n" +
+                        "            \t<span class=\"icon-bar\"></span>\n" +
+                        "            \t<span class=\"icon-bar\"></span>\n" +
+                        "            \t<span class=\"icon-bar\"></span>\n" +
+                        "            </button>            \n" +
+                        "        </div>\n" +
+                        "        <div class=\"collapse navbar-collapse\" id=\"navbar-collapse2\">\n" +
+                        "            <ul class=\"nav navbar-nav navbar-right\">\n" +
+                        "                <li class=\"active\"><a href=\"/index.html\">Posts</a></li>\n" +
+                        "                <li><a href=\"/user/login.html\" role=\"button\">로그인</a></li>\n" +
+                        "                <li><a href=\"/user/form.html\" role=\"button\">회원가입</a></li>\n" +
+                        "                <li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
+                        "                <li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n" +
+                        "            </ul>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "</div>\n" +
+                        "\n" +
+                        "<div class=\"container\" id=\"main\">\n" +
+                        "   <div class=\"col-md-10 col-md-offset-1\">\n" +
+                        "      <div class=\"panel panel-default\">\n" +
+                        "          <table class=\"table table-hover\">\n" +
+                        "              <thead>\n" +
+                        "                <tr>\n" +
+                        "                    <th>날짜</th> <th>작성자</th> <th>내용</th><th></th>\n" +
+                        "                </tr>\n" +
+                        "              </thead>\n" +
+                        "              <tbody>\n");
+
+                for(Post p:posts){
+                    sb.append("<tr>\n" +
+                            "<td>" +
+                            p.getDate() +
+                            "</td> <td>" +
+                            p.getWriter() +
+                            "</td> <td>" +
+                            p.getContent() +
+                            "</td>\n" +
+                            "</tr>\n");
+                }
+
+                sb.append("              </tbody>\n" +
+                        "          </table>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "    <div>" +
+                        "        <form method=\"post\" action=\"/memo/add\" >" +
+                        "            <input name=\"writer\" />" +
+                        "            <input name=\"memo\" />" +
+                        "            <input type=\"submit\" value=\"제출\"/>" +
+                        "        </form>" +
+                        "    </div>" +
+                        "</div>\n" +
+                        "\n" +
+                        "<!-- script references -->\n" +
+                        "<script src=\"/js/jquery-2.2.0.min.js\"></script>\n" +
+                        "<script src=\"/js/bootstrap.min.js\"></script>\n" +
+                        "<script src=\"/js/scripts.js\"></script>\n" +
+                        "\t</body>\n" +
+                        "</html>");
+                File file = new File("./webapp/qna/show.html");
+                try{
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+                    bw.write(sb.toString());
+                    bw.close();
+                    DataOutputStream dos = new DataOutputStream(out);
+                    byte[] body = Files.readAllBytes(new File("./webapp/qna/show.html").toPath());
                     response200Header(dos, body.length);
                     responseBody(dos, body);
                 }catch(Exception e){
