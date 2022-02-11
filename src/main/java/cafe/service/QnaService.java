@@ -34,13 +34,17 @@ public class QnaService {
                     qnaListHtml.append("<div class=\"wrap\">");
                     qnaListHtml.append("<div class=\"main\">");
 
-                    qnaListHtml.append("<string class=\"subject\">");
+                    qnaListHtml.append("<strong class=\"subject\">");
                     qnaListHtml.append(qna.getTitle());
                     qnaListHtml.append("</strong>");
 
-                    qnaListHtml.append("<div class=\"auth-info\"");
+                    qnaListHtml.append("<class=\"contents\">");
+                    qnaListHtml.append(qna.getContents());
+                    qnaListHtml.append("</class>");
+
+                    qnaListHtml.append("<div class=\"auth-info\">");
                     qnaListHtml.append("<i class=\"icon-add-comment\">").append("</i>");
-                    qnaListHtml.append("<span class=\"time\">").append(qna.getCreatedAt().toString()).append("</span>");
+                    qnaListHtml.append("<span class=\"time\">").append(qna.getCreatedAt().toString() + " ").append("</span>");
                     qnaListHtml.append("<a href=\"./user/profile.html\" class=\"author\">").append(qna.getWriter()).append("</a>");
                     qnaListHtml.append("</div>");
 
