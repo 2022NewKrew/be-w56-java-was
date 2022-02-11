@@ -3,7 +3,6 @@ package webserver.http.request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
-import util.constant.Http;
 import util.constant.Parser;
 
 import java.io.BufferedReader;
@@ -12,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static util.HttpRequestUtils.*;
 
@@ -40,7 +40,7 @@ public class HttpRequest {
     private HttpRequestLine parseRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
         Map<String, String> request = parseRequest(line);
-        return new HttpRequestLine(request.get(Http.METHOD), request.get(Http.URL), request.get(Http.VERSION));
+        return HttpRequestLine.of(request);
     }
 
     private HttpRequestHeader parseRequestHeader(BufferedReader br) throws IOException {
@@ -75,4 +75,16 @@ public class HttpRequest {
         return httpRequestHeader;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HttpRequest that = (HttpRequest) o;
+        return method == that.method && Objects.equals(url, that.url) && Objects.equals(version, that.version) && Objects.equals(httpRequestHeader, that.httpRequestHeader) && Objects.equals(httpRequestBody, that.httpRequestBody);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(method, url, version, httpRequestHeader, httpRequestBody);
+    }
 }

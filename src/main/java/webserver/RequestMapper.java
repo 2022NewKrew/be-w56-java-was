@@ -37,5 +37,4 @@ public class RequestMapper {
                 .filter(controller -> controller.isValidRequest(request))
                 .findAny();
     }
-
 }

@@ -1,30 +1,44 @@
 package db;
 
-import java.util.Collections;
-import java.util.List;
+import com.google.common.collect.Maps;
+import entity.User;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.params.provider.Arguments;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-class DataBaseTest {
-//    static Stream<Arguments> parseRanksArguments() {
-//        return Stream.of(
-//                Arguments.of(List.of(), Collections.emptyMap()),
-//                Arguments.of(List.of(Rank.valueOf(6, false)), Map.of(Rank.FIRST, 1L)),
-//                Arguments.of(List.of(Rank.valueOf(3, false)), Map.of(Rank.FIFTH, 1L)),
-//                Arguments.of(List.of(Rank.valueOf(3, false), Rank.valueOf(3, false)), Map.of(Rank.FIFTH, 2L))
-//        );
-//    }
-    void addUser() {
+public class DataBaseTest {
+    private static final User TEST0 = User.builder()
+            .userId("chenID")
+            .password("1234")
+            .name("chen")
+            .email("chen@kakao.com")
+            .build();
+
+    private static final User TEST1 = User.builder()
+            .userId("chenID1")
+            .password("1234")
+            .name("chen1")
+            .email("chen1@kakao.com")
+            .build();
+
+    private static Map<String, User> testUsers = Maps.newHashMap();
+
+    static Stream<Arguments> parseCreate() {
+        return Stream.of(
+                Arguments.of(TEST0),
+                Arguments.of(TEST1)
+        );
     }
 
-    void findUserById() {
-    }
-
-    void findAll() {
+    @ParameterizedTest(name = "create: {arguments}")
+    @MethodSource("parseCreate")
+    public void create(User user) {
+        testUsers.put(user.getUserId(), user);
+        assertThat(testUsers.get(user.getUserId())).isEqualTo(user);
     }
 }
