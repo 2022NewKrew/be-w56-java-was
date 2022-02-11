@@ -1,6 +1,7 @@
 package cafe.repository;
 
 import cafe.model.Qna;
+import cafe.util.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,30 +9,29 @@ import java.util.Collection;
 import java.util.List;
 
 public class QnaRepository {
-    private static final String DB_URL = "jdbc:mysql://10.202.174.226/spring_cafe";
-    private static final String USER_NAME = "root";
-    private static final String PASSWORD = "root123";
-
     public void addQna(Qna qna) {
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
-             Statement statement = connection.createStatement();
-        ) {
-            String query = "INSERT INTO QNA(writer, title, contents, created_at) " +
-                    "VALUE('" + qna.getWriter() + "', '" + qna.getTitle() + "', '" + qna.getContents() + "', '" + qna.getCreated_at() + "')";
+        String query = "INSERT INTO QNA(writer, title, contents, created_at) VALUE(?, ?, ?, ?)";
 
-            statement.executeUpdate(query);
+        try (Connection connection = DBUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ) {
+            preparedStatement.setString(1, qna.getWriter());
+            preparedStatement.setString(2, qna.getTitle());
+            preparedStatement.setString(3, qna.getContents());
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(qna.getCreatedAt()));
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public Collection<Qna> findAll() {
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
-             Statement statement = connection.createStatement();
-        ) {
-            String query = "SELECT writer, title, contents, created_at FROM QNA WHERE deleted = false";
+        String query = "SELECT writer, title, contents, created_at FROM QNA WHERE deleted = false ORDER BY created_at desc ";
 
-            ResultSet resultSet = statement.executeQuery(query);
+        try (Connection connection = DBUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             List<Qna> qnaList = new ArrayList<>();
 
             while (resultSet.next()) {
