@@ -6,6 +6,8 @@ public enum HttpContentType {
     TEXT_HTML(".html", "text/html;charset=UTF-8"),
     APPLICATION_JS(".js", "application/js"),
     IMAGE_X_ICON(".ico", "image/x-icon"),
+    APPLICATION_X_WWW_FORM_URLENCODED("", "application/x-www-form-urlencoded");
+
     ;
 
     private final String extension;

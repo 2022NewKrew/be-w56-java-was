@@ -8,6 +8,11 @@ public class SocketChannelIO implements ConnectionIO {
     }
 
     @Override
+    public int read(char[] cbuf, int off, int len) {
+        return 0;
+    }
+
+    @Override
     public void writeBytes(String s) {
 
     }

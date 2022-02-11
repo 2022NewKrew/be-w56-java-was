@@ -2,8 +2,7 @@ package webserver.http.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import common.ObjectUtil;
-import webserver.http.message.HttpBody;
+import util.ObjectUtil;
 import webserver.http.message.HttpStartLine;
 
 import java.util.Arrays;
@@ -24,16 +23,12 @@ public class HttpRequestDecodeUtil {
             throw new RuntimeException("[ERROR] Http Request format invalid : " + startLine);
         }
 
-        if(tokens[1].contains("\\?")) {
+        if(tokens[1].contains("?")) {
             final String[] uriAndQueryStrings = tokens[1].split("\\?");
             return new HttpStartLine(tokens[0], uriAndQueryStrings[0], uriAndQueryStrings[1], tokens[2]);
         }
 
         return new HttpStartLine(tokens[0], tokens[1], tokens[2]);
-    }
-
-    private static Map<String, String> parseUri(String uri) {
-        return parseValues(uri, "\\?");
     }
 
     public static String[] parseHeaderNames(String headerLine) {
@@ -42,10 +37,6 @@ public class HttpRequestDecodeUtil {
         String key = headerLine.substring(0, idx).trim();
         String value = headerLine.substring(idx + 1).trim();
         return new String[]{key, value};
-    }
-
-    public static HttpBody parseBody() {
-        return new HttpBody();
     }
 
     /**

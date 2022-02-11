@@ -3,9 +3,15 @@ package webserver.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.connection.ConnectionIO;
-import webserver.http.message.*;
+import webserver.http.message.HttpHeader;
+import webserver.http.message.HttpRequest;
+import webserver.http.message.HttpResponse;
+import webserver.http.message.HttpStartLine;
+import webserver.http.message.values.HttpContentType;
 import webserver.http.message.values.HttpHeaderNames;
 import webserver.http.util.HttpRequestDecodeUtil;
+
+import java.util.Map;
 
 import static com.google.common.net.HttpHeaders.*;
 
@@ -23,11 +29,13 @@ public class HttpCodec {
 
     public HttpRequest decode() {
         final HttpStartLine startLine = getHttpStartLine();
-        //TODO:queryString 분리작업 추가
+        log.debug("request start line : {}", startLine);
+        final Map<String, String> queryString = getQueryString(startLine);
         final HttpHeader header = getHttpHeader();
-        final HttpBody body = getHttpBody();
+        final String body = getHttpBody(header.getContentLength());
+        final Map<String, String> requestParams = getRequestParams(header, body);
 
-        return  new HttpRequest(startLine, header, body);
+        return  new HttpRequest(startLine, queryString, header, body, requestParams);
     }
 
     private HttpStartLine getHttpStartLine() {
@@ -35,6 +43,14 @@ public class HttpCodec {
         final HttpStartLine startLine = HttpRequestDecodeUtil.parseStartLine(line);
         log.debug("request method : {}", startLine);
         return startLine;
+    }
+
+    private Map<String, String> getQueryString(HttpStartLine startLine) {
+        final String queryString = startLine.getQueryStrings();
+        if(queryString == null) {
+            return null;
+        }
+        return HttpRequestDecodeUtil.parseQueryString(queryString);
     }
 
     private HttpHeader getHttpHeader() {
@@ -68,9 +84,23 @@ public class HttpCodec {
         return new HttpHeader(accept, cookie, contentLength, contentType);
     }
 
-    private HttpBody getHttpBody() {
+    private String getHttpBody(int contentLength) {
+        char[] buffer = new char[contentLength];
+        socket.read(buffer, 0, contentLength);
 
-        return new HttpBody();
+        return new String(buffer);
+    }
+
+    private Map<String, String> getRequestParams(HttpHeader header, String body) {
+        if(isApplicationXWwwFormUrlencoded(header.getContentType())){
+            return HttpRequestDecodeUtil.parseQueryString(body);
+        }
+        return null;
+    }
+
+    private boolean isApplicationXWwwFormUrlencoded(String contentType) {
+        return contentType != null &&
+                contentType.equals(HttpContentType.APPLICATION_X_WWW_FORM_URLENCODED.getValue());
     }
 
     public void encode(HttpResponse response) {

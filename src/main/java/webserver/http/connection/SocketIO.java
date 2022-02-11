@@ -36,6 +36,16 @@ public class SocketIO implements ConnectionIO {
     }
 
     @Override
+    public int read(char[] cbuf, int off, int len) {
+        try {
+            return br.read(cbuf, off, len);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
     public void writeBytes(String s) {
         try {
             dos.writeBytes(s);

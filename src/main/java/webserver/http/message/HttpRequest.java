@@ -2,26 +2,29 @@ package webserver.http.message;
 
 import webserver.http.message.values.HttpMethod;
 
+import java.util.Map;
+
 public class HttpRequest {
     private final HttpMethod method;
     private final String uri;
-    private final String queryStrings;
+    private final Map<String, String> queryStrings;
     private final String version;
     private final HttpHeader header;
-    private final HttpBody body;
+    private final String body;
+    private final Map<String, String> requestParams;
 
-    public HttpRequest(HttpStartLine startLine, HttpHeader header) {
-        this(startLine, header, null);
+    public HttpRequest(HttpStartLine startLine, Map<String, String> queryStrings, HttpHeader header) {
+        this(startLine, queryStrings, header, null, null);
     }
 
-    public HttpRequest(HttpStartLine startLine, HttpHeader header, HttpBody body) {
+    public HttpRequest(HttpStartLine startLine, Map<String, String> queryStrings, HttpHeader header, String body, Map<String, String> requestParams) {
         this.method = startLine.getMethod();
         this.uri = startLine.getUri();
-        this.queryStrings = startLine.getQueryStrings();
+        this.queryStrings = queryStrings;
         this.version = startLine.getVersion();
-
         this.header = header;
         this.body = body;
+        this.requestParams = requestParams;
     }
 
     public HttpMethod getMethod() {
@@ -32,7 +35,7 @@ public class HttpRequest {
         return uri;
     }
 
-    public String getQueryStrings() {
+    public Map<String, String> getQueryStrings() {
         return queryStrings;
     }
 
@@ -44,7 +47,11 @@ public class HttpRequest {
         return header;
     }
 
-    public HttpBody getBody() {
+    public String getBody() {
         return body;
+    }
+
+    public Map<String, String> getRequestParams() {
+        return requestParams;
     }
 }

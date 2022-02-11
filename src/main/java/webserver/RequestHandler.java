@@ -73,10 +73,8 @@ public class RequestHandler extends Thread {
 
     private void doMethod(Method method, HttpResponse response) {
         try {
-            //TODO: 인자 있으면 response에서 사용 ex) session
-            final String responseUri = (String) method.invoke(controller);
+            final String responseUri = (String) method.invoke(controller, response);
             setResponseUri(response, responseUri);
-            //TODO
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

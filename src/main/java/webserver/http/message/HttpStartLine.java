@@ -38,4 +38,16 @@ public class HttpStartLine {
     public String getQueryStrings() {
         return queryStrings;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(method).append(" ");
+        sb.append(uri);
+        if(queryStrings != null)
+            sb.append("?").append(queryStrings);
+        sb.append(" ");
+        sb.append(version);
+        return sb.toString();
+    }
 }
