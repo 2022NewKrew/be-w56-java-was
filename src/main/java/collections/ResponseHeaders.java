@@ -19,7 +19,4 @@ public class ResponseHeaders {
         return headers.keySet();
     }
 
-    public boolean isVaild() {
-        return headers.containsKey("name") | headers.containsKey("content");
-    }
 }

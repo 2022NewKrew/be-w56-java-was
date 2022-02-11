@@ -47,7 +47,6 @@ public class HttpRequest {
         line = br.readLine();
         var tempRequestHeaders = new HashMap<String, String>();
         while (line != null && !line.equals("")) {
-            String[] header = line.split(": ");
             HttpRequestUtils.Pair pair = parseHeader(line);
             tempRequestHeaders.put(pair.getKey(), pair.getValue());
             log.debug("     {}", line);
