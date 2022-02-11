@@ -2,17 +2,16 @@ package webserver.http.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Constants;
 import util.IOUtils;
+import util.constant.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 
 import static util.HttpRequestUtils.*;
 
@@ -25,7 +24,6 @@ public class HttpRequest {
     private final String version;
     private final HttpRequestHeader httpRequestHeader;
     private final String httpRequestBody;
-
 
     public HttpRequest(InputStream in) throws IOException {
         log.debug("New HttpRequest: InputStream {}", in);
@@ -42,25 +40,23 @@ public class HttpRequest {
     private HttpRequestLine parseRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
         Map<String, String> request = parseRequest(line);
-        return new HttpRequestLine(request.get(Constants.HTTP_METHOD), request.get(Constants.HTTP_URL), request.get(Constants.HTTP_VERSION));
+        return HttpRequestLine.of(request);
     }
 
     private HttpRequestHeader parseRequestHeader(BufferedReader br) throws IOException {
         String line = br.readLine();
-        List<Pair> pairs = new ArrayList<Pair>();
+        HashMap<String, String> pairs = new HashMap<>();
 
-        while (!(line = br.readLine()).equals(Constants.EMPTY)) {
+        while (!(line = br.readLine()).equals(Parser.EMPTY)) {
             Pair pair = parseHeader(line);
-            pairs.add(pair);
+            pairs.put(pair.getKey(), pair.getValue());
         }
         return new HttpRequestHeader(pairs);
     }
 
     private String parseRequestBody(BufferedReader br) throws IOException {
-        Optional<Pair> contentLengthHeader = this.httpRequestHeader.getHeaders().stream()
-                .filter(header -> header.getKey().equals("Content-Length"))
-                .findAny();
-       return contentLengthHeader.isEmpty() ? null : IOUtils.readData(br, Integer.parseInt(contentLengthHeader.get().getValue()));
+        String contentLengthHeader = this.httpRequestHeader.getHeaders().get("Content-Length");
+        return contentLengthHeader == null ? null : IOUtils.readData(br, Integer.parseInt(contentLengthHeader));
      }
 
     public Method getMethod() {
@@ -73,5 +69,22 @@ public class HttpRequest {
 
     public String getHttpRequestBody() {
         return httpRequestBody;
+    }
+
+    public HttpRequestHeader getHttpRequestHeader() {
+        return httpRequestHeader;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HttpRequest that = (HttpRequest) o;
+        return method == that.method && Objects.equals(url, that.url) && Objects.equals(version, that.version) && Objects.equals(httpRequestHeader, that.httpRequestHeader) && Objects.equals(httpRequestBody, that.httpRequestBody);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(method, url, version, httpRequestHeader, httpRequestBody);
     }
 }

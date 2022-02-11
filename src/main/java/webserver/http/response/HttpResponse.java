@@ -2,7 +2,8 @@ package webserver.http.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Constants;
+import util.constant.Http;
+import util.constant.Parser;
 import webserver.http.request.HttpRequest;
 
 import java.io.DataOutputStream;
@@ -34,12 +35,12 @@ public class HttpResponse {
     }
 
     public static class Builder {
-        private byte[] body = " ".getBytes(StandardCharsets.UTF_8);
+        private byte[] body = Parser.SPACE.getBytes(StandardCharsets.UTF_8);
         private HttpStatus httpStatus = HttpStatus._200;
         private String contentType = "*/*";
         private int contentLength = 0;
-        private String redirect = "";
-        private String cookie = "";
+        private String redirect = Parser.EMPTY;
+        private String cookie = Parser.EMPTY;
         private final OutputStream out;
 
         public Builder(OutputStream out) {
@@ -88,7 +89,8 @@ public class HttpResponse {
             responseHeader();
             responseBody();
         } else {
-            responseHeaderWithCookie();
+            responseHeader();
+            responseCookie();
             responseBody();
         }
 
@@ -97,25 +99,19 @@ public class HttpResponse {
     private void responseHeader() {
         try {
             log.debug("responseHeader write start!");
-            dos.writeBytes(Constants.HTTP_VERSION_CURRENT + Constants.SPACE + httpStatus.valueOf() + "\r\n");
-            dos.writeBytes(Constants.HTTP_CONTENT_TYPE + Constants.SEMICOLON + Constants.SPACE + contentType + "; charset=utf-8\r\n");
-            dos.writeBytes(Constants.HTTP_CONTENT_LENGTH + Constants.SEMICOLON + Constants.SPACE + contentLength + "\r\n");
-            dos.writeBytes(Constants.HTTP_LOCATION + Constants.SEMICOLON + redirect + "\r\n");
-            dos.writeBytes("\r\n");
+            dos.writeBytes(Http.VERSION_CURRENT + Parser.SPACE + httpStatus.getStatus() + "\r\n");
+            dos.writeBytes(Http.CONTENT_TYPE + Parser.SEMICOLON + Parser.SPACE + contentType + "; charset=utf-8\r\n");
+            dos.writeBytes(Http.CONTENT_LENGTH + Parser.SEMICOLON + Parser.SPACE + contentLength + "\r\n");
+            dos.writeBytes(Http.LOCATION + Parser.SEMICOLON + redirect + "\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void responseHeaderWithCookie() {
+    private void responseCookie() {
         try {
             log.debug("responseHeaderWithCookie write start!");
-            dos.writeBytes(Constants.HTTP_VERSION_CURRENT + Constants.SPACE + httpStatus.valueOf() + "\r\n");
-            dos.writeBytes(Constants.HTTP_CONTENT_TYPE + Constants.SEMICOLON + Constants.SPACE + contentType + "; charset=utf-8\r\n");
-            dos.writeBytes(Constants.HTTP_CONTENT_LENGTH + Constants.SEMICOLON + Constants.SPACE + contentLength + "\r\n");
-            dos.writeBytes(Constants.HTTP_LOCATION + Constants.SEMICOLON + redirect + "\r\n");
-            dos.writeBytes(Constants.HTTP_COOKIE + Constants.SEMICOLON + Constants.SPACE + Constants.HTTP_COOKIE_LOGINED_KEY + Constants.EQUAL + cookie + ";" + Constants.SPACE + Constants.HTTP_COOKIE_REQUEST_PATH_KEY + Constants.EQUAL + Constants.HTTP_COOKIE_REQUEST_PATH_VALUE + "\r\n");
-            dos.writeBytes("\r\n");
+            dos.writeBytes(Http.COOKIE + Parser.SEMICOLON + Parser.SPACE + Http.COOKIE_LOGINED_KEY + Parser.EQUAL + cookie + ";" + Parser.SPACE + Http.COOKIE_REQUEST_PATH_KEY + Parser.EQUAL + Http.COOKIE_REQUEST_PATH_VALUE + "\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -124,6 +120,7 @@ public class HttpResponse {
     private void responseBody() {
         try {
             log.debug("responseBody write start!");
+            dos.writeBytes("\r\n");
             dos.write(body, 0, body.length);
             dos.flush();
         } catch (IOException e) {

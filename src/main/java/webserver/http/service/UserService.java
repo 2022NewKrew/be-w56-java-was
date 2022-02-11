@@ -5,21 +5,21 @@ import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import entity.User;
 
+import java.util.Collection;
+import java.util.Optional;
+
 public class UserService {
 
     public void join(UserSignUpDto userSignUpDto) {
-        User user = User.builder()
-                .userId(userSignUpDto.getUserId())
-                .password(userSignUpDto.getPassword())
-                .name(userSignUpDto.getName())
-                .email(userSignUpDto.getEmail())
-                .build();
-
+        User user = userSignUpDto.toEntity();
         DataBase.addUser(user);
     }
 
-    public User findUser(UserLoginDto userLoginDto) {
+    public Optional<User> findUser(UserLoginDto userLoginDto) {
         return DataBase.findUserById(userLoginDto.getUserId());
     }
 
+    public Collection<User> findUsers() {
+        return DataBase.findAll();
+    }
 }

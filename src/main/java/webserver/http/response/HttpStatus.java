@@ -16,7 +16,7 @@ public enum HttpStatus {
         this.status = status;
     }
 
-    public String valueOf() {
+    public String getStatus() {
         return status;
     }
 

@@ -25,7 +25,7 @@ public enum ContentType {
         return extension;
     }
 
-    public static ContentType getContentType(String inputExtension) {
+    public static ContentType of(String inputExtension) {
         return Optional.of(ContentType.valueOf(inputExtension.toUpperCase())).orElse(ANY);
     }
 }

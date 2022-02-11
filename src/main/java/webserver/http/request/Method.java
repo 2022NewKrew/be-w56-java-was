@@ -8,7 +8,7 @@ public enum Method {
     DELETE("DELETE"),
     TRACE("TRACE"),
     CONNECT("CONNECT"),
-    UNRECOGNIZED(null);
+    UNRECOGNIZED("EMPTY");
 
     private final String method;
 

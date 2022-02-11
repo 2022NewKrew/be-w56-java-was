@@ -1,5 +1,6 @@
 package util;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import util.constant.Http;
+import util.constant.Parser;
+import util.constant.Route;
 
 public class HttpRequestUtils {
     /**
@@ -33,7 +37,7 @@ public class HttpRequestUtils {
         }
 
         String[] tokens = values.split(separator);
-        return Arrays.stream(tokens).map(t -> getKeyValue(t, Constants.EQUAL)).filter(p -> p != null)
+        return Arrays.stream(tokens).map(t -> getKeyValue(t, Parser.EQUAL)).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
@@ -51,24 +55,26 @@ public class HttpRequestUtils {
     }
 
     public static Map<String, String> parseRequest(String requestLine) {
-        String[] tokens = requestLine.split(Constants.SPACE);
+        String[] tokens = requestLine.split(Parser.SPACE);
 
         Map<String, String> requestMap = new HashMap<>();
 
-        requestMap.put(Constants.HTTP_METHOD, tokens[0]);
-        requestMap.put(Constants.HTTP_URL, tokens[1]);
-        requestMap.put(Constants.HTTP_VERSION, tokens[2]);
+        requestMap.put(Http.METHOD, tokens[0]);
+        requestMap.put(Http.URL, tokens[1]);
+        requestMap.put(Http.VERSION, tokens[2]);
 
         return requestMap;
     }
 
-    public static String getContentTypeFromUrl(String url) {
-        String[] tokens = url.split(Constants.DOT);
-        return tokens[tokens.length - 1];
+    public static Path urlToFile(String url) {
+        if (url.equals("/")) {
+            return Path.of(Route.BASE.getPath() + Route.INDEX.getPath());
+        }
+        return Path.of(Route.BASE.getPath(), url);
     }
 
     public static Pair parseHeader(String header) {
-        return getKeyValue(header, Constants.SEMICOLON + Constants.SPACE);
+        return getKeyValue(header, ": ");
     }
 
     public static class Pair {
@@ -123,6 +129,5 @@ public class HttpRequestUtils {
         public String toString() {
             return "Pair [key=" + key + ", value=" + value + "]";
         }
-
     }
 }

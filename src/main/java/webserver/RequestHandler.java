@@ -37,7 +37,7 @@ public class RequestHandler extends Thread {
 
     private HttpResponse handle(HttpRequest req, OutputStream out) throws IOException {
         if (mapper.getController(req).isEmpty()) {
-            log.debug("handle is empty");
+            log.trace("handle is empty");
             return new HttpResponse.Builder(out)
                     .setHttpStatus(HttpStatus._404)
                     .build();

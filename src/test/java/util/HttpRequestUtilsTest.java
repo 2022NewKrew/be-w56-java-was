@@ -8,6 +8,8 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.HttpRequestUtils.Pair;
+import util.constant.Http;
+import util.constant.Parser;
 
 public class HttpRequestUtilsTest {
     @Test
@@ -76,11 +78,11 @@ public class HttpRequestUtilsTest {
     public void parseRequest() {
         // Given
         String requestLine = "GET /index.html HTTP/1.1";
-        String[] tokens = requestLine.split(Constants.SPACE);
+        String[] tokens = requestLine.split(Parser.SPACE);
 
         // when & then
-        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_METHOD));
-        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_URL));
-        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Constants.HTTP_VERSION));
+        assertThat(tokens[0]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Http.METHOD));
+        assertThat(tokens[1]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Http.URL));
+        assertThat(tokens[2]).isEqualTo(HttpRequestUtils.parseRequest(requestLine).get(Http.VERSION));
     }
 }
