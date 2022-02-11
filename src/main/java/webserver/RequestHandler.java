@@ -55,13 +55,12 @@ public class RequestHandler extends Thread {
         responseHeader.getHtmlResponseHeader()
                 .response(dos, responseHeader);
         responseHeader.responseBody(dos);
+        dos.writeBytes("Connection: keep-alive\r\n");
+        dos.writeBytes("Keep-Alive: timeout=5; max=100\r\n");
+        dos.writeBytes("\r\n");
     }
 
     private HttpResponse getResponseHeader(RequestHeader requestHeader) throws Exception {
-        try {
-            return RequestController.controlRequest(requestHeader);
-        } catch (Exception exception) {
-            return ExceptionHandler.handleException(exception, requestHeader);
-        }
+        return RequestController.controlRequest(requestHeader);
     }
 }

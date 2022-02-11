@@ -1,15 +1,22 @@
 package controller;
 
+import dynamic.DynamicHtmlBuilder;
+import dynamic.DynamicModel;
+import exception.ExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
-import model.RequestHeader;
-import model.HttpResponse;
+import model.*;
 import service.MemoService;
-import service.UserService;
-import model.builder.*;
+import util.ControllerUtils;
+import util.HttpResponseHeader;
+import util.IOUtils;
+import util.Links;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 
 @Slf4j
 public class RequestController {
-    private static final UserService userService = UserService.getInstance();
     private static final MemoService memoService = MemoService.getInstance();
 
     private RequestController() {
@@ -22,33 +29,72 @@ public class RequestController {
         log.info("CONTROL URI: " + uri);
         log.info("CONTROL METHOD: " + method);
 
-        if (uri.equals("/user/create") && method.equals("POST")) {
-            userService.save(requestHeader);
-            return new UserCreateResponseBuilder().build(requestHeader);
+        DynamicModel model = new DynamicModel();
+        HttpResponse httpResponse;
+
+        try {
+            httpResponse = UserController.controlRequest(requestHeader, uri, method);
+            if (httpResponse == null) {
+                httpResponse = MemoController.controlRequest(requestHeader, uri, method);
+            }
+            if (httpResponse != null) {
+                return httpResponse;
+            }
+
+            if (uri.startsWith("/error")) {
+                return getErrorPage(model);
+            }
+
+            if ((uri.equals("/") || uri.startsWith("/index")) && method.equals("GET")) {
+                return getIndex(requestHeader, model);
+            }
+
+            return getDefault(requestHeader, model);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            ExceptionHandler.handleException(exception, requestHeader);
+            return ControllerUtils.redirect(Links.ERROR);
+        }
+    }
+
+    private static HttpResponse getIndex(RequestHeader requestHeader, DynamicModel model)
+            throws SQLException, IOException {
+        model.addAttribute("memo", memoService.findAll());
+
+        return HttpResponseBuilder.build(
+                Links.MAIN,
+                DynamicHtmlBuilder.getDynamicHtml(IOUtils.readBody(Links.MAIN), model),
+                HttpResponseHeader.RESPONSE_200,
+                requestHeader.getAccept()
+        );
+    }
+
+    private static HttpResponse getErrorPage(DynamicModel model) throws IOException {
+        return HttpResponseBuilder.build(
+                Links.ERROR,
+                DynamicHtmlBuilder.getDynamicHtml(IOUtils.readBody(Links.ERROR), model),
+                HttpResponseHeader.RESPONSE_200,
+                "text/html"
+        );
+    }
+
+    private static HttpResponse getDefault(RequestHeader requestHeader, DynamicModel model) throws IOException {
+        String locationUri = requestHeader.getHeader("uri");
+
+        if (!locationUri.contains(".")) {
+            locationUri += ".html";
         }
 
-        if (uri.equals("/user/login") && method.equals("POST")) {
-            return new UserLoginResponseBuilder().build(requestHeader);
+        byte[] body = IOUtils.readBody(locationUri);
+        if (locationUri.contains(".html")) {
+            body = DynamicHtmlBuilder.getDynamicHtml(body, model);
         }
 
-        if (uri.equals("/user/list") && method.equals("GET")) {
-            return new UserListResponseBuilder().build(requestHeader);
-        }
-
-        if (uri.equals("/user/logout") && method.equals("GET")) {
-            return new UserLogoutResponseBuilder().build(requestHeader);
-        }
-
-        if (uri.equals("/memo/write") && method.equals("POST")) {
-            memoService.writeMemo(requestHeader);
-            return new MemoWriteResponseBuilder().build(requestHeader);
-        }
-
-
-        if ((uri.equals("/") || uri.equals("/index.html")) && method.equals("GET")) {
-            return new IndexResponseBuilder().build(requestHeader);
-        }
-
-        return new NormalRequestResponseBuilder().build(requestHeader);
+        return HttpResponseBuilder.build(
+                locationUri,
+                body,
+                HttpResponseHeader.RESPONSE_200,
+                requestHeader.getAccept()
+        );
     }
 }

@@ -32,7 +32,7 @@ public class DynamicHtmlBuilder {
     private static String buildDynamicHtml(String body, DynamicModel model) {
         if (body.contains("{{#")) {
             String[] repeatBody = body.split(OPEN_REPEAT_START);
-            StringBuilder stringBuilder = new StringBuilder(repeatBody[0]);
+            StringBuilder stringBuilder = new StringBuilder(buildWithNoRepeat(repeatBody[0], model));
             for (int repeatCount = 1; repeatCount < repeatBody.length; repeatCount++) {
                 String[] repeatToken = repeatBody[repeatCount].split(CLOSE_REPEAT_START);
                 stringBuilder.append(repeatBody(repeatToken[1], model, repeatToken[0]));
