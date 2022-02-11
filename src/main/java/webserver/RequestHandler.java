@@ -4,14 +4,13 @@ import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import Router.Router;
-import util.HttpRequestUtils;
+import router.Router;
+import util.RequestUtills;
+import util.ResponseUtils;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.util.List;
-import java.util.Map;
-
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -28,25 +27,13 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            List<String> requestLine = HttpRequestUtils.readRequestMainHeader(br);
-            log.debug("request line : {}", requestLine);
-            Map<String, String> header = HttpRequestUtils.readHeader(br);
-            log.debug("header : {}", header);
-            Map<String, String> body = HttpRequestUtils.readBody(br, requestLine, header);
-            log.debug("body : {}", body);
-
-            Request request = Request.of(requestLine, header, body);
-
+            Request request = RequestUtills.generateRequest(in);
             Response response = Router.routing(request);
+            ResponseUtils.response(out, response);
 
-            ResponseHandler responseHandler = new ResponseHandler();
-            responseHandler.response(out, response);
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
-    }
 
+    }
 }
