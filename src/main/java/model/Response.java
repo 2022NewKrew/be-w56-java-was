@@ -1,26 +1,28 @@
 package model;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
+@Builder
 public class Response {
     private String httpMethod;
-    private String contextType;
-    private String urlPath;
+    private String respContextType;
+    private String url;
+    private String cookie;
+    private byte[] body;
 
-    @Builder
-    public Response(String httpMethod, String contextType, String urlPath){
-        this.httpMethod = httpMethod;
-        this.contextType = contextType;
-        this.urlPath = urlPath;
+    public static Response of(Request request, String url, byte[] body) {
+        return Response.builder()
+                .httpMethod(request.getHttpMethod())
+                .respContextType(request.getRespContextType())
+                .url(url)
+                .body(body)
+                .cookie("")
+                .build();
     }
 
-    public static Response of(String httpMethod, String contextType, String urlPath) {
-        return Response.builder()
-                .httpMethod(httpMethod)
-                .contextType(contextType)
-                .urlPath(urlPath)
-                .build();
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
     }
 }
