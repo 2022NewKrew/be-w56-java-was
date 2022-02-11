@@ -4,7 +4,7 @@ import controller.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.AbstractMultivaluedMap;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Created by melodist
@@ -41,7 +41,7 @@ public class HttpResponseUtils {
         return responseStringBuilder.toString();
     }
 
-    private static String createHeaderString(AbstractMultivaluedMap<String, String> headers) {
+    private static String createHeaderString(MultivaluedMap<String, String> headers) {
         StringBuilder headersStringBuilder = new StringBuilder();
         headers.forEach((k, v) -> v.forEach(s -> headersStringBuilder.append(k).append(": ").append(s).append(CRLF)) );
         return headersStringBuilder.toString();

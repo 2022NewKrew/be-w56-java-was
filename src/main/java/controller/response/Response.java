@@ -2,8 +2,8 @@ package controller.response;
 
 import util.HttpStatus;
 
-import javax.ws.rs.core.AbstractMultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Created by melodist
@@ -12,14 +12,14 @@ import javax.ws.rs.core.MultivaluedHashMap;
  */
 public class Response {
     private HttpStatus httpStatus;
-    private AbstractMultivaluedMap<String, String> responseHeader;
+    private MultivaluedMap<String, String> responseHeader;
     private byte[] responseBody;
 
     public HttpStatus getHttpStatus() {
         return httpStatus;
     }
 
-    public AbstractMultivaluedMap<String, String> getResponseHeader() {
+    public MultivaluedMap<String, String> getResponseHeader() {
         return responseHeader;
     }
 
@@ -29,7 +29,7 @@ public class Response {
 
     public static class Builder {
         private HttpStatus httpStatus;
-        private AbstractMultivaluedMap<String, String> responseHeader;
+        private MultivaluedMap<String, String> responseHeader;
         private byte[] responseBody;
 
         public Builder() {
@@ -55,7 +55,7 @@ public class Response {
             responseHeader.add(key, value);
             return this;
         }
-        public Builder headers(AbstractMultivaluedMap<String, String> headers) {
+        public Builder headers(MultivaluedMap<String, String> headers) {
             this.responseHeader = headers;
             return this;
         }
