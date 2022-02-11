@@ -12,7 +12,7 @@ public class JdbcConnection {
         if(connection == null){
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://10.202.180.9:3306/theodb", "theo", "aA45124152@@");
+                connection = DriverManager.getConnection("jdbc:mysql://10.202.180.9:3306/theodb?autoReconnect=true&validationQuery=select 1", "theo", "password");
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }

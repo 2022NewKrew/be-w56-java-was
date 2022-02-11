@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;

@@ -1,5 +1,6 @@
 package repository;
 
+import model.Memo;
 import model.User;
 
 import java.util.Collection;

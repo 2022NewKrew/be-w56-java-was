@@ -1,10 +1,12 @@
 package webserver;
 
+import model.Memo;
 import model.Request;
 import model.Response;
 import model.User;
 import repository.UserRepository;
 import service.AuthService;
+import service.MemoService;
 import util.Cookie;
 import util.HttpStatus;
 
@@ -21,8 +23,9 @@ public enum RequestMappingPath {
     ROOT("/") {
         @Override
         public Response handle(Request request, DataOutputStream dos) throws Exception {
+            Collection<Memo> memos = MemoService.showMemos(request);
             return new Response.Builder(dos)
-                    .body(Files.readAllBytes(new File(DEFAULT_PATH + "/index.html").toPath()))
+                    .body(renderDynamicTemplate(memos, "/index.html").getBytes())
                     .status(HttpStatus.OK)
                     .contentType(request.getContentType())
                     .build();
@@ -50,7 +53,6 @@ public enum RequestMappingPath {
                         .build();
             }
             Cookie cookie = (AuthService.login(request))? new Cookie("logined", "true") : new Cookie("logined", "false");
-            System.out.println(cookie);
             return new Response.Builder(dos)
                     .status(HttpStatus.FOUND)
                     .headers("Set-Cookie", cookie.toString())
@@ -74,7 +76,19 @@ public enum RequestMappingPath {
             }
             return result.build();
         }
-    };
+    },
+    MEMO_CREATE("/memo/create") {
+        @Override
+        public Response handle(Request request, DataOutputStream dos) throws Exception {
+            MemoService.createMemo(request);
+            return new Response.Builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .headers("Location", "/")
+                    .contentType(request.getContentType())
+                    .build();
+        }
+    }
+    ;
 
     private static final UserRepository userRepository;
 

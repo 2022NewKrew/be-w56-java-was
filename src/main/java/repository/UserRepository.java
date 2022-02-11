@@ -24,7 +24,7 @@ public class UserRepository implements Repository<User>{
             psmt.setString(4, user.getPassword());
             psmt.execute();
 
-            conn.close();
+            JdbcConnection.close();
             psmt.close();
         } catch (SQLException e) {
             log.error("could not create user : {}", e.getMessage());
@@ -45,7 +45,7 @@ public class UserRepository implements Repository<User>{
                 User user = userMaker(rs);
                 result.add(user);
             }
-            conn.close();
+            JdbcConnection.close();
             psmt.close();
             return result;
 
@@ -69,7 +69,30 @@ public class UserRepository implements Repository<User>{
             if (rs.next())
                 user = userMaker(rs);
 
-            conn.close();
+            JdbcConnection.close();
+            psmt.close();
+            return Optional.of(user);
+
+        } catch (SQLException e) {
+            log.error("could not find user : {}", e.getMessage());
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> findByName(String name) {
+        String sql = "SELECT USER_ID, NAME, EMAIL, PASSWORD FROM USER_WAS WHERE NAME = ?";
+        try {
+            Connection conn = JdbcConnection.getConnection();
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setString(1, name);
+            ResultSet rs = psmt.executeQuery();
+
+            User user = null;
+            if (rs.next())
+                user = userMaker(rs);
+
+            JdbcConnection.close();
             psmt.close();
             return Optional.of(user);
 
@@ -92,7 +115,7 @@ public class UserRepository implements Repository<User>{
             psmt.setString(4, user.getUserId());
             psmt.execute();
 
-            conn.close();
+            JdbcConnection.close();
             psmt.close();
 
         } catch (SQLException e) {
@@ -111,7 +134,7 @@ public class UserRepository implements Repository<User>{
             psmt.setString(1, user.getUserId());
             psmt.execute();
 
-            conn.close();
+            JdbcConnection.close();
             psmt.close();
 
         } catch (SQLException e) {
