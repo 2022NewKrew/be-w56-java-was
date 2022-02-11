@@ -50,8 +50,13 @@ public enum Header {
 
     public abstract void exampleHeader(String parameter, Boolean logined);
 
-    public void setCookie(Boolean logined){
-        addParameter("Set-Cookie", "logined="+ logined.toString() +"; Path=/");
+    public void setCookie(Boolean login){
+        if(login){
+            addParameter("Set-Cookie", "logined=true; Path=/");
+        }
+        else{
+            addParameter("Set-Cookie", "logined=false; Path=/");
+        }
     }
 
 

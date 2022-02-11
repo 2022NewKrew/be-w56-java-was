@@ -30,23 +30,20 @@ public class WebService {
 
         while(true){
             String next = bufferedReader.readLine().trim();
-            log.debug("Next {}", next);
             if(next.isEmpty()){
                 break;
             }
             String[] splitLine = next.split(" ");
-            if (splitLine[0].equals("POST")) {
-                method = "POST";
+            if (splitLine.length <= 1){
+                continue;
+            }
+            if (splitLine[0].equals("POST") || splitLine[0].equals("GET")) {
+                method = splitLine[0];
                 toURL = splitLine[1];
                 String[] subString = toURL.split("\\.");
                 type = (subString.length > 0)? subString[subString.length-1] : "html";
             }
-            if (splitLine[0].equals("GET")) {
-                method = "GET";
-                toURL = splitLine[1];
-                String[] subString = toURL.split("\\.");
-                type = (subString.length > 0)? subString[subString.length-1] : "html";
-            }
+
             if (splitLine[0].equals("Content-Length:")) {
                 contentLength = splitLine[1];
             }
@@ -57,8 +54,6 @@ public class WebService {
         requestParse.put("method", method);
         requestParse.put("URL", toURL);
         requestParse.put("contentLength", contentLength);
-        //TODO type 별 다른 응답
-        type = (type.equals("css")) ? "css" : "html";
         requestParse.put("type", type);
 
         if (method.equals("POST") & !contentLength.isEmpty()){
