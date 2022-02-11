@@ -1,8 +1,8 @@
 package mapper;
 
 import dto.UserDto;
-import java.sql.Timestamp;
-import java.time.temporal.ChronoUnit;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import model.User;
 import org.bson.Document;
@@ -48,10 +48,12 @@ public interface UserMapper {
                 document.getString("password"),
                 document.getString("name"),
                 document.getString("email"),
-                new Timestamp(document.getDate("createTime").getTime()).toLocalDateTime()
-                        .minus(9, ChronoUnit.HOURS),
-                new Timestamp(document.getDate("modifiedTime").getTime()).toLocalDateTime()
-                        .minus(9, ChronoUnit.HOURS)
+                Instant.ofEpochMilli(document.getDate("createTime").getTime())
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime(),
+                Instant.ofEpochMilli(document.getDate("modifiedTime").getTime())
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime()
         );
     }
 

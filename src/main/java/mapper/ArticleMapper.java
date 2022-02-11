@@ -40,10 +40,10 @@ public interface ArticleMapper {
                 document.getString("author"),
                 document.getString("content"),
                 Instant.ofEpochMilli(document.getDate("createTime").getTime())
-                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .atZone(ZoneId.systemDefault())
                         .toLocalDateTime(),
                 Instant.ofEpochMilli(document.getDate("modifiedTime").getTime())
-                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .atZone(ZoneId.systemDefault())
                         .toLocalDateTime()
         );
     }
