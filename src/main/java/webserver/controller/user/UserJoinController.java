@@ -13,8 +13,6 @@ import webserver.controller.Controller;
 import webserver.domain.entity.User;
 import webserver.domain.repository.UserRepository;
 
-import java.util.Map;
-
 @RequiredArgsConstructor
 public class UserJoinController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserJoinController.class);
@@ -38,7 +36,7 @@ public class UserJoinController implements Controller {
 
     private HttpResponse handleJoin(HttpRequest httpRequest){
         User user = createUser(httpRequest);
-        userRepository.saveUser(user);
+        userRepository.save(user);
         log.info("created user {}", user);
 
         return HttpResponse.builder(HttpStatus.REDIRECT, ContentType.HTML)

@@ -3,7 +3,7 @@ package util.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypeChecker {
+class TypeChecker {
     public static boolean equals(Class<?> type1, Class<?> type2) {
         return getAncestor(type1).equals(type2);
     }

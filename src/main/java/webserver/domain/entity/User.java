@@ -1,5 +1,6 @@
 package webserver.domain.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -7,6 +8,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @ToString
 @Getter
+@EqualsAndHashCode
 public class User {
     private final String userId;
     private final String password;

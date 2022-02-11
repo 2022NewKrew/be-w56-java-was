@@ -5,7 +5,7 @@ import webserver.domain.entity.User;
 
 import java.util.Map;
 
-public class MapToUserConverter implements Converter<Map<String, String>, User>{
+class MapToUserConverter implements Converter<Map<String, String>, User>{
     @Override
     public boolean support(Class<?> fromType, Class<?> toType) {
         return TypeChecker.equals(fromType, Map.class)
