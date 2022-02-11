@@ -6,76 +6,81 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class WebService {
 
-    private static final String URL_PREFIX = "./webapp";
+    public static final String URL_PREFIX = "./webapp";
     private static final Logger log = LoggerFactory.getLogger(WebService.class);
 
     public static HashMap<String, String> parseRequest(BufferedReader bufferedReader) throws Exception {
 
         String method = "";
         String toURL = "";
+        String type = "html";
         String contentLength = "";
 
         while(true){
             String next = bufferedReader.readLine().trim();
-            log.debug(next);
             if(next.isEmpty()){
                 break;
             }
             String[] splitLine = next.split(" ");
-            if (splitLine[0].equals("POST")) {
-                method = "POST";
-                toURL = splitLine[1];
+            if (splitLine.length <= 1){
+                continue;
             }
-            if (splitLine[0].equals("GET")) {
-                method = "GET";
+            if (splitLine[0].equals("POST") || splitLine[0].equals("GET")) {
+                method = splitLine[0];
                 toURL = splitLine[1];
+                String[] subString = toURL.split("\\.");
+                type = (subString.length > 0)? subString[subString.length-1] : "html";
             }
+
             if (splitLine[0].equals("Content-Length:")) {
                 contentLength = splitLine[1];
             }
         }
 
-        log.debug("Extract results, method : {}, toURL : {}, contentLength : {}", method, toURL, contentLength);
+        log.debug("Extract results, method : {}, toURL : {}, contentLength : {}, type {}", method, toURL, contentLength, type);
         HashMap<String, String> requestParse = new HashMap<>();
         requestParse.put("method", method);
         requestParse.put("URL", toURL);
         requestParse.put("contentLength", contentLength);
+        requestParse.put("type", type);
 
         if (method.equals("POST") & !contentLength.isEmpty()){
             String body = IOUtils.readData(bufferedReader, Integer.parseInt(contentLength));
-            log.debug("print body {}", body);
             requestParse.put("body", body);
         }
 
         return requestParse;
     }
 
-    public static User createUser(String testURL){
-
-        String[] parameter = testURL.split("&");
+    public static HashMap<String, String> parseURLBody(String body){
+        String[] parameter = body.split("&");
         HashMap<String, String> parameterMap = new HashMap<>();
 
         Arrays.stream(parameter).forEach(s -> parameterMap.put(s.split("=")[0], s.split("=")[1]));
-        log.debug("createUser, parameter get {}", parameterMap.toString());
+        log.debug("parseURLBody, parameter get {}", parameterMap.toString());
 
-        User createUser = new User(parameterMap.get("userId"), parameterMap.get("password"), parameterMap.get("name"), parameterMap.get("email"));
-        DataBase.addUser(createUser);
-
-        return createUser;
-
+        return parameterMap;
     }
+
     public static String extractFunction(String ansURL){
         String[] list = ansURL.split("\\?")[0].split("/");
-        return list[list.length-1];
+
+        if (list.length > 0){
+            return list[list.length-1];
+        }
+        return "";
     }
 
     public static byte[] openUrl(String url){
@@ -84,12 +89,10 @@ public class WebService {
         Path openURL = Paths.get(fullURL);
 
         try{
-            byte[] openFile = Files.readAllBytes(openURL);
-            return openFile;
+            return Files.readAllBytes(openURL);
         } catch(Exception e){
             log.debug("openURL exception {}", openURL);
-            byte[] openFile = {};
-            return openFile;
+            return new byte[]{};
         }
     }
 
