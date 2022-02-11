@@ -1,10 +1,10 @@
 package framework.handler;
 
-import util.HttpRequest;
+import webserver.request.HttpRequest;
 
 import java.lang.reflect.Method;
 
-// (reflection 용)controller 의 method, Controller 객체, (match 용) HTTP Method, path 를 가지고 있음
+// (reflection 용)application.controller 의 method, Controller 객체, (match 용) HTTP Method, path 를 가지고 있음
 public class HandlerMethod {
 
     private Object bean;

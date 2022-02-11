@@ -173,3 +173,7 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,gradle,intellij+all
+
+# 임시 파일
+src/main/java/framework/template/TemplateParser.java
+src/main/java/framework/template/TemplateParser2.java

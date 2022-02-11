@@ -1,10 +1,12 @@
 package framework;
 
 import framework.handler.Handler;
+import framework.modelAndView.ModelAndView;
+import framework.modelAndView.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequest;
-import util.HttpResponse;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 
 import java.io.IOException;
 
@@ -33,11 +35,21 @@ public class FrontController {
             return ;
         }
 
+        ModelAndView mv = null;
+
         // 반환할 html 이름을 반환 (Resource 일 경우 파일을 로드하고 null 반환)
-        String viewName = mappedHandler.handle(req, res);
+        mv = mappedHandler.handle(req, res);
         // html 을 HttpResponse 의 body 로 로드
-        if (viewName != null)
-            viewResolver.render(viewName, req, res);
+        if (mv != null)
+            render(mv, req, res);
+
+    }
+
+    private void render(ModelAndView mv, HttpRequest req, HttpResponse res) throws IOException {
+        View view = viewResolver.resolveViewName(mv.getViewName());
+        if (view != null) {
+            view.render(mv, req, res);
+        }
 
     }
 }

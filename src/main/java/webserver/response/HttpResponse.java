@@ -1,9 +1,9 @@
-package util;
+package webserver.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.request.HttpRequest;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,19 +65,8 @@ public class HttpResponse {
         headers.put(key, value);
     }
 
-    private byte[] responseHeader() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("HTTP/1.1 " + statusCode +" OK \r\n");
-        sb.append("Content-Length: " + body.length + "\r\n");
-        headers.entrySet().stream().forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\r\n"));
-        sb.append("\r\n");
-//        log.info("Request Path: {}, Method: {}", httpRequest.getPath(), httpRequest.getMethod());
-//        log.info(sb.toString());
-        return sb.toString().getBytes(StandardCharsets.UTF_8);
-    }
-
     public byte[] toByte() {
-        byte[] header = responseHeader();
+        byte[] header = HttpResponseBuilder.responseHeader(this);
         byte[] response = new byte[header.length + body.length];
         System.arraycopy(header, 0, response, 0, header.length);
         System.arraycopy(body, 0, response, header.length, body.length);

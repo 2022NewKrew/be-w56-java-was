@@ -1,7 +1,8 @@
 package framework.handler;
 
-import util.HttpRequest;
-import util.HttpResponse;
+import framework.modelAndView.ModelAndView;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -17,19 +18,24 @@ public class RequestMappingHandler extends Handler{
     }
 
     @Override
-    public String handle(HttpRequest req, HttpResponse res) {
+    public ModelAndView handle(HttpRequest req, HttpResponse res) {
+
+        ModelAndView mv = new ModelAndView();
+
         HandlerMethod method = lookupHandlerMethod(req).get();
         Object returnValue = null;
         try {
             // Controller 의 Method 호출
             // view 네임 반환됨
-            returnValue = method.getHandleMethod().invoke(method.getBean(), req, res);
+            returnValue = method.getHandleMethod().invoke(method.getBean(), mv, req, res);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        return (String) returnValue;
+
+        mv.setViewName((String) returnValue);
+        return mv;
     }
 
     @Override

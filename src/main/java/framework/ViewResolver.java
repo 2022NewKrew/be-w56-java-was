@@ -1,24 +1,36 @@
 package framework;
 
-import util.HttpRequest;
-import util.HttpResponse;
+import framework.modelAndView.ModelAndView;
+import framework.modelAndView.View;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 import util.MIME;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 
 public class ViewResolver {
 
-    public void render(String viewName, HttpRequest req, HttpResponse res) throws IOException {
-        // 302 리다이렉트일 경우
-        if (res.getStatusCode() == 302) {
-            res.addHeader("Location", viewName);
-            return ;
+    private final Map<String, View> viewMap;
+
+    public ViewResolver(Map<String, View> viewMap) {
+        this.viewMap = viewMap;
+    }
+
+    public Map<String, View> getViewMap() {
+        return viewMap;
+    }
+
+    // 정규표현식으로 반별
+    public View resolveViewName(String viewName) {
+        for (String supportView : viewMap.keySet()) {
+            if (viewName.matches(supportView)) {
+                return viewMap.get(supportView);
+            }
         }
 
-        byte[] body = Files.readAllBytes(new File("./webapp" + viewName).toPath());
-        res.addHeader("Content-Type", MIME.getMediaType(viewName));
-        res.setBody(body);
+        return null;
     }
 }

@@ -1,8 +1,16 @@
-package util;
+package webserver.request;
 
-import java.io.*;
+import util.IOUtils;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HttpRequest {
 
@@ -14,6 +22,7 @@ public class HttpRequest {
     private Map<String, String> queryStrings = new HashMap<>();
     private String body;
     private Map<String, String> headers = new HashMap<>();
+    private Cookie cookie;
 
     public HttpRequest(String rawReqeust) {
 
@@ -21,6 +30,7 @@ public class HttpRequest {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(rawReqeust.getBytes(StandardCharsets.UTF_8))));
             parseFirstLine(br);
             parseHeader(br);
+            parseCookie();
             parseBody(br);
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,6 +69,19 @@ public class HttpRequest {
         this.body = IOUtils.readData(br, contentLength);
     }
 
+
+    private void parseCookie() {
+        String strCookie = headers.get("Cookie");
+        if (strCookie == null) {
+            this.cookie =  new Cookie();
+        }
+        this.cookie = new Cookie(HttpRequestUtils.parseCookies(strCookie));
+    }
+
+    public Cookie getCookie() {
+        return cookie;
+    }
+
     public String getMethod() {
         return method;
     }
@@ -85,5 +108,9 @@ public class HttpRequest {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public String getHeaderByKey(String key) {
+        return headers.get(key);
     }
 }

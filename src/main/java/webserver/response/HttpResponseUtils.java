@@ -1,4 +1,4 @@
-package util;
+package webserver.response;
 
 public class HttpResponseUtils {
 }

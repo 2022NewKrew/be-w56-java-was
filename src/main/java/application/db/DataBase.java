@@ -1,11 +1,11 @@
-package db;
+package application.db;
 
-import java.util.Collection;
-import java.util.Map;
-
+import application.domain.User;
 import com.google.common.collect.Maps;
 
-import domain.User;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class DataBase {
 
@@ -16,6 +16,7 @@ public class DataBase {
     }
 
     static {
+
         User user = new User("testID", "1234", "김민수", "raon.su@kakaocorp.com");
         addUser(user);
     }
@@ -24,7 +25,7 @@ public class DataBase {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public static List<User> findAll() {
+        return new ArrayList<User>(users.values());
     }
 }
