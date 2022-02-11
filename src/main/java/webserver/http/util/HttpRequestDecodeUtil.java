@@ -1,13 +1,44 @@
-package util;
+package webserver.http.util;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import util.ObjectUtil;
+import webserver.http.message.HttpStartLine;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
+public class HttpRequestDecodeUtil {
 
-public class HttpRequestUtils {
+    private HttpRequestDecodeUtil() {
+
+    }
+
+    public static HttpStartLine parseStartLine(String startLine) {
+        ObjectUtil.checkNotNull(startLine, "startLine");
+
+        final String[] tokens = startLine.split(" ");
+        if(tokens.length != 3) {
+            throw new RuntimeException("[ERROR] Http Request format invalid : " + startLine);
+        }
+
+        if(tokens[1].contains("?")) {
+            final String[] uriAndQueryStrings = tokens[1].split("\\?");
+            return new HttpStartLine(tokens[0], uriAndQueryStrings[0], uriAndQueryStrings[1], tokens[2]);
+        }
+
+        return new HttpStartLine(tokens[0], tokens[1], tokens[2]);
+    }
+
+    public static String[] parseHeaderNames(String headerLine) {
+        ObjectUtil.checkNotNull(headerLine, "headerLine");
+        int idx = headerLine.indexOf(":");
+        String key = headerLine.substring(0, idx).trim();
+        String value = headerLine.substring(idx + 1).trim();
+        return new String[]{key, value};
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -47,10 +78,6 @@ public class HttpRequestUtils {
         }
 
         return new Pair(tokens[0], tokens[1]);
-    }
-
-    public static Pair parseHeader(String header) {
-        return getKeyValue(header, ": ");
     }
 
     public static class Pair {
