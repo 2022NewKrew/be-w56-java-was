@@ -33,4 +33,11 @@ public class exceptionHandler {
                 View.staticFile("/errors/loginFailed.html"));
         View.sendResponse(out, httpResponse.message());
     }
+
+    public static void logoutFailed(OutputStream out, String message) throws IOException {
+        log.error(message);
+        HttpResponse httpResponse = HttpClientErrorResponse.of(HttpStatus.UNAUTHORIZED,
+                View.staticFile("/errors/logoutFailed.html"));
+        View.sendResponse(out, httpResponse.message());
+    }
 }

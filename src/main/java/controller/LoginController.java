@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import model.Cookie;
 import model.HttpClientErrorResponse;
 import model.HttpMethod;
 import model.HttpRedirectionResponse;
@@ -25,7 +26,6 @@ public class LoginController implements Controller {
     private static final String PAIR_SPLIT_DELIMITER = "&";
     private static final String KEY_VALUE_SPLIT_DELIMITER = "=";
     private static final int KEY_VALUE_SPLIT_RESULT_SIZE = 2;
-    private static final String LOGIN_COOKIE = "logined=true";
     private static LoginController instance;
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
@@ -51,7 +51,7 @@ public class LoginController implements Controller {
         return loginElementMap;
     }
 
-    public void validLogin(String body) {
+    private void validLogin(String body) {
         Map<String, String> userElementMap = getLoginElement(body);
         String userId = userElementMap.get("userId");
         String password = userElementMap.get("password");
@@ -73,7 +73,7 @@ public class LoginController implements Controller {
     public HttpResponse run(HttpRequest request) throws IOException {
         if (request.getHttpMethod() == HttpMethod.POST) {
             validLogin(request.getBody());
-            return HttpRedirectionResponse.of(HttpStatus.FOUND, "/post/list.html", LOGIN_COOKIE);
+            return HttpRedirectionResponse.of(HttpStatus.FOUND, "/post/list.html", Cookie.makeByLoginSuccess(true));
         }
         return HttpClientErrorResponse.of(HttpStatus.NOT_FOUND, View.staticFile("/errors/notFound.html"));
     }

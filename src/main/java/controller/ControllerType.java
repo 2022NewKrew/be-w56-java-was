@@ -6,7 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum ControllerType {
     STATIC_FILE_CONTROLLER("", StaticFileController.getInstance()),
     USER_CREATE_CONTROLLER("/users", UserCreateController.getInstance()),
-    LOGIN_CONTROLLER("/login", LoginController.getInstance());
+    LOGIN_CONTROLLER("/login", LoginController.getInstance()),
+    LOGOUT_CONTROLLER("/logout", LogoutController.getInstance());
 
     public static final Map<String, Controller> controllerMap = new ConcurrentHashMap<>();
 
@@ -35,5 +36,4 @@ public enum ControllerType {
     public Controller getController() {
         return controller;
     }
-
 }
