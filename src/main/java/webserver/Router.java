@@ -28,13 +28,13 @@ public class Router {
         }
         log.info("dynamic response");
 
-        Reflections reflections = new Reflections("controller");
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        Class<?> controller = getMatchingController(classes, path);
+        Reflections reflections = new Reflections();
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Class<?> matchedController = getMatchingController(controllers, path);
         try {
-            Method[] methods = controller.getMethods();
+            Method[] methods = matchedController.getMethods();
             Method method = getMatchingMethod(methods, path, requestMethod);
-            return (HttpResponse) method.invoke(controller.getConstructor().newInstance(), httpRequest);
+            return (HttpResponse) method.invoke(matchedController.getConstructor().newInstance(), httpRequest);
         } catch (NoSuchPathException e) {
             log.error("NoSuchPathException occurred");
             return ResponseGenerator.generateResponse404();
