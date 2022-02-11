@@ -3,9 +3,9 @@ package controller;
 import collections.RequestBody;
 import collections.RequestHeaders;
 import collections.RequestStartLine;
-import collections.ResponseHeaders;
 import http.HttpResponse;
 import http.HttpRequest;
+import service.MemoService;
 import service.UserService;
 
 import java.io.DataOutputStream;
@@ -17,9 +17,11 @@ import java.util.HashMap;
 public class PostController implements Controller {
 
     private final UserService userService;
+    private final MemoService memoService;
 
-    public PostController(UserService userService) {
+    public PostController(UserService userService, MemoService memoService) {
         this.userService = userService;
+        this.memoService = memoService;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class PostController implements Controller {
         var headers = new HashMap<String, String>();
         headers.put("Location", "/");
 
-        userService.post(requestBody.getBodies());
+        memoService.post(requestBody.getBodies());
 
         return HttpResponse.create302RedirectHttpResponse(headers);
     }
