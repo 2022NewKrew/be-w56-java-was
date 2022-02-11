@@ -1,27 +1,28 @@
-package application.db;
+package application.db.repository;
 
-import application.domain.User;
-import com.google.common.collect.Maps;
+import application.db.DataSource;
+import application.db.DataSourceUtils;
+import application.domain.Memo;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class UserRepository {
+public class MemoRepository {
 
     private final DataSource dataSource;
 
-    public UserRepository(DataSource dataSource) {
+    public MemoRepository(DataSource dataSource) {
         this.dataSource = dataSource;
 
-        createUserTable();
-        User user = new User("testID", "1234", "김민수", "raon.su@kakaocorp.com");
-        addUser(user);
+        createMemoTable();
+        Memo memo = new Memo("testID", "안녕하세요~!~!~", LocalDate.now());
+        addMemo(memo);
     }
 
-    public void addUser(User user) {
-        final String sql = "INSERT INTO users VALUES(?,?,?,?)";
+    public void addMemo(Memo memo) {
+        final String sql = "INSERT INTO memos(`userId`, `content`, `date`) VALUES(?,?,?);";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -31,10 +32,9 @@ public class UserRepository {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, user.getUserId());
-            pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
+            pstmt.setString(1, memo.getUserId());
+            pstmt.setString(2, memo.getContent());
+            pstmt.setDate(3, Date.valueOf(memo.getLocalDate()));
 
             pstmt.execute();
         } catch (SQLException e) {
@@ -45,8 +45,8 @@ public class UserRepository {
 
     }
 
-    public User findUserById(String userId) {
-        final String sql = "SELECT * FROM users WHERE userId = ?";
+    public Memo findMemoById(String userId) {
+        final String sql = "SELECT * FROM memos WHERE userId = ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -59,8 +59,8 @@ public class UserRepository {
             pstmt.setString(1, userId);
 
             rs = pstmt.executeQuery();
-            rs.next();
-            return userMapper(rs);
+
+            return memoMapper(rs);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,13 +69,13 @@ public class UserRepository {
         return null;
     }
 
-    public List<User> findAll() {
-        final String sql = "SELECT * FROM users";
+    public List<Memo> findAll() {
+        final String sql = "SELECT * FROM memos";
 
         Connection conn = null;
         ResultSet rs = null;
 
-        List<User> users = new ArrayList<>();
+        List<Memo> memos = new ArrayList<>();
 
         try {
             conn = getConnection();
@@ -83,29 +83,30 @@ public class UserRepository {
             rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                users.add(userMapper(rs));
+                memos.add(memoMapper(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return users;
+        return memos;
     }
 
-    private User userMapper(ResultSet rs) throws SQLException {
-        return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
+    private Memo memoMapper(ResultSet rs) throws SQLException {
+        return new Memo(rs.getString("userId"), rs.getString("content"), rs.getDate("date").toLocalDate());
     }
 
-    private void createUserTable() {
+    private void createMemoTable() {
         Connection conn = null;
         Statement statement = null;
 
-        final String sql = "drop table if exists users CASCADE;" +
-                " CREATE TABLE users (" +
-                " userId VARCHAR(125) PRIMARY KEY," +
-                " password VARCHAR(125) NOT NULL," +
-                " name VARCHAR(125) NOT NULL," +
-                " email VARCHAR(125) NOT NULL" +
+        final String sql = "drop table if exists memos CASCADE;" +
+                " CREATE TABLE memos (" +
+                " id bigint PRIMARY KEY AUTO_INCREMENT," +
+                " userId varchar(125)," +
+                " content TEXT," +
+                " date DATE NOT NULL," +
+                " foreign key (userId) references users(userId) on delete CASCADE" +
                 ");";
 
         try {
@@ -145,5 +146,4 @@ public class UserRepository {
     private void close(Connection conn) {
         DataSourceUtils.releaseConnection(conn);
     }
-
 }

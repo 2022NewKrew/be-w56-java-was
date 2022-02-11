@@ -1,6 +1,6 @@
 package application.domain;
 
-import application.db.MemoRepository;
+import application.db.repository.MemoRepository;
 
 import java.util.List;
 

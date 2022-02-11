@@ -3,7 +3,7 @@ package application.controller;
 import application.domain.Memo;
 import application.domain.MemoService;
 import framework.modelAndView.ModelAndView;
-import framework.util.RequestMapping;
+import framework.annotation.RequestMapping;
 import webserver.request.HttpRequest;
 import webserver.request.HttpRequestUtils;
 import webserver.response.HttpResponse;

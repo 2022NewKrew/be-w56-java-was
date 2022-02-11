@@ -1,13 +1,12 @@
 package framework.config;
 
 import application.controller.MemoController;
+import application.controller.UserController;
 import application.db.DataSource;
-import application.db.MemoRepository;
-import application.db.UserRepository;
+import application.db.repository.MemoRepository;
+import application.db.repository.UserRepository;
 import application.domain.MemoService;
 import application.domain.UserService;
-import application.controller.UserController;
-import application.db.DataBase;
 
 public class Beans {
 

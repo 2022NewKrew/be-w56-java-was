@@ -1,10 +1,10 @@
 package application.controller;
 
-import application.domain.UserService;
-import framework.util.RequestMapping;
 import application.domain.User;
+import application.domain.UserService;
 import application.domain.dto.LoginDto;
 import framework.modelAndView.ModelAndView;
+import framework.annotation.RequestMapping;
 import webserver.request.HttpRequest;
 import webserver.request.HttpRequestUtils;
 import webserver.response.HttpResponse;

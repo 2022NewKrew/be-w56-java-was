@@ -2,7 +2,7 @@ package framework.template;
 
 import framework.modelAndView.Model;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class TemplateParser {

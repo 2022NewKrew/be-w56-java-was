@@ -9,7 +9,7 @@ import framework.handler.RequestMappingHandler;
 import framework.handler.ResourceRequestHandler;
 import framework.modelAndView.view.RedirectView;
 import framework.modelAndView.view.TemplateView;
-import framework.util.RequestMapping;
+import framework.annotation.RequestMapping;
 import framework.modelAndView.view.StaticView;
 import framework.modelAndView.View;
 

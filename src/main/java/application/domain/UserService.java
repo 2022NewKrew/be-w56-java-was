@@ -1,7 +1,6 @@
 package application.domain;
 
-import application.db.DataBase;
-import application.db.UserRepository;
+import application.db.repository.UserRepository;
 import application.domain.dto.LoginDto;
 
 import java.util.List;

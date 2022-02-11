@@ -16,7 +16,6 @@ public class TemplateView extends View {
     @Override
     public void render(ModelAndView mv, HttpRequest req, HttpResponse res) throws IOException {
         String templateName = mv.getViewName();
-//        String template = new String(Files.readAllBytes(new File("./webapp/template" + templateName + ".html").toPath()));
         String template = Files.readString(Path.of("./webapp/template" + templateName + ".html"));
 
         TemplateParser3 templateParser3 = new TemplateParser3(template, mv.getModel());

@@ -5,7 +5,6 @@ import framework.modelAndView.Model;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,24 +76,22 @@ public class TemplateParser3 {
     }
 
     private Integer processObjectBlock(String targetAttributeName, Object inAttribute) {
-        int returnIndex = index;
         int lastIndex = template.indexOf("{{/" + targetAttributeName +"}}") - 1;
-        replaceAllTag(returnIndex, lastIndex, inAttribute);
+        replaceAllTag(lastIndex, inAttribute);
         return lastIndex + targetAttributeName.length() + 5;
     }
 
     private Integer processListBlock(String targetAttributeName, Object inAttribute) {
-        int returnIndex = index;
         int lastIndex = template.indexOf("{{/" + targetAttributeName +"}}") - 1;
 
         for (Object obj : (List) inAttribute) {
-            replaceAllTag(returnIndex, lastIndex, obj);
+            replaceAllTag(lastIndex, obj);
         }
 
         return lastIndex + targetAttributeName.length() + 5;
     }
 
-    private void replaceAllTag(int startIndex, int lastIndex, Object modelAttribute) {
+    private void replaceAllTag(int lastIndex, Object modelAttribute) {
         String template = this.template.substring(index, lastIndex);
         Matcher matcher = TAG_TYPE_PATTERN.matcher(template);
         while (matcher.find()) {

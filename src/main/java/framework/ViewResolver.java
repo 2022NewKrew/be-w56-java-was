@@ -23,6 +23,7 @@ public class ViewResolver {
         return viewMap;
     }
 
+    // 정규표현식으로 반별
     public View resolveViewName(String viewName) {
         for (String supportView : viewMap.keySet()) {
             if (viewName.matches(supportView)) {
