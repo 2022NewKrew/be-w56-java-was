@@ -3,7 +3,9 @@ package cafe.controller.user;
 import cafe.controller.exception.IncorrectLoginUserException;
 import cafe.dto.LoginDto;
 import cafe.dto.UserCreateDto;
+import cafe.dto.UserDto;
 import cafe.service.UserService;
+import cafe.view.UserView;
 import framework.annotation.Controller;
 import framework.annotation.RequestBody;
 import framework.annotation.RequestMapping;
@@ -15,13 +17,16 @@ import framework.http.response.HttpStatus;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Controller
 public class UserController {
     private final UserService userService;
+    private final UserView userView;
 
     public UserController() {
         this.userService = new UserService();
+        this.userView = new UserView();
     }
 
     @RequestMapping(value = "/user", method = "POST")
@@ -84,7 +89,9 @@ public class UserController {
     public HttpResponse userProfileListHtml() throws IOException {
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setContentType(MediaType.TEXT_HTML);
-        String userListHtml = userService.getUserListHtml();
+
+        List<UserDto> userList = userService.getUserList();
+        String userListHtml = userView.getUserListHtml(userList);
 
         return new HttpResponse(HttpStatus.OK, responseHeader, userListHtml.getBytes(StandardCharsets.UTF_8));
     }
