@@ -7,6 +7,7 @@ import util.ParseRequest;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Map;
 
 
@@ -44,6 +45,8 @@ public class RequestHandler extends Thread {
 
         } catch (IOException e) {
             log.error(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -55,7 +58,7 @@ public class RequestHandler extends Thread {
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             if (statusCode.equals("FOUND")) {
                 dos.writeBytes("Location: " + additionalInfo.get("location") + "\r\n");
-                dos.writeBytes("Set-Cookie: " + additionalInfo.get("cookie") + "\r\n");
+                dos.writeBytes("Set-Cookie: " + additionalInfo.get("Cookie") + "\r\n");
             }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
