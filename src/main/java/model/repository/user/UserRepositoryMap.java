@@ -1,4 +1,4 @@
-package model.repository;
+package model.repository.user;
 
 import java.util.ArrayList;
 import java.util.HashMap;

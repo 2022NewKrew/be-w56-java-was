@@ -16,4 +16,6 @@ public interface UserMapper{
     User toEntityFromSaveDto(UserCreateDto userCreateDto);
 
     List<UserResponseDto> toDtoList(List<User> users);
+
+    UserCookieDto toCookieDto(User user);
 }

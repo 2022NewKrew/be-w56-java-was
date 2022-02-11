@@ -3,11 +3,13 @@ package dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
-public class UserResponseDto {
+public class MemoResponseDto {
     private int id;
-    private String stringId;
-    private String name;
-    private String email;
+    private String content;
+    private String writer;
+    private LocalDateTime createdAt;
 }

@@ -1,35 +1,30 @@
 package service;
 
-import dto.UserCreateDto;
-import dto.UserResponseDto;
-import dto.mapper.UserMapper;
-import model.User;
-import model.repository.UserRepository;
-import model.repository.UserRepositoryMap;
+import dto.MemoCreateDto;
+import dto.MemoResponseDto;
+import dto.mapper.MemoMapper;
+import model.repository.memo.MemoRepository;
+import model.repository.memo.MemoRepositoryJdbc;
 
 import java.util.List;
 
-public class UserService {
-    private static final UserService instance = new UserService();
+public class MemoService {
+    private static final MemoService instance = new MemoService();
 
-    private UserService() {}
+    private MemoService() {}
 
-    public static UserService getInstance() {
+    public static MemoService getInstance() {
         return instance;
     }
 
-    private static final UserRepository userRepository = new UserRepositoryMap();
+    private static final MemoRepository memoRepository = new MemoRepositoryJdbc();
 
-    public void create(UserCreateDto userCreateDto){
-        userRepository.save(UserMapper.INSTANCE.toEntityFromSaveDto(userCreateDto));
+    public void create(MemoCreateDto memoCreateDto){
+        memoRepository.save(MemoMapper.INSTANCE.toEntityFromSaveDto(memoCreateDto));
     }
 
-    public List<UserResponseDto> findAll(){
-        return UserMapper.INSTANCE.toDtoList(userRepository.findAll());
-    }
-
-    public Boolean login(String stringId, String password){
-        User user = userRepository.findByStringId(stringId);
-        return user != null && user.getPassword().equals(password);
+    public List<MemoResponseDto> findAll(){
+        System.out.println(memoRepository.findAll().toString());
+        return MemoMapper.INSTANCE.toDtoList(memoRepository.findAll());
     }
 }

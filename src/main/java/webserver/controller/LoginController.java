@@ -1,5 +1,7 @@
 package webserver.controller;
 
+import dto.mapper.UserCookieDto;
+import model.User;
 import service.UserService;
 import util.annotation.RequestMapping;
 import webserver.view.ModelAndView;
@@ -19,8 +21,11 @@ public class LoginController {
     @RequestMapping(value="/login", method="POST")
     public ModelAndView login(Request request, Response response) {
         ModelAndView mv = new ModelAndView();
-        if(userService.login(request.getParameter("stringId"), request.getParameter("password"))){
+        UserCookieDto userCookieDto = userService.login(request.getParameter("stringId"), request.getParameter("password"));
+        if(userCookieDto != null){
             response.setCookie("logined", "true; Path=/");
+            response.setCookie("userId", userCookieDto.getId() +"; Path=/");
+            response.setCookie("userName", userCookieDto.getName() +"; Path=/");
             mv.setViewName("redirect:/index.html");
             return mv;
         }
