@@ -20,7 +20,6 @@ import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,6 @@ import app.http.HttpResponse;
 import app.http.HttpStatus;
 import app.http.HttpVersion;
 import app.http.Mime;
-import app.model.user.User;
 import webserver.handler.HandlerMethod;
 import webserver.handler.typeResolver.HttpResponseTypeResolver;
 import webserver.handler.typeResolver.MapTypeResolver;
@@ -93,17 +91,13 @@ public class DefaultHandlerAdapter implements HandlerAdapter {
                                           .getType(request, response, model));
             }
         }
-        if (arguments.size() == 0) {
+        if (arguments.isEmpty()) {
             return null;
         }
         return arguments;
     }
 
     private void setResponse(HttpRequest request, HttpResponse response, String path, Model model) {
-        if(!model.isEmpty()) {
-            Collection<User> users = (Collection<User>) model.getAttribute("users");
-        }
-
         if(!path.endsWith(SUFFIX)) {
             path = path + SUFFIX;
         }

@@ -44,7 +44,7 @@ public class HttpResponse {
     }
 
     public void setCookie(String name, String value) {
-        this.cookie = Cookie.of();
+        this.cookie = Cookie.from();
         cookie.setName(name);
         cookie.setValue(value);
     }
