@@ -16,4 +16,8 @@ public class LoginInfo {
     public String getPassword() {
         return password;
     }
+
+    public boolean authorize(User user) {
+        return !user.isDummyUser() && password.equals(user.getPassword());
+    }
 }

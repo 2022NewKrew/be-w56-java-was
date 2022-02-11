@@ -27,7 +27,8 @@ public enum HttpStatus {
         return statusCode;
     }
 
-    public String makeStatusLine(String version) {
-        return version + " " + codeNumber + " " + statusCode + "\r\n";
+    @Override
+    public String toString() {
+        return codeNumber + " " + statusCode;
     }
 }

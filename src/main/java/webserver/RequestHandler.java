@@ -7,7 +7,6 @@ import model.MyHttpRequest;
 import model.MyHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpResponseUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,8 +24,8 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
             MyHttpRequest myHttpRequest = new MyHttpRequest(in);
-            MyHttpResponse myHttpResponse = new MyHttpResponse(myHttpRequest);
-            HttpResponseUtils.response(out, myHttpResponse, myHttpRequest.getUri());
+            MyHttpResponse myHttpResponse = RequestMapper.createResponse(myHttpRequest, out);
+            myHttpResponse.write();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -24,7 +24,8 @@ public class MyHttpRequest {
 
     private static final Logger logger = LoggerFactory.getLogger(MyHttpRequest.class);
 
-    public MyHttpRequest() {}
+    public MyHttpRequest() {
+    }
 
     public MyHttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -33,10 +34,9 @@ public class MyHttpRequest {
         setRequest(request);
 
         br.lines().takeWhile(line -> !line.equals(""))
-                .peek(h -> logger.debug("        : {}", h))
                 .forEach(this::setHeader);
 
-        if(method.equals(HttpMethod.POST)) {
+        if (method.equals(HttpMethod.POST)) {
             String body = IOUtils.readData(br, Integer.parseInt(headers.get(CONTENT_LENGTH)));
             Stream.of(body.split("&"))
                     .forEach(this::setParameters);
