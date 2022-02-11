@@ -1,10 +1,11 @@
 package webserver.response;
 
-import com.google.common.collect.Maps;
-import java.util.Map;
+import java.util.List;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Getter
 public class Response {
@@ -13,7 +14,7 @@ public class Response {
     private static final String HTTP_VERSION = "HTTP/1.1";
 
     private final StatusCode statusCode;
-    private final Map<String, String> headers = Maps.newHashMap();
+    private final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
     private byte[] body;
 
     protected Response(StatusCode statusCode) {
@@ -21,12 +22,12 @@ public class Response {
     }
 
     protected void addHeader(String key, String value) {
-        headers.put(key, value);
+        headers.add(key, value);
     }
 
     protected void setContents(String contentType, byte[] content) {
-        headers.put("Content-Length", String.valueOf(content.length));
-        headers.put("Content-Type", contentType);
+        headers.put("Content-Length", List.of(String.valueOf(content.length)));
+        headers.put("Content-Type", List.of(contentType));
         body = content;
     }
 

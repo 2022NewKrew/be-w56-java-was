@@ -3,6 +3,7 @@ package webserver.response;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,7 @@ public final class ResponseWriter {
     }
 
     public static void write(OutputStream out, Response response) {
-        try {
-            DataOutputStream dos = new DataOutputStream(out);
+        try (DataOutputStream dos = new DataOutputStream(out)) {
             writeResponseLine(dos, response);
             writeHeaderLine(dos, response);
             writeBody(dos, response);
@@ -41,8 +41,11 @@ public final class ResponseWriter {
     private static void writeHeaderLine(DataOutputStream dos, Response response)
         throws IOException {
         for (String key : response.getHeaders().keySet()) {
-            dos.writeBytes(key + ": " + response.getHeaders().get(key) + "\r\n");
-            log.debug("http header line: {}", key + ": " + response.getHeaders().get(key));
+            List<String> values = response.getHeaders().get(key);
+            for (String value : response.getHeaders().get(key)) {
+                dos.writeBytes(key + ": " + value + "\r\n");
+                log.debug("http header line: {}", key + ": " + value);
+            }
         }
         dos.writeBytes("\r\n");
     }

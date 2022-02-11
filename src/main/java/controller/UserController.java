@@ -1,15 +1,19 @@
 package controller;
 
 import annotation.Controller;
+import annotation.GetMapping;
 import annotation.PostMapping;
 import db.DataBase;
 import exception.InvalidRequestException;
+import exception.TemplateProcessingException;
+import java.util.Collection;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.Request;
 import webserver.response.Response;
 import webserver.response.ResponseFactory;
+import webserver.response.TemplateResponse.Model;
 
 @Controller
 public final class UserController {
@@ -45,5 +49,23 @@ public final class UserController {
         }
         return ResponseFactory.redirect(HOME_URL)
             .setCookie("logined=true&userId=" + request.getParam("userId"), "Path=/");
+    }
+
+    @GetMapping("/user/list")
+    public Response userList(Request request, Model model) throws TemplateProcessingException {
+        if (validateUser(request)) {
+            Collection<User> users = DataBase.findAll();
+            log.debug("model: " + model);
+            log.debug(String.valueOf(users.size()));
+            model.addAttribute("users", users);
+            return ResponseFactory.template("user/list");
+        }
+        return ResponseFactory.template("user/list");
+    }
+
+    private boolean validateUser(Request request) {
+        //String logedIn = request.getCookieValue("login");
+        //return logedIn != null && logedIn.equals("true");
+        return true;
     }
 }

@@ -1,8 +1,11 @@
 package context;
 
 import annotation.Controller;
+import annotation.GetMapping;
 import annotation.PostMapping;
 import com.google.common.collect.Maps;
+import exception.InvalidRequestException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -20,12 +23,14 @@ public final class Context {
 
     private static Set<Class<?>> controllerAClasses;
     private static Map<Class<?>, Object> controllerObjects = Maps.newHashMap();
-    private static Map<String, Pair> postMappingMethods = Maps.newHashMap();
+    private static Map<String, ObjectMethodPair> postMappingMethods = Maps.newHashMap();
+    private static Map<String, ObjectMethodPair> getMappingMethods = Maps.newHashMap();
 
     public static void init() {
         try {
             initControllerObjects();
             initPostMappingMethods();
+            initGetMappingMethods();
         } catch (Exception e) {
             log.error("Exception occurred when initializing context: {}", e.getMessage());
             e.printStackTrace();
@@ -52,7 +57,23 @@ public final class Context {
             for (Method method : methods) {
                 PostMapping postMapping = method.getAnnotation(PostMapping.class);
                 postMappingMethods.put(postMapping.value(),
-                    new Pair(controllerObjects.get(controller), method));
+                    new ObjectMethodPair(controllerObjects.get(controller), method));
+            }
+        }
+    }
+
+    private static void initGetMappingMethods() {
+        for (Class<?> controller : controllerAClasses) {
+            Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(
+                    ClasspathHelper.forClass(controller))
+                .setScanners(new MethodAnnotationsScanner()));
+            Set<Method> methods = reflections.getMethodsAnnotatedWith(
+                GetMapping.class);
+            for (Method method : methods) {
+                GetMapping getMapping = method.getAnnotation(GetMapping.class);
+                getMappingMethods.put(getMapping.value(),
+                    new ObjectMethodPair(controllerObjects.get(controller), method));
+                log.debug("getMapping: " + getMapping.value());
             }
         }
     }
@@ -63,16 +84,29 @@ public final class Context {
 
     public static Object invokePostMappingMethod(String uri, Object... object)
         throws Exception {
-        Pair pair = postMappingMethods.get(uri);
-        return pair.getMethod().invoke(pair.getObject(), object);
+        ObjectMethodPair objectMethodPair = postMappingMethods.get(uri);
+        return objectMethodPair.getMethod().invoke(objectMethodPair.getObject(), object);
     }
 
-    static class Pair {
+    public static boolean existsGetMappingUri(String uri) {
+        return getMappingMethods.containsKey(uri);
+    }
+
+    public static Object invokeGetMappingMethod(String uri, Object... object) throws Exception {
+        ObjectMethodPair objectMethodPair = getMappingMethods.get(uri);
+        try {
+            return objectMethodPair.getMethod().invoke(objectMethodPair.getObject(), object);
+        } catch (InvocationTargetException e) {
+            throw new InvalidRequestException("getMapping 못찾음 " + uri);
+        }
+    }
+
+    static class ObjectMethodPair {
 
         Object object;
         Method method;
 
-        Pair(Object object, Method method) {
+        ObjectMethodPair(Object object, Method method) {
             this.object = object;
             this.method = method;
         }
