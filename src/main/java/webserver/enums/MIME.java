@@ -10,7 +10,8 @@ public enum MIME {
     JS("application/javascript", ".js"),
     ICO("image/x-icon", ".ico"),
     TTF("application/x-font-ttf", ".ttf"),
-    WOFF("application/x-font-woff", ".woff");
+    WOFF("application/x-font-woff", ".woff"),
+    NULL("", "");
 
     private final String contentType;
     private final String extension;
@@ -21,13 +22,17 @@ public enum MIME {
     }
 
     public static MIME parse(String path) {
-        MIME mime = Arrays.stream(values())
-                .filter(m->path.endsWith(m.extension))
-                .findFirst().orElse(HTML);
-        return mime;
+        return Arrays.stream(values())
+                .filter(m -> path.endsWith(m.extension))
+                .findFirst()
+                .orElse(NULL);
     }
 
     public String getContentType() {
         return contentType;
+    }
+
+    public boolean isNull() {
+        return this.equals(NULL);
     }
 }

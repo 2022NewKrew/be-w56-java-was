@@ -3,6 +3,7 @@ package model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.IOUtils;
+import webserver.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,15 +14,18 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class MyHttpRequest {
-    private String method = "";
+    private HttpMethod method;
     private String uri = "";
     private String protocol = "";
     private final Map<String, String> parameters = new HashMap<>();
     private final Map<String, String> headers = new HashMap<>();
 
+    private static final String CONTENT_LENGTH = "Content-Length";
+
     private static final Logger logger = LoggerFactory.getLogger(MyHttpRequest.class);
 
-    public MyHttpRequest() {}
+    public MyHttpRequest() {
+    }
 
     public MyHttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -30,11 +34,10 @@ public class MyHttpRequest {
         setRequest(request);
 
         br.lines().takeWhile(line -> !line.equals(""))
-                .peek(h -> logger.debug("        : {}", h))
                 .forEach(this::setHeader);
 
-        if(method.equals("POST")) {
-            String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
+        if (method.equals(HttpMethod.POST)) {
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get(CONTENT_LENGTH)));
             Stream.of(body.split("&"))
                     .forEach(this::setParameters);
         }
@@ -47,7 +50,7 @@ public class MyHttpRequest {
             throw new IOException("http request 포맷이 잘못 되었습니다.");
         }
 
-        this.method = tokens[0];
+        this.method = HttpMethod.valueOf(tokens[0]);
         setUri(tokens[1]);
         this.protocol = tokens[2];
     }
@@ -73,7 +76,7 @@ public class MyHttpRequest {
         this.headers.put(tokens[0], tokens[1]);
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
