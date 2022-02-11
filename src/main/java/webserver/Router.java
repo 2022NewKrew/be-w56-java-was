@@ -12,8 +12,9 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Set;
+import java.lang.reflect.Parameter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Router {
     private static final Logger log = LoggerFactory.getLogger(Router.class);
@@ -23,18 +24,12 @@ public class Router {
         String requestMethod = httpRequest.getMethod();
         log.info("Path: {}, Request Method: {}", path, requestMethod);
         if (isStaticFile(path)) {
-            log.info("static response");
             return ResponseGenerator.generateStaticResponse(path);
         }
-        log.info("dynamic response");
 
-        Reflections reflections = new Reflections();
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        Class<?> matchedController = getMatchingController(controllers, path);
+        Class<?> matchedController = matchController(path);
         try {
-            Method[] methods = matchedController.getMethods();
-            Method method = getMatchingMethod(methods, path, requestMethod);
-            return (HttpResponse) method.invoke(matchedController.getConstructor().newInstance(), httpRequest);
+            return matchMethodAndInvoke(matchedController, httpRequest);
         } catch (NoSuchPathException e) {
             log.error("NoSuchPathException occurred");
             return ResponseGenerator.generateResponse404();
@@ -47,11 +42,42 @@ public class Router {
         }
     }
 
+    private static Class<?> matchController(String path) {
+        Reflections reflections = new Reflections("controller");
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        return getMatchingController(controllers, path);
+    }
+
     private static Class<?> getMatchingController(Set<Class<?>> classes, String path) {
         return classes.stream()
                 .filter(c -> path.startsWith(c.getAnnotation(Controller.class).value()))
                 .findFirst()
                 .orElse(RootController.class);
+    }
+
+    private static HttpResponse matchMethodAndInvoke(
+            Class<?> matchedController,
+            HttpRequest httpRequest)
+            throws Exception {
+        String path = httpRequest.getPath();
+        String requestMethod = httpRequest.getMethod();
+
+        Method[] methods = matchedController.getMethods();
+        Method method = getMatchingMethod(methods, path, requestMethod);
+        List<Parameter> parameters = Arrays.stream(method.getParameters())
+                .collect(Collectors.toUnmodifiableList());
+
+        List<Object> args = new ArrayList<>();
+        Map<String, String> httpParams = httpRequest.getParameters();
+        parameters.forEach(p -> {
+                    if (p.getName().equals("loggedin")) {
+                        args.add(httpRequest.isLoggedIn());
+                    } else {
+                        args.add(httpParams.get(p.getName()));
+                    }
+                });
+        
+        return (HttpResponse) method.invoke(matchedController.getConstructor().newInstance(), args.toArray());
     }
 
     private static Method getMatchingMethod(Method[] methods, String path, String requestMethod) throws NoSuchPathException, RequestMethodNotSupportedException {

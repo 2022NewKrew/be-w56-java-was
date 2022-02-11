@@ -1,6 +1,8 @@
 package service;
 
 import dao.UserDAO;
+import dto.UserCreateCommand;
+import dto.UserLoginCommand;
 import model.User;
 import webserver.http.HttpRequest;
 
@@ -15,15 +17,14 @@ public class UserService {
         this.userDAO = new UserDAO();
     }
 
-    public void store(HttpRequest httpRequest) throws SQLException {
-        userDAO.storeUser(httpRequest);
+    public void store(UserCreateCommand ucc) throws SQLException {
+        userDAO.storeUser(ucc);
     }
 
-    public boolean canLogIn(HttpRequest httpRequest) {
+    public boolean canLogIn(UserLoginCommand ulc) {
         try {
-            Map<String, String> params = httpRequest.getParameters();
-            String userId = params.get("userId");
-            String password = params.get("password");
+            String userId = ulc.getUserId();
+            String password = ulc.getPassword();
             User user = userDAO.findUser(userId);
 
             return user.getUserId().equals(userId) && user.getPassword().equals(password);

@@ -1,6 +1,7 @@
 package service;
 
 import dao.MemoDAO;
+import dto.MemoCreateCommand;
 import model.Memo;
 import webserver.http.HttpRequest;
 
@@ -12,8 +13,8 @@ public class MemoService {
 
     public MemoService() { this.memoDAO = new MemoDAO(); }
 
-    public void store(HttpRequest httpRequest) throws SQLException {
-        memoDAO.storeMemo(httpRequest);
+    public void store(MemoCreateCommand mcc) throws SQLException {
+        memoDAO.storeMemo(mcc);
     }
 
     public List<Memo> findAll() throws SQLException {
