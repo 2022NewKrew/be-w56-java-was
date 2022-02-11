@@ -173,3 +173,9 @@ public enum ContentType {
 - `MultiValuedHashMap` 사용 시 컨트롤러 코드 변경 필요
   - 코드의 변경을 최소화할 수 있는 설계 필요 
 - Atlas 연결 시 `extension (5) should not be presented in certificate_request` 오류 발생
+
+### 2022-02-11 (금)
+
+#### 구현 내용
+
+- `AbstractMultivaluedMap` -> `MultivaluedMap` 으로 수정

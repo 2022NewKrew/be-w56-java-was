@@ -5,8 +5,8 @@ import controller.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.AbstractMultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +23,7 @@ public class ViewController implements WebController {
     public Response process(Request request) {
         Response response = null;
 
-        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
         headers.add("Content-Type", "text/" + request.getContentType() + ";charset=utf-8");
         try {
             byte[] body = readBody(request.getPath());

@@ -4,8 +4,8 @@ import controller.response.Response;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.AbstractMultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Created by melodist
@@ -30,7 +30,7 @@ class HttpResponseUtilsTest {
     @Test
     public void createResponseStringWithHeader() {
         // given
-        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
         headers.add("test-key", "test-value");
         Response response = new Response.Builder().ok()
                 .headers(headers)

@@ -1,10 +1,9 @@
 import com.mongodb.client.*;
 import com.mongodb.client.result.InsertOneResult;
-import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by melodist
@@ -56,5 +55,4 @@ public class MongoDbDriverTest {
         // then
         findIterable.forEach(d -> System.out.println(d));
     }
-
 }

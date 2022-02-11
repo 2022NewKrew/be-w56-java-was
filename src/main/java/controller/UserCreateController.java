@@ -4,8 +4,8 @@ import controller.request.Request;
 import controller.response.Response;
 import service.UserService;
 
-import javax.ws.rs.core.AbstractMultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Created by melodist
@@ -21,7 +21,7 @@ public class UserCreateController implements WebController{
         String email = request.getBody("email");
         UserService.addUser(userId, password, name, email);
 
-        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
         headers.add("Location", "/index.html");
 
         return new Response.Builder()

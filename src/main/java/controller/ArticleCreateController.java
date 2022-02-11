@@ -5,8 +5,8 @@ import controller.response.Response;
 import service.ArticleService;
 import util.HttpRequestUtils;
 
-import javax.ws.rs.core.AbstractMultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import java.util.Map;
 
 /**
@@ -18,7 +18,7 @@ public class ArticleCreateController implements WebController {
     @Override
     public Response process(Request request) {
         Map<String, String> cookies = HttpRequestUtils.parseCookies(request.getHeader("Cookie"));
-        AbstractMultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
 
         String loggedIn = cookies.get("loggedIn");
         String loggedInUser = cookies.get("loggedInUser");
