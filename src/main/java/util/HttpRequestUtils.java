@@ -1,13 +1,59 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpRequestUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
+
+    public static Map<String, String> getBody(BufferedReader bufferedReader,
+        Map<String, String> headers, String method) throws IOException {
+
+        if (method.equals("GET") || !headers.containsKey("Content-Length")) {
+            return null;
+        }
+
+        String requestBody = IOUtils.readData(bufferedReader, Integer.parseInt(headers.get("Content-Length")));
+        return parseQueryString(requestBody);
+    }
+
+    public static Map<String, String> getHeaders(BufferedReader bufferedReader) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+
+        String line = bufferedReader.readLine();
+        while (!"".equals(line)  && Objects.nonNull(line)) {
+            Pair pair = HttpRequestUtils.parseHeader(line);
+            headers.put(pair.getKey(), pair.getValue());
+            line = bufferedReader.readLine();
+        }
+        return headers;
+    }
+
+    public static Map<String, String> getQuerys(String[] splitedUri) {
+        if (splitedUri.length == 2) {
+            return parseQueryString(splitedUri[1]);
+        }
+        return null;
+    }
+
+    public static String getUrl(String firstLine) {
+        String[] splited = firstLine.split(" ");
+        String path = splited[1];
+        log.debug("request path : {}", path);
+        return path;
+    }
+
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
