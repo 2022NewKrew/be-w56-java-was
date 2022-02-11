@@ -27,7 +27,7 @@ class HttpCodecTest {
                 "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net").getBytes(StandardCharsets.UTF_8);
 
         socket = mock(SocketIO.class);
-        when(socket.readAllBytes()).thenReturn(bytes);
+        when(socket.readLine()).thenReturn(bytes);
     }
 
     @Test

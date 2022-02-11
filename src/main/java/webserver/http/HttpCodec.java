@@ -7,10 +7,6 @@ import webserver.http.message.*;
 import webserver.http.message.values.HttpHeaderNames;
 import webserver.http.util.HttpRequestDecodeUtil;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-
 import static com.google.common.net.HttpHeaders.*;
 
 public class HttpCodec {
@@ -26,47 +22,29 @@ public class HttpCodec {
     }
 
     public HttpRequest decode() {
-        final byte[] bytes = socket.readAllBytes();
-        final String requestMessage = new String(bytes, StandardCharsets.UTF_8);
-        log.debug("request : {}", requestMessage);
-        System.out.println(requestMessage);
-        final List<String> requestMsg = List.of(requestMessage.split(NEWLINE));
-        final Iterator<String> it = requestMsg.iterator();
-
-        final HttpStartLine startLine = getHttpStartLine(it);
+        final HttpStartLine startLine = getHttpStartLine();
         //TODO:queryString 분리작업 추가
-        final HttpHeader header = getHttpHeader(it);
-        final HttpBody body = getHttpBody(it);
+        final HttpHeader header = getHttpHeader();
+        final HttpBody body = getHttpBody();
 
         return  new HttpRequest(startLine, header, body);
     }
 
-    private HttpStartLine getHttpStartLine(Iterator<String> it) {
-        final String line = nextLine(it);
+    private HttpStartLine getHttpStartLine() {
+        final String line = socket.readLine();
         final HttpStartLine startLine = HttpRequestDecodeUtil.parseStartLine(line);
         log.debug("request method : {}", startLine);
         return startLine;
     }
 
-    private String nextLine(Iterator<String> it) {
-        if(it.hasNext()) {
-            return it.next();
-        }
-        return null;
-    }
-
-    private HttpHeader getHttpHeader(Iterator<String> it) {
+    private HttpHeader getHttpHeader() {
         String accept = null;
         String cookie = null;
         int contentLength = 0;
         String contentType = null;
 
-        while(it.hasNext()) {
-            final String line = it.next();
-            if(line.equals("")) {
-                break;
-            }
-
+        String line = socket.readLine();
+        while(!line.equals("")) {
             final String[] headerLine = HttpRequestDecodeUtil.parseHeaderNames(line);
 
             switch (headerLine[0]) {
@@ -83,12 +61,14 @@ public class HttpCodec {
                     contentType = headerLine[1];
                     break;
             }
+
+            line = socket.readLine();
         }
 
         return new HttpHeader(accept, cookie, contentLength, contentType);
     }
 
-    private HttpBody getHttpBody(Iterator<String> it) {
+    private HttpBody getHttpBody() {
 
         return new HttpBody();
     }
@@ -96,25 +76,27 @@ public class HttpCodec {
     public void encode(HttpResponse response) {
         StringBuilder sb = new StringBuilder();
         HttpRequest request = response.getRequest();
-        HttpHeader header = request.getHeader();
+
         sb.append(request.getVersion()).append(SPACE)
                 .append(response.getStatus().getStatusCode()).append(SPACE)
                 .append(response.getStatus().getReasonPhrase()).append(SPACE)
                 .append(NEWLINE);
 
-        sb.append(HttpHeaderNames.CONTENT_TYPE)
+        sb.append(HttpHeaderNames.CONTENT_TYPE.getName())
                 .append(COLON).append(SPACE)
                 .append(response.getContentType().getValue())
                 .append(NEWLINE);
 
-        sb.append(HttpHeaderNames.CONTENT_LENGTH)
+        sb.append(HttpHeaderNames.CONTENT_LENGTH.getName())
                 .append(COLON).append(SPACE)
                 .append(response.getResponseBody().length)
                 .append(NEWLINE);
 
         sb.append(NEWLINE);
+        socket.writeBytes(sb.toString());
 
-        sb.append(new String(response.getResponseBody()));
-        socket.writeAllBytes(sb.toString().getBytes(StandardCharsets.UTF_8));
+        socket.write(response.getResponseBody(), 0, response.getResponseBody().length);
+        socket.writeBytes(NEWLINE);
+        socket.flush();
     }
 }

@@ -2,8 +2,8 @@ package webserver.http.message.values;
 
 public enum HttpContentType {
 
-    TEXT_CSS(".css", "text/css;charset=utf-8"),
-    TEXT_HTML(".html", "text/html;charset=utf-8"),
+    TEXT_CSS(".css", "text/css;charset=UTF-8"),
+    TEXT_HTML(".html", "text/html;charset=UTF-8"),
     APPLICATION_JS(".js", "application/js"),
     IMAGE_X_ICON(".ico", "image/x-icon"),
     ;

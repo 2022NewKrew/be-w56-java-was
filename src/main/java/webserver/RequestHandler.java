@@ -57,8 +57,6 @@ public class RequestHandler extends Thread {
             case POST:
                 mapToPostMappingAnnotation(methods, response);
                 break;
-            default:
-                setResponseUri(response, request.getUri());
         }
     }
 
@@ -70,7 +68,7 @@ public class RequestHandler extends Thread {
                 .filter(method -> method.getDeclaredAnnotation(GetMapping.class).value().equals(requestUri))
                 .findFirst();
 
-        mappedMethod.ifPresent(method -> doMethod(method, response));
+        mappedMethod.ifPresentOrElse(method -> doMethod(method, response), () -> setResponseUri(response ,requestUri));
     }
 
     private void doMethod(Method method, HttpResponse response) {
@@ -112,6 +110,6 @@ public class RequestHandler extends Thread {
                 .filter(method -> method.getDeclaredAnnotation(PostMapping.class).value().equals(requestUri))
                 .findFirst();
 
-        mappedMethod.ifPresent(method -> doMethod(method, response));
+        mappedMethod.ifPresentOrElse(method -> doMethod(method, response), () -> setResponseUri(response, requestUri));
     }
 }
