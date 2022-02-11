@@ -15,7 +15,7 @@ public class Cookie {
     private String path = "/";
     private Duration maxAge = Duration.ofDays(7);
 
-    public static Cookie of() {
+    public static Cookie from() {
         return new Cookie();
     }
 
