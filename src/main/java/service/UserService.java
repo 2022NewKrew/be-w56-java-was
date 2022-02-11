@@ -1,34 +1,54 @@
 package service;
 
-import db.DataBase;
+import db.MySQLConfig;
 import model.User;
 
-import java.util.Iterator;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
-public enum UserService {
-    INSTANCE;
+public class UserService {
+    public static final UserService INSTANCE = new UserService();
 
-    public void addUser(User user) {
-        DataBase.addUser(user);
+    private final MySQLConfig mySQLConfig;
+
+    private UserService() {
+        this.mySQLConfig = MySQLConfig.INSTANCE;
     }
 
-    public boolean userLogin(String userId, String password) {
-        User user = DataBase.findUserById(userId);
-        return user != null && user.getPassword().equals(password);
+    public void addUser(User user) throws SQLException {
+        mySQLConfig.addUser(user);
     }
 
-    public String getUserList() {
+    public boolean userLogin(String userId, String password) throws SQLException {
+        ResultSet rs = mySQLConfig.findUserByUserId(userId);
+        return rs.next() && rs.getString("password").equals(password);
+    }
+
+    public String getUserList() throws SQLException {
         StringBuilder sb = new StringBuilder();
-        Iterator<User> userIterator = DataBase.findAll().iterator();
-        for (int idx = 1; userIterator.hasNext(); idx++) {
-            User user = userIterator.next();
+        ResultSet rs = mySQLConfig.getUsers();
+        int idx = 1;
+        while (rs.next()) {
             sb.append("<tr><th scope=\"row\">" + idx + "</th>" +
-                    "<td>" + user.getUserId() + "</td>" +
-                    "<td>" + user.getName() + "</td>" +
-                    "<td>" + user.getEmail() + "</td>" +
+                    "<td>" + rs.getString("userid") + "</td>" +
+                    "<td>" + rs.getString("name") + "</td>" +
+                    "<td>" + rs.getString("email") + "</td>" +
                     "<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
+            idx++;
         }
         return sb.toString();
+    }
+
+    public User getUserById(long id) throws SQLException {
+        ResultSet rs = mySQLConfig.findUserById(id);
+        rs.next();
+        return new User(rs.getInt("ID"), rs.getString("USERID"), rs.getString("PASSWORD"), rs.getString("NAME"), rs.getString("EMAIL"));
+    }
+
+    public User getUserByUserId(String userId) throws SQLException {
+        ResultSet rs = mySQLConfig.findUserByUserId(userId);
+        rs.next();
+        return new User(rs.getInt("ID"), rs.getString("USERID"), rs.getString("PASSWORD"), rs.getString("NAME"), rs.getString("EMAIL"));
     }
 }
