@@ -24,17 +24,4 @@ public class RequestBody {
         return bodies.get(key);
     }
 
-    public boolean isValidForPost() {
-        if (!bodies.containsKey("writer") | !bodies.containsKey("contents")) {
-            return false;
-        }
-
-        String writer = bodies.get("writer");
-        String contents = bodies.get("contents");
-        if (writer == null | writer.isBlank() | contents == null | contents.isBlank()) {
-            return false;
-        }
-
-        return true;
-    }
 }

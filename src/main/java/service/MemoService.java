@@ -1,6 +1,5 @@
 package service;
 
-import collections.RequestBody;
 import controller.Controller;
 import dto.PostMemoRequestParameterDto;
 import mapper.PostMemoRequestParameterDtoMemoMapper;
