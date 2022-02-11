@@ -25,6 +25,7 @@ dependencies {
     implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
     implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation("mysql:mysql-connector-java:8.0.21")
 }
 
 test {
