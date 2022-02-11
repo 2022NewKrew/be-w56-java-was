@@ -9,15 +9,13 @@ import http.response.HttpResponse;
 import http.response.ModelAndView;
 import http.status.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
+import util.ResourceUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,8 +79,10 @@ public class UrlMappingHandlerAdapter implements HandlerAdapter {
     }
 
     private void resolve(HttpResponse response, ModelAndView mv) throws IOException {
-        Path path = Paths.get(GlobalConfig.WEB_ROOT + mv.getViewName() + GlobalConfig.SUFFIX);
-        String html = Files.readString(path);
+//        Path path = Paths.get(getResource(mv.getViewName() + GlobalConfig.SUFFIX));
+//        String html = Files.readString(path);
+        byte[] resource = ResourceUtils.getResource(mv.getViewName() + GlobalConfig.SUFFIX);
+        String html = new String(resource, StandardCharsets.UTF_8);
         if (mv.hasModel()) {
             html = applyModelInView(mv, html);
         }
