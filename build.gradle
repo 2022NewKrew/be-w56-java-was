@@ -5,6 +5,7 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+
 repositories {
     mavenCentral()
 }
@@ -16,9 +17,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
-    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2
+//    // https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2
     implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.9.0'
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
@@ -28,9 +27,21 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     // mongodb
-    implementation 'org.mongodb:mongo-java-driver:3.12.10';
+    implementation 'org.mongodb:mongo-java-driver:3.12.10'
+    // logback
+    implementation('ch.qos.logback:logback-classic:1.2.10')
 }
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    manifest.attributes(
+            'Main-Class': 'webserver.WebServer'
+    )
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

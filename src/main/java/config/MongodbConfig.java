@@ -8,7 +8,8 @@ import org.bson.Document;
 public abstract class MongodbConfig {
 
     private static final String DB_NAME = "local";
-    private static final MongoClient MONGO_CLIENT = new MongoClient("localhost", 27017);
+    private static final String DB_HOST = System.getenv("MONGODB_HOST");
+    private static final MongoClient MONGO_CLIENT = new MongoClient(DB_HOST, 27017);
 
     private MongodbConfig() {
     }
