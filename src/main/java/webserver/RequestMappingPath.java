@@ -1,22 +1,20 @@
 package webserver;
 
-import db.DataBase;
+import model.Memo;
 import model.Request;
 import model.Response;
 import model.User;
+import repository.UserRepository;
 import service.AuthService;
+import service.MemoService;
 import util.Cookie;
 import util.HttpStatus;
-import util.MIME;
 
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static util.TemplateEngineUtils.renderDynamicTemplate;
 import static webserver.WebServer.DEFAULT_PATH;
@@ -25,8 +23,9 @@ public enum RequestMappingPath {
     ROOT("/") {
         @Override
         public Response handle(Request request, DataOutputStream dos) throws Exception {
+            Collection<Memo> memos = MemoService.showMemos(request);
             return new Response.Builder(dos)
-                    .body(Files.readAllBytes(new File(DEFAULT_PATH + "/index.html").toPath()))
+                    .body(renderDynamicTemplate(memos, "/index.html").getBytes())
                     .status(HttpStatus.OK)
                     .contentType(request.getContentType())
                     .build();
@@ -54,7 +53,6 @@ public enum RequestMappingPath {
                         .build();
             }
             Cookie cookie = (AuthService.login(request))? new Cookie("logined", "true") : new Cookie("logined", "false");
-            System.out.println(cookie);
             return new Response.Builder(dos)
                     .status(HttpStatus.FOUND)
                     .headers("Set-Cookie", cookie.toString())
@@ -65,11 +63,11 @@ public enum RequestMappingPath {
     },
     USER_LIST("/user/list") {
         @Override
-        public Response handle(Request request, DataOutputStream dos) throws IOException {
+        public Response handle(Request request, DataOutputStream dos) {
             Response.Builder result = new Response.Builder(dos)
                     .contentType(request.getContentType());
             if(request.getCookies().get("logined").equals("true")){
-                Collection<User> users = DataBase.findAll();
+                Collection<User> users = userRepository.findAll();
                 result.status(HttpStatus.OK)
                         .body(renderDynamicTemplate(users, "/user/list.html").getBytes());
             } else {
@@ -78,7 +76,25 @@ public enum RequestMappingPath {
             }
             return result.build();
         }
-    };
+    },
+    MEMO_CREATE("/memo/create") {
+        @Override
+        public Response handle(Request request, DataOutputStream dos) throws Exception {
+            MemoService.createMemo(request);
+            return new Response.Builder(dos)
+                    .status(HttpStatus.FOUND)
+                    .headers("Location", "/")
+                    .contentType(request.getContentType())
+                    .build();
+        }
+    }
+    ;
+
+    private static final UserRepository userRepository;
+
+    static {
+        userRepository = new UserRepository();
+    }
 
     private final String path;
 
