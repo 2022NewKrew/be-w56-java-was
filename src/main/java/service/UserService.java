@@ -1,13 +1,11 @@
 package service;
 
-import db.DataBase;
 import model.RequestHeader;
 import model.User;
 import repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 public class UserService {
     private final UserRepository userRepository;
