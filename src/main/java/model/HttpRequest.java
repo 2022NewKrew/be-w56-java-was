@@ -74,6 +74,10 @@ public class HttpRequest {
         return body.get();
     }
 
+    public String headerValue(HttpHeader key) {
+        return header.get(key);
+    }
+
     public String getUrl() {
         return startLine.getUrl();
     }

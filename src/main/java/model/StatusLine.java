@@ -15,7 +15,6 @@ public class StatusLine {
     }
 
     public String message() {
-        System.out.println(httpVersion.getVersion());
         return httpVersion.getVersion() + SEPARATOR + statusCode + SEPARATOR + statusMessage;
     }
 }
