@@ -3,6 +3,7 @@ package webserver;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import db.DataBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,9 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
+
+        // DB 초기화
+        DataBase.getInstance().init();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
 

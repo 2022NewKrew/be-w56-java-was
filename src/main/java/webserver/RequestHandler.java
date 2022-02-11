@@ -34,11 +34,11 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             try {
                 handleRequest(br, dos);
-            } catch (IOException | NullPointerException e) {
-                printResponseSimple(dos, HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (IOException e) {
+                printResponse(dos, HttpStatus.INTERNAL_SERVER_ERROR);
                 log.error(e.getMessage());
             } catch (InvalidHttpRequestException e) {
-                printResponseSimple(dos, HttpStatus.BAD_REQUEST);
+                printResponse(dos, HttpStatus.BAD_REQUEST);
                 log.error(e.getMessage());
             }
         } catch (IOException e) {
@@ -47,11 +47,13 @@ public class RequestHandler extends Thread {
     }
 
     private static void printResponse(DataOutputStream dos, HttpStatus status, Map<String, String> responseHeader, byte[] body)
-            throws IOException, NullPointerException {
+            throws IOException {
 
         dos.writeBytes("HTTP/1.1 " + status.getStatusCode() + " " + status.getStatusMsg() + "\r\n");
-        for (Map.Entry<String, String> entry : responseHeader.entrySet()) {
-            dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+        if(responseHeader != null) {
+            for (Map.Entry<String, String> entry : responseHeader.entrySet()) {
+                dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+            }
         }
         int bodyLength = body == null ? 0 : body.length;
         dos.writeBytes("Content-Length: " + bodyLength + "\r\n\r\n");
@@ -62,13 +64,11 @@ public class RequestHandler extends Thread {
     }
 
     // Body가 없고 추가 헤더 필드도 없는 경우의 응답입니다. (400, 404, 500 등)
-    private static void printResponseSimple(DataOutputStream dos, HttpStatus status) throws IOException {
-        dos.writeBytes("HTTP/1.1 " + status.getStatusCode() + " " + status.getStatusMsg() + "\r\n");
-        dos.writeBytes("Content-Length: 0\r\n\r\n");
-        dos.flush();
+    private static void printResponse(DataOutputStream dos, HttpStatus status) throws IOException {
+        printResponse(dos, status, null, null);
     }
 
-    private static void handleRequest(BufferedReader br, DataOutputStream dos) throws IOException, InvalidHttpRequestException, NullPointerException {
+    private static void handleRequest(BufferedReader br, DataOutputStream dos) throws IOException, InvalidHttpRequestException {
         HttpRequestStartLine startLine = parseStartLine(br);
         Map<String, String> requestHeader = parseHeader(br);
         Map<String, String> responseHeader = new HashMap<>();
@@ -120,7 +120,7 @@ public class RequestHandler extends Thread {
     }
 
     private static void handleGetRequest(DataOutputStream dos, String url,
-                                         Map<String, String> requestHeader, Map<String, String> responseHeader) throws IOException, NullPointerException {
+                                         Map<String, String> requestHeader, Map<String, String> responseHeader) throws IOException {
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
 
@@ -141,17 +141,17 @@ public class RequestHandler extends Thread {
                     break;
 
                 default:
-                    printResponseSimple(dos, HttpStatus.INTERNAL_SERVER_ERROR);
+                    printResponse(dos, HttpStatus.NOT_FOUND);
                     return;
             }
             printResponse(dos, HttpStatus.OK, responseHeader, body);
         } catch (FileNotFoundException e) {
-            printResponseSimple(dos, HttpStatus.NOT_FOUND);
+            printResponse(dos, HttpStatus.NOT_FOUND);
         }
     }
 
     private static void handlePostRequest(BufferedReader br, DataOutputStream dos, String url,
-                                          Map<String, String> requestHeader, Map<String, String> responseHeader) throws IOException, NullPointerException {
+                                          Map<String, String> requestHeader, Map<String, String> responseHeader) throws IOException {
         try {
             int contentLength = Integer.parseInt(requestHeader.get("Content-Length"));
             switch (url) {
@@ -164,7 +164,7 @@ public class RequestHandler extends Thread {
                     break;
 
                 default:
-                    printResponseSimple(dos, HttpStatus.NOT_FOUND);
+                    printResponse(dos, HttpStatus.NOT_FOUND);
             }
 
         } catch (NoSuchElementException | NumberFormatException | InvalidPostBodyException e) {
@@ -175,15 +175,19 @@ public class RequestHandler extends Thread {
             if (e instanceof NumberFormatException) {
                 log.debug("Content-Length 필드가 잘못됨");
             }
-            printResponseSimple(dos, HttpStatus.BAD_REQUEST);
+            printResponse(dos, HttpStatus.BAD_REQUEST);
+        } catch (DuplicateUserException e) {
+            log.debug("유저 ID 중복");
+            responseHeader.put("Location", "/user/form.html");
+            printResponse(dos, HttpStatus.FOUND, responseHeader, null);
         } catch (Exception e) {
             log.debug(e.getMessage());
-            printResponseSimple(dos, HttpStatus.INTERNAL_SERVER_ERROR);
+            printResponse(dos, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     private static void handleUserPostRequest(BufferedReader br, DataOutputStream dos, int contentLength, Map<String, String> responseHeader)
-            throws IOException, InvalidPostBodyException, NullPointerException {
+            throws IOException, InvalidPostBodyException, DuplicateUserException {
         String body = IOUtils.readData(br, contentLength);
         Map<String, String> parseQueryString = HttpRequestUtils.parseQueryString(body);
 
@@ -192,7 +196,7 @@ public class RequestHandler extends Thread {
             throw new InvalidPostBodyException("/user 잘못된 body 형식");
         }
 
-        DataBase.addUser(new User(parseQueryString.get("userId"),
+        DataBase.getInstance().addUser(new User(parseQueryString.get("userId"),
                 parseQueryString.get("password"),
                 parseQueryString.get("name"),
                 parseQueryString.get("email")));
@@ -202,7 +206,7 @@ public class RequestHandler extends Thread {
     }
 
     private static void handleLoginPostRequest(BufferedReader br, DataOutputStream dos, int contentLength, Map<String, String> responseHeader)
-            throws IOException, InvalidPostBodyException, NullPointerException {
+            throws IOException, InvalidPostBodyException {
         String body = IOUtils.readData(br, contentLength);
         Map<String, String> parseQueryString = HttpRequestUtils.parseQueryString(body);
 
@@ -210,7 +214,7 @@ public class RequestHandler extends Thread {
             throw new InvalidPostBodyException("/login 잘못된 body 형식");
         }
 
-        User user = DataBase.findUserById(parseQueryString.get("userId"));
+        User user = DataBase.getInstance().findUserById(parseQueryString.get("userId"));
 
         if (user == null || !user.getPassword().equals(parseQueryString.get("password"))) {
             responseHeader.put("Set-Cookie", "login=false");
