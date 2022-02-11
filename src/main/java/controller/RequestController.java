@@ -12,6 +12,7 @@ import util.Links;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
 
@@ -54,6 +55,10 @@ public class RequestController {
                 return postMemoWrite(requestHeader, model);
             }
 
+            if (uri.startsWith("/error")) {
+                return getErrorPage(model);
+            }
+
 
             if ((uri.equals("/") || uri.startsWith("/index")) && method.equals("GET")) {
                 return getIndex(requestHeader, model);
@@ -61,38 +66,47 @@ public class RequestController {
 
             return getDefault(requestHeader, model);
         } catch (Exception exception) {
-            ExceptionHandler.handleException(exception, requestHeader);
-            return getErrorPage(model);
+            exception.printStackTrace();
+            return redirectErrorPage(ExceptionHandler.handleException(exception, requestHeader));
         }
+    }
+
+    private static HttpResponse redirectErrorPage(String error) throws IOException {
+        return HttpResponseBuilder.build(
+                error,
+                "".getBytes(StandardCharsets.UTF_8),
+                HttpResponseHeader.REDIRECT_302,
+                "text/html"
+        );
     }
 
     private static HttpResponse getErrorPage(DynamicModel model) throws IOException {
         return HttpResponseBuilder.build(
                 Links.ERROR,
                 DynamicHtmlBuilder.getDynamicHtml(readBody(Links.ERROR), model),
-                HttpResponseHeader.REDIRECT_302,
+                HttpResponseHeader.RESPONSE_200,
                 "text/html"
         );
     }
 
     private static HttpResponse getDefault(RequestHeader requestHeader, DynamicModel model) throws IOException {
-        String uri = requestHeader.getHeader("uri");
+        String locationUri = requestHeader.getHeader("uri");
 
-        if (!uri.contains(".")) {
-            uri += ".html";
+        if (!locationUri.contains(".")) {
+            locationUri += ".html";
         }
 
-        byte[] body = readBody(uri);
-        if (uri.contains(".html")) {
+        byte[] body = readBody(locationUri);
+        if (locationUri.contains(".html")) {
             body = DynamicHtmlBuilder.getDynamicHtml(body, model);
         }
 
-        return HttpResponse.builder()
-                .locationUri(uri)
-                .htmlResponseHeader(HttpResponseHeader.RESPONSE_200)
-                .body(body)
-                .accept(requestHeader.getAccept())
-                .build();
+        return HttpResponseBuilder.build(
+                locationUri,
+                body,
+                HttpResponseHeader.RESPONSE_200,
+                requestHeader.getAccept()
+        );
     }
 
     private static HttpResponse postUserLogout(RequestHeader requestHeader, DynamicModel model)

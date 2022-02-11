@@ -58,10 +58,6 @@ public class RequestHandler extends Thread {
     }
 
     private HttpResponse getResponseHeader(RequestHeader requestHeader) throws Exception {
-        try {
-            return RequestController.controlRequest(requestHeader);
-        } catch (Exception exception) {
-            return ExceptionHandler.handleException(exception, requestHeader);
-        }
+        return RequestController.controlRequest(requestHeader);
     }
 }

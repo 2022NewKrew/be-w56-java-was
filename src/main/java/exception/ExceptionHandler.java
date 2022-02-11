@@ -1,11 +1,6 @@
 package exception;
 
-import dynamic.DynamicHtmlBuilder;
-import model.HttpResponseBuilder;
 import model.RequestHeader;
-import model.HttpResponse;
-import model.builder.ExceptionResponseBuilder;
-import util.HttpResponseHeader;
 import util.Links;
 
 import java.io.IOException;
@@ -16,7 +11,7 @@ public class ExceptionHandler {
     }
 
     // Exception 처리
-    public static void handleException(Exception exception, RequestHeader requestHeader) throws Exception {
+    public static String handleException(Exception exception, RequestHeader requestHeader) {
         exception.printStackTrace();
         // TODO Error Case에 따른 분류
         if (exception instanceof IOException) {
@@ -26,5 +21,8 @@ public class ExceptionHandler {
         if (exception instanceof NullPointerException) {
 
         }
+
+        // Error Case에 따라 다른 오류 링크 리턴 OR 다이나믹으로 처리
+        return Links.ERROR;
     }
 }
