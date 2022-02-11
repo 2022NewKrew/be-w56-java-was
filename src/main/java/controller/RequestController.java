@@ -6,6 +6,7 @@ import exception.ExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import model.*;
 import service.MemoService;
+import util.ControllerUtils;
 import util.HttpResponseHeader;
 import util.IOUtils;
 import util.Links;
@@ -51,16 +52,20 @@ public class RequestController {
             return getDefault(requestHeader, model);
         } catch (Exception exception) {
             exception.printStackTrace();
-            return redirectErrorPage(ExceptionHandler.handleException(exception, requestHeader));
+            ExceptionHandler.handleException(exception, requestHeader);
+            return ControllerUtils.redirect(Links.ERROR);
         }
     }
 
-    private static HttpResponse redirectErrorPage(String error) throws IOException {
+    private static HttpResponse getIndex(RequestHeader requestHeader, DynamicModel model)
+            throws SQLException, IOException {
+        model.addAttribute("memo", memoService.findAll());
+
         return HttpResponseBuilder.build(
-                error,
-                "".getBytes(StandardCharsets.UTF_8),
-                HttpResponseHeader.REDIRECT_302,
-                "text/html"
+                Links.MAIN,
+                DynamicHtmlBuilder.getDynamicHtml(IOUtils.readBody(Links.MAIN), model),
+                HttpResponseHeader.RESPONSE_200,
+                requestHeader.getAccept()
         );
     }
 
@@ -88,18 +93,6 @@ public class RequestController {
         return HttpResponseBuilder.build(
                 locationUri,
                 body,
-                HttpResponseHeader.RESPONSE_200,
-                requestHeader.getAccept()
-        );
-    }
-
-    private static HttpResponse getIndex(RequestHeader requestHeader, DynamicModel model)
-            throws SQLException, IOException {
-        model.addAttribute("memo", memoService.findAll());
-
-        return HttpResponseBuilder.build(
-                Links.MAIN,
-                DynamicHtmlBuilder.getDynamicHtml(IOUtils.readBody(Links.MAIN), model),
                 HttpResponseHeader.RESPONSE_200,
                 requestHeader.getAccept()
         );
