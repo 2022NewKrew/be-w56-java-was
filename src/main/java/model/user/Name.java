@@ -1,14 +1,18 @@
-package model;
+package model.user;
 
 import error.ErrorMessages;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
+@NoArgsConstructor
+@Embeddable
 public class Name {
 
-    private final String name;
+    private String name;
     private static final String NAME_FORMAT = "[A-Za-z가-힣]*";
 
     public Name(String name) {

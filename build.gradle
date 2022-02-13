@@ -15,9 +15,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.projectlombok:lombok:1.18.20'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
@@ -29,13 +29,22 @@ dependencies {
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     // https://mvnrepository.com/artifact/org.apache.tika/tika-core
     implementation group: 'org.apache.tika', name: 'tika-core', version: '2.2.1'
 
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
+
+    //implementation group: 'com.h2database', name: 'h2', version: '2.0.206'
+
+    //implementation 'org.hibernate:hibernate-entitymanager:5.6.5.Final'
+
+    // david
+    implementation group: 'com.h2database', name: 'h2', version: '2.1.210'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.19'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.5.Final'
 }
 
 test {

@@ -53,7 +53,8 @@ public class View {
     }
 
     private String replaceConditions(String stringFile) {
-        Pattern pattern = Pattern.compile("\\{\\{#(.|\n)*\\{\\{\\/.*\\}\\}");
+        //Pattern pattern = Pattern.compile("\\{\\{#(.|\n)*\\{\\{\\/.*\\}\\}");
+        Pattern pattern = Pattern.compile("\\{\\{#.*?\\}\\}(.|\n)*?\\{\\{\\/.*?\\}\\}");
         Matcher matched = pattern.matcher(stringFile);
         while (matched.find()) {
             String block = matched.group();

@@ -1,14 +1,18 @@
-package model;
+package model.user;
 
 import error.ErrorMessages;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
+@NoArgsConstructor
+@Embeddable
 public class Password {
 
-    private final String password;
+    private String password;
     private final static String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z0-9/$@$!%*#?&]{8,}$";
 
     public Password(String password) {

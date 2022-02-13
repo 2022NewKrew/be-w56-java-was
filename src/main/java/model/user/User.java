@@ -1,10 +1,23 @@
-package model;
+package model.user;
 
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Entity
+@NoArgsConstructor
+@Table(name = "member")
 public class User {
-    private final UserId userId;
-    private final Password password;
-    private final Name name;
-    private final Email email;
+
+    @EmbeddedId
+    @Column(name = "user_id")
+    private UserId userId;
+    @Embedded
+    private Password password;
+    @Embedded
+    private Name name;
+    @Embedded
+    private Email email;
 
     public User(UserId userId, Password password, Name name, Email email) {
         this.userId = userId;
@@ -31,6 +44,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+        return userId.toString();
     }
 }
