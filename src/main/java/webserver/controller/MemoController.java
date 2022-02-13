@@ -20,16 +20,15 @@ public class MemoController {
 
     @RequestMapping(value="/memos", method="POST")
     public ModelAndView create(Request request, Response response) {
+        ModelAndView mv = new ModelAndView();
         if(StringUtils.equals(request.getCookie("logined"), "true")){
             memoService.create(MemoCreateDto.builder()
                     .userId(Integer.parseInt(request.getCookie("userId")))
                     .content(request.getParameter("content"))
                     .build());
-            ModelAndView mv = new ModelAndView();
             mv.setViewName("redirect:/index.html");
             return mv;
         }
-        ModelAndView mv = new ModelAndView();
         mv.setViewName("redirect:/user/login.html");
         return mv;
     }
