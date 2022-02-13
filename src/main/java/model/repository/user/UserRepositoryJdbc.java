@@ -50,7 +50,7 @@ public class UserRepositoryJdbc implements UserRepository{
                     .build();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException();
+            return null;
         } finally {
             try {rs.close();} catch (Exception e) {}
             try {pstmt.close();} catch (Exception e) {}
@@ -80,7 +80,7 @@ public class UserRepositoryJdbc implements UserRepository{
                     .build();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException();
+            return null;
         } finally {
             try {rs.close();} catch (Exception e) {}
             try {pstmt.close();} catch (Exception e) {}

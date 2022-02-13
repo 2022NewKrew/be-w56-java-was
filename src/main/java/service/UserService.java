@@ -34,6 +34,6 @@ public class UserService {
         if(user!=null && StringUtils.equals(user.getPassword(), password)){
             return UserMapper.INSTANCE.toCookieDto(user);
         }
-        throw new IllegalArgumentException();
+        return UserCookieDto.builder().id(-1).build();
     }
 }

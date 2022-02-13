@@ -21,7 +21,7 @@ public class LoginController {
     public ModelAndView login(Request request, Response response) {
         ModelAndView mv = new ModelAndView();
         UserCookieDto userCookieDto = userService.login(request.getParameter("stringId"), request.getParameter("password"));
-        if(userCookieDto != null){
+        if(userCookieDto.getId()!=-1){
             response.setCookie("logined", "true; Path=/");
             response.setCookie("userId", userCookieDto.getId() +"; Path=/");
             response.setCookie("userName", userCookieDto.getName() +"; Path=/");
