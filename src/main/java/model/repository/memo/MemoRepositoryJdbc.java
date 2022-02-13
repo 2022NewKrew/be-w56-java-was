@@ -28,12 +28,15 @@ public class MemoRepositoryJdbc implements MemoRepository {
 
     @Override
     public List<Memo> findAll() {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "SELECT M.ID, M.USER_ID, U.NAME as WRITER, M.CONTENT, M.CREATED_AT FROM `MEMO` M INNER JOIN `USER` U ON M.USER_ID = U.ID";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery(sql);
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery(sql);
             List<Memo> memos = new ArrayList<>();
             while(rs.next()){
                 memos.add(Memo.builder()
@@ -48,33 +51,46 @@ public class MemoRepositoryJdbc implements MemoRepository {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        } finally {
+            try {rs.close();} catch (Exception e) {}
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 
     private int insert(Memo memo){
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "INSERT INTO `MEMO`(USER_ID, CONTENT) VALUES (?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, memo.getUserId());
             pstmt.setString(2, memo.getContent());
             pstmt.executeUpdate();
-            ResultSet rs =  pstmt.getGeneratedKeys();
+            rs =  pstmt.getGeneratedKeys();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        } finally {
+            try {rs.close();} catch (Exception e) {}
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 
     private void update(Memo memo){
+        Connection conn = null;
+        PreparedStatement pstmt = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "UPDATE `MEMO` SET USER_ID=?, CONTENT=? WHERE ID=?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, memo.getUserId());
             pstmt.setString(2, memo.getContent());
             pstmt.setInt(3, memo.getId());
@@ -82,6 +98,9 @@ public class MemoRepositoryJdbc implements MemoRepository {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        } finally {
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 }

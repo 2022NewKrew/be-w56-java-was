@@ -1,7 +1,6 @@
 package webserver.controller;
 
 import dto.mapper.UserCookieDto;
-import model.User;
 import service.UserService;
 import util.annotation.RequestMapping;
 import webserver.view.ModelAndView;

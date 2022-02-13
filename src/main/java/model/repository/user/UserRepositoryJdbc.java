@@ -30,13 +30,16 @@ public class UserRepositoryJdbc implements UserRepository{
 
     @Override
     public User findById(int id) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "SELECT ID, STRING_ID, NAME, PASSWORD, EMAIL FROM `USER` WHERE ID = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             rs.next();
             return User.builder()
                     .id(rs.getInt(1))
@@ -48,18 +51,25 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        }finally {
+            try {rs.close();} catch (Exception e) {}
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 
     @Override
     public User findByStringId(String stringId) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "SELECT ID, STRING_ID, NAME, PASSWORD, EMAIL FROM `USER` WHERE STRING_ID = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, stringId);
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             rs.next();
             return User.builder()
                     .id(rs.getInt(1))
@@ -71,17 +81,24 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        }finally {
+            try {rs.close();} catch (Exception e) {}
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 
     @Override
     public List<User> findAll() {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "SELECT ID, STRING_ID, NAME, PASSWORD, EMAIL FROM `USER`";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery(sql);
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery(sql);
             List<User> users = new ArrayList<>();
             while(rs.next()){
                 users.add(User.builder()
@@ -96,35 +113,48 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        }finally {
+            try {rs.close();} catch (Exception e) {}
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 
     private int insert(User user){
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "INSERT INTO `USER`(STRING_ID, NAME, PASSWORD, EMAIL) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, user.getStringId());
             pstmt.setString(2, user.getName());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getEmail());
             pstmt.executeUpdate();
-            ResultSet rs =  pstmt.getGeneratedKeys();
+            rs =  pstmt.getGeneratedKeys();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        }finally {
+            try {rs.close();} catch (Exception e) {}
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 
     private void update(User user){
+        Connection conn = null;
+        PreparedStatement pstmt = null;
         try{
             Class.forName(DRIVER);
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             String sql = "UPDATE `USER` SET STRING_ID=?, NAME=?, PASSWORD=?, EMAIL=? WHERE ID=?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, user.getStringId());
             pstmt.setString(2, user.getName());
             pstmt.setString(3, user.getPassword());
@@ -134,6 +164,9 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
+        }finally {
+            try {pstmt.close();} catch (Exception e) {}
+            try {conn.close();} catch (Exception e) {}
         }
     }
 }
