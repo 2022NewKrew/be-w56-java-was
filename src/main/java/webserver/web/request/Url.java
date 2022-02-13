@@ -18,7 +18,7 @@ public class Url {
         this.url = url;
         if (this.url.equals("/")) {
             this.url = "/";
-            parameters.put("filePath", "index.html");
+            parameters.put("filePath", "redirect:/board/list");
         }
         if (this.url.contains("?")) {
             parameters = HttpRequestUtils.parseQueryString(url.split("\\?")[1]);

@@ -1,0 +1,37 @@
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="java-was-db">
+        <class>model.user.User</class>
+        <class>model.user.UserId</class>
+        <class>model.user.Password</class>
+        <class>model.user.Name</class>
+        <class>model.user.Email</class>
+        <class>model.board.Board</class>
+        <class>model.board.Text</class>
+        <properties>
+            <!-- 필수 속성 -->
+            <!--<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+            <property name="javax.persistence.jdbc.user" value="sa" />
+            <property name="javax.persistence.jdbc.password" value="" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:java-was-db" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />-->
+
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.user" value=""/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.202.174.53:3306/java-was-db"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+
+            <!-- 옵션 -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="true"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <!--<property name="hibernate.hbm2ddl.auto" value="create"/>-->
+            <!--<property name="javax.persistence.sql-load-script-source" value="resources/META-INF/dml.sql"/>-->
+        </properties>
+    </persistence-unit>
+</persistence>

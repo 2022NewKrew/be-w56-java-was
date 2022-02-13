@@ -1,13 +1,13 @@
 package util;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
 import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
     /**
@@ -35,7 +35,7 @@ public class HttpRequestUtils {
 
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> URLDecoder.decode(p.getValue())));
+                .collect(Collectors.toMap(p -> p.getKey(), p -> URLDecoder.decode(p.getValue(), StandardCharsets.UTF_8)));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

@@ -3,7 +3,7 @@ package webserver.controller;
 import annotation.GetMapping;
 import annotation.PostMapping;
 import lombok.extern.slf4j.Slf4j;
-import model.*;
+import model.user.*;
 import webserver.Model;
 import webserver.service.UserService;
 import webserver.web.request.Request;
@@ -15,10 +15,11 @@ import java.util.List;
 @annotation.Controller
 public class UserController extends BaseController {
 
-    private final UserService userService = UserService.getInstance();
+    private final UserService userService;
     private static final UserController userController = new UserController();
 
     private UserController() {
+        userService = UserService.getInstance();
     }
 
     public static UserController getInstance() {
@@ -34,23 +35,23 @@ public class UserController extends BaseController {
 
     @PostMapping(url = "/user/login")
     public String loginUser(String userId, String password, Request request, Response.ResponseBuilder builder) {
-        if (request.inquireHeaderData("Cookie").contains("logined=true")) {
+        if (request.inquireHeaderData("Cookie").contains("logined")) {
             log.info("이미 로그인된 유저");
             return "redirect:/index.html";
         }
         if (userService.loginUser(userId, password)) {
-            builder.setCookie("logined=true; Path=/");
+            builder.setCookie("logined=" + userId + "; Path=/; max-age=300");
             log.info("로그인 성공");
             return "redirect:/index.html";
         }
-        builder.setCookie("logined=false; Path=/");
+        //builder.setCookie("logined=false; Path=/");
         log.info("로그인 실패");
         return "redirect:/user/login_failed.html";
     }
 
     @GetMapping(url = "/user/list")
     public String showUserList(Request request, Model model) {
-        if (!request.inquireHeaderData("Cookie").contains("logined=true")) {
+        if (!request.inquireHeaderData("Cookie").contains("logined")) {
             return "redirect:/user/login.html";
         }
         List<User> users = userService.getAllUsers();

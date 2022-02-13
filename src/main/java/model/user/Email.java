@@ -1,14 +1,18 @@
-package model;
+package model.user;
 
 import error.ErrorMessages;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
+@NoArgsConstructor
+@Embeddable
 public class Email {
 
-    private final String email;
+    private String email;
     private final static String EMAIL_PATTERN = ".*@.*\\..*";
 
     public Email(String email) {

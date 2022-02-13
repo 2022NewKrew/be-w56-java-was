@@ -1,13 +1,19 @@
-package model;
+package model.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+
+@Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class UserId {
+public class UserId implements Serializable {
 
-    private final String userId;
+    private String userId;
 
     @Override
     public String toString() {
