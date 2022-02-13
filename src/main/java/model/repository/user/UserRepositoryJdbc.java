@@ -51,7 +51,7 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
-        }finally {
+        } finally {
             try {rs.close();} catch (Exception e) {}
             try {pstmt.close();} catch (Exception e) {}
             try {conn.close();} catch (Exception e) {}
@@ -81,7 +81,7 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
-        }finally {
+        } finally {
             try {rs.close();} catch (Exception e) {}
             try {pstmt.close();} catch (Exception e) {}
             try {conn.close();} catch (Exception e) {}
@@ -113,7 +113,7 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
-        }finally {
+        } finally {
             try {rs.close();} catch (Exception e) {}
             try {pstmt.close();} catch (Exception e) {}
             try {conn.close();} catch (Exception e) {}
@@ -140,7 +140,7 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
-        }finally {
+        } finally {
             try {rs.close();} catch (Exception e) {}
             try {pstmt.close();} catch (Exception e) {}
             try {conn.close();} catch (Exception e) {}
@@ -164,7 +164,7 @@ public class UserRepositoryJdbc implements UserRepository{
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
-        }finally {
+        } finally {
             try {pstmt.close();} catch (Exception e) {}
             try {conn.close();} catch (Exception e) {}
         }

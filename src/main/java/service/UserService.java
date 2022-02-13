@@ -8,7 +8,6 @@ import model.User;
 import model.repository.user.UserRepository;
 import model.repository.user.UserRepositoryJdbc;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
 
 public class UserService {

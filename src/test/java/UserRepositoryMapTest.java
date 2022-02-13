@@ -13,14 +13,14 @@ public class UserRepositoryMapTest {
 
         User userSaved = userRepository.save(User.builder()
                 .stringId("test1")
-                .name("testName")
+                .name("testName1")
                 .build());
         System.out.println(userSaved.getId());
         assertThat(userSaved.getId()).isEqualTo(1);
 
         userSaved = userRepository.save(User.builder()
                 .stringId("test2")
-                .name("testName")
+                .name("testName2")
                 .build());
         System.out.println(userSaved.getId());
         assertThat(userSaved.getId()).isEqualTo(2);

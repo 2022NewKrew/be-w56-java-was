@@ -1,7 +1,6 @@
 package model.repository.memo;
 
 import model.Memo;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
