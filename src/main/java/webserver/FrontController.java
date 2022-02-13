@@ -27,6 +27,7 @@ public class FrontController extends Thread {
             viewResolver.resolve(response, handlerMapper.map(request, response));
         } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

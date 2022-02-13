@@ -2,7 +2,6 @@ package webserver.view;
 
 import org.apache.tika.Tika;
 import webserver.Response;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

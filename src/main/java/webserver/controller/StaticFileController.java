@@ -3,7 +3,6 @@ package webserver.controller;
 import webserver.view.ModelAndView;
 import webserver.Request;
 import webserver.Response;
-
 import java.io.IOException;
 
 public class StaticFileController{

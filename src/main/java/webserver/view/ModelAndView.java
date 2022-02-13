@@ -1,7 +1,6 @@
 package webserver.view;
 
 import lombok.Getter;
-
 import java.util.HashMap;
 import java.util.Map;
 

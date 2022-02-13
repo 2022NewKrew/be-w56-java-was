@@ -1,10 +1,9 @@
-package model.repository;
+package model.repository.user;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import model.User;
 
 public class UserRepositoryMap implements UserRepository{
@@ -14,9 +13,15 @@ public class UserRepositoryMap implements UserRepository{
 
     @Override
     public User save(User user){
-        if(user.isNew()) {
-            insert(user);
-            return user;
+        if (user.isNew()) {
+            int id = insert(user);
+            return User.builder()
+                    .id(id)
+                    .stringId(user.getStringId())
+                    .name(user.getName())
+                    .password(user.getPassword())
+                    .email(user.getEmail())
+                    .build();
         }
         update(user);
         return user;
@@ -37,9 +42,10 @@ public class UserRepositoryMap implements UserRepository{
         return new ArrayList<>(idIndex.values());
     }
 
-    private void insert(User user){
+    private int insert(User user){
+        int id = maxIndex;
         User userToInsert = User.builder()
-                .id(maxIndex)
+                .id(id)
                 .stringId(user.getStringId())
                 .name(user.getName())
                 .password(user.getPassword())
@@ -48,6 +54,7 @@ public class UserRepositoryMap implements UserRepository{
         idIndex.put(userToInsert.getId(), userToInsert);
         stringIdIndex.put(userToInsert.getStringId(), userToInsert);
         maxIndex++;
+        return id;
     }
 
     private void update(User user){
