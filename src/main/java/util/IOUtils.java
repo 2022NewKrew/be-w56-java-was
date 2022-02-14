@@ -5,8 +5,6 @@ import org.apache.tika.Tika;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 
 public class IOUtils {
     /**
