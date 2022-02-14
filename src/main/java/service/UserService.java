@@ -2,6 +2,7 @@ package service;
 
 import db.DataBase;
 import model.User;
+import webserver.http.request.InfoMap;
 
 import java.util.Map;
 
@@ -12,11 +13,11 @@ public class UserService {
         dataBase = DataBase.getInstance();
     }
 
-    public void createUser(Map<String, String> userInfoMap) {
+    public void createUser(InfoMap userInfoMap) {
         dataBase.addUser(getUserFromUserDataMap(userInfoMap));
     }
 
-    private User getUserFromUserDataMap(Map<String, String> userInfoMap) {
+    private User getUserFromUserDataMap(InfoMap userInfoMap) {
         String userId = userInfoMap.get("userId");
         String password = userInfoMap.get("password");
         String name = userInfoMap.get("name");
