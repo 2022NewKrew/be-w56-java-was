@@ -1,8 +1,11 @@
 package controller;
 
-import java.util.Map;
+import webserver.http.request.HttpRequest;
+import webserver.http.response.HttpResponse;
+
+import java.io.IOException;
 
 public interface Controller {
 
-    String create(Map<String,String> map);
+    HttpResponse handle(HttpRequest httpRequest) throws IOException;
 }

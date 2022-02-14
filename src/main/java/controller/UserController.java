@@ -1,8 +1,11 @@
 package controller;
 
 import service.UserService;
+import util.RedirectHandler;
+import webserver.http.request.HttpRequest;
+import webserver.http.response.HttpResponse;
 
-import java.util.Map;
+import java.io.IOException;
 
 public class UserController implements Controller {
     UserService userService;
@@ -12,8 +15,16 @@ public class UserController implements Controller {
     }
 
     @Override
-    public String create(Map<String, String> userInfoMap) {
-        userService.createUser(userInfoMap);
+    public HttpResponse handle(HttpRequest httpRequest) throws IOException {
+        String url = httpRequest.getUrlPath();
+        if (url.equals("/user/create")) {
+            return HttpResponse.of(create(httpRequest), 302);
+        }
+        return null;
+    }
+
+    private String create(HttpRequest httpRequest) {
+        userService.createUser(httpRequest.getInfoMap());
         return "/index.html";
     }
 }
