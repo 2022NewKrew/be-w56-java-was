@@ -3,40 +3,12 @@ package util;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class HttpRequestUtils {
-    private static final int REQUEST_HEADER_METHOD_INDEX = 0;
-    private static final int REQUEST_HEADER_URL_PATH_INDEX = 1;
-    private static final int METHOD_PATH_INDEX = 0;
-    private static final int VALUE_INDEX = 1;
-
-    public static String getHttpMethod(String httpRequestHeader) {
-        return httpRequestHeader.split(" ")[REQUEST_HEADER_METHOD_INDEX];
-    }
-
-    public static String getUrlPath(String httpRequestHeader) {
-        return httpRequestHeader.split(" ")[REQUEST_HEADER_URL_PATH_INDEX];
-    }
-
-    public static Optional<Map<String, String>> getInfoMap(String httpMethod, String url, String httpRequestBody) {
-        String[] urlSplitList = url.split("\\?");
-        if (httpMethod.equals("GET") && urlSplitList.length > VALUE_INDEX)
-            return Optional.of(parseQueryString(urlSplitList[VALUE_INDEX], "&", "="));
-        if (httpMethod.equals("POST")) {
-            return Optional.of(parseQueryString(httpRequestBody, "&", "="));
-        }
-        return Optional.empty();
-    }
-
-    public static String getMethodPath(String url) {
-        return url.split("\\?")[METHOD_PATH_INDEX];
-    }
-
     /**
      * @param queryString 은 URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
      */
@@ -76,18 +48,6 @@ public class HttpRequestUtils {
 
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
-    }
-
-    public static RedirectPair runMethod(String httpRequestHeader, String httpRequestBody) {
-        String url = HttpRequestUtils.getUrlPath(httpRequestHeader);
-        String methodPath = HttpRequestUtils.getMethodPath(url);
-
-        Optional<Map<String, String>> infoMap = HttpRequestUtils.getInfoMap(
-                HttpRequestUtils.getHttpMethod(httpRequestHeader), url, httpRequestBody
-        );
-        if (infoMap.isPresent())
-            return HandlerMapping.getInstance().runMethod(methodPath, infoMap.get());
-        return new RedirectPair(url,false);
     }
 
     public static class Pair {

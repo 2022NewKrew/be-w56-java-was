@@ -11,9 +11,9 @@ import java.util.Optional;
 public class IOUtils {
     /**
      * @param br 은
-     *            Request Body를 시작하는 시점이어야
+     *            HttpRequest Body를 시작하는 시점이어야
      * @param contentLength 는
-     *            Request Header의 Content-Length 값이다.
+     *            HttpRequest Header의 Content-Length 값이다.
      */
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
@@ -39,19 +39,5 @@ public class IOUtils {
 
     public static String gttHttpRequestBody(BufferedReader br,int contentLength) throws IOException{
         return IOUtils.readData(br,contentLength);
-    }
-
-    private static Optional<String> getHeaderParameterValue(String httpRequestHeader,String parameterName) {
-        Map<String,String> requestHeaderMap = HttpRequestUtils.parseQueryString(
-                httpRequestHeader,System.lineSeparator(),": "
-        );
-
-        if(requestHeaderMap.containsKey(parameterName))
-            return Optional.of(requestHeaderMap.get(parameterName));
-        return Optional.empty();
-    }
-    public static int getContentLength(String httpRequestHeader){
-        Optional<String> contentLengthOptional = getHeaderParameterValue(httpRequestHeader,"Content-Length");
-        return contentLengthOptional.map(Integer::parseInt).orElse(0);
     }
 }
