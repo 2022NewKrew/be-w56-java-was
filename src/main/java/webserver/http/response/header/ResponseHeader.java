@@ -47,12 +47,10 @@ public class ResponseHeader {
     }
 
     private String createHeaderMessage() {
-        String str = "HTTP/1.1 " + status.getCode() + " " + status.getMessage() + "\r\n" +
+        return "HTTP/1.1 " + status.getCode() + " " + status.getMessage() + "\r\n" +
                 "Location : " + url + "\r\n" +
                 "Content-Type: " + contentType + ";charset=utf-8\r\n" +
                 "Content-Length: " + bodyContentLength + "\r\n" +
                 "\r\n";
-        System.out.println(str);
-        return str;
     }
 }
