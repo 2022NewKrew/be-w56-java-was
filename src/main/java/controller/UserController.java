@@ -1,7 +1,6 @@
 package controller;
 
 import service.UserService;
-import util.RedirectHandler;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 
