@@ -10,7 +10,7 @@ public class UserController implements Controller {
     UserService userService;
 
     public UserController() {
-        this.userService = new UserService();
+        this.userService = UserService.getInstance();
     }
 
     @Override

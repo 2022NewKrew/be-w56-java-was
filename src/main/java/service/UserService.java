@@ -4,13 +4,16 @@ import db.DataBase;
 import model.User;
 import webserver.http.request.InfoMap;
 
-import java.util.Map;
-
 public class UserService {
     private final DataBase dataBase;
+    private static final UserService userService = new UserService();
 
-    public UserService() {
+    private UserService() {
         dataBase = DataBase.getInstance();
+    }
+
+    public static UserService getInstance() {
+        return userService;
     }
 
     public void createUser(InfoMap userInfoMap) {
