@@ -23,9 +23,9 @@ public class RequestHeader {
         return inputHeader.split(" ")[REQUEST_HEADER_METHOD_INDEX];
     }
 
-    private Optional<String> getValue(String parameterName) {
-        if (headerMap.containsKey(parameterName))
-            return Optional.of(headerMap.get(parameterName));
+    private Optional<String> getValue(String headerParameterName) {
+        if (headerMap.containsKey(headerParameterName))
+            return Optional.of(headerMap.get(headerParameterName));
         return Optional.empty();
     }
 
