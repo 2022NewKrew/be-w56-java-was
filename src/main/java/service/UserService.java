@@ -2,7 +2,7 @@ package service;
 
 import db.DataBase;
 import model.User;
-import webserver.http.request.InfoMap;
+import webserver.dto.UserRequest;
 
 public class UserService {
     private final DataBase dataBase;
@@ -16,15 +16,15 @@ public class UserService {
         return userService;
     }
 
-    public void createUser(InfoMap userInfoMap) {
-        dataBase.addUser(getUserFromUserDataMap(userInfoMap));
+    public void createUser(UserRequest userRequest) {
+        dataBase.addUser(getUserFromUserRequest(userRequest));
     }
 
-    private User getUserFromUserDataMap(InfoMap userInfoMap) {
-        String userId = userInfoMap.get("userId");
-        String password = userInfoMap.get("password");
-        String name = userInfoMap.get("name");
-        String email = userInfoMap.get("email");
+    private User getUserFromUserRequest(UserRequest userRequest) {
+        String userId = userRequest.getUserId();
+        String password = userRequest.getPassword();
+        String name = userRequest.getName();
+        String email = userRequest.getEmail();
 
         return new User(userId, password, name, email);
     }

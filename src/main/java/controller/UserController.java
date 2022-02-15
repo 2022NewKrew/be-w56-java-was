@@ -1,6 +1,7 @@
 package controller;
 
 import service.UserService;
+import webserver.dto.UserRequest;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 
@@ -23,7 +24,8 @@ public class UserController implements Controller {
     }
 
     private String create(HttpRequest httpRequest) {
-        userService.createUser(httpRequest.getInfoMap());
+        UserRequest userRequest = UserRequest.from(httpRequest.getInfoMap());
+        userService.createUser(userRequest);
         return "/index.html";
     }
 }
