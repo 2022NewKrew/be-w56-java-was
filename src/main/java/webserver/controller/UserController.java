@@ -1,5 +1,6 @@
-package controller;
+package webserver.controller;
 
+import exception.IllegalCreateUserException;
 import service.UserService;
 import webserver.dto.UserRequest;
 import webserver.http.request.HttpRequest;
@@ -15,17 +16,25 @@ public class UserController implements Controller {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest httpRequest) throws IOException {
-        String url = httpRequest.getUrlPath();
-        if (url.equals("/user/create")) {
-            return HttpResponse.of(create(httpRequest), 302);
+    public HttpResponse handle(HttpRequest httpRequest) throws IOException{
+        try {
+            String url = httpRequest.getUrlPath();
+            if (url.equals("/user/create"))
+                return HttpResponse.of(create(httpRequest), 302);
+            return null;
         }
-        return null;
+        catch(IllegalCreateUserException e){
+            return exceptionResponse(e.getMessage());
+        }
     }
 
     private String create(HttpRequest httpRequest) {
         UserRequest userRequest = UserRequest.from(httpRequest.getInfoMap());
         userService.createUser(userRequest);
         return "/index.html";
+    }
+
+    private HttpResponse exceptionResponse(String message){
+        return HttpResponse.from(message);
     }
 }

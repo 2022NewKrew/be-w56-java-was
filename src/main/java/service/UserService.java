@@ -1,6 +1,7 @@
 package service;
 
 import db.DataBase;
+import exception.IllegalCreateUserException;
 import model.User;
 import webserver.dto.UserRequest;
 
@@ -16,8 +17,12 @@ public class UserService {
         return userService;
     }
 
-    public void createUser(UserRequest userRequest) {
-        dataBase.addUser(getUserFromUserRequest(userRequest));
+    public void createUser(UserRequest userRequest) throws IllegalCreateUserException{
+        User user = getUserFromUserRequest(userRequest);
+        if(dataBase.findUserById(user.getUserId()).isEmpty())
+            dataBase.addUser(user);
+        else
+            throw new IllegalCreateUserException("이미 존재하는 id 입니다.");
     }
 
     private User getUserFromUserRequest(UserRequest userRequest) {
