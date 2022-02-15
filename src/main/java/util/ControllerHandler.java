@@ -1,8 +1,8 @@
 package util;
 
-import controller.Controller;
-import controller.DefaultController;
-import controller.UserController;
+import webserver.controller.Controller;
+import webserver.controller.DefaultController;
+import webserver.controller.UserController;
 
 import java.util.*;
 
@@ -14,7 +14,8 @@ public class ControllerHandler {
         controllerMap.put("/user/create", new UserController());
     }
 
-    private ControllerHandler(){}
+    private ControllerHandler() {
+    }
 
     public static Controller getController(String url) {
         Controller controller;
