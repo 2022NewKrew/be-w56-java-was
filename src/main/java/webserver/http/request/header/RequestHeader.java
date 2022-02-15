@@ -34,6 +34,7 @@ public class RequestHeader {
     }
 
     public int getContentLength() {
-        return 0;
+        Optional<String> contentLengthOptional = getValue("Content-Length");
+        return contentLengthOptional.map(Integer::parseInt).orElse(0);
     }
 }
