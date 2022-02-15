@@ -1,6 +1,9 @@
 # be-w56-java-was
 56주차 간단 웹 서버 구현
 
+### 실행방법
+서버 실행 후, http://localhost:8080/index.html 로 이동
+
 # Step1
 ## 요구사항
 - Http를 학습한 후, 학습 내용을 기반으로 웹 서버 구현.
@@ -30,3 +33,21 @@
 - Controller interface 를 만들어 사용.
 - UserController 는 Controller interface 를 상속.
 - UserController, UserService, DataBase 클래스 생성.
+
+# Step3
+## 요구사항
+- POST 로 회원가입 기능을 구현.
+- redirect 구현.
+- ![img_2.png](img_2.png)
+- ![img_3.png](img_3.png)
+
+## 구현내용
+- HttpRequest의 parsing 함수들을 separator 와, keyValueSeparator 를 입력으로 받도록 변경.
+- 이를 통해 HttpRequestHeader 에서 Content-Length 값을 얻어오는 함수 생성. 
+- HTTP Method가 POST 인 경우 httpRequestBody 를 parsing 해서 HashMap으로 만들도록 생성.
+- RedirectPair 클래스를 만들어서, Redirect 여부와 url을 같이 전달.
+- 각 url 에 대해 redirect 여부를 redirectSet 에 넣어서 알 수 있도록 생성.
+- Enum 을 이용하여, Status code, Status Message 를 저장하는 Status 생성.
+- Lombok 이용
+- User 생성 시, userId 가 이미 존재하는 경우 Exception 발생하는 내용 추가.
+- IllegalCreateUserException 발생 시, 해당 Message 를 웹 페이지에 출력.

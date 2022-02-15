@@ -9,9 +9,9 @@ import java.io.IOException;
 public class IOUtils {
     /**
      * @param br 은
-     *            Request Body를 시작하는 시점이어야
+     *            HttpRequest Body를 시작하는 시점이어야
      * @param contentLength 는
-     *            Request Header의 Content-Length 값이다.
+     *            HttpRequest Header의 Content-Length 값이다.
      */
     public static String readData(BufferedReader br, int contentLength) throws IOException {
         char[] body = new char[contentLength];
@@ -33,5 +33,9 @@ public class IOUtils {
             httpRequestHeader.append(System.lineSeparator());
         }
         return httpRequestHeader.toString();
+    }
+
+    public static String gttHttpRequestBody(BufferedReader br,int contentLength) throws IOException{
+        return IOUtils.readData(br,contentLength);
     }
 }
