@@ -1,5 +1,8 @@
 package model;
 
+import lombok.Getter;
+
+@Getter
 public class User {
     private final String userId;
     private final String password;
