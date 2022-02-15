@@ -16,18 +16,18 @@ public class HttpRequest {
     private final RequestBody requestBody;
     private final InfoMap infoMap;
 
+    public HttpRequest(RequestHeader requestHeader, RequestBody requestBody, InfoMap infoMap) {
+        this.requestHeader = requestHeader;
+        this.requestBody = requestBody;
+        this.infoMap = infoMap;
+    }
+
     public static HttpRequest from(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         RequestHeader requestHeader = new RequestHeader(IOUtils.getHttpRequestHeader(br));
         RequestBody requestBody = new RequestBody(IOUtils.gttHttpRequestBody(br, requestHeader.getContentLength()));
         InfoMap infoMap = new InfoMap(requestHeader, requestBody);
         return new HttpRequest(requestHeader, requestBody, infoMap);
-    }
-
-    public HttpRequest(RequestHeader requestHeader, RequestBody requestBody, InfoMap infoMap) {
-        this.requestHeader = requestHeader;
-        this.requestBody = requestBody;
-        this.infoMap = infoMap;
     }
 
     public String getUrlPath() {
